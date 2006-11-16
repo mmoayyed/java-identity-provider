@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/OpenSAML2-J"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/XMLTooling-J"/>
+	<classpathentry kind="lib" path="build-lib/servlet-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-web.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-support.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-core.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-context.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0-beans.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

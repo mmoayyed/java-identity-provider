@@ -1,0 +1,58 @@
+<project name="Shibboleth Common" basedir="." default="package">
+
+	<property name="build-lib.dir" value="${basedir}/build-lib" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="doc.dir" value="${basedir}/doc" />
+	<property name="javadoc.dir" value="${doc.dir}/javadoc" />
+	<property name="build.dir" value="${basedir}/build" />
+	<property name="dist.dir" value="${basedir}/dist" />
+
+	<!-- Project settings -->
+	<property name="version" value="" />
+	<property name="jar.name" value="shib-common-${version}.jar" />
+
+	<!-- Classpath for compilations -->
+	<path id="build-path">
+		<fileset dir="${build-lib.dir}" includes="**/*.jar" />
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<!-- Remove classes directory for clean build -->
+	<target name="clean" description="Prepare for clean build">
+		<delete dir="${build.dir}" />
+		<delete dir="${doc.dir}" />
+	</target>
+
+	<!-- Normal build of application -->
+	<target name="compile">
+		<mkdir dir="${build.dir}"/>
+
+		<javac srcdir="${src.dir}" destdir="${build.dir}" includes="**/*.java" debug="on" source="1.5">
+			<classpath refid="build-path" />
+		</javac>
+	</target>
+
+	<!-- Build Javadoc documentation -->
+	<target name="javadoc">
+		
+		<javadoc packagenames="*" 
+		         sourcepath="${src.dir}" 
+		         destdir="${javadoc.dir}" 
+		         author="false" 
+		         version="true" 
+		         windowtitle="Shibboleth Java SP ${version} Java API" 
+		         doctitle="Shibboleth Java SP ${version} Java API" 
+		         bottom="${copyright}"
+		         overview="${src.dir}/overview.html">
+	        <classpath refid="build-path" />
+	    </javadoc>
+	</target>
+
+	<!-- Create binary package -->
+	<target name="package" depends="compile">
+		<mkdir dir="${dist.dir}" />
+        <jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}" whenempty="fail" />
+	</target>
+
+</project>
