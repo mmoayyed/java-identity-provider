@@ -3,8 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/OpenSAML2-J"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/XMLTooling-J"/>
 	<classpathentry exported="true" kind="lib" path="build-lib/servlet-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-webmvc.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-web.jar"/>
@@ -16,5 +14,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-beans.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="build-lib/junit-3.8.1.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/java-opensaml2"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
