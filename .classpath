@@ -3,17 +3,61 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="build-lib/servlet-2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-webmvc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-web.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-support.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-context.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-commons-logging.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-commons-collections.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-beans.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
-	<classpathentry kind="lib" path="build-lib/junit-3.8.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="build-lib/servlet-2.4.jar">
+		<attributes>
+			<attribute value="http://tomcat.apache.org/tomcat-5.0-doc/servletapi/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-webmvc.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-web.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-support.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-core.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-context.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-commons-logging.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-commons-collections.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-beans.jar">
+		<attributes>
+			<attribute value="http://static.springframework.org/spring/docs/2.0.x/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar">
+		<attributes>
+			<attribute value="http://logging.apache.org/log4j/docs/api/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="build-lib/junit-3.8.1.jar">
+		<attributes>
+			<attribute value="http://junit.sourceforge.net/javadoc/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/java-opensaml2"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
