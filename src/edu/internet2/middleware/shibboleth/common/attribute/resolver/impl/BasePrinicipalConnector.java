@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalConnector;
 
 /**
- * Base class for Principal Connector PlugIns.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for {@link PrincipalConnector} plug-ins.
  */
-public abstract class BasePrinicipalConnector extends BaseResolutionPlugIn<String> implements PrincipalConnector {
+public abstract class BasePrinicipalConnector extends AbstractResolutionPlugIn<String> implements PrincipalConnector {
 
 }

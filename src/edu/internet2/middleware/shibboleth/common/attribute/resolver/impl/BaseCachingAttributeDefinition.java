@@ -18,19 +18,27 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.List;
 
+import javolution.util.FastList;
+
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
 
 /**
- * Base class for Attribute Definition PlugIns that need to cache their resolutions.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for {@link AttributeDefinition} plug-ins that need to cache their resolutions.
  */
 public abstract class BaseCachingAttributeDefinition extends BaseCachingResolutionPlugIn<Attribute> implements
         AttributeDefinition {
 
+    /** attribute encoders associated with this definition */
     private List<AttributeEncoder> encoders;
+
+    /**
+     * Constructor
+     */
+    public BaseCachingAttributeDefinition() {
+        encoders = new FastList<AttributeEncoder>();
+    }
 
     /** {@inheritDoc} */
     public List<AttributeEncoder> getAttributeEncoders() {

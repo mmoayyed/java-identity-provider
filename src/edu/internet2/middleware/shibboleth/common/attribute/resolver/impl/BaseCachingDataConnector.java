@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.List;
@@ -21,12 +22,12 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 
 /**
- * Base class for Data Connector PlugIns that need to cache their resolutions.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for {@link DataConnector} plug-ins that need to cache their resolutions.
  */
-public abstract class BaseCachingDataConnector extends BaseCachingResolutionPlugIn<List<Attribute>> implements DataConnector {
+public abstract class BaseCachingDataConnector extends BaseCachingResolutionPlugIn<List<Attribute>> implements
+        DataConnector {
 
+    /** ID of the data connector to use if this one fails */
     private String failoverDependencyId;
 
     /** {@inheritDoc} */

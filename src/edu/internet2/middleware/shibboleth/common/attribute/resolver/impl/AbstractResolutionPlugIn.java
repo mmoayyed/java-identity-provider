@@ -21,24 +21,22 @@ import java.util.List;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
 
 /**
- * Base class for all Resolution PlugIns
- *
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for all {@link ResolutionPlugIn}s.
  */
-public abstract class BaseResolutionPlugIn<ResolvedType> implements ResolutionPlugIn<ResolvedType> {
-    
-    /** The identifier for this PlugIn. */
+public abstract class AbstractResolutionPlugIn<ResolvedType> implements ResolutionPlugIn<ResolvedType> {
+
+    /** The identifier for this plug-in. */
     private static String id;
-    
-    /** Whether to propagate errors out of the PlugIn as exceptions. */
+
+    /** Whether to propagate errors out of the plug-in as exceptions. */
     private boolean propagateErrors;
-    
-    /** AttributeDefinitions this plugin depends on */
+
+    /** IDs of the {@link AttributeDefinition}s this plug-in depends on */
     private List<String> attributeDefinitionDependencyIds;
-    
-    /** DataConnectors this plugin depends on */
+
+    /** IDs of the {@link DataConnector}s this plug-in depends on */
     private List<String> dataConnectorDependencyIds;
-    
+
     /** {@inheritDoc} */
     public List<String> getAttributeDefinitionDependencyIds() {
         return attributeDefinitionDependencyIds;

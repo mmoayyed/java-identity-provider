@@ -22,12 +22,11 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 
 /**
- * Base class for Data Connector PlugIns.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for {@link DataConnector} plug-ins.
  */
-public abstract class BaseDataConnector extends BaseResolutionPlugIn<List<Attribute>> implements DataConnector {
+public abstract class BaseDataConnector extends AbstractResolutionPlugIn<List<Attribute>> implements DataConnector {
 
+    /** ID of the data connector to use if this one fails */
     private String failoverDependencyId;
 
     /** {@inheritDoc} */

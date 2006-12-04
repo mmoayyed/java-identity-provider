@@ -18,18 +18,27 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.List;
 
+import javolution.util.FastList;
+
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
 
 /**
- * Base class for Attribute Definition PlugIns.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for {@link AttributeDefinition} plug-ins.
  */
-public abstract class BaseAttributeDefinition extends BaseResolutionPlugIn<Attribute> implements AttributeDefinition {
+public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<Attribute> implements
+        AttributeDefinition {
 
+    /** attribute encoders associated with this definition */
     private List<AttributeEncoder> encoders;
+
+    /**
+     * Constructor
+     */
+    public BaseAttributeDefinition() {
+        encoders = new FastList<AttributeEncoder>();
+    }
 
     /** {@inheritDoc} */
     public List<AttributeEncoder> getAttributeEncoders() {

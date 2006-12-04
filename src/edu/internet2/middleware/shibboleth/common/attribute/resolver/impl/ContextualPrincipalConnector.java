@@ -23,16 +23,25 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalCo
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
- * Wrapper for a PrincipalConnector within a ResolutionContext. This wrapper ensures that the connector is resolved only
- * once per context.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Wrapper for a {@link PrincipalConnector} within a {@link ResolutionContext}. This wrapper ensures that the connector
+ * is resolved only once per context.
  */
 public class ContextualPrincipalConnector implements PrincipalConnector {
 
+    /** wrapped principal connector */
     private PrincipalConnector connector;
 
+    /** cached result of resolving the connector */
     private String principal;
+
+    /**
+     * Constructor
+     * 
+     * @param connector principal connector to wrap
+     */
+    public ContextualPrincipalConnector(PrincipalConnector connector) {
+        this.connector = connector;
+    }
 
     /** {@inheritDoc} */
     public List<String> getAttributeDefinitionDependencyIds() {

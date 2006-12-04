@@ -24,21 +24,26 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnect
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
- * Wrapper for a DataConnector within a ResolutionContext. This wrapper ensures that the connector is resolved
- * only once per context.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Wrapper for a {@link DataConnector} within a {@link ResolutionContext}. This wrapper ensures that the connector is
+ * resolved only once per context.
  */
 public class ContextualDataConnector implements DataConnector {
 
+    /** wrapped data connector */
     private DataConnector connector;
 
+    /** cached result of resolving the data connector */
     private List<Attribute> attributes;
 
+    /**
+     * Constructor
+     * 
+     * @param connector data connector to wrap
+     */
     public ContextualDataConnector(DataConnector connector) {
         this.connector = connector;
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         return connector.equals(obj);

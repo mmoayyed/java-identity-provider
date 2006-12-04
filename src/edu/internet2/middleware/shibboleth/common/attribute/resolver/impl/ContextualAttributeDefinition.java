@@ -25,19 +25,22 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeRe
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
- * Wrapper for an AttributeDefinition within a ResolutionContext. This wrapper ensures that the definition is resolved
- * only once per context.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Wrapper for an {@link AttributeDefinition} within a {@link ResolutionContext}. This wrapper ensures that the
+ * definition is resolved only once per context.
  */
 public class ContextualAttributeDefinition implements AttributeDefinition {
-
-    /** cached result of resolving the attribute definition */
-    private Attribute attribute;
 
     /** wrapped attribute definition */
     private AttributeDefinition definition;
 
+    /** cached result of resolving the attribute definition */
+    private Attribute attribute;
+
+    /**
+     * Constructor
+     * 
+     * @param definition attribute definition to wrap
+     */
     public ContextualAttributeDefinition(AttributeDefinition definition) {
         this.definition = definition;
     }

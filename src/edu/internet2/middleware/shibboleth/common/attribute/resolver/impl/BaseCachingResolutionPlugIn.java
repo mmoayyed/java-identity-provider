@@ -22,15 +22,15 @@ import org.springframework.context.ApplicationEvent;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.CachingResolutionPlugin;
 
 /**
- * Base class for resolution plugins that need to cache their resolutions.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for {@link ResolutionPlugIn}s that need to cache their resolutions.
  */
-public abstract class BaseCachingResolutionPlugIn<ResolvedType> extends BaseResolutionPlugIn<ResolvedType> implements
-        CachingResolutionPlugin<ResolvedType> {
+public abstract class BaseCachingResolutionPlugIn<ResolvedType> extends AbstractResolutionPlugIn<ResolvedType>
+        implements CachingResolutionPlugin<ResolvedType> {
 
+    /** storage service used for caching */
     private StorageService storage;
 
+    /** Time, in milliseconds, to cache the result of this plug-in */
     private long cacheDuration;
 
     /** {@inheritDoc} */

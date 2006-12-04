@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalConnector;
 
 /**
- * Base class for Principal Connector PlugIns that need to cache their resolutions.
- * 
- * @author Will Norris (wnorris@usc.edu)
+ * Base class for {@link PrincipalConnector} plug-ins that need to cache their resolutions.
  */
-public abstract class BaseCachingPrincipalConnector extends BaseCachingResolutionPlugIn<String> implements PrincipalConnector {
+public abstract class BaseCachingPrincipalConnector extends BaseCachingResolutionPlugIn<String> implements
+        PrincipalConnector {
 
 }
