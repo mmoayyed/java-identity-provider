@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationEvent;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.CachingResolutionPlugin;
 
 /**
- * Base class resolution plugins that need to cache their resolutions.
+ * Base class for resolution plugins that need to cache their resolutions.
  * 
  * @author Will Norris (wnorris@usc.edu)
  */
