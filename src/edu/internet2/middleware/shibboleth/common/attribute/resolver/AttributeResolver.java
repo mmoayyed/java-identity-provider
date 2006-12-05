@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -29,11 +30,12 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 /**
  * The service that resolves the attribtues for a particular subject.
  * 
- * "Raw" attributes are gathered by the registered {@link DataConnector}s while the {@link AttributeDefinition}s refine the raw attributes or create attributes of their own.  Connectors 
- * and definitions may depend on each other so implementations must use a directed dependency graph when performing the resolution.
+ * "Raw" attributes are gathered by the registered {@link DataConnector}s while the {@link AttributeDefinition}s
+ * refine the raw attributes or create attributes of their own. Connectors and definitions may depend on each other so
+ * implementations must use a directed dependency graph when performing the resolution.
  */
 public interface AttributeResolver {
-    
+
     /**
      * Creates a resolution context for the given user and attribute requester.
      * 
@@ -41,12 +43,13 @@ public interface AttributeResolver {
      * @param attributeRequester the party requesting the attributes
      * @param request the request from the client
      * 
-     * @return
+     * @return resolution context containing the principal name for subject
      */
     public ResolutionContext createResolutionContext(String principal, String attributeRequester, ServletRequest request);
-    
+
     /**
-     * Creates a resolution context for the given user and attribute requester. The subject's nameID is resolved into a system specific principal name.
+     * Creates a resolution context for the given user and attribute requester. The subject's nameID is resolved into a
+     * system specific principal name.
      * 
      * @param subject the subject whose attributes will be resolved
      * @param attributeRequester the party requesting the attributes
@@ -56,11 +59,13 @@ public interface AttributeResolver {
      * 
      * @throws AttributeResolutionException thrown if the NameID can not be resolved into a principal name
      */
-    public ResolutionContext createResolutionContext(NameID subject, String attributeRequester, ServletRequest request) throws AttributeResolutionException;
+    public ResolutionContext createResolutionContext(NameID subject, String attributeRequester, ServletRequest request)
+            throws AttributeResolutionException;
 
     /**
-     * Gets all the attributes for a given subject.  While an initial attribute producer is given this does not mean every returned attribute is from that 
-     * producer.  The producer may return information that can be used by data connectors to contact other producers and retrieve attributes from them.
+     * Gets all the attributes for a given subject. While an initial attribute producer is given this does not mean
+     * every returned attribute is from that producer. The producer may return information that can be used by data
+     * connectors to contact other producers and retrieve attributes from them.
      * 
      * @param attributes list of attributes to resolve or null to resolve all attributes
      * @param resolutionContext the attribute resolution context to use to resolve attributes
@@ -69,43 +74,37 @@ public interface AttributeResolver {
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-	public Set<Attribute> resolveAttributes(List<String> attributes, ResolutionContext resolutionContext) throws AttributeResolutionException;
+    public Set<Attribute> resolveAttributes(List<String> attributes, ResolutionContext resolutionContext)
+            throws AttributeResolutionException;
     
+    /**
+     * Gets the list of principal connectors used to convert {@link NameID}s into userids.
+     * 
+     * @return connectors used to convert {@link NameID}s into userids
+     */
+    public Collection<PrincipalConnector> getPrincipalConnectors();
+
     /**
      * Gets the list of data connectors used to fetch the raw attributes for a subject.
      * 
      * @return data connectors used to fetch the raw attributes for a subject
      */
-    public List<DataConnector> getDataConnectors();
-    
-    /**
-     * Sets the list of data connectors used to fetch the raw attributes for a subject, replacing the existing list.
-     * 
-     * @param connectors data connectors used to fetch the raw attributes for a subject
-     */
-    public void setDataConnectors(List<DataConnector> connectors);
-    
+    public Collection<DataConnector> getDataConnectors();
+
     /**
      * Gets the list of attribute definitions that will produce the attributes for a subject.
      * 
      * @return attribute definitions that will produce the attributes for a subject
      */
-    public List<AttributeDefinition> getAttributeDefinitions();
-    
-    /**
-     * Sets the list of attribute definitions that will produce the attributes for a subject, replacing the existing list.
-     * 
-     * @param definitions attribute definitions that will produce the attributes for a subject
-     */
-    public void setAttributeDefinitions(List<AttributeDefinition> definitions);
-    
+    public Collection<AttributeDefinition> getAttributeDefinitions();
+
     /**
      * Gets the metadata provider that may be used to lookup information about entities.
      * 
      * @return metadata provider that may be used to lookup information about entities
      */
     public MetadataProvider getMetadataProvider();
-    
+
     /**
      * Sets the metadata provider that may be used to lookup information about entities.
      * 
