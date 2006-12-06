@@ -17,7 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -74,8 +73,7 @@ public interface AttributeResolver {
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public Set<Attribute> resolveAttributes(List<String> attributes, ResolutionContext resolutionContext)
-            throws AttributeResolutionException;
+	public Set<Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext) throws AttributeResolutionException;
     
     /**
      * Gets the list of principal connectors used to convert {@link NameID}s into userids.
