@@ -1,4 +1,8 @@
 <project name="Shibboleth Common" basedir="." default="package">
+	
+	<tstamp>
+		<format property="build-date" pattern="ddMMyyyy'T'kkmmss" timezone="GMT"/>
+	</tstamp>
 
 	<property name="build-lib.dir" value="${basedir}/build-lib" />
 	<property name="lib.dir" value="${basedir}/lib" />
@@ -6,11 +10,16 @@
 	<property name="doc.dir" value="${basedir}/doc" />
 	<property name="javadoc.dir" value="${doc.dir}/javadoc" />
 	<property name="build.dir" value="${basedir}/build" />
+	<property name="reports.dir" value="${doc.dir}/reports" />
+	<property name="test-report.dir" value="${reports.dir}/unit-test" />
 	<property name="dist.dir" value="${basedir}/dist" />
 
 	<!-- Project settings -->
-	<property name="version" value="" />
+	<property name="version" value="${build-date}" />
 	<property name="jar.name" value="shib-common-${version}.jar" />
+	
+	<!-- Load Checkstyle tasks -->
+	<taskdef resource="checkstyletask.properties" />
 
 	<!-- Classpath for compilations -->
 	<path id="build-path">
@@ -53,6 +62,19 @@
 	<target name="package" depends="compile">
 		<mkdir dir="${dist.dir}" />
         <jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}" whenempty="fail" />
+	</target>
+	
+	<!-- Checks code against style guidelines -->
+	<target name="checkstyle" >
+		<mkdir dir="${reports.dir}" />
+		
+		<checkstyle config="${basedir}/checkstyle.xml"
+					failOnViolation="false"
+	                classpathref="build-path">
+			<fileset dir="src" includes="**/*.java"/>
+			<formatter type="plain"
+					   toFile="${reports.dir}/checkstyle-report.txt" />
+		</checkstyle>
 	</target>
 
 </project>
