@@ -33,7 +33,7 @@ public interface XMLConfigurator<TargetType> extends Configurator<TargetType> {
      * 
      * @return configuration XML resource
      */
-    public String getConfigurationResource();
+    public Resource getConfigurationResource();
     
     /**
      * Sets the configuration XML resource.
