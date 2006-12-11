@@ -36,6 +36,8 @@ public interface Resource {
      * Checks whether the resource exists.
      * 
      * @return true if the resource exists, false if not
+     * 
+     * @throws ResourceException thrown if there is a problem determining if the resource exists
      */
     public boolean exists() throws ResourceException;
     
@@ -43,6 +45,8 @@ public interface Resource {
      * Gets the inputstream to the resource's data.
      * 
      * @return inputstream to the resource's data
+     * 
+     * @throws ResourceException thrown if an input stream can not be created for the resource
      */
     public InputStream getInputStream() throws ResourceException;
     
@@ -50,6 +54,8 @@ public interface Resource {
      * Gets the date and time the resource was last modified.
      * 
      * @return date and time the resource was last modified
+     * 
+     * @throws ResourceException thrown if the last modified time can not be determined
      */
     public DateTime getLastModifiedTime() throws ResourceException;
 }

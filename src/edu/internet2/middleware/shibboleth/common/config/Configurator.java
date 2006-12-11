@@ -17,6 +17,8 @@ package edu.internet2.middleware.shibboleth.common.config;
 
 /**
  * A simple interface for classes used to configure another object.
+ * 
+ * @param <TargetType> the type of object to be configured
  */
 public interface Configurator<TargetType> {
 

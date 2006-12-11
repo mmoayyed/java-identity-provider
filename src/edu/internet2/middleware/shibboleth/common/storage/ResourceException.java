@@ -23,7 +23,7 @@ import edu.internet2.middleware.shibboleth.common.ShibbolethException;
  */
 public class ResourceException extends ShibbolethException {
 
-    /** Serial version UID */
+    /** Serial version UID. */
     private static final long serialVersionUID = -3347987371630094896L;
 
     /**

@@ -22,6 +22,8 @@ import org.opensaml.xml.XMLObject;
  * Attribute encoders convert {@link Attribute}s into protocol specific representations.
  * 
  * Encoders MUST be thread-safe and stateless.
+ * 
+ * @param <AttributeType> the type of attribute this encoder works on
  */
 public interface AttributeEncoder<AttributeType extends Attribute> {
 
@@ -43,6 +45,8 @@ public interface AttributeEncoder<AttributeType extends Attribute> {
      * Enocdes the attribute into a protocol specific representations.
      * 
      * @param attribute the attribute to encode
+     * 
+     * @return the Object the attribute was encoded into
      */
     public XMLObject encode(AttributeType attribute);
 }

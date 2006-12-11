@@ -18,11 +18,11 @@ package edu.internet2.middleware.shibboleth.common;
 
 
 /**
- * Base class for Shibboleth exceptions
+ * Base class for Shibboleth exceptions.
  */
 public class ShibbolethException extends Exception {
 
-    /** Serial version UID */
+    /** Serial version UID. */
     private static final long serialVersionUID = -1815410491743822650L;
 
     /**

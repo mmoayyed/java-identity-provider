@@ -29,11 +29,11 @@ import org.opensaml.xml.util.DatatypeHelper;
  */
 public class FilesystemResource implements Resource {
     
-    /** The file represented by this resource */
-    private File resourceFile;
+    /** The file represented by this resource. */
+    private File resource;
     
     /**
-     * Constructor
+     * Constructor.
      *
      * @param resourcePath the path to the file for this resource
      * 
@@ -44,7 +44,7 @@ public class FilesystemResource implements Resource {
             throw new ResourceException("Resource path may not be null or empty");
         }
         
-        resourceFile = new File(resourcePath);
+        resource = new File(resourcePath);
     }
     
     /**
@@ -64,18 +64,18 @@ public class FilesystemResource implements Resource {
             throw new ResourceException("Resource file is not a file");
         }
         
-        this.resourceFile = new File(resourceFile.getAbsolutePath());
+        this.resource = new File(resourceFile.getAbsolutePath());
     }
 
     /** {@inheritDoc} */
     public boolean exists() throws ResourceException {
-        return resourceFile.exists();
+        return resource.exists();
     }
 
     /** {@inheritDoc} */
     public InputStream getInputStream() throws ResourceException {
         try{
-            return new FileInputStream(resourceFile);
+            return new FileInputStream(resource);
         }catch(FileNotFoundException e){
             throw new ResourceException("Resource file does not exist");
         }
@@ -83,15 +83,15 @@ public class FilesystemResource implements Resource {
 
     /** {@inheritDoc} */
     public DateTime getLastModifiedTime() throws ResourceException {
-        if(!resourceFile.exists()){
+        if(!resource.exists()){
             throw new ResourceException("Resource file does not exist");
         }
         
-        return new DateTime(resourceFile.lastModified());
+        return new DateTime(resource.lastModified());
     }
 
     /** {@inheritDoc} */
     public String getLocation() {
-        return resourceFile.getAbsolutePath();
+        return resource.getAbsolutePath();
     }
 }

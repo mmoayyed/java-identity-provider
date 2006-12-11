@@ -22,6 +22,8 @@ import java.util.SortedSet;
 
 /**
  * A resolved attribute.
+ * 
+ * @param <ValueType> the object type of the values for this attribute
  */
 public interface Attribute<ValueType>{
     

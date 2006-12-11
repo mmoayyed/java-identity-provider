@@ -23,6 +23,8 @@ import edu.internet2.middleware.shibboleth.common.storage.Resource;
  * The XML to load is expressed by a {@link Resource}.  An optional XPath 2.0
  * expression may be given to identify the root configuration element to use.  If 
  * not XPath expression is given then the document element is used.
+ * 
+ * @param <TargetType> the type of object to be configured
  */
 public interface XMLConfigurator<TargetType> extends Configurator<TargetType> {
     

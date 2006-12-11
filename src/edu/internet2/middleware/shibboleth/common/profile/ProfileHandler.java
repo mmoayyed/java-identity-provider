@@ -20,14 +20,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-
 /**
  * A processor for a communication profile supported by the IdP.
  * 
- * Profile handlers must be stateless and thread-safe as a single instance may be used to service every incoming request.
+ * Profile handlers must be stateless and thread-safe as a single instance may be used to service every incoming
+ * request.
  */
 public interface ProfileHandler {
-    
+
     /**
      * Processes an incoming request.
      * 
