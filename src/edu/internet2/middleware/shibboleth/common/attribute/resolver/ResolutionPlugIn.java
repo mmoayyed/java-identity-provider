@@ -64,4 +64,11 @@ public interface ResolutionPlugIn<ResolvedType> {
      * @throws AttributeResolutionException the problem that occured during the resolution
      */
     public ResolvedType resolve(ResolutionContext resolutionContext) throws AttributeResolutionException;
+    
+    /**
+     * Validate the internal state of this plug-in.
+     * 
+     * @throws AttributeResolutionException if the plug-in has an invalid internal state
+     */
+    public void validate() throws AttributeResolutionException;
 }
