@@ -29,40 +29,40 @@ import edu.internet2.middleware.shibboleth.common.storage.ResourceListener.Resou
 /**
  * A watcher that invokes a callback when a resource update/deletion has been detected.
  */
-public class ResourceChangeWatcher extends TimerTask{
+public class ResourceChangeWatcher extends TimerTask {
 
-    /** Logger */
-    private final static Logger log = Logger.getLogger(ResourceChangeWatcher.class);
+    /** Default polling frequency, 12 hours. */
+    public static final long DEFAULT_POLL_FREQUENCY = 1000 * 60 * 60 * 12;
 
-    /** Default polling frequency, 12 hours */
-    public final static long DEFAULT_POLL_FREQUENCY = 1000 * 60 * 60 * 12;
+    /** Default maximum retry attempts, 0. */
+    public static final int DEFAULT_MAX_RETRY_ATTEMPTS = 0;
+    
+    /** Class logger. */
+    private static Logger log = Logger.getLogger(ResourceChangeWatcher.class);
 
-    /** Default maximum retry attempts, 0 */
-    public final static int DEFAULT_MAX_RETRY_ATTEMPTS = 0;
-
-    /** Resource being watched */
+    /** Resource being watched. */
     private Resource watchedResource;
 
-    /** Frequency, in milliseconds, the resource is polled for changes */
+    /** Frequency, in milliseconds, the resource is polled for changes. */
     private long pollFrequency;
 
-    /** Max number of polls to try before considering the resource inaccessible */
+    /** Max number of polls to try before considering the resource inaccessible. */
     private int maxRetryAttempts;
 
-    /** Number of times the resource has been polled but generated an error */
+    /** Number of times the resource has been polled but generated an error. */
     private int currentRetryAttempts;
 
-    /** Whether the resource currently exists */
+    /** Whether the resource currently exists. */
     private boolean resourceExist;
 
-    /** Last time the resource was modified */
+    /** Last time the resource was modified. */
     private DateTime lastModification;
 
-    /** Registered listeners of resource change notifications */
+    /** Registered listeners of resource change notifications. */
     private FastList<ResourceListener> resourceListeners;
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param resource the resource to be watched
      * 
@@ -73,27 +73,27 @@ public class ResourceChangeWatcher extends TimerTask{
     }
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param resource the resource to be watched
-     * @param pollFrequency the frequency, in milliseconds, to poll the resource for changes
+     * @param pollingFrequency the frequency, in milliseconds, to poll the resource for changes
      * 
      * @throws ResourceException thrown if resource existance or last modification time can not be determined
      */
-    public ResourceChangeWatcher(Resource resource, long pollFrequency) throws ResourceException {
-        this(resource, pollFrequency, DEFAULT_MAX_RETRY_ATTEMPTS);
+    public ResourceChangeWatcher(Resource resource, long pollingFrequency) throws ResourceException {
+        this(resource, pollingFrequency, DEFAULT_MAX_RETRY_ATTEMPTS);
     }
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param resource the resource to be watched
-     * @param pollFrequency the frequency, in milliseconds, to poll the resource for changes
-     * @param maxRetryAttempts maximum number of poll attempts before the resource is considered inaccessible
+     * @param pollingFrequency the frequency, in milliseconds, to poll the resource for changes
+     * @param retryAttempts maximum number of poll attempts before the resource is considered inaccessible
      * 
      * @throws ResourceException thrown if resource existance or last modification time can not be determined
      */
-    public ResourceChangeWatcher(Resource resource, long pollFrequency, int maxRetryAttempts) throws ResourceException {
+    public ResourceChangeWatcher(Resource resource, long pollingFrequency, int retryAttempts) throws ResourceException {
         if (resource == null) {
             throw new NullPointerException("Watched resource is null");
         }
@@ -107,8 +107,8 @@ public class ResourceChangeWatcher extends TimerTask{
         }
 
         watchedResource = resource;
-        this.pollFrequency = pollFrequency;
-        this.maxRetryAttempts = maxRetryAttempts;
+        pollFrequency = pollingFrequency;
+        maxRetryAttempts = retryAttempts;
         currentRetryAttempts = 0;
 
         if (watchedResource.exists()) {
@@ -164,14 +164,14 @@ public class ResourceChangeWatcher extends TimerTask{
             if (currentRetryAttempts >= maxRetryAttempts) {
                 cancel();
                 log.error("Resource "
-                                + watchedResource.getLocation()
-                                + " was not accessible for max number of retry attempts.  This resource will no longer be watched");
+                    + watchedResource.getLocation()
+                    + " was not accessible for max number of retry attempts.  This resource will no longer be watched");
             }
         }
     }
 
     /**
-     * Signals all registered listeners of a resource change
+     * Signals all registered listeners of a resource change.
      * 
      * @param changeType the resource change type
      */
@@ -180,16 +180,21 @@ public class ResourceChangeWatcher extends TimerTask{
             switch (changeType) {
                 case CREATION:
                     for (ResourceListener listener : resourceListeners) {
-                        listener.onResourceCreate();
+                        listener.onResourceCreate(watchedResource);
                     }
+                    break;
                 case UPDATE:
                     for (ResourceListener listener : resourceListeners) {
-                        listener.onResourceUpdate();
+                        listener.onResourceUpdate(watchedResource);
                     }
+                    break;
                 case DELETE:
                     for (ResourceListener listener : resourceListeners) {
-                        listener.onResourceDelete();
+                        listener.onResourceDelete(watchedResource);
                     }
+                    break;
+                default:
+                    break;
             }
         }
     }

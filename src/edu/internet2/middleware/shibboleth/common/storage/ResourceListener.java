@@ -21,21 +21,27 @@ package edu.internet2.middleware.shibboleth.common.storage;
  */
 public interface ResourceListener{
     
-    /** Types of change events; creation, update, and deletion */
+    /** Types of change events; creation, update, and deletion. */
     public enum ResourceChange{ CREATION, UPDATE, DELETE};
     
     /**
      * Called when a resource is created.
+     * 
+     * @param resource the resource that was created
      */
-    public void onResourceCreate();
+    public void onResourceCreate(Resource resource);
     
     /**
      * Called when a resource is update.
+     * 
+     * @param resource the resource that was updated
      */
-    public void onResourceUpdate();
+    public void onResourceUpdate(Resource resource);
     
     /**
      * Called when a resource is deleted.
+     * 
+     * @param resource the resource that was deleted
      */
-    public void onResourceDelete();
+    public void onResourceDelete(Resource resource);
 }

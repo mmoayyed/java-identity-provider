@@ -15,22 +15,20 @@
  */
 package edu.internet2.middleware.shibboleth.common.log;
 
-import org.apache.log4j.Level;
-
 /** Critical logging level for items that are not errors but still important. */
-public class CriticalLevel extends Level {
+public class Level extends org.apache.log4j.Level {
 
     /** Integer representation of logging level. */
     public static final int CRITICAL_INT = 60000;
     
     /** Critical logging level. */
-    public static final Level CRITICAL = new CriticalLevel();
+    public static final Level CRITICAL = new Level();
     
     /** Serial version UID. */
     private static final long serialVersionUID = -104586023689772363L;
         
     /** Constructor. */
-    protected CriticalLevel(){
+    protected Level(){
         super(CRITICAL_INT, "CRITICAL", 0);
     }
 }
