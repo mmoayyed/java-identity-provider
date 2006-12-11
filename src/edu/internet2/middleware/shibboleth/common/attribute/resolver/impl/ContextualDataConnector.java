@@ -29,24 +29,29 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionC
  */
 public class ContextualDataConnector implements DataConnector {
 
-    /** wrapped data connector */
+    /** Wrapped data connector. */
     private DataConnector connector;
 
-    /** cached result of resolving the data connector */
+    /** Cached result of resolving the data connector. */
     private List<Attribute> attributes;
 
     /**
-     * Constructor
+     * Constructor.
      * 
-     * @param connector data connector to wrap
+     * @param newConnector data connector to wrap
      */
-    public ContextualDataConnector(DataConnector connector) {
-        this.connector = connector;
+    public ContextualDataConnector(DataConnector newConnector) {
+        this.connector = newConnector;
     }
 
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         return connector.equals(obj);
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return connector.hashCode();
     }
 
     /** {@inheritDoc} */

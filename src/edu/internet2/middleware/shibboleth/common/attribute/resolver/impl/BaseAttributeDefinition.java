@@ -30,11 +30,11 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDe
 public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<Attribute> implements
         AttributeDefinition {
 
-    /** attribute encoders associated with this definition */
+    /** Attribute encoders associated with this definition. */
     private List<AttributeEncoder> encoders;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public BaseAttributeDefinition() {
         encoders = new FastList<AttributeEncoder>();

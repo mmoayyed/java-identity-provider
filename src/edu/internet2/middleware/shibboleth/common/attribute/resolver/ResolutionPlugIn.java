@@ -20,38 +20,40 @@ import java.util.List;
 
 /**
  * A base interface for plugins that provide attributes.
+ * 
+ * @param <ResolvedType> object type this plug-in resolves to
  */
-public interface ResolutionPlugIn<ResolvedType>{
+public interface ResolutionPlugIn<ResolvedType> {
 
-	/**
-	 * Returns the unqiue ID of the plugin.
-	 * 
-	 * @return unqiue ID of the plugin
-	 */
-	public String getId();
+    /**
+     * Returns the unqiue ID of the plugin.
+     * 
+     * @return unqiue ID of the plugin
+     */
+    public String getId();
 
-	/**
-	 * Gets whether resolution exceptions should be propagated or just logged.  If exceptions are not propagated the plugin is treated as if 
-     * returned null during resolution.
-	 * 
-	 * @return whether resolution exceptions should be propagated or just logged
-	 */
-	public boolean getPropagateErrors();
+    /**
+     * Gets whether resolution exceptions should be propagated or just logged. If exceptions are not propagated the
+     * plugin is treated as if returned null during resolution.
+     * 
+     * @return whether resolution exceptions should be propagated or just logged
+     */
+    public boolean getPropagateErrors();
 
-	/**
-	 * Gets the IDs of the attribute definitions this plugin is dependent on.
-	 * 
-	 * @return IDs of the attribute definitions this plugin is dependent on
-	 */
-	public List<String> getAttributeDefinitionDependencyIds();
+    /**
+     * Gets the IDs of the attribute definitions this plugin is dependent on.
+     * 
+     * @return IDs of the attribute definitions this plugin is dependent on
+     */
+    public List<String> getAttributeDefinitionDependencyIds();
 
-	/**
-	 * Gets the IDs of the data connectors this plugin is dependent on.
-	 * 
-	 * @return IDs of the data connectors this plugin is dependent on
-	 */
-	public List<String> getDataConnectorDependencyIds();
-    
+    /**
+     * Gets the IDs of the data connectors this plugin is dependent on.
+     * 
+     * @return IDs of the data connectors this plugin is dependent on
+     */
+    public List<String> getDataConnectorDependencyIds();
+
     /**
      * Performs the attribute resolution for this plugin.
      * 

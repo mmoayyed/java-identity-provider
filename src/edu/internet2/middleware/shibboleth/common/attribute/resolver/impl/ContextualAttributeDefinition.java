@@ -30,24 +30,29 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionC
  */
 public class ContextualAttributeDefinition implements AttributeDefinition {
 
-    /** wrapped attribute definition */
+    /** Wrapped attribute definition. */
     private AttributeDefinition definition;
 
-    /** cached result of resolving the attribute definition */
+    /** Cached result of resolving the attribute definition. */
     private Attribute attribute;
 
     /**
-     * Constructor
+     * Constructor.
      * 
-     * @param definition attribute definition to wrap
+     * @param newDefinition attribute definition to wrap
      */
-    public ContextualAttributeDefinition(AttributeDefinition definition) {
-        this.definition = definition;
+    public ContextualAttributeDefinition(AttributeDefinition newDefinition) {
+        definition = newDefinition;
     }
 
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         return definition.equals(obj);
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return definition.hashCode();
     }
 
     /** {@inheritDoc} */

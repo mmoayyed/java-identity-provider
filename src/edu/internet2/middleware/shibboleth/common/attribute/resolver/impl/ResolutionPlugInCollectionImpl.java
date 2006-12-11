@@ -42,17 +42,20 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionP
  * 
  * TODO: sanity checks: right now, we're checking for ID uniqueness based on the nature of using an internal map. We're
  * currently not checking for any other problems like dependency loops.
+ * 
+ * @param <PlugInType> type of plug-in this collection contains
  */
 public class ResolutionPlugInCollectionImpl<PlugInType extends ResolutionPlugIn> extends AbstractCollection<PlugInType>
         implements ResolutionPlugInCollection<PlugInType>, Serializable {
 
+    /** Required serial version ID. */
     private static final long serialVersionUID = -5163392461789339218L;
     
-    /** internal container for this collection's elements */
+    /** Internal container for this collection's elements. */
     private Map<String, PlugInType> elementMap;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public ResolutionPlugInCollectionImpl() {
         elementMap = new FastMap<String, PlugInType>();
@@ -88,7 +91,12 @@ public class ResolutionPlugInCollectionImpl<PlugInType extends ResolutionPlugIn>
         }
     }
 
-    /** Not supported. */
+    /** 
+     * Not supported.
+     * 
+     * @param c collection
+     * @return true if completed successfully
+     */
     public boolean addAll(Collection<? extends PlugInType> c) {
         // TODO: try to implement or not? If so, then how we determine success? What if part of the collection is
         // successfully added, but not the rest?
@@ -117,24 +125,41 @@ public class ResolutionPlugInCollectionImpl<PlugInType extends ResolutionPlugIn>
 
     /**
      * returns an unmodifiable {@link Iterator}.
+     * 
+     * @return unmodifiable iterator
      */
     public Iterator<PlugInType> iterator() {
         return new UnmodifiableIterator<PlugInType>(elementMap.values().iterator());
     }
 
-    /** Not supported. */
+    /** 
+     * Not supported.
+     * 
+     * @param o object to remove
+     * @return true if removed successfully
+     */
     public boolean remove(Object o) {
         // TODO: try to implement or not?
         throw new UnsupportedOperationException();
     }
 
-    /** Not supported. */
+    /** 
+     * Not supported.
+     * 
+     * @param c collection
+     * @return true if completed successfully
+     */
     public boolean removeAll(Collection<?> c) {
         // TODO: try to implement or not?
         throw new UnsupportedOperationException();
     }
 
-    /** Not supported. */
+    /** 
+     * Not supported.
+     * 
+     * @param c collection
+     * @return true if completed successfully
+     */
     public boolean retainAll(Collection<?> c) {
         // TODO: try to implement or not?
         throw new UnsupportedOperationException();
@@ -158,16 +183,16 @@ public class ResolutionPlugInCollectionImpl<PlugInType extends ResolutionPlugIn>
      */
     private class UnmodifiableIterator<Type> implements Iterator<Type> {
 
-        /** wrapped iterator */
-        Iterator<Type> it;
+        /** wrapped iterator. */
+        private Iterator<Type> it;
 
         /**
-         * Constructor
+         * Constructor.
          * 
-         * @param it Iterator to wrap
+         * @param newIterator Iterator to wrap
          */
-        public UnmodifiableIterator(Iterator<Type> it) {
-            this.it = it;
+        public UnmodifiableIterator(Iterator<Type> newIterator) {
+            this.it = newIterator;
         }
 
         /** {@inheritDoc} */
@@ -180,7 +205,7 @@ public class ResolutionPlugInCollectionImpl<PlugInType extends ResolutionPlugIn>
             return it.next();
         }
 
-        /** Not supported */
+        /** Not supported. */
         public void remove() {
             throw new UnsupportedOperationException();
         }

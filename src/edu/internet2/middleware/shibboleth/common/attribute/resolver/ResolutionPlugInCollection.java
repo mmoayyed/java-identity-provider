@@ -24,11 +24,13 @@ import java.util.Set;
  * {@link Map}-like methods for accessing the collection elements. As plug-ins are added to this collection, they are
  * checked for sanity issues like dependency loops and ID uniqueness. This collection is intended to be used internally
  * by the {@link AttributeResolver} to manage resolution plug-ins.
+ * 
+ * @param <PlugInType> type of plug-in this collection contains
  */
 public interface ResolutionPlugInCollection<PlugInType extends ResolutionPlugIn> extends Collection<PlugInType> {
 
     /**
-     * Returns a resolution plug-in from this collection that has the specified id
+     * Returns a resolution plug-in from this collection that has the specified id.
      * 
      * @param id id of plug-in to return
      * @return plug-in with the requested id, or <code>null</code> if there no plug-in is found
@@ -36,14 +38,14 @@ public interface ResolutionPlugInCollection<PlugInType extends ResolutionPlugIn>
     public PlugInType get(String id);
 
     /**
-     * Returns a set of the IDs of all plug-ins in this collection
+     * Returns a set of the IDs of all plug-ins in this collection.
      * 
      * @return set of ids for the plug-ins in this collection
      */
     public Set<String> getIds();
 
     /**
-     * Returns <code>true</code> if this collection contains a plug-in with the specified id
+     * Returns <code>true</code> if this collection contains a plug-in with the specified id.
      * 
      * @param id plug-in id whose presence in the collection is being checked
      * @return <code>true</code> if this collection contains a plug-in with the specified id

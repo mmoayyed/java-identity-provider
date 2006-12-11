@@ -24,7 +24,7 @@ import edu.internet2.middleware.shibboleth.common.ShibbolethException;
  */
 public class AttributeResolutionException extends ShibbolethException {
 
-    /** Serial verison UID */
+    /** Serial verison UID. */
     private static final long serialVersionUID = -6467683432957797691L;
 
     /**

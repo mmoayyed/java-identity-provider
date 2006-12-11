@@ -24,56 +24,56 @@ import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 /**
- * A context for a resolution request.  This provides access to the information about the subject the attributes describe,
- * the requester of the attributes, the prodocuer of the attributes, and the attributes, attribute definitions, and data connectors 
- * already resolved.
+ * A context for a resolution request. This provides access to the information about the subject the attributes
+ * describe, the requester of the attributes, the prodocuer of the attributes, and the attributes, attribute
+ * definitions, and data connectors already resolved.
  * 
  * All information in this object is read-only to the resolution plugins it is given to.
  */
 public interface ResolutionContext {
-   
+
     /**
      * Gets the principal name (userid) of the user the attributes in this context describe.
      * 
      * @return principal name of the user the attributes in this context describe
      */
     public String getPrincipalName();
-    
+
     /**
      * Gets the subject the attributes in this context describe.
      * 
      * @return subject the attributes in this context describe
      */
     public NameID getSubject();
-    
+
     /**
      * Gets the requester of the attributes.
      * 
      * @return requester of the attributes
      */
     public String getAttributeRequester();
-    
+
     /**
-     * Gets the request from the client.  The request and all related objects are read-only.
+     * Gets the request from the client. The request and all related objects are read-only.
      * 
      * @return request from the client
      */
     public ServletRequest getRequest();
-    
+
     /**
      * Gets the data connectors that have already been resolved, indexed by the connector's ID.
      * 
      * @return data connectors that have already been resolved
      */
     public Map<String, DataConnector> getResolvedDataConnectors();
-    
+
     /**
      * Gets the attribute definitions that have already been resolved, indexed by the definition's ID.
      * 
      * @return attribute definitions that have already been resolved
      */
     public Map<String, AttributeDefinition> getResolvedAttributeDefinitions();
-    
+
     /**
      * Gets the metadata provider that may be used to lookup information about entities.
      * 

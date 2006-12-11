@@ -28,19 +28,19 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionC
  */
 public class ContextualPrincipalConnector implements PrincipalConnector {
 
-    /** wrapped principal connector */
+    /** Wrapped principal connector. */
     private PrincipalConnector connector;
 
-    /** cached result of resolving the connector */
+    /** Cached result of resolving the connector. */
     private String principal;
 
     /**
-     * Constructor
+     * Constructor.
      * 
-     * @param connector principal connector to wrap
+     * @param newConnector principal connector to wrap
      */
-    public ContextualPrincipalConnector(PrincipalConnector connector) {
-        this.connector = connector;
+    public ContextualPrincipalConnector(PrincipalConnector newConnector) {
+        this.connector = newConnector;
     }
 
     /** {@inheritDoc} */

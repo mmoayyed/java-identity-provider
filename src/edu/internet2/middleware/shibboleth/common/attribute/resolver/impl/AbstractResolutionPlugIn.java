@@ -22,6 +22,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionP
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
+ * 
+ * @param <ResolvedType> object type this plug-in resolves to
  */
 public abstract class AbstractResolutionPlugIn<ResolvedType> implements ResolutionPlugIn<ResolvedType> {
 
@@ -31,10 +33,10 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
     /** Whether to propagate errors out of the plug-in as exceptions. */
     private boolean propagateErrors;
 
-    /** IDs of the {@link AttributeDefinition}s this plug-in depends on */
+    /** IDs of the {@link AttributeDefinition}s this plug-in depends on. */
     private List<String> attributeDefinitionDependencyIds;
 
-    /** IDs of the {@link DataConnector}s this plug-in depends on */
+    /** IDs of the {@link DataConnector}s this plug-in depends on. */
     private List<String> dataConnectorDependencyIds;
 
     /** {@inheritDoc} */

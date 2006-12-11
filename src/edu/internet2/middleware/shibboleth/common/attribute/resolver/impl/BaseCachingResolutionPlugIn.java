@@ -23,14 +23,16 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.CachingReso
 
 /**
  * Base class for {@link ResolutionPlugIn}s that need to cache their resolutions.
+ * 
+ * @param <ResolvedType> object type this plug-in resolves to
  */
 public abstract class BaseCachingResolutionPlugIn<ResolvedType> extends AbstractResolutionPlugIn<ResolvedType>
         implements CachingResolutionPlugin<ResolvedType> {
 
-    /** storage service used for caching */
+    /** Storage service used for caching. */
     private StorageService storage;
 
-    /** Time, in milliseconds, to cache the result of this plug-in */
+    /** Time, in milliseconds, to cache the result of this plug-in. */
     private long cacheDuration;
 
     /** {@inheritDoc} */

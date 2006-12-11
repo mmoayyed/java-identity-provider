@@ -26,8 +26,10 @@ import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
  * 
  * Caching plugins will also receive {@link LogoutEvent}s notifications and may choose to 
  * reclaim cache space when a user logs out.
+ * 
+ * @param <ResolvedType> object type this plug-in resolves to
  */
-public interface CachingResolutionPlugin<AttributeType> extends ResolutionPlugIn<AttributeType>, ApplicationListener {
+public interface CachingResolutionPlugin<ResolvedType> extends ResolutionPlugIn<ResolvedType>, ApplicationListener {
 
     /**
      * Gets the storage service used to cache information.
