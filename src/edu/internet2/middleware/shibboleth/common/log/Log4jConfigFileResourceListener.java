@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.opensaml.common.xml.ParserPoolManager;
+import org.opensaml.log.Level;
 import org.opensaml.xml.parse.XMLParserException;
 import org.w3c.dom.Element;
 
