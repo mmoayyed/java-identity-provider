@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
-import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -81,21 +81,21 @@ public interface AttributeResolver {
      * 
      * @return connectors used to convert {@link NameID}s into userids
      */
-    public Collection<PrincipalConnector> getPrincipalConnectors();
+    public Map<String, PrincipalConnector> getPrincipalConnectors();
 
     /**
      * Gets the list of data connectors used to fetch the raw attributes for a subject.
      * 
      * @return data connectors used to fetch the raw attributes for a subject
      */
-    public Collection<DataConnector> getDataConnectors();
+    public Map<String, DataConnector> getDataConnectors();
 
     /**
      * Gets the list of attribute definitions that will produce the attributes for a subject.
      * 
      * @return attribute definitions that will produce the attributes for a subject
      */
-    public Collection<AttributeDefinition> getAttributeDefinitions();
+    public Map<String, AttributeDefinition> getAttributeDefinitions();
 
     /**
      * Gets the metadata provider that may be used to lookup information about entities.
