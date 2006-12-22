@@ -16,12 +16,42 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import org.opensaml.xml.util.StorageService;
+import org.springframework.context.ApplicationEvent;
+
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.CachingResolutionPlugin;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalConnector;
 
 /**
  * Base class for {@link PrincipalConnector} plug-ins that need to cache their resolutions.
  */
-public abstract class BaseCachingPrincipalConnector extends BaseCachingResolutionPlugIn<String> implements
-        PrincipalConnector {
+public abstract class BaseCachingPrincipalConnector extends BasePrincipalConnector implements
+        CachingResolutionPlugin<String> {
+
+    /** Storage service used for caching. */
+    private StorageService storage;
+
+    /** Time, in milliseconds, to cache the result of this plug-in. */
+    private long cacheDuration;
+
+    /** {@inheritDoc} */
+    public long getCacheDuration() {
+        return cacheDuration;
+    }
+
+    /** {@inheritDoc} */
+    public StorageService getStorageService() {
+        return storage;
+    }
+
+    /** {@inheritDoc} */
+    public void setStorageService(StorageService storageService) {
+        storage = storageService;
+    }
+
+    /** {@inheritDoc} */
+    public void onApplicationEvent(ApplicationEvent event) {
+        // TODO Auto-generated method stub
+    }
 
 }

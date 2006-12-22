@@ -16,13 +16,21 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import javolution.util.FastList;
+import javolution.util.FastSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
  * Base class for {@link AttributeDefinition} plug-ins.
@@ -30,6 +38,9 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDe
 public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<Attribute> implements
         AttributeDefinition {
 
+    /** Log4j logger. */
+    private static Logger log = Logger.getLogger(BaseAttributeDefinition.class);
+    
     /** Attribute encoders associated with this definition. */
     private List<AttributeEncoder> encoders;
 
@@ -43,6 +54,81 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     /** {@inheritDoc} */
     public List<AttributeEncoder> getAttributeEncoders() {
         return encoders;
+    }
+
+    /**
+     * Get values from dependencies.
+     * 
+     * @param context resolution context
+     * @return collection of values
+     */
+    protected Collection<Object> getValuesFromAllDependencies(ResolutionContext context) {
+        Set<Object> values = new FastSet<Object>();
+
+        if (!getAttributeDefinitionDependencyIds().isEmpty()) {
+            values.addAll(getValuesFromAttributeDependencies(context));
+        }
+
+        if (!getAttributeDefinitionDependencyIds().isEmpty()) {
+            values.addAll(getValuesFromConnectorDependencies(context));
+        }
+
+        return values;
+    }
+
+    /**
+     * Get values from attribute dependencies.
+     * 
+     * @param context resolution context
+     * @return collection of values
+     */
+    protected Collection<Object> getValuesFromAttributeDependencies(ResolutionContext context) {
+        Set<Object> values = new FastSet<Object>();
+
+        for (String id : getAttributeDefinitionDependencyIds()) {
+            AttributeDefinition definition = context.getResolvedAttributeDefinitions().get(id);
+            if (definition != null) {
+                try {
+                    Attribute attribute = definition.resolve(context);
+                    for (Object o : attribute.getValues()) {
+                        values.add(o);
+                    }
+                } catch (AttributeResolutionException e) {
+                    // TODO Auto-generated catch block
+                }
+            }
+        }
+
+        return values;
+    }
+
+    /**
+     * Get values from data connectors.
+     * 
+     * @param context resolution context
+     * @return collection of values
+     */
+    protected Collection<Object> getValuesFromConnectorDependencies(ResolutionContext context) {
+        Set<Object> values = new FastSet<Object>();
+
+        for (String id : getDataConnectorDependencyIds()) {
+            DataConnector connector = context.getResolvedDataConnectors().get(id);
+            if (connector != null) {
+                try {
+                    for (Attribute attribute : connector.resolve(context)) {
+                        if (attribute.getID().equals(this.getId())) {
+                            for (Object o : attribute.getValues()) {
+                                values.add(o);
+                            }
+                        }
+                    }
+                } catch (AttributeResolutionException e) {
+                    // TODO Auto-generated catch block
+                }
+            }
+        }
+
+        return values;
     }
 
 }

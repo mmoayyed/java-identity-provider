@@ -18,21 +18,43 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.List;
 
+import org.opensaml.xml.util.StorageService;
+import org.springframework.context.ApplicationEvent;
+
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.CachingResolutionPlugin;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 
 /**
  * Base class for {@link DataConnector} plug-ins that need to cache their resolutions.
  */
-public abstract class BaseCachingDataConnector extends BaseCachingResolutionPlugIn<List<Attribute>> implements
-        DataConnector {
+public abstract class BaseCachingDataConnector extends BaseDataConnector implements
+        CachingResolutionPlugin<List<Attribute>> {
 
-    /** ID of the data connector to use if this one fails. */
-    private String failoverDependencyId;
+    /** Storage service used for caching. */
+    private StorageService storage;
+
+    /** Time, in milliseconds, to cache the result of this plug-in. */
+    private long cacheDuration;
 
     /** {@inheritDoc} */
-    public String getFailoverDependencyId() {
-        return failoverDependencyId;
+    public long getCacheDuration() {
+        return cacheDuration;
+    }
+
+    /** {@inheritDoc} */
+    public StorageService getStorageService() {
+        return storage;
+    }
+
+    /** {@inheritDoc} */
+    public void setStorageService(StorageService storageService) {
+        storage = storageService;
+    }
+
+    /** {@inheritDoc} */
+    public void onApplicationEvent(ApplicationEvent event) {
+        // TODO Auto-generated method stub
     }
 
 }

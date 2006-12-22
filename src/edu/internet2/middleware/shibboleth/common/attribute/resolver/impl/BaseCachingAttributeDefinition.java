@@ -16,33 +16,50 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
-import java.util.List;
-
-import javolution.util.FastList;
+import org.opensaml.xml.util.StorageService;
+import org.springframework.context.ApplicationEvent;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.CachingResolutionPlugin;
 
 /**
  * Base class for {@link AttributeDefinition} plug-ins that need to cache their resolutions.
  */
-public abstract class BaseCachingAttributeDefinition extends BaseCachingResolutionPlugIn<Attribute> implements
-        AttributeDefinition {
+public abstract class BaseCachingAttributeDefinition extends BaseAttributeDefinition implements
+        CachingResolutionPlugin<Attribute> {
 
-    /** Attribute encoders associated with this definition. */
-    private List<AttributeEncoder> encoders;
+    /** Storage service used for caching. */
+    private StorageService storage;
+
+    /** Time, in milliseconds, to cache the result of this plug-in. */
+    private long cacheDuration;
 
     /**
      * Constructor.
      */
     public BaseCachingAttributeDefinition() {
-        encoders = new FastList<AttributeEncoder>();
+        super();
     }
 
     /** {@inheritDoc} */
-    public List<AttributeEncoder> getAttributeEncoders() {
-        return encoders;
+    public long getCacheDuration() {
+        return cacheDuration;
+    }
+
+    /** {@inheritDoc} */
+    public StorageService getStorageService() {
+        return storage;
+    }
+
+    /** {@inheritDoc} */
+    public void setStorageService(StorageService storageService) {
+        storage = storageService;
+    }
+
+    /** {@inheritDoc} */
+    public void onApplicationEvent(ApplicationEvent event) {
+        // TODO Auto-generated method stub
     }
 
 }

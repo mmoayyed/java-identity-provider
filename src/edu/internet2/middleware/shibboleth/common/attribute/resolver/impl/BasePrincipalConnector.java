@@ -21,6 +21,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalCo
 /**
  * Base class for {@link PrincipalConnector} plug-ins.
  */
-public abstract class BasePrinicipalConnector extends AbstractResolutionPlugIn<String> implements PrincipalConnector {
+public abstract class BasePrincipalConnector extends AbstractResolutionPlugIn<String> implements PrincipalConnector {
 
 }
