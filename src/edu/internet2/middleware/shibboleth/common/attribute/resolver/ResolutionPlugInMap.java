@@ -42,7 +42,7 @@ public class ResolutionPlugInMap<PlugInType extends ResolutionPlugIn<?>> impleme
     /** Internal container for this map's elements. */
     private Map<String, PlugInType> elementMap;
 
-    /** AttributeResolver this collection is a part of. */
+    /** AttributeResolver this map is a part of. */
     private AttributeResolver resolver;
 
     /** Directed Graph of plug-in dependencies. */
@@ -81,24 +81,24 @@ public class ResolutionPlugInMap<PlugInType extends ResolutionPlugIn<?>> impleme
 
         // add attribute definitions to dependency graph
         for (String dependencyId : plugin.getAttributeDefinitionDependencyIds()) {
-            AttributeDefinition dep = resolver.getAttributeDefinitions().get(dependencyId);
-            if (dep == null) {
+            AttributeDefinition definition = resolver.getAttributeDefinitions().get(dependencyId);
+            if (definition == null) {
                 throw new IllegalArgumentException("Plug-in dependency (" + dependencyId
                         + ") does not exist in resolver.");
             }
 
-            dependencyGraph.addEdge(plugin, dep);
+            dependencyGraph.addEdge(plugin, definition);
         }
 
         // add data connectors to dependency graph
         for (String dependencyId : plugin.getDataConnectorDependencyIds()) {
-            DataConnector dep = resolver.getDataConnectors().get(dependencyId);
-            if (dep == null) {
+            DataConnector connector = resolver.getDataConnectors().get(dependencyId);
+            if (connector == null) {
                 throw new IllegalArgumentException("Plug-in dependency (" + dependencyId
                         + ") does not exist in resolver.");
             }
 
-            dependencyGraph.addEdge(plugin, dep);
+            dependencyGraph.addEdge(plugin, connector);
         }
 
         // check for a dependency loop
