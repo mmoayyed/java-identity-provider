@@ -81,11 +81,17 @@ public class ContextualDataConnector implements DataConnector {
 
     /** {@inheritDoc} */
     public List<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+        // TODO: should we be dealing with failovers here?
         if (attributes == null) {
             attributes = connector.resolve(resolutionContext);
         }
 
         return attributes;
+    }
+
+    /** {@inheritDoc} */
+    public void validate() throws AttributeResolutionException {
+        connector.validate();
     }
 
 }

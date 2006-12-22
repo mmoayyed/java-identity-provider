@@ -72,4 +72,9 @@ public class ContextualPrincipalConnector implements PrincipalConnector {
         return principal;
     }
 
+    /** {@inheritDoc} */
+    public void validate() throws AttributeResolutionException {
+        connector.validate();
+    }
+
 }

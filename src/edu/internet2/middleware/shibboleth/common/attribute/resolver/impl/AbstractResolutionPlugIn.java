@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.List;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
 
 /**
@@ -57,6 +58,10 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
     /** {@inheritDoc} */
     public boolean getPropagateErrors() {
         return propagateErrors;
+    }
+    
+    /** {@inheritDoc} */
+    public void validate() throws AttributeResolutionException {
     }
 
 }

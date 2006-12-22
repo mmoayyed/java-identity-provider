@@ -89,4 +89,9 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
         return attribute;
     }
 
+    /** {@inheritDoc} */
+    public void validate() throws AttributeResolutionException {
+        definition.validate();
+    }
+    
 }
