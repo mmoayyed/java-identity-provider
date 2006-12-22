@@ -59,5 +59,10 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/java-opensaml2"/>
+	<classpathentry kind="lib" path="lib/jgrapht-jdk1.5.jar">
+		<attributes>
+			<attribute value="http://www.jgrapht.org/javadoc/" name="javadoc_location"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
