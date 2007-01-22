@@ -111,4 +111,12 @@ public interface AttributeResolver {
      */
     public void setMetadataProvider(MetadataProvider metadataProvider);
 
+    /**
+     * Check that the Attribute Resolver is in a valid state and ready to begin receiving resolution requests.
+     * 
+     * @throws AttributeResolutionException if resolver is in an invalid state
+     */
+    public void validate() throws AttributeResolutionException;
+    // TODO: does it really make sense to throw an AttributeResolutionException? Perhaps a ConfigurationException?
+
 }
