@@ -16,4 +16,4 @@
 .DS_store
 # Simulated Subversion default ignores end here
 # The contents of the svn:ignore property on the branch root.
-/doc
+/*-build.properties
