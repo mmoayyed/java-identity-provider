@@ -72,14 +72,24 @@ public class AttributeResolverImpl implements AttributeResolver {
     /** {@inheritDoc} */
     public ResolutionContext createResolutionContext(NameID subject, String attributeRequester, ServletRequest request)
             throws AttributeResolutionException {
-        // TODO Auto-generated method stub
-        return null;
+        ResolutionContextImpl context = new ResolutionContextImpl();
+        context.setSubject(subject);
+        // TODO: resolve subject name into local principal name
+        // context.setPrincipalName(principal)
+        context.setAttributeRequester(attributeRequester);
+        context.setServletRequest(request);
+
+        return context;
     }
 
     /** {@inheritDoc} */
     public ResolutionContext createResolutionContext(String principal, String attributeRequester, ServletRequest request) {
-        // TODO Auto-generated method stub
-        return null;
+        ResolutionContextImpl context = new ResolutionContextImpl();
+        context.setPrincipalName(principal);
+        context.setAttributeRequester(attributeRequester);
+        context.setServletRequest(request);
+
+        return context;
     }
 
     /** {@inheritDoc} */
