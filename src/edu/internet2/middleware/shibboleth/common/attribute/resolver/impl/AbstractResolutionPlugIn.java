@@ -18,7 +18,11 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.List;
 
+import javolution.util.FastList;
+
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
 
 /**
@@ -40,6 +44,12 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
     /** IDs of the {@link DataConnector}s this plug-in depends on. */
     private List<String> dataConnectorDependencyIds;
 
+    /** Constructor. */
+    public AbstractResolutionPlugIn() {
+        attributeDefinitionDependencyIds = new FastList<String>();
+        dataConnectorDependencyIds = new FastList<String>();
+    }
+
     /** {@inheritDoc} */
     public List<String> getAttributeDefinitionDependencyIds() {
         return attributeDefinitionDependencyIds;
@@ -55,11 +65,29 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
         return id;
     }
 
+    /**
+     * Set plug-in id.
+     * 
+     * @param newId new plug-in id
+     */
+    public void setId(String newId) {
+        id = newId;
+    }
+
     /** {@inheritDoc} */
     public boolean getPropagateErrors() {
         return propagateErrors;
     }
-    
+
+    /**
+     * Set propagate errors flag.
+     * 
+     * @param newPropagateErrors new flag value
+     */
+    public void setPropagateErrors(boolean newPropagateErrors) {
+        propagateErrors = newPropagateErrors;
+    }
+
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
     }

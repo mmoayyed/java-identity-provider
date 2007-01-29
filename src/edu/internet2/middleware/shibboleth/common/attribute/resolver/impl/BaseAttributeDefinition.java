@@ -20,11 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 import javolution.util.FastList;
 import javolution.util.FastSet;
-
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
@@ -38,9 +35,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionC
 public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<Attribute> implements
         AttributeDefinition {
 
-    /** Log4j logger. */
-    private static Logger log = Logger.getLogger(BaseAttributeDefinition.class);
-    
     /** Attribute encoders associated with this definition. */
     private List<AttributeEncoder> encoders;
 
@@ -117,6 +111,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
                 try {
                     for (Attribute attribute : connector.resolve(context)) {
                         if (attribute.getID().equals(this.getId())) {
+                            // TODO do we need any kind of connector mapping like in previous versions?
                             for (Object o : attribute.getValues()) {
                                 values.add(o);
                             }

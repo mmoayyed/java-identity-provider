@@ -34,4 +34,12 @@ public abstract class BaseDataConnector extends AbstractResolutionPlugIn<List<At
         return failoverDependencyId;
     }
 
+    /**
+     * Set Id of FailoverDataConnector.
+     * 
+     * @param newFailoverDependencyId id of failover connector
+     */
+    public void setFailoverDependencyId(String newFailoverDependencyId) {
+        failoverDependencyId = newFailoverDependencyId;
+    }
 }
