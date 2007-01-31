@@ -23,7 +23,7 @@ import org.joda.time.DateTime;
 /**
  * Session information for user currently logged in.
  */
-public interface Session extends Serializable{
+public interface Session extends Serializable {
 
     /**
      * Gets the unique identifier of the session.
@@ -44,5 +44,5 @@ public interface Session extends Serializable{
      * 
      * @return time of the last activity from the user
      */
-    public DateTime getLastActivityInstance();
+    public DateTime getLastActivityInstant();
 }
