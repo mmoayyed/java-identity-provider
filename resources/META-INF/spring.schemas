@@ -1,1 +1,2 @@
-shibboleth-2.0-attribute-resolver.xsd = schema/shibboleth-2.0-attribute-resolver.xsd
+urn\:mace\:shibboleth\:2.0\:resolver= schema/shibboleth-2.0-attribute-resolver.xsd
+urn\:mace\:shibboleth\:2.0\:metadata = schema/shibboleth-2.0-metadata.xsd

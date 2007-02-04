@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="urn:mace:shibboleth:2.0:metadata" 
+        xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
+        xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata">
+        
+    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="/schema/saml-schema-metadata-2.0.xsd" />
+    
+    <element name="MetadataProvider" type="shibmd:MetadataProviderType" />
+    
+    <element name="MetadataFilter" type="shibmd:MetadataFilterType" />
+    
+    <complexType name="ChainingMetadataProvider">
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <sequence>
+                    <element ref="shibmd:MetadataProvider" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="InlineMetadataProvider">
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <choice>
+                    <element ref="saml2md:EntitiesDescriptor" />
+                    <element ref="saml2md:EntityDescriptor" />
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="FileBackedURLMetadataProvider">
+        <complexContent>
+            <extension base="shibmd:ULRMetadataProvider">
+                <attribute name="backingFile" type="string" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="URLMetadataProvider">
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <attribute name="metadataURL" type="anyURI" use="required" />
+                <attribute name="maintainExpiredMetadata" type="boolean" default="false" />
+                <attribute name="cacheDuration" type="unsignedInt" default="2880" />
+                <attribute name="requestTimeout" type="unsignedInt" default="15" />
+                <attribute name="basicAuthUser" type="string" />
+                <attribute name="basicAuthPassword" type="string" />
+                <!-- Need to deal with socket factory -->
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="FilesystemMetadataProvider">
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <attribute name="metadataFile" type="string" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+	<complexType name="MetadataProviderType" abstract="true">
+		<sequence>
+			<element ref="shibmd:MetadataFilter" />
+			<any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded">
+		</sequence>
+		<anyAttribute namespace="##any" processContents="lax"/>
+	</complexType>
+	
+	<complexType name="MetadataFilterType" abstract="true">
+		<sequence>
+			<any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded">
+		</sequence>
+		<anyAttribute namespace="##any" processContents="lax"/>
+	</complexType>
+    
+</schema>

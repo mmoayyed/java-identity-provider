@@ -32,8 +32,8 @@ public interface RelyingPartyManager {
      * returned. Otherwise, the given relying party entity ID is looked for in the list of registered
      * {@link RelyingPartyConfiguration}s and if found is returned. If no configuration is registered for the specific
      * entity ID the entity descriptor for the relying party is located using the {@link MetadataProvider}. The name of
-     * ancestoral entities descriptors are then looked up in ascending order (i.e. the parent entities descriptor, then
-     * the grandparent, great-grandparent, etc.) with the first configuration found being returned. If no configuration
+     * ancestral entities descriptors are then looked up, in ascending order (i.e. the parent entities descriptor, then
+     * the grandparent, great-grandparent, etc.), with the first configuration found being returned. If no configuration
      * is found once the top of the tree is reached the default configuration is returned.
      * 
      * @param relyingPartyEntityID the entity of the relying part to get the configuration for
