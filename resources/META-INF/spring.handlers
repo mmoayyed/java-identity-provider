@@ -1,2 +1,3 @@
 urn\:mace\:shibboleth\:2.0\:resolver = edu.internet2.middleware.shibboleth.common.config.ResolverNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:metadata = edu.internet2.middleware.shibboleth.common.config.metadata.MetadataNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:credential = edu.internet2.middleware.shibboleth.common.config.CredentialNamespaceHandler
