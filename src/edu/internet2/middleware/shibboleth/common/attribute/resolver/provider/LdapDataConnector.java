@@ -47,6 +47,9 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnector.class);
+    
+    /** Engine for transforming templated filters into populated filters */
+    private StatementCreator filterCreator;
 
     /** Whether multiple result sets should be merged */
     private boolean mergeMultipleResults;
@@ -78,6 +81,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      */
     public LdapDataConnector() {
         this.ldap = new Ldap(this.ldapConfig);
+        filterCreator = new StatementCreator();
     }
     
     
@@ -311,17 +315,20 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     /** {@inheritDoc} */
     public List<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException
     {
+        String searchFilter = filterCreator.createStatement(filter, resolutionContext, getDataConnectorDependencyIds(),
+                getAttributeDefinitionDependencyIds()); 
+        
         // create Attribute objects to return
         List attributes = new ArrayList<BaseAttribute>();        
 
         // check for cached data
         if (this.cacheResults) {
-            attributes = this.getCachedAttributes(resolutionContext);
+            attributes = this.getCachedAttributes(resolutionContext, searchFilter);
         }
         if (attributes == null) { // results not found in the cache
             Iterator results = null;
             try {
-                results = this.ldap.search(this.createStatement(resolutionContext), this.returnAttributes);
+                results = this.ldap.search(searchFilter, this.returnAttributes);
             } catch (NamingException e) {
                 log.error("An error occured when atteming to search the LDAP: "+this.ldapConfig.getEnvironment(), e);
                 throw new AttributeResolutionException("An error occurred when attemping to search the LDAP");            
@@ -348,7 +355,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
                 attributes.add(attribute);
             }
             if (this.cacheResults && attributes != null) {
-                this.setCachedAttributes(resolutionContext, attributes);
+                this.setCachedAttributes(resolutionContext, searchFilter, attributes);
             }
         }
         return attributes;
@@ -365,20 +372,6 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
             throw new AttributeResolutionException("Cannot connect to the LDAP");
         }
     }
-
-
-    /**
-     * <p>
-     * This creates a statement specific to this connector and the supplied resolution context.
-     * </p>
-     * 
-     * @param resolutionContext <code>ResolutionContext</code>
-     * @return <code>String</code>
-     */
-    private String createStatement(ResolutionContext resolutionContext) {
-        return (new StatementCreator()).createStatement(this.filter, resolutionContext);        
-    }
-    
     
     /**
      * <p>
@@ -386,9 +379,10 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * </p>
      * 
      * @param resolutionContext <code>ResolutionContext</code>
+     * @param searchFiler the searchFilter that produced the attributes
      * @param attributes <code>List</code> to store
      */
-    private void setCachedAttributes(ResolutionContext resolutionContext, List attributes) {
+    private void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler, List attributes) {
         Map<String,List> results = null;
         String principal = resolutionContext.getPrincipalName();
         if (this.cache.containsKey(principal)) {
@@ -397,7 +391,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
             results = new HashMap();            
             this.cache.put(principal, results);
         }
-        results.put(this.createStatement(resolutionContext), attributes);
+        results.put(searchFiler, attributes);
     }
     
 
@@ -408,14 +402,16 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * </p>
      * 
      * @param resolutionContext <code>ResolutionContext</code>
+     * @param searchFilter the search filter the produced the attributes
+     * 
      * @return <code>List</code> of attributes
      */
-    private List getCachedAttributes(ResolutionContext resolutionContext) {
+    private List getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
         List attributes = null;
         String principal = resolutionContext.getPrincipalName();
         if (this.cache.containsKey(principal)) {
             Map results = (Map) this.cache.get(principal);
-            attributes = (List) results.get(this.createStatement(resolutionContext));                                
+            attributes = (List) results.get(searchFilter);                                
         }
         return attributes;
     }
