@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 
@@ -34,6 +35,9 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionC
  */
 public class StatementCreator {
 
+    /** Class logger. */
+    private static Logger log = Logger.getLogger(StatementCreator.class);
+    
     /**
      * Create a statement from a give template by replacing it's macro's with information within the resolution context.
      * 
@@ -52,10 +56,15 @@ public class StatementCreator {
         VelocityContext vContext = createVelocityContext(resolutionContext, dataConnectors, attributeDefinitions);
 
         try {
+            if(log.isDebugEnabled()){
+                log.debug("Populating the following template: " + template);
+            }
+            
             StringWriter output = new StringWriter();
             Velocity.evaluate(vContext, output, "StatementCreator", template);
             return output.toString();
         } catch (Exception e) {
+            log.error("Unable to populate template " + template, e);
             throw new AttributeResolutionException("Unable to evaluate template", e);
         }
     }
@@ -73,6 +82,9 @@ public class StatementCreator {
      */
     protected VelocityContext createVelocityContext(ResolutionContext resolutionContext, Set<String> dataConnectors,
             Set<String> attributeDefinitions) throws AttributeResolutionException {
+        if(log.isDebugEnabled()){
+            log.debug("Populating velocity context");
+        }
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("principal", resolutionContext.getPrincipalName());
 
@@ -80,6 +92,9 @@ public class StatementCreator {
         DataConnector dataConnector;
         for (String connectorId : dataConnectors) {
             dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorId);
+            if(log.isDebugEnabled()){
+                log.debug("Resolving attributes from data connector " + connectorId);
+            }
             attributes = dataConnector.resolve(resolutionContext);
             for (Attribute attribute : attributes) {
                 vCtx.put(attribute.getID(), attribute.getValues());
@@ -90,6 +105,9 @@ public class StatementCreator {
         AttributeDefinition attributeDefinition;
         for (String definitionId : attributeDefinitions) {
             attributeDefinition = resolutionContext.getResolvedAttributeDefinitions().get(definitionId);
+            if(log.isDebugEnabled()){
+                log.debug("Resolving attributes from attribute definition " + definitionId);
+            }
             attribute = attributeDefinition.resolve(resolutionContext);
             vCtx.put(attribute.getID(), attribute.getValues());
         }
