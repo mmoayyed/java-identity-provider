@@ -16,10 +16,21 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+
+import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
- * Create a statement from a give template by replacing it's macro's with information within the resolution context.
+ * Create a statement from a give template by replacing its macro's with information within the resolution context.
  */
 public class StatementCreator {
 
@@ -28,10 +39,61 @@ public class StatementCreator {
      * 
      * @param template statement template
      * @param resolutionContext the current resolution context
+     * @param dataConnectors the list of data connectors that will provider attributes
+     * @param attributeDefinitions the list of attribute definitions that will provider attributes
      * 
      * @return constructed statement
+     * 
+     * @throws AttributeResolutionException thrown if the given template can not be populated because it is malformed or
+     *             the given data connectors or attribute definitions error out during resolution
      */
-    public String createStatement(String template, ResolutionContext resolutionContext) {
-        return null;
+    public String createStatement(String template, ResolutionContext resolutionContext, Set<String> dataConnectors,
+            Set<String> attributeDefinitions) throws AttributeResolutionException {
+        VelocityContext vContext = createVelocityContext(resolutionContext, dataConnectors, attributeDefinitions);
+
+        try {
+            StringWriter output = new StringWriter();
+            Velocity.evaluate(vContext, output, "StatementCreator", template);
+            return output.toString();
+        } catch (Exception e) {
+            throw new AttributeResolutionException("Unable to evaluate template", e);
+        }
+    }
+
+    /**
+     * Creates the velocity context from the given resolution context.
+     * 
+     * @param resolutionContext the resolution context containing the currently resolved attribute information
+     * @param dataConnectors data connectors that will provide attributes to the velocity context
+     * @param attributeDefinitions attribute definitions that will provide attributes to the velocity context
+     * 
+     * @return the velocity context to use when evaluating the template
+     * 
+     * @throws AttributeResolutionException thrown if a resolution plugin errors out while resolving its attributes
+     */
+    protected VelocityContext createVelocityContext(ResolutionContext resolutionContext, Set<String> dataConnectors,
+            Set<String> attributeDefinitions) throws AttributeResolutionException {
+        VelocityContext vCtx = new VelocityContext();
+        vCtx.put("principal", resolutionContext.getPrincipalName());
+
+        List<Attribute> attributes;
+        DataConnector dataConnector;
+        for (String connectorId : dataConnectors) {
+            dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorId);
+            attributes = dataConnector.resolve(resolutionContext);
+            for (Attribute attribute : attributes) {
+                vCtx.put(attribute.getID(), attribute.getValues());
+            }
+        }
+
+        Attribute attribute;
+        AttributeDefinition attributeDefinition;
+        for (String definitionId : attributeDefinitions) {
+            attributeDefinition = resolutionContext.getResolvedAttributeDefinitions().get(definitionId);
+            attribute = attributeDefinition.resolve(resolutionContext);
+            vCtx.put(attribute.getID(), attribute.getValues());
+        }
+
+        return vCtx;
     }
 }
