@@ -25,25 +25,25 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-import org.apache.log4j.Logger;
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.AbstractResolutionPlugIn;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.StatementCreator;
+import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.LdapConfig;
 import edu.vt.middleware.ldap.LdapUtil;
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 /**
  * <p>
- * <code>LdapDataConnector</code>
+ * <code>LdapDataConnector</code> provides a plugin to retrieve attributes from an LDAP.
  * <p>
  */
-public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpSessionListener {
+public class LdapDataConnector extends AbstractResolutionPlugIn implements ApplicationListener {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnector.class);
@@ -52,7 +52,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
     private boolean mergeMultipleResults;
     
     /** Whether an empty result set is an error */
-    private boolean noResultsIsError;
+    private boolean noResultsIsError = true;
     
     /** Whether to cache search results for the duration of the session */
     private boolean cacheResults;
@@ -81,14 +81,6 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
     }
     
     
-    /**
-     * @param useStartTls The useStartTls to set.
-     */
-    public void setUseStartTls(boolean useStartTls) {
-        this.ldapConfig.useTls(useStartTls);
-    }
-
-   
     /**
      * @return Returns the mergeMultipleResults.
      */
@@ -154,35 +146,143 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
 
 
     /**
-     * @param ldapControls The ldapControls to set.
+     * @return Returns the useStartTls.
      */
-    public void setLdapControls(Map<String, String> ldapControls) {
-        Iterator i = ldapControls.entrySet().iterator();
-        while (i.hasNext()) {
-            Map.Entry pairs = (Map.Entry) i.next();
-            if (pairs.getKey().equals("searchScope")) {
-                this.ldapConfig.setSearchScope((String) pairs.getValue());
-            } else if (pairs.getKey().equals("returningAttributes")) {
-                StringTokenizer st = new StringTokenizer((String) pairs.getValue(), ",");
-                this.returnAttributes = new String[st.countTokens()];
-                for (int count = 0; count < st.countTokens(); count++) {
-                    this.returnAttributes[count] = st.nextToken();
-                }
-            } else if (pairs.getKey().equals("timeLimit")) {
-                this.ldapConfig.setTimeLimit((String) pairs.getValue());
-            } else if (pairs.getKey().equals("countLimit")) {
-                this.ldapConfig.setCountLimit((String) pairs.getValue());
-            } else if (pairs.getKey().equals("returningObjects")) {
-                this.ldapConfig.setReturningObjFlag((String) pairs.getValue());
-            } else if (pairs.getKey().equals("linkDereferencing")) {
-                this.ldapConfig.setDerefLinkFlag((String) pairs.getValue());
-            } else {
-                log.error("Unknown ldap control property: "+pairs.getKey());
-            }
-        }        
+    public boolean isUseStartTls() {
+        return this.ldapConfig.isTlsEnabled();
     }
 
 
+    /**
+     * @param useStartTls The useStartTls to set.
+     */
+    public void setUseStartTls(boolean useStartTls) {
+        this.ldapConfig.useTls(useStartTls);
+    }
+
+   
+    /**
+     * @return Returns the searchScope.
+     */
+    public int getSearchScope() {
+        return this.ldapConfig.getSearchScope();
+    }
+
+
+    /**
+     * @param searchScope The searchScope to set.
+     */
+    public void setSearchScope(int searchScope) {
+        this.ldapConfig.setSearchScope(searchScope);
+    }
+
+   
+    /**
+     * @param searchScope The searchScope to set.
+     */
+    public void setSearchScope(String searchScope) {
+        if (searchScope.equals("OBJECT_SCOPE")) {
+            this.ldapConfig.useObjectScopeSearch();            
+        } else if (searchScope.equals("SUBTREE_SCOPE")) {
+            this.ldapConfig.useSubTreeSearch();
+        } else if (searchScope.equals("ONELEVEL_SCOPE")) {
+            this.ldapConfig.useOneLevelSearch();
+        }
+    }
+
+   
+    /**
+     * @return Returns the returnAttributes.
+     */
+    public String[] getReturnAttributes() {
+        return this.returnAttributes;
+    }
+
+
+    /**
+     * @param returnAttributes The returnAttributes to set.
+     */
+    public void setReturnAttributes(String[] returnAttributes) {
+        this.returnAttributes = returnAttributes;
+    }
+
+   
+    /**
+     * @param returnAttributes The comma delimited returnAttributes to set.
+     */
+    public void setReturnAttributes(String returnAttributes) {
+        StringTokenizer st = new StringTokenizer(returnAttributes, ",");
+        this.returnAttributes = new String[st.countTokens()];
+        for (int count = 0; count < st.countTokens(); count++) {
+            this.returnAttributes[count] = st.nextToken();
+        }
+    }
+
+   
+    /**
+     * @return Returns the timeLimit.
+     */
+    public int getTimeLimit() {
+        return this.ldapConfig.getTimeLimit();
+    }
+
+
+    /**
+     * @param timeLimit The timeLimit to set.
+     */
+    public void setTimeLimit(int timeLimit) {
+        this.ldapConfig.setTimeLimit(timeLimit);
+    }
+
+   
+    /**
+     * @return Returns the countLimit.
+     */
+    public long getCountLimit() {
+        return this.ldapConfig.getCountLimit();
+    }
+
+
+    /**
+     * @param countLimit The countLimit to set.
+     */
+    public void setCountLimit(long countLimit) {
+        this.ldapConfig.setCountLimit(countLimit);
+    }
+
+   
+    /**
+     * @return Returns the returningObjects.
+     */
+    public boolean isReturningObjects() {
+        return this.ldapConfig.getReturningObjFlag();
+    }
+
+
+    /**
+     * @param returningObjects The returningObjects to set.
+     */
+    public void setReturningObjects(boolean returningObjects) {
+        this.ldapConfig.setReturningObjFlag(returningObjects);
+    }
+    
+    
+    /**
+     * @return Returns the linkDereferencing
+     */
+    public boolean isLinkDereferencing() {
+        return this.ldapConfig.getDerefLinkFlag();
+    }
+
+
+    /**
+     * @param linkDereferencing The linkDereferencing to set.
+     */
+    public void setLinkDereferencing(boolean linkDereferencing) {
+        this.ldapConfig.setDerefLinkFlag(linkDereferencing);
+    }
+    
+    
     /**
      * @param ldapProperties The ldapProperties to set.
      */
@@ -194,30 +294,34 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
         }
     }
 
+    
     /** {@inheritDoc} */
-    public void sessionCreated(HttpSessionEvent event) {}
+    public void setNotificationAddress(String notificationAddress) {}
 
 
     /** {@inheritDoc} */
-    public void sessionDestroyed(HttpSessionEvent event) {
-        this.cache.remove(event.getSession().getId());
+    public void onApplicationEvent(ApplicationEvent evt) {
+        if (evt instanceof LogoutEvent) {
+            LogoutEvent logoutEvent = (LogoutEvent) evt;
+            this.cache.remove(logoutEvent.getUserSession().getPrincipalID());
+        }
     }
 
-
+    
     /** {@inheritDoc} */
     public List<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException
     {
         // create Attribute objects to return
-        List attributes = new ArrayList();        
+        List attributes = new ArrayList<BaseAttribute>();        
 
         // check for cached data
         if (this.cacheResults) {
             attributes = this.getCachedAttributes(resolutionContext);
         }
-        if (attributes == null) { // results found in the cache
+        if (attributes == null) { // results not found in the cache
             Iterator results = null;
             try {
-                results = this.ldap.search(this.createTemplate(resolutionContext), this.returnAttributes);
+                results = this.ldap.search(this.createStatement(resolutionContext), this.returnAttributes);
             } catch (NamingException e) {
                 log.error("An error occured when atteming to search the LDAP: "+this.ldapConfig.getEnvironment(), e);
                 throw new AttributeResolutionException("An error occurred when attemping to search the LDAP");            
@@ -228,18 +332,20 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
                         "No LDAP entry found for "+resolutionContext.getPrincipalName());
             }
             SearchResult sr = (SearchResult) results.next();
-            Map attrs = this.mergeAttributes(new HashMap(), sr.getAttributes());
+            Map attrs = this.mergeAttributes(new HashMap<String,List>(), sr.getAttributes());
             // merge additional results if requested
             while (this.mergeMultipleResults && results.hasNext()) {
                 SearchResult additionalResult = (SearchResult) results.next();
                 attrs = this.mergeAttributes(attrs, additionalResult.getAttributes());
             }
+            // populate list of attributes
             Iterator i = attrs.entrySet().iterator();
             while (i.hasNext()) {
                 Map.Entry pairs = (Map.Entry) i.next();
                 BaseAttribute attribute = new BaseAttribute();
                 attribute.setID((String) pairs.getKey());
-                attribute.getValues().addAll((List) pairs.getValue());
+                attribute.getValues().addAll((List<String>) pairs.getValue());
+                attributes.add(attribute);
             }
             if (this.cacheResults && attributes != null) {
                 this.setCachedAttributes(resolutionContext, attributes);
@@ -263,23 +369,6 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
 
     /**
      * <p>
-     * This creates a template that can be used for by a <code>StatementCreator</code>.
-     * For this connector the template is the ldap filter for the supplied principal.
-     * </p>
-     * 
-     * @param resolutionContext <code>ResolutionContext</code>
-     * @return <code>String</code>
-     */
-    private String createTemplate(ResolutionContext resolutionContext) {
-        // get principal from the context
-        String principal = resolutionContext.getPrincipalName();        
-        // replace key in filter
-        return this.filter.replaceAll("%PRINCIPAL%", principal);        
-    }
-    
-    
-    /**
-     * <p>
      * This creates a statement specific to this connector and the supplied resolution context.
      * </p>
      * 
@@ -287,7 +376,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
      * @return <code>String</code>
      */
     private String createStatement(ResolutionContext resolutionContext) {
-        return (new StatementCreator()).createStatement(this.createTemplate(resolutionContext), resolutionContext);        
+        return (new StatementCreator()).createStatement(this.filter, resolutionContext);        
     }
     
     
@@ -300,18 +389,15 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
      * @param attributes <code>List</code> to store
      */
     private void setCachedAttributes(ResolutionContext resolutionContext, List attributes) {
-        // retrieve user session id
-        HttpServletRequest request = (HttpServletRequest) resolutionContext.getRequest();
-        String cacheId = request.getSession().getId();        
-
-        Map statements = null;
-        if (this.cache.containsKey(cacheId)) {
-            statements = (Map) this.cache.get(cacheId);            
+        Map<String,List> results = null;
+        String principal = resolutionContext.getPrincipalName();
+        if (this.cache.containsKey(principal)) {
+            results = (Map) this.cache.get(principal);            
         } else {
-            statements = new HashMap();            
-            this.cache.put(cacheId, statements);
+            results = new HashMap();            
+            this.cache.put(principal, results);
         }
-        statements.put(this.createStatement(resolutionContext), attributes);
+        results.put(this.createStatement(resolutionContext), attributes);
     }
     
 
@@ -325,14 +411,11 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
      * @return <code>List</code> of attributes
      */
     private List getCachedAttributes(ResolutionContext resolutionContext) {
-        // retrieve user session id
-        HttpServletRequest request = (HttpServletRequest) resolutionContext.getRequest();
-        String cacheId = request.getSession().getId();        
-
         List attributes = null;
-        if (this.cache.containsKey(cacheId)) {
-            Map statements = (Map) this.cache.get(cacheId);
-            attributes = (List) statements.get(this.createStatement(resolutionContext));                                
+        String principal = resolutionContext.getPrincipalName();
+        if (this.cache.containsKey(principal)) {
+            Map results = (Map) this.cache.get(principal);
+            attributes = (List) results.get(this.createStatement(resolutionContext));                                
         }
         return attributes;
     }
@@ -348,23 +431,23 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements HttpS
      * @param newAttrs <code>Attributes</code> to parse
      * @throws AttributeResolutionException if the supplied attributes cannot be parsed
      */
-    private Map mergeAttributes(Map attrs, Attributes newAttrs) throws AttributeResolutionException
+    private Map mergeAttributes(Map<String,List> attrs, Attributes newAttrs) throws AttributeResolutionException
     {
         // merge the new attributes
         try {
-            Map newAttrsMap = LdapUtil.parseAttributes(newAttrs, true);
+            Map<String,List> newAttrsMap = LdapUtil.parseAttributes(newAttrs, true);
             
             Iterator i = newAttrsMap.entrySet().iterator();
             while (i.hasNext()) {
                 Map.Entry pairs = (Map.Entry) i.next();
-              String attrName = (String) pairs.getKey();
-              List attrValues = (List) pairs.getValue();
-              if (attrs.containsKey(attrName)) {
-                List l = (List) attrs.get(attrName);
-                l.addAll(attrValues);
-              } else {
-                attrs.put(attrName, attrValues);
-              }
+                String attrName = (String) pairs.getKey();
+                List attrValues = (List) pairs.getValue();
+                if (attrs.containsKey(attrName)) {
+                    List<String> l = (List) attrs.get(attrName);
+                    l.addAll(attrValues);
+                } else {
+                    attrs.put(attrName, attrValues);
+                }
             }
         } catch (NamingException e) {
             log.error("Error parsing LDAP attributes", e);
