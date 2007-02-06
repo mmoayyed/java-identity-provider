@@ -16,10 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
-import java.util.List;
+import java.util.Set;
 
-import javolution.util.FastList;
-
+import javolution.util.FastSet;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
@@ -39,24 +38,24 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
     private boolean propagateErrors;
 
     /** IDs of the {@link AttributeDefinition}s this plug-in depends on. */
-    private List<String> attributeDefinitionDependencyIds;
+    private Set<String> attributeDefinitionDependencyIds;
 
     /** IDs of the {@link DataConnector}s this plug-in depends on. */
-    private List<String> dataConnectorDependencyIds;
+    private Set<String> dataConnectorDependencyIds;
 
     /** Constructor. */
     public AbstractResolutionPlugIn() {
-        attributeDefinitionDependencyIds = new FastList<String>();
-        dataConnectorDependencyIds = new FastList<String>();
+        attributeDefinitionDependencyIds = new FastSet<String>();
+        dataConnectorDependencyIds = new FastSet<String>();
     }
 
     /** {@inheritDoc} */
-    public List<String> getAttributeDefinitionDependencyIds() {
+    public Set<String> getAttributeDefinitionDependencyIds() {
         return attributeDefinitionDependencyIds;
     }
 
     /** {@inheritDoc} */
-    public List<String> getDataConnectorDependencyIds() {
+    public Set<String> getDataConnectorDependencyIds() {
         return dataConnectorDependencyIds;
     }
 

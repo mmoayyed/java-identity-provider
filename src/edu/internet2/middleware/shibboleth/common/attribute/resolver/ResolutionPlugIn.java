@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * A base interface for plugins that provide attributes.
@@ -45,14 +45,14 @@ public interface ResolutionPlugIn<ResolvedType> {
      * 
      * @return IDs of the attribute definitions this plugin is dependent on
      */
-    public List<String> getAttributeDefinitionDependencyIds();
+    public Set<String> getAttributeDefinitionDependencyIds();
 
     /**
      * Gets the IDs of the data connectors this plugin is dependent on.
      * 
      * @return IDs of the data connectors this plugin is dependent on
      */
-    public List<String> getDataConnectorDependencyIds();
+    public Set<String> getDataConnectorDependencyIds();
 
     /**
      * Performs the attribute resolution for this plugin.

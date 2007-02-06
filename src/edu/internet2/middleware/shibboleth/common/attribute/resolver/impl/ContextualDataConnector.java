@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -55,12 +56,12 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public List<String> getAttributeDefinitionDependencyIds() {
+    public Set<String> getAttributeDefinitionDependencyIds() {
         return connector.getAttributeDefinitionDependencyIds();
     }
 
     /** {@inheritDoc} */
-    public List<String> getDataConnectorDependencyIds() {
+    public Set<String> getDataConnectorDependencyIds() {
         return connector.getDataConnectorDependencyIds();
     }
 
