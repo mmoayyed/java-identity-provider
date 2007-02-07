@@ -39,40 +39,38 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
- * <p>
  * <code>LdapDataConnector</code> provides a plugin to retrieve attributes from an LDAP.
- * <p>
  */
 public class LdapDataConnector extends AbstractResolutionPlugIn implements ApplicationListener {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnector.class);
     
-    /** Engine for transforming templated filters into populated filters */
+    /** Engine for transforming templated filters into populated filters. */
     private StatementCreator filterCreator;
 
-    /** Whether multiple result sets should be merged */
+    /** Whether multiple result sets should be merged. */
     private boolean mergeMultipleResults;
     
-    /** Whether an empty result set is an error */
+    /** Whether an empty result set is an error. */
     private boolean noResultsIsError = true;
     
-    /** Whether to cache search results for the duration of the session */
+    /** Whether to cache search results for the duration of the session. */
     private boolean cacheResults;
     
-    /** Ldap search filter */
+    /** Ldap search filter. */
     private String filter;
 
-    /** Attributes to return from ldap searches */
+    /** Attributes to return from ldap searches. */
     private String[] returnAttributes;
     
-    /** Ldap configuration */
+    /** Ldap configuration. */
     private LdapConfig ldapConfig;
 
-    /** Ldap object */
+    /** Ldap object. */
     private Ldap ldap;
 
-    /** Data cache */
+    /** Data cache. */
     private Map cache = new HashMap();
     
 
@@ -80,221 +78,270 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * Default Constructor.
      */
     public LdapDataConnector() {
-        this.ldap = new Ldap(this.ldapConfig);
+        ldap = new Ldap(ldapConfig);
         filterCreator = new StatementCreator();
     }
     
     
     /**
-     * @return Returns the mergeMultipleResults.
+     * Returns the mergeMultipleResults.
+     * 
+     * @return <code>boolean</code>
      */
     public boolean isMergeMultipleResults() {
-        return this.mergeMultipleResults;
+        return mergeMultipleResults;
     }
 
 
     /**
-     * @param mergeMultipleResults The mergeMultipleResults to set.
+     * Sets the mergeMultipleResults.
+     * 
+     * @param b <code>boolean</code>
      */
-    public void setMergeMultipleResults(boolean mergeMultipleResults) {
-        this.mergeMultipleResults = mergeMultipleResults;
+    public void setMergeMultipleResults(boolean b) {
+        mergeMultipleResults = b;
     }
     
     
     /**
-     * @return Returns the cacheResults.
+     * Returns the cacheResults.
+     * 
+     * @return <code>boolean</code>
      */
     public boolean isCacheResults() {
-        return this.cacheResults;
+        return cacheResults;
     }
 
 
     /**
-     * @param cacheResults The cacheResults to set.
+     * Sets the cacheResults.
+     * 
+     * @param b <code>boolean</code>
      */
-    public void setCacheResults(boolean cacheResults) {
-        this.cacheResults = cacheResults;
+    public void setCacheResults(boolean b) {
+        cacheResults = b;
     }
     
     
     /**
-     * @return Returns the noResultsIsError.
+     * Returns the noResultsIsError.
+     * 
+     * @return <code>boolean</code> 
      */
     public boolean isNoResultsIsError() {
-        return this.noResultsIsError;
+        return noResultsIsError;
     }
 
 
     /**
-     * @param noResultsIsError The noResultsIsError to set.
+     * Sets the noResultsIsError.
+     * 
+     * @param b <code>boolean</code>
      */
-    public void setNoResultsIsError(boolean noResultsIsError) {
-        this.noResultsIsError = noResultsIsError;
+    public void setNoResultsIsError(boolean b) {
+        noResultsIsError = b;
     }
 
 
     /**
-     * @return Returns the filter.
+     * Returns the filter.
+     * 
+     * @return <code>String</code> 
      */
     public String getFilter() {
-        return this.filter;
+        return filter;
     }
 
 
     /**
-     * @param filter The filter to set.
+     * Sets the filter.
+     * 
+     * @param s <code>String</code>
      */
-    public void setFilter(String filter) {
-        this.filter = filter;
+    public void setFilter(String s) {
+        filter = s;
     }
 
 
     /**
-     * @return Returns the useStartTls.
+     * Returns the useStartTls.
+     * 
+     * @return <code>boolean</code> 
      */
     public boolean isUseStartTls() {
-        return this.ldapConfig.isTlsEnabled();
+        return ldapConfig.isTlsEnabled();
     }
 
 
     /**
-     * @param useStartTls The useStartTls to set.
+     * Sets the useStartTls.
+     * 
+     * @param b <code>boolean</code>
      */
-    public void setUseStartTls(boolean useStartTls) {
-        this.ldapConfig.useTls(useStartTls);
+    public void setUseStartTls(boolean b) {
+        ldapConfig.useTls(b);
     }
 
    
     /**
-     * @return Returns the searchScope.
+     * Returns the searchScope.
+     * 
+     * @return <code>int</code> 
      */
     public int getSearchScope() {
-        return this.ldapConfig.getSearchScope();
+        return ldapConfig.getSearchScope();
     }
 
 
     /**
-     * @param searchScope The searchScope to set.
+     * Sets the searchScope.
+     * 
+     * @param i <code>int</code>
      */
-    public void setSearchScope(int searchScope) {
-        this.ldapConfig.setSearchScope(searchScope);
+    public void setSearchScope(int i) {
+        ldapConfig.setSearchScope(i);
     }
 
    
     /**
-     * @param searchScope The searchScope to set.
+     * Sets the searchScope.
+     * 
+     * @param s <code>String</code>
      */
-    public void setSearchScope(String searchScope) {
-        if (searchScope.equals("OBJECT_SCOPE")) {
-            this.ldapConfig.useObjectScopeSearch();            
-        } else if (searchScope.equals("SUBTREE_SCOPE")) {
-            this.ldapConfig.useSubTreeSearch();
-        } else if (searchScope.equals("ONELEVEL_SCOPE")) {
-            this.ldapConfig.useOneLevelSearch();
+    public void setSearchScope(String s) {
+        if (s.equals("OBJECT_SCOPE")) {
+            ldapConfig.useObjectScopeSearch();            
+        } else if (s.equals("SUBTREE_SCOPE")) {
+            ldapConfig.useSubTreeSearch();
+        } else if (s.equals("ONELEVEL_SCOPE")) {
+            ldapConfig.useOneLevelSearch();
         }
     }
 
    
     /**
-     * @return Returns the returnAttributes.
+     * Returns the returnAttributes.
+     * 
+     * @return <code>String[]</code> 
      */
     public String[] getReturnAttributes() {
-        return this.returnAttributes;
+        return returnAttributes;
     }
 
 
     /**
-     * @param returnAttributes The returnAttributes to set.
+     * Sets the returnAttributes.
+     * 
+     * @param s <code>String[]</code>
      */
-    public void setReturnAttributes(String[] returnAttributes) {
-        this.returnAttributes = returnAttributes;
+    public void setReturnAttributes(String[] s) {
+        returnAttributes = s;
     }
 
    
     /**
-     * @param returnAttributes The comma delimited returnAttributes to set.
+     * Sets the returnAttributes.
+     * 
+     * @param s <code>String[]</code> comma delimited returnAttributes
      */
-    public void setReturnAttributes(String returnAttributes) {
-        StringTokenizer st = new StringTokenizer(returnAttributes, ",");
-        this.returnAttributes = new String[st.countTokens()];
+    public void setReturnAttributes(String s) {
+        StringTokenizer st = new StringTokenizer(s, ",");
+        returnAttributes = new String[st.countTokens()];
         for (int count = 0; count < st.countTokens(); count++) {
-            this.returnAttributes[count] = st.nextToken();
+            returnAttributes[count] = st.nextToken();
         }
     }
 
    
     /**
-     * @return Returns the timeLimit.
+     * Returns the timeLimit.
+     * 
+     * @return <code>int</code>
      */
     public int getTimeLimit() {
-        return this.ldapConfig.getTimeLimit();
+        return ldapConfig.getTimeLimit();
     }
 
 
     /**
-     * @param timeLimit The timeLimit to set.
+     * Sets the timeLimit.
+     * @param i <code>int</code>
      */
-    public void setTimeLimit(int timeLimit) {
-        this.ldapConfig.setTimeLimit(timeLimit);
+    public void setTimeLimit(int i) {
+        ldapConfig.setTimeLimit(i);
     }
 
    
     /**
-     * @return Returns the countLimit.
+     * Returns the countLimit.
+     * 
+     * @return <code>long</code> 
      */
     public long getCountLimit() {
-        return this.ldapConfig.getCountLimit();
+        return ldapConfig.getCountLimit();
     }
 
 
     /**
-     * @param countLimit The countLimit to set.
+     * Sets the countLimit.
+     * 
+     * @param l <code>long</code>
      */
-    public void setCountLimit(long countLimit) {
-        this.ldapConfig.setCountLimit(countLimit);
+    public void setCountLimit(long l) {
+        ldapConfig.setCountLimit(l);
     }
 
    
     /**
-     * @return Returns the returningObjects.
+     * Returns the returningObjects.
+     * 
+     * @return <code>boolean</code> 
      */
     public boolean isReturningObjects() {
-        return this.ldapConfig.getReturningObjFlag();
+        return ldapConfig.getReturningObjFlag();
     }
 
 
     /**
-     * @param returningObjects The returningObjects to set.
+     * Sets the returningObjects.
+     * 
+     * @param b <code>boolean</code>
      */
-    public void setReturningObjects(boolean returningObjects) {
-        this.ldapConfig.setReturningObjFlag(returningObjects);
+    public void setReturningObjects(boolean b) {
+        ldapConfig.setReturningObjFlag(b);
     }
     
     
     /**
-     * @return Returns the linkDereferencing
+     * Returns the linkDereferencing.
+     * 
+     * @return <code>boolean</code> 
      */
     public boolean isLinkDereferencing() {
-        return this.ldapConfig.getDerefLinkFlag();
+        return ldapConfig.getDerefLinkFlag();
     }
 
 
     /**
-     * @param linkDereferencing The linkDereferencing to set.
+     * Sets the linkDereferencing.
+     * 
+     * @param b <code>boolean</code>
      */
-    public void setLinkDereferencing(boolean linkDereferencing) {
-        this.ldapConfig.setDerefLinkFlag(linkDereferencing);
+    public void setLinkDereferencing(boolean b) {
+        ldapConfig.setDerefLinkFlag(b);
     }
     
     
     /**
-     * @param ldapProperties The ldapProperties to set.
+     * Sets the ldapProperties.
+     * 
+     * @param ldapProperties <code>Map</code> of name/value pairs
      */
     public void setLdapProperties(Map<String, String> ldapProperties) {
         Iterator i = ldapProperties.entrySet().iterator();
         while (i.hasNext()) {
             Map.Entry pairs = (Map.Entry) i.next();
-            this.ldapConfig.setExtraProperties((String) pairs.getKey(), (String) pairs.getValue());            
+            ldapConfig.setExtraProperties((String) pairs.getKey(), (String) pairs.getValue());            
         }
     }
 
@@ -307,7 +354,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     public void onApplicationEvent(ApplicationEvent evt) {
         if (evt instanceof LogoutEvent) {
             LogoutEvent logoutEvent = (LogoutEvent) evt;
-            this.cache.remove(logoutEvent.getUserSession().getPrincipalID());
+            cache.remove(logoutEvent.getUserSession().getPrincipalID());
         }
     }
 
@@ -315,68 +362,115 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     /** {@inheritDoc} */
     public List<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException
     {
-        String searchFilter = filterCreator.createStatement(filter, resolutionContext, getDataConnectorDependencyIds(),
-                getAttributeDefinitionDependencyIds()); 
+        if (log.isDebugEnabled()) {
+            log.debug("Begin resolve for "+resolutionContext.getPrincipalName());
+        }
+        
+        String searchFilter = filterCreator.createStatement(
+                filter, resolutionContext, getDataConnectorDependencyIds(), getAttributeDefinitionDependencyIds()); 
+        if (log.isDebugEnabled()) {
+            log.debug("search filter = "+searchFilter);
+        }
         
         // create Attribute objects to return
-        List attributes = new ArrayList<BaseAttribute>();        
+        List attributes = null;        
 
         // check for cached data
-        if (this.cacheResults) {
-            attributes = this.getCachedAttributes(resolutionContext, searchFilter);
-        }
-        if (attributes == null) { // results not found in the cache
-            Iterator results = null;
-            try {
-                results = this.ldap.search(searchFilter, this.returnAttributes);
-            } catch (NamingException e) {
-                log.error("An error occured when atteming to search the LDAP: "+this.ldapConfig.getEnvironment(), e);
-                throw new AttributeResolutionException("An error occurred when attemping to search the LDAP");            
+        if (cacheResults) {
+            attributes = getCachedAttributes(resolutionContext, searchFilter);
+            if (log.isDebugEnabled()) {
+                log.debug("Returning attributes from cache");
             }
+        }
+        // results not found in the cache
+        if (attributes == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieving attributes from LDAP");
+            }
+            Iterator results = searchLdap(searchFilter);
             // check for empty result set
-            if (this.noResultsIsError && !results.hasNext()) {
+            if (noResultsIsError && !results.hasNext()) {
                 throw new AttributeResolutionException(
                         "No LDAP entry found for "+resolutionContext.getPrincipalName());
             }
-            SearchResult sr = (SearchResult) results.next();
-            Map attrs = this.mergeAttributes(new HashMap<String,List>(), sr.getAttributes());
-            // merge additional results if requested
-            while (this.mergeMultipleResults && results.hasNext()) {
-                SearchResult additionalResult = (SearchResult) results.next();
-                attrs = this.mergeAttributes(attrs, additionalResult.getAttributes());
-            }
-            // populate list of attributes
-            Iterator i = attrs.entrySet().iterator();
-            while (i.hasNext()) {
-                Map.Entry pairs = (Map.Entry) i.next();
-                BaseAttribute attribute = new BaseAttribute();
-                attribute.setID((String) pairs.getKey());
-                attribute.getValues().addAll((List<String>) pairs.getValue());
-                attributes.add(attribute);
-            }
-            if (this.cacheResults && attributes != null) {
-                this.setCachedAttributes(resolutionContext, searchFilter, attributes);
+            // build resolved attributes from LDAP attributes
+            attributes = buildBaseAttributes(results);
+            if (cacheResults && attributes != null) {
+                setCachedAttributes(resolutionContext, searchFilter, attributes);
+                if (log.isDebugEnabled()) {
+                    log.debug("Stored results in the cache");
+                }
             }
         }
         return attributes;
     }
 
     /** {@inheritDoc} */
-    public void validate() throws AttributeResolutionException
-    {
+    public void validate() throws AttributeResolutionException {
         try {
-            if (!this.ldap.connect()) {
+            if (!ldap.connect()) {
                 throw new NamingException();
             }
         } catch (NamingException e) {
-            throw new AttributeResolutionException("Cannot connect to the LDAP");
+            log.error("Cannot connect to the LDAP", e);
+            throw new AttributeResolutionException("Cannot connect to the LDAP: "+
+                    ldapConfig.getEnvironment());
         }
     }
     
+    
     /**
-     * <p>
+     * This searches the LDAP with the supplied filter.
+     * 
+     * @param searchFilter <code>String</code> the searchFilter that produced the attributes
+     * @return <code>Iterator</code> of search results
+     * @throws AttributeResolutionException if an error occurs performing the search
+     */
+    private Iterator searchLdap(String searchFilter) throws AttributeResolutionException {
+        try {
+            return ldap.search(searchFilter, returnAttributes);
+        } catch (NamingException e) {
+            log.error("An error occured when atteming to search the LDAP: "+ldapConfig.getEnvironment(), e);
+            throw new AttributeResolutionException(
+                    "An error occurred when attemping to search the LDAP");            
+        }
+    }
+    
+
+    /**
+     * This returns a list of <code>BaseAttribute</code> object from the supplied search results.
+     * 
+     * @param results <code>Iterator</code> of LDAP search results
+     * @return <code>List</code> of <code>BaseAttribute</code>
+     * @throws AttributeResolutionException if an error occurs parsing attribute results
+     */
+    public List<Attribute> buildBaseAttributes(Iterator results)  throws AttributeResolutionException {
+        List attributes = new ArrayList<BaseAttribute>();
+        SearchResult sr = (SearchResult) results.next();
+        Map attrs = mergeAttributes(new HashMap<String,List>(), sr.getAttributes());
+        // merge additional results if requested
+        while (mergeMultipleResults && results.hasNext()) {
+            SearchResult additionalResult = (SearchResult) results.next();
+            attrs = mergeAttributes(attrs, additionalResult.getAttributes());
+        }
+        // populate list of attributes
+        Iterator i = attrs.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry pairs = (Map.Entry) i.next();
+            if (log.isDebugEnabled()) {
+                log.debug("Found the following attribute: "+pairs);
+            }
+            BaseAttribute attribute = new BaseAttribute();
+            attribute.setID((String) pairs.getKey());
+            attribute.getValues().addAll((List<String>) pairs.getValue());
+            attributes.add(attribute);
+        }
+        return attributes;
+    }
+    
+    
+    /**
      * This stores the supplied attributes in the cache.
-     * </p>
      * 
      * @param resolutionContext <code>ResolutionContext</code>
      * @param searchFiler the searchFilter that produced the attributes
@@ -385,21 +479,19 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     private void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler, List attributes) {
         Map<String,List> results = null;
         String principal = resolutionContext.getPrincipalName();
-        if (this.cache.containsKey(principal)) {
-            results = (Map) this.cache.get(principal);            
+        if (cache.containsKey(principal)) {
+            results = (Map) cache.get(principal);            
         } else {
-            results = new HashMap();            
-            this.cache.put(principal, results);
+            results = new HashMap<String,List>();            
+            cache.put(principal, results);
         }
         results.put(searchFiler, attributes);
     }
     
 
     /**
-     * <p>
      * This retrieves any cached attributes for the supplied resolution context.
      * Returns null if nothing is cached.
-     * </p>
      * 
      * @param resolutionContext <code>ResolutionContext</code>
      * @param searchFilter the search filter the produced the attributes
@@ -409,8 +501,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     private List getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
         List attributes = null;
         String principal = resolutionContext.getPrincipalName();
-        if (this.cache.containsKey(principal)) {
-            Map results = (Map) this.cache.get(principal);
+        if (cache.containsKey(principal)) {
+            Map results = (Map) cache.get(principal);
             attributes = (List) results.get(searchFilter);                                
         }
         return attributes;
@@ -418,13 +510,12 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     
     
     /**
-     * <p>
      * This updates the supplied attribute map with the names and values found in the
      * supplied <code>Attributes</code> object.
-     * </p>
      * 
      * @param attrs <code>Map</code> to update
      * @param newAttrs <code>Attributes</code> to parse
+     * @return <code>Map</code> of attributes
      * @throws AttributeResolutionException if the supplied attributes cannot be parsed
      */
     private Map mergeAttributes(Map<String,List> attrs, Attributes newAttrs) throws AttributeResolutionException
@@ -439,7 +530,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
                 String attrName = (String) pairs.getKey();
                 List attrValues = (List) pairs.getValue();
                 if (attrs.containsKey(attrName)) {
-                    List<String> l = (List) attrs.get(attrName);
+                    List<String> l = (List<String>) attrs.get(attrName);
                     l.addAll(attrValues);
                 } else {
                     attrs.put(attrName, attrValues);
