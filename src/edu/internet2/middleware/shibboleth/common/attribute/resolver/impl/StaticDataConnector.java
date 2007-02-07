@@ -67,4 +67,8 @@ public class StaticDataConnector extends BaseDataConnector {
         return sourceData;
     }
 
+    /** {@inheritDoc} */
+    public void validate() throws AttributeResolutionException {
+        // Do nothing
+    }
 }

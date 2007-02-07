@@ -43,4 +43,8 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
         return attribute;
     }
 
+    /** {@inheritDoc} */
+    public void validate() throws AttributeResolutionException {
+        //do nothing
+    }
 }

@@ -35,6 +35,9 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionC
 public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<Attribute> implements
         AttributeDefinition {
 
+    /** Whether this attribute definition is only a dependency and thus its values should never be released. */
+    private boolean dependencyOnly;
+
     /** Attribute encoders associated with this definition. */
     private List<AttributeEncoder> encoders;
 
@@ -42,7 +45,28 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * Constructor.
      */
     public BaseAttributeDefinition() {
+        dependencyOnly = false;
         encoders = new FastList<AttributeEncoder>();
+    }
+
+    /**
+     * Gets whether this attribute definition is only a dependency and thus its values should never be released outside
+     * the resolver.
+     * 
+     * @return whether this attribute definition is only a dependency
+     */
+    public boolean isDependencyOnly() {
+        return dependencyOnly;
+    }
+
+    /**
+     * Sets whether this attribute definition is only a dependency and thus its values should never be released outside
+     * the resolver.
+     * 
+     * @param isDependencyOnly whether this attribute definition is only a dependency
+     */
+    public void setDependencyOnly(boolean isDependencyOnly) {
+        dependencyOnly = isDependencyOnly;
     }
 
     /** {@inheritDoc} */
