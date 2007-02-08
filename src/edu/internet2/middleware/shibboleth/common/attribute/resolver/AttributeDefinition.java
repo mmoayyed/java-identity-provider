@@ -34,4 +34,12 @@ public interface AttributeDefinition extends ResolutionPlugIn<Attribute> {
      * @return encoders to be added to attributes produced by this definition
      */
     public List<AttributeEncoder> getAttributeEncoders();
+    
+    /**
+     * Gets whether this attribute definition is only a dependency and thus its values should never be released outside
+     * the resolver.
+     * 
+     * @return whether this attribute definition is only a dependency
+     */
+    public boolean isDependencyOnly();
 }
