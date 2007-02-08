@@ -37,7 +37,7 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
     private String id;
 
     /** List of attribute encoders for this attribute. */
-    private List<AttributeEncoder<Attribute>> encoders;
+    private List<AttributeEncoder<Attribute<ValueType>, ?>> encoders;
 
     /** Set of values for this attribute. */
     private SortedSet<ValueType> values;
@@ -47,12 +47,12 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
 
     /** Constructor. */
     public BaseAttribute() {
-        encoders = new FastList<AttributeEncoder<Attribute>>();
+        encoders = new FastList<AttributeEncoder<Attribute<ValueType>, ?>>();
         values = new TreeSet<ValueType>();
     }
 
     /** {@inheritDoc} */
-    public List<AttributeEncoder<Attribute>> getEncoders() {
+    public List<AttributeEncoder<Attribute<ValueType>, ?>> getEncoders() {
         return encoders;
     }
 
@@ -101,11 +101,23 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
             newAttribute.getValues().add(value);
         }
 
-        for (AttributeEncoder<Attribute> encoder : this.getEncoders()) {
+        for (AttributeEncoder<Attribute<ValueType>,?> encoder : this.getEncoders()) {
             newAttribute.getEncoders().add(encoder);
         }
 
         return newAttribute;
     }
 
+    /** {@inheritDoc} */
+    public AttributeEncoder<Attribute<ValueType>, ?> getEncoderByCategory(String categroy) {
+        // TODO Optomize this method
+        
+        for(AttributeEncoder<Attribute<ValueType>, ?> encoder : getEncoders()){
+            if(encoder.getEncoderCategory().equals(categroy)){
+                return encoder;
+            }
+        }
+        
+        return null;
+    }
 }

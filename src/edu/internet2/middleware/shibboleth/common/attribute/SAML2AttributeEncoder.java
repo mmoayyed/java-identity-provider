@@ -18,8 +18,10 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 
 /**
  * SAML 2.0 attribute encoder.
+ * 
+ * @param <ValueType> the type of attribute values this encoder can operate on
  */
-public interface SAML2AttributeEncoder extends AttributeEncoder {
+public interface SAML2AttributeEncoder<ValueType> extends XMLObjectAttributeEncoder<Attribute<ValueType>> {
 
     /**
      * Gets the attribute's name format.

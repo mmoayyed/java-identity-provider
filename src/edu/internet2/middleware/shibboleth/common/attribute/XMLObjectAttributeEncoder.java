@@ -1,5 +1,5 @@
 /*
- * Copyright [2006] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,14 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute;
 
-/**
- * SAML 1.X attribute encoder.
- * 
- * @param <ValueType> the type of attribute values this encoder can operate on
- */
-public interface SAML1AttributeEncoder<ValueType> extends XMLObjectAttributeEncoder<Attribute<ValueType>> {
+import org.opensaml.xml.XMLObject;
 
-    /**
-     * Gets the attribute namespace.
-     * 
-     * @return attribute namespace
-     */
-    public String getAttributeNamespace();
-    
-    /**
-     * Sets the attribute namespace.
-     * 
-     * @param namespace attribute namespace
-     */
-    public void setAttributeNamespace(String namespace);
+/**
+ * Attribute encoder that encodes attributes into XMLObjects.
+ * 
+ * @param <AttributeType> the type of attribute encoded
+ */
+public interface XMLObjectAttributeEncoder<AttributeType extends Attribute> extends
+        AttributeEncoder<AttributeType, XMLObject> {
+
 }

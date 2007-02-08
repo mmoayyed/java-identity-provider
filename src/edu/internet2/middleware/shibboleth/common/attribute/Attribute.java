@@ -50,9 +50,18 @@ public interface Attribute<ValueType>{
     public SortedSet<ValueType> getValues();
     
     /**
+     * Gets the encoder registered under a specific category.
+     * 
+     * @param category the category of the encoder
+     * 
+     * @return encoder registered under a specific category
+     */
+    public AttributeEncoder<Attribute<ValueType>, ?> getEncoderByCategory(String category);
+    
+    /**
      * Gets the list of attribute encoders usable with this attribute.
      * 
      * @return attribute encoders usable with this attribute
      */
-    public List<AttributeEncoder<Attribute>> getEncoders();
+    public List<AttributeEncoder<Attribute<ValueType>, ?>> getEncoders();
 }

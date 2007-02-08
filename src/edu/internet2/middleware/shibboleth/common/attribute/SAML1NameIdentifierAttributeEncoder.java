@@ -18,8 +18,11 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 
 /**
  * SAML 1.X NameIdentifier attribute encoder.
+ * 
+ * @param <ValueType> the type of attribute values this encoder can operate on
  */
-public interface SAML1NameIdentifierAttributeEncoder extends AttributeEncoder {
+public interface SAML1NameIdentifierAttributeEncoder<ValueType> 
+    extends XMLObjectAttributeEncoder<Attribute<ValueType>> {
 
     /**
      * Gets the name domain qualifier for the NameID.
@@ -27,7 +30,7 @@ public interface SAML1NameIdentifierAttributeEncoder extends AttributeEncoder {
      * @return name domain qualifier for the NameID
      */
     public String getNameQualifier();
-    
+
     /**
      * Sets the name domain qualifier for the NameID.
      * 

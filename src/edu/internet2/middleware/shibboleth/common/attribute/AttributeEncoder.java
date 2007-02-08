@@ -16,17 +16,36 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute;
 
-import org.opensaml.xml.XMLObject;
 
 /**
  * Attribute encoders convert {@link Attribute}s into protocol specific representations.
  * 
+ * Encoders may have contain a category that can be used to distingush encoder types from
+ * each other.  This inteded to be used to look up an encoder that can be used to encode 
+ * attributes in accordance with a defined specification or tranmission protcol.
+ * 
  * Encoders MUST be thread-safe and stateless.
  * 
  * @param <AttributeType> the type of attribute this encoder works on
+ * @param <EncodedType> the type of object created by encoding the attribute
  */
-public interface AttributeEncoder<AttributeType extends Attribute> {
+public interface AttributeEncoder<AttributeType extends Attribute, EncodedType> {
 
+    /**
+     * Gets the category for this encoder.
+     * 
+     * @return category for this encoder
+     */
+    public String getEncoderCategory();
+    
+    
+    /**
+     * Sets the category for this encoder.
+     * 
+     * @param category category for this encoder
+     */
+    public void setEncoderCategory(String category);
+    
     /**
      * Get the name of the attribute.
      * 
@@ -48,5 +67,5 @@ public interface AttributeEncoder<AttributeType extends Attribute> {
      * 
      * @return the Object the attribute was encoded into
      */
-    public XMLObject encode(AttributeType attribute);
+    public EncodedType encode(AttributeType attribute);
 }
