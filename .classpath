@@ -65,5 +65,6 @@
 			<attribute name="javadoc_location" value="http://www.jgrapht.org/javadoc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/ldap-2.7.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

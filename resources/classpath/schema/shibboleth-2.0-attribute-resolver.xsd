@@ -67,6 +67,7 @@
                 <sequence>
                     <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded"/>
                 </sequence>
+                <attribute name="dependencyOnly" type="boolean" default="false" />
             </extension>
         </complexContent>
     </complexType>
@@ -129,9 +130,9 @@
             </documentation>
         </annotation>
         <choice minOccurs="0" maxOccurs="unbounded">
-            <element ref="resolver:AttributeDefinitionDependency" />
-            <element ref="resolver:DataConnectorDependency" />
-            <any namespace="##any" processContents="lax" />
+            <element ref="resolver:AttributeDefinitionDependency" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="resolver:DataConnectorDependency" minOccurs="0" maxOccurs="unbounded"/>
+            <any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
         </choice>
         <attribute name="id" type="string" use="required" />
         <attribute name="type" type="string" use="optional" />
