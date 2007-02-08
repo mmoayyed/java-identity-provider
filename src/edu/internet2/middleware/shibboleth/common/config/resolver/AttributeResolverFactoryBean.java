@@ -46,19 +46,25 @@ public class AttributeResolverFactoryBean extends AbstractFactoryBean {
     protected Object createInstance() throws Exception {
         if (attributeDefinitions != null) {
             for (AttributeDefinition definition : attributeDefinitions) {
-                resolver.getAttributeDefinitions().put(definition.getId(), definition);
+                if (definition != null) {
+                    resolver.getAttributeDefinitions().put(definition.getId(), definition);
+                }
             }
         }
 
         if (dataConnectors != null) {
             for (DataConnector connector : dataConnectors) {
-                resolver.getDataConnectors().put(connector.getId(), connector);
+                if (connector != null) {
+                    resolver.getDataConnectors().put(connector.getId(), connector);
+                }
             }
         }
 
         if (principalConnectors != null) {
             for (PrincipalConnector connector : principalConnectors) {
-                resolver.getPrincipalConnectors().put(connector.getId(), connector);
+                if (connector != null) {
+                    resolver.getPrincipalConnectors().put(connector.getId(), connector);
+                }
             }
         }
 

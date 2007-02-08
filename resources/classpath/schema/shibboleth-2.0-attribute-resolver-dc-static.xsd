@@ -1,0 +1,40 @@
+<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc:static" 
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:resolver="urn:mace:shibboleth:2.0:resolver" 
+	xmlns:static="urn:mace:shibboleth:2.0:resolver:dc:static"
+	elementFormDefault="qualified">
+
+	<import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="shibboleth-2.0-attribute-resolver.xsd" />
+
+	<complexType name="StaticDataConnector">
+		<annotation>
+			<documentation>
+				Static Data Connector.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="resolver:BaseDataConnectorType">
+				<sequence>
+					<choice minOccurs="0" maxOccurs="unbounded">
+             <element ref="resolver:AttributeDefinitionDependency"/>
+             <element ref="resolver:DataConnectorDependency"/>
+             <element name="Attribute">
+							<complexType>
+								<sequence maxOccurs="unbounded">
+									<element name="Value" type="string" />
+								</sequence>
+								<attribute name="name" type="string" use="required" />
+							</complexType>
+						</element>
+        	</choice>
+        	<element ref="resolver:FailoverDataConnector" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+				<attribute name="id" type="string" use="required" />
+				<attribute name="type" type="string" fixed="edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.StaticDataConnector" />
+        <attribute name="cacheTime" type="string" />
+        <attribute name="propagateErrors" type="boolean" default="true" />
+			</restriction>
+		</complexContent>
+	</complexType>
+
+</schema>

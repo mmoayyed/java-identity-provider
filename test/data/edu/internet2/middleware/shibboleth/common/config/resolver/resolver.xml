@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
 	xmlns:static="urn:mace:shibboleth:2.0:resolver:dc:static"
-	xmlns:jndi="urn:mace:shibboleth:2.0:resolver:connector:jndi"
 	xsi:schemaLocation="
-    	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-    	urn:mace:shibboleth:2.0:resolver ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
-    ">
+    	urn:mace:shibboleth:2.0:resolver /Users/wnorris/Projects/shibboleth/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
+    	urn:mace:shibboleth:2.0:resolver:dc:static /Users/wnorris/Projects/shibboleth/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver-dc-static.xsd">
 
-	<resolver:AttributeResolver>
+	<resolver:DataConnector xsi:type="static:StaticDataConnector" id="static">
+		<static:Attribute name="uid">
+			<static:Value>gpburdell</static:Value>
+		</static:Attribute>
+		<static:Attribute name="cn">
+			<static:Value>George P Burdell</static:Value>
+			<static:Value>George Burdell</static:Value>
+		</static:Attribute>
+	</resolver:DataConnector>
 
+	<resolver:DataConnector xsi:type="static:StaticDataConnector" id="static2">
+		<static:Attribute name="foo">
+			<static:Value>gpburdell</static:Value>
+		</static:Attribute>
+		<static:Attribute name="bar">
+			<static:Value>George Burdell</static:Value>
+		</static:Attribute>
+	</resolver:DataConnector>
 
-	</resolver:AttributeResolver>
-
-</beans>
+</AttributeResolver>
