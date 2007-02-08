@@ -94,5 +94,9 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     public void validate() throws AttributeResolutionException {
         definition.validate();
     }
-    
+
+    /** {@inheritDoc} */
+    public boolean isDependencyOnly() {
+        return definition.isDependencyOnly();
+    }
 }
