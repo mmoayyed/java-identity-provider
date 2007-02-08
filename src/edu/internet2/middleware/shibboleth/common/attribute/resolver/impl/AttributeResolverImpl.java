@@ -186,7 +186,7 @@ public class AttributeResolverImpl implements AttributeResolver {
                     Attribute resolution = resolveAttribute(id, resolutionContext);
 
                     if (resolution != null) {
-                        resolvedAttributes.put(resolution.getID(), resolution);
+                        resolvedAttributes.put(resolution.getId(), resolution);
                     }
                 }
             }

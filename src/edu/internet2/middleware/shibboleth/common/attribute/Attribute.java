@@ -32,7 +32,7 @@ public interface Attribute<ValueType>{
      * 
      * @return unique ID of the attribute
      */
-    public String getID();
+    public String getId();
     
     /**
      * Gets the compartor used to sort values.  If no compartor is set then the value 

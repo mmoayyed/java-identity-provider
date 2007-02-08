@@ -45,7 +45,7 @@ public class StaticDataConnector extends BaseDataConnector {
         List<Attribute> attributes = new FastList<Attribute>();
         for (Attribute<String> a : sourceData) {
             BaseAttribute<String> newAttribute = new BaseAttribute<String>();
-            newAttribute.setID(a.getID());
+            newAttribute.setId(a.getId());
 
             for (String value : a.getValues()) {
                 String newValue = value.replaceAll("%PRINCIPAL%", resolutionContext.getPrincipalName());

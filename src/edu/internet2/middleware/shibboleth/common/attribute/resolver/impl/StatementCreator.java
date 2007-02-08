@@ -97,7 +97,7 @@ public class StatementCreator {
             }
             attributes = dataConnector.resolve(resolutionContext);
             for (Attribute attribute : attributes) {
-                vCtx.put(attribute.getID(), attribute.getValues());
+                vCtx.put(attribute.getId(), attribute.getValues());
             }
         }
 
@@ -109,7 +109,7 @@ public class StatementCreator {
                 log.debug("Resolving attributes from attribute definition " + definitionId);
             }
             attribute = attributeDefinition.resolve(resolutionContext);
-            vCtx.put(attribute.getID(), attribute.getValues());
+            vCtx.put(attribute.getId(), attribute.getValues());
         }
 
         return vCtx;

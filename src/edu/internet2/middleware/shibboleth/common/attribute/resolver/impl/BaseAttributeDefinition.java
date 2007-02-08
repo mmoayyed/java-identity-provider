@@ -129,7 +129,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
             if (connector != null) {
                 try {
                     for (Attribute attribute : connector.resolve(context)) {
-                        if (attribute.getID().equals(this.getId())) {
+                        if (attribute.getId().equals(this.getId())) {
                             // TODO do we need any kind of connector mapping like in previous versions?
                             for (Object o : attribute.getValues()) {
                                 values.add(o);

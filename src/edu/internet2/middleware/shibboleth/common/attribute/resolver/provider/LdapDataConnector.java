@@ -461,7 +461,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
                 log.debug("Found the following attribute: "+pairs);
             }
             BaseAttribute attribute = new BaseAttribute();
-            attribute.setID((String) pairs.getKey());
+            attribute.setId((String) pairs.getKey());
             attribute.getValues().addAll((List<String>) pairs.getValue());
             attributes.add(attribute);
         }

@@ -57,7 +57,7 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
     }
 
     /** {@inheritDoc} */
-    public String getID() {
+    public String getId() {
         return id;
     }
 
@@ -66,7 +66,7 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
      * 
      * @param newID new ID
      */
-    public void setID(String newID) {
+    public void setId(String newID) {
         id = newID;
     }
 
@@ -93,7 +93,7 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
     public BaseAttribute<ValueType> clone() {
         BaseAttribute<ValueType> newAttribute = new BaseAttribute<ValueType>();
 
-        newAttribute.setID(this.getID());
+        newAttribute.setId(this.getId());
 
         newAttribute.setValueComparator(this.getValueComparator());
 
