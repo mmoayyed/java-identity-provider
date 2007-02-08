@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+	xmlns:static="urn:mace:shibboleth:2.0:resolver:dc:static"
+	xmlns:jndi="urn:mace:shibboleth:2.0:resolver:connector:jndi"
+	xsi:schemaLocation="
+    	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+    	urn:mace:shibboleth:2.0:resolver /home/wnorris/workspace/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
+    ">
+
+	<resolver:AttributeResolver>
+
+
+	</resolver:AttributeResolver>
+
+</beans>
