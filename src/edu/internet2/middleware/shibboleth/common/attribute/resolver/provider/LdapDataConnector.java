@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
+import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
@@ -71,7 +71,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     private Ldap ldap;
 
     /** Data cache. */
-    private Map cache = new HashMap();
+    private Map<String,Map<String,List<Attribute<String>>>> cache =
+        new HashMap<String,Map<String,List<Attribute<String>>>>();
     
 
     /**
@@ -338,10 +339,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param ldapProperties <code>Map</code> of name/value pairs
      */
     public void setLdapProperties(Map<String, String> ldapProperties) {
-        Iterator i = ldapProperties.entrySet().iterator();
-        while (i.hasNext()) {
-            Map.Entry pairs = (Map.Entry) i.next();
-            ldapConfig.setExtraProperties((String) pairs.getKey(), (String) pairs.getValue());            
+        for (Map.Entry<String,String> entry: ldapProperties.entrySet()) {
+            ldapConfig.setExtraProperties(entry.getKey(), entry.getValue());            
         }
     }
 
@@ -360,8 +359,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
 
     
     /** {@inheritDoc} */
-    public List<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException
-    {
+    public List<Attribute<String>> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
             log.debug("Begin resolve for "+resolutionContext.getPrincipalName());
         }
@@ -373,7 +371,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         }
         
         // create Attribute objects to return
-        List attributes = null;        
+        List<Attribute<String>> attributes = null;        
 
         // check for cached data
         if (cacheResults) {
@@ -387,7 +385,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
             if (log.isDebugEnabled()) {
                 log.debug("Retrieving attributes from LDAP");
             }
-            Iterator results = searchLdap(searchFilter);
+            Iterator<SearchResult> results = searchLdap(searchFilter);
             // check for empty result set
             if (noResultsIsError && !results.hasNext()) {
                 throw new AttributeResolutionException(
@@ -426,7 +424,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @return <code>Iterator</code> of search results
      * @throws AttributeResolutionException if an error occurs performing the search
      */
-    private Iterator searchLdap(String searchFilter) throws AttributeResolutionException {
+    private Iterator<SearchResult> searchLdap(String searchFilter) throws AttributeResolutionException {
         try {
             return ldap.search(searchFilter, returnAttributes);
         } catch (NamingException e) {
@@ -444,26 +442,25 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @return <code>List</code> of <code>BaseAttribute</code>
      * @throws AttributeResolutionException if an error occurs parsing attribute results
      */
-    public List<Attribute> buildBaseAttributes(Iterator results)  throws AttributeResolutionException {
-        List attributes = new ArrayList<BaseAttribute>();
-        SearchResult sr = (SearchResult) results.next();
-        Map attrs = mergeAttributes(new HashMap<String,List>(), sr.getAttributes());
+    public List<Attribute<String>> buildBaseAttributes(Iterator<SearchResult> results)
+        throws AttributeResolutionException {
+        List<Attribute<String>> attributes = new ArrayList<Attribute<String>>();
+        SearchResult sr = results.next();
+        Map<String,List<String>> attrs = mergeAttributes(new HashMap<String,List<String>>(), sr.getAttributes());
         // merge additional results if requested
         while (mergeMultipleResults && results.hasNext()) {
-            SearchResult additionalResult = (SearchResult) results.next();
+            SearchResult additionalResult = results.next();
             attrs = mergeAttributes(attrs, additionalResult.getAttributes());
         }
         // populate list of attributes
-        Iterator i = attrs.entrySet().iterator();
-        while (i.hasNext()) {
-            Map.Entry pairs = (Map.Entry) i.next();
+        for (Map.Entry<String,List<String>> entry: attrs.entrySet()) {
             if (log.isDebugEnabled()) {
-                log.debug("Found the following attribute: "+pairs);
+                log.debug("Found the following attribute: "+entry);
             }
-            BaseAttribute attribute = new BaseAttribute();
-            attribute.setId((String) pairs.getKey());
-            attribute.getValues().addAll((List<String>) pairs.getValue());
-            attributes.add(attribute);
+            BaseAttribute<String> attribute = new BaseAttribute<String>();
+            attribute.setId(entry.getKey());
+            attribute.getValues().addAll(entry.getValue());
+            attributes.add(attribute);            
         }
         return attributes;
     }
@@ -476,13 +473,15 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param searchFiler the searchFilter that produced the attributes
      * @param attributes <code>List</code> to store
      */
-    private void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler, List attributes) {
-        Map<String,List> results = null;
+    private void setCachedAttributes(ResolutionContext resolutionContext,
+                                     String searchFiler,
+                                     List<Attribute<String>> attributes) {
+        Map<String,List<Attribute<String>>> results = null;
         String principal = resolutionContext.getPrincipalName();
         if (cache.containsKey(principal)) {
-            results = (Map) cache.get(principal);            
+            results = cache.get(principal);            
         } else {
-            results = new HashMap<String,List>();            
+            results = new HashMap<String,List<Attribute<String>>>();            
             cache.put(principal, results);
         }
         results.put(searchFiler, attributes);
@@ -498,12 +497,12 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * 
      * @return <code>List</code> of attributes
      */
-    private List getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
-        List attributes = null;
+    private List<Attribute<String>> getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
+        List<Attribute<String>> attributes = null;
         String principal = resolutionContext.getPrincipalName();
         if (cache.containsKey(principal)) {
-            Map results = (Map) cache.get(principal);
-            attributes = (List) results.get(searchFilter);                                
+            Map<String,List<Attribute<String>>> results = cache.get(principal);
+            attributes = results.get(searchFilter);                                
         }
         return attributes;
     }
@@ -518,19 +517,17 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @return <code>Map</code> of attributes
      * @throws AttributeResolutionException if the supplied attributes cannot be parsed
      */
-    private Map mergeAttributes(Map<String,List> attrs, Attributes newAttrs) throws AttributeResolutionException
-    {
+    private Map<String,List<String>> mergeAttributes(Map<String,List<String>> attrs, Attributes newAttrs)
+        throws AttributeResolutionException {
         // merge the new attributes
         try {
-            Map<String,List> newAttrsMap = LdapUtil.parseAttributes(newAttrs, true);
-            
-            Iterator i = newAttrsMap.entrySet().iterator();
-            while (i.hasNext()) {
-                Map.Entry pairs = (Map.Entry) i.next();
-                String attrName = (String) pairs.getKey();
-                List attrValues = (List) pairs.getValue();
+            Map<String,List<String>> newAttrsMap = LdapUtil.parseAttributes(newAttrs, true);
+
+            for (Map.Entry<String,List<String>> entry: newAttrsMap.entrySet()) {
+                String attrName = entry.getKey();
+                List<String> attrValues = entry.getValue();
                 if (attrs.containsKey(attrName)) {
-                    List<String> l = (List<String>) attrs.get(attrName);
+                    List<String> l = attrs.get(attrName);
                     l.addAll(attrValues);
                 } else {
                     attrs.put(attrName, attrValues);
