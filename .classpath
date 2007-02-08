@@ -3,9 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources/classpath"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry including="META-INF/" excluding="*|classpath/" kind="src" path="resources"/>
+	<classpathentry excluding="*|classpath/" including="META-INF/" kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="build-lib/servlet-2.4.jar">
+	<classpathentry kind="lib" path="build-lib/servlet-2.4.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://tomcat.apache.org/tomcat-5.0-doc/servletapi/"/>
 		</attributes>
@@ -50,7 +50,7 @@
 			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.0.x/api/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar">
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.13.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://logging.apache.org/log4j/docs/api/"/>
 		</attributes>
@@ -66,6 +66,6 @@
 			<attribute name="javadoc_location" value="http://www.jgrapht.org/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/ldap-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ldap-2.7.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
