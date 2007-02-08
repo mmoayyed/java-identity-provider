@@ -6,7 +6,7 @@
 	xmlns:jndi="urn:mace:shibboleth:2.0:resolver:connector:jndi"
 	xsi:schemaLocation="
     	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-    	urn:mace:shibboleth:2.0:resolver /home/wnorris/workspace/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
+    	urn:mace:shibboleth:2.0:resolver ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
     ">
 
 	<resolver:AttributeResolver>
