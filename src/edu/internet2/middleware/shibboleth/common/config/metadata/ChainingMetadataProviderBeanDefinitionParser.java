@@ -18,26 +18,39 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.saml2.metadata.provider.ChainingMetadataProvider;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /**
- * Spring bean definition parser for Shibboleth chaining metadata provider definition. 
+ * Spring bean definition parser for Shibboleth chaining metadata provider definition.
  */
-public class ChainingMetadataProviderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class ChainingMetadataProviderBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "ChainingMetadataProvider");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
+        BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(ChainingMetadataProvider.class);
 
-    /** {@inheritDoc} */
-    protected void doParse(Element element, BeanDefinitionBuilder bean) {
-        
+        NodeList providerEs = element.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider");
+        ManagedList providers = new ManagedList();
+        BeanDefinition providerDef;
+        for (int i = 0; i < providerEs.getLength(); i++) {
+            providerDef = SpringConfigurationUtils.parseCustomElement((Element) providerEs.item(i), parserContext);
+            providers.add(providerDef);
+        }
+
+        factory.addPropertyValue("providers", providers);
+        return factory.getBeanDefinition();
     }
 }

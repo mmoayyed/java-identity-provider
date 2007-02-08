@@ -63,17 +63,18 @@
 
 	<complexType name="MetadataProviderType" abstract="true">
 		<sequence>
-			<element ref="shibmd:MetadataFilter" />
-			<any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+			<element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded"/>
+			<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
-		<anyAttribute namespace="##any" processContents="lax"/>
+        <attribute name="id" type="ID" />
+		<anyAttribute namespace="##other" processContents="lax"/>
 	</complexType>
 	
 	<complexType name="MetadataFilterType" abstract="true">
 		<sequence>
-			<any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+			<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
-		<anyAttribute namespace="##any" processContents="lax"/>
+		<anyAttribute namespace="##other" processContents="lax"/>
 	</complexType>
     
 </schema>

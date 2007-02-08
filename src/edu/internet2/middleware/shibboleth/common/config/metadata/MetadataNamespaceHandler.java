@@ -23,6 +23,15 @@ import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHand
  */
 public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
 
+    /** Namespace for this handler. */
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
+    
+    /** Local tag name for MetadataProvider tags. */
+    public static final String METADATA_PROVIDER_ELEMENT_LOCAL_NAME = "MetadataProvider";
+    
+    /** Local tag name for MetadataFilter tags. */
+    public static final String METADATA_FILTER_ELEMENT_LOCAL_NAME = "MetadataFilter";
+    
     /** {@inheritDoc} */
     public void init() {
         registerBeanDefinitionParser(ChainingMetadataProviderBeanDefinitionParser.TYPE_NAME,
