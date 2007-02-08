@@ -96,16 +96,18 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
      */
     protected BeanDefinitionParser findParserForElement(Element element) {
         BeanDefinitionParser parser;
-        
-        parser = parsers.get(XMLHelper.getXSIType(element));
-        
-        if(parser == null){
+
+        QName elementType = XMLHelper.getXSIType(element);
+        parser = parsers.get(elementType);
+
+        if (parser == null) {
             parser = parsers.get(XMLHelper.getNodeQName(element));
         }
 
         if (parser == null) {
-            throw new IllegalArgumentException("Cannot locate BeanDefinitionParser for element ["
-                    + element.getLocalName() + "].");
+            throw new IllegalArgumentException("Cannot locate BeanDefinitionParser for element {"
+                    + element.getNamespaceURI() + "}" + element.getLocalName() + " of type {"
+                    + elementType.getNamespaceURI() + "}" + elementType.getLocalPart());
         }
 
         return parser;
@@ -124,7 +126,7 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
 
         if (node instanceof Element) {
             decorator = decorators.get(XMLHelper.getXSIType((Element) node));
-            if(decorator == null){
+            if (decorator == null) {
                 decorator = decorators.get(XMLHelper.getNodeQName(node));
             }
         } else if (node instanceof Attr) {
