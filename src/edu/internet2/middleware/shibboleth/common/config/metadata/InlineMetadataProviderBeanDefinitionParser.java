@@ -46,10 +46,6 @@ public class InlineMetadataProviderBeanDefinitionParser extends AbstractSingleBe
         }
         
         bean.addConstructorArg((Element)metadataContent.item(0));
-    }
-    
-    /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
-        return true;
+        bean.setInitMethodName("initialize");
     }
 }

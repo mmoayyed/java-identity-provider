@@ -17,6 +17,8 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import junit.framework.TestCase;
 
+import org.opensaml.DefaultBootstrap;
+import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
@@ -31,25 +33,32 @@ public class InlineMetadataProviderTest extends TestCase {
     
     private String providerId;
     
+    private String expectedName;
+    
     /** {@inheritDoc} */
     protected void setUp() throws Exception {
         super.setUp();
         
-        providerId = "InlineMetadataProvider";
+        DefaultBootstrap.bootstrap();
+        
+        providerId = "InlineMetadata";
+        expectedName = "urn:mace:incommon";
         
         String springConfigFile = "/data/edu/internet2/middleware/shibboleth/common/config/metadata/InlineMetadataProvider.xml";
         springCtx = new GenericApplicationContext();
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(springCtx);
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(InlineMetadataProviderTest.this.springCtx);
         configReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
+        configReader.setNamespaceAware(true);
         configReader.loadBeanDefinitions(new ClassPathResource(springConfigFile));
     }
     
-    public void testProviderInstantiation(){
+    public void testProviderInstantiation() throws Exception{
         assertEquals(1, springCtx.getBeanDefinitionCount());
         
         assertTrue("Configured metadata provider no present in Spring context", springCtx.containsBean(providerId));
         
         MetadataProvider provider = (MetadataProvider) springCtx.getBean(providerId);
         assertNotNull(provider);
+        assertEquals(((EntitiesDescriptor)provider.getMetadata()).getName(), expectedName);
     }
 }

@@ -5,8 +5,8 @@
 	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
 	xmlns:static="urn:mace:shibboleth:2.0:resolver:dc:static"
 	xsi:schemaLocation="
-    	urn:mace:shibboleth:2.0:resolver /Users/wnorris/Projects/shibboleth/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
-    	urn:mace:shibboleth:2.0:resolver:dc:static /Users/wnorris/Projects/shibboleth/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver-dc-static.xsd">
+    	urn:mace:shibboleth:2.0:resolver /Applications/Development/eclipse/workspace/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
+    	urn:mace:shibboleth:2.0:resolver:dc:static /Applications/Development/eclipse/workspace/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver-dc-static.xsd">
 
 	<resolver:DataConnector xsi:type="static:StaticDataConnector" id="static">
 		<static:Attribute name="uid">

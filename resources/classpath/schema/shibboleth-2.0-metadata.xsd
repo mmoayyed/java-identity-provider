@@ -4,7 +4,7 @@
         xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
         xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata">
         
-    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="/schema/saml-schema-metadata-2.0.xsd" />
+    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="/Applications/Development/eclipse/workspace/java-opensaml2/resources/classpath/schema/saml-schema-metadata-2.0.xsd" />
     
     <element name="MetadataProvider" type="shibmd:MetadataProviderType" />
     
@@ -64,17 +64,10 @@
 	<complexType name="MetadataProviderType" abstract="true">
 		<sequence>
 			<element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded"/>
-			<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
-        <attribute name="id" type="ID" />
-		<anyAttribute namespace="##other" processContents="lax"/>
+        <attribute name="id" type="ID" use="required" />
 	</complexType>
 	
-	<complexType name="MetadataFilterType" abstract="true">
-		<sequence>
-			<any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
-		</sequence>
-		<anyAttribute namespace="##other" processContents="lax"/>
-	</complexType>
+	<complexType name="MetadataFilterType" abstract="true" />
     
 </schema>
