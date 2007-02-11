@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="urn:mace:shibboleth:2.0:aap" 
-               xmlns="http://www.w3.org/2001/XMLSchema"
-               xmlns:aap="urn:mace:shibboleth:2.0:aap"
-               xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:aap="urn:mace:shibboleth:2.0:aap"
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 
     <import namespace="http://www.w3.org/2000/09/xmldsig#"
-        schemaLocation="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
+        schemaLocation="classpath:/schema/xmldsig-core-schema.xsd"/>
 
     <annotation>
         <documentation>Shibboleth 2.0 Service Provider Attribute Acceptance Policy schema.</documentation>

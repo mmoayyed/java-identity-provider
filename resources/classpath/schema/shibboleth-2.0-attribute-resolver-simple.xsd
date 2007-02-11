@@ -4,7 +4,7 @@
         xmlns:simple="urn:mace:shibboleth:2.0:resolver:ad:simple"
         xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
         
-    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="/schema/shibboleth-2.0-attribute-resolver.xsd" />
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
     
     <complexType name="Simple">
         <complexContent>

@@ -4,9 +4,9 @@
                          xmlns:samlmd="urn:oasis:names:tc:SAML:2.0:metadata"
                          xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                         xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata file:/Applications/Development/eclipse/workspace/java-shib-common/resources/classpath/schema/shibboleth-2.0-metadata.xsd urn:oasis:names:tc:SAML:2.0:metadata file:/Applications/Development/eclipse/workspace/java-opensaml2/resources/classpath/schema/saml-schema-metadata-2.0.xsd "
+                         xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd urn:oasis:names:tc:SAML:2.0:metadata classpath:/schema/saml-schema-metadata-2.0.xsd "
                          xsi:type="shibmd:InlineMetadataProvider">
-    
+                         
     <samlmd:EntitiesDescriptor Name="urn:mace:incommon">
     
         <samlmd:EntityDescriptor entityID="urn:mace:incommon:internet2.edu">
@@ -26,7 +26,7 @@
                 <samlmd:EmailAddress>ij@internet2.edu</samlmd:EmailAddress>
             </samlmd:ContactPerson>
         </samlmd:EntityDescriptor>
-        
+
     </samlmd:EntitiesDescriptor>
-    
+
 </shibmd:MetadataProvider>

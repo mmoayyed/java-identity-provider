@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <schema xmlns="http://www.w3.org/2001/XMLSchema" 
-             targetNamespace="urn:mace:shibboleth:2.0:relying-party" 
-             xmlns:rp="urn:mace:shibboleth:2.0:relying-party">
+        targetNamespace="urn:mace:shibboleth:2.0:relying-party" 
+        xmlns:rp="urn:mace:shibboleth:2.0:relying-party">
              
     <element name="RelyingParty" type="rp:RelyingPartyType" />
     <element name="DefaultRelyingParty" type="rp:RelyingPartyType" />
@@ -10,4 +11,5 @@
     <complexType name="RelyingPartyType">
     
     </complexType>
+    
 </schema>

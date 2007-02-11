@@ -4,7 +4,7 @@
         xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
         xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata">
         
-    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="/Applications/Development/eclipse/workspace/java-opensaml2/resources/classpath/schema/saml-schema-metadata-2.0.xsd" />
+    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="classpath:/schema/saml-schema-metadata-2.0.xsd" />
     
     <element name="MetadataProvider" type="shibmd:MetadataProviderType" />
     
