@@ -16,20 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.log;
 
-import java.io.InputStream;
+import javax.xml.parsers.FactoryConfigurationError;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.opensaml.common.xml.ParserPoolManager;
 import org.opensaml.log.Level;
-import org.opensaml.xml.parse.XMLParserException;
-import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.storage.Resource;
-import edu.internet2.middleware.shibboleth.common.storage.ResourceException;
 import edu.internet2.middleware.shibboleth.common.storage.ResourceListener;
 
 /**
@@ -43,6 +39,9 @@ public class Log4jConfigFileResourceListener implements ResourceListener {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(Log4jConfigFileResourceListener.class);
+    
+    /** Parser used to read in
+    private static DocumentBuilder parser;
 
     /** Default logging layout pattern for appenders. */
     private static String defaultLayoutPattern = "%d %-5p [%c] %m%n";
@@ -71,18 +70,11 @@ public class Log4jConfigFileResourceListener implements ResourceListener {
         log.log(Level.CRITICAL, "Loading Log4J configuration file " + log4jConfig.getLocation());
 
         try {
-            InputStream configIn = log4jConfig.getInputStream();
-
-            ParserPoolManager poolManager = ParserPoolManager.getInstance();
-            Element configElem = poolManager.parse(configIn).getDocumentElement();
-
             LogManager.resetConfiguration();
-            DOMConfigurator.configure(configElem);
+            DOMConfigurator.configure(log4jConfig.getLocation());
             log.log(Level.CRITICAL, "Log4J configuration file " + log4jConfig.getLocation() + " loaded");
-        } catch (ResourceException e) {
+        } catch (FactoryConfigurationError e) {
             log.error("Unable to read Log4J configuration file " + log4jConfig.getLocation(), e);
-        } catch (XMLParserException e) {
-            log.error("Unable to parse Log4J configuration file " + log4jConfig.getLocation(), e);
         }
     }
 
