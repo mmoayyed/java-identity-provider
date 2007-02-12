@@ -37,7 +37,7 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
     private String id;
 
     /** List of attribute encoders for this attribute. */
-    private List<AttributeEncoder<Attribute<ValueType>, ?>> encoders;
+    private List<AttributeEncoder> encoders;
 
     /** Set of values for this attribute. */
     private SortedSet<ValueType> values;
@@ -47,12 +47,12 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
 
     /** Constructor. */
     public BaseAttribute() {
-        encoders = new FastList<AttributeEncoder<Attribute<ValueType>, ?>>();
+        encoders = new FastList<AttributeEncoder>();
         values = new TreeSet<ValueType>();
     }
 
     /** {@inheritDoc} */
-    public List<AttributeEncoder<Attribute<ValueType>, ?>> getEncoders() {
+    public List<AttributeEncoder> getEncoders() {
         return encoders;
     }
 
@@ -101,7 +101,7 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
             newAttribute.getValues().add(value);
         }
 
-        for (AttributeEncoder<Attribute<ValueType>,?> encoder : this.getEncoders()) {
+        for (AttributeEncoder encoder : this.getEncoders()) {
             newAttribute.getEncoders().add(encoder);
         }
 
@@ -109,10 +109,10 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
     }
 
     /** {@inheritDoc} */
-    public AttributeEncoder<Attribute<ValueType>, ?> getEncoderByCategory(String categroy) {
+    public AttributeEncoder getEncoderByCategory(String categroy) {
         // TODO Optomize this method
         
-        for(AttributeEncoder<Attribute<ValueType>, ?> encoder : getEncoders()){
+        for(AttributeEncoder encoder : getEncoders()){
             if(encoder.getEncoderCategory().equals(categroy)){
                 return encoder;
             }

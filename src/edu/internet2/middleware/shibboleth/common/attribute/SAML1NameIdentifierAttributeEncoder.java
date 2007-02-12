@@ -22,7 +22,7 @@ package edu.internet2.middleware.shibboleth.common.attribute;
  * @param <ValueType> the type of attribute values this encoder can operate on
  */
 public interface SAML1NameIdentifierAttributeEncoder<ValueType> 
-    extends XMLObjectAttributeEncoder<Attribute<ValueType>> {
+    extends XMLObjectAttributeEncoder {
 
     /**
      * Gets the name domain qualifier for the NameID.
