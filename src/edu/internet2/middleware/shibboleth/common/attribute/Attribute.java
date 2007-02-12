@@ -56,12 +56,12 @@ public interface Attribute<ValueType>{
      * 
      * @return encoder registered under a specific category
      */
-    public AttributeEncoder<Attribute<ValueType>, ?> getEncoderByCategory(String category);
+    public AttributeEncoder getEncoderByCategory(String category);
     
     /**
      * Gets the list of attribute encoders usable with this attribute.
      * 
      * @return attribute encoders usable with this attribute
      */
-    public List<AttributeEncoder<Attribute<ValueType>, ?>> getEncoders();
+    public List<AttributeEncoder> getEncoders();
 }

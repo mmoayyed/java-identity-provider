@@ -26,10 +26,9 @@ package edu.internet2.middleware.shibboleth.common.attribute;
  * 
  * Encoders MUST be thread-safe and stateless.
  * 
- * @param <AttributeType> the type of attribute this encoder works on
  * @param <EncodedType> the type of object created by encoding the attribute
  */
-public interface AttributeEncoder<AttributeType extends Attribute, EncodedType> {
+public interface AttributeEncoder<EncodedType> {
 
     /**
      * Gets the category for this encoder.
@@ -67,5 +66,5 @@ public interface AttributeEncoder<AttributeType extends Attribute, EncodedType> 
      * 
      * @return the Object the attribute was encoded into
      */
-    public EncodedType encode(AttributeType attribute);
+    public EncodedType encode(Attribute attribute);
 }
