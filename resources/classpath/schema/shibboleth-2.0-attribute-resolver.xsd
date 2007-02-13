@@ -80,12 +80,6 @@
                 specific representation such as a SAML 1 Attribute or a SAML 2 NameID.
             </documentation>
         </annotation>
-        <sequence>
-            <any minOccurs="0" maxOccurs="unbounded" namespace="##any" processContents="lax"/>
-        </sequence>
-        <attribute name="attributeName" type="string" use="required" />
-        <attribute name="type" type="string" use="optional" />
-        <anyAttribute namespace="##other" processContents="lax" />
     </complexType>
 
     <element name="DataConnector" type="resolver:BaseDataConnectorType" />
@@ -132,13 +126,9 @@
         <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="resolver:AttributeDefinitionDependency" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="resolver:DataConnectorDependency" minOccurs="0" maxOccurs="unbounded"/>
-            <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
         </choice>
         <attribute name="id" type="string" use="required" />
-        <attribute name="type" type="string" use="optional" />
-        <attribute name="cacheTime" type="string" />
         <attribute name="propagateErrors" type="boolean" default="true" />
-        <anyAttribute namespace="##other" processContents="lax" />
     </complexType>
     
     <element name="AttributeDefinitionDependency" type="resolver:PluginDependencyType"/>
