@@ -25,7 +25,7 @@ import org.joda.time.DateTime;
  */
 public class AuditLogEntry {
 
-    /** UTC timestamp of the audit event. */
+    /** UTC IS8601 timestamp of the audit event. */
     private DateTime auditEventTime;
     
     /** Entity ID of the relying party. */
