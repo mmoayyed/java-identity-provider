@@ -1,0 +1,78 @@
+<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc:rdbms"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+        xmlns:rdbms="urn:mace:shibboleth:2.0:resolver:dc:rdbms">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver"
+        schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+        
+        <complexType name="RDBMS">
+            <complexContent>
+                <extension base="resolver:BaseDataConnectorType">
+                    <sequence>
+                        <choice>
+                            <element ref="rdbms:ManagedConnection" />
+                            <element ref="rdbms:UnmanagedConnection" />
+                        </choice>
+                        <element name="Query" type="string" />
+                        <element ref="rdbms:Column" minOccurs="0" maxOccurs="unbounded" />
+                    </sequence>
+                    <attribute name="readOnly" type="boolean" default="true" />
+                    <attribute name="useCallableStatement" type="boolean" default="false" />
+                </extension>
+            </complexContent>
+        </complexType>
+        
+        <element name="ManagedConnection" type="rdbms:ManagedConnectionType"/>
+        <complexType name="ManagedConnectionType">
+            <sequence>
+                <element name="JNDIConnectionProperty" type="rdbms:PropertyType" />
+            </sequence>
+            <attribute name="resourceName" type="string" use="required" />
+        </complexType>
+        
+        <element name="UnmanagedConnection" type="rdbms:UnmanagedConnectionType" />
+        <complexType name="UnmanagedConnectionType">
+            <sequence>
+                <element name="ConnectionProperty" type="rdbms:PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+            <attribute name="jdbcURL" type="string" use="required" />
+            <attribute name="jdbcDriver" type="string" use="required" />
+            <attribute name="validationQuery" type="string" />
+            <attribute name="maxActive" type="positiveInteger" default="20" />
+            <attribute name="maxIdle" type="positiveInteger" default="5" />
+            <attribute name="maxWait" type="positiveInteger" default=300" />
+            <attribute name="maxResultSet" type="positiveInteger" default="1" />
+        </complexType>
+        
+        <complexType name="PropertyType">
+            <attribute name="name" type="string" use="required" />
+            <attribute name="value" type="string" use="required" />
+        </complexType>
+        
+        <element name="Column" type="rdbms:ColumnType" />
+        <complexType name="ColumnType">
+            <attribute name="name" type="string" use="required" />
+            <attribute name="type" type="rdbms:ColumnDataType" use="required" />
+        </complexType>
+        
+        <simpleType name="ColumnDataType">
+            <restriction>
+                <enumeration value="BigDecimal" />
+                <enumeration value="Boolean" />
+                <enumeration value="Byte" />
+                <enumeration value="ByteArray" />
+                <enumeration value="Date" />
+                <enumeration value="Double" />
+                <enumeration value="Float" />
+                <enumeration value="Int" />
+                <enumeration value="Long" />
+                <enumeration value="Object" />
+                <enumeration value="Short" />
+                <enumeration value="String" />
+                <enumeration value="Time" />
+                <enumeration value="Timestamp" />
+                <enumeration value="URL" />
+            </restriction>
+        </simpleType>
+</schema>
