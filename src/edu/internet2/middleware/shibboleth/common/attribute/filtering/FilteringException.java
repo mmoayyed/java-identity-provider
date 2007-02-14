@@ -23,7 +23,7 @@ import edu.internet2.middleware.shibboleth.common.ShibbolethException;
  */
 public class FilteringException extends ShibbolethException {
 
-    /** Serial version UID */
+    /** Serial version UID. */
     private static final long serialVersionUID = -155030459695142046L;
 
     /**

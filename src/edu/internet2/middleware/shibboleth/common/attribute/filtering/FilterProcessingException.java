@@ -22,7 +22,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering;
  */
 public class FilterProcessingException extends FilteringException {
 
-    /** Serial version UID */
+    /** Serial version UID. */
     private static final long serialVersionUID = -8400445663950882824L;
 
     /**

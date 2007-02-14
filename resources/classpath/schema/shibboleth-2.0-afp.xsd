@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="urn:mace:shibboleth:2.0:afp"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:afp="urn:mace:shibboleth:2.0:afp"
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+
+    <import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="classpath:/schema/xmldsig-core-schema.xsd" />
+
+    <element name="AttributeAcceptancePolicy" type="afp:AttributeAcceptancePolicyType" />
+    <complexType name="AttributeAcceptancePolicyType">
+        <sequence>
+            <element ref="ds:Signature" minOccurs="0" />
+            <element ref="afp:ApplicationRequirement" minOccurs="0" maxOccurs="unbounded" />
+            <element ref="afp:ValueFilter" minOccurs="0" maxOccurs="unbounded" />
+            <element ref="afp:AttributeRule" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="id" type="ID" use="optional" />
+    </complexType>
+
+    <element name="AttributeRule" type="afp:AttributeRuleType" />
+    <complexType name="AttributeRuleType">
+        <sequence>
+            <element ref="afp:FilterPolicy" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="attribute" type="string" use="required" />
+    </complexType>
+
+    <element name="FilterPolicy" type="afp:FilterPolicyType" />
+    <complexType name="FilterPolicyType">
+        <sequence>
+            <element ref="afp:ApplicationRequirement" />
+            <element ref="afp:ValueFilter" />
+        </sequence>
+    </complexType>
+
+    <complexType name="MatchFunctorReferenceType">
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <attribute name="ref" type="IDREF" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="ApplicationRequirement" type="afp:MatchFunctorType" />
+    <element name="ValueFilter" type="afp:MatchFunctorType" />
+    <complexType name="MatchFunctorType" abstract="true">
+        <attribute name="id" type="ID" />
+        <attribute name="negateResult" type="boolean" default="false" />
+    </complexType>
+
+</schema>

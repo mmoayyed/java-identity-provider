@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering;
 
-import java.util.List;
+import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 
@@ -24,30 +24,29 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
  * The engine that applies attribute acceptance policies to a collection of attributes.
  */
 public interface FilteringEngine {
-    
-    /**
-     * Gets the list of attributes that may be released to the given entity.
-     * 
-     * @param entityId the ID of the entity to release attributes to
-     * 
-     * @return attributes, identified by their ID, that may be released to the given entity
-     */
-    public List<String> getReleasableAttributes(String entityId);
-    
-    //TODO NameID attribute lookup
+
+    // TODO NameID attribute lookup
 
     /**
-     * Processes the given collection of attributes using the effective attribute acceptance policy
-     * for the identity provider identified by its entity ID.  Processing filters out attributes, or 
-     * attribute values, that will not be accepted from the identity provider and may optionally transform 
-     * the given attributes (e.g. changing the format of values, concatinating values).
+     * Processes the given collection of attributes using the effective attribute acceptance policy for the identity
+     * provider identified by its entity ID. Processing filters out attributes, or attribute values, that will not be
+     * accepted from the identity provider and may optionally transform the given attributes (e.g. changing the format
+     * of values, concatinating values).
      * 
-     * @param attributes the collection of attributes to filter
-     * @param providerEntityId the identity provider that produced the attributes
+     * @param filterContext contextual information for filtering attributes
      * 
      * @return the filtered attributes
      * 
-     * @throws FilteringException thrown if there is a problem retrieving or applying the attribute acceptance policy 
+     * @throws FilteringException thrown if there is a problem retrieving or applying the attribute acceptance policy
      */
-    public List<Attribute> filterAttributes(List<Attribute> attributes, String providerEntityId) throws FilteringException;
+    public Set<Attribute> filterAttributes(FilterContext filterContext) throws FilteringException;
+
+    /**
+     * Gets the set of attribute rules for the filtering engine. Only one rule per attribute ID may be registered,
+     * adding an attribute rule that applies to the same attribute as an existing attribute rule will cause the later to
+     * be replaced by the former.
+     * 
+     * @return set of attribute rules for the filtering engine
+     */
+    public Set<AttributeRule> getAttributeRules();
 }
