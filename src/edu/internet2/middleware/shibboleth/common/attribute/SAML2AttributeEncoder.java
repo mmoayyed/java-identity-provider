@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute;
 
+import org.opensaml.common.xml.SAMLConstants;
+
 /**
  * SAML 2.0 attribute encoder.
  * 
@@ -23,6 +25,9 @@ package edu.internet2.middleware.shibboleth.common.attribute;
  */
 public interface SAML2AttributeEncoder<ValueType> extends XMLObjectAttributeEncoder {
 
+    /** Category for attribute encoders. */
+    public static final String CATEGORY = SAMLConstants.SAML20P_NS;
+    
     /**
      * Gets the attribute's name format.
      * 
