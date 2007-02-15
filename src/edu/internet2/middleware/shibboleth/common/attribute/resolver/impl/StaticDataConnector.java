@@ -9,7 +9,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javolution.util.FastList;
 
@@ -38,11 +40,11 @@ public class StaticDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public List<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Set<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving connector: (" + getId() + ")");
         log.debug(getId() + " resolving for principal: (" + resolutionContext.getPrincipalName() + ")");
 
-        List<Attribute> attributes = new FastList<Attribute>();
+        Set<Attribute> attributes = new HashSet<Attribute>();
         for (Attribute<String> a : sourceData) {
             BaseAttribute<String> newAttribute = new BaseAttribute<String>();
             newAttribute.setId(a.getId());

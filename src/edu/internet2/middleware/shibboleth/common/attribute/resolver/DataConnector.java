@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
-import java.util.List;
+import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 
@@ -25,7 +25,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
  * 
  * Data connectors must be stateless and thread-safe as a single instance may be used to service every request.
  */
-public interface DataConnector extends ResolutionPlugIn<List<Attribute>> {
+public interface DataConnector extends ResolutionPlugIn<Set<Attribute>> {
 
     /**
      * Returns the ID of a data connector to use if this one fails.

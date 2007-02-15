@@ -2,8 +2,7 @@
 package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import java.io.IOException;
-import java.util.List;
-
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -60,7 +59,7 @@ public class BasicAttributeResolverTest extends TestCase {
             log.info("connector - (" + id + ") = " + connector);
 
             try {
-                List<Attribute> attributes = connector.resolve(context);
+                Set<Attribute> attributes = connector.resolve(context);
                 for (Attribute a : attributes) {
                     log.info("attribute - (" + a.getId() + ")");
                     log.info("values - (" + a.getValues() + ")");

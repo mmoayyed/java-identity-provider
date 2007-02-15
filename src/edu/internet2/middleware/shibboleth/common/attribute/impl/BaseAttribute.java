@@ -120,4 +120,18 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
         
         return null;
     }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if(obj instanceof Attribute){
+            return obj.hashCode() == hashCode();
+        }
+        
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

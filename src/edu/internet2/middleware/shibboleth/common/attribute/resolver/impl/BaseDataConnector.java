@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
-import java.util.List;
+import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
@@ -24,7 +24,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnect
 /**
  * Base class for {@link DataConnector} plug-ins.
  */
-public abstract class BaseDataConnector extends AbstractResolutionPlugIn<List<Attribute>> implements DataConnector {
+public abstract class BaseDataConnector extends AbstractResolutionPlugIn<Set<Attribute>> implements DataConnector {
 
     /** ID of the data connector to use if this one fails. */
     private String failoverDependencyId;

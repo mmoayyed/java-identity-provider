@@ -17,7 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.io.StringWriter;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -88,7 +87,7 @@ public class StatementCreator {
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("principal", resolutionContext.getPrincipalName());
 
-        List<Attribute> attributes;
+        Set<Attribute> attributes;
         DataConnector dataConnector;
         for (String connectorId : dataConnectors) {
             dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorId);
