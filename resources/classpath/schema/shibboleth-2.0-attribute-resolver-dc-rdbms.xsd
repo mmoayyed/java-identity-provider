@@ -121,7 +121,7 @@
                     <documentation>The minimum number of connections the pool will establish with the database.  A value of zero means there is no minimum.</documentation>
                 </annotation>            
             </attribute>
-            <attribute name="poolMaxSize" type="positiveInteger" default="15">
+            <attribute name="poolMaxSize" type="positiveInteger" default="50">
                 <annotation>
                     <documentation>The maximum number of connections the pool will establish with the database.  A value of zero means there is no maximum.</documentation>
                 </annotation>

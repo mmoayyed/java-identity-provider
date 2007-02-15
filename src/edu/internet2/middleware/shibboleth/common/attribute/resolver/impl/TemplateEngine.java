@@ -20,8 +20,11 @@ import java.io.StringWriter;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
+import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
@@ -30,17 +33,40 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnect
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
- * Create a statement from a give template by replacing its macro's with information within the resolution context.
+ * A velocity based template engine that pulls information from a resolution context for use within the template.
  */
-public class StatementCreator {
+public class TemplateEngine {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(StatementCreator.class);
+    private static Logger log = Logger.getLogger(TemplateEngine.class);
+    
+    /** Velocity engine to use to render templates. */
+    private VelocityEngine velocity;
+    
+    /**
+     * Constructor.
+     *
+     * @param engine velocity engine used to evaluate templates
+     */
+    public TemplateEngine(VelocityEngine engine){
+        velocity = engine;
+    }
+    
+    /**
+     * Registers a template under a given name.
+     * 
+     * @param templateName name to register the template under
+     * @param template template to register
+     */
+    public void registerTemplate(String templateName, String template){
+        StringResourceRepository repository = StringResourceLoader.getRepository();
+        repository.putStringResource(templateName, template);
+    }
     
     /**
      * Create a statement from a give template by replacing it's macro's with information within the resolution context.
      * 
-     * @param template statement template
+     * @param templateName name of the template
      * @param resolutionContext the current resolution context
      * @param dataConnectors the list of data connectors that will provider attributes
      * @param attributeDefinitions the list of attribute definitions that will provider attributes
@@ -50,20 +76,21 @@ public class StatementCreator {
      * @throws AttributeResolutionException thrown if the given template can not be populated because it is malformed or
      *             the given data connectors or attribute definitions error out during resolution
      */
-    public String createStatement(String template, ResolutionContext resolutionContext, Set<String> dataConnectors,
+    public String createStatement(String templateName, ResolutionContext resolutionContext, Set<String> dataConnectors,
             Set<String> attributeDefinitions) throws AttributeResolutionException {
         VelocityContext vContext = createVelocityContext(resolutionContext, dataConnectors, attributeDefinitions);
 
         try {
             if(log.isDebugEnabled()){
-                log.debug("Populating the following template: " + template);
+                log.debug("Populating the following " + templateName + " template");
             }
             
             StringWriter output = new StringWriter();
-            Velocity.evaluate(vContext, output, "StatementCreator", template);
+            Template template = velocity.getTemplate(templateName);
+            template.merge(vContext, output);
             return output.toString();
         } catch (Exception e) {
-            log.error("Unable to populate template " + template, e);
+            log.error("Unable to populate " + templateName + " template", e);
             throw new AttributeResolutionException("Unable to evaluate template", e);
         }
     }

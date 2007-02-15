@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,6 +67,9 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** Query to use to validate connectivity with the database. */
     private String validationQuery;
 
+    /** Name the query template is registered under with the statement creator. */
+    private String queryTemplateName;
+
     /** Template that produces the query to use. */
     private String queryTemplate;
 
@@ -76,20 +80,29 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     private Map<String, Map<String, SoftReference<Set<Attribute>>>> resultsCache;
 
     /** Template engine used to change query template into actual query. */
-    private StatementCreator queryCreator;
+    private TemplateEngine queryCreator;
 
     /**
      * Constructor.
      * 
      * @param source data source used to retrieve connections
+     * @param validation query used to validate connections to the database, should be very fast
      * @param resultCaching whether query results should be cached
      */
-    public RDBMSDataConnector(DataSource source, boolean resultCaching) {
+    public RDBMSDataConnector(DataSource source, String validation, boolean resultCaching) {
         dataSource = source;
-        usesStoredProcedure = false;
+        validationQuery = validation;
         cacheResults = resultCaching;
+        usesStoredProcedure = false;
         columnDescriptors = new HashMap<String, ColumnDescriptor>();
-        queryCreator = new StatementCreator();
+    }
+
+    /**
+     * Intializes the connector and prepares it for use.
+     */
+    public void initialize() {
+        queryTemplateName = "shibboleth.resolver.dc." + getId();
+        queryCreator.registerTemplate(queryTemplateName, queryTemplate);
 
         if (cacheResults) {
             resultsCache = new HashMap<String, Map<String, SoftReference<Set<Attribute>>>>();
@@ -133,12 +146,22 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     }
 
     /**
-     * Sets the query used to validate connectivity with the database.
+     * Gets the engine used to evaluate the query template.
      * 
-     * @param query query used to validate connectivity with the database
+     * @return engine used to evaluate the query template
      */
-    public void setValidationQuery(String query) {
-        validationQuery = query;
+    public TemplateEngine getTemplateEneing() {
+        return queryCreator;
+    }
+
+    /**
+     * Sets the engine used to evaluate the query template.
+     * 
+     * @param engine engine used to evaluate the query template
+     */
+    public void setTemplateEngine(TemplateEngine engine) {
+        queryCreator = engine;
+        clearCache();
     }
 
     /**
@@ -157,16 +180,17 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     public void setQueryTemplate(String template) {
         queryTemplate = template;
+        clearCache();
     }
 
     /**
      * Gets the set of column descriptors used to deal with result set data. The name of the database column is the
-     * map's key.
+     * map's key. This list is unmodifiable.
      * 
      * @return column descriptors used to deal with result set data
      */
     public Map<String, ColumnDescriptor> getColumnDescriptor() {
-        return columnDescriptors;
+        return Collections.unmodifiableMap(columnDescriptors);
     }
 
     /**
@@ -175,7 +199,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * @param descriptors column descriptors used to deal with result set data
      */
     public void setColumnDescriptors(Map<String, ColumnDescriptor> descriptors) {
-        columnDescriptors = descriptors;
+        columnDescriptors = new HashMap<String, ColumnDescriptor>(descriptors);
+        clearCache();
     }
 
     /** {@inheritDoc} */
@@ -190,8 +215,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** {@inheritDoc} */
     public Set<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
-        String query = queryCreator.createStatement(queryTemplate, resolutionContext, getDataConnectorDependencyIds(),
-                getDataConnectorDependencyIds());
+        String query = queryCreator.createStatement(queryTemplateName, resolutionContext,
+                getDataConnectorDependencyIds(), getDataConnectorDependencyIds());
 
         Set<Attribute> resolvedAttributes = null;
 
@@ -245,6 +270,15 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             log.error("Unable to validate RDBMS data connector " + getId() + " configuration", e);
             throw new AttributeResolutionException("Unable to validate RDBMS data connector " + getId()
                     + " configuration", e);
+        }
+    }
+
+    /**
+     * Clears the result cache.
+     */
+    protected void clearCache() {
+        if (cacheResults) {
+            resultsCache.clear();
         }
     }
 
