@@ -1,73 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
-        targetNamespace="urn:mace:shibboleth:2.0:metadata" 
-        xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
-        xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata">
-        
-    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="classpath:/schema/saml-schema-metadata-2.0.xsd" />
-    
-    <element name="MetadataProvider" type="shibmd:MetadataProviderType" />
-    
-    <element name="MetadataFilter" type="shibmd:MetadataFilterType" />
-    
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata"
+    xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata">
+
+    <annotation>
+        <documentation>Schema describing metadata providers and filters.</documentation>
+    </annotation>
+
+    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
+        schemaLocation="classpath:/schema/saml-schema-metadata-2.0.xsd" />
+
+    <element name="MetadataProvider" type="shibmd:MetadataProviderType">
+        <annotation>
+            <documentation>Defines a provider of SAML 2 metadata information.</documentation>
+        </annotation>
+    </element>
+
+    <element name="MetadataFilter" type="shibmd:MetadataFilterType">
+        <annotation>
+            <documentation>
+                Defines a filter that is applied to SAML2 metadata after it has been parsed and validated. Filters may
+                be used to remove unecessary information or preform other transformative logic.
+            </documentation>
+        </annotation>
+    </element>
+
     <complexType name="ChainingMetadataProvider">
+        <annotation>
+            <documentation>
+                A metadata provider that composes other metadata providers. During a lookup operation member providers
+                are searched in the order they listed in this providers configuration until one provides a response to
+                the lookup. That response is then returned, no subsequent member providers are inspected.
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="shibmd:MetadataProviderType">
                 <sequence>
-                    <element ref="shibmd:MetadataProvider" minOccurs="1" maxOccurs="unbounded" />
+                    <element ref="shibmd:MetadataProvider" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A member metadata provider that will be searched for information.
+                            </documentation>
+                        </annotation>
+                    </element>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="InlineMetadataProvider">
+        <annotation>
+            <documentation>A metadata provider that allows SAML 2 metadata to be specified inline.</documentation>
+        </annotation>
         <complexContent>
             <extension base="shibmd:MetadataProviderType">
                 <choice>
-                    <element ref="saml2md:EntitiesDescriptor" />
-                    <element ref="saml2md:EntityDescriptor" />
+                    <element ref="saml2md:EntitiesDescriptor">
+                        <annotation>
+                            <documentation>A SAML 2 metadata EntitiesDescriptor declaration.</documentation>
+                        </annotation>
+                    </element>
+                    <element ref="saml2md:EntityDescriptor">
+                        <annotation>
+                            <documentation>A SAML 2 metadata EntitiesDescriptor declaration.</documentation>
+                        </annotation>
+                    </element>
                 </choice>
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="FileBackedURLMetadataProvider">
+        <annotation>
+            <documentation>
+                A metadata provider that periodically pulls metadata from a given URL. If the metadata is valid it is
+                stored to disk. If the the provided URL can not be reached or the metadata retrieved is invalid this
+                provider will fall back to its on-disk copy.
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="shibmd:URLMetadataProvider">
-                <attribute name="backingFile" type="string" use="required"/>
-            </extension>
-        </complexContent>
-    </complexType>
-    
-    <complexType name="URLMetadataProvider">
-        <complexContent>
-            <extension base="shibmd:MetadataProviderType">
-                <attribute name="metadataURL" type="anyURI" use="required" />
-                <attribute name="maintainExpiredMetadata" type="boolean" default="false" />
-                <attribute name="cacheDuration" type="unsignedInt" default="2880" />
-                <attribute name="requestTimeout" type="unsignedInt" default="15" />
-                <attribute name="basicAuthUser" type="string" />
-                <attribute name="basicAuthPassword" type="string" />
-                <!-- Need to deal with socket factory -->
-            </extension>
-        </complexContent>
-    </complexType>
-    
-    <complexType name="FilesystemMetadataProvider">
-        <complexContent>
-            <extension base="shibmd:MetadataProviderType">
-                <attribute name="metadataFile" type="string" use="required" />
+                <attribute name="backingFile" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The path to the temporary file used to store valid metadata on-disk.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
 
-	<complexType name="MetadataProviderType" abstract="true">
-		<sequence>
-			<element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded"/>
-		</sequence>
-        <attribute name="id" type="ID" use="required" />
-	</complexType>
-	
-	<complexType name="MetadataFilterType" abstract="true" />
-    
+    <complexType name="URLMetadataProvider">
+        <annotation>
+            <documentation>A metadata provider that periodically pulls metadata from a given URL.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <attribute name="metadataURL" type="anyURI" use="required">
+                    <annotation>
+                        <documentation>The URL from which to retrieve the metadata.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maintainExpiredMetadata" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether expired metadata should continue to be used until such
+                            time as fresh metadata can be retireved from the remote server.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheDuration" type="unsignedInt" default="2880">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time, in seconds, to cache metadata. If the metadata specifies a
+                            shorter duration, either through a cache duration of explicit expiration time, then that
+                            duration will be used.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="requestTimeout" type="unsignedInt" default="15">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time, in secondsm to wait for the remote server to response.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthUser" type="string">
+                    <annotation>
+                        <documentation>
+                            The user name to provide, during basic authentication, when connecting to the remote server.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthPassword" type="string">
+                    <annotation>
+                        <documentation>
+                            The password to provide, during basic authentication, when connecting to the remote server.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <!-- Need to deal with socket factory -->
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="FilesystemMetadataProvider">
+        <annotation>
+            <documentation>A metatadata provider that reads SAML2 metadata from the filesystem.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <attribute name="metadataFile" type="string" use="required">
+                    <annotation>
+                        <documentation>The path to the metadata file.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="MetadataProviderType" abstract="true">
+        <sequence>
+            <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                        A filter to be applied to metadata after it has been parsed and validated.
+                    </documentation>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="id" type="ID" use="required">
+            <annotation>
+                <documentation>A unique identifier that may be used to identify a particular provider</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="MetadataFilterType" abstract="true" />
+
 </schema>

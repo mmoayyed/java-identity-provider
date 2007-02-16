@@ -1,26 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
-        targetNamespace="urn:mace:shibboleth:2.0:resolver:ad:simple" 
-        xmlns:simple="urn:mace:shibboleth:2.0:resolver:ad:simple"
-        xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
-        
-    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
-    
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:resolver:ad:simple"
+    xmlns:simple="urn:mace:shibboleth:2.0:resolver:ad:simple" xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver"
+        schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+
     <complexType name="Simple">
+        <annotation>
+            <documentation>
+                An attribute definition the gets its information from a static 
+            </documentation>
+        </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <sequence>
                     <element name="Attribute" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies an attribute, and its values, to be exposed by this definition.
+                            </documentation>
+                        </annotation>
                         <complexType>
                             <sequence>
-                                <element name="Value" type="string" maxOccurs="unbounded"/>
+                                <element name="Value" type="string" maxOccurs="unbounded">
+                                    <annotation>
+                                        <documentation>
+                                            A value of the attribute. If the value contains characters that would
+                                            otherwise need to be XML encoded you may wrap the value in a CDATA section.
+                                        </documentation>
+                                    </annotation>
+                                </element>
                             </sequence>
-                            <attribute name="name" type="string" use="required" />
+                            <attribute name="name" type="string" use="required">
+                                <annotation>
+                                    <documentation>The name of the attribute.</documentation>
+                                </annotation>
+                            </attribute>
                         </complexType>
                     </element>
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    
+
 </schema>

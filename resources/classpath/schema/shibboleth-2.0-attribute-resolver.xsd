@@ -1,26 +1,26 @@
-<schema targetNamespace="urn:mace:shibboleth:2.0:resolver" 
-        xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
-               
+<schema targetNamespace="urn:mace:shibboleth:2.0:resolver" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
+
     <annotation>
-        <documentation>
-            Shibboleth 2.0 Attribute Resolver configuration schema
-        </documentation>
+        <documentation>Shibboleth 2.0 Attribute Resolver configuration schema</documentation>
     </annotation>
 
     <element name="AttributeResolver" type="resolver:AttributeResolverType">
         <annotation>
             <documentation>Root of the attribute resolver configuration file.</documentation>
         </annotation>
-        <keyref name="AttributeDefinitionAttributeDefinitionDependencyRef" refer="resolver:AttributeDefinitionDependencyKey">
+        <keyref name="AttributeDefinitionAttributeDefinitionDependencyRef"
+            refer="resolver:AttributeDefinitionDependencyKey">
             <selector xpath="./resolver:AttributeDefinition/resolver:AttributeDefinitionDependency" />
             <field xpath="@ref" />
         </keyref>
-        <keyref name="DataConnectorAttributeDefinitionDependencyRef" refer="resolver:AttributeDefinitionDependencyKey">
+        <keyref name="DataConnectorAttributeDefinitionDependencyRef"
+            refer="resolver:AttributeDefinitionDependencyKey">
             <selector xpath="./resolver:DataConnector/resolver:AttributeDefinitionDependency" />
             <field xpath="@ref" />
         </keyref>
-        <keyref name="PrincipalConnectorAttributeDefinitionDependencyRef" refer="resolver:AttributeDefinitionDependencyKey">
+        <keyref name="PrincipalConnectorAttributeDefinitionDependencyRef"
+            refer="resolver:AttributeDefinitionDependencyKey">
             <selector xpath="./resolver:PrincipalConnector/resolver:AttributeDefinitionDependency" />
             <field xpath="@ref" />
         </keyref>
@@ -28,7 +28,7 @@
             <selector xpath="./resolver:AttributeDefinition" />
             <field xpath="@id" />
         </key>
-        
+
         <keyref name="AttributeDefinitionDataConnectorDependencyRef" refer="resolver:DataConnectorDependencyKey">
             <selector xpath="./resolver:AttributeDefinition/resolver:DataConnectorDependency" />
             <field xpath="@ref" />
@@ -48,7 +48,7 @@
         <key name="DataConnectorDependencyKey">
             <selector xpath="./resolver:DataConnector" />
             <field xpath="@id" />
-        </key> 
+        </key>
     </element>
     <complexType name="AttributeResolverType">
         <choice minOccurs="0" maxOccurs="unbounded">
@@ -72,17 +72,21 @@
         <complexContent>
             <extension base="resolver:BaseResolutionPlugInType">
                 <sequence>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
                 <attribute name="dependencyOnly" type="boolean" default="false">
                     <annotation>
-                        <documentation>A boolean flag that indicates whether this attribute definition is only defined becaue its data is needed elsewhere within the resolver and as such should not be released outside the resolver.</documentation>
+                        <documentation>
+                            A boolean flag that indicates whether this attribute definition is only defined becaue its
+                            data is needed elsewhere within the resolver and as such should not be released outside the
+                            resolver.
+                        </documentation>
                     </annotation>
                 </attribute>
             </extension>
         </complexContent>
     </complexType>
-    
+
     <element name="AttributeEncoder" type="resolver:BaseAttributeEncoderType">
         <annotation>
             <documentation>Defines an encoder for an attribute.</documentation>
@@ -99,36 +103,40 @@
 
     <element name="DataConnector" type="resolver:BaseDataConnectorType">
         <annotation>
-            <documentation>Defines a data connector which is used to pull information from local infrastructure.</documentation>
+            <documentation>
+                Defines a data connector which is used to pull information from local infrastructure.
+            </documentation>
         </annotation>
     </element>
     <complexType name="BaseDataConnectorType">
         <annotation>
             <documentation>
-                Data connectors pull information from local infrastructure, such as databases and LDAP directories,
-                and make these raw attributes available to attribute definitions for finishing.
+                Data connectors pull information from local infrastructure, such as databases and LDAP directories, and
+                make these raw attributes available to attribute definitions for finishing.
             </documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseResolutionPlugInType">
                 <sequence>
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="resolver:FailoverDataConnector" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
             </extension>
         </complexContent>
     </complexType>
-    
+
     <element name="PrincipalConnector" type="resolver:BasePrincipalConnectorType">
         <annotation>
-            <documentation>Principal connectors convert a subject's NameID into an internal principal name for use within 
-                attribute definitions and data connectors.</documentation>
+            <documentation>
+                Principal connectors convert a subject's NameID into an internal principal name for use within attribute
+                definitions and data connectors.
+            </documentation>
         </annotation>
     </element>
     <complexType name="BasePrincipalConnectorType">
         <annotation>
             <documentation>
-                Principal connectors convert a subject's NameID into an internal principal name for use within 
-                attribute definitions and data connectors.
+                Principal connectors convert a subject's NameID into an internal principal name for use within attribute
+                definitions and data connectors.
             </documentation>
         </annotation>
         <complexContent>
@@ -156,8 +164,8 @@
             </documentation>
         </annotation>
         <choice minOccurs="0" maxOccurs="unbounded">
-            <element ref="resolver:AttributeDefinitionDependency" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="resolver:DataConnectorDependency" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="resolver:AttributeDefinitionDependency" minOccurs="0" maxOccurs="unbounded" />
+            <element ref="resolver:DataConnectorDependency" minOccurs="0" maxOccurs="unbounded" />
         </choice>
         <attribute name="id" type="string" use="required">
             <annotation>
@@ -166,11 +174,15 @@
         </attribute>
         <attribute name="propagateErrors" type="boolean" default="true">
             <annotation>
-                <documentation>A boolean flag indiciating whether errors within a definition should be propogated outside the resolver.  Errors exposed outside the resolver will likely result in an error being returned to the relying party.</documentation>
+                <documentation>
+                    A boolean flag indiciating whether errors within a definition should be propogated outside the
+                    resolver. Errors exposed outside the resolver will likely result in an error being returned to the
+                    relying party.
+                </documentation>
             </annotation>
         </attribute>
     </complexType>
-    
+
     <element name="AttributeDefinitionDependency" type="resolver:PluginDependencyType">
         <annotation>
             <documentation>Defines a dependency on a specific attribute definition.</documentation>
@@ -188,11 +200,9 @@
     </element>
     <complexType name="PluginDependencyType">
         <annotation>
-            <documentation>
-                A type that represents a reference to another plugin
-            </documentation>
+            <documentation>A type that represents a reference to another plugin</documentation>
         </annotation>
         <attribute name="ref" type="string" use="required" />
-   </complexType>
-    
+    </complexType>
+
 </schema>

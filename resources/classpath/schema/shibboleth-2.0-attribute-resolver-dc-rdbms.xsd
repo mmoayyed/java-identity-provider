@@ -1,196 +1,255 @@
-<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc:rdbms"
-        xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-        xmlns:rdbms="urn:mace:shibboleth:2.0:resolver:dc:rdbms">
+<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc:rdbms" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:rdbms="urn:mace:shibboleth:2.0:resolver:dc:rdbms">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
-        
-        <complexType name="RelationalDatabase">
-            <annotation>
-                <documentation>A database connector definition that uses JDBC version 3 to connect to and pull information from a relational database.</documentation>
-            </annotation>
-            <complexContent>
-                <extension base="resolver:BaseDataConnectorType">
-                    <sequence>
-                        <choice>
-                            <element ref="rdbms:ManagedConnection" />
-                            <element ref="rdbms:UnmanagedConnection" />
-                        </choice>
-                        <element name="QueryTemplate" type="string">
+
+    <complexType name="RelationalDatabase">
+        <annotation>
+            <documentation>
+                A database connector definition that uses JDBC version 3 to connect to and pull information from a
+                relational database.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <sequence>
+                    <choice>
+                        <element ref="rdbms:ContainerManagedConnection">
                             <annotation>
-                                <documentation>A template that will be used to create SQL query used to pull information from the database.</documentation>
+                            <documentation>
+                                A connection, or pool of connections, to the database managed the application container.
+                            </documentation>
                             </annotation>
                         </element>
-                        <element ref="rdbms:Column" minOccurs="0" maxOccurs="unbounded" />
-                    </sequence>
-                    <attribute name="queryUsesStoredProcedure" type="boolean" default="false">
+                        <element ref="rdbms:ConnectorManagedConnection">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed the data connector.
+                                </documentation>
+                            </annotation>
+                        </element>
+                    </choice>
+                    <element name="QueryTemplate" type="string">
                         <annotation>
-                            <documentation>A boolean flag that determines whether stored procedures might be used in the SQL queries used in this connector.</documentation>
+                            <documentation>
+                                A template that will be used to create SQL query used to pull information from the
+                                database.
+                            </documentation>
                         </annotation>
-                    </attribute>
-                    <attribute name="cacheResults" type="boolean" default="true">
-                        <annotation>
-                            <documentation>A boolean flag that determines whether to cache results.  Results using a compound key consisting of the principal name for whom the information is being requested and the actual SQL query used.</documentation>
-                        </annotation>
-                    </attribute>
-                    <attribute name="validationQuery" type="string" use="required">
-                        <annotation>
-                            <documentation>A simple SQL query that may be executed to ensure a proper configuration.  This query should execute as quckly as possible and must return at least one result.</documentation>
-                        </annotation>
-                    </attribute>
-                </extension>
-            </complexContent>
-        </complexType>
-        
-        <element name="ContainerManagedConnection" type="rdbms:ContainerManagedConnectionType">
-            <annotation>
-                <documentation>Describes a database connection source that is managed by the application container.</documentation>
-            </annotation>
-        </element>
-        <complexType name="ContainerManagedConnectionType">
-            <sequence>
-                <element name="JNDIConnectionProperty" type="rdbms:PropertyType">
+                    </element>
+                    <element ref="rdbms:Column" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+                <attribute name="queryUsesStoredProcedure" type="boolean" default="false">
                     <annotation>
-                        <documentation>A property used when contrusting a JNDI initial context which in turn is used to lookup the database DataSource.</documentation>
+                        <documentation>
+                            A boolean flag that determines whether stored procedures might be used in the SQL queries
+                            used in this connector.
+                        </documentation>
                     </annotation>
-                </element>
-            </sequence>
-            <attribute name="resourceName" type="string" use="required">
-                <annotation>
-                    <documentation>The resource name the DataSource is bound to in the JNDI tree.</documentation>
-                </annotation>
-            </attribute>
-        </complexType>
-        
-        <element name="ConnectorManagedConnection" type="rdbms:ConnectorManagedConnectionType">
-            <annotation>
-                <documentation>Describes a database connection source that is managed by the attribute resolver data connector.</documentation>
-            </annotation>
-        </element>
-        <complexType name="ConnectorManagedConnectionType">
-            <sequence>
-                <element name="ConnectionProperty" type="rdbms:PropertyType" minOccurs="0" maxOccurs="unbounded">
+                </attribute>
+                <attribute name="cacheResults" type="boolean" default="true">
                     <annotation>
-                        <documentation>A property used constructing a connection from the DriverManager.</documentation>
+                        <documentation>
+                            A boolean flag that determines whether to cache results. Results using a compound key
+                            consisting of the principal name for whom the information is being requested and the actual
+                            SQL query used.
+                        </documentation>
                     </annotation>
-                </element>
-            </sequence>
-            <attribute name="jdbcURL" type="string" use="required">
+                </attribute>
+                <attribute name="validationQuery" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            A simple SQL query that may be executed to ensure a proper configuration. This query should
+                            execute as quckly as possible and must return at least one result.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <element name="ContainerManagedConnection" type="rdbms:ContainerManagedConnectionType">
+        <annotation>
+            <documentation>
+                Describes a database connection source that is managed by the application container.
+            </documentation>
+        </annotation>
+    </element>
+    <complexType name="ContainerManagedConnectionType">
+        <sequence>
+            <element name="JNDIConnectionProperty" type="rdbms:PropertyType">
                 <annotation>
-                    <documentation>The JDBC URL for the database.  These are usually of the form jdbc:databaseProduceName:databaseSpecificInformation.  For example, jdbc:hsql:mem:MyDatabase</documentation>
+                    <documentation>
+                        A property used when contrusting a JNDI initial context which in turn is used to lookup the
+                        database DataSource.
+                    </documentation>
                 </annotation>
-            </attribute>
-            <attribute name="jdbcDriver" type="string" use="required">
-                <annotation>
-                    <documentation>This is the full qualified class name of the JDBC driver used to connect to the database.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="jdbcserName" type="string">
-                <annotation>
-                    <documentation>The user name to use while connecting to the database.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="jdbcPassword" type="string">
-                <annotation>
-                    <documentation>The password to use while connecting to the database.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="poolAccquireIncrement" type="positiveInteger" default="3">
-                <annotation>
-                    <documentation>The number of new connection that will be created when the pool is exhausted.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="poolAccquireRetryAttempts" type="positiveInteger" default="36">
-                <annotation>
-                    <documentation>The number of times the pool will try to get establish a connection to a database.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="poolAccquireRetryDelay" type="positiveInteger" default="5000">
-                <annotation>
-                    <documentation>The ammount of time, in milliseconds, the pool will wait before trying to retrieve a new connection after it has failed.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="poolBreakAfterAccquireFailure" type="boolean" default="true">
-                <annotation>
-                    <documentation>A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new connection can not be established after the accquire retry attempts is reached.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="poolMinSize" type="positiveInteger" default="2">
-                <annotation>
-                    <documentation>The minimum number of connections the pool will establish with the database.  A value of zero means there is no minimum.</documentation>
-                </annotation>            
-            </attribute>
-            <attribute name="poolMaxSize" type="positiveInteger" default="50">
-                <annotation>
-                    <documentation>The maximum number of connections the pool will establish with the database.  A value of zero means there is no maximum.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="poolMaxIdleTime" type="positiveInteger" default="600">
-                <annotation>
-                    <documentation>The maximum time, in seconds, that an established connection will remain idle before it is closed.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="poolIdleTestPeriod" type="positiveInteger" default="180">
-                <annotation>
-                    <documentation>The interval, in seconds, that the pool will scan idle established connections, using the validation query, for liveness.</documentation>
-                </annotation>
-            </attribute>
-        </complexType>
-        
-        <complexType name="PropertyType">
-            <attribute name="name" type="string" use="required">
-                <annotation>
-                    <documentation>The name of the property.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="value" type="string" use="required">
-                <annotation>
-                    <documentation>The value of the property,</documentation>
-                </annotation>
-            </attribute>
-        </complexType>
-        
-        <element name="Column" type="rdbms:ColumnType">
+            </element>
+        </sequence>
+        <attribute name="resourceName" type="string" use="required">
             <annotation>
-                <documentation>A description of a column in the result set from the query.</documentation>
+                <documentation>The resource name the DataSource is bound to in the JNDI tree.</documentation>
             </annotation>
-        </element>
-        <complexType name="ColumnType">
-            <attribute name="columnName" type="string" use="required">
+        </attribute>
+    </complexType>
+
+    <element name="ConnectorManagedConnection" type="rdbms:ConnectorManagedConnectionType">
+        <annotation>
+            <documentation>
+                Describes a database connection source that is managed by the attribute resolver data connector.
+            </documentation>
+        </annotation>
+    </element>
+    <complexType name="ConnectorManagedConnectionType">
+        <sequence>
+            <element name="ConnectionProperty" type="rdbms:PropertyType" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
-                    <documentation>The name of the database column.</documentation>
+                    <documentation>A property used constructing a connection from the DriverManager.</documentation>
                 </annotation>
-            </attribute>
-            <attribute name="attributeName" type="string">
-                <annotation>
-                    <documentation>The name of the attribute that data from this column should be added to.</documentation>
-                </annotation>
-            </attribute>
-            <attribute name="type" type="rdbms:ColumnDataType" default="String">
-                <annotation>
-                    <documentation>The Java data type data in the column should be extracted as.</documentation>
-                </annotation>
-            </attribute>
-        </complexType>
-        
-        <simpleType name="ColumnDataType">
-            <restriction>
-                <enumeration value="BigDecimal" />
-                <enumeration value="Boolean" />
-                <enumeration value="Byte" />
-                <enumeration value="ByteArray" />
-                <enumeration value="Date" />
-                <enumeration value="Double" />
-                <enumeration value="Float" />
-                <enumeration value="Int" />
-                <enumeration value="Long" />
-                <enumeration value="Object" />
-                <enumeration value="Short" />
-                <enumeration value="String" />
-                <enumeration value="Time" />
-                <enumeration value="Timestamp" />
-                <enumeration value="URL" />
-            </restriction>
-        </simpleType>
+            </element>
+        </sequence>
+        <attribute name="jdbcURL" type="string" use="required">
+            <annotation>
+                <documentation>
+                    The JDBC URL for the database. These are usually of the form
+                    jdbc:databaseProduceName:databaseSpecificInformation. For example, jdbc:hsql:mem:MyDatabase
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcDriver" type="string" use="required">
+            <annotation>
+                <documentation>
+                    This is the full qualified class name of the JDBC driver used to connect to the database.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcserName" type="string">
+            <annotation>
+                <documentation>The user name to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcPassword" type="string">
+            <annotation>
+                <documentation>The password to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAccquireIncrement" type="positiveInteger" default="3">
+            <annotation>
+                <documentation>
+                    The number of new connection that will be created when the pool is exhausted.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAccquireRetryAttempts" type="positiveInteger" default="36">
+            <annotation>
+                <documentation>
+                    The number of times the pool will try to get establish a connection to a database.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAccquireRetryDelay" type="positiveInteger" default="5000">
+            <annotation>
+                <documentation>
+                    The ammount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
+                    after it has failed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolBreakAfterAccquireFailure" type="boolean" default="true">
+            <annotation>
+                <documentation>
+                    A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new
+                    connection can not be established after the accquire retry attempts is reached.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMinSize" type="positiveInteger" default="2">
+            <annotation>
+                <documentation>
+                    The minimum number of connections the pool will establish with the database. A value of zero means
+                    there is no minimum.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMaxSize" type="positiveInteger" default="50">
+            <annotation>
+                <documentation>
+                    The maximum number of connections the pool will establish with the database. A value of zero means
+                    there is no maximum.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMaxIdleTime" type="positiveInteger" default="600">
+            <annotation>
+                <documentation>
+                    The maximum time, in seconds, that an established connection will remain idle before it is closed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolIdleTestPeriod" type="positiveInteger" default="180">
+            <annotation>
+                <documentation>
+                    The interval, in seconds, that the pool will scan idle established connections, using the validation
+                    query, for liveness.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="PropertyType">
+        <attribute name="name" type="string" use="required">
+            <annotation>
+                <documentation>The name of the property.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="value" type="string" use="required">
+            <annotation>
+                <documentation>The value of the property,</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <element name="Column" type="rdbms:ColumnType">
+        <annotation>
+            <documentation>A description of a column in the result set from the query.</documentation>
+        </annotation>
+    </element>
+    <complexType name="ColumnType">
+        <attribute name="columnName" type="string" use="required">
+            <annotation>
+                <documentation>The name of the database column.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="attributeName" type="string">
+            <annotation>
+                <documentation>The name of the attribute that data from this column should be added to.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="type" type="rdbms:ColumnDataType" default="String">
+            <annotation>
+                <documentation>The Java data type data in the column should be extracted as.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <simpleType name="ColumnDataType">
+        <restriction>
+            <enumeration value="BigDecimal" />
+            <enumeration value="Boolean" />
+            <enumeration value="Byte" />
+            <enumeration value="ByteArray" />
+            <enumeration value="Date" />
+            <enumeration value="Double" />
+            <enumeration value="Float" />
+            <enumeration value="Int" />
+            <enumeration value="Long" />
+            <enumeration value="Object" />
+            <enumeration value="Short" />
+            <enumeration value="String" />
+            <enumeration value="Time" />
+            <enumeration value="Timestamp" />
+            <enumeration value="URL" />
+        </restriction>
+    </simpleType>
 </schema>

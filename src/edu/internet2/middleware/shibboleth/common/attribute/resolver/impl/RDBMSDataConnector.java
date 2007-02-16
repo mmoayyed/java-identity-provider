@@ -101,9 +101,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * Intializes the connector and prepares it for use.
      */
     public void initialize() {
-        queryTemplateName = "shibboleth.resolver.dc." + getId();
-        queryCreator.registerTemplate(queryTemplateName, queryTemplate);
-
+        registerTemplate();
         if (cacheResults) {
             resultsCache = new HashMap<String, Map<String, SoftReference<Set<Attribute>>>>();
         }
@@ -161,6 +159,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     public void setTemplateEngine(TemplateEngine engine) {
         queryCreator = engine;
+        registerTemplate();
         clearCache();
     }
 
@@ -273,13 +272,17 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         }
     }
 
-    /**
-     * Clears the result cache.
-     */
+    /** Clears the result cache. */
     protected void clearCache() {
         if (cacheResults) {
             resultsCache.clear();
         }
+    }
+    
+    /** Registers the query template with template engine. */
+    protected void registerTemplate(){
+        queryTemplateName = "shibboleth.resolver.dc." + getId();
+        queryCreator.registerTemplate(queryTemplateName, queryTemplate);
     }
 
     /**
