@@ -15,87 +15,56 @@
  */
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import junit.framework.TestCase;
-
-import org.apache.log4j.Logger;
-import org.opensaml.DefaultBootstrap;
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
+import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.xml.parse.ClasspathResolver;
-import org.opensaml.xml.parse.LoggingErrorHandler;
-import org.springframework.beans.factory.xml.DocumentLoader;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.w3c.dom.Document;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.context.ApplicationContext;
+import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
 
 /**
  * Test that the configuration code for inline metadata providers works correctly.
  */
-public class InlineMetadataProviderTest extends TestCase {
-
-    private GenericApplicationContext springCtx;
+public class InlineMetadataProviderTest extends BaseConfigTestCase {
     
-    private String providerId;
-    
-    private String expectedName;
-    
-    /** {@inheritDoc} */
-    protected void setUp() throws Exception {
-        super.setUp();
+    /**
+     * Tests that an Inline provider is properly created when given an {@link EntitiesDescriptor}.
+     * 
+     * @throws Exception thrown if there is an error using the configuration
+     */
+    public void testProviderInstantiationEntitiesDescriptor() throws Exception{
+        ApplicationContext appContext = createSpringContext(DATA_PATH + "/config/metadata/InlineMetadataProvider1.xml");
         
-        DefaultBootstrap.bootstrap();
-        
-        providerId = "InlineMetadata";
-        expectedName = "urn:mace:incommon";
-        
-        String springConfigFile = "/data/edu/internet2/middleware/shibboleth/common/config/metadata/InlineMetadataProvider.xml";
-        springCtx = new GenericApplicationContext();
-        
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(springCtx);
-        configReader.setDocumentLoader(new ValidatingDocumentLoader());
-        //configReader.setEntityResolver(new ClasspathEntityResolver());
-        //configReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
-        //configReader.setNamespaceAware(true);
-        configReader.loadBeanDefinitions(new ClassPathResource(springConfigFile));
-    }
-    
-    public void testProviderInstantiation() throws Exception{
-        assertEquals(1, springCtx.getBeanDefinitionCount());
-        
-        assertTrue("Configured metadata provider no present in Spring context", springCtx.containsBean(providerId));
-        
-        MetadataProvider provider = (MetadataProvider) springCtx.getBean(providerId);
+        MetadataProvider provider = (MetadataProvider) appContext.getBean("InlineMetadata");
         assertNotNull(provider);
-        assertEquals(((EntitiesDescriptor)provider.getMetadata()).getName(), expectedName);
+        assertEquals(((EntitiesDescriptor)provider.getMetadata()).getName(), "urn:mace:incommon");
     }
     
-    public class ValidatingDocumentLoader implements DocumentLoader{
-
-        Logger log = Logger.getLogger(ValidatingDocumentLoader.class);
+    /**
+     * Tests that an Inline provider is properly created when given an {@link EntityDescriptor}.
+     * 
+     * @throws Exception thrown if there is an error using the configuration
+     */
+    public void testProviderInstantiationEntityDescriptor() throws Exception{
+        ApplicationContext appContext = createSpringContext(DATA_PATH + "/config/metadata/InlineMetadataProvider2.xml");
         
-        /** {@inheritDoc} */
-        public Document loadDocument(InputSource inputSource, EntityResolver entityResolver, ErrorHandler errorHandler, int validationMode, boolean namespaceAware) throws Exception {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-    "http://www.w3.org/2001/XMLSchema");
-            factory.setCoalescing(true);
-            factory.setIgnoringComments(true);
-            factory.setNamespaceAware(true);
-            factory.setValidating(true);
-            
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            builder.setErrorHandler(new LoggingErrorHandler(log));
-            builder.setEntityResolver(new ClasspathResolver());
-            return builder.parse(inputSource);
+        MetadataProvider provider = (MetadataProvider) appContext.getBean("InlineMetadata");
+        assertNotNull(provider);
+        assertEquals(((EntityDescriptor)provider.getMetadata()).getEntityID(), "urn:mace:incommon:internet2.edu");
+    }
+    
+    /**
+     * Tests that an Inline provider is properly created when given an {@link EntitiesDescriptor}.
+     * 
+     * @throws Exception thrown if there is an error using the configuration
+     */
+    public void testFailedProviderInstantiation() throws Exception{
+        try{
+            createSpringContext(DATA_PATH + "/config/metadata/InlineMetadataProvider3.xml");
+            fail("Loaded invalid configuration file.");
+        }catch(BeanDefinitionStoreException e){
+            // expected
         }
     }
 }
