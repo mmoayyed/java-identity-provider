@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.ArrayList;
@@ -21,9 +22,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
+
+import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -33,10 +40,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.Statem
 import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.LdapConfig;
+import edu.vt.middleware.ldap.LdapPool;
 import edu.vt.middleware.ldap.LdapUtil;
-import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 
 /**
  * <code>LdapDataConnector</code> provides a plugin to retrieve attributes from an LDAP.
@@ -45,45 +50,62 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnector.class);
-    
+
     /** Engine for transforming templated filters into populated filters. */
     private StatementCreator filterCreator;
 
     /** Whether multiple result sets should be merged. */
     private boolean mergeMultipleResults;
-    
+
     /** Whether an empty result set is an error. */
     private boolean noResultsIsError = true;
-    
+
     /** Whether to cache search results for the duration of the session. */
     private boolean cacheResults;
-    
+
     /** Ldap search filter. */
     private String filter;
 
     /** Attributes to return from ldap searches. */
     private String[] returnAttributes;
-    
+
     /** Ldap configuration. */
     private LdapConfig ldapConfig;
 
-    /** Ldap object. */
-    private Ldap ldap;
+    /** LdapPool object. */
+    private LdapPool ldapPool;
+
+    /** Maximum number of idle objects in the ldap pool. */
+    private int poolMaxIdle;
+
+    /** Initial capacity of the the ldap pool. */
+    private int poolInitIdleCapacity;
 
     /** Data cache. */
-    private Map<String,Map<String,List<Attribute<String>>>> cache =
-        new HashMap<String,Map<String,List<Attribute<String>>>>();
-    
+    private Map<String, Map<String, List<Attribute<String>>>> cache = new HashMap<String, Map<String, List<Attribute<String>>>>();
 
     /**
-     * Default Constructor.
+     * This creates a new ldap data connector with the supplied pool properties.
+     * 
+     * @param startTls <code>boolean</code> whether connection should startTls
+     * @param maxIdle <code>int</code> maximum number of idle pool objects
+     * @param initIdleCapacity <code>int</code> initial capacity of the pool
      */
-    public LdapDataConnector() {
-        ldap = new Ldap(ldapConfig);
+    public LdapDataConnector(boolean startTls, int maxIdle, int initIdleCapacity) {
+        poolMaxIdle = maxIdle;
+        poolInitIdleCapacity = initIdleCapacity;
+        ldapConfig = new LdapConfig();
+        ldapConfig.useTls(startTls);
         filterCreator = new StatementCreator();
     }
-    
-    
+
+    /**
+     * This initializes the ldap pool.
+     */
+    private void initializeLdapPool() {
+        ldapPool = new LdapPool(ldapConfig, poolMaxIdle, poolInitIdleCapacity);
+    }
+
     /**
      * Returns the mergeMultipleResults.
      * 
@@ -93,17 +115,16 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         return mergeMultipleResults;
     }
 
-
     /**
      * Sets the mergeMultipleResults.
      * 
      * @param b <code>boolean</code>
      */
     public void setMergeMultipleResults(boolean b) {
+        clearCachedAttributes();
         mergeMultipleResults = b;
     }
-    
-    
+
     /**
      * Returns the cacheResults.
      * 
@@ -113,26 +134,24 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         return cacheResults;
     }
 
-
     /**
      * Sets the cacheResults.
      * 
      * @param b <code>boolean</code>
      */
     public void setCacheResults(boolean b) {
+        clearCachedAttributes();
         cacheResults = b;
     }
-    
-    
+
     /**
      * Returns the noResultsIsError.
      * 
-     * @return <code>boolean</code> 
+     * @return <code>boolean</code>
      */
     public boolean isNoResultsIsError() {
         return noResultsIsError;
     }
-
 
     /**
      * Sets the noResultsIsError.
@@ -143,16 +162,14 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         noResultsIsError = b;
     }
 
-
     /**
      * Returns the filter.
      * 
-     * @return <code>String</code> 
+     * @return <code>String</code>
      */
     public String getFilter() {
         return filter;
     }
-
 
     /**
      * Sets the filter.
@@ -160,39 +177,27 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param s <code>String</code>
      */
     public void setFilter(String s) {
+        clearCachedAttributes();
         filter = s;
     }
-
 
     /**
      * Returns the useStartTls.
      * 
-     * @return <code>boolean</code> 
+     * @return <code>boolean</code>
      */
     public boolean isUseStartTls() {
         return ldapConfig.isTlsEnabled();
     }
 
-
-    /**
-     * Sets the useStartTls.
-     * 
-     * @param b <code>boolean</code>
-     */
-    public void setUseStartTls(boolean b) {
-        ldapConfig.useTls(b);
-    }
-
-   
     /**
      * Returns the searchScope.
      * 
-     * @return <code>int</code> 
+     * @return <code>int</code>
      */
     public int getSearchScope() {
         return ldapConfig.getSearchScope();
     }
-
 
     /**
      * Sets the searchScope.
@@ -200,18 +205,19 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param i <code>int</code>
      */
     public void setSearchScope(int i) {
+        clearCachedAttributes();
         ldapConfig.setSearchScope(i);
     }
 
-   
     /**
      * Sets the searchScope.
      * 
      * @param s <code>String</code>
      */
     public void setSearchScope(String s) {
+        clearCachedAttributes();
         if (s.equals("OBJECT_SCOPE")) {
-            ldapConfig.useObjectScopeSearch();            
+            ldapConfig.useObjectScopeSearch();
         } else if (s.equals("SUBTREE_SCOPE")) {
             ldapConfig.useSubTreeSearch();
         } else if (s.equals("ONELEVEL_SCOPE")) {
@@ -219,16 +225,14 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         }
     }
 
-   
     /**
      * Returns the returnAttributes.
      * 
-     * @return <code>String[]</code> 
+     * @return <code>String[]</code>
      */
     public String[] getReturnAttributes() {
         return returnAttributes;
     }
-
 
     /**
      * Sets the returnAttributes.
@@ -236,10 +240,10 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param s <code>String[]</code>
      */
     public void setReturnAttributes(String[] s) {
+        clearCachedAttributes();
         returnAttributes = s;
     }
 
-   
     /**
      * Sets the returnAttributes.
      * 
@@ -247,13 +251,13 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      */
     public void setReturnAttributes(String s) {
         StringTokenizer st = new StringTokenizer(s, ",");
-        returnAttributes = new String[st.countTokens()];
+        String[] ra = new String[st.countTokens()];
         for (int count = 0; count < st.countTokens(); count++) {
-            returnAttributes[count] = st.nextToken();
+            ra[count] = st.nextToken();
         }
+        setReturnAttributes(ra);
     }
 
-   
     /**
      * Returns the timeLimit.
      * 
@@ -263,25 +267,24 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         return ldapConfig.getTimeLimit();
     }
 
-
     /**
      * Sets the timeLimit.
+     * 
      * @param i <code>int</code>
      */
     public void setTimeLimit(int i) {
+        clearCachedAttributes();
         ldapConfig.setTimeLimit(i);
     }
 
-   
     /**
      * Returns the countLimit.
      * 
-     * @return <code>long</code> 
+     * @return <code>long</code>
      */
     public long getCountLimit() {
         return ldapConfig.getCountLimit();
     }
-
 
     /**
      * Sets the countLimit.
@@ -289,19 +292,18 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param l <code>long</code>
      */
     public void setCountLimit(long l) {
+        clearCachedAttributes();
         ldapConfig.setCountLimit(l);
     }
 
-   
     /**
      * Returns the returningObjects.
      * 
-     * @return <code>boolean</code> 
+     * @return <code>boolean</code>
      */
     public boolean isReturningObjects() {
         return ldapConfig.getReturningObjFlag();
     }
-
 
     /**
      * Sets the returningObjects.
@@ -309,19 +311,18 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param b <code>boolean</code>
      */
     public void setReturningObjects(boolean b) {
+        clearCachedAttributes();
         ldapConfig.setReturningObjFlag(b);
     }
-    
-    
+
     /**
      * Returns the linkDereferencing.
      * 
-     * @return <code>boolean</code> 
+     * @return <code>boolean</code>
      */
     public boolean isLinkDereferencing() {
         return ldapConfig.getDerefLinkFlag();
     }
-
 
     /**
      * Sets the linkDereferencing.
@@ -329,25 +330,26 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param b <code>boolean</code>
      */
     public void setLinkDereferencing(boolean b) {
+        clearCachedAttributes();
         ldapConfig.setDerefLinkFlag(b);
     }
-    
-    
+
     /**
      * Sets the ldapProperties.
      * 
      * @param ldapProperties <code>Map</code> of name/value pairs
      */
     public void setLdapProperties(Map<String, String> ldapProperties) {
-        for (Map.Entry<String,String> entry: ldapProperties.entrySet()) {
-            ldapConfig.setExtraProperties(entry.getKey(), entry.getValue());            
+        clearCachedAttributes();
+        for (Map.Entry<String, String> entry : ldapProperties.entrySet()) {
+            ldapConfig.setExtraProperties(entry.getKey(), entry.getValue());
         }
+        initializeLdapPool();
     }
 
-    
     /** {@inheritDoc} */
-    public void setNotificationAddress(String notificationAddress) {}
-
+    public void setNotificationAddress(String notificationAddress) {
+    }
 
     /** {@inheritDoc} */
     public void onApplicationEvent(ApplicationEvent evt) {
@@ -357,21 +359,20 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         }
     }
 
-    
     /** {@inheritDoc} */
     public List<Attribute<String>> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
-            log.debug("Begin resolve for "+resolutionContext.getPrincipalName());
+            log.debug("Begin resolve for " + resolutionContext.getPrincipalName());
         }
-        
-        String searchFilter = filterCreator.createStatement(
-                filter, resolutionContext, getDataConnectorDependencyIds(), getAttributeDefinitionDependencyIds()); 
+
+        String searchFilter = filterCreator.createStatement(filter, resolutionContext, getDataConnectorDependencyIds(),
+                getAttributeDefinitionDependencyIds());
         if (log.isDebugEnabled()) {
-            log.debug("search filter = "+searchFilter);
+            log.debug("search filter = " + searchFilter);
         }
-        
+
         // create Attribute objects to return
-        List<Attribute<String>> attributes = null;        
+        List<Attribute<String>> attributes = null;
 
         // check for cached data
         if (cacheResults) {
@@ -388,8 +389,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
             Iterator<SearchResult> results = searchLdap(searchFilter);
             // check for empty result set
             if (noResultsIsError && !results.hasNext()) {
-                throw new AttributeResolutionException(
-                        "No LDAP entry found for "+resolutionContext.getPrincipalName());
+                throw new AttributeResolutionException("No LDAP entry found for "
+                        + resolutionContext.getPrincipalName());
             }
             // build resolved attributes from LDAP attributes
             attributes = buildBaseAttributes(results);
@@ -405,18 +406,30 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
+        Ldap ldap = null;
         try {
+            ldap = (Ldap) ldapPool.borrowObject();
             if (!ldap.connect()) {
                 throw new NamingException();
             }
         } catch (NamingException e) {
-            log.error("Cannot connect to the LDAP", e);
-            throw new AttributeResolutionException("Cannot connect to the LDAP: "+
-                    ldapConfig.getEnvironment());
+            log.error("An error occured when atteming to search the LDAP: " + ldapConfig.getEnvironment(), e);
+            throw new AttributeResolutionException("An error occurred when attemping to search the LDAP");
+        } catch (Exception e) {
+            log.error("Could not retrieve Ldap object from pool", e);
+            throw new AttributeResolutionException(
+                    "An error occurred when attemping to retrieve a LDAP connection from the pool");
+        } finally {
+            if (ldap != null) {
+                try {
+                    ldapPool.returnObject(ldap);
+                } catch (Exception e) {
+                    log.error("Could not return Ldap object back to pool", e);
+                }
+            }
         }
     }
-    
-    
+
     /**
      * This searches the LDAP with the supplied filter.
      * 
@@ -425,15 +438,27 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @throws AttributeResolutionException if an error occurs performing the search
      */
     private Iterator<SearchResult> searchLdap(String searchFilter) throws AttributeResolutionException {
+        Ldap ldap = null;
         try {
+            ldap = (Ldap) ldapPool.borrowObject();
             return ldap.search(searchFilter, returnAttributes);
         } catch (NamingException e) {
-            log.error("An error occured when atteming to search the LDAP: "+ldapConfig.getEnvironment(), e);
+            log.error("An error occured when atteming to search the LDAP: " + ldapConfig.getEnvironment(), e);
+            throw new AttributeResolutionException("An error occurred when attemping to search the LDAP");
+        } catch (Exception e) {
+            log.error("Could not retrieve Ldap object from pool", e);
             throw new AttributeResolutionException(
-                    "An error occurred when attemping to search the LDAP");            
+                    "An error occurred when attemping to retrieve a LDAP connection from the pool");
+        } finally {
+            if (ldap != null) {
+                try {
+                    ldapPool.returnObject(ldap);
+                } catch (Exception e) {
+                    log.error("Could not return Ldap object back to pool", e);
+                }
+            }
         }
     }
-    
 
     /**
      * This returns a list of <code>BaseAttribute</code> object from the supplied search results.
@@ -442,30 +467,29 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @return <code>List</code> of <code>BaseAttribute</code>
      * @throws AttributeResolutionException if an error occurs parsing attribute results
      */
-    public List<Attribute<String>> buildBaseAttributes(Iterator<SearchResult> results)
-        throws AttributeResolutionException {
+    private List<Attribute<String>> buildBaseAttributes(Iterator<SearchResult> results)
+            throws AttributeResolutionException {
         List<Attribute<String>> attributes = new ArrayList<Attribute<String>>();
         SearchResult sr = results.next();
-        Map<String,List<String>> attrs = mergeAttributes(new HashMap<String,List<String>>(), sr.getAttributes());
+        Map<String, List<String>> attrs = mergeAttributes(new HashMap<String, List<String>>(), sr.getAttributes());
         // merge additional results if requested
         while (mergeMultipleResults && results.hasNext()) {
             SearchResult additionalResult = results.next();
             attrs = mergeAttributes(attrs, additionalResult.getAttributes());
         }
         // populate list of attributes
-        for (Map.Entry<String,List<String>> entry: attrs.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : attrs.entrySet()) {
             if (log.isDebugEnabled()) {
-                log.debug("Found the following attribute: "+entry);
+                log.debug("Found the following attribute: " + entry);
             }
             BaseAttribute<String> attribute = new BaseAttribute<String>();
             attribute.setId(entry.getKey());
             attribute.getValues().addAll(entry.getValue());
-            attributes.add(attribute);            
+            attributes.add(attribute);
         }
         return attributes;
     }
-    
-    
+
     /**
      * This stores the supplied attributes in the cache.
      * 
@@ -473,24 +497,21 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param searchFiler the searchFilter that produced the attributes
      * @param attributes <code>List</code> to store
      */
-    private void setCachedAttributes(ResolutionContext resolutionContext,
-                                     String searchFiler,
-                                     List<Attribute<String>> attributes) {
-        Map<String,List<Attribute<String>>> results = null;
+    private void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler,
+            List<Attribute<String>> attributes) {
+        Map<String, List<Attribute<String>>> results = null;
         String principal = resolutionContext.getPrincipalName();
         if (cache.containsKey(principal)) {
-            results = cache.get(principal);            
+            results = cache.get(principal);
         } else {
-            results = new HashMap<String,List<Attribute<String>>>();            
+            results = new HashMap<String, List<Attribute<String>>>();
             cache.put(principal, results);
         }
         results.put(searchFiler, attributes);
     }
-    
 
     /**
-     * This retrieves any cached attributes for the supplied resolution context.
-     * Returns null if nothing is cached.
+     * This retrieves any cached attributes for the supplied resolution context. Returns null if nothing is cached.
      * 
      * @param resolutionContext <code>ResolutionContext</code>
      * @param searchFilter the search filter the produced the attributes
@@ -501,29 +522,35 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         List<Attribute<String>> attributes = null;
         String principal = resolutionContext.getPrincipalName();
         if (cache.containsKey(principal)) {
-            Map<String,List<Attribute<String>>> results = cache.get(principal);
-            attributes = results.get(searchFilter);                                
+            Map<String, List<Attribute<String>>> results = cache.get(principal);
+            attributes = results.get(searchFilter);
         }
         return attributes;
     }
-    
-    
+
     /**
-     * This updates the supplied attribute map with the names and values found in the
-     * supplied <code>Attributes</code> object.
+     * This removes all entries from the cache.
+     */
+    private void clearCachedAttributes() {
+        cache.clear();
+    }
+
+    /**
+     * This updates the supplied attribute map with the names and values found in the supplied <code>Attributes</code>
+     * object.
      * 
      * @param attrs <code>Map</code> to update
      * @param newAttrs <code>Attributes</code> to parse
      * @return <code>Map</code> of attributes
      * @throws AttributeResolutionException if the supplied attributes cannot be parsed
      */
-    private Map<String,List<String>> mergeAttributes(Map<String,List<String>> attrs, Attributes newAttrs)
-        throws AttributeResolutionException {
+    private Map<String, List<String>> mergeAttributes(Map<String, List<String>> attrs, Attributes newAttrs)
+            throws AttributeResolutionException {
         // merge the new attributes
         try {
-            Map<String,List<String>> newAttrsMap = LdapUtil.parseAttributes(newAttrs, true);
+            Map<String, List<String>> newAttrsMap = LdapUtil.parseAttributes(newAttrs, true);
 
-            for (Map.Entry<String,List<String>> entry: newAttrsMap.entrySet()) {
+            for (Map.Entry<String, List<String>> entry : newAttrsMap.entrySet()) {
                 String attrName = entry.getKey();
                 List<String> attrValues = entry.getValue();
                 if (attrs.containsKey(attrName)) {
@@ -537,6 +564,6 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
             log.error("Error parsing LDAP attributes", e);
             throw new AttributeResolutionException("Error parsing LDAP attributes");
         }
-        return attrs;        
+        return attrs;
     }
 }
