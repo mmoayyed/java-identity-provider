@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shibmd:MetadataProvider id="URLMetadata"
+                         metadataURL="http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml"
+                         maintainExpiredMetadata="true"
+                         cacheDuration="1705"
+                         requestTimeout="3000"
+                         
+                         xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd"
+                         xsi:type="shibmd:URLMetadataProvider" />

@@ -61,11 +61,14 @@ public class URLMetadataProviderBeanDefinitionParser extends AbstractSingleBeanD
         String basicAuthPassword = element.getAttributeNS(null, BASIC_AUTH_PASSWORD_ATTRIBUTE_NAME);
 
         int requestTimeout = Integer.parseInt(element.getAttributeNS(null, REQUEST_TIMEOUT_ATTRIBUTE_NAME));
-        int cacheDuration = Integer.parseInt(element.getAttributeNS(null, CACHE_DURATION_ATTRIBUTE_NAME));
+        long cacheDuration = Long.parseLong(element.getAttributeNS(null, CACHE_DURATION_ATTRIBUTE_NAME));
 
         boolean maintainExpiredMetadata = Boolean.parseBoolean(element.getAttributeNS(null,
                 MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME));
 
+        bean.addDependsOn("shibboleth.ParserPool");
+        bean.addPropertyReference("parserPool", "shibboleth.ParserPool");
+        
         bean.addConstructorArg(metadataURL);
         bean.addConstructorArg(requestTimeout);
 
@@ -74,5 +77,7 @@ public class URLMetadataProviderBeanDefinitionParser extends AbstractSingleBeanD
 
         // TODO basic auth credentials
         // bean.addPropertyReference("basicCredentials", beanName)
+        
+        bean.setInitMethodName("initialize");
     }
 }

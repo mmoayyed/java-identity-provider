@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
+import java.io.File;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
@@ -49,7 +51,10 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends AbstractSing
         boolean maintainExpiredMetadata = Boolean.parseBoolean(element.getAttributeNS(null,
                 MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME));
 
-        bean.addConstructorArg(metadataFile);
+        bean.addDependsOn("shibboleth.ParserPool");
+        bean.addConstructorArg(new File(metadataFile));
+        bean.addPropertyReference("parserPool", "shibboleth.ParserPool");
         bean.addPropertyValue("maintainExpiredMetadata", maintainExpiredMetadata);
+        bean.setInitMethodName("initialize");
     }
 }

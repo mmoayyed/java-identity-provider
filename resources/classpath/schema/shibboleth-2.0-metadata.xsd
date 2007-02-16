@@ -121,7 +121,7 @@
                 <attribute name="requestTimeout" type="unsignedInt" default="15">
                     <annotation>
                         <documentation>
-                            The maximum length of time, in secondsm to wait for the remote server to response.
+                            The maximum length of time, in milliseconds, to wait for the remote server to response.
                         </documentation>
                     </annotation>
                 </attribute>

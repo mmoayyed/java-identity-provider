@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" default-autowire="byType">
+
+    <bean id="shibboleth.VelocityEngine" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer" >
+        <property name="velocityProperties">
+            <props>
+                <prop key="resource.loader">classpath, string</prop>
+                <prop key="classpath.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                </prop>
+                <prop key="string.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                </prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.StatementCreator" class="edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.StatementCreator" lazy-init="true">
+        <constructor-arg ref="shibboleth.VelocityEngine" />
+    </bean>
+    
+    <bean id="shibboleth.ParserPool" class="org.opensaml.xml.parse.ParserPool">
+        <property name="maxPoolSize" value="50" />
+        <property name="createBuildersAtPoolLimit" value="true" />
+        <property name="coalescing" value="true" />
+        <property name="ignoreComments" value="true" />
+        <property name="ignoreElementContentWhitespace" value="true"/>
+        <property name="namespaceAware" value="true" />
+    </bean>
+</beans>
