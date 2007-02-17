@@ -19,14 +19,15 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.URLMetadataProvider;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
  * Spring bean definition parser for Shibboleth file backed url metadata provider definition. 
  */
-public class URLMetadataProviderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class URLMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "URLMetadataProvider");
@@ -55,29 +56,39 @@ public class URLMetadataProviderBeanDefinitionParser extends AbstractSingleBeanD
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element element, BeanDefinitionBuilder bean) {
+    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(URLMetadataProvider.class);
+        parseCommonConfig(builder, element, parserContext);
+        parseConfig(builder, element, parserContext);
+        return builder.getBeanDefinition();
+    }
+    
+    /**
+     * Parses the configuration for this provider.
+     * 
+     * @param builder builder of the bean definition
+     * @param element configuration element
+     * @param context current parsing context
+     */
+    protected void parseConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
+        builder.setInitMethodName("initialize");
+        builder.addPropertyReference("parserPool", "shibboleth.ParserPool");
+        
         String metadataURL = element.getAttributeNS(null, METADATA_URL_ATTRIBUTE_NAME);
-        String basicAuthUser = element.getAttributeNS(null, BASIC_AUTH_USER_ATTRIBUTE_NAME);
-        String basicAuthPassword = element.getAttributeNS(null, BASIC_AUTH_PASSWORD_ATTRIBUTE_NAME);
-
+        builder.addConstructorArg(metadataURL);
+        
         int requestTimeout = Integer.parseInt(element.getAttributeNS(null, REQUEST_TIMEOUT_ATTRIBUTE_NAME));
-        long cacheDuration = Long.parseLong(element.getAttributeNS(null, CACHE_DURATION_ATTRIBUTE_NAME));
-
+        builder.addConstructorArg(requestTimeout);
+        
+        int cacheDuration = Integer.parseInt(element.getAttributeNS(null, CACHE_DURATION_ATTRIBUTE_NAME));
+        builder.addPropertyValue("maxCacheDuration", cacheDuration);
+        
         boolean maintainExpiredMetadata = Boolean.parseBoolean(element.getAttributeNS(null,
                 MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME));
-
-        bean.addDependsOn("shibboleth.ParserPool");
-        bean.addPropertyReference("parserPool", "shibboleth.ParserPool");
+        builder.addPropertyValue("maintainExpiredMetadata", maintainExpiredMetadata);
         
-        bean.addConstructorArg(metadataURL);
-        bean.addConstructorArg(requestTimeout);
-
-        bean.addPropertyValue("maintainExpiredMetadata", maintainExpiredMetadata);
-        bean.addPropertyValue("maxCacheDuration", cacheDuration);
-
+        String basicAuthUser = element.getAttributeNS(null, BASIC_AUTH_USER_ATTRIBUTE_NAME);
+        String basicAuthPassword = element.getAttributeNS(null, BASIC_AUTH_PASSWORD_ATTRIBUTE_NAME);
         // TODO basic auth credentials
-        // bean.addPropertyReference("basicCredentials", beanName)
-        
-        bean.setInitMethodName("initialize");
     }
 }

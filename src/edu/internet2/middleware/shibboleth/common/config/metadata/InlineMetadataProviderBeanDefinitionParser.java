@@ -19,33 +19,42 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.metadata.provider.DOMMetadataProvider;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
  * Spring bean definition parser for a OpenSAML2 DOMMetadataProvider. 
  */
-public class InlineMetadataProviderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class InlineMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
     
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "InlineMetadataProvider");
-
-    /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
-        return DOMMetadataProvider.class;
-    }
     
     /** {@inheritDoc} */
-    protected void doParse(Element element, BeanDefinitionBuilder bean) {
-        NodeList metadataContent = element.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntitiesDescriptor");
+    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(DOMMetadataProvider.class);
+        parseCommonConfig(builder, element, parserContext);
+        parseConfig(builder, element, parserContext);
+        return builder.getBeanDefinition();
+    }
+    
+    /**
+     * Parses the configuration for this provider.
+     * 
+     * @param builder builder of the bean definition
+     * @param element configuration element
+     * @param context current parsing context
+     */
+    protected void parseConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
+        builder.setInitMethodName("initialize");
         
+        NodeList metadataContent = element.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntitiesDescriptor");
         if(metadataContent.getLength() < 1){
             metadataContent = element.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntityDescriptor");
         }
-        
-        bean.addConstructorArg((Element)metadataContent.item(0));
-        bean.setInitMethodName("initialize");
+        builder.addConstructorArg((Element)metadataContent.item(0));
     }
 }

@@ -21,14 +21,15 @@ import java.io.File;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
  * Spring bean definition parser for Shibboleth file system based metadata provider definition.
  */
-public class FilesystemMetadataProviderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "FilesystemMetadataProvider");
@@ -45,16 +46,20 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends AbstractSing
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element element, BeanDefinitionBuilder bean) {
+    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FilesystemMetadataProvider.class);
+        parseCommonConfig(builder, element, parserContext);
+        
+        builder.setInitMethodName("initialize");
+        builder.addPropertyReference("parserPool", "shibboleth.ParserPool");
+        
         String metadataFile = element.getAttributeNS(null, METADATA_FILE_ATTRIBUTE_NAME);
-
+        builder.addConstructorArg(new File(metadataFile));
+        
         boolean maintainExpiredMetadata = Boolean.parseBoolean(element.getAttributeNS(null,
                 MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME));
-
-        bean.addDependsOn("shibboleth.ParserPool");
-        bean.addConstructorArg(new File(metadataFile));
-        bean.addPropertyReference("parserPool", "shibboleth.ParserPool");
-        bean.addPropertyValue("maintainExpiredMetadata", maintainExpiredMetadata);
-        bean.setInitMethodName("initialize");
+        builder.addPropertyValue("maintainExpiredMetadata", maintainExpiredMetadata);
+        
+        return builder.getBeanDefinition();
     }
 }

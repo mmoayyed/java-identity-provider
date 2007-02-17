@@ -26,6 +26,7 @@ import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Utilities to help configure Spring beans.
@@ -44,6 +45,7 @@ public final class SpringConfigurationUtils {
      * 
      * @param element element to parse
      * @param parserContext current parser context
+     * 
      * @return bean definition
      */
     public static BeanDefinition parseCustomElement(Element element, ParserContext parserContext) {
@@ -67,15 +69,38 @@ public final class SpringConfigurationUtils {
      * 
      * @param elements List of {@link Element}s to parse
      * @param parserContext current parser context
+     * 
      * @return ManagedList of bean definitions for the given elements
+     * 
+     * @deprecated use {@link #parseCustomElements(NodeList, ParserContext)}
      */
-    public static ManagedList parseElements(List elements, ParserContext parserContext) {
+    public static ManagedList parseCustomElements(List elements, ParserContext parserContext) {
         ManagedList definitions = new ManagedList(elements.size());
 
         for (int i = 0; i < elements.size(); i++) {
             Element e = (Element) elements.get(i);
             BeanDefinition def = parseCustomElement(e, parserContext);
             definitions.add(def);
+        }
+
+        return definitions;
+    }
+    
+    /**
+     * Parse list of elements into bean definitions.
+     * 
+     * @param elements list of elements to parse
+     * @param parserContext current parsing context
+     * 
+     * @return list of bean references
+     */
+    public static ManagedList parseCustomElements(NodeList elements, ParserContext parserContext) {
+        ManagedList definitions = new ManagedList(elements.getLength());
+
+        Element e;
+        for (int i = 0; i < elements.getLength(); i++) {
+            e = (Element) elements.item(i);
+            definitions.add(parseCustomElement(e, parserContext));
         }
 
         return definitions;

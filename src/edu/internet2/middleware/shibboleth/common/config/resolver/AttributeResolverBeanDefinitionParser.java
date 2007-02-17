@@ -40,21 +40,21 @@ public class AttributeResolverBeanDefinitionParser extends AbstractBeanDefinitio
         // parse AttributeDefinition plug-ins
         elements = DomUtils.getChildElementsByTagName(element, "AttributeDefinition");
         if (elements != null && elements.size() > 0) {
-            ManagedList connectors = SpringConfigurationUtils.parseElements(elements, parserContext);
+            ManagedList connectors = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             factory.addPropertyValue("attributeDefinitions", connectors);
         }
 
         // parse DataConnector plug-ins
         elements = DomUtils.getChildElementsByTagName(element, "DataConnector");
         if (elements != null && elements.size() > 0) {
-            ManagedList connectors = SpringConfigurationUtils.parseElements(elements, parserContext);
+            ManagedList connectors = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             factory.addPropertyValue("dataConnectors", connectors);
         }
 
         // parse PrincipalConnector plug-ins
         elements = DomUtils.getChildElementsByTagName(element, "PrincipalConnector");
         if (elements != null && elements.size() > 0) {
-            ManagedList connectors = SpringConfigurationUtils.parseElements(elements, parserContext);
+            ManagedList connectors = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             factory.addPropertyValue("principalConnectors", connectors);
         }
 

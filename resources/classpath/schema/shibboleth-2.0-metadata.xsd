@@ -30,6 +30,9 @@
                 A metadata provider that composes other metadata providers. During a lookup operation member providers
                 are searched in the order they listed in this providers configuration until one provides a response to
                 the lookup. That response is then returned, no subsequent member providers are inspected.
+                
+                Note, that metadata filters and the require valid metadata flag expressed on this configuration
+                overrides those settings on member providers.
             </documentation>
         </annotation>
         <complexContent>
@@ -161,7 +164,7 @@
 
     <complexType name="MetadataProviderType" abstract="true">
         <sequence>
-            <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded">
+            <element ref="shibmd:MetadataFilter" minOccurs="0">
                 <annotation>
                     <documentation>
                         A filter to be applied to metadata after it has been parsed and validated.
@@ -172,6 +175,15 @@
         <attribute name="id" type="ID" use="required">
             <annotation>
                 <documentation>A unique identifier that may be used to identify a particular provider</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="requireValidMetadata" type="boolean">
+            <annotation>
+                <documentation>
+                    A boolean flag indicating whether the metadata retrieved must be valid. At a minimum,
+                    metadata is valid only if the date expressed in entity's validUntil attribute has not passed.
+                    Specific implementations may add additional constraints.
+                </documentation>
             </annotation>
         </attribute>
     </complexType>
