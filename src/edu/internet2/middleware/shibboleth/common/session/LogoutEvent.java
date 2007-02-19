@@ -24,11 +24,11 @@ import org.springframework.context.ApplicationEvent;
  */
 public class LogoutEvent extends ApplicationEvent {
 
-    /** Serial version UID  */
+    /** Serial version UID.  */
     private static final long serialVersionUID = -1234450648177702760L;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param session session of the user being logged out
      */

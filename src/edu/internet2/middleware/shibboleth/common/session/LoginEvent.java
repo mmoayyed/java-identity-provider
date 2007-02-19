@@ -24,11 +24,11 @@ import org.springframework.context.ApplicationEvent;
  */
 public class LoginEvent extends ApplicationEvent {
 
-    /** Serial version UID */
+    /** Serial version UID. */
     private static final long serialVersionUID = -898463237588351558L;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param session session for the user logging in
      */

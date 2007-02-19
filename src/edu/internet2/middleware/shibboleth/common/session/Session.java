@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.session;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 
 import org.joda.time.DateTime;
 
@@ -31,6 +32,13 @@ public interface Session extends Serializable {
      * @return unique identifier of the session
      */
     public String getSessionID();
+    
+    /**
+     * Gets the IP address of the presenter.
+     * 
+     * @return IP address of the presenter
+     */
+    public InetAddress getPresenterAddress();
 
     /**
      * Gets the principal ID of the user.
@@ -45,4 +53,11 @@ public interface Session extends Serializable {
      * @return time of the last activity from the user
      */
     public DateTime getLastActivityInstant();
+
+    /**
+     * Sets the time of the last activity from the user.
+     * 
+     * @param lastActivity time of the last activity from the user
+     */
+    public void setLastActivityInstant(DateTime lastActivity);
 }
