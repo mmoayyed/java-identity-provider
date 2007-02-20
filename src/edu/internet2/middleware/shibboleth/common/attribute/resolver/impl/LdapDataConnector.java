@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.naming.NamingException;
@@ -35,8 +36,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.AbstractResolutionPlugIn;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.StatementCreator;
 import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.LdapConfig;
@@ -46,13 +45,10 @@ import edu.vt.middleware.ldap.LdapUtil;
 /**
  * <code>LdapDataConnector</code> provides a plugin to retrieve attributes from an LDAP.
  */
-public class LdapDataConnector extends AbstractResolutionPlugIn implements ApplicationListener {
+public class LdapDataConnector extends BaseDataConnector implements ApplicationListener {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnector.class);
-
-    /** Engine for transforming templated filters into populated filters. */
-    private StatementCreator filterCreator;
 
     /** Whether multiple result sets should be merged. */
     private boolean mergeMultipleResults;
@@ -62,6 +58,12 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
 
     /** Whether to cache search results for the duration of the session. */
     private boolean cacheResults;
+
+    /** Template that produces the query to use. */
+    private String filterTemplate;
+
+    /** Template engine used to change filter template into actual filter. */
+    private TemplateEngine filterCreator;
 
     /** Ldap search filter. */
     private String filter;
@@ -82,7 +84,10 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     private int poolInitIdleCapacity;
 
     /** Data cache. */
-    private Map<String, Map<String, List<Attribute<String>>>> cache = new HashMap<String, Map<String, List<Attribute<String>>>>();
+    private Map<String, Map<String, Set<Attribute>>> cache;
+
+    /** Whether this data connector has been initialized. */
+    private boolean initialized;
 
     /**
      * This creates a new ldap data connector with the supplied pool properties.
@@ -92,18 +97,59 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param initIdleCapacity <code>int</code> initial capacity of the pool
      */
     public LdapDataConnector(boolean startTls, int maxIdle, int initIdleCapacity) {
-        poolMaxIdle = maxIdle;
-        poolInitIdleCapacity = initIdleCapacity;
         ldapConfig = new LdapConfig();
         ldapConfig.useTls(startTls);
-        filterCreator = new StatementCreator();
+        poolMaxIdle = maxIdle;
+        poolInitIdleCapacity = initIdleCapacity;
     }
 
     /**
-     * This initializes the ldap pool.
+     * Initializes the connector and prepares it for use.
      */
-    private void initializeLdapPool() {
-        ldapPool = new LdapPool(ldapConfig, poolMaxIdle, poolInitIdleCapacity);
+    public void initialize() {
+        initialized = true;
+        registerTemplate();
+        initializeLdapPool();
+        initializeCache();
+    }
+
+    /**
+     * Initializes the ldap pool and prepares it for use. {@link #initialize()} must be called first or this method does
+     * nothing.
+     */
+    protected void initializeLdapPool() {
+        if (initialized) {
+            ldapPool = new LdapPool(ldapConfig, poolMaxIdle, poolInitIdleCapacity);
+        }
+    }
+
+    /**
+     * Initializes the cache and prepares it for use. {@link #initialize()} must be called first or this method does
+     * nothing.
+     */
+    protected void initializeCache() {
+        if (cacheResults && initialized) {
+            cache = new HashMap<String, Map<String, Set<Attribute>>>();
+        }
+    }
+
+    /**
+     * This removes all entries from the cache. {@link #initialize()} must be called first or this method does nothing.
+     */
+    protected void clearCache() {
+        if (cacheResults && initialized) {
+            cache.clear();
+        }
+    }
+
+    /**
+     * Registers the query template with template engine. {@link #initialize()} must be called first or this method does
+     * nothing.
+     */
+    protected void registerTemplate() {
+        if (initialized) {
+            filterCreator.registerTemplate("shibboleth.resolver.dc." + getId(), filterTemplate);
+        }
     }
 
     /**
@@ -121,8 +167,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param b <code>boolean</code>
      */
     public void setMergeMultipleResults(boolean b) {
-        clearCachedAttributes();
         mergeMultipleResults = b;
+        clearCache();
     }
 
     /**
@@ -140,8 +186,12 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param b <code>boolean</code>
      */
     public void setCacheResults(boolean b) {
-        clearCachedAttributes();
         cacheResults = b;
+        if (!cacheResults) {
+            cache = null;
+        } else {
+            initializeCache();
+        }
     }
 
     /**
@@ -163,6 +213,45 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     }
 
     /**
+     * Gets the engine used to evaluate the query template.
+     * 
+     * @return engine used to evaluate the query template
+     */
+    public TemplateEngine getTemplateEngine() {
+        return filterCreator;
+    }
+
+    /**
+     * Sets the engine used to evaluate the query template.
+     * 
+     * @param engine engine used to evaluate the query template
+     */
+    public void setTemplateEngine(TemplateEngine engine) {
+        filterCreator = engine;
+        registerTemplate();
+        clearCache();
+    }
+
+    /**
+     * Gets the template used to create queries.
+     * 
+     * @return template used to create queries
+     */
+    public String getFilterTemplate() {
+        return filterTemplate;
+    }
+
+    /**
+     * Sets the template used to create queries.
+     * 
+     * @param template template used to create queries
+     */
+    public void setFilterTemplate(String template) {
+        filterTemplate = template;
+        clearCache();
+    }
+
+    /**
      * Returns the filter.
      * 
      * @return <code>String</code>
@@ -177,8 +266,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param s <code>String</code>
      */
     public void setFilter(String s) {
-        clearCachedAttributes();
         filter = s;
+        clearCache();
     }
 
     /**
@@ -205,8 +294,9 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param i <code>int</code>
      */
     public void setSearchScope(int i) {
-        clearCachedAttributes();
         ldapConfig.setSearchScope(i);
+        clearCache();
+        initializeLdapPool();
     }
 
     /**
@@ -215,7 +305,6 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param s <code>String</code>
      */
     public void setSearchScope(String s) {
-        clearCachedAttributes();
         if (s.equals("OBJECT_SCOPE")) {
             ldapConfig.useObjectScopeSearch();
         } else if (s.equals("SUBTREE_SCOPE")) {
@@ -223,6 +312,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
         } else if (s.equals("ONELEVEL_SCOPE")) {
             ldapConfig.useOneLevelSearch();
         }
+        clearCache();
+        initializeLdapPool();
     }
 
     /**
@@ -240,8 +331,8 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param s <code>String[]</code>
      */
     public void setReturnAttributes(String[] s) {
-        clearCachedAttributes();
         returnAttributes = s;
+        clearCache();
     }
 
     /**
@@ -273,8 +364,9 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param i <code>int</code>
      */
     public void setTimeLimit(int i) {
-        clearCachedAttributes();
         ldapConfig.setTimeLimit(i);
+        clearCache();
+        initializeLdapPool();
     }
 
     /**
@@ -292,8 +384,9 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param l <code>long</code>
      */
     public void setCountLimit(long l) {
-        clearCachedAttributes();
         ldapConfig.setCountLimit(l);
+        clearCache();
+        initializeLdapPool();
     }
 
     /**
@@ -311,8 +404,9 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param b <code>boolean</code>
      */
     public void setReturningObjects(boolean b) {
-        clearCachedAttributes();
         ldapConfig.setReturningObjFlag(b);
+        clearCache();
+        initializeLdapPool();
     }
 
     /**
@@ -330,8 +424,9 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param b <code>boolean</code>
      */
     public void setLinkDereferencing(boolean b) {
-        clearCachedAttributes();
         ldapConfig.setDerefLinkFlag(b);
+        clearCache();
+        initializeLdapPool();
     }
 
     /**
@@ -340,10 +435,10 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param ldapProperties <code>Map</code> of name/value pairs
      */
     public void setLdapProperties(Map<String, String> ldapProperties) {
-        clearCachedAttributes();
         for (Map.Entry<String, String> entry : ldapProperties.entrySet()) {
             ldapConfig.setExtraProperties(entry.getKey(), entry.getValue());
         }
+        clearCache();
         initializeLdapPool();
     }
 
@@ -360,24 +455,24 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
     }
 
     /** {@inheritDoc} */
-    public List<Attribute<String>> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Set<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
             log.debug("Begin resolve for " + resolutionContext.getPrincipalName());
         }
 
         String searchFilter = filterCreator.createStatement(filter, resolutionContext, getDataConnectorDependencyIds(),
-                getAttributeDefinitionDependencyIds());
+                getDataConnectorDependencyIds());
         if (log.isDebugEnabled()) {
             log.debug("search filter = " + searchFilter);
         }
 
         // create Attribute objects to return
-        List<Attribute<String>> attributes = null;
+        Set<Attribute> attributes = null;
 
         // check for cached data
         if (cacheResults) {
             attributes = getCachedAttributes(resolutionContext, searchFilter);
-            if (log.isDebugEnabled()) {
+            if (attributes != null && log.isDebugEnabled()) {
                 log.debug("Returning attributes from cache");
             }
         }
@@ -437,7 +532,7 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @return <code>Iterator</code> of search results
      * @throws AttributeResolutionException if an error occurs performing the search
      */
-    private Iterator<SearchResult> searchLdap(String searchFilter) throws AttributeResolutionException {
+    protected Iterator<SearchResult> searchLdap(String searchFilter) throws AttributeResolutionException {
         Ldap ldap = null;
         try {
             ldap = (Ldap) ldapPool.borrowObject();
@@ -464,12 +559,11 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * This returns a list of <code>BaseAttribute</code> object from the supplied search results.
      * 
      * @param results <code>Iterator</code> of LDAP search results
-     * @return <code>List</code> of <code>BaseAttribute</code>
+     * @return <code>Set</code> of <code>BaseAttribute</code>
      * @throws AttributeResolutionException if an error occurs parsing attribute results
      */
-    private List<Attribute<String>> buildBaseAttributes(Iterator<SearchResult> results)
-            throws AttributeResolutionException {
-        List<Attribute<String>> attributes = new ArrayList<Attribute<String>>();
+    protected Set<Attribute> buildBaseAttributes(Iterator<SearchResult> results) throws AttributeResolutionException {
+        Set<Attribute> attributes = new HashSet<Attribute>();
         SearchResult sr = results.next();
         Map<String, List<String>> attrs = mergeAttributes(new HashMap<String, List<String>>(), sr.getAttributes());
         // merge additional results if requested
@@ -497,14 +591,14 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param searchFiler the searchFilter that produced the attributes
      * @param attributes <code>List</code> to store
      */
-    private void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler,
-            List<Attribute<String>> attributes) {
-        Map<String, List<Attribute<String>>> results = null;
+    protected void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler,
+            Set<Attribute> attributes) {
+        Map<String, Set<Attribute>> results = null;
         String principal = resolutionContext.getPrincipalName();
         if (cache.containsKey(principal)) {
             results = cache.get(principal);
         } else {
-            results = new HashMap<String, List<Attribute<String>>>();
+            results = new HashMap<String, Set<Attribute>>();
             cache.put(principal, results);
         }
         results.put(searchFiler, attributes);
@@ -516,23 +610,18 @@ public class LdapDataConnector extends AbstractResolutionPlugIn implements Appli
      * @param resolutionContext <code>ResolutionContext</code>
      * @param searchFilter the search filter the produced the attributes
      * 
-     * @return <code>List</code> of attributes
+     * @return <code>Set</code> of attributes
      */
-    private List<Attribute<String>> getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
-        List<Attribute<String>> attributes = null;
-        String principal = resolutionContext.getPrincipalName();
-        if (cache.containsKey(principal)) {
-            Map<String, List<Attribute<String>>> results = cache.get(principal);
-            attributes = results.get(searchFilter);
+    protected Set<Attribute> getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
+        Set<Attribute> attributes = null;
+        if (cacheResults) {
+            String principal = resolutionContext.getPrincipalName();
+            if (cache.containsKey(principal)) {
+                Map<String, Set<Attribute>> results = cache.get(principal);
+                attributes = results.get(searchFilter);
+            }
         }
         return attributes;
-    }
-
-    /**
-     * This removes all entries from the cache.
-     */
-    private void clearCachedAttributes() {
-        cache.clear();
     }
 
     /**
