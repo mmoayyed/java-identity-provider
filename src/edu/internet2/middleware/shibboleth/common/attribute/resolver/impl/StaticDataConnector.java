@@ -7,7 +7,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +21,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.BaseDataConnector;
 
 /**
  * <code>DataConnectorPlugIn</code> implementation that allows static values to be declared in the resolver
@@ -42,9 +41,9 @@ public class StaticDataConnector extends BaseDataConnector {
 
     /** {@inheritDoc} */
     public Set<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
-        log.debug("Resolving connector: (" + getId() + ")");
-        log.debug(getId() + " resolving for principal: (" + resolutionContext.getPrincipalName() + ")");
-
+        log.debug("Resolving connector: (" + getId() + ") for principal: (" + resolutionContext.getPrincipalName()
+                + ")");
+        
         Set<Attribute> attributes = new HashSet<Attribute>();
         for (Attribute<String> a : sourceData) {
             BaseAttribute<String> newAttribute = new BaseAttribute<String>();
