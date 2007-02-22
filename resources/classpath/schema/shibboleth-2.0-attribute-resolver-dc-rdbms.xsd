@@ -17,9 +17,10 @@
                     <choice>
                         <element ref="rdbms:ContainerManagedConnection">
                             <annotation>
-                            <documentation>
-                                A connection, or pool of connections, to the database managed the application container.
-                            </documentation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed the application
+                                    container.
+                                </documentation>
                             </annotation>
                         </element>
                         <element ref="rdbms:ConnectorManagedConnection">
@@ -40,6 +41,14 @@
                     </element>
                     <element ref="rdbms:Column" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
+                <attribute name="readOnlyConnection" type="boolean" default="trure">
+                    <annotation>
+                        <documentation>
+                            A boolean flag that determines whether the connection to the database is read-only, if the
+                            value is true, or read-write if the value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="queryUsesStoredProcedure" type="boolean" default="false">
                     <annotation>
                         <documentation>
