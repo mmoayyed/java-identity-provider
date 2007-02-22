@@ -124,7 +124,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="jdbcserName" type="string">
+        <attribute name="jdbcUserName" type="string">
             <annotation>
                 <documentation>The user name to use while connecting to the database.</documentation>
             </annotation>
@@ -134,21 +134,21 @@
                 <documentation>The password to use while connecting to the database.</documentation>
             </annotation>
         </attribute>
-        <attribute name="poolAccquireIncrement" type="positiveInteger" default="3">
+        <attribute name="poolAcquireIncrement" type="positiveInteger" default="3">
             <annotation>
                 <documentation>
                     The number of new connection that will be created when the pool is exhausted.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolAccquireRetryAttempts" type="positiveInteger" default="36">
+        <attribute name="poolAcquireRetryAttempts" type="positiveInteger" default="36">
             <annotation>
                 <documentation>
                     The number of times the pool will try to get establish a connection to a database.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolAccquireRetryDelay" type="positiveInteger" default="5000">
+        <attribute name="poolAcquireRetryDelay" type="positiveInteger" default="5000">
             <annotation>
                 <documentation>
                     The ammount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
@@ -156,7 +156,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolBreakAfterAccquireFailure" type="boolean" default="true">
+        <attribute name="poolBreakAfterAcquireFailure" type="boolean" default="true">
             <annotation>
                 <documentation>
                     A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new
