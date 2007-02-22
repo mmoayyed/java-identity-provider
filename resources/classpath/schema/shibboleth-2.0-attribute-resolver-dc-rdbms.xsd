@@ -94,14 +94,14 @@
         </attribute>
     </complexType>
 
-    <element name="ConnectorManagedConnection" type="rdbms:ConnectorManagedConnectionType">
+    <element name="ApplicationManagedConnection" type="rdbms:ApplicationManagedConnectionType">
         <annotation>
             <documentation>
                 Describes a database connection source that is managed by the attribute resolver data connector.
             </documentation>
         </annotation>
     </element>
-    <complexType name="ConnectorManagedConnectionType">
+    <complexType name="ApplicationManagedConnectionType">
         <sequence>
             <element name="ConnectionProperty" type="rdbms:PropertyType" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
@@ -221,7 +221,7 @@
                 <documentation>The name of the database column.</documentation>
             </annotation>
         </attribute>
-        <attribute name="attributeName" type="string">
+        <attribute name="attributeID" type="string">
             <annotation>
                 <documentation>The name of the attribute that data from this column should be added to.</documentation>
             </annotation>
