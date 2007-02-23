@@ -1,0 +1,198 @@
+<schema targetNamespace="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:afpmfb="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns:afp="urn:mace:shibboleth:2.0:afp">
+
+    <import namespace="urn:mace:shibboleth:2.0:afp" schemaLocation="classpath:/schema/shibboleth-2.0-afp.xsd" />
+
+    <!--  Boolean Match Functions -->
+    <complexType name="AND">
+        <annotation>
+            <documentation>
+                A match function that performs a logical AND on the results of all contained matching functions.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <choice>
+                    <element ref="afp:ApplicationRequirement">
+                        <annotation>
+                            <documentation>
+                                A requirement that if met signals that this filter policy should be used.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="afp:ValueFilter">
+                        <annotation>
+                            <documentation>
+                                A filter for attribtue values. If any filter for a value evaluates to false the value is
+                                filtered out. If all filters evaluate to true the value is kept and released.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="OR">
+        <annotation>
+            <documentation>
+                A match function that performs a logical OR on the results of all contained matching functions.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <choice>
+                    <element ref="afp:ApplicationRequirement">
+                        <annotation>
+                            <documentation>
+                                A requirement that if met signals that this filter policy should be used.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="afp:ValueFilter">
+                        <annotation>
+                            <documentation>
+                                A filter for attribtue values. If any filter for a value evaluates to false the value is
+                                filtered out. If all filters evaluate to true the value is kept and released.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!--  Literal String Match Functions -->
+    <complexType name="AttributeRequesterString">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute request against the specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:StringMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="AttributeProducerString">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute producer against the specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:StringMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="PrincipalNameString">
+        <annotation>
+            <documentation>A match function that matches the principal name against the specified value.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:StringMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="AttributeValueString">
+        <annotation>
+            <documentation>
+                A match function that matches the value of an attribute against the specified value. This match
+                evaluates to true if the attribute contains the specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:StringMatchType">
+                <attribute name="attribtueID" type="string" use="required">
+                    <annotation>
+                        <documentation>The ID of the attribute whose value should be matched.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="StringMatchType" abstract="true">
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <attribute name="value" type="string" use="required">
+                    <annotation>
+                        <documentation>The string value to match.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="ignoreCase" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether case should be ignored when evaluating the match.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!--  Regular Expression Match Functions -->
+    <complexType name="AttributeRequesterRegex">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute requester against the specified regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:RegexMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="AttributeProducerRegex">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute requester against the specified regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:RegexMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="PrincipalNameRegex">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute requester against the specified regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:RegexMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="AttributeValueRegex">
+        <annotation>
+            <documentation>
+                A match function that matches an attribute value against the specified regular expression. This function
+                evaluates to true if any value matches the given expression
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afpmfb:RegexMatchType">
+                <attribute name="attribtueID" type="string" use="required">
+                    <annotation>
+                        <documentation>The ID of the attribute whose value should be matched.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RegexMatchType" abstract="true">
+        <complexContent>
+            <extension base="afp:MatchFunctorType">
+                <attribute name="regex" type="string" use="required">
+                    <annotation>
+                        <documentation>The regular expression values are matched against.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>
