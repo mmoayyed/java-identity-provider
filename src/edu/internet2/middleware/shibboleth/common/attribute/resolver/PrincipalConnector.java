@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
+import java.util.Set;
+
 import org.opensaml.saml2.core.NameID;
 
 /**
@@ -28,4 +30,17 @@ import org.opensaml.saml2.core.NameID;
  */
 public interface PrincipalConnector extends ResolutionPlugIn<String> {
 
+    /**
+     * Get NamID format.
+     * 
+     * @return the NameID format
+     */
+    public String getFormat();
+    
+    /**
+     * Get relying parties this connector is valid for.
+     * 
+     * @return set of relying parties
+     */
+    public Set<String> getRelyingParties();
 }
