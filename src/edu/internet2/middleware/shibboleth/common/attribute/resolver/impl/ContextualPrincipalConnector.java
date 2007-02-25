@@ -54,6 +54,11 @@ public class ContextualPrincipalConnector implements PrincipalConnector {
     }
 
     /** {@inheritDoc} */
+    public String getFormat() {
+        return connector.getFormat();
+    }
+
+    /** {@inheritDoc} */
     public String getId() {
         return connector.getId();
     }
@@ -61,6 +66,11 @@ public class ContextualPrincipalConnector implements PrincipalConnector {
     /** {@inheritDoc} */
     public boolean getPropagateErrors() {
         return connector.getPropagateErrors();
+    }
+
+    /** {@inheritDoc} */
+    public Set<String> getRelyingParties() {
+        return connector.getRelyingParties();
     }
 
     /** {@inheritDoc} */

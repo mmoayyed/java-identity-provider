@@ -58,13 +58,12 @@ public abstract class AbstractPrincipalConnector extends AbstractResolutionPlugI
     public String getFormat() {
         return format;
     }
-    
+
     /** {@inheritDoc} */
     public Set<String> getRelyingParties() {
         return relyingParties;
     }
 
-    
     /**
      * Verify that the provided NameID is valid for this Identity Provider.
      * 
@@ -82,9 +81,9 @@ public abstract class AbstractPrincipalConnector extends AbstractResolutionPlugI
 
         if (provider == null || !provider.equals(nameQualifier)) {
             log.error("The name qualifier (" + nameQualifier
-                    + ") for the referenced subject is not valid for this identity provider.");
+                    + ") for the referenced subject is not valid for this provider.");
             throw new AttributeResolutionException("The name qualifier (" + nameQualifier
-                    + ") for the referenced subject is not valid for this identity provider.");
+                    + ") for the referenced subject is not valid for this provider.");
         }
     }
 

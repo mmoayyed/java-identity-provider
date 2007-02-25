@@ -21,12 +21,11 @@ import java.util.Set;
 import org.opensaml.saml2.core.NameID;
 
 /**
- * Principal connectors are responsible for taking subject's {@link NameID} and converting it 
- * into a string based principal (user) name.
+ * Principal connectors are responsible for taking subject's {@link NameID} and converting it into a string based
+ * principal (user) name.
  * 
- * This plugin and all its dependencies are guarenteed to run prior to the attribute definitions 
- * meant to provide attributes about the user, such that those definitions and data connectors will 
- * have access to a principal name.
+ * This plugin and all its dependencies are guarenteed to run prior to the attribute definitions meant to provide
+ * attributes about the user, such that those definitions and data connectors will have access to a principal name.
  */
 public interface PrincipalConnector extends ResolutionPlugIn<String> {
 
@@ -36,7 +35,7 @@ public interface PrincipalConnector extends ResolutionPlugIn<String> {
      * @return the NameID format
      */
     public String getFormat();
-    
+
     /**
      * Get relying parties this connector is valid for.
      * 
