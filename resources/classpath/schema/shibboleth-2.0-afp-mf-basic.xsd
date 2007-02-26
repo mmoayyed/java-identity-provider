@@ -146,7 +146,7 @@
     <complexType name="AttributeProducerRegex">
         <annotation>
             <documentation>
-                A match function that matches the attribute requester against the specified regular expression.
+                A match function that matches the attribute producer against the specified regular expression.
             </documentation>
         </annotation>
         <complexContent>
@@ -157,7 +157,7 @@
     <complexType name="PrincipalNameRegex">
         <annotation>
             <documentation>
-                A match function that matches the attribute requester against the specified regular expression.
+                A match function that matches the principal name against the specified regular expression.
             </documentation>
         </annotation>
         <complexContent>

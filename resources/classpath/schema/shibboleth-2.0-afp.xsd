@@ -55,7 +55,7 @@
 
     <element name="AttributeRule" type="afp:AttributeRuleType">
         <annotation>
-            <documentation>A rule that describs how values of an attribute will be filtered.</documentation>
+            <documentation>A rule that describes how values of an attribute will be filtered.</documentation>
         </annotation>
     </element>
     <complexType name="AttributeRuleType">
@@ -96,7 +96,7 @@
             <element ref="afp:ValueFilter">
                 <annotation>
                     <documentation>
-                        A filter for attribtue values. If any filter for a value evaluates to false the value is
+                        A filter for attribute values. If any filter for a value evaluates to false the value is
                         filtered out. If all filters evaluate to true the value is kept and released.
                     </documentation>
                 </annotation>
