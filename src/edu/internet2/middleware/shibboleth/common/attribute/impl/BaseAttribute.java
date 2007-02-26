@@ -17,12 +17,11 @@
 package edu.internet2.middleware.shibboleth.common.attribute.impl;
 
 import java.util.Comparator;
-import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javolution.util.FastList;
-
+import javolution.util.FastMap;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 
@@ -31,13 +30,13 @@ import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
  * 
  * @param <ValueType> value type
  */
-public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable {
+public class BaseAttribute<ValueType> extends Attribute<ValueType> implements Cloneable {
 
     /** ID of this attribute. */
     private String id;
 
-    /** List of attribute encoders for this attribute. */
-    private List<AttributeEncoder> encoders;
+    /** Map of attribute encoders for this attribute, keyed off of category. */
+    private Map<String, AttributeEncoder> encoders;
 
     /** Set of values for this attribute. */
     private SortedSet<ValueType> values;
@@ -47,12 +46,12 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
 
     /** Constructor. */
     public BaseAttribute() {
-        encoders = new FastList<AttributeEncoder>();
+        encoders = new FastMap<String, AttributeEncoder>();
         values = new TreeSet<ValueType>();
     }
 
     /** {@inheritDoc} */
-    public List<AttributeEncoder> getEncoders() {
+    public Map<String, AttributeEncoder> getEncoders() {
         return encoders;
     }
 
@@ -101,37 +100,16 @@ public class BaseAttribute<ValueType> implements Attribute<ValueType>, Cloneable
             newAttribute.getValues().add(value);
         }
 
-        for (AttributeEncoder encoder : this.getEncoders()) {
-            newAttribute.getEncoders().add(encoder);
+        for (String category : getEncoders().keySet()) {
+            newAttribute.getEncoders().put(category, getEncoders().get(category));
         }
 
         return newAttribute;
     }
 
     /** {@inheritDoc} */
-    public AttributeEncoder getEncoderByCategory(String categroy) {
-        // TODO Optomize this method
-        
-        for(AttributeEncoder encoder : getEncoders()){
-            if(encoder.getEncoderCategory().equals(categroy)){
-                return encoder;
-            }
-        }
-        
-        return null;
+    public AttributeEncoder getEncoderByCategory(String category) {
+        return encoders.get(category);
     }
-    
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if(obj instanceof Attribute){
-            return obj.hashCode() == hashCode();
-        }
-        
-        return false;
-    }
-    
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return id.hashCode();
-    }
+
 }

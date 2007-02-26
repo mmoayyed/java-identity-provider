@@ -17,7 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute;
 
 import java.util.Comparator;
-import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 
 /**
@@ -25,30 +25,30 @@ import java.util.SortedSet;
  * 
  * @param <ValueType> the object type of the values for this attribute
  */
-public interface Attribute<ValueType>{
-    
+public abstract class Attribute<ValueType> {
+
     /**
      * Gets the unique ID of the attribute.
      * 
      * @return unique ID of the attribute
      */
-    public String getId();
-    
+    public abstract String getId();
+
     /**
-     * Gets the compartor used to sort values.  If no compartor is set then the value 
-     * set with be natural ordering sorted.
+     * Gets the compartor used to sort values. If no compartor is set then the value set with be natural ordering
+     * sorted.
      * 
      * @return compartor used to sort values
      */
-    public Comparator<ValueType> getValueComparator();
-    
+    public abstract Comparator<ValueType> getValueComparator();
+
     /**
      * Gets the values of the attribute.
      * 
      * @return values of the attribute
      */
-    public SortedSet<ValueType> getValues();
-    
+    public abstract SortedSet<ValueType> getValues();
+
     /**
      * Gets the encoder registered under a specific category.
      * 
@@ -56,12 +56,26 @@ public interface Attribute<ValueType>{
      * 
      * @return encoder registered under a specific category
      */
-    public AttributeEncoder getEncoderByCategory(String category);
-    
+    public abstract AttributeEncoder getEncoderByCategory(String category);
+
     /**
      * Gets the list of attribute encoders usable with this attribute.
      * 
-     * @return attribute encoders usable with this attribute
+     * @return attribute encoders usable with this attribute, keyed off of the encoder category
      */
-    public List<AttributeEncoder> getEncoders();
+    public abstract Map<String, AttributeEncoder> getEncoders();
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if(obj instanceof Attribute){
+            return obj.hashCode() == hashCode();
+        }
+        
+        return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }
