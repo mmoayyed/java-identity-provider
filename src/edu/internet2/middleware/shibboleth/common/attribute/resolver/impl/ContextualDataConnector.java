@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.Map;
 import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
@@ -33,7 +34,7 @@ public class ContextualDataConnector implements DataConnector {
     private DataConnector connector;
 
     /** Cached result of resolving the data connector. */
-    private Set<Attribute> attributes;
+    private Map<String, Attribute> attributes;
 
     /**
      * Constructor.
@@ -80,7 +81,7 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public Set<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         // TODO: should we be dealing with failovers here?
         if (attributes == null) {
             attributes = connector.resolve(resolutionContext);
