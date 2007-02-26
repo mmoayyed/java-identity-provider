@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javolution.util.FastList;
@@ -128,10 +129,11 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
             DataConnector connector = context.getResolvedDataConnectors().get(id);
             if (connector != null) {
                 try {
-                    for (Attribute attribute : connector.resolve(context)) {
-                        if (attribute.getId().equals(this.getId())) {
+                    Map<String, Attribute> attributes = connector.resolve(context);
+                    for (String attributeId: attributes.keySet()) {
+                        if (attributeId != null && attributeId.equals(this.getId())) {
                             // TODO do we need any kind of connector mapping like in previous versions?
-                            for (Object o : attribute.getValues()) {
+                            for (Object o : attributes.get(attributeId).getValues()) {
                                 values.add(o);
                             }
                         }
