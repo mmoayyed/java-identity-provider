@@ -17,11 +17,9 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.naming.NamingException;
@@ -84,7 +82,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     private int poolInitIdleCapacity;
 
     /** Data cache. */
-    private Map<String, Map<String, Set<Attribute>>> cache;
+    private Map<String, Map<String, Map<String, Attribute>>> cache;
 
     /** Whether this data connector has been initialized. */
     private boolean initialized;
@@ -129,7 +127,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     protected void initializeCache() {
         if (cacheResults && initialized) {
-            cache = new HashMap<String, Map<String, Set<Attribute>>>();
+            cache = new HashMap<String, Map<String, Map<String, Attribute>>>();
         }
     }
 
@@ -455,7 +453,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /** {@inheritDoc} */
-    public Set<Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
             log.debug("Begin resolve for " + resolutionContext.getPrincipalName());
         }
@@ -467,7 +465,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
         }
 
         // create Attribute objects to return
-        Set<Attribute> attributes = null;
+        Map<String, Attribute> attributes = null;
 
         // check for cached data
         if (cacheResults) {
@@ -556,14 +554,15 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * This returns a list of <code>BaseAttribute</code> object from the supplied search results.
+     * This returns a map of attribute ids to attributes from the supplied search results.
      * 
      * @param results <code>Iterator</code> of LDAP search results
-     * @return <code>Set</code> of <code>BaseAttribute</code>
+     * @return <code>Map</code> of attribute ids to attributes
      * @throws AttributeResolutionException if an error occurs parsing attribute results
      */
-    protected Set<Attribute> buildBaseAttributes(Iterator<SearchResult> results) throws AttributeResolutionException {
-        Set<Attribute> attributes = new HashSet<Attribute>();
+    protected Map<String, Attribute> buildBaseAttributes(Iterator<SearchResult> results)
+            throws AttributeResolutionException {
+        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         SearchResult sr = results.next();
         Map<String, List<String>> attrs = mergeAttributes(new HashMap<String, List<String>>(), sr.getAttributes());
         // merge additional results if requested
@@ -579,7 +578,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             BaseAttribute<String> attribute = new BaseAttribute<String>();
             attribute.setId(entry.getKey());
             attribute.getValues().addAll(entry.getValue());
-            attributes.add(attribute);
+            attributes.put(attribute.getId(), attribute);
         }
         return attributes;
     }
@@ -589,16 +588,16 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * 
      * @param resolutionContext <code>ResolutionContext</code>
      * @param searchFiler the searchFilter that produced the attributes
-     * @param attributes <code>List</code> to store
+     * @param attributes <code>Map</code> of attribute ids to attributes
      */
     protected void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler,
-            Set<Attribute> attributes) {
-        Map<String, Set<Attribute>> results = null;
+            Map<String, Attribute> attributes) {
+        Map<String, Map<String, Attribute>> results = null;
         String principal = resolutionContext.getPrincipalName();
         if (cache.containsKey(principal)) {
             results = cache.get(principal);
         } else {
-            results = new HashMap<String, Set<Attribute>>();
+            results = new HashMap<String, Map<String, Attribute>>();
             cache.put(principal, results);
         }
         results.put(searchFiler, attributes);
@@ -610,14 +609,14 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * @param resolutionContext <code>ResolutionContext</code>
      * @param searchFilter the search filter the produced the attributes
      * 
-     * @return <code>Set</code> of attributes
+     * @return <code>Map</code> of attributes ids to attributes
      */
-    protected Set<Attribute> getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
-        Set<Attribute> attributes = null;
+    protected Map<String, Attribute> getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
+        Map<String, Attribute> attributes = null;
         if (cacheResults) {
             String principal = resolutionContext.getPrincipalName();
             if (cache.containsKey(principal)) {
-                Map<String, Set<Attribute>> results = cache.get(principal);
+                Map<String, Map<String, Attribute>> results = cache.get(principal);
                 attributes = results.get(searchFilter);
             }
         }
