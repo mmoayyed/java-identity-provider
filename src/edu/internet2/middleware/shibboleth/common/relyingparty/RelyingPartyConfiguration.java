@@ -44,6 +44,13 @@ public interface RelyingPartyConfiguration {
      * @return credential that should be used to sign a message
      */
     public Credential getSigningCredential();
+    
+    /**
+     * Gets the credential that should be used to encrypt a message. 
+     * 
+     * @return credential that should be used to encrypt a message
+     */
+    public Credential getEncryptionCredential();
 
     /**
      * Gets the credential that should be used to decrypt a message. Credential <strong>MUST</strong> include a private
