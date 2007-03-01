@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.io.StringWriter;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -114,7 +115,7 @@ public class TemplateEngine {
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("principal", resolutionContext.getPrincipalName());
 
-        Set<Attribute> attributes;
+        Map<String, Attribute> attributes;
         DataConnector dataConnector;
         for (String connectorId : dataConnectors) {
             dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorId);
@@ -122,8 +123,8 @@ public class TemplateEngine {
                 log.debug("Resolving attributes from data connector " + connectorId);
             }
             attributes = dataConnector.resolve(resolutionContext);
-            for (Attribute attribute : attributes) {
-                vCtx.put(attribute.getId(), attribute.getValues());
+            for (String attributeId : attributes.keySet()) {
+                vCtx.put(attributeId, attributes.get(attributeId));
             }
         }
 
