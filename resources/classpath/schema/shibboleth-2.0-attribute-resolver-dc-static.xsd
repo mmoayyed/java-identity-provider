@@ -13,7 +13,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:BaseAttributeDefinitionType">
+            <extension base="resolver:BaseDataConnectorType">
                 <sequence>
                     <element name="Attribute" maxOccurs="unbounded">
                         <annotation>
