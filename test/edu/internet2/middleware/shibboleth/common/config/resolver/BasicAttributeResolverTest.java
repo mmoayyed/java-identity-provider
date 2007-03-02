@@ -2,26 +2,25 @@
 package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import java.io.IOException;
-import java.util.Set;
-
-import junit.framework.TestCase;
+import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
 /**
  * Test configuration code for attribute resolver.
  */
-public class BasicAttributeResolverTest extends TestCase {
+public class BasicAttributeResolverTest extends BaseConfigTestCase {
 
     /** Log4j logger. */
     private static Logger log = Logger.getLogger(BasicAttributeResolverTest.class);
@@ -35,12 +34,12 @@ public class BasicAttributeResolverTest extends TestCase {
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure();
         Logger.getRootLogger().setLevel(Level.INFO);
+        Logger.getLogger("edu.internet2.middleware.shibboleth").setLevel(Level.DEBUG);
     }
 
     /** {@inheritDoc} */
     public void setUp() throws IOException {
-        ac = new FileSystemXmlApplicationContext(
-                "test/data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver.xml");
+        ac = createSpringContext("data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver.xml");
     }
 
     /**
@@ -53,16 +52,15 @@ public class BasicAttributeResolverTest extends TestCase {
         ResolutionContext context = resolver.createResolutionContext("wnorris", "http://foo.com/", null);
         
         
-        log.info("total connectors = (" + resolver.getDataConnectors().size() + ")");
+        log.debug("total connectors = (" + resolver.getDataConnectors().size() + ")");
         for (String id : resolver.getDataConnectors().keySet()) {
             DataConnector connector = resolver.getDataConnectors().get(id);
-            log.info("connector - (" + id + ") = " + connector);
+            log.debug("connector (" + id + ") = " + connector);
 
             try {
-                Set<Attribute> attributes = connector.resolve(context);
-                for (Attribute a : attributes) {
-                    log.info("attribute - (" + a.getId() + ")");
-                    log.info("values - (" + a.getValues() + ")");
+                Map<String, Attribute> attributes = connector.resolve(context);
+                for (String attributeId : attributes.keySet()) {
+                    log.debug("    (" + attributeId + ") => (" + attributes.get(attributeId).getValues() + ")");
                 }
 
             } catch (AttributeResolutionException e) {
