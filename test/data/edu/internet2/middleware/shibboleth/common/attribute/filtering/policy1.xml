@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<afp:AttributeFilterPolicy xmlns:afp="urn:mace:shibboleth:2.0:afp"
+                           xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                           xsi:schemaLocation="urn:mace:shibboleth:2.0:afp ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp.xsd
+                                               urn:mace:shibboleth:2.0:afp:mf:basic ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-basic.xsd ">
+
+  <!-- Release any value for first name to anyone -->
+  <afp:FilterPolicy>
+    <afp:PolicyRequirement xsi:type="basic:ANY"/>
+    
+    <afp:AttributeRule attributeID="firstName">
+      <afp:ValueFilter xsi:type="basic:ANY"/>
+    </afp:AttributeRule>
+  </afp:FilterPolicy>
+
+
+  <!-- Release email address to anyone with an urn:mace:incommon: entityID except internet2.edu -->  
+  <afp:FilterPolicy>
+    <afp:PolicyRequirement xsi:type="basic:AND">
+        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="urn:mace:incommon:internet2.edu" negateResult="true"/>
+        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterRegex" regex="urn:mace:incommon:*" />
+    </afp:PolicyRequirement>
+    
+    <afp:AttributeRule attributeID="email">
+        <afp:ValueFilter xsi:type="basic:ANY"/>
+    </afp:AttributeRule>
+  </afp:FilterPolicy>
+  
+  
+  <!-- Release information if individual is not a student or, if a student, has not elected FERP suppression -->
+  <afp:FilterPolicy>
+    <afp:PolicyRequirement xsi:type="basic:OR">
+        <afp:PolicyRequirement xsi:type="basic:AttributeValueString" attributeID="affilition" value="student" negateResult="true"/>
+        <afp:PolicyRequirement xsi:type="basic:AND">
+            <afp:PolicyRequirement xsi:type="basic:AttributeValueString" attributeID="affilition" value="student"/>
+            <afp:PolicyRequirement xsi:type="basic:AttributeValueString" attributeID="ferpa" value="false"/>
+        </afp:PolicyRequirement>
+    </afp:PolicyRequirement>
+
+    <afp:AttributeRule attributeID="surname">
+        <afp:ValueFilter xsi:type="basic:ANY"/>
+    </afp:AttributeRule>
+  </afp:FilterPolicy>
+  
+</afp:AttributeFilterPolicy>

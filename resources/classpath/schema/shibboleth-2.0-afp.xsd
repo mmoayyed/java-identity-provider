@@ -27,9 +27,16 @@
                 <annotation>
                     <documentation>
                         Defines a set of requirements applications requirements that may be reused across multiple
-                        attribtue rules.
+                        filter policies.
                     </documentation>
                 </annotation>
+            </element>
+            <element ref="afp:AttributeRule" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                        Defines an attribute rule that may be reused across multiple filter policies.
+                    </documentation>
+                </annotation>            
             </element>
             <element ref="afp:ValueFilter" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
@@ -97,6 +104,20 @@
                 </annotation>
             </element>
         </sequence>
+        <attribute name="id" type="ID" use="optional">
+            <annotation>
+                <documentation>
+                    A unique identifier for this rule.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="ref" type="IDREF" use="optional">
+            <annotation>
+                <documentation>
+                    A reference to globally declared attribute rule.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="attributeID" type="string" use="required">
             <annotation>
                 <documentation>The unique ID of the attribute to which this rule applies.</documentation>

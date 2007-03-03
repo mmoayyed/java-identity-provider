@@ -5,6 +5,7 @@
 
     <import namespace="urn:mace:shibboleth:2.0:afp" schemaLocation="classpath:/schema/shibboleth-2.0-afp.xsd" />
 
+    <!-- Blanket Match Function -->
     <complexType name="ANY">
         <annotation>
             <documentation>
@@ -26,14 +27,14 @@
         <complexContent>
             <extension base="afp:MatchFunctorType">
                 <choice>
-                    <element ref="afp:ApplicationRequirement">
+                    <element ref="afp:PolicyRequirement" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
                                 A requirement that if met signals that this filter policy should be used.
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="afp:ValueFilter">
+                    <element ref="afp:ValueFilter" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
                                 A filter for attribtue values. If any filter for a value evaluates to false the value is
@@ -55,14 +56,14 @@
         <complexContent>
             <extension base="afp:MatchFunctorType">
                 <choice>
-                    <element ref="afp:ApplicationRequirement">
+                    <element ref="afp:PolicyRequirement" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
                                 A requirement that if met signals that this filter policy should be used.
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="afp:ValueFilter">
+                    <element ref="afp:ValueFilter" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
                                 A filter for attribtue values. If any filter for a value evaluates to false the value is
@@ -116,7 +117,7 @@
         </annotation>
         <complexContent>
             <extension base="afpmfb:StringMatchType">
-                <attribute name="attribtueID" type="string" use="required">
+                <attribute name="attributeID" type="string" use="required">
                     <annotation>
                         <documentation>The ID of the attribute whose value should be matched.</documentation>
                     </annotation>
