@@ -1,6 +1,6 @@
 <schema targetNamespace="urn:mace:shibboleth:2.0:afp:mf:saml"
         xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:afpmfsaml="urn:mace:shibboleth:2.0:afp:mf:saml"
+        xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
         xmlns:afp="urn:mace:shibboleth:2.0:afp">
 
     <import namespace="urn:mace:shibboleth:2.0:afp" schemaLocation="classpath:/schema/shibboleth-2.0-afp.xsd" />
