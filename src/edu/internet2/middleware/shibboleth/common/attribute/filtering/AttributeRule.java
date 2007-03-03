@@ -31,9 +31,9 @@ public interface AttributeRule {
     public String getAttributeId();
 
     /**
-     * Gets the filter policies for the given attribute.
+     * Gets the attribute value filters that should be applied if this policy's application requirement is met.
      * 
-     * @return filter policies for the given attribute
+     * @return attribute value filters that should be applied if this policy's application requirement is met
      */
-    public List<FilterPolicy> getFilterPolcies();
+    public List<MatchFunctor> getValueFilters();
 }

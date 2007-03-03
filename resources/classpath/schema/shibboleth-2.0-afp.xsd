@@ -19,11 +19,11 @@
                 <annotation>
                     <documentation>
                         Digital signature for the policy. Policies that are fetched from an external source, such as a
-                        federation, should be signed.
+                        federation site, should be signed.
                     </documentation>
                 </annotation>
             </element>
-            <element ref="afp:ApplicationRequirement" minOccurs="0" maxOccurs="unbounded">
+            <element ref="afp:PolicyRequirement" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         Defines a set of requirements applications requirements that may be reused across multiple
@@ -38,9 +38,12 @@
                     </documentation>
                 </annotation>
             </element>
-            <element ref="afp:AttributeRule" maxOccurs="unbounded">
+            <element ref="afp:FilterPolicy" maxOccurs="unbounded">
                 <annotation>
-                    <documentation>A rule that describes how values of an attribute will be filtered.</documentation>
+                    <documentation>
+                        A policy that defines the set of attribute value filters that will be applied if its application
+                        requirements are met.
+                    </documentation>
                 </annotation>
             </element>
         </sequence>
@@ -52,6 +55,31 @@
             </annotation>
         </attribute>
     </complexType>
+    
+    <element name="FilterPolicy" type="afp:FilterPolicyType">
+        <annotation>
+            <documentation>
+                A policy that defines a set of attribute value filters rules that should be used if given 
+                requirements are met.
+            </documentation>
+        </annotation>
+    </element>
+    <complexType name="FilterPolicyType">
+        <sequence>
+            <element ref="afp:PolicyRequirement" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                        A requirement that if met signals that this filter policy should be used.
+                    </documentation>
+                </annotation>
+            </element>
+            <element ref="afp:AttributeRule" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>A rule that describes how values of an attribute will be filtered.</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
 
     <element name="AttributeRule" type="afp:AttributeRuleType">
         <annotation>
@@ -60,11 +88,11 @@
     </element>
     <complexType name="AttributeRuleType">
         <sequence>
-            <element ref="afp:FilterPolicy" maxOccurs="unbounded">
+            <element ref="afp:ValueFilter" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
-                        A policy that defines the set of attribute value filters that will be applied if its application
-                        requirements are met.
+                        A filter for attribute values. If any filter for a value evaluates to false the value is
+                        filtered out. If all filters evaluate to true the value is kept and released.
                     </documentation>
                 </annotation>
             </element>
@@ -76,37 +104,9 @@
         </attribute>
     </complexType>
 
-    <element name="FilterPolicy" type="afp:FilterPolicyType">
+    <element name="PolicyRequirement" type="afp:MatchFunctorType">
         <annotation>
-            <documentation>
-                A policy that defines the set of attribute value filters that will be applied if its application
-                requirements are met.
-            </documentation>
-        </annotation>
-    </element>
-    <complexType name="FilterPolicyType">
-        <sequence>
-            <element ref="afp:ApplicationRequirement">
-                <annotation>
-                    <documentation>
-                        A requirement that if met signals that this filter policy should be used.
-                    </documentation>
-                </annotation>
-            </element>
-            <element ref="afp:ValueFilter">
-                <annotation>
-                    <documentation>
-                        A filter for attribute values. If any filter for a value evaluates to false the value is
-                        filtered out. If all filters evaluate to true the value is kept and released.
-                    </documentation>
-                </annotation>
-            </element>
-        </sequence>
-    </complexType>
-
-    <element name="ApplicationRequirement" type="afp:MatchFunctorType">
-        <annotation>
-            <documentation>A requirement that if met signals that this filter policy should be used.</documentation>
+            <documentation>A requirement that if met signals that a filter policy should be used.</documentation>
         </annotation>
     </element>
     <element name="ValueFilter" type="afp:MatchFunctorType">
@@ -121,22 +121,19 @@
         <attribute name="id" type="ID">
             <annotation>
                 <documentation>
-                    A unique ID for this match functor.  This allows the functor to be declared globally and referenced within individual rules.
+                    A unique ID for this match functor. This allows the functor to be declared globally and referenced
+                    within individual rules.
                 </documentation>
             </annotation>
         </attribute>
         <attribute name="ref" type="IDREF">
             <annotation>
-                <documentation>
-                    Used to reference a globally defined functor.
-                </documentation>
+                <documentation>Used to reference a globally defined functor.</documentation>
             </annotation>
         </attribute>
         <attribute name="negateResult" type="boolean" default="false">
             <annotation>
-                <documentation>
-                    Used to negate the result of a match evaluation.
-                </documentation>
+                <documentation>Used to negate the result of a match evaluation.</documentation>
             </annotation>
         </attribute>
     </complexType>

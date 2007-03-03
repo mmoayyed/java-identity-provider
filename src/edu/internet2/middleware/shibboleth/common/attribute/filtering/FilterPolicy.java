@@ -24,42 +24,51 @@ import java.util.List;
  */
 public class FilterPolicy {
 
-    /** Requirement that must be met for the given value filters to apply. */
-    private MatchFunctor applicationReq;
+    /** Requirement that must be met for this policy to apply. */
+    private List<MatchFunctor> policyRequirements;
 
     /** Filters to be used on attribute values. */
-    private List<MatchFunctor> valueFilters;
+    private List<AttributeRule> attribtueRules;
 
     /** Constructor. */
     public FilterPolicy() {
-        valueFilters = new ArrayList<MatchFunctor>();
+        policyRequirements = new ArrayList<MatchFunctor>();
+        attribtueRules = new ArrayList<AttributeRule>();
     }
 
     /**
-     * Gets the requirement that must be met in order for the registered attribute value filters to be applicable.
+     * Gets the requirements for this policy.
      * 
-     * @return requirement that must be met in order for the registered attribute value filters to be applicable
+     * @return requirements for this policy
      */
-    public MatchFunctor getApplicationRequirement() {
-        return applicationReq;
+    public List<MatchFunctor> getPolicyRequirements() {
+        return policyRequirements;
     }
 
     /**
-     * Sets the requirement that must be met in order for the registered attribute value filters to be applicable.
+     * Sets the requirements for this policy.
      * 
-     * @param requirement requirement that must be met in order for the registered attribute value filters to be
-     *            applicable
+     * @param requirements requirements for this policy
      */
-    public void setApplicationRequirement(MatchFunctor requirement) {
-        applicationReq = requirement;
+    public void setPolicyRequirements(List<MatchFunctor> requirements) {
+        policyRequirements = requirements;
     }
-
+    
     /**
-     * Gets the attribute value filters that should be applied if this policy's application requirement is met.
+     * Gets the attribute rules that are in effect if this policy is in effect.
      * 
-     * @return attribute value filters that should be applied if this policy's application requirement is met
+     * @return attribute rules that are in effect if this policy is in effect
      */
-    public List<MatchFunctor> getValueFilters() {
-        return valueFilters;
+    public List<AttributeRule> getAttributeRules(){
+        return attribtueRules;
+    }
+    
+    /**
+     * Sets the attribute rules that are in effect if this policy is in effect.
+     * 
+     * @param rules attribute rules that are in effect if this policy is in effect
+     */
+    public void setAttributeRules(List<AttributeRule> rules){
+        attribtueRules = rules;
     }
 }

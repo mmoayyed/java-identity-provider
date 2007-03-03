@@ -1,7 +1,20 @@
-<schema targetNamespace="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:afpmfb="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns:afp="urn:mace:shibboleth:2.0:afp">
+<schema targetNamespace="urn:mace:shibboleth:2.0:afp:mf:basic"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:afpmfb="urn:mace:shibboleth:2.0:afp:mf:basic"
+        xmlns:afp="urn:mace:shibboleth:2.0:afp">
 
     <import namespace="urn:mace:shibboleth:2.0:afp" schemaLocation="classpath:/schema/shibboleth-2.0-afp.xsd" />
+
+    <complexType name="ANY">
+        <annotation>
+            <documentation>
+                A match function that evaluates to true.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType" />
+        </complexContent>
+    </complexType>
 
     <!--  Boolean Match Functions -->
     <complexType name="AND">
