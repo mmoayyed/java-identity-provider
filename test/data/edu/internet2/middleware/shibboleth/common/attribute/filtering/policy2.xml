@@ -1,0 +1,37 @@
+<!--
+    These examples are written from the point of an entity (e.g. service provider, identity
+    provider aggregating attributes, accepting and filter attributes.
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<afp:AttributeFilterPolicy xmlns:afp="urn:mace:shibboleth:2.0:afp"
+                           xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+                           xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
+                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                           xsi:schemaLocation="urn:mace:shibboleth:2.0:afp ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp.xsd
+                                               urn:mace:shibboleth:2.0:afp:mf:saml ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-saml.xsd
+                                               urn:mace:shibboleth:2.0:afp:mf:basic ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-basic.xsd ">
+  
+    <!-- Globally defined value filter -->
+    <afp:ValueFilter id="eduPersonAffiliationValues" xsi:type="basic:OR">
+        <afp:ValueFilter xsi:type="basic:AttributeValueString" attributeID="affiliation" value="faculty"/>
+        <afp:ValueFilter xsi:type="basic:AttributeValueString" attributeID="affiliation" value="student"/>
+        <afp:ValueFilter xsi:type="basic:AttributeValueString" attributeID="affiliation" value="staff"/>
+        <afp:ValueFilter xsi:type="basic:AttributeValueString" attributeID="affiliation" value="alum"/>
+        <afp:ValueFilter xsi:type="basic:AttributeValueString" attributeID="affiliation" value="member"/>
+        <afp:ValueFilter xsi:type="basic:AttributeValueString" attributeID="affiliation" value="affiliate"/>
+        <afp:ValueFilter xsi:type="basic:AttributeValueString" attributeID="affiliation" value="employee"/>
+    </afp:ValueFilter>
+
+    <!-- Accept affiliation from members of InCommon but only accept the controlled vocabulary -->
+    <afp:FilterPolicy>
+        <afp:PolicyRequirement xsi:type="saml:AttributeProducerEntityGroup" groupID="urn:mace:incommon"/>
+        
+        <afp:AttributeRule attributeID="affiliation">
+            <afp:ValueFilter ref="eduPersonAffiliationValues"/>
+        </afp:AttributeRule>
+        <afp:AttributeRule attributeID="primaryAffiliation" ref="eduPersonAffiliationValues">
+            <afp:ValueFilter ref="eduPersonAffiliationValues"/>
+        </afp:AttributeRule>
+    </afp:FilterPolicy>
+  
+</afp:AttributeFilterPolicy>
