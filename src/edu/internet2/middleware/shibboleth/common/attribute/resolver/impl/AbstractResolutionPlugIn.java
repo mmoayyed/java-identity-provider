@@ -31,7 +31,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionP
 public abstract class AbstractResolutionPlugIn<ResolvedType> implements ResolutionPlugIn<ResolvedType> {
 
     /** The identifier for this plug-in. */
-    private static String id;
+    private String id;
 
     /** Whether to propagate errors out of the plug-in as exceptions. */
     private boolean propagateErrors;
