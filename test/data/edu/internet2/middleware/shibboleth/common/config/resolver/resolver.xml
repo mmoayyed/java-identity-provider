@@ -5,10 +5,10 @@
 	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
 	xmlns:static="urn:mace:shibboleth:2.0:resolver:dc:static"
 	xsi:schemaLocation="
-    	urn:mace:shibboleth:2.0:resolver /Applications/Development/eclipse/workspace/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver.xsd
-    	urn:mace:shibboleth:2.0:resolver:dc:static /Applications/Development/eclipse/workspace/java-shib-common/resources/classpath/schema/shibboleth-2.0-attribute-resolver-dc-static.xsd">
+    	urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
+    	urn:mace:shibboleth:2.0:resolver:dc:static classpath:/schema/shibboleth-2.0-attribute-resolver-dc-static.xsd">
 
-	<resolver:DataConnector xsi:type="static:StaticDataConnector" id="static">
+	<resolver:DataConnector xsi:type="static:Static" id="static">
 		<static:Attribute name="uid">
 			<static:Value>gpburdell</static:Value>
 		</static:Attribute>
@@ -18,12 +18,12 @@
 		</static:Attribute>
 	</resolver:DataConnector>
 
-	<resolver:DataConnector xsi:type="static:StaticDataConnector" id="static2">
+	<resolver:DataConnector xsi:type="static:Static" id="static2">
 		<static:Attribute name="foo">
-			<static:Value>gpburdell</static:Value>
+			<static:Value>ttrojan</static:Value>
 		</static:Attribute>
 		<static:Attribute name="bar">
-			<static:Value>George Burdell</static:Value>
+			<static:Value>Tommy Trojan</static:Value>
 		</static:Attribute>
 	</resolver:DataConnector>
 

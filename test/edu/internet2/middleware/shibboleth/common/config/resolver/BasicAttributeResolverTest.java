@@ -8,7 +8,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -24,7 +23,7 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
 
     /** Log4j logger. */
     private static Logger log = Logger.getLogger(BasicAttributeResolverTest.class);
-    
+
     /** Application Context. */
     private ApplicationContext ac;
 
