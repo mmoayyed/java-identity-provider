@@ -8,6 +8,9 @@ import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHand
  */
 public class ResolverNamespaceHandler extends BaseSpringNamespaceHandler {
 
+    /** Namespace for this handler. */
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver";
+    
     /** {@inheritDoc} */
     public void init() {
         registerBeanDefinitionParser(AttributeResolverBeanDefinitionParser.TYPE_NAME,

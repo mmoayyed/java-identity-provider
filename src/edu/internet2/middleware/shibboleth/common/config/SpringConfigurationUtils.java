@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -62,28 +60,6 @@ public final class SpringConfigurationUtils {
             return null;
         }
         return handler.parse(element, new ParserContext(delegate.getReaderContext(), delegate, null));
-    }
-
-    /**
-     * Parse list of elements into bean definitions.
-     * 
-     * @param elements List of {@link Element}s to parse
-     * @param parserContext current parser context
-     * 
-     * @return ManagedList of bean definitions for the given elements
-     * 
-     * @deprecated use {@link #parseCustomElements(NodeList, ParserContext)}
-     */
-    public static ManagedList parseCustomElements(List elements, ParserContext parserContext) {
-        ManagedList definitions = new ManagedList(elements.size());
-
-        for (int i = 0; i < elements.size(); i++) {
-            Element e = (Element) elements.get(i);
-            BeanDefinition def = parseCustomElement(e, parserContext);
-            definitions.add(def);
-        }
-
-        return definitions;
     }
     
     /**
