@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:attribute-map" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:am="urn:mace:shibboleth:2.0:attribute-map">
+    xmlns:am="urn:mace:shibboleth:2.0:attribute-map"
+    xmlns:saml="">
 
     <annotation>
         <documentation>
@@ -37,16 +38,10 @@
                 <documentation>The name of the attribute.</documentation>
             </annotation>
         </attribute>
-        <attribute name="namespace" type="string" use="optional"
-            default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
-            <annotation>
-                <documentation>The SAML 1 Namespace of the attribute.</documentation>
-            </annotation>
-        </attribute>
         <attribute name="nameFormat" type="string" use="optional"
-            default="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+            default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
             <annotation>
-                <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+                <documentation>The SAML 1 Namespace or SAML 2 NameFormat of the attribute.</documentation>
             </annotation>
         </attribute>
     </complexType>
