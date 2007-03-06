@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema targetNamespace="urn:mace:shibboleth:2.0:attribute-map" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:am="urn:mace:shibboleth:2.0:attribute-map">
+
+    <annotation>
+        <documentation>
+            This schema maps SAML specific attribute names into shibboleth internal attribute IDs.
+        </documentation>
+    </annotation>
+
+    <element name="Attributes">
+        <annotation>
+            <documentation>The set of SAML 1/2 attribute mappings.</documentation>
+        </annotation>
+        <complexType>
+            <sequence>
+                <element name="Attribute" type="am:AttributeType" maxOccurs="unbounded"/>
+            </sequence>
+        </complexType>
+    </element>
+
+    <complexType name="AttributeType">
+        <annotation>
+            <documentation>Rule for mapping a SAML 1/2 attribute to an internal attribute ID.</documentation>
+        </annotation>
+        <sequence>
+            <element name="AttributeDecoder" type="am:AttributeDecoderType" />
+        </sequence>
+        <attribute name="id" type="string">
+            <annotation>
+                <documentation>The internal attribute ID to which this SAML attribute maps.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="name" type="string">
+            <annotation>
+                <documentation>The name of the attribute.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="namespace" type="string" use="optional"
+            default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+            <annotation>
+                <documentation>The SAML 1 Namespace of the attribute.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="nameFormat" type="string" use="optional"
+            default="urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified">
+            <annotation>
+                <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
+    <complexType name="StringAttributeDecoder">
+        <annotation>
+            <documentation>
+                Decoder for attributes with scoped values.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="am:AttributeDecoderType">
+                <attribute name="scopeDelimiter" type="string" use="optional" default="@">
+                    <annotation>
+                        <documentation>
+                            The character(s) used delimit the scoped information from the scope.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StringAttributeDecoder">
+        <annotation>
+            <documentation>
+                Decoder for attributes with string values.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="am:AttributeDecoderType" />
+        </complexContent>
+    </complexType>
+    
+    <complexType name="AttributeDecoderType" abstract="true">
+        <annotation>
+            <documentation>
+                Decodes a SAML attribute into its shibboleth-internal representation.
+            </documentation>
+        </annotation>
+    </complexType>
+    
+ </schema>
