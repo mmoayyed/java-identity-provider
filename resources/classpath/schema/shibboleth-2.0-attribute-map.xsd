@@ -25,7 +25,7 @@
             <documentation>Rule for mapping a SAML 1/2 attribute to an internal attribute ID.</documentation>
         </annotation>
         <sequence>
-            <element name="AttributeDecoder" type="am:AttributeDecoderType" />
+            <element name="AttributeDecoder" type="am:AttributeDecoderType" minOccurs="0"/>
         </sequence>
         <attribute name="id" type="string">
             <annotation>
