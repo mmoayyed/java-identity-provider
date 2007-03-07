@@ -117,7 +117,7 @@ public class StaticDataConnectorBeanDefinitionParser extends AbstractBeanDefinit
         BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(AttributeFactoryBean.class);
         BeanDefinitionBuilder attribute = BeanDefinitionBuilder.rootBeanDefinition(BaseAttribute.class);
         
-        attribute.addPropertyValue("id", element.getAttribute("name"));
+        attribute.addPropertyValue("id", element.getAttribute("id"));
 
         NodeList valueElements = element.getElementsByTagNameNS(StaticDataConnectorNamespaceHandler.NAMESPACE, "Value");
         factory.addPropertyValue("values", parseValues(valueElements));

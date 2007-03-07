@@ -32,9 +32,9 @@
                                     </annotation>
                                 </element>
                             </sequence>
-                            <attribute name="name" type="string" use="required">
+                            <attribute name="id" type="string" use="required">
                                 <annotation>
-                                    <documentation>The name of the attribute.</documentation>
+                                    <documentation>The ID of the attribute.</documentation>
                                 </annotation>
                             </attribute>
                         </complexType>
