@@ -16,16 +16,13 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering;
 
-import java.util.Set;
-
+import java.util.Map;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 
 /**
  * The engine that applies attribute acceptance policies to a collection of attributes.
  */
 public interface FilteringEngine {
-
-    // TODO NameID attribute lookup
 
     /**
      * Processes the given collection of attributes using the effective attribute acceptance policy for the identity
@@ -35,18 +32,9 @@ public interface FilteringEngine {
      * 
      * @param filterContext contextual information for filtering attributes
      * 
-     * @return the filtered attributes
+     * @return the filtered attributes, attribute ID is the key, attribute object is the value
      * 
      * @throws FilteringException thrown if there is a problem retrieving or applying the attribute acceptance policy
      */
-    public Set<Attribute> filterAttributes(FilterContext filterContext) throws FilteringException;
-
-    /**
-     * Gets the set of attribute rules for the filtering engine. Only one rule per attribute ID may be registered,
-     * adding an attribute rule that applies to the same attribute as an existing attribute rule will cause the later to
-     * be replaced by the former.
-     * 
-     * @return set of attribute rules for the filtering engine
-     */
-    public Set<AttributeRule> getAttributeRules();
+    public Map<String, Attribute> filterAttributes(FilterContext filterContext) throws FilteringException;
 }

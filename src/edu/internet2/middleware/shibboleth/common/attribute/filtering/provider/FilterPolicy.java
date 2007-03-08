@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,34 +24,50 @@ import java.util.List;
  */
 public class FilterPolicy {
 
+    /** Unique identifier for this policy. */
+    private String policyId;
+    
     /** Requirement that must be met for this policy to apply. */
-    private List<MatchFunctor> policyRequirements;
+    private MatchFunctor policyRequirement;
 
     /** Filters to be used on attribute values. */
     private List<AttributeRule> attribtueRules;
 
-    /** Constructor. */
-    public FilterPolicy() {
-        policyRequirements = new ArrayList<MatchFunctor>();
+    /**
+     * Constructor.
+     * 
+     * @param id unique ID for the policy
+     */
+    public FilterPolicy(String id) {
+        policyId = id;
         attribtueRules = new ArrayList<AttributeRule>();
     }
-
+    
     /**
-     * Gets the requirements for this policy.
+     * Gets the unique ID for this policy.
      * 
-     * @return requirements for this policy
+     * @return unique ID for this policy
      */
-    public List<MatchFunctor> getPolicyRequirements() {
-        return policyRequirements;
+    public String getPolicyId(){
+        return policyId;
     }
 
     /**
-     * Sets the requirements for this policy.
+     * Gets the requirement for this policy.
      * 
-     * @param requirements requirements for this policy
+     * @return requirement for this policy
      */
-    public void setPolicyRequirements(List<MatchFunctor> requirements) {
-        policyRequirements = requirements;
+    public MatchFunctor getPolicyRequirement() {
+        return policyRequirement;
+    }
+
+    /**
+     * Sets the requirement for this policy.
+     * 
+     * @param requirement requirement for this policy
+     */
+    public void setPolicyRequirement(MatchFunctor requirement) {
+        policyRequirement = requirement;
     }
     
     /**

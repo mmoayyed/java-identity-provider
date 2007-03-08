@@ -46,4 +46,11 @@ public interface SAMLFilterContext extends FilterContext {
      * @return metadata for the relying party or attribute requester
      */
     public EntityDescriptor getRequesterMetadata();
+    
+    /**
+     * Gets the metadata for the attribute producer.
+     * 
+     * @return metadata for the attribute producer
+     */
+    public EntityDescriptor getProducerMetadata();
 }

@@ -50,9 +50,9 @@ public interface FilterContext {
     public String getAttributeProducer();
 
     /**
-     * Gets the unfiltered attributes indexed by the attributes ID.
+     * Gets the attributes indexed by the attributes ID.
      * 
      * @return unfiltered attributes
      */
-    public Map<String, Attribute> getUnfilteredAttributes();
+    public Map<String, Attribute> getAttributes();
 }

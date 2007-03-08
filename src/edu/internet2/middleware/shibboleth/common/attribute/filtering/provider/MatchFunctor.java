@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
+
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 
 /**
  * A function that evaluates whether an expressed criteria is met by the current filter context.
@@ -22,21 +24,29 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering;
 public interface MatchFunctor {
 
     /**
-     * Gets whether the results of the evaluation should be negated.
+     * Evaluates this matching criteria. This evaluation is used while the filtering engine determiens policy
+     * applicability.
      * 
-     * @return whether the results of the evaluation should be negated
-     */
-    public boolean negateEvaluation();
-
-    /**
-     * Evaluates this matching criteria.
-     * 
-     * @param owningAttribute the ID of the attribute that the owning rule applies to
-     * @param filterContext the current filtering context
+     * @param filterContext current filtering context
      * 
      * @return true if the criteria for this matching function are meant
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    public boolean evaluate(String owningAttribute, FilterContext filterContext) throws FilterProcessingException;
+    public boolean evaluate(FilterContext filterContext) throws FilterProcessingException;
+
+    /**
+     * Evaluates this matching criteria. This evaluation is used while the filtering engine is filtering attribute
+     * values.
+     * 
+     * @param filterContext the current filtering context
+     * @param attributeId ID of the attribute being evaluated
+     * @param attributeValue value of the attribute being evalauted
+     * 
+     * @return true if the criteria for this matching function are meant
+     * 
+     * @throws FilterProcessingException thrown if the function can not be evaluated
+     */
+    public boolean evaluate(FilterContext filterContext, String attributeId, Object attributeValue)
+            throws FilterProcessingException;
 }

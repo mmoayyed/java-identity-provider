@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
-import java.util.Comparator;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 
 /**
- * A rule that compares two attribute rules.  The comparison is a lexical ordering 
- * based on the ID of the attribute the rule is for.
+ * A {@link MatchFunctor} that returns true to evaluations. Note, the result may still be negated.
  */
-public class AttributeRuleComparator implements Comparator<AttributeRule> {
+public class AnyMatchFunctor extends AbstractMatchFunctor {
 
     /** {@inheritDoc} */
-    public int compare(AttributeRule rule1, AttributeRule rule2) {
-        return rule1.getAttributeId().compareTo(rule2.getAttributeId());
+    protected boolean doEvaluate(FilterContext filterContext) throws FilterProcessingException {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    protected boolean doEvaluate(FilterContext filterContext, String attributeId, Object attributeValue)
+            throws FilterProcessingException {
+        return true;
     }
 }

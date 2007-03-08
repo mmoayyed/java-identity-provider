@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
+
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
+
 
 
 /**

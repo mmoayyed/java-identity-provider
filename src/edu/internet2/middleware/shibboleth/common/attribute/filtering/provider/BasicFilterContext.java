@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
 import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 
 /**
  * A basic implementation of the {@link FilterContext}.
@@ -35,7 +36,7 @@ public class BasicFilterContext implements FilterContext {
     private String princpialName;
     
     /** Attributes to be filtered with a map key of the attribute's ID. */
-    private Map<String, Attribute> unfilteredAttributes;
+    private Map<String, Attribute> attributes;
     
     /**
      * Constructor.
@@ -43,13 +44,13 @@ public class BasicFilterContext implements FilterContext {
      * @param requester entity ID of the attribute requester
      * @param producer ID of the producer of the attribute
      * @param principal principal name of the user the attributes describe
-     * @param attribtues attributes about the user
+     * @param attribs attributes about the user
      */
-    public BasicFilterContext(String requester, String producer, String principal, Map<String, Attribute> attribtues){
+    public BasicFilterContext(String requester, String producer, String principal, Map<String, Attribute> attribs){
         attributeRequester = requester;
         attributeProducer = producer;
         princpialName = principal;
-        unfilteredAttributes = attribtues;
+        attributes = attribs;
     }
     
     /** {@inheritDoc} */
@@ -68,7 +69,7 @@ public class BasicFilterContext implements FilterContext {
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> getUnfilteredAttributes() {
-        return unfilteredAttributes;
+    public Map<String, Attribute> getAttributes() {
+        return attributes;
     }
 }
