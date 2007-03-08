@@ -188,7 +188,7 @@
         </annotation>
         <complexContent>
             <extension base="basic:RegexMatchType">
-                <attribute name="attribtueID" type="string" use="required">
+                <attribute name="attribtueID" type="string">
                     <annotation>
                         <documentation>The ID of the attribute whose value should be matched.</documentation>
                     </annotation>

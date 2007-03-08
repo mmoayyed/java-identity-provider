@@ -73,7 +73,7 @@
     </element>
     <complexType name="FilterPolicyType">
         <sequence>
-            <element ref="afp:PolicyRequirement" maxOccurs="unbounded">
+            <element ref="afp:PolicyRequirement">
                 <annotation>
                     <documentation>
                         A requirement that if met signals that this filter policy should be used.
@@ -86,6 +86,13 @@
                 </annotation>
             </element>
         </sequence>
+        <attribute name="id" type="ID" use="required">
+            <annotation>
+                <documentation>
+                    A unique ID which will appear in the log files when working with the policy.
+                </documentation>
+            </annotation>
+        </attribute>
     </complexType>
 
     <element name="AttributeRule" type="afp:AttributeRuleType">
@@ -95,11 +102,10 @@
     </element>
     <complexType name="AttributeRuleType">
         <sequence>
-            <element ref="afp:ValueFilter" maxOccurs="unbounded">
+            <element ref="afp:ValueFilter">
                 <annotation>
                     <documentation>
-                        A filter for attribute values. If any filter for a value evaluates to false the value is
-                        filtered out. If all filters evaluate to true the value is kept and released.
+                        A filter for attribute values.  If the filter evaluates to true the value is kept, otherwise it is filtered out.
                     </documentation>
                 </annotation>
             </element>
