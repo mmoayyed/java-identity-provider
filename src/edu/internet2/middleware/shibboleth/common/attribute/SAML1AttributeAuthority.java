@@ -16,10 +16,13 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute;
 
+import org.opensaml.saml1.core.AttributeDesignator;
 import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.AttributeStatement;
-import org.opensaml.saml1.core.Attribute;
 import org.opensaml.saml1.core.NameIdentifier;
+
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 
 /**
  * An attribute authority that can take an attribute query and produce a resultant attribute statement.
@@ -28,25 +31,33 @@ public interface SAML1AttributeAuthority {
 
     /**
      * Performs a SAML 1 attribute query based on the given query. This includes fetching of the requested attributes,
-     * filtering the attributes and values, and finally creating an attribute statement in respone to the query.
+     * filtering the attributes and values, and finally creating an attribute statement in response to the query.
      * 
      * @param query the SAML 1 attribute query
      * 
      * @return the attribute statement in response to the attribute query
+     * 
+     * @throws AttributeResolutionException if the attributes in the query cannot be resolved
+     * @throws FilteringException if the attributes in the query cannot be filtered
      */
-    public AttributeStatement performAttributeQuery(AttributeQuery query);
+    public AttributeStatement performAttributeQuery(AttributeQuery query) throws AttributeResolutionException,
+            FilteringException;
 
     /**
      * Performs a query for attributes to be released to the given entity. This includes fetching of the requested
-     * attributes, filtering the attributes and values, and finally creating an attribute statement in respone to the
+     * attributes, filtering the attributes and values, and finally creating an attribute statement in response to the
      * query.
      * 
      * @param entity the entity to release the attributes to
      * @param subject the subject of the attributes
      * 
      * @return the attribute statement for the entity
+     * 
+     * @throws AttributeResolutionException if the attributes in the query cannot be resolved
+     * @throws FilteringException if the attributes in the query cannot be filtered
      */
-    public AttributeStatement performAttributeQuery(String entity, NameIdentifier subject);
+    public AttributeStatement performAttributeQuery(String entity, NameIdentifier subject)
+            throws AttributeResolutionException, FilteringException;
 
     /**
      * Translates SAML 1 attribute naming information into the internal attribute ID used by the resolver and filtering
@@ -56,7 +67,7 @@ public interface SAML1AttributeAuthority {
      * 
      * @return the attribute ID used by the resolver and filtering engine
      */
-    public String getAttributeIDBySAMLAttribute(Attribute attribute);
+    public String getAttributeIDBySAMLAttribute(AttributeDesignator attribute);
 
     /**
      * Translates the internal attribute ID, used by the resolver and filtering engine, into its representative SAML 1
@@ -66,5 +77,5 @@ public interface SAML1AttributeAuthority {
      * 
      * @return SAML 1 attribute name
      */
-    public Attribute getSAMLAttributeByAttributeID(String id);
+    public AttributeDesignator getSAMLAttributeByAttributeID(String id);
 }

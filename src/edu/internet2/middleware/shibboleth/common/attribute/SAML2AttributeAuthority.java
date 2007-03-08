@@ -21,6 +21,9 @@ import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.AttributeStatement;
 import org.opensaml.saml2.core.NameID;
 
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+
 /**
  * An attribute authority that can take an attribute query and produce a resultant attribute statement.
  */
@@ -33,9 +36,14 @@ public interface SAML2AttributeAuthority {
      * @param query the SAML 2 attribute query
      * 
      * @return the attribute statement in response to the attribute query
+     * 
+     * @throws AttributeResolutionException if the attributes in the query cannot be resolved
+     * @throws FilteringException if the attributes in the query cannot be filtered
+     * 
      */
-    public AttributeStatement performAttributeQuery(AttributeQuery query);
-    
+    public AttributeStatement performAttributeQuery(AttributeQuery query) throws AttributeResolutionException,
+            FilteringException;
+
     /**
      * Performs a query for attributes to be released to the given entity. This includes fetching of the requested
      * attributes, filtering the attributes and values, and finally creating an attribute statement in respone to the
@@ -45,8 +53,13 @@ public interface SAML2AttributeAuthority {
      * @param subject the subject of the attributes
      * 
      * @return the attribute statement for the entity
+     * 
+     * @throws AttributeResolutionException if the attributes in the query cannot be resolved
+     * @throws FilteringException if the attributes in the query cannot be filtered
+     * 
      */
-    public AttributeStatement performAttributeQuery(String entity, NameID subject);
+    public AttributeStatement performAttributeQuery(String entity, NameID subject) throws AttributeResolutionException,
+            FilteringException;
 
     /**
      * Translates SAML 2 attribute naming information into the internal attribute ID used by the resolver and filtering
