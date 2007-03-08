@@ -49,7 +49,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
         dependencyOnly = false;
         encoders = new FastList<AttributeEncoder>();
     }
-    
+
     /** {@inheritDoc} */
     public boolean isDependencyOnly() {
         return dependencyOnly;
@@ -83,7 +83,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
             values.addAll(getValuesFromAttributeDependencies(context));
         }
 
-        if (!getAttributeDefinitionDependencyIds().isEmpty()) {
+        if (!getDataConnectorDependencyIds().isEmpty()) {
             values.addAll(getValuesFromConnectorDependencies(context));
         }
 
@@ -125,12 +125,12 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     protected Collection<Object> getValuesFromConnectorDependencies(ResolutionContext context) {
         Set<Object> values = new FastSet<Object>();
 
-        for (String id : getDataConnectorDependencyIds()) {
-            DataConnector connector = context.getResolvedDataConnectors().get(id);
+        for (String connectorId : getDataConnectorDependencyIds()) {
+            DataConnector connector = context.getResolvedDataConnectors().get(connectorId);
             if (connector != null) {
                 try {
                     Map<String, Attribute> attributes = connector.resolve(context);
-                    for (String attributeId: attributes.keySet()) {
+                    for (String attributeId : attributes.keySet()) {
                         if (attributeId != null && attributeId.equals(this.getId())) {
                             // TODO do we need any kind of connector mapping like in previous versions?
                             for (Object o : attributes.get(attributeId).getValues()) {

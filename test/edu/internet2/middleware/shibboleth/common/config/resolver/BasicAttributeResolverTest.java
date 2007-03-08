@@ -2,7 +2,8 @@
 package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -12,7 +13,6 @@ import org.springframework.context.ApplicationContext;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
@@ -48,26 +48,22 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
     public void testResolverInstantiation() {
         AttributeResolver resolver = (AttributeResolver) ac
                 .getBean("edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverFactoryBean");
-        ResolutionContext context = resolver.createResolutionContext("wnorris", "http://foo.com/", null);
+        ResolutionContext context = resolver.createResolutionContext("ttrojan", "http://example.com/", null);
         
+        SortedSet<String> expected = new TreeSet<String>();
+        expected.add("gpburdell");
+        expected.add("ttrojan");
         
-        log.debug("total connectors = (" + resolver.getDataConnectors().size() + ")");
-        for (String id : resolver.getDataConnectors().keySet()) {
-            DataConnector connector = resolver.getDataConnectors().get(id);
-            log.debug("connector (" + id + ") = " + connector);
-
-            try {
-                Map<String, Attribute> attributes = connector.resolve(context);
-                for (String attributeId : attributes.keySet()) {
-                    log.debug("    (" + attributeId + ") => (" + attributes.get(attributeId).getValues() + ")");
-                }
-
-            } catch (AttributeResolutionException e) {
-                e.printStackTrace();
-            }
+        try {
+            Attribute[] actual = resolver.resolveAttributes(null, context).toArray(new Attribute[0]);
+            
+            assertEquals(1, actual.length);
+            assertEquals(2, actual[0].getValues().size());
+            assertEquals(expected, actual[0].getValues());
+        } catch (AttributeResolutionException e) {
+            fail(e.getMessage());
         }
         
-        assertNotNull(resolver);
     }
 
 }

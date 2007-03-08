@@ -36,6 +36,7 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
         log.debug("Resolving attribute: (" + getId() + ")");
 
         BaseAttribute<Object> attribute = new BaseAttribute<Object>();
+        attribute.setId(getId());
         for (Object o : getValuesFromAllDependencies(resolutionContext)) {
             attribute.getValues().add(o);
         }

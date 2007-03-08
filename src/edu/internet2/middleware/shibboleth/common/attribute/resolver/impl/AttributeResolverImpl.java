@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -174,7 +175,7 @@ public class AttributeResolverImpl implements AttributeResolver {
         }
 
         for (String id : attributeIDs) {
-            if (getAttributeDefinitions().containsKey(id)) {
+            if (!getAttributeDefinitions().containsKey(id)) {
                 log.warn("No plug-in registered for attribute: (" + id + ")");
             } else {
                 log.info("Resolving attribute: (" + id + ")");
@@ -185,14 +186,14 @@ public class AttributeResolverImpl implements AttributeResolver {
                 } else {
                     Attribute resolution = resolveAttribute(id, resolutionContext);
 
-                    if (resolution != null) {
+                    if (resolution != null && resolution.getId() != null) {
                         resolvedAttributes.put(resolution.getId(), resolution);
                     }
                 }
             }
         }
 
-        return (Set<Attribute>) resolvedAttributes.values();
+        return new HashSet<Attribute>(resolvedAttributes.values());
     }
 
     /**
