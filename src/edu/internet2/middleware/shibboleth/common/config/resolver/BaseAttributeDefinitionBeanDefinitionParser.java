@@ -37,7 +37,7 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         super.doParse(element, parserContext, builder);
 
         // parse attribute encoders
-        NodeList elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+        NodeList elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
                 ATTRIBUTE_ENCODER_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList encoders = SpringConfigurationUtils.parseCustomElements(elements, parserContext);

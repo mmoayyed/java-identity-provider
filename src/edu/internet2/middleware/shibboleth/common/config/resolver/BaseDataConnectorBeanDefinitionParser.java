@@ -34,7 +34,7 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractReso
         super.doParse(element, parserContext, builder);
 
         // parse failover connector
-        NodeList elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+        NodeList elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
                 FAILOVER_DATA_CONNECTOR_ATTRIBUTE_NAME);
         if (elements != null && elements.getLength() > 0) {
             builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));

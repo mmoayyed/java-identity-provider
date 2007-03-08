@@ -45,7 +45,7 @@ public class AttributeResolverBeanDefinitionParser extends AbstractBeanDefinitio
         NodeList elements;
 
         // parse AttributeDefinition plug-ins
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+        elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
                 ATTRIBUTE_DEFINITION_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList definitions = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
@@ -54,14 +54,14 @@ public class AttributeResolverBeanDefinitionParser extends AbstractBeanDefinitio
 
         // parse DataConnector plug-ins
         elements = element
-                .getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, DATA_CONNECTOR_ELEMENT_LOCAL_NAME);
+                .getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE, DATA_CONNECTOR_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList connectors = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             factory.addPropertyValue("dataConnectors", connectors);
         }
 
         // parse PrincipalConnector plug-ins
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+        elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
                 PRINCIPAL_CONNECTOR_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList connectors = SpringConfigurationUtils.parseCustomElements(elements, parserContext);

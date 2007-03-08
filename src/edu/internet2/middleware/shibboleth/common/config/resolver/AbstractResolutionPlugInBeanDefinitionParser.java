@@ -52,13 +52,13 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
         // parse child elements
         NodeList elements;
 
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+        elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
                 ATTRIBUTE_DEFINITION_DEPENDENCY_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
         }
 
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+        elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
                 DATA_CONNECTOR_DEPENDENCY_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             builder.addPropertyValue("dataConnectorDependencyIds", parseDependencies(elements));
