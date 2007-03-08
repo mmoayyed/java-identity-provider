@@ -41,6 +41,12 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:resolver:dc:static", "Static");
 
+    /** Local name of attribute. */
+    public static final String ATTRIBUTE_ELEMENT_LOCAL_NAME = "Attribute";
+
+    /** Local name of value. */
+    public static final String VALUE_ELEMENT_LOCAL_NAME = "Value";
+
     /** {@inheritDoc} */
     protected Class<? extends ResolutionPlugIn> getBeanClass(Element element) {
         return StaticDataConnector.class;
@@ -50,7 +56,8 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        NodeList elements = element.getElementsByTagNameNS(StaticDataConnectorNamespaceHandler.NAMESPACE, "Attribute");
+        NodeList elements = element.getElementsByTagNameNS(StaticDataConnectorNamespaceHandler.NAMESPACE,
+                ATTRIBUTE_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList attributes = new ManagedList(elements.getLength());
 
@@ -76,7 +83,8 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
         builder.addPropertyValue("id", element.getAttribute("id"));
 
         // parse <Value> elements
-        NodeList valueElements = element.getElementsByTagNameNS(StaticDataConnectorNamespaceHandler.NAMESPACE, "Value");
+        NodeList valueElements = element.getElementsByTagNameNS(StaticDataConnectorNamespaceHandler.NAMESPACE,
+                VALUE_ELEMENT_LOCAL_NAME);
         if (valueElements != null && valueElements.getLength() > 0) {
             SortedSet<String> values = new TreeSet<String>();
 

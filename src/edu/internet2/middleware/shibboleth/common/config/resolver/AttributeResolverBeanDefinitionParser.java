@@ -22,6 +22,15 @@ public class AttributeResolverBeanDefinitionParser extends AbstractBeanDefinitio
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:resolver", "AttributeResolver");
 
+    /** Local name of attribute definition. */
+    public static final String ATTRIBUTE_DEFINITION_ELEMENT_LOCAL_NAME = "AttributeDefinition";
+
+    /** Local name of data connector. */
+    public static final String DATA_CONNECTOR_ELEMENT_LOCAL_NAME = "DataConnector";
+
+    /** Local name of principal connector. */
+    public static final String PRINCIPAL_CONNECTOR_ELEMENT_LOCAL_NAME = "PrincipalConnector";
+
     /** {@inheritDoc} */
     protected boolean shouldGenerateId() {
         return true;
@@ -32,25 +41,28 @@ public class AttributeResolverBeanDefinitionParser extends AbstractBeanDefinitio
         BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(AttributeResolverFactoryBean.class);
         BeanDefinitionBuilder resolver = BeanDefinitionBuilder.rootBeanDefinition(AttributeResolverImpl.class);
         factory.addPropertyValue("resolver", resolver.getBeanDefinition());
-        
+
         NodeList elements;
 
         // parse AttributeDefinition plug-ins
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "AttributeDefinition");
+        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+                ATTRIBUTE_DEFINITION_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList definitions = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             factory.addPropertyValue("attributeDefinitions", definitions);
         }
 
         // parse DataConnector plug-ins
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "DataConnector");
+        elements = element
+                .getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, DATA_CONNECTOR_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList connectors = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             factory.addPropertyValue("dataConnectors", connectors);
         }
 
         // parse PrincipalConnector plug-ins
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "PrincipalConnector");
+        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+                PRINCIPAL_CONNECTOR_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList connectors = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             factory.addPropertyValue("principalConnectors", connectors);

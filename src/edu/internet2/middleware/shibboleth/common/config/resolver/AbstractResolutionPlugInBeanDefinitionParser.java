@@ -33,6 +33,12 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionP
  */
 public abstract class AbstractResolutionPlugInBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
+    /** Local name of attribute definition dependency. */
+    public static final String ATTRIBUTE_DEFINITION_DEPENDENCY_ELEMENT_LOCAL_NAME = "AttributeDefinitionDependency";
+
+    /** Local name of data connector dependency. */
+    public static final String DATA_CONNECTOR_DEPENDENCY_ELEMENT_LOCAL_NAME = "DataConnectorDependency";
+
     /** {@inheritDoc} */
     protected abstract Class<? extends ResolutionPlugIn> getBeanClass(Element element);
 
@@ -40,18 +46,20 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
         // grab attributes off of the plugin element
-        builder.addPropertyValue("id", element.getAttribute("id"));
+        builder.addPropertyValue("id", element.getAttribute(ID_ATTRIBUTE));
         builder.addPropertyValue("propagateErrors", element.getAttribute("propagateErrors"));
 
         // parse child elements
         NodeList elements;
 
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "AttributeDefinitionDependency");
+        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+                ATTRIBUTE_DEFINITION_DEPENDENCY_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
         }
 
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "DataConnectorDependency");
+        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+                DATA_CONNECTOR_DEPENDENCY_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             builder.addPropertyValue("dataConnectorDependencyIds", parseDependencies(elements));
         }

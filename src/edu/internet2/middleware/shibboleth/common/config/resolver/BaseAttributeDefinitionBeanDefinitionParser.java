@@ -29,12 +29,16 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
  */
 public abstract class BaseAttributeDefinitionBeanDefinitionParser extends AbstractResolutionPlugInBeanDefinitionParser {
 
+    /** Local name of attribute encoder. */
+    public static final String ATTRIBUTE_ENCODER_ELEMENT_LOCAL_NAME = "AttributeEncoder";
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         // parse attribute encoders
-        NodeList elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "AttributeEncoder");
+        NodeList elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+                ATTRIBUTE_ENCODER_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             ManagedList encoders = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
             builder.addPropertyValue("attributeEncoders", encoders);

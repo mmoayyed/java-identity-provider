@@ -26,12 +26,16 @@ import org.w3c.dom.NodeList;
  */
 public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractResolutionPlugInBeanDefinitionParser {
 
+    /** Failover data connector attribute name. */
+    public static final String FAILOVER_DATA_CONNECTOR_ATTRIBUTE_NAME = "failoverDataConnector";
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         // parse failover connector
-        NodeList elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
+        NodeList elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE,
+                FAILOVER_DATA_CONNECTOR_ATTRIBUTE_NAME);
         if (elements != null && elements.getLength() > 0) {
             builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
         }
