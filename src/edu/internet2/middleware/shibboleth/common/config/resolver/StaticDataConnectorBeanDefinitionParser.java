@@ -77,11 +77,9 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
      * @return bean definition builder
      */
     private static BeanDefinition buildAttribute(Element element) {
-        BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(AttributeFactoryBean.class);
-        BeanDefinitionBuilder attribute = BeanDefinitionBuilder.rootBeanDefinition(BaseAttribute.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(BaseAttribute.class);
 
-        attribute.addPropertyValue("id", element.getAttribute("id"));
-        factory.addPropertyValue("attribute", attribute.getBeanDefinition());
+        builder.addPropertyValue("id", element.getAttribute("id"));
 
         // parse <Value> elements
         NodeList valueElements = element.getElementsByTagNameNS(StaticDataConnectorNamespaceHandler.NAMESPACE, "Value");
@@ -94,10 +92,10 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
                 values.add(value);
             }
 
-            factory.addPropertyValue("values", values);
+            builder.addPropertyValue("values", values);
         }
 
-        return factory.getBeanDefinition();
+        return builder.getBeanDefinition();
     }
 
 }
