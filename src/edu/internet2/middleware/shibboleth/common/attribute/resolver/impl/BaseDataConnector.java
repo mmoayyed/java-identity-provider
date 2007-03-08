@@ -24,7 +24,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnect
 /**
  * Base class for {@link DataConnector} plug-ins.
  */
-public abstract class BaseDataConnector extends AbstractResolutionPlugIn<Map<String, Attribute>> implements DataConnector {
+public abstract class BaseDataConnector extends AbstractResolutionPlugIn<Map<String, Attribute>> implements
+        DataConnector {
 
     /** ID of the data connector to use if this one fails. */
     private String failoverDependencyId;

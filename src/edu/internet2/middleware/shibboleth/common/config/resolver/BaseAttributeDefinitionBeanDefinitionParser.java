@@ -30,16 +30,14 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 public abstract class BaseAttributeDefinitionBeanDefinitionParser extends AbstractResolutionPlugInBeanDefinitionParser {
 
     /** {@inheritDoc} */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder factory,
-            BeanDefinitionBuilder pluginBuilder) {
-        
-        super.doParse(element, parserContext, factory, pluginBuilder);
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
 
         // parse attribute encoders
         NodeList elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "AttributeEncoder");
         if (elements != null && elements.getLength() > 0) {
             ManagedList encoders = SpringConfigurationUtils.parseCustomElements(elements, parserContext);
-            factory.addPropertyValue("attributeEncoders", encoders);
+            builder.addPropertyValue("attributeEncoders", encoders);
         }
     }
 

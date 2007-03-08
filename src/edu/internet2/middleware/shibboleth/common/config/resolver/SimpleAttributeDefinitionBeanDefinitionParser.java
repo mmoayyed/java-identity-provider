@@ -30,14 +30,9 @@ public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseAttribute
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:resolver:ad:simple", "Simple");
-    
-    /** {@inheritDoc} */
-    protected Class getFactoryBeanClass(Element element) {
-        return SimpleAttributeDefinitionFactoryBean.class;
-    }
 
     /** {@inheritDoc} */
-    protected Class<? extends ResolutionPlugIn> getInternalBeanClass(Element element) {
+    protected Class<? extends ResolutionPlugIn> getBeanClass(Element element) {
         return SimpleAttributeDefinition.class;
     }
 }

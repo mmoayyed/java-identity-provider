@@ -58,6 +58,24 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
         return dataConnectorDependencyIds;
     }
 
+    /**
+     * Replace the current set of attribute definition dependency IDs with the given set.
+     * 
+     * @param newIds The new IDs to set.
+     */
+    public void setAttributeDefinitionDependencyIds(Set<String> newIds) {
+        this.attributeDefinitionDependencyIds = newIds;
+    }
+
+    /**
+     * Replace the current set of data connector dependency IDs with the given set.
+     * 
+     * @param newIds The new IDs to set.
+     */
+    public void setDataConnectorDependencyIds(Set<String> newIds) {
+        this.dataConnectorDependencyIds = newIds;
+    }
+
     /** {@inheritDoc} */
     public String getId() {
         return id;

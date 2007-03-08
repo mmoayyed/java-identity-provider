@@ -43,7 +43,7 @@ public class StaticDataConnector extends BaseDataConnector {
     public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving connector: (" + getId() + ") for principal: (" + resolutionContext.getPrincipalName()
                 + ")");
-        
+
         Map<String, Attribute> attributes = new FastMap<String, Attribute>();
         for (Attribute<String> a : sourceData) {
             BaseAttribute<String> newAttribute = new BaseAttribute<String>();
@@ -67,6 +67,18 @@ public class StaticDataConnector extends BaseDataConnector {
      */
     public List<BaseAttribute<String>> getSourceData() {
         return sourceData;
+    }
+
+    /**
+     * Replace the current list of source attributes with the given list.
+     * 
+     * @param newSourceData new data to replace existing data
+     */
+    public void setSourceData(List<BaseAttribute<String>> newSourceData) {
+        sourceData.clear();
+        for (BaseAttribute<String> attribute : newSourceData) {
+            sourceData.add(attribute);
+        }
     }
 
     /** {@inheritDoc} */

@@ -47,7 +47,6 @@ public class AttributeResolverFactoryBean extends AbstractFactoryBean {
         if (attributeDefinitions != null) {
             for (AttributeDefinition definition : attributeDefinitions) {
                 if (definition != null) {
-                    System.out.println("ad.id = " + definition.getId());
                     resolver.getAttributeDefinitions().put(definition.getId(), definition);
                 }
             }
@@ -92,9 +91,6 @@ public class AttributeResolverFactoryBean extends AbstractFactoryBean {
      * @param definitions collection of definitions.
      */
     public void setAttributeDefinitions(Collection<AttributeDefinition> definitions) {
-        for(AttributeDefinition ad : definitions) {
-            //System.out.println("ad.id = " + ad.getId());
-        }
         attributeDefinitions = definitions;
     }
 

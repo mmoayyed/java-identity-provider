@@ -87,16 +87,14 @@ public class BaseAttribute<ValueType> extends Attribute<ValueType> implements Cl
     public SortedSet<ValueType> getValues() {
         return values;
     }
-    
+
     /**
-     * Replaces the current set of values with the given set.
+     * Replace the current set of values with the given set.
+     * 
      * @param newValues new values to replace existing ones
      */
     public void setValues(SortedSet<ValueType> newValues) {
-        values.clear();
-        for(ValueType v : newValues) {
-            values.add(v);
-        }
+        values = newValues;
     }
 
     /** {@inheritDoc} */

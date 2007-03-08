@@ -23,7 +23,6 @@ import javolution.util.FastSet;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.Assert;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -34,34 +33,28 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionP
  */
 public abstract class AbstractResolutionPlugInBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-    /**
-     * Determine the class of the factory bean corresponding to the supplied {@link Element}.
-     * 
-     * @param element the <code>Element</code> that is being parsed
-     * @return the {@link Class} of the bean that is being defined via parsing the supplied <code>Element</code>
-     */
-    protected abstract Class getFactoryBeanClass(Element element);
-
-    /**
-     * Determine the bean class corresponding to the supplied {@link Element}.
-     * 
-     * @param element the <code>Element</code> that is being parsed
-     * @return the {@link Class} of the bean that is being defined via parsing the supplied <code>Element</code>
-     */
-    protected abstract Class<? extends ResolutionPlugIn> getInternalBeanClass(Element element); 
+    /** {@inheritDoc} */
+    protected abstract Class<? extends ResolutionPlugIn> getBeanClass(Element element);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return getFactoryBeanClass(element);
-    }
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
-    /** {@inheritDoc} */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder factory) {
-        Class internalBeanClass = getInternalBeanClass(element);
-        Assert.state(internalBeanClass != null, "Class returned from getInternalBeanClass(Element) must not be null");
-        BeanDefinitionBuilder pluginBuilder = BeanDefinitionBuilder.rootBeanDefinition(internalBeanClass);
+        // grab attributes off of the plugin element
+        builder.addPropertyValue("id", element.getAttribute("id"));
+        builder.addPropertyValue("propagateErrors", element.getAttribute("propagateErrors"));
 
-        doParse(element, parserContext, factory, pluginBuilder);
+        // parse child elements
+        NodeList elements;
+
+        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "AttributeDefinitionDependency");
+        if (elements != null && elements.getLength() > 0) {
+            builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
+        }
+
+        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "DataConnectorDependency");
+        if (elements != null && elements.getLength() > 0) {
+            builder.addPropertyValue("dataConnectorDependencyIds", parseDependencies(elements));
+        }
     }
 
     /**
@@ -81,34 +74,4 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
         return dependencyIds;
     }
 
-    /**
-     * TODO
-     * 
-     * @param element
-     * @param parserContext
-     * @param factory
-     * @param pluginBuilder
-     */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder factory,
-            BeanDefinitionBuilder pluginBuilder) {
-        
-        // grab attributes off of the plugin element
-        pluginBuilder.addPropertyValue("id", element.getAttribute("id"));
-        pluginBuilder.addPropertyValue("propagateErrors", element.getAttribute("propagateErrors"));
-
-        // parse child elements
-        NodeList elements;
-
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "AttributeDefinitionDependency");
-        if (elements != null && elements.getLength() > 0) {
-            factory.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
-        }
-
-        elements = element.getElementsByTagNameNS(ResolverNamespaceHandler.NAMESPACE, "DataConnectorDependency");
-        if (elements != null && elements.getLength() > 0) {
-            factory.addPropertyValue("dataConnectorDependencyIds", parseDependencies(elements));
-        }
-
-        factory.addPropertyValue("plugin", pluginBuilder.getBeanDefinition());
-    }
 }

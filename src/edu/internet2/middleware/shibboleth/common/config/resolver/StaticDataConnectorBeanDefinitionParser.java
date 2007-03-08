@@ -42,20 +42,14 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:resolver:dc:static", "Static");
 
     /** {@inheritDoc} */
-    protected Class getFactoryBeanClass(Element element) {
-        return StaticDataConnectorFactoryBean.class;
-    }
-
-    /** {@inheritDoc} */
-    protected Class<? extends ResolutionPlugIn> getInternalBeanClass(Element element) {
+    protected Class<? extends ResolutionPlugIn> getBeanClass(Element element) {
         return StaticDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder factory,
-            BeanDefinitionBuilder pluginBuilder) {
-        super.doParse(element, parserContext, factory, pluginBuilder);
-        
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+
         NodeList elements = element.getElementsByTagNameNS(StaticDataConnectorNamespaceHandler.NAMESPACE, "Attribute");
         if (elements != null && elements.getLength() > 0) {
             ManagedList attributes = new ManagedList(elements.getLength());
@@ -66,7 +60,7 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
                 attributes.add(attr);
             }
 
-            factory.addPropertyValue("attributes", attributes);
+            builder.addPropertyValue("sourceData", attributes);
         }
     }
 
