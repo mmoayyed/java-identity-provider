@@ -34,7 +34,7 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 public class ChainingMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "ChainingMetadataProvider");
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ChainingMetadataProvider");
 
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {

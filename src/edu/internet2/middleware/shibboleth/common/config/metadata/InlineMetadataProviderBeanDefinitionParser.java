@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
 public class InlineMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
     
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "InlineMetadataProvider");
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "InlineMetadataProvider");
     
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {

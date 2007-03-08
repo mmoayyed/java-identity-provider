@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 public class FileBackedURLMetadataProviderBeanDefinitionParser extends URLMetadataProviderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", 
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, 
             "FileBackedURLMetadataProvider");
 
     /** Backing file attirbute name. */

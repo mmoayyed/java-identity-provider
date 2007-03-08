@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "FilesystemMetadataProvider");
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "FilesystemMetadataProvider");
 
     /** Maintain expired metadata configuration option attribute name. */
     public static final String METADATA_FILE_ATTRIBUTE_NAME = "metadataFile";

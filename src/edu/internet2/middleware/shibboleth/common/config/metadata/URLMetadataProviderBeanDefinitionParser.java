@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 public class URLMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:metadata", "URLMetadataProvider");
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "URLMetadataProvider");
 
     /** Metadata URL configuration option attribute name. */
     public static final String METADATA_URL_ATTRIBUTE_NAME = "metadataURL";
