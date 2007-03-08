@@ -1,4 +1,5 @@
 urn\:mace\:shibboleth\:2.0\:resolver= schema/shibboleth-2.0-attribute-resolver.xsd
-urn\:mace\:shibboleth\:2.0\:resolver\:dc\:static= schema/shibboleth-2.0-attribute-resolver-connector-static.xsd
+urn\:mace\:shibboleth\:2.0\:resolver\:dc\:static= schema/shibboleth-2.0-attribute-resolver-dc-static.xsd
+urn\:mace\:shibboleth\:2.0\:resolver\:ad\:simple= schema/shibboleth-2.0-attribute-resolver-ad-simple.xsd
 urn\:mace\:shibboleth\:2.0\:metadata = schema/shibboleth-2.0-metadata.xsd
 urn\:mace\:shibboleth\:2.0\:credential = schema/shibboleth-2.0-credential.xsd

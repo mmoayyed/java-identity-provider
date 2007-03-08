@@ -12,34 +12,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:BaseAttributeDefinitionType">
-                <sequence>
-                    <element name="Attribute" maxOccurs="unbounded">
-                        <annotation>
-                            <documentation>
-                                Specifies an attribute, and its values, to be exposed by this definition.
-                            </documentation>
-                        </annotation>
-                        <complexType>
-                            <sequence>
-                                <element name="Value" type="string" maxOccurs="unbounded">
-                                    <annotation>
-                                        <documentation>
-                                            A value of the attribute. If the value contains characters that would
-                                            otherwise need to be XML encoded you may wrap the value in a CDATA section.
-                                        </documentation>
-                                    </annotation>
-                                </element>
-                            </sequence>
-                            <attribute name="name" type="string" use="required">
-                                <annotation>
-                                    <documentation>The name of the attribute.</documentation>
-                                </annotation>
-                            </attribute>
-                        </complexType>
-                    </element>
-                </sequence>
-            </extension>
+            <extension base="resolver:BaseAttributeDefinitionType" />
         </complexContent>
     </complexType>
 

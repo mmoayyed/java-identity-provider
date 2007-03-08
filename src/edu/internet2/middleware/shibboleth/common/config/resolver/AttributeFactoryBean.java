@@ -38,7 +38,6 @@ public class AttributeFactoryBean implements FactoryBean {
         
         if (values != null && !values.isEmpty()) {
             for (String value : values) {
-                System.out.println(value);
                 attribute.getValues().add(value);
             }
         }

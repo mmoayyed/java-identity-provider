@@ -18,37 +18,16 @@ package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import java.util.Collection;
 
-import javolution.util.FastList;
-
-import org.springframework.beans.factory.FactoryBean;
-
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.StaticDataConnector;
 
 /**
  * FactoryBean for creating {@link StaticDataConnector}s.
  */
-public class StaticDataConnectorFactoryBean implements FactoryBean {
-
-    /** Data connector. */
-    private StaticDataConnector connector;
+public class StaticDataConnectorFactoryBean extends BaseDataConnectorFactoryBean<StaticDataConnector> {
 
     /** Attributes. */
     private Collection<BaseAttribute<String>> attributes;
-
-    /** Constructor. */
-    public StaticDataConnectorFactoryBean() {
-        attributes = new FastList<BaseAttribute<String>>();
-    }
-
-    /**
-     * Set the data connector.
-     * 
-     * @param newConnector the data connector
-     */
-    public void setConnector(StaticDataConnector newConnector) {
-        connector = newConnector;
-    }
 
     /**
      * Set the attributes.
@@ -60,22 +39,14 @@ public class StaticDataConnectorFactoryBean implements FactoryBean {
     }
 
     /** {@inheritDoc} */
-    public Object getObject() throws Exception {
-        for (BaseAttribute<String> a : attributes) {
-            connector.getSourceData().add(a);
+    protected void buildPlugin(StaticDataConnector connector) {
+        super.buildPlugin(connector);
+
+        if (attributes != null && !attributes.isEmpty()) {
+            for (BaseAttribute<String> a : attributes) {
+                connector.getSourceData().add(a);
+            }
         }
-
-        return connector;
-    }
-
-    /** {@inheritDoc} */
-    public Class getObjectType() {
-        return StaticDataConnector.class;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isSingleton() {
-        return false;
     }
 
 }
