@@ -8,12 +8,12 @@
         <documentation>Schema for the attribute filter policies.</documentation>
     </annotation>
 
-    <element name="AttributeFilterPolicy" type="afp:AttributeFilterPolicyType">
+    <element name="AttributeFilterPolicies" type="afp:AttributeFilterPoliciesType">
         <annotation>
             <documentation>Root element of the attribute filter policy.</documentation>
         </annotation>
     </element>
-    <complexType name="AttributeFilterPolicyType">
+    <complexType name="AttributeFilterPoliciesType">
         <sequence>
             <element ref="ds:Signature" minOccurs="0">
                 <annotation>
@@ -54,10 +54,10 @@
                 </annotation>
             </element>
         </sequence>
-        <attribute name="id" type="ID" use="optional">
+        <attribute name="id" type="ID" use="required">
             <annotation>
                 <documentation>
-                    A unique ID for this policy that may serve as the reference for the dgitial signature.
+                    A unique ID for this policy.  This ID may also serve as the reference for the dgitial signature.
                 </documentation>
             </annotation>
         </attribute>
@@ -110,14 +110,14 @@
                 </annotation>
             </element>
         </sequence>
-        <attribute name="id" type="ID" use="optional">
+        <attribute name="id" type="ID">
             <annotation>
                 <documentation>
                     A unique identifier for this rule.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="ref" type="IDREF" use="optional">
+        <attribute name="ref" type="IDREF">
             <annotation>
                 <documentation>
                     A reference to globally declared attribute rule.
