@@ -131,17 +131,17 @@ public class AFPEngine implements FilteringEngine {
         
         Map<String, AttributeRule> effectiveRules = new HashMap<String, AttributeRule>();
         AttributeRule effectiveRule;
-        OrMatchFunctor effectiveFilter;
+        AndMatchFunctor effectiveFilter;
         for(FilterPolicy policy : policies){
             for(AttributeRule rule : policy.getAttributeRules()){
                 effectiveRule = effectiveRules.get(rule.getAttributeId());
                 if(effectiveRule == null){
                     effectiveRule = new AttributeRule(rule.getAttributeId());
-                    effectiveRule.setValueFilter(new OrMatchFunctor());
+                    effectiveRule.setValueFilter(new AndMatchFunctor());
                     effectiveRules.put(rule.getAttributeId(), effectiveRule);
                 }
                 
-                effectiveFilter = (OrMatchFunctor) effectiveRule.getValueFilter();
+                effectiveFilter = (AndMatchFunctor) effectiveRule.getValueFilter();
                 effectiveFilter.getFunctors().add(rule.getValueFilter());
             }
         }
