@@ -7,7 +7,7 @@
     
     <!-- A set of SAML specific match functions.  These match functions only operate against a SAMLFilterContext. -->
     
-    <complexType name="AttributeRequesterEntityGroup">
+    <complexType name="AttributeRequesterInEntityGroup">
         <annotation>
             <documentation>
                 A match function that evaluates to true if the attribute requester is found in metadata and is a member of the given entity group.
@@ -18,7 +18,7 @@
         </complexContent>
     </complexType>
     
-    <complexType name="AttributeProducerEntityGroup">
+    <complexType name="AttributeIssuerInEntityGroup">
         <annotation>
             <documentation>
                 A match function that evaluates to true if the attribute producer is found in metadata and is a member of the given entity group.

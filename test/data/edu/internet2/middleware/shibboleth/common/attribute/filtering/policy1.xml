@@ -1,47 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<afp:AttributeFilterPolicy xmlns:afp="urn:mace:shibboleth:2.0:afp"
-                           xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
-                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                           xsi:schemaLocation="urn:mace:shibboleth:2.0:afp ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp.xsd
-                                               urn:mace:shibboleth:2.0:afp:mf:basic ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-basic.xsd ">
+<afp:AttributeFilterPolicyGroup id="PolicyExample1" 
+                                xmlns:afp="urn:mace:shibboleth:2.0:afp"
+                                xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="urn:mace:shibboleth:2.0:afp ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp.xsd
+                                                    urn:mace:shibboleth:2.0:afp:mf:basic ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-basic.xsd ">
 
-  <!-- Release any value for first name to anyone -->
-  <afp:FilterPolicy>
-    <afp:PolicyRequirement xsi:type="basic:ANY"/>
-    
-    <afp:AttributeRule attributeID="firstName">
-      <afp:ValueFilter xsi:type="basic:ANY"/>
-    </afp:AttributeRule>
-  </afp:FilterPolicy>
+    <!--
+        Release attributes if the person is not an alumni or a student with FERPA suppression.
+    -->
+    <afp:PermitValue id="studentWithSuppression" xsi:type="basic:OR">
+        <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="student"
+            negateResult="true" />
+        <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="alum"
+            negateResult="true" />
+        <afp:PermitValue xsi:type="basic:AND">
+            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="student" />
+            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="ferpa" value="false" />
+        </afp:PermitValue>
+    </afp:PermitValue>
 
+    <!-- Release some attributes to JSTOR -->
+    <afp:AttributeFilterPolicy>
+        <!-- This policy is in effect if the requester entity ID is JSTORs -->
+        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="https://www.jstor.org/shibboleth" />
 
-  <!-- Release email address to anyone with an urn:mace:incommon: entityID except internet2.edu -->  
-  <afp:FilterPolicy>
-    <afp:PolicyRequirement xsi:type="basic:AND">
-        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="urn:mace:incommon:internet2.edu" negateResult="true"/>
-        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterRegex" regex="urn:mace:incommon:*" />
-    </afp:PolicyRequirement>
-    
-    <afp:AttributeRule attributeID="email">
-        <afp:ValueFilter xsi:type="basic:ANY"/>
-    </afp:AttributeRule>
-  </afp:FilterPolicy>
-  
-  
-  <!-- Release information if individual is not a student or, if a student, has not elected FERP suppression -->
-  <afp:FilterPolicy>
-    <afp:PolicyRequirement xsi:type="basic:OR">
-        <afp:PolicyRequirement xsi:type="basic:AttributeValueString" attributeID="affilition" value="student" negateResult="true"/>
-        <afp:PolicyRequirement xsi:type="basic:AND">
-            <afp:PolicyRequirement xsi:type="basic:AttributeValueString" attributeID="affilition" value="student"/>
-            <afp:PolicyRequirement xsi:type="basic:AttributeValueString" attributeID="ferpa" value="false"/>
-        </afp:PolicyRequirement>
-    </afp:PolicyRequirement>
+        <!-- Release a transient ID -->
+        <afp:AttributeRule attributeID="transientID">
+            <afp:PermitValue xsi:type="basic:ANY" />
+        </afp:AttributeRule>
 
-    <afp:AttributeRule attributeID="surname">
-        <afp:ValueFilter xsi:type="basic:ANY"/>
-    </afp:AttributeRule>
-  </afp:FilterPolicy>
-  
-</afp:AttributeFilterPolicy>
+        <!-- Release user's first name if not an alum or a student with FERPA suppresion  -->
+        <afp:AttributeRule attributeID="firstName">
+            <afp:PermitValue ref="studentWithSuppression" />
+        </afp:AttributeRule>
+
+        <!-- Release email address if not an alum or a student with FERPA suppresion  -->
+        <afp:AttributeRule attributeID="email">
+            <afp:PermitValue ref="studentWithSuppression" />
+        </afp:AttributeRule>
+
+        <!-- Release primary affiliation and verify that there is only one value -->
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValue xsi:type="basic:AND">
+                <afp:PermitValue ref="eduPersonAffiliationValues" />
+                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" values="1" />
+            </afp:PermitValue>
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+    <!-- Release some attributes to JSTOR -->
+    <afp:AttributeFilterPolicy>
+        <!-- This policy is in effect if the requester entity ID is ScienceDirect -->
+        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="https://sdauth.sciencedirect.com/" />
+
+        <!-- Release a persistent ID -->
+        <afp:AttributeRule attributeID="persistentID">
+            <afp:PermitValue xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+
+        <!-- Release user's first name if not an alum or a student with FERPA suppresion  -->
+        <afp:AttributeRule attributeID="firstName">
+            <afp:PermitValue ref="studentWithSuppression" />
+        </afp:AttributeRule>
+
+        <!-- Release email address if not an alum or a student with FERPA suppresion  -->
+        <afp:AttributeRule attributeID="email">
+            <afp:PermitValue ref="studentWithSuppression" />
+        </afp:AttributeRule>
+
+        <!-- Release primary affiliation and verify that there is only one value -->
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValue xsi:type="basic:AND">
+                <afp:PermitValue id="eduPersonAffiliationValues" xsi:type="basic:OR">
+                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="faculty" />
+                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="student" />
+                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="staff" />
+                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="alum" />
+                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="member" />
+                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="affiliate" />
+                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="employee" />
+                </afp:PermitValue>
+                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" values="1" />
+            </afp:PermitValue>
+        </afp:AttributeRule>
+
+        <!-- Release affiliation -->
+        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
+            <afp:PermitValue id="eduPersonAffiliationValues" xsi:type="basic:OR">
+                <afp:PermitValue xsi:type="basic:AttributeValueString" value="faculty" />
+                <afp:PermitValue xsi:type="basic:AttributeValueString" value="student" />
+                <afp:PermitValue xsi:type="basic:AttributeValueString" value="staff" />
+                <afp:PermitValue xsi:type="basic:AttributeValueString" value="alum" />
+                <afp:PermitValue xsi:type="basic:AttributeValueString" value="member" />
+                <afp:PermitValue xsi:type="basic:AttributeValueString" value="affiliate" />
+                <afp:PermitValue xsi:type="basic:AttributeValueString" value="employee" />
+            </afp:PermitValue>
+        </afp:AttributeRule>
+
+    </afp:AttributeFilterPolicy>
+
+</afp:AttributeFilterPolicyGroup>

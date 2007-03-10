@@ -8,21 +8,13 @@
         <documentation>Schema for the attribute filter policies.</documentation>
     </annotation>
 
-    <element name="AttributeFilterPolicies" type="afp:AttributeFilterPoliciesType">
+    <element name="AttributeFilterPolicyGroup" type="afp:AttributeFilterPolicyGroupType">
         <annotation>
-            <documentation>Root element of the attribute filter policy.</documentation>
+            <documentation>Root element of the attribute filter policy.  Represents a named group of filter policies.</documentation>
         </annotation>
     </element>
-    <complexType name="AttributeFilterPoliciesType">
+    <complexType name="AttributeFilterPolicyGroupType">
         <sequence>
-            <element ref="ds:Signature" minOccurs="0">
-                <annotation>
-                    <documentation>
-                        Digital signature for the policy. Policies that are fetched from an external source, such as a
-                        federation site, should be signed.
-                    </documentation>
-                </annotation>
-            </element>
             <element ref="afp:PolicyRequirement" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
@@ -38,18 +30,26 @@
                     </documentation>
                 </annotation>            
             </element>
-            <element ref="afp:ValueFilter" minOccurs="0" maxOccurs="unbounded">
+            <element ref="afp:PermitValue" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         Defines an attribute value filter that may be reused across multiple attribtue rules.
                     </documentation>
                 </annotation>
             </element>
-            <element ref="afp:FilterPolicy" maxOccurs="unbounded">
+            <element ref="afp:FilterPolicy" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         A policy that defines the set of attribute value filters that will be applied if its application
                         requirements are met.
+                    </documentation>
+                </annotation>
+            </element>
+            <element ref="ds:Signature" minOccurs="0">
+                <annotation>
+                    <documentation>
+                        Digital signature for the policy. Policies that are fetched from an external source, such as a
+                        federation site, should be signed.
                     </documentation>
                 </annotation>
             </element>
@@ -63,7 +63,7 @@
         </attribute>
     </complexType>
     
-    <element name="FilterPolicy" type="afp:FilterPolicyType">
+    <element name="AttributeFilterPolicy" type="afp:AttributeFilterPolicyType">
         <annotation>
             <documentation>
                 A policy that defines a set of attribute value filters rules that should be used if given 
@@ -71,7 +71,7 @@
             </documentation>
         </annotation>
     </element>
-    <complexType name="FilterPolicyType">
+    <complexType name="AttributeFilterPolicyType">
         <sequence>
             <element ref="afp:PolicyRequirement">
                 <annotation>
@@ -102,10 +102,10 @@
     </element>
     <complexType name="AttributeRuleType">
         <sequence>
-            <element ref="afp:ValueFilter">
+            <element ref="afp:"PermitValue"">
                 <annotation>
                     <documentation>
-                        A filter for attribute values.  If the filter evaluates to true the value is kept, otherwise it is filtered out.
+                        A filter for attribute values.  If the filter evaluates to true the value is permitted, otherwise it is filtered out.
                     </documentation>
                 </annotation>
             </element>
@@ -136,15 +136,14 @@
             <documentation>A requirement that if met signals that a filter policy should be used.</documentation>
         </annotation>
     </element>
-    <element name="ValueFilter" type="afp:MatchFunctorType">
+    <element name="PermitValue" type="afp:MatchFunctorType">
         <annotation>
             <documentation>
-                A filter for attribtue values. If any filter for a value evaluates to false the value is filtered out.
-                If all filters evaluate to true the value is kept and released.
+                A filter for attribtue values. If the filter evaluates to true the value is permitted, otherwise it is filtered out.
             </documentation>
         </annotation>
     </element>
-    <complexType name="MatchFunctorType" abstract="true">
+    <complexType name="MatchFunctorType">
         <attribute name="id" type="ID">
             <annotation>
                 <documentation>
