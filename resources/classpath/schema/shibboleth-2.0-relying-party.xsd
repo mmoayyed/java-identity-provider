@@ -2,14 +2,128 @@
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema" 
         targetNamespace="urn:mace:shibboleth:2.0:relying-party" 
-        xmlns:rp="urn:mace:shibboleth:2.0:relying-party">
+        xmlns:rp="urn:mace:shibboleth:2.0:relying-party"
+        xmlns:cred="urn:mace:shibboleth:2.0:credential"
+        xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion">
+        
+    <import namespace="urn:mace:shibboleth:2.0:credential" schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
+    <import namespace="urn:oasis:names:tc:SAML:2.0:assertion" schemaLocation="classpath:/schema/saml-schema-assertion-2.0.xsd" />
              
-    <element name="RelyingParty" type="rp:RelyingPartyType" />
-    <element name="DefaultRelyingParty" type="rp:RelyingPartyType" />
-    <element name="AnonymousRelyingParty" type="rp:RelyingPartyType" />
+    <element name="RelyingParty" type="rp:RelyingPartyType">
+        <annotation>
+            <documentation>
+              A set of configuration options specific to a given relying party or group of relying parties as expressed in SAML 2
+              metadata.  Note, configuration options are not inherited from either the default relying party or ancestral groups.
+            </documentation>
+        </annotation>
+    </element>
+    <element name="DefaultRelyingParty" type="rp:RelyingPartyType">
+        <annotation>
+            <documentation>
+              The default set of configuration options to use for relying parties/groups not specifically called out.
+            </documentation>
+        </annotation>
+    </element>
+    <element name="AnonymousRelyingParty" type="rp:RelyingPartyType">
+    <annotation>
+            <documentation>
+              The set of configuration options to use for relying parties/groups which are not authenticated or known to the system.
+            </documentation>
+        </annotation>
+    </element>
     
     <complexType name="RelyingPartyType">
-    
+        <annotation>
+            <documentation>
+                Configuration options for communicating with a relying party or group of relying parties.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="IssuerID" type="rp:IssuerIDType">
+                <annotation>
+                    <documentation>
+                        Specified the Issuer to use when sending messages to the relying party.
+                    </documentation>
+                </annotation>
+            </element>
+            <element ref="cred:SigningCredential" minOccurs="0">
+                <annotation>
+                    <documentation>
+                        Credential used to sign messages to the given relying party.
+                    </documentation>
+                </annotation>
+            </element>
+            <!--  TODO align with new credential management and document -->
+            <element ref="cred:EncryptionCredential" minOccurs="0" />
+        </sequence>
+        <attribute name="id" type="ID" use="required">
+            <annotation>
+                <documentation>
+                    ID of the relying party or group
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="defaultNameIDFormat" type="string">
+            <annotation>
+                <documentation>
+                    The default NameID format to use for the relying party.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="defaultArtificateType" type="int">
+            <annotation>
+                <documentation>
+                    The default artifact type to use.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="createSingleAssertion" type="boolean" default="false">
+            <annotation>
+                <documentation>
+                    Whether to include all statements into a single assertion.  In many cases this is not done because various statements may have different lifetimes
+                    and wrapping them in a single assertion ties those statements to the lifetime of the assertion which may be quite small in some cases.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="signAssertion" type="boolean" default="true">
+            <annotation>
+                <documentation>
+                    Whether assertions sent to the relying party should be signed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="encryptNameID" type="boolean" default="false">
+            <annotation>
+                <documentation>
+                    Whether the NameID sent to the relying party should be encrypted.  This is a SAML 2 only option.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="encryptAssertion" type="boolean" default="false">
+            <annotation>
+                <documentation>
+                    Whether the assertion sent to the relying party should be encrypted.  This is a SAML 2 only option.
+                </documentation>
+            </annotation>
+        </attribute>
     </complexType>
+    
+    <complexType name="SAML2Issuer">
+        <complexContent>
+            <extension base="rp:IssuerIdType">
+                <sequence>
+                    <element ref="saml2:Issuer"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StringIssuer" >
+        <simpleContent>
+            <extension base="rp:IssuerIdType" />
+        </simpleContent>
+    </complexType>
+    
+    <complexType name="IssuerIdType" abstract="true" />
     
 </schema>

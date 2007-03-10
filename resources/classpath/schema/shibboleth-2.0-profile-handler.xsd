@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="urn:mace:shibboleth:2.0:profile-handler" 
+        xmlns:ph="urn:mace:shibboleth:2.0:profile-handler">
+        
+        
+</schema>

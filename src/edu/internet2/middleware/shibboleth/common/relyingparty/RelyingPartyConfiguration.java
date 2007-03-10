@@ -68,13 +68,6 @@ public interface RelyingPartyConfiguration {
     public String getDefaultNameIDFormat();
 
     /**
-     * Gets the URI for the default authentication method.
-     * 
-     * @return URI for the default authentication method
-     */
-    public String getDefaultAuthenticationMethod();
-
-    /**
      * Gets the default artifact type.
      * 
      * @return default artifact type
