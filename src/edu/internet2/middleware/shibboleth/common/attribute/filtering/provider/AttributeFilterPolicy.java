@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * A policy describing if a set of attribute value filters is applicable.
  */
-public class FilterPolicy {
+public class AttributeFilterPolicy {
 
     /** Unique identifier for this policy. */
     private String policyId;
@@ -38,7 +38,7 @@ public class FilterPolicy {
      * 
      * @param id unique ID for the policy
      */
-    public FilterPolicy(String id) {
+    public AttributeFilterPolicy(String id) {
         policyId = id;
         attribtueRules = new ArrayList<AttributeRule>();
     }

@@ -59,7 +59,7 @@ public class AttributeFilterPoliciesBeanDefinitionParser extends AbstractBeanDef
 
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element attribFilterPolcies, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(AttributeFilterPolicies.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(AttributeFilterPolicyGroup.class);
 
         String policyId = DatatypeHelper.safeTrimOrNullString(attribFilterPolcies.getAttributeNS(null, "id"));
         builder.addConstructorArg(policyId);

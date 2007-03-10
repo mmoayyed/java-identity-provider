@@ -28,34 +28,40 @@ public class BasicFilterContext implements FilterContext {
 
     /** Requester of the attributes. */
     private String attributeRequester;
-    
-    /** Producer of the attributes. */
-    private String attributeProducer;
-    
+
+    /** Issuer of the attributes. */
+    private String attributeIssuer;
+
     /** Principal name of the user the attributes are about. */
     private String princpialName;
-    
+
+    /** Method used to authenticate the user. */
+    private String authenticationMethod;
+
     /** Attributes to be filtered with a map key of the attribute's ID. */
     private Map<String, Attribute> attributes;
-    
+
     /**
      * Constructor.
-     *
+     * 
      * @param requester entity ID of the attribute requester
-     * @param producer ID of the producer of the attribute
+     * @param issuer ID of the issuer of the attribute
      * @param principal principal name of the user the attributes describe
+     * @param authentication method used to authenticate the user
      * @param attribs attributes about the user
      */
-    public BasicFilterContext(String requester, String producer, String principal, Map<String, Attribute> attribs){
+    public BasicFilterContext(String requester, String issuer, String principal, String authentication,
+            Map<String, Attribute> attribs) {
         attributeRequester = requester;
-        attributeProducer = producer;
+        attributeIssuer = issuer;
         princpialName = principal;
+        authenticationMethod = authentication;
         attributes = attribs;
     }
-    
+
     /** {@inheritDoc} */
-    public String getAttributeProducer() {
-        return attributeProducer;
+    public String getAttributeIssuer() {
+        return attributeIssuer;
     }
 
     /** {@inheritDoc} */
@@ -66,6 +72,11 @@ public class BasicFilterContext implements FilterContext {
     /** {@inheritDoc} */
     public String getPrincipalName() {
         return princpialName;
+    }
+
+    /** {@inheritDoc} */
+    public String getAuthenticationMethod() {
+        return authenticationMethod;
     }
 
     /** {@inheritDoc} */

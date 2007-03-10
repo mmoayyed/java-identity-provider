@@ -45,7 +45,7 @@
         <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
             <afp:PermitValue xsi:type="basic:AND">
                 <afp:PermitValue ref="eduPersonAffiliationValues" />
-                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" values="1" />
+                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" maximum="1" />
             </afp:PermitValue>
         </afp:AttributeRule>
 
@@ -83,7 +83,7 @@
                     <afp:PermitValue xsi:type="basic:AttributeValueString" value="affiliate" />
                     <afp:PermitValue xsi:type="basic:AttributeValueString" value="employee" />
                 </afp:PermitValue>
-                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" values="1" />
+                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" maximum="1" />
             </afp:PermitValue>
         </afp:AttributeRule>
 

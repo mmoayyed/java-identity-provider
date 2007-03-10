@@ -19,19 +19,19 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 
 /**
- * A {@link MatchFunctor} that evaluates to true if {@link FilterContext#getAttributeProducer()} matches the provided
- * regular expression.
+ * A {@link MatchFunctor} that evaluates to true if {@link FilterContext#getAttributeIssuer()} matches the given match
+ * string.
  */
-public class AttributeProduceRegexMatchFunctor extends AbstractRegexMatchFunctor {
+public class AttributeIssuerStringMatchFunctor extends AbstractStringMatchFunctor {
 
     /** {@inheritDoc} */
     protected boolean doEvaluate(FilterContext filterContext) throws FilterProcessingException {
-        return isMatch(filterContext.getAttributeProducer());
+        return isMatch(filterContext.getAttributeIssuer());
     }
 
     /** {@inheritDoc} */
     protected boolean doEvaluate(FilterContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
-        return isMatch(filterContext.getAttributeProducer());
+        return isMatch(filterContext.getAttributeIssuer());
     }
 }

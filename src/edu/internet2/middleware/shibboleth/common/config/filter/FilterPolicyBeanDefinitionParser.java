@@ -27,11 +27,11 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterPolicy;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.AttributeFilterPolicy;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /**
- * Spring bean definition parser to configure an {@link FilterPolicy}.
+ * Spring bean definition parser to configure an {@link AttributeFilterPolicy}.
  */
 public class FilterPolicyBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
@@ -46,7 +46,7 @@ public class FilterPolicyBeanDefinitionParser extends AbstractBeanDefinitionPars
 
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element filterPolicyElem, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FilterPolicy.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(AttributeFilterPolicy.class);
 
         String policyId = DatatypeHelper.safeTrimOrNullString(filterPolicyElem.getAttributeNS(null, "id"));
         builder.addConstructorArg(policyId);

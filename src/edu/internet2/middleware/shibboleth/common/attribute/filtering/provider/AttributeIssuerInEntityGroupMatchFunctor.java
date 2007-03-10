@@ -20,15 +20,15 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterCont
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.SAMLFilterContext;
 
 /**
- * A {@link MatchFunctor} that evaluates to true if {@link SAMLFilterContext#getProducerMetadata()} matches the
+ * A {@link MatchFunctor} that evaluates to true if {@link SAMLFilterContext#getIssuerMetadata()} matches the
  * provided entity group name.
  */
-public class AttributeProducerEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
+public class AttributeIssuerInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
 
     /** {@inheritDoc} */
     public boolean evaluate(FilterContext filterContext) throws FilterProcessingException {
         if (filterContext instanceof SAMLFilterContext) {
-            return isEntityInGroup(((SAMLFilterContext) filterContext).getProducerMetadata());
+            return isEntityInGroup(((SAMLFilterContext) filterContext).getIssuerMetadata());
         }else{
             throw new FilterProcessingException("Given filter context is not a SAMLFilterContext");
         }
@@ -38,7 +38,7 @@ public class AttributeProducerEntityGroupMatchFunctor extends AbstractEntityGrou
     public boolean evaluate(FilterContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
         if (filterContext instanceof SAMLFilterContext) {
-            return isEntityInGroup(((SAMLFilterContext) filterContext).getProducerMetadata());
+            return isEntityInGroup(((SAMLFilterContext) filterContext).getIssuerMetadata());
         }else{
             throw new FilterProcessingException("Given filter context is not a SAMLFilterContext");
         }

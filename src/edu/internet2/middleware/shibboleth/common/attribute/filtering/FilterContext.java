@@ -34,6 +34,13 @@ public interface FilterContext {
      * @return principal name of the user the attributes in this context describe
      */
     public String getPrincipalName();
+    
+    /**
+     * Gets the method used to authenticate the principal.
+     * 
+     * @return method used to authenticate the principal
+     */
+    public String getAuthenticationMethod();
 
     /**
      * Gets the requester of the attributes.
@@ -43,11 +50,11 @@ public interface FilterContext {
     public String getAttributeRequester();
     
     /**
-     * Get the producer of the attributes.
+     * Get the issuer of the attributes.
      * 
-     * @return producer of the attributes
+     * @return issuer of the attributes
      */
-    public String getAttributeProducer();
+    public String getAttributeIssuer();
 
     /**
      * Gets the attributes indexed by the attributes ID.

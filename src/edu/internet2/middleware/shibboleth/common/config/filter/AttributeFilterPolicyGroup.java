@@ -19,19 +19,19 @@ package edu.internet2.middleware.shibboleth.common.config.filter;
 import java.util.Collection;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.AttributeRule;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterPolicy;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.AttributeFilterPolicy;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 
 /**
  * A collection of attribute filter policies and globally declared filter components.
  */
-public class AttributeFilterPolicies {
+public class AttributeFilterPolicyGroup {
 
     /** Unique ID for this set of policies. */
     private String afpId;
     
     /** Declared filter policies. */
-    private Collection<FilterPolicy> filterPolicies;
+    private Collection<AttributeFilterPolicy> filterPolicies;
     
     /** Globally declared policy requirements. */
     private Collection<MatchFunctor> policyRequirements;
@@ -39,15 +39,15 @@ public class AttributeFilterPolicies {
     /** Globally declared attribute rules. */
     private Collection<AttributeRule> attributeRules;
     
-    /** Globally declared valueFilters. */
-    private Collection<MatchFunctor> valueFilters;
+    /** Globally declared permit value rules. */
+    private Collection<MatchFunctor> permitValues;
     
     /**
      * Constructor.
      *
      * @param id unique ID for this set of policies
      */
-    public AttributeFilterPolicies(String id){
+    public AttributeFilterPolicyGroup(String id){
         afpId = id;
     }
 
@@ -74,7 +74,7 @@ public class AttributeFilterPolicies {
      * 
      * @return declared filter policies
      */
-    public Collection<FilterPolicy> getFilterPolicies() {
+    public Collection<AttributeFilterPolicy> getFilterPolicies() {
         return filterPolicies;
     }
 
@@ -83,7 +83,7 @@ public class AttributeFilterPolicies {
      * 
      * @param policies declared filter policies
      */
-    public void setFilterPolicies(Collection<FilterPolicy> policies) {
+    public void setFilterPolicies(Collection<AttributeFilterPolicy> policies) {
         filterPolicies = policies;
     }
 
@@ -110,8 +110,8 @@ public class AttributeFilterPolicies {
      * 
      * @return globally declared value filters
      */
-    public Collection<MatchFunctor> getValueFilters() {
-        return valueFilters;
+    public Collection<MatchFunctor> getPermitValues() {
+        return permitValues;
     }
 
     /**
@@ -119,8 +119,8 @@ public class AttributeFilterPolicies {
      * 
      * @param filters globally declared value filters
      */
-    public void setValueFilters(Collection<MatchFunctor> filters) {
-        valueFilters = filters;
+    public void setPermitValues(Collection<MatchFunctor> filters) {
+        permitValues = filters;
     }
 
     /**

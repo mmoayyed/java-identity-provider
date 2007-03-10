@@ -25,7 +25,7 @@ public class AttributeRule {
     private String ruleId;
     
     /** Value filters for this attribute. */
-    private MatchFunctor valueFilter;
+    private MatchFunctor permitValue;
     
     /**
      * Constructor.
@@ -50,8 +50,8 @@ public class AttributeRule {
      * 
      * @return value filter for this attribute
      */
-    public MatchFunctor getValueFilter(){
-        return valueFilter;
+    public MatchFunctor getPermitValue(){
+        return permitValue;
     }
     
     /**
@@ -59,7 +59,7 @@ public class AttributeRule {
      * 
      * @param filter value filter for this attribute
      */
-    public void setValueFilter(MatchFunctor filter){
-        valueFilter = filter;
+    public void setPermitValue(MatchFunctor filter){
+        permitValue = filter;
     }
 }

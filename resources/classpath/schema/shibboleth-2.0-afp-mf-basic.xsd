@@ -237,7 +237,7 @@
         <complexType name="NumberOfAttributeValues">
         <annotation>
             <documentation>
-                A match function that evaluates to true if the given attribute has as many values then the specified limit.
+                A match function that evaluates to true if the given attribute has as a number of values that falls between the minimum and maximum.
                 This method may be used as a sanity check to ensure that an unexpected number of values did not come
                 from the attribute resolver and be released.
             </documentation>
@@ -249,62 +249,17 @@
                         <documentation>The ID of the attribute whose value should be matched.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="values" type="positiveInteger" use="required">
+                <attribute name="minimum" type="positiveInteger" default="0">
                     <annotation>
                         <documentation>
-                            The number of values that a given attribute has must be less than this.
+                            Minimum number of values an attribute may have.
                         </documentation>
                     </annotation>
                 </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-    
-    <complexType name="LessThanNumberOfAttributeValues">
-        <annotation>
-            <documentation>
-                A match function that evaluates to true if the given attribute has less values then the specified limit.
-                This method may be used as a sanity check to ensure that an unexpected number of values did not come
-                from the attribute resolver and be released.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:MatchFunctorType">
-                <attribute name="attribtueID" type="string">
-                    <annotation>
-                        <documentation>The ID of the attribute whose value should be matched.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="values" type="positiveInteger" use="required">
+                <attribute name="maximum" type="positiveInteger" default="2147483647">
                     <annotation>
                         <documentation>
-                            The number of values that a given attribute has must be less than this.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="GreaterThanNumberOfAttributeValues">
-        <annotation>
-            <documentation>
-                A match function that evaluates to true if the given attribute has more values then the specified limit.
-                This method may be used as a sanity check to ensure that an unexpected number of values did not come
-                from the attribute resolver and be released.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="afp:MatchFunctorType">
-                <attribute name="attribtueID" type="string">
-                    <annotation>
-                        <documentation>The ID of the attribute whose value should be matched.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="values" type="positiveInteger" use="required">
-                    <annotation>
-                        <documentation>
-                            The number of values that a given attribute has must be greater than this.
+                            Maximum number of values an attribute may have.
                         </documentation>
                     </annotation>
                 </attribute>

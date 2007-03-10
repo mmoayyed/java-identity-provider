@@ -23,7 +23,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.SAMLFilter
  * A {@link MatchFunctor} that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the
  * provided entity group name.
  */
-public class AttributeRequesterEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
+public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
 
     /** {@inheritDoc} */
     public boolean evaluate(FilterContext filterContext) throws FilterProcessingException {

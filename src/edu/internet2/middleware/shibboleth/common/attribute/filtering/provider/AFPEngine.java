@@ -38,7 +38,7 @@ public class AFPEngine implements FilteringEngine {
     private static Logger log = Logger.getLogger(AFPEngine.class);
 
     /** Active attribute rules. */
-    private List<FilterPolicy> filterPolicies;
+    private List<AttributeFilterPolicy> filterPolicies;
 
     /** Constructor. */
     public AFPEngine() {
@@ -64,7 +64,7 @@ public class AFPEngine implements FilteringEngine {
      * 
      * @return filter policies active for this engine
      */
-    public List<FilterPolicy> getFilterPolicies() {
+    public List<AttributeFilterPolicy> getFilterPolicies() {
         return filterPolicies;
     }
 
@@ -73,7 +73,7 @@ public class AFPEngine implements FilteringEngine {
      * 
      * @param policies filter policies active for this engine
      */
-    public void setFilterPolicies(List<FilterPolicy> policies) {
+    public void setFilterPolicies(List<AttributeFilterPolicy> policies) {
         filterPolicies = policies;
     }
 
@@ -93,8 +93,8 @@ public class AFPEngine implements FilteringEngine {
         if (log.isDebugEnabled()) {
             log.debug("Determing effective filter policies for principal " + filterContext.getPrincipalName());
         }
-        ArrayList<FilterPolicy> effectivePolicies = new ArrayList<FilterPolicy>();
-        for (FilterPolicy policy : getFilterPolicies()) {
+        ArrayList<AttributeFilterPolicy> effectivePolicies = new ArrayList<AttributeFilterPolicy>();
+        for (AttributeFilterPolicy policy : getFilterPolicies()) {
             if (policy.getPolicyRequirement().evaluate(filterContext)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Filter policy " + policy.getPolicyId() + " is in effect for principal "
@@ -120,7 +120,7 @@ public class AFPEngine implements FilteringEngine {
      * 
      * @return list of merged rules
      */
-    protected Collection<AttributeRule> mergeAttributeRules(List<FilterPolicy> policies) {
+    protected Collection<AttributeRule> mergeAttributeRules(List<AttributeFilterPolicy> policies) {
         if(policies.size() == 0){
             return null;
         }
@@ -132,17 +132,17 @@ public class AFPEngine implements FilteringEngine {
         Map<String, AttributeRule> effectiveRules = new HashMap<String, AttributeRule>();
         AttributeRule effectiveRule;
         AndMatchFunctor effectiveFilter;
-        for(FilterPolicy policy : policies){
+        for(AttributeFilterPolicy policy : policies){
             for(AttributeRule rule : policy.getAttributeRules()){
                 effectiveRule = effectiveRules.get(rule.getAttributeId());
                 if(effectiveRule == null){
                     effectiveRule = new AttributeRule(rule.getAttributeId());
-                    effectiveRule.setValueFilter(new AndMatchFunctor());
+                    effectiveRule.setPermitValue(new AndMatchFunctor());
                     effectiveRules.put(rule.getAttributeId(), effectiveRule);
                 }
                 
-                effectiveFilter = (AndMatchFunctor) effectiveRule.getValueFilter();
-                effectiveFilter.getFunctors().add(rule.getValueFilter());
+                effectiveFilter = (AndMatchFunctor) effectiveRule.getPermitValue();
+                effectiveFilter.getFunctors().add(rule.getPermitValue());
             }
         }
         
@@ -172,7 +172,7 @@ public class AFPEngine implements FilteringEngine {
         if (log.isDebugEnabled()) {
             log.debug("Filtering values for attribute " + rule.getAttributeId());
         }
-        MatchFunctor valueFilter = rule.getValueFilter();
+        MatchFunctor valueFilter = rule.getPermitValue();
         for (Object value : attribute.getValues()) {
             if (!valueFilter.evaluate(filterContext, attribute.getId(), value)) {
                 if (log.isDebugEnabled()) {
