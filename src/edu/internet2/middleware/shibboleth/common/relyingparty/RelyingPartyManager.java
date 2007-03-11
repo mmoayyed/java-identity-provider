@@ -50,25 +50,11 @@ public interface RelyingPartyManager {
     public MetadataProvider getMetadataProvider();
 
     /**
-     * Sets the metadata provider used to lookup information about relying parties.
-     * 
-     * @param provider metadata provider used to lookup information about relying parties
-     */
-    public void setMetadataProvider(MetadataProvider provider);
-
-    /**
      * Gets the registered relying party configurations.
      * 
      * @return the registered relying party configurations
      */
     public List<RelyingPartyConfiguration> getRelyingPartyConfigurations();
-
-    /**
-     * Sets the registered relying party configurations.
-     * 
-     * @param relyingParties the registered relying party configurations
-     */
-    public void setRelyingPartyConfigurations(List<RelyingPartyConfiguration> relyingParties);
 
     /**
      * Gets the default relying party configuration.
@@ -78,23 +64,9 @@ public interface RelyingPartyManager {
     public RelyingPartyConfiguration getDefaultRelyingPartyConfiguration();
 
     /**
-     * Sets the default relying party configuration.
-     * 
-     * @param defaultConfiguration the default relying party configuration
-     */
-    public void setDefaultRelyingPartyConfiguration(RelyingPartyConfiguration defaultConfiguration);
-
-    /**
      * Gets the relying party configuration to use for anonymous parties.
      * 
      * @return the relying party configuration to use for anonymous parties
      */
     public RelyingPartyConfiguration getAnonymousRelyingConfiguration();
-
-    /**
-     * Sets the relying party configuration to use for anonymous parties.
-     * 
-     * @param anonymousConfiguration the relying party configuration to use for anonymous parties
-     */
-    public void setAnonymousRelyingPartyConfiguration(RelyingPartyConfiguration anonymousConfiguration);
 }
