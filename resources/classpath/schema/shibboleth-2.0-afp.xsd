@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <schema targetNamespace="urn:mace:shibboleth:2.0:afp" xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 
@@ -10,7 +11,9 @@
 
     <element name="AttributeFilterPolicyGroup" type="afp:AttributeFilterPolicyGroupType">
         <annotation>
-            <documentation>Root element of the attribute filter policy.  Represents a named group of filter policies.</documentation>
+            <documentation>
+                Root element of the attribute filter policy. Represents a named group of filter policies.
+            </documentation>
         </annotation>
     </element>
     <complexType name="AttributeFilterPolicyGroupType">
@@ -20,6 +23,8 @@
                     <documentation>
                         Defines a set of requirements applications requirements that may be reused across multiple
                         filter policies.
+
+                        This element MUST include an id attribute.
                     </documentation>
                 </annotation>
             </element>
@@ -27,21 +32,27 @@
                 <annotation>
                     <documentation>
                         Defines an attribute rule that may be reused across multiple filter policies.
+
+                        This element MUST include an id attribute.
                     </documentation>
-                </annotation>            
+                </annotation>
             </element>
             <element ref="afp:PermitValue" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         Defines an attribute value filter that may be reused across multiple attribtue rules.
+
+                        This element MUST include an id attribute.
                     </documentation>
                 </annotation>
             </element>
-            <element ref="afp:FilterPolicy" minOccurs="0" maxOccurs="unbounded">
+            <element ref="afp:AttributeFilterPolicy" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         A policy that defines the set of attribute value filters that will be applied if its application
                         requirements are met.
+
+                        This element MUST include an id attribute.
                     </documentation>
                 </annotation>
             </element>
@@ -57,17 +68,17 @@
         <attribute name="id" type="ID" use="required">
             <annotation>
                 <documentation>
-                    A unique ID for this policy.  This ID may also serve as the reference for the dgitial signature.
+                    A unique ID for this policy. This ID may also serve as the reference for the dgitial signature.
                 </documentation>
             </annotation>
         </attribute>
     </complexType>
-    
+
     <element name="AttributeFilterPolicy" type="afp:AttributeFilterPolicyType">
         <annotation>
             <documentation>
-                A policy that defines a set of attribute value filters rules that should be used if given 
-                requirements are met.
+                A policy that defines a set of attribute value filters rules that should be used if given requirements
+                are met.
             </documentation>
         </annotation>
     </element>
@@ -86,7 +97,7 @@
                 </annotation>
             </element>
         </sequence>
-        <attribute name="id" type="ID" use="required">
+        <attribute name="id" type="string" use="required">
             <annotation>
                 <documentation>
                     A unique ID which will appear in the log files when working with the policy.
@@ -102,31 +113,31 @@
     </element>
     <complexType name="AttributeRuleType">
         <sequence>
-            <element ref="afp:"PermitValue"">
+            <element ref="afp:PermitValue">
                 <annotation>
                     <documentation>
-                        A filter for attribute values.  If the filter evaluates to true the value is permitted, otherwise it is filtered out.
+                        A filter for attribute values. If the filter evaluates to true the value is permitted, otherwise
+                        it is filtered out.
                     </documentation>
                 </annotation>
             </element>
         </sequence>
-        <attribute name="id" type="ID">
-            <annotation>
-                <documentation>
-                    A unique identifier for this rule.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="ref" type="IDREF">
-            <annotation>
-                <documentation>
-                    A reference to globally declared attribute rule.
-                </documentation>
-            </annotation>
-        </attribute>
         <attribute name="attributeID" type="string" use="required">
             <annotation>
-                <documentation>The unique ID of the attribute to which this rule applies.</documentation>
+                <documentation>
+                    The unique ID of the attribute to which this rule applies. Also serves as the unique ID for the rule
+                    if no id attribute is specified.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="id" type="string">
+            <annotation>
+                <documentation>A unique ID for this attribute rule.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="ref" type="string">
+            <annotation>
+                <documentation>A reference to globally declared attribute rule.</documentation>
             </annotation>
         </attribute>
     </complexType>
@@ -139,12 +150,13 @@
     <element name="PermitValue" type="afp:MatchFunctorType">
         <annotation>
             <documentation>
-                A filter for attribtue values. If the filter evaluates to true the value is permitted, otherwise it is filtered out.
+                A filter for attribtue values. If the filter evaluates to true the value is permitted, otherwise it is
+                filtered out.
             </documentation>
         </annotation>
     </element>
     <complexType name="MatchFunctorType">
-        <attribute name="id" type="ID">
+        <attribute name="id" type="string">
             <annotation>
                 <documentation>
                     A unique ID for this match functor. This allows the functor to be declared globally and referenced
@@ -152,7 +164,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="ref" type="IDREF">
+        <attribute name="ref" type="string">
             <annotation>
                 <documentation>Used to reference a globally defined functor.</documentation>
             </annotation>
