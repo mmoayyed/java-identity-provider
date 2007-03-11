@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
 import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 
 /**
  * A {@link MatchFunctor} that logical ANDs the results of contained functors.

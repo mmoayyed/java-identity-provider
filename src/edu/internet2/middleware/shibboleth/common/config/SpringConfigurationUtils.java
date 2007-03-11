@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
@@ -103,6 +105,27 @@ public final class SpringConfigurationUtils {
 
         return definitions;
     }
+    
+    /**
+     * Parse list of elements into bean definitions.
+     * 
+     * @param elements list of elements to parse
+     * @param parserContext current parsing context
+     * 
+     * @return list of bean references
+     */
+    public static ManagedList parseCustomElements(List<Element> elements, ParserContext parserContext) {
+        if(elements == null){
+            return null;
+        }
+        
+        ManagedList definitions = new ManagedList(elements.size());
+        for(Element e: elements){
+            definitions.add(parseCustomElement(e, parserContext));
+        }
+
+        return definitions;
+    }
 
     /**
      * Parses custom elements which may bean definitions or references to another bean definition.
@@ -120,6 +143,32 @@ public final class SpringConfigurationUtils {
         Element e;
         for (int i = 0; i < numOfElements; i++) {
             e = (Element) elements.item(0);
+            if (e.hasAttributeNS(null, refAttribute)) {
+                definitions.add(parseCustomElementReference(e, refAttribute, parserContext));
+            } else {
+                definitions.add(parseCustomElement(e, parserContext));
+            }
+        }
+
+        return definitions;
+    }
+    
+    /**
+     * Parses custom elements which may bean definitions or references to another bean definition.
+     * 
+     * @param elements list of custom elements to parse
+     * @param refAttribute the name of the attribute that contains the referenced bean's name
+     * @param parserContext current parsing context
+     * 
+     * @return list of bean definitions or references
+     */
+    public static ManagedList parseCustomElements(List<Element> elements, String refAttribute, ParserContext parserContext) {
+        if(elements == null){
+            return null;
+        }
+        
+        ManagedList definitions = new ManagedList();
+        for (Element e : elements){
             if (e.hasAttributeNS(null, refAttribute)) {
                 definitions.add(parseCustomElementReference(e, refAttribute, parserContext));
             } else {

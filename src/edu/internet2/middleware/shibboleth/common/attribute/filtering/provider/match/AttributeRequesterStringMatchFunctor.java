@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 
 /**
- * A {@link MatchFunctor} that returns true to evaluations. Note, the result may still be negated.
+ * A {@link MatchFunctor} that evaluates to true if {@link FilterContext#getAttributeRequester()} matches the given
+ * match string.
  */
-public class AnyMatchFunctor extends AbstractMatchFunctor {
+public class AttributeRequesterStringMatchFunctor extends AbstractStringMatchFunctor {
 
     /** {@inheritDoc} */
     protected boolean doEvaluate(FilterContext filterContext) throws FilterProcessingException {
-        return true;
+        return isMatch(filterContext.getAttributeRequester());
     }
 
     /** {@inheritDoc} */
     protected boolean doEvaluate(FilterContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
-        return true;
+        return isMatch(filterContext.getAttributeRequester());
     }
 }

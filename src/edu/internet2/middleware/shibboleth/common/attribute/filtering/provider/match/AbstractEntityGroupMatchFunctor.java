@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.util.DatatypeHelper;
+
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 
 
 /**

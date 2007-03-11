@@ -2,5 +2,6 @@ urn\:mace\:shibboleth\:2.0\:resolver = edu.internet2.middleware.shibboleth.commo
 urn\:mace\:shibboleth\:2.0\:resolver\:dc\:static = edu.internet2.middleware.shibboleth.common.config.resolver.StaticDataConnectorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:resolver\:ad\:simple = edu.internet2.middleware.shibboleth.common.config.resolver.SimpleAttributeDefinitionNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:afp = edu.internet2.middleware.shibboleth.common.config.filter.AttributeFilterNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:afp\:mf\:basic = edu.internet2.middleware.shibboleth.common.config.filter.match.BasicMatchFunctorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:metadata = edu.internet2.middleware.shibboleth.common.config.metadata.MetadataNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:credential = edu.internet2.middleware.shibboleth.common.config.credential.CredentialNamespaceHandler

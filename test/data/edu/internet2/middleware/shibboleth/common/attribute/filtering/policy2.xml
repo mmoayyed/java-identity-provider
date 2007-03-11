@@ -1,9 +1,3 @@
-<!--
-    These examples are written from the point of an entity (e.g. service provider, identity
-    provider aggregating attributes, accepting and filter attributes.
--->
-<?xml version="1.0" encoding="UTF-8"?>
-
 <afp:AttributeFilterPolicyGroup id="PolicyExample2"
                                 xmlns:afp="urn:mace:shibboleth:2.0:afp"
                                 xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
@@ -14,7 +8,7 @@
                                                     urn:mace:shibboleth:2.0:afp:mf:basic ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-basic.xsd ">
 
     <!-- Release affiliation to anyone in the InCommon group -->
-    <afp:AttributeFilterPolicy>
+    <afp:AttributeFilterPolicy id="InCommonRelease">
         <afp:PolicyRequirement xsi:type="saml:AttributeIssuerInEntityGroup" groupID="urn:mace:incommon"/>
         
         <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">

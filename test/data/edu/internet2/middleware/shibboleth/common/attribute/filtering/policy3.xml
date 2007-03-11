@@ -1,0 +1,16 @@
+<afp:AttributeFilterPolicyGroup id="PolicyExample3"
+                                xmlns:afp="urn:mace:shibboleth:2.0:afp"
+                                xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
+                                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                                                    urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd ">
+
+    <afp:AttributeFilterPolicy id="MostBasicExample">
+        <afp:PolicyRequirement xsi:type="basic:ANY" />
+        
+        <afp:AttributeRule attributeID="email">
+            <afp:PermitValue xsi:type="basic:ANY" />
+        </afp:AttributeRule>
+    </afp:AttributeFilterPolicy>
+    
+</afp:AttributeFilterPolicyGroup>

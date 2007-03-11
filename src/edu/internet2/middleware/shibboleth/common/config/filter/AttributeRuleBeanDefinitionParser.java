@@ -16,16 +16,18 @@
 
 package edu.internet2.middleware.shibboleth.common.config.filter;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.AttributeRule;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
@@ -36,13 +38,13 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 public class AttributeRuleBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeType");
+    public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule");
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRuleType");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(AttributeFilterPoliciesBeanDefinitionParser.class);
+    private static Logger log = Logger.getLogger(AttributeFilterPolicyGroupBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
@@ -56,25 +58,27 @@ public class AttributeRuleBeanDefinitionParser extends AbstractBeanDefinitionPar
         builder.addConstructorArg(ruleId);
 
         if (log.isDebugEnabled()) {
-            log.debug("Processing value filter definition");
+            log.debug("Processing permit value definition");
         }
-        NodeList valueFilterNodes = element.getElementsByTagNameNS(AttributeFilterNamespaceHandler.NAMESPACE,
-                AttributeFilterPoliciesBeanDefinitionParser.VALUE_FILTER_ELEMENT_LOCAL_NAME);
-        if (valueFilterNodes.getLength() > 0) {
-            Element valueFilterElem = (Element) valueFilterNodes.item(0);
-            if (valueFilterElem.hasAttributeNS(null, "ref")) {
-                builder.addPropertyReference("valueFilter", DatatypeHelper.safeTrimOrNullString(valueFilterElem
+        List<Element> permitValues = XMLHelper.getChildElementsByTagNameNS(element,
+                AttributeFilterPolicyGroupBeanDefinitionParser.PERMIT_VALUE_ELEMENT_NAME.getNamespaceURI(),
+                AttributeFilterPolicyGroupBeanDefinitionParser.PERMIT_VALUE_ELEMENT_NAME.getLocalPart());
+        
+        for (Element permitValue : permitValues) {
+            if (permitValue.hasAttributeNS(null, "ref")) {
+                builder.addPropertyReference("permitValue", DatatypeHelper.safeTrimOrNullString(permitValue
                         .getAttributeNS(null, "ref")));
             } else {
-                builder.addPropertyValue("valueFilter", SpringConfigurationUtils.parseCustomElement(valueFilterElem,
+                builder.addPropertyValue("permitValue", SpringConfigurationUtils.parseCustomElement(permitValue,
                         parserContext));
-            }
-        } else {
-            if (log.isDebugEnabled()) {
-                log.debug("No value filter specified for attribute rule " + ruleId);
             }
         }
 
         return builder.getBeanDefinition();
+    }
+
+    /** {@inheritDoc} */
+    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
+        return DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
     }
 }

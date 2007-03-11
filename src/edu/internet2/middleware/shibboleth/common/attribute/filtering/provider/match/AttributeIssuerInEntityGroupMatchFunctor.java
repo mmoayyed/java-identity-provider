@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.SAMLFilterContext;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 
 /**
- * A {@link MatchFunctor} that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the
+ * A {@link MatchFunctor} that evaluates to true if {@link SAMLFilterContext#getIssuerMetadata()} matches the
  * provided entity group name.
  */
-public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
+public class AttributeIssuerInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
 
     /** {@inheritDoc} */
     public boolean evaluate(FilterContext filterContext) throws FilterProcessingException {
         if (filterContext instanceof SAMLFilterContext) {
-            return isEntityInGroup(((SAMLFilterContext) filterContext).getRequesterMetadata());
+            return isEntityInGroup(((SAMLFilterContext) filterContext).getIssuerMetadata());
         }else{
             throw new FilterProcessingException("Given filter context is not a SAMLFilterContext");
         }
@@ -38,7 +40,7 @@ public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityG
     public boolean evaluate(FilterContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
         if (filterContext instanceof SAMLFilterContext) {
-            return isEntityInGroup(((SAMLFilterContext) filterContext).getRequesterMetadata());
+            return isEntityInGroup(((SAMLFilterContext) filterContext).getIssuerMetadata());
         }else{
             throw new FilterProcessingException("Given filter context is not a SAMLFilterContext");
         }

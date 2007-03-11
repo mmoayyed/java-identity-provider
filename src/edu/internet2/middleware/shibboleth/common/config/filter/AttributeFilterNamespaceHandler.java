@@ -30,13 +30,13 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
 
     /** {@inheritDoc} */
     public void init() {
-        BeanDefinitionParser parser = new AttributeFilterPoliciesBeanDefinitionParser();
-        registerBeanDefinitionParser(AttributeFilterPoliciesBeanDefinitionParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(AttributeFilterPoliciesBeanDefinitionParser.TYPE_NAME, parser);
+        BeanDefinitionParser parser = new AttributeFilterPolicyGroupBeanDefinitionParser();
+        registerBeanDefinitionParser(AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(AttributeFilterPolicyGroupBeanDefinitionParser.TYPE_NAME, parser);
         
-        parser = new FilterPolicyBeanDefinitionParser();
-        registerBeanDefinitionParser(FilterPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(FilterPolicyBeanDefinitionParser.TYPE_NAME, parser);
+        parser = new AttributeFilterPolicyBeanDefinitionParser();
+        registerBeanDefinitionParser(AttributeFilterPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(AttributeFilterPolicyBeanDefinitionParser.TYPE_NAME, parser);
         
         parser = new AttributeRuleBeanDefinitionParser();
         registerBeanDefinitionParser(AttributeRuleBeanDefinitionParser.ELEMENT_NAME, parser);

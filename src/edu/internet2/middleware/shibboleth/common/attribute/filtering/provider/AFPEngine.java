@@ -28,6 +28,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.AndMatchFunctor;
 
 /**
  * Implementation of {@link FilteringEngine}.

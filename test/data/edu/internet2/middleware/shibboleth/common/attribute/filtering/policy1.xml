@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <afp:AttributeFilterPolicyGroup id="PolicyExample1" 
                                 xmlns:afp="urn:mace:shibboleth:2.0:afp"
                                 xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
@@ -22,7 +20,7 @@
     </afp:PermitValue>
 
     <!-- Release some attributes to JSTOR -->
-    <afp:AttributeFilterPolicy>
+    <afp:AttributeFilterPolicy id="JSTORRelease">
         <!-- This policy is in effect if the requester entity ID is JSTORs -->
         <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="https://www.jstor.org/shibboleth" />
 
@@ -51,8 +49,8 @@
 
     </afp:AttributeFilterPolicy>
 
-    <!-- Release some attributes to JSTOR -->
-    <afp:AttributeFilterPolicy>
+    <!-- Release some attributes to ScienceDirect -->
+    <afp:AttributeFilterPolicy id="ScienceDirect">
         <!-- This policy is in effect if the requester entity ID is ScienceDirect -->
         <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="https://sdauth.sciencedirect.com/" />
 
