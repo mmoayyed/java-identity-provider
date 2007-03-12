@@ -101,14 +101,24 @@ public class AttributeFilterPolicyBeanDefinitionParser extends AbstractBeanDefin
      */
     protected void processAttributeRule(BeanDefinitionBuilder builder, Element filterPolicyElem,
             ParserContext parserContext) {
-        if (log.isDebugEnabled()) {
-            log.debug("Processing attribute rule definitions");
-        }
-        List<Element> attributeRules = XMLHelper.getChildElementsByTagNameNS(filterPolicyElem,
-                AttributeRuleBeanDefinitionParser.ELEMENT_NAME.getNamespaceURI(),
-                AttributeRuleBeanDefinitionParser.ELEMENT_NAME.getLocalPart());
+//        if (log.isDebugEnabled()) {
+//            log.debug("Processing attribute rule definitions");
+//        }
+//        List<Element> attributeRules = XMLHelper.getChildElementsByTagNameNS(filterPolicyElem,
+//                AttributeRuleBeanDefinitionParser.ELEMENT_NAME.getNamespaceURI(),
+//                AttributeRuleBeanDefinitionParser.ELEMENT_NAME.getLocalPart());
+//
+//        builder.addPropertyValue("attributeRules", SpringConfigurationUtils.parseCustomElements(attributeRules, "ref",
+//                parserContext));
+    }
 
-        builder.addPropertyValue("attributeRules", SpringConfigurationUtils.parseCustomElements(attributeRules, "ref",
-                parserContext));
+    /** {@inheritDoc} */
+    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
+        Element afpgElement = element.getOwnerDocument().getDocumentElement();
+        String policyGroupId = DatatypeHelper.safeTrimOrNullString(afpgElement.getAttributeNS(null, "id"));
+        String localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
+        String absId = "/{" + AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME.getLocalPart() + "}"
+                + policyGroupId + "/{" + ELEMENT_NAME.getLocalPart() + "}" + localId;
+        return absId;
     }
 }

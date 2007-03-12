@@ -63,7 +63,7 @@ public class AttributeRuleBeanDefinitionParser extends AbstractBeanDefinitionPar
         List<Element> permitValues = XMLHelper.getChildElementsByTagNameNS(element,
                 AttributeFilterPolicyGroupBeanDefinitionParser.PERMIT_VALUE_ELEMENT_NAME.getNamespaceURI(),
                 AttributeFilterPolicyGroupBeanDefinitionParser.PERMIT_VALUE_ELEMENT_NAME.getLocalPart());
-        
+
         for (Element permitValue : permitValues) {
             if (permitValue.hasAttributeNS(null, "ref")) {
                 builder.addPropertyReference("permitValue", DatatypeHelper.safeTrimOrNullString(permitValue
@@ -79,6 +79,17 @@ public class AttributeRuleBeanDefinitionParser extends AbstractBeanDefinitionPar
 
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
-        return DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
+        Element afpgElement = element.getOwnerDocument().getDocumentElement();
+        String policyGroupId = DatatypeHelper.safeTrimOrNullString(afpgElement.getAttributeNS(null, "id"));
+
+        String localId;
+        if (element.hasAttributeNS(null, "id")) {
+            localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
+        } else {
+            localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "attributeID"));
+        }
+        String absId = "/{" + AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME.getLocalPart() + "}"
+                + policyGroupId + "/{" + ELEMENT_NAME.getLocalPart() + "}" + localId;
+        return absId;
     }
 }

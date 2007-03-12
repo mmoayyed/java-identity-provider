@@ -31,8 +31,6 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
         ApplicationContext appContext = createSpringContext(configs);
         
         assertNotNull(appContext.containsBean("PolicyExample3"));
-        Object policy = appContext.getBean("PolicyExample3");
-        
-        System.out.println(policy.getClass().getName());
+        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext.getBean("PolicyExample3");
     }
 }
