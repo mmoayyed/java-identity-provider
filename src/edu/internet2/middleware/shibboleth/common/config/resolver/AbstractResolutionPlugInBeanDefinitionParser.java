@@ -16,9 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.resolver;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import javolution.util.FastSet;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -72,7 +71,7 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
      * @return the dependency IDs
      */
     protected Set<String> parseDependencies(NodeList elements) {
-        Set<String> dependencyIds = new FastSet<String>();
+        Set<String> dependencyIds = new HashSet<String>();
 
         for (int i = 0; i < elements.getLength(); ++i) {
             Element dependency = (Element) elements.item(i);

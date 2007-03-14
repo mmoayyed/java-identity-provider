@@ -16,9 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import javolution.util.FastSet;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
@@ -44,8 +44,8 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
 
     /** Constructor. */
     public AbstractResolutionPlugIn() {
-        attributeDefinitionDependencyIds = new FastSet<String>();
-        dataConnectorDependencyIds = new FastSet<String>();
+        attributeDefinitionDependencyIds = new HashSet<String>();
+        dataConnectorDependencyIds = new HashSet<String>();
     }
 
     /** {@inheritDoc} */

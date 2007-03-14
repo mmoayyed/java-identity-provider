@@ -16,9 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.HashSet;
 import java.util.Set;
-
-import javolution.util.FastSet;
 
 import org.apache.log4j.Logger;
 import org.opensaml.saml2.core.NameID;
@@ -42,7 +41,7 @@ public abstract class AbstractPrincipalConnector extends AbstractResolutionPlugI
 
     /** Constructor. */
     public AbstractPrincipalConnector() {
-        relyingParties = new FastSet<String>();
+        relyingParties = new HashSet<String>();
     }
 
     /**

@@ -9,11 +9,10 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javolution.util.FastList;
-import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +35,7 @@ public class StaticDataConnector extends BaseDataConnector {
 
     /** Constructor. */
     public StaticDataConnector() {
-        sourceData = new FastList<BaseAttribute<String>>();
+        sourceData = new ArrayList<BaseAttribute<String>>();
     }
 
     /** {@inheritDoc} */
@@ -44,7 +43,7 @@ public class StaticDataConnector extends BaseDataConnector {
         log.debug("Resolving connector: (" + getId() + ") for principal: (" + resolutionContext.getPrincipalName()
                 + ")");
 
-        Map<String, Attribute> attributes = new FastMap<String, Attribute>();
+        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         for (Attribute<String> a : sourceData) {
             BaseAttribute<String> newAttribute = new BaseAttribute<String>();
             newAttribute.setId(a.getId());

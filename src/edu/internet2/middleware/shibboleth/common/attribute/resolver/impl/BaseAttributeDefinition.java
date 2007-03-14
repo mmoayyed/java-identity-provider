@@ -16,13 +16,13 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javolution.util.FastList;
-import javolution.util.FastSet;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
@@ -47,7 +47,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      */
     public BaseAttributeDefinition() {
         dependencyOnly = false;
-        encoders = new FastList<AttributeEncoder>();
+        encoders = new ArrayList<AttributeEncoder>();
     }
 
     /** {@inheritDoc} */
@@ -77,7 +77,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * @return collection of values
      */
     protected Collection<Object> getValuesFromAllDependencies(ResolutionContext context) {
-        Set<Object> values = new FastSet<Object>();
+        Set<Object> values = new HashSet<Object>();
 
         if (!getAttributeDefinitionDependencyIds().isEmpty()) {
             values.addAll(getValuesFromAttributeDependencies(context));
@@ -97,7 +97,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * @return collection of values
      */
     protected Collection<Object> getValuesFromAttributeDependencies(ResolutionContext context) {
-        Set<Object> values = new FastSet<Object>();
+        Set<Object> values = new HashSet<Object>();
 
         for (String id : getAttributeDefinitionDependencyIds()) {
             AttributeDefinition definition = context.getResolvedAttributeDefinitions().get(id);
@@ -123,7 +123,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * @return collection of values
      */
     protected Collection<Object> getValuesFromConnectorDependencies(ResolutionContext context) {
-        Set<Object> values = new FastSet<Object>();
+        Set<Object> values = new HashSet<Object>();
 
         for (String connectorId : getDataConnectorDependencyIds()) {
             DataConnector connector = context.getResolvedDataConnectors().get(connectorId);

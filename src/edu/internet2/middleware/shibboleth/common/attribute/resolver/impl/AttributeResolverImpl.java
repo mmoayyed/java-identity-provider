@@ -16,13 +16,12 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
-
-import javolution.util.FastMap;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
@@ -65,9 +64,9 @@ public class AttributeResolverImpl implements AttributeResolver {
      * Constructor.
      */
     public AttributeResolverImpl() {
-        dataConnectors = new FastMap<String, DataConnector>();
-        definitions = new FastMap<String, AttributeDefinition>();
-        principalConnectors = new FastMap<String, PrincipalConnector>();
+        dataConnectors = new HashMap<String, DataConnector>();
+        definitions = new HashMap<String, AttributeDefinition>();
+        principalConnectors = new HashMap<String, PrincipalConnector>();
     }
 
     /** {@inheritDoc} */
@@ -75,11 +74,14 @@ public class AttributeResolverImpl implements AttributeResolver {
             throws AttributeResolutionException {
         ResolutionContextImpl context = new ResolutionContextImpl();
         context.setSubject(subject);
-        // TODO: resolve subject name into local principal name
-        // context.setPrincipalName(principal)
         context.setAttributeRequester(attributeRequester);
         context.setServletRequest(request);
-
+        
+        // TODO: determine which principal connector to use
+        PrincipalConnector principalConnector = null;
+        String principalName = principalConnector.resolve(context);
+        context.setPrincipalName(principalName);
+        
         return context;
     }
 
@@ -167,7 +169,7 @@ public class AttributeResolverImpl implements AttributeResolver {
     public Set<Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext)
             throws AttributeResolutionException {
         Set<String> attributeIDs = attributes;
-        Map<String, Attribute> resolvedAttributes = new FastMap<String, Attribute>();
+        Map<String, Attribute> resolvedAttributes = new HashMap<String, Attribute>();
 
         // if no attributes requested, then resolve everything
         if (attributeIDs == null || attributeIDs.isEmpty()) {

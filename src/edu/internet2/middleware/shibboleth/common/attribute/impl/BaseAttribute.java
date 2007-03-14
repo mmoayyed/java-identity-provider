@@ -17,11 +17,11 @@
 package edu.internet2.middleware.shibboleth.common.attribute.impl;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javolution.util.FastMap;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 
@@ -46,7 +46,7 @@ public class BaseAttribute<ValueType> extends Attribute<ValueType> implements Cl
 
     /** Constructor. */
     public BaseAttribute() {
-        encoders = new FastMap<String, AttributeEncoder>();
+        encoders = new HashMap<String, AttributeEncoder>();
         values = new TreeSet<ValueType>();
     }
 

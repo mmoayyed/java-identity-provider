@@ -31,8 +31,6 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import javolution.util.FastMap;
-
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.context.ApplicationEvent;
@@ -239,7 +237,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         
         // TODO: this was kind of a quick and dirty way to get convert a Map.  Ideally the whole class 
         // should probably be updated to use Maps throughout
-        Map<String, Attribute> attributeMap = new FastMap<String, Attribute>();
+        Map<String, Attribute> attributeMap = new HashMap<String, Attribute>();
         for(Attribute attr : resolvedAttributes) {
             attributeMap.put(attr.getId(), attr);
         }

@@ -16,11 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletRequest;
-
-import javolution.util.FastMap;
 
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
@@ -57,8 +56,8 @@ public class ResolutionContextImpl implements ResolutionContext {
 
     /** Constructor. */
     public ResolutionContextImpl() {
-        definitions = new FastMap<String, AttributeDefinition>();
-        connectors = new FastMap<String, DataConnector>();
+        definitions = new HashMap<String, AttributeDefinition>();
+        connectors = new HashMap<String, DataConnector>();
     }
 
     /** {@inheritDoc} */
