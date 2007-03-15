@@ -131,12 +131,6 @@ public class AttributeResolverImpl implements AttributeResolver {
             return null;
         }
 
-        if (definition.isDependencyOnly()) {
-            log.debug("Attribute (" + id + ") is set to be a dependency only and cannot be released"
-                    + " to relying parties.");
-            return null;
-        }
-
         // resolve attribute and all dependencies if not done so already
         if (!context.getResolvedAttributeDefinitions().containsKey(id)) {
 
@@ -178,6 +172,11 @@ public class AttributeResolverImpl implements AttributeResolver {
         for (String id : attributeIDs) {
             if (!getAttributeDefinitions().containsKey(id)) {
                 log.warn("No plug-in registered for attribute: (" + id + ")");
+                
+            } else if (getAttributeDefinitions().get(id).isDependencyOnly()) {
+                log.debug("Attribute (" + id + ") is set to be a dependency only and cannot be released"
+                        + " to relying parties.");
+                
             } else {
                 log.info("Resolving attribute: (" + id + ")");
 
