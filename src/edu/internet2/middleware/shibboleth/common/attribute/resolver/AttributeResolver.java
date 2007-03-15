@@ -73,7 +73,7 @@ public interface AttributeResolver {
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public Set<Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext)
+    public Map<String, Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext)
             throws AttributeResolutionException;
 
     /**

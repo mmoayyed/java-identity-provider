@@ -17,7 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -166,7 +165,7 @@ public class AttributeResolverImpl implements AttributeResolver {
     }
 
     /** {@inheritDoc} */
-    public Set<Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext)
+    public Map<String, Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext)
             throws AttributeResolutionException {
         Set<String> attributeIDs = attributes;
         Map<String, Attribute> resolvedAttributes = new HashMap<String, Attribute>();
@@ -195,7 +194,7 @@ public class AttributeResolverImpl implements AttributeResolver {
             }
         }
 
-        return new HashSet<Attribute>(resolvedAttributes.values());
+        return resolvedAttributes;
     }
 
     /**
