@@ -16,10 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,14 +39,14 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     private boolean dependencyOnly;
 
     /** Attribute encoders associated with this definition. */
-    private List<AttributeEncoder> encoders;
+    private Map<String, AttributeEncoder> encoders;
 
     /**
      * Constructor.
      */
     public BaseAttributeDefinition() {
         dependencyOnly = false;
-        encoders = new ArrayList<AttributeEncoder>();
+        encoders = new HashMap<String, AttributeEncoder>();
     }
 
     /** {@inheritDoc} */
@@ -66,7 +65,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     }
 
     /** {@inheritDoc} */
-    public List<AttributeEncoder> getAttributeEncoders() {
+    public Map<String, AttributeEncoder> getAttributeEncoders() {
         return encoders;
     }
 
