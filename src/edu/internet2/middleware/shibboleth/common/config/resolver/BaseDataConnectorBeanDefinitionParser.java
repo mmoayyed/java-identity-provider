@@ -17,17 +17,21 @@
 package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * TODO
+ * Base spring {@link BeanDefinitionParser} for data connectors. DataConnector implementations should provide a custom
+ * BeanDefinitionParser by extending this class and overriding the doParse() method to parse any additional attributes
+ * or elements it requires. Standard attributes and elements defined by the ResolutionPlugIn and DataConnector schemas
+ * will automatically attempt to be parsed.
  */
 public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractResolutionPlugInBeanDefinitionParser {
 
     /** Failover data connector attribute name. */
-    public static final String FAILOVER_DATA_CONNECTOR_ATTRIBUTE_NAME = "failoverDataConnector";
+    public static final String FAILOVER_DATA_CONNECTOR_ELEMENT_LOCAL_NAME = "failoverDataConnector";
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -35,7 +39,7 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractReso
 
         // parse failover connector
         NodeList elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
-                FAILOVER_DATA_CONNECTOR_ATTRIBUTE_NAME);
+                FAILOVER_DATA_CONNECTOR_ELEMENT_LOCAL_NAME);
         if (elements != null && elements.getLength() > 0) {
             builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
         }

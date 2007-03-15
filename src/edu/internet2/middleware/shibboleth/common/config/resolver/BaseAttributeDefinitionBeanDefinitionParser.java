@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -25,7 +26,10 @@ import org.w3c.dom.NodeList;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /**
- * TODO
+ * Base spring {@link BeanDefinitionParser} for attribute definitions. AttributeDefinition implementations should
+ * provide a custom BeanDefinitionParser by extending this class and overriding the doParse() method to parse any
+ * additional attributes or elements it requires. Standard attributes and elements defined by the ResolutionPlugIn and
+ * AttributeDefinition schemas will automatically attempt to be parsed.
  */
 public abstract class BaseAttributeDefinitionBeanDefinitionParser extends AbstractResolutionPlugInBeanDefinitionParser {
 

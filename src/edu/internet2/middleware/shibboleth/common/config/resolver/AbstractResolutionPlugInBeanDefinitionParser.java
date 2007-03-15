@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
 
 /**
- * Base class for Spring bean definition parser for Shibboleth resovler plug-ins.
+ * Base class for Spring bean definition parser for Shibboleth resolver plug-ins.
  */
 public abstract class AbstractResolutionPlugInBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
@@ -38,6 +38,9 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
     /** Local name of data connector dependency. */
     public static final String DATA_CONNECTOR_DEPENDENCY_ELEMENT_LOCAL_NAME = "DataConnectorDependency";
 
+    /** NameID format attribute name. */
+    public static final String PROPAGATE_ERRORS_ATTRIBUTE_NAME = "propagateErrors";
+
     /** {@inheritDoc} */
     protected abstract Class<? extends ResolutionPlugIn> getBeanClass(Element element);
 
@@ -46,7 +49,7 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
 
         // grab attributes off of the plugin element
         builder.addPropertyValue("id", element.getAttribute(ID_ATTRIBUTE));
-        builder.addPropertyValue("propagateErrors", element.getAttribute("propagateErrors"));
+        builder.addPropertyValue("propagateErrors", element.getAttribute(PROPAGATE_ERRORS_ATTRIBUTE_NAME));
 
         // parse child elements
         NodeList elements;

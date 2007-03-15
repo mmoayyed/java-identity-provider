@@ -22,5 +22,26 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalCo
  * Base class for {@link PrincipalConnector} plug-ins.
  */
 public abstract class BasePrincipalConnector extends AbstractResolutionPlugIn<String> implements PrincipalConnector {
+    
+    /** NameID Format. **/
+    private String nameIDFormat;
 
+    /**
+     * Get the NameID format.
+     * 
+     * @return the nameIDFormat.
+     */
+    public String getNameIDFormat() {
+        return nameIDFormat;
+    }
+
+    /**
+     * Set the NameID format.
+     * 
+     * @param newFormat the new nameIDFormat to set.
+     */
+    public void setNameIDFormat(String newFormat) {
+        nameIDFormat = newFormat;
+    }
+       
 }
