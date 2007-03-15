@@ -55,7 +55,7 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
         expected.add("ttrojan");
         
         try {
-            Attribute[] actual = resolver.resolveAttributes(null, context).toArray(new Attribute[0]);
+            Attribute[] actual = resolver.resolveAttributes(null, context).values().toArray(new Attribute[0]);
             
             assertEquals(1, actual.length);
             assertEquals(2, actual[0].getValues().size());
