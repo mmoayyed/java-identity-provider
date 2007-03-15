@@ -16,10 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.storage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
-
-import javolution.util.FastList;
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -59,7 +58,7 @@ public class ResourceChangeWatcher extends TimerTask {
     private DateTime lastModification;
 
     /** Registered listeners of resource change notifications. */
-    private FastList<ResourceListener> resourceListeners;
+    private List<ResourceListener> resourceListeners;
 
     /**
      * Constructor.
@@ -118,7 +117,7 @@ public class ResourceChangeWatcher extends TimerTask {
             resourceExist = false;
         }
 
-        resourceListeners = new FastList<ResourceListener>();
+        resourceListeners = new ArrayList<ResourceListener>();
     }
 
     /**
