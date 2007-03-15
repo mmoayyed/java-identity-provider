@@ -1,16 +1,38 @@
 <schema targetNamespace="urn:mace:shibboleth:2.0:resolver:encoder" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:encoder="urn:mace:shibboleth:2.0:resolver:encoder" xmlns:resover="urn:mace:shibboleth:2.0:resolver">
+    xmlns:encoder="urn:mace:shibboleth:2.0:resolver:encoder" xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
 
-    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+    <import namespace="urn:mace:shibboleth:2.0:resolver"
+        schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
 
     <complexType name="SAML1StringAttributeEncoder">
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="name" type="string" use="required" />
-                <attribute name="category" type="string" use="required" />
-                <attribute name="namespace" type="string" use="required" />
+                <attribute name="nameFormat" type="string" use="required"
+                    default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                    <annotation>
+                        <documentation>The SAML 1 Namespace of the attribute.</documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
-    
+
+    <complexType name="SAML2StringAttributeEncoder">
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string" use="required"
+                    default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="friendlyName" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
 </schema>

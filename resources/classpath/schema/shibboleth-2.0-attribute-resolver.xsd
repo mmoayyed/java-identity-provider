@@ -101,6 +101,7 @@
                 specific representation such as a SAML 1 Attribute or a SAML 2 NameID.
             </documentation>
         </annotation>
+        <attribute name="name" type="string" use="required" />
     </complexType>
 
     <element name="DataConnector" type="resolver:BaseDataConnectorType">
