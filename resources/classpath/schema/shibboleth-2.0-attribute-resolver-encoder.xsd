@@ -1,0 +1,16 @@
+<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:encoder" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:encoder="urn:mace:shibboleth:2.0:resolver:encoder" xmlns:resover="urn:mace:shibboleth:2.0:resolver">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver" schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+
+    <complexType name="SAML1StringAttributeEncoder">
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="name" type="string" use="required" />
+                <attribute name="category" type="string" use="required" />
+                <attribute name="namespace" type="string" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+    
+</schema>
