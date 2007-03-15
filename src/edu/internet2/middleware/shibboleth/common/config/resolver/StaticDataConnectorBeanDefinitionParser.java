@@ -29,7 +29,7 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.StaticDataConnector;
 
@@ -78,7 +78,7 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
      * @return bean definition builder
      */
     private static BeanDefinition buildAttribute(Element element) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(BaseAttribute.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(BasicAttribute.class);
 
         builder.addPropertyValue("id", element.getAttribute("id"));
 

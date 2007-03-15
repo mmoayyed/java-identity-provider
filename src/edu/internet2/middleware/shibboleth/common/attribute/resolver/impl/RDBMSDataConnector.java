@@ -37,7 +37,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
@@ -408,7 +408,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             throws SQLException {
         int numOfCols = resultMetadata.getColumnCount();
 
-        BaseAttribute attribute;
+        BasicAttribute attribute;
         HashMap<String, Attribute> attributes = new HashMap<String, Attribute>();
         String columnName = null;
         String attributeName = null;
@@ -423,7 +423,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                 attributeName = columnName;
             }
 
-            attribute = new BaseAttribute();
+            attribute = new BasicAttribute();
             attribute.setId(attributeName);
             attributes.put(columnName, attribute);
         }

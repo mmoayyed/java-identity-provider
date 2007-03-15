@@ -17,7 +17,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
@@ -31,11 +31,11 @@ public class StaticDataConnector extends BaseDataConnector {
     private static Logger log = Logger.getLogger(StaticDataConnector.class.getName());
 
     /** Source Data. */
-    private List<BaseAttribute<String>> sourceData;
+    private List<BasicAttribute<String>> sourceData;
 
     /** Constructor. */
     public StaticDataConnector() {
-        sourceData = new ArrayList<BaseAttribute<String>>();
+        sourceData = new ArrayList<BasicAttribute<String>>();
     }
 
     /** {@inheritDoc} */
@@ -45,7 +45,7 @@ public class StaticDataConnector extends BaseDataConnector {
 
         Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         for (Attribute<String> a : sourceData) {
-            BaseAttribute<String> newAttribute = new BaseAttribute<String>();
+            BasicAttribute<String> newAttribute = new BasicAttribute<String>();
             newAttribute.setId(a.getId());
 
             for (String value : a.getValues()) {
@@ -64,7 +64,7 @@ public class StaticDataConnector extends BaseDataConnector {
      * 
      * @return list of source attributes.
      */
-    public List<BaseAttribute<String>> getSourceData() {
+    public List<BasicAttribute<String>> getSourceData() {
         return sourceData;
     }
 
@@ -73,9 +73,9 @@ public class StaticDataConnector extends BaseDataConnector {
      * 
      * @param newSourceData new data to replace existing data
      */
-    public void setSourceData(List<BaseAttribute<String>> newSourceData) {
+    public void setSourceData(List<BasicAttribute<String>> newSourceData) {
         sourceData.clear();
-        for (BaseAttribute<String> attribute : newSourceData) {
+        for (BasicAttribute<String> attribute : newSourceData) {
             sourceData.add(attribute);
         }
     }

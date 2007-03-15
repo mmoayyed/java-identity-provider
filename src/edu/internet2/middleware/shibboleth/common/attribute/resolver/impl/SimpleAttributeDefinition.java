@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
 import org.apache.log4j.Logger;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
@@ -35,7 +35,7 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
     public Attribute resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving attribute: (" + getId() + ")");
 
-        BaseAttribute<Object> attribute = new BaseAttribute<Object>();
+        BasicAttribute<Object> attribute = new BasicAttribute<Object>();
         attribute.setId(getId());
         for (Object o : getValuesFromAllDependencies(resolutionContext)) {
             attribute.getValues().add(o);

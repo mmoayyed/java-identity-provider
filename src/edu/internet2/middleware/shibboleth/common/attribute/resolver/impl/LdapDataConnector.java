@@ -31,7 +31,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
@@ -575,7 +575,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             if (log.isDebugEnabled()) {
                 log.debug("Found the following attribute: " + entry);
             }
-            BaseAttribute<String> attribute = new BaseAttribute<String>();
+            BasicAttribute<String> attribute = new BasicAttribute<String>();
             attribute.setId(entry.getKey());
             attribute.getValues().addAll(entry.getValue());
             attributes.put(attribute.getId(), attribute);

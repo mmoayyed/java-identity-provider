@@ -30,7 +30,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
  * 
  * @param <ValueType> value type
  */
-public class BaseAttribute<ValueType> extends Attribute<ValueType> implements Cloneable {
+public class BasicAttribute<ValueType> extends Attribute<ValueType> implements Cloneable {
 
     /** ID of this attribute. */
     private String id;
@@ -45,7 +45,7 @@ public class BaseAttribute<ValueType> extends Attribute<ValueType> implements Cl
     private Comparator<ValueType> comparator;
 
     /** Constructor. */
-    public BaseAttribute() {
+    public BasicAttribute() {
         encoders = new HashMap<String, AttributeEncoder>();
         values = new TreeSet<ValueType>();
     }
@@ -98,8 +98,8 @@ public class BaseAttribute<ValueType> extends Attribute<ValueType> implements Cl
     }
 
     /** {@inheritDoc} */
-    public BaseAttribute<ValueType> clone() {
-        BaseAttribute<ValueType> newAttribute = new BaseAttribute<ValueType>();
+    public BasicAttribute<ValueType> clone() {
+        BasicAttribute<ValueType> newAttribute = new BasicAttribute<ValueType>();
 
         newAttribute.setId(this.getId());
 

@@ -21,7 +21,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 /**
  * An attribute whose values contain a scope.
  */
-public class ScopedAttribute extends BaseAttribute<String> {
+public class ScopedAttribute extends BasicAttribute<String> {
 
     /** Attribute's value's scope. */
     private String scope;
