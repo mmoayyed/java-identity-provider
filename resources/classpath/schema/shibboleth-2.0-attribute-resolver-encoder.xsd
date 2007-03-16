@@ -4,10 +4,13 @@
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
 
-    <complexType name="SAML1StringAttributeEncoder">
+    <complexType name="SAML1String">
+        <annotation>
+            <documentation>Defines a SAML 1 string encoder for an attribute.</documentation>
+        </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" use="required"
+                <attribute name="namespace" type="string" use="required"
                     default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
@@ -17,7 +20,10 @@
         </complexContent>
     </complexType>
 
-    <complexType name="SAML2StringAttributeEncoder">
+    <complexType name="SAML2String">
+        <annotation>
+            <documentation>Defines a SAML 2 string encoder for an attribute.</documentation>
+        </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
                 <attribute name="nameFormat" type="string" use="required"

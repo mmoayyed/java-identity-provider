@@ -33,14 +33,14 @@ public interface SAML2AttributeEncoder<ValueType> extends XMLObjectAttributeEnco
      * 
      * @return attribute's name format
      */
-    public String getAttributeFormat();
+    public String getNameFormat();
     
     /**
      * Sets the attribute's name format.
      * 
      * @param format attribute's name format
      */
-    public void setAttributeFormat(String format);
+    public void setNameFormat(String format);
     
     /**
      * Gets the human friendly name of the attribute.

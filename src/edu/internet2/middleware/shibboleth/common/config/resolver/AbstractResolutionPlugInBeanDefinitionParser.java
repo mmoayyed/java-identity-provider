@@ -68,7 +68,7 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
     }
 
     /**
-     * Parse dependcy elements.
+     * Parse dependency elements.
      * 
      * @param elements DOM elements of type <code>resolver:PluginDependencyType</code>
      * @return the dependency IDs

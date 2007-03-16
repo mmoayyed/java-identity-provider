@@ -33,12 +33,12 @@ public interface SAML1AttributeEncoder<ValueType> extends XMLObjectAttributeEnco
      * 
      * @return attribute namespace
      */
-    public String getAttributeNamespace();
+    public String getNamespace();
     
     /**
      * Sets the attribute namespace.
      * 
      * @param namespace attribute namespace
      */
-    public void setAttributeNamespace(String namespace);
+    public void setNamespace(String namespace);
 }

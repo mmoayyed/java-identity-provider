@@ -4,7 +4,7 @@ package edu.internet2.middleware.shibboleth.common.config.resolver;
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
 /**
- * Spring namespace handler for the Shibboleth resolver namespace.
+ * Spring namespace handler for the Shibboleth static data connector namespace.
  */
 public class StaticDataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 

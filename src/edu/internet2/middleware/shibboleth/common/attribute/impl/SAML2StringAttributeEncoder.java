@@ -50,7 +50,7 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder implem
     }
     
     /** {@inheritDoc} */
-    public String getAttributeFormat() {
+    public String getNameFormat() {
         return format;
     }
 
@@ -60,7 +60,7 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder implem
     }
 
     /** {@inheritDoc} */
-    public void setAttributeFormat(String newFormat) {
+    public void setNameFormat(String newFormat) {
         format = newFormat;
     }
 
@@ -75,7 +75,7 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder implem
         samlAttribute = attributeBuilder.buildObject();
         
         samlAttribute.setName(getAttributeName());
-        samlAttribute.setNameFormat(getAttributeFormat());
+        samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.setFriendlyName(getFriendlyName());
         
         for(Object o: attribute.getValues()) {

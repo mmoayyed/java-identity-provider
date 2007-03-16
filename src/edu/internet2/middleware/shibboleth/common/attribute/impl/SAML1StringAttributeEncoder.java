@@ -45,12 +45,12 @@ public class SAML1StringAttributeEncoder extends AbstractAttributeEncoder implem
     }
     
     /** {@inheritDoc} */
-    public String getAttributeNamespace() {
+    public String getNamespace() {
         return namespace;
     }
 
     /** {@inheritDoc} */
-    public void setAttributeNamespace(String newNamespace) {
+    public void setNamespace(String newNamespace) {
         namespace = newNamespace;
     }
 
