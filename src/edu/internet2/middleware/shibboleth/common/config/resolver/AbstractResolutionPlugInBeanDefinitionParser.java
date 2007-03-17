@@ -25,7 +25,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 
 /**
  * Base class for Spring bean definition parser for Shibboleth resolver plug-ins.

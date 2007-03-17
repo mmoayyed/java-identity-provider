@@ -7,7 +7,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.ArrayList;
 import java.util.HashMap;

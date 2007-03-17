@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.Set;
+
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
  * A base interface for plugins that provide attributes.

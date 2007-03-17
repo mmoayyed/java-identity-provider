@@ -23,6 +23,9 @@ import javax.servlet.ServletRequest;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.DataConnector;
+
 /**
  * A context for a resolution request. This provides access to the information about the subject the attributes
  * describe, the requester of the attributes, the prodocuer of the attributes, and the attributes, attribute
@@ -52,13 +55,22 @@ public interface ResolutionContext {
      * @return requester of the attributes
      */
     public String getAttributeRequester();
-
+    
     /**
      * Gets the request from the client. The request and all related objects are read-only.
+     * 
+     * May be null if the request is not from a servlet.
      * 
      * @return request from the client
      */
     public ServletRequest getRequest();
+    
+    /**
+     * Sets the request from the client.
+     * 
+     * @param request request from the client
+     */
+    public void setRequest(ServletRequest request);
 
     /**
      * Gets the data connectors that have already been resolved, indexed by the connector's ID.

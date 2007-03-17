@@ -48,7 +48,7 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
     public void testResolverInstantiation() {
         AttributeResolver resolver = (AttributeResolver) ac
                 .getBean("edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverFactoryBean");
-        ResolutionContext context = resolver.createResolutionContext("ttrojan", "http://example.com/", null);
+        ResolutionContext context = resolver.createResolutionContext("ttrojan", "http://example.com/");
         
         SortedSet<String> expected = new TreeSet<String>();
         expected.add("gpburdell");

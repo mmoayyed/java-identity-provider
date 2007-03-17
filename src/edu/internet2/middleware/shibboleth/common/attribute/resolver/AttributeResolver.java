@@ -19,19 +19,12 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletRequest;
-
 import org.opensaml.saml2.core.NameID;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 
 /**
  * The service that resolves the attribtues for a particular subject.
- * 
- * "Raw" attributes are gathered by the registered {@link DataConnector}s while the {@link AttributeDefinition}s
- * refine the raw attributes or create attributes of their own. Connectors and definitions may depend on each other so
- * implementations must use a directed dependency graph when performing the resolution.
  */
 public interface AttributeResolver {
 
@@ -40,11 +33,10 @@ public interface AttributeResolver {
      * 
      * @param principal the principal whose attributes will be resolved
      * @param attributeRequester the party requesting the attributes
-     * @param request the request from the client
      * 
      * @return resolution context containing the principal name for subject
      */
-    public ResolutionContext createResolutionContext(String principal, String attributeRequester, ServletRequest request);
+    public ResolutionContext createResolutionContext(String principal, String attributeRequester);
 
     /**
      * Creates a resolution context for the given user and attribute requester. The subject's nameID is resolved into a
@@ -52,13 +44,12 @@ public interface AttributeResolver {
      * 
      * @param subject the subject whose attributes will be resolved
      * @param attributeRequester the party requesting the attributes
-     * @param request the request from the client
      * 
      * @return resolution context containing the principal name for subject
      * 
      * @throws AttributeResolutionException thrown if the NameID can not be resolved into a principal name
      */
-    public ResolutionContext createResolutionContext(NameID subject, String attributeRequester, ServletRequest request)
+    public ResolutionContext createResolutionContext(NameID subject, String attributeRequester)
             throws AttributeResolutionException;
 
     /**
@@ -75,41 +66,6 @@ public interface AttributeResolver {
      */
     public Map<String, Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext)
             throws AttributeResolutionException;
-
-    /**
-     * Gets the list of principal connectors used to convert {@link NameID}s into userids.
-     * 
-     * @return connectors used to convert {@link NameID}s into userids
-     */
-    public Map<String, PrincipalConnector> getPrincipalConnectors();
-
-    /**
-     * Gets the list of data connectors used to fetch the raw attributes for a subject.
-     * 
-     * @return data connectors used to fetch the raw attributes for a subject
-     */
-    public Map<String, DataConnector> getDataConnectors();
-
-    /**
-     * Gets the list of attribute definitions that will produce the attributes for a subject.
-     * 
-     * @return attribute definitions that will produce the attributes for a subject
-     */
-    public Map<String, AttributeDefinition> getAttributeDefinitions();
-
-    /**
-     * Gets the metadata provider that may be used to lookup information about entities.
-     * 
-     * @return metadata provider that may be used to lookup information about entities
-     */
-    public MetadataProvider getMetadataProvider();
-
-    /**
-     * Sets the metadata provider that may be used to lookup information about entities.
-     * 
-     * @param metadataProvider metadata provider that may be used to lookup information about entities
-     */
-    public void setMetadataProvider(MetadataProvider metadataProvider);
 
     /**
      * Check that the Attribute Resolver is in a valid state and ready to begin receiving resolution requests.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +24,6 @@ import javax.servlet.ServletRequest;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
@@ -127,7 +125,7 @@ public class ResolutionContextImpl implements ResolutionContext {
      * 
      * @param newServletRequest The servletRequest to set.
      */
-    public void setServletRequest(ServletRequest newServletRequest) {
+    public void setRequest(ServletRequest newServletRequest) {
         servletRequest = newServletRequest;
     }
 

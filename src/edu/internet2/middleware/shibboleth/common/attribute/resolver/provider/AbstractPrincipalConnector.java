@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 import org.opensaml.saml2.core.NameID;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalConnector;
 
 /**
  * Abstract base class for principal connectors.

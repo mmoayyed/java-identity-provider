@@ -20,8 +20,8 @@ import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.SimpleAttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.SimpleAttributeDefinition;
 
 /**
  * Spring Bean Definition Parser for static data connector.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.Map;
 

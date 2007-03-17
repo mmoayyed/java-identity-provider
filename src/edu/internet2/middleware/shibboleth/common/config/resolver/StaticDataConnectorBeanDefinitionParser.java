@@ -30,8 +30,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.StaticDataConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.StaticDataConnector;
 
 /**
  * Spring Bean Definition Parser for static data connector.

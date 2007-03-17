@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.Map;
 import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**

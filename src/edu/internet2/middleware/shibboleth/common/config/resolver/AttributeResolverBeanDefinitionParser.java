@@ -26,7 +26,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.impl.AttributeResolverImpl;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AttributeResolverImpl;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /**

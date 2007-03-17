@@ -20,10 +20,11 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AttributeResolverImpl;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.DataConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.PrincipalConnector;
 
 /**
  * FactoryBean for creating the {@link AttributeResolver}.
@@ -31,7 +32,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalCo
 public class AttributeResolverFactoryBean extends AbstractFactoryBean {
 
     /** Attribute resolver. */
-    private AttributeResolver resolver;
+    private AttributeResolverImpl resolver;
 
     /** Attribute definitions. */
     private Collection<AttributeDefinition> attributeDefinitions;
@@ -81,7 +82,7 @@ public class AttributeResolverFactoryBean extends AbstractFactoryBean {
      * 
      * @param newResolver the resolver
      */
-    public void setResolver(AttributeResolver newResolver) {
+    public void setResolver(AttributeResolverImpl newResolver) {
         resolver = newResolver;
     }
 

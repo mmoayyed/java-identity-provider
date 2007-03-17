@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.ServletRequest;
 
 import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
@@ -31,16 +29,16 @@ import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.PrincipalConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
 
 /**
  * Primary implementation of {@link AttributeResolver}.
+ * 
+ * "Raw" attributes are gathered by the registered {@link DataConnector}s while the {@link AttributeDefinition}s
+ * refine the raw attributes or create attributes of their own. Connectors and definitions may depend on each other so
+ * implementations must use a directed dependency graph when performing the resolution.
  */
 public class AttributeResolverImpl implements AttributeResolver {
 
@@ -69,12 +67,11 @@ public class AttributeResolverImpl implements AttributeResolver {
     }
 
     /** {@inheritDoc} */
-    public ResolutionContext createResolutionContext(NameID subject, String attributeRequester, ServletRequest request)
+    public ResolutionContext createResolutionContext(NameID subject, String attributeRequester)
             throws AttributeResolutionException {
         ResolutionContextImpl context = new ResolutionContextImpl();
         context.setSubject(subject);
         context.setAttributeRequester(attributeRequester);
-        context.setServletRequest(request);
         
         // TODO: determine which principal connector to use
         PrincipalConnector principalConnector = null;
@@ -85,11 +82,10 @@ public class AttributeResolverImpl implements AttributeResolver {
     }
 
     /** {@inheritDoc} */
-    public ResolutionContext createResolutionContext(String principal, String attributeRequester, ServletRequest request) {
+    public ResolutionContext createResolutionContext(String principal, String attributeRequester) {
         ResolutionContextImpl context = new ResolutionContextImpl();
         context.setPrincipalName(principal);
         context.setAttributeRequester(attributeRequester);
-        context.setServletRequest(request);
 
         return context;
     }

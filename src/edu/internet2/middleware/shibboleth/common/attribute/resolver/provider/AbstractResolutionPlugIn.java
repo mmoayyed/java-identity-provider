@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeDefinition;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.DataConnector;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionPlugIn;
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
