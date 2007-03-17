@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.resolver.attributeDefinition;
 
 import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.SimpleAttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.SimpleAttributeDefinition;
 
 /**
  * Spring Bean Definition Parser for static data connector.

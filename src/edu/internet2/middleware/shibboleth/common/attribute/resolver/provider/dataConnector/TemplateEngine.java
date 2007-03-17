@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -30,6 +30,7 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
 
 /**
  * A velocity based template engine that pulls information from a resolution context for use within the template.

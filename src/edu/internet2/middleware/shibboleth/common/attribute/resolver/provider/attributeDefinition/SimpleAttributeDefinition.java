@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
 import org.apache.log4j.Logger;
 

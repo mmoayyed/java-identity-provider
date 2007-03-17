@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
 import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
 /**
  * A plugin used to create attributes or refine attributes provided from {@link DataConnector}s.

@@ -14,32 +14,24 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
 import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 
 /**
- * Base class for {@link DataConnector} plug-ins.
+ * A plugin used to pull attribute information from a data store.
+ * 
+ * Data connectors must be stateless and thread-safe as a single instance may be used to service every request.
  */
-public abstract class BaseDataConnector extends AbstractResolutionPlugIn<Map<String, Attribute>> implements
-        DataConnector {
-
-    /** ID of the data connector to use if this one fails. */
-    private String failoverDependencyId;
-
-    /** {@inheritDoc} */
-    public String getFailoverDependencyId() {
-        return failoverDependencyId;
-    }
+public interface DataConnector extends ResolutionPlugIn<Map<String, Attribute>> {
 
     /**
-     * Set Id of FailoverDataConnector.
+     * Returns the ID of a data connector to use if this one fails.
      * 
-     * @param newFailoverDependencyId id of failover connector
+     * @return String an Id
      */
-    public void setFailoverDependencyId(String newFailoverDependencyId) {
-        failoverDependencyId = newFailoverDependencyId;
-    }
+    public String getFailoverDependencyId();
 }

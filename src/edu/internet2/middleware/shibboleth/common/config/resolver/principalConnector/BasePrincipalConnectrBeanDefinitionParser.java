@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.resolver.principalConnector;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import edu.internet2.middleware.shibboleth.common.config.resolver.AbstractResolutionPlugInBeanDefinitionParser;
 
 /**
  * Base spring {@link BeanDefinitionParser} for principal connectors. PrincipalConnector implementations should provide

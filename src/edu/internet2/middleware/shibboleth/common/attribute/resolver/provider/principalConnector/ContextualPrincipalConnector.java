@@ -14,44 +14,32 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector;
 
-import java.util.Map;
 import java.util.Set;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
- * Wrapper for a {@link DataConnector} within a {@link ResolutionContext}. This wrapper ensures that the connector is
- * resolved only once per context.
+ * Wrapper for a {@link PrincipalConnector} within a {@link ResolutionContext}. This wrapper ensures that the connector
+ * is resolved only once per context.
  */
-public class ContextualDataConnector implements DataConnector {
+public class ContextualPrincipalConnector implements PrincipalConnector {
 
-    /** Wrapped data connector. */
-    private DataConnector connector;
+    /** Wrapped principal connector. */
+    private PrincipalConnector connector;
 
-    /** Cached result of resolving the data connector. */
-    private Map<String, Attribute> attributes;
+    /** Cached result of resolving the connector. */
+    private String principal;
 
     /**
      * Constructor.
      * 
-     * @param newConnector data connector to wrap
+     * @param newConnector principal connector to wrap
      */
-    public ContextualDataConnector(DataConnector newConnector) {
+    public ContextualPrincipalConnector(PrincipalConnector newConnector) {
         this.connector = newConnector;
-    }
-
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        return connector.equals(obj);
-    }
-    
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return connector.hashCode();
     }
 
     /** {@inheritDoc} */
@@ -65,8 +53,8 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public String getFailoverDependencyId() {
-        return connector.getFailoverDependencyId();
+    public String getFormat() {
+        return connector.getFormat();
     }
 
     /** {@inheritDoc} */
@@ -80,13 +68,17 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
-        // TODO: should we be dealing with failovers here?
-        if (attributes == null) {
-            attributes = connector.resolve(resolutionContext);
+    public Set<String> getRelyingParties() {
+        return connector.getRelyingParties();
+    }
+
+    /** {@inheritDoc} */
+    public String resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+        if (principal == null) {
+            principal = connector.resolve(resolutionContext);
         }
 
-        return attributes;
+        return principal;
     }
 
     /** {@inheritDoc} */

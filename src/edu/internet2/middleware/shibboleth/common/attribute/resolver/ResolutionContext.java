@@ -23,8 +23,8 @@ import javax.servlet.ServletRequest;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AttributeDefinition;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.DataConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
 /**
  * A context for a resolution request. This provides access to the information about the subject the attributes

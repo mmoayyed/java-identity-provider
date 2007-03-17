@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector;
 
 import java.util.Set;
 
 import org.opensaml.saml2.core.NameID;
+
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 
 /**
  * Principal connectors are responsible for taking subject's {@link NameID} and converting it into a string based

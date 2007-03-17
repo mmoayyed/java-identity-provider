@@ -19,6 +19,9 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 import java.util.HashSet;
 import java.util.Set;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
+
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.

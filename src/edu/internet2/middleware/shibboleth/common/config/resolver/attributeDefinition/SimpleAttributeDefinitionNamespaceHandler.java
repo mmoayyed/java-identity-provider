@@ -1,5 +1,5 @@
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.resolver.attributeDefinition;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 

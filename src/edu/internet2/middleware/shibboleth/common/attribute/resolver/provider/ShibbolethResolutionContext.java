@@ -25,11 +25,13 @@ import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
 /**
  * Basic implementation of {@link ResolutionContext}.
  */
-public class ResolutionContextImpl implements ResolutionContext {
+public class ShibbolethResolutionContext implements ResolutionContext {
 
     /** ID of entity making request. */
     private String attributeRequester;
@@ -53,7 +55,7 @@ public class ResolutionContextImpl implements ResolutionContext {
     private NameID subject;
 
     /** Constructor. */
-    public ResolutionContextImpl() {
+    public ShibbolethResolutionContext() {
         definitions = new HashMap<String, AttributeDefinition>();
         connectors = new HashMap<String, DataConnector>();
     }

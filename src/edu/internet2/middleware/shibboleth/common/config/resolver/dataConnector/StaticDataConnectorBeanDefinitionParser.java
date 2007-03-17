@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.resolver.dataConnector;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.StaticDataConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.StaticDataConnector;
 
 /**
  * Spring Bean Definition Parser for static data connector.

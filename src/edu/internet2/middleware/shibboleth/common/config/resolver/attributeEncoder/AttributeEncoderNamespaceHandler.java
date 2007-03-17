@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.resolver.attributeEncoder;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 

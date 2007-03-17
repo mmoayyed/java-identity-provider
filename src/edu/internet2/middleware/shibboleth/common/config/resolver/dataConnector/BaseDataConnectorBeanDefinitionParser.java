@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.resolver.dataConnector;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import edu.internet2.middleware.shibboleth.common.config.resolver.AbstractResolutionPlugInBeanDefinitionParser;
+import edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverNamespaceHandler;
 
 /**
  * Base spring {@link BeanDefinitionParser} for data connectors. DataConnector implementations should provide a custom

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.resolver.attributeDefinition;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -24,6 +24,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
+import edu.internet2.middleware.shibboleth.common.config.resolver.AbstractResolutionPlugInBeanDefinitionParser;
+import edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverNamespaceHandler;
 
 /**
  * Base spring {@link BeanDefinitionParser} for attribute definitions. AttributeDefinition implementations should

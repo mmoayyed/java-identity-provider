@@ -32,6 +32,11 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ContextualAttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.ContextualDataConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector.PrincipalConnector;
 
 /**
  * Primary implementation of {@link AttributeResolver}.
@@ -40,10 +45,10 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionC
  * refine the raw attributes or create attributes of their own. Connectors and definitions may depend on each other so
  * implementations must use a directed dependency graph when performing the resolution.
  */
-public class AttributeResolverImpl implements AttributeResolver {
+public class ShibbolethAttributeResolver implements AttributeResolver {
 
     /** Log4j logger. */
-    private static Logger log = Logger.getLogger(AttributeResolverImpl.class.getName());
+    private static Logger log = Logger.getLogger(ShibbolethAttributeResolver.class.getName());
 
     /** Metadata provider defined for this resolver. */
     private MetadataProvider metadataProvider;
@@ -60,7 +65,7 @@ public class AttributeResolverImpl implements AttributeResolver {
     /**
      * Constructor.
      */
-    public AttributeResolverImpl() {
+    public ShibbolethAttributeResolver() {
         dataConnectors = new HashMap<String, DataConnector>();
         definitions = new HashMap<String, AttributeDefinition>();
         principalConnectors = new HashMap<String, PrincipalConnector>();
@@ -69,7 +74,7 @@ public class AttributeResolverImpl implements AttributeResolver {
     /** {@inheritDoc} */
     public ResolutionContext createResolutionContext(NameID subject, String attributeRequester)
             throws AttributeResolutionException {
-        ResolutionContextImpl context = new ResolutionContextImpl();
+        ShibbolethResolutionContext context = new ShibbolethResolutionContext();
         context.setSubject(subject);
         context.setAttributeRequester(attributeRequester);
         
@@ -83,7 +88,7 @@ public class AttributeResolverImpl implements AttributeResolver {
 
     /** {@inheritDoc} */
     public ResolutionContext createResolutionContext(String principal, String attributeRequester) {
-        ResolutionContextImpl context = new ResolutionContextImpl();
+        ShibbolethResolutionContext context = new ShibbolethResolutionContext();
         context.setPrincipalName(principal);
         context.setAttributeRequester(attributeRequester);
 

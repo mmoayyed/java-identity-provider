@@ -26,7 +26,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AttributeResolverImpl;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /**
@@ -54,7 +54,7 @@ public class AttributeResolverBeanDefinitionParser extends AbstractBeanDefinitio
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
         BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(AttributeResolverFactoryBean.class);
-        BeanDefinitionBuilder resolver = BeanDefinitionBuilder.rootBeanDefinition(AttributeResolverImpl.class);
+        BeanDefinitionBuilder resolver = BeanDefinitionBuilder.rootBeanDefinition(ShibbolethAttributeResolver.class);
         factory.addPropertyValue("resolver", resolver.getBeanDefinition());
 
         NodeList elements;
