@@ -46,7 +46,7 @@
         </attribute>
     </complexType>
     
-    <complexType name="StringAttributeDecoder">
+    <complexType name="ScopedAttributeDecoder">
         <annotation>
             <documentation>
                 Decoder for attributes with scoped values.
