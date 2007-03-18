@@ -63,11 +63,9 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
     /**
      * This creates a new attribute authority.
      * 
-     * @param resolver The attribute resolver to set.
-     * @param filterEngine The filtering engine to set.
+     * @param resolver The attribute resolver to set
      */
-    public SAML1AttributeAuthorityImpl(AttributeResolver<ShibbolethAttributeRequestContext> resolver,
-            AttributeFilteringEngine<ShibbolethAttributeRequestContext> filterEngine) {
+    public SAML1AttributeAuthorityImpl(AttributeResolver<ShibbolethAttributeRequestContext> resolver) {
 
         XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
         statementBuilder = (SAMLObjectBuilder<AttributeStatement>) builderFactory
@@ -76,7 +74,6 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
                 .getBuilder(org.opensaml.saml1.core.Attribute.DEFAULT_ELEMENT_NAME);
 
         attributeResolver = resolver;
-        filteringEngine = filterEngine;
     }
 
     /**
@@ -95,6 +92,15 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
      */
     public AttributeFilteringEngine<ShibbolethAttributeRequestContext> getFilteringEngine() {
         return filteringEngine;
+    }
+    
+    /**
+     * Sets the attribute filtering engine.
+     * 
+     * @param engine attribute filtering engine
+     */
+    public void setFilteringEngine(AttributeFilteringEngine<ShibbolethAttributeRequestContext> engine){
+        filteringEngine = engine;
     }
 
     /** {@inheritDoc} */
@@ -130,7 +136,13 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
     /** {@inheritDoc} */
     public Map<String, Attribute> getAttributes(ShibbolethAttributeRequestContext requestContext)
             throws AttributeRequestException {
-        return filteringEngine.filterAttributes(attributeResolver.resolveAttributes(requestContext), requestContext);
+        Map<String, Attribute> attributes = attributeResolver.resolveAttributes(requestContext);
+        
+        if(filteringEngine != null){
+            attributes = filteringEngine.filterAttributes(attributes, requestContext);
+        }
+        
+        return attributes;
     }
 
     /** {@inheritDoc} */
