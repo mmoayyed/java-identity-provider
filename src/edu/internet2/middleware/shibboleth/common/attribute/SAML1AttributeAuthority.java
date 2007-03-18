@@ -21,8 +21,10 @@ import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.saml1.core.NameIdentifier;
 
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
  * An attribute authority that can take an attribute query and produce a resultant attribute statement.
@@ -34,14 +36,16 @@ public interface SAML1AttributeAuthority {
      * filtering the attributes and values, and finally creating an attribute statement in response to the query.
      * 
      * @param query the SAML 1 attribute query
+     * @param resolutionContext for resolving attributes
+     * @param filterContext for filtering attributes
      * 
      * @return the attribute statement in response to the attribute query
      * 
      * @throws AttributeResolutionException if the attributes in the query cannot be resolved
      * @throws FilteringException if the attributes in the query cannot be filtered
      */
-    public AttributeStatement performAttributeQuery(AttributeQuery query) throws AttributeResolutionException,
-            FilteringException;
+    public AttributeStatement performAttributeQuery(AttributeQuery query, ResolutionContext resolutionContext,
+            FilterContext filterContext) throws AttributeResolutionException, FilteringException;
 
     /**
      * Performs a query for attributes to be released to the given entity. This includes fetching of the requested
