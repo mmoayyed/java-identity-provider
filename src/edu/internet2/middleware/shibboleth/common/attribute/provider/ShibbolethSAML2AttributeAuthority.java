@@ -43,10 +43,10 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeRe
 /**
  * SAML 2.0 Attribute Authority.
  */
-public class SAML2AttributeAuthorityImpl implements SAML2AttributeAuthority {
+public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthority {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(SAML2AttributeAuthorityImpl.class);
+    private static Logger log = Logger.getLogger(ShibbolethSAML2AttributeAuthority.class);
 
     /** For building attribute statements. */
     private SAMLObjectBuilder<AttributeStatement> statementBuilder;
@@ -65,7 +65,7 @@ public class SAML2AttributeAuthorityImpl implements SAML2AttributeAuthority {
      * 
      * @param resolver The attribute resolver to set
      */
-    public SAML2AttributeAuthorityImpl(AttributeResolver<ShibbolethAttributeRequestContext> resolver) {
+    public ShibbolethSAML2AttributeAuthority(AttributeResolver<ShibbolethAttributeRequestContext> resolver) {
         
         XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
         statementBuilder = (SAMLObjectBuilder<AttributeStatement>) builderFactory

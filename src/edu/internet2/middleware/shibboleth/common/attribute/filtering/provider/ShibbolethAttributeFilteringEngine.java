@@ -33,16 +33,16 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethA
 /**
  * Implementation of {@link AttributeFilteringEngine}.
  */
-public class ShibbolethFilteringEngine implements AttributeFilteringEngine<ShibbolethAttributeRequestContext> {
+public class ShibbolethAttributeFilteringEngine implements AttributeFilteringEngine<ShibbolethAttributeRequestContext> {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(ShibbolethFilteringEngine.class);
+    private static Logger log = Logger.getLogger(ShibbolethAttributeFilteringEngine.class);
 
     /** Active attribute rules. */
     private List<AttributeFilterPolicy> filterPolicies;
 
     /** Constructor. */
-    public ShibbolethFilteringEngine() {
+    public ShibbolethAttributeFilteringEngine() {
 
     }
 

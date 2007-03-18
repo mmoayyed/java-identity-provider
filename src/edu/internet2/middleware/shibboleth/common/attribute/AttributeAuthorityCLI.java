@@ -227,7 +227,8 @@ public class AttributeAuthorityCLI {
         SimpleRelyingPartyConfiguration rpConfig = new SimpleRelyingPartyConfiguration(issuer, requester);
 
         try {
-            ShibbolethAttributeRequestContext attribReqCtx = new ShibbolethAttributeRequestContext(metadataProvider, rpConfig);
+            ShibbolethAttributeRequestContext attribReqCtx = new ShibbolethAttributeRequestContext(metadataProvider,
+                    rpConfig);
 
             String principal = (String) parser.getOptionValue(CLIParserBuilder.PRINCIPAL_ARG);
             attribReqCtx.setPrincipalName(principal);
