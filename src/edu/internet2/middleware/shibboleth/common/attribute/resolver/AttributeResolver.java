@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.opensaml.saml2.core.NameID;
+import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 
@@ -75,4 +76,17 @@ public interface AttributeResolver {
     public void validate() throws AttributeResolutionException;
     // TODO: does it really make sense to throw an AttributeResolutionException? Perhaps a ConfigurationException?
 
+    /**
+     * Gets the metadata provider used during attribute resolution.
+     * 
+     * @return metadata provider used during attribute resolution
+     */
+    public MetadataProvider getMetadataProvider();
+    
+    /**
+     * Sets the metadata provider used during attribute resolution.
+     * 
+     * @param provider metadata provider used during attribute resolution
+     */
+    public void setMetadataProvider(MetadataProvider provider);
 }

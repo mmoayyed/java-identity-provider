@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletRequest;
-
 import org.apache.log4j.Logger;
 import org.opensaml.Configuration;
 import org.opensaml.common.SAMLObjectBuilder;
@@ -138,11 +136,10 @@ public class SAML2AttributeAuthorityImpl implements SAML2AttributeAuthority {
      * {@link #performAttributeQuery(AttributeQuery, ResolutionContext, FilterContext)}.
      * 
      * @param principal to create resolution context with
-     * @param request to create resolution context with
      * @return <code>ResolutionContext</code>
      */
-    public ResolutionContext createResolutionContext(String principal, ServletRequest request) {
-        return attributeResolver.createResolutionContext(principal, securityPolicy.getIssuer().toString(), request);
+    public ResolutionContext createResolutionContext(String principal) {
+        return attributeResolver.createResolutionContext(principal, securityPolicy.getIssuer().toString());
     }
 
     /**
