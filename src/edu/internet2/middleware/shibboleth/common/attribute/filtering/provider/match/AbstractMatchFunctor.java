@@ -16,9 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
  * Base class for {@link MatchFunctor}s that delegate the evaluation and negate the result if necessary.
@@ -47,7 +47,7 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(FilterContext filterContext) throws FilterProcessingException {
+    public boolean evaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
         boolean result = doEvaluate(filterContext);
         if (negateResult) {
             return !result;
@@ -57,7 +57,7 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(FilterContext filterContext, String attributeId, Object attributeValue)
+    public boolean evaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
         boolean result = doEvaluate(filterContext, attributeId, attributeValue);
         if (negateResult) {
@@ -77,7 +77,7 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    protected abstract boolean doEvaluate(FilterContext filterContext) throws FilterProcessingException;
+    protected abstract boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException;
 
     /**
      * Evaluates this matching criteria. This evaluation is used while the filtering engine is filtering attribute
@@ -91,6 +91,6 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    protected abstract boolean doEvaluate(FilterContext filterContext, String attributeId, Object attributeValue)
-            throws FilterProcessingException;
+    protected abstract boolean doEvaluate(ShibbolethFilteringContext filterContext, String attributeId,
+            Object attributeValue) throws FilterProcessingException;
 }

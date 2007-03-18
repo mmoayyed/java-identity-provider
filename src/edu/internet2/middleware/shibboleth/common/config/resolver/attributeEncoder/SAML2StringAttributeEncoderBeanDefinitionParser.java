@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.impl.SAML2StringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2StringAttributeEncoder;
 
 /**
  * Spring Bean Definition Parser for SAML2 string attribute encoder.

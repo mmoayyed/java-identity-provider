@@ -1,5 +1,5 @@
 /*
- * Copyright [2006] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.resolver;
+package edu.internet2.middleware.shibboleth.common.attribute;
 
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
-
+import edu.internet2.middleware.shibboleth.common.ShibbolethException;
 
 /**
- * An exception indicating a problem resolving a particular attribute.
+ * Indicates a problem during an attribute request.
  */
-public class AttributeResolutionException extends AttributeRequestException {
+public class AttributeRequestException extends ShibbolethException {
 
-    /** Serial verison UID. */
-    private static final long serialVersionUID = -6467683432957797691L;
+    /** Serial version UID. */
+    private static final long serialVersionUID = -1423975900801377151L;
 
     /**
      * Constructor.
      */
-    public AttributeResolutionException() {
+    public AttributeRequestException() {
         super();
     }
     
@@ -39,7 +38,7 @@ public class AttributeResolutionException extends AttributeRequestException {
      * 
      * @param message exception message
      */
-    public AttributeResolutionException(String message) {
+    public AttributeRequestException(String message) {
         super(message);
     }
     
@@ -48,7 +47,7 @@ public class AttributeResolutionException extends AttributeRequestException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(Exception wrappedException) {
+    public AttributeRequestException(Exception wrappedException) {
         super(wrappedException);
     }
     
@@ -58,7 +57,7 @@ public class AttributeResolutionException extends AttributeRequestException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(String message, Exception wrappedException) {
+    public AttributeRequestException(String message, Exception wrappedException) {
         super(message, wrappedException);
     }
 }

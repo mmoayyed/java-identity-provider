@@ -18,7 +18,9 @@ package edu.internet2.middleware.shibboleth.common.config.filter.match;
 
 import javax.xml.namespace.QName;
 
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.AnyMatchFunctor;
@@ -37,7 +39,7 @@ public class AnyMatchFunctorBeanDefinitionParser extends AbstractSingleBeanDefin
     }
     
     /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
-        return true;
+    protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
+        return super.resolveId(element, definition, parserContext);
     }
 }

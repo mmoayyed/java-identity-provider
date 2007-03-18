@@ -16,12 +16,12 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering;
 
-import edu.internet2.middleware.shibboleth.common.ShibbolethException;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 
 /**
  * General attribute acceptance policy exception.
  */
-public class FilteringException extends ShibbolethException {
+public class AttributeFilteringException extends AttributeRequestException {
 
     /** Serial version UID. */
     private static final long serialVersionUID = -155030459695142046L;
@@ -29,7 +29,7 @@ public class FilteringException extends ShibbolethException {
     /**
      * Constructor.
      */
-    public FilteringException() {
+    public AttributeFilteringException() {
         super();
     }
 
@@ -38,7 +38,7 @@ public class FilteringException extends ShibbolethException {
      * 
      * @param message exception message
      */
-    public FilteringException(String message) {
+    public AttributeFilteringException(String message) {
         super(message);
     }
 
@@ -47,7 +47,7 @@ public class FilteringException extends ShibbolethException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public FilteringException(Exception wrappedException) {
+    public AttributeFilteringException(Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -57,7 +57,7 @@ public class FilteringException extends ShibbolethException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public FilteringException(String message, Exception wrappedException) {
+    public AttributeFilteringException(String message, Exception wrappedException) {
         super(message, wrappedException);
     }
 }

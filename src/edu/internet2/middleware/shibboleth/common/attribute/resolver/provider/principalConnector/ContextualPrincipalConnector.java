@@ -19,11 +19,11 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.p
 import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
 /**
- * Wrapper for a {@link PrincipalConnector} within a {@link ResolutionContext}. This wrapper ensures that the connector
- * is resolved only once per context.
+ * Wrapper for a {@link PrincipalConnector} within a resolution context. This wrapper ensures that the connector is
+ * resolved only once per context.
  */
 public class ContextualPrincipalConnector implements PrincipalConnector {
 
@@ -73,7 +73,7 @@ public class ContextualPrincipalConnector implements PrincipalConnector {
     }
 
     /** {@inheritDoc} */
-    public String resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public String resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         if (principal == null) {
             principal = connector.resolve(resolutionContext);
         }

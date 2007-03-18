@@ -13,70 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
-package edu.internet2.middleware.shibboleth.common.attribute.impl;
-
-import org.opensaml.saml2.core.AttributeValue;
-import org.opensaml.saml2.core.impl.AttributeBuilder;
+import org.opensaml.saml1.core.impl.AttributeBuilder;
+import org.opensaml.saml1.core.AttributeValue;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeEncoder;
 
 /**
- * Implementation of SAML 2.0 attribute encoder.
+ * Implementation of SAML 1.X attribute encoder.
  */
-public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder implements SAML2AttributeEncoder<String> {
-
+public class SAML1StringAttributeEncoder extends AbstractAttributeEncoder implements SAML1AttributeEncoder<String> {
+    
     /** Attribute factory. */
     private static AttributeBuilder attributeBuilder;
     
     /** XSString factory. */
     private static XSStringBuilder stringBuilder;
-    
-    /** Format of attribute. */
-    private String format;
 
-    /** Friendly name of attribute. */
-    private String friendlyName;
+    /** Namespace of attribute. */
+    private String namespace;
     
     /** Constructor. */
-    public SAML2StringAttributeEncoder() {
+    public SAML1StringAttributeEncoder() {
         attributeBuilder = new AttributeBuilder();
         stringBuilder = new XSStringBuilder();
-        setEncoderCategory(SAML2AttributeEncoder.CATEGORY);
     }
     
     /** {@inheritDoc} */
-    public String getNameFormat() {
-        return format;
+    public String getNamespace() {
+        return namespace;
     }
 
     /** {@inheritDoc} */
-    public String getFriendlyName() {
-        return friendlyName;
-    }
-
-    /** {@inheritDoc} */
-    public void setNameFormat(String newFormat) {
-        format = newFormat;
-    }
-
-    /** {@inheritDoc} */
-    public void setFriendlyName(String name) {
-        friendlyName = name;
+    public void setNamespace(String newNamespace) {
+        namespace = newNamespace;
     }
 
     /** {@inheritDoc} */
     public XMLObject encode(Attribute attribute) {
-        org.opensaml.saml2.core.Attribute samlAttribute;
+        org.opensaml.saml1.core.Attribute samlAttribute;
         samlAttribute = attributeBuilder.buildObject();
-        
-        samlAttribute.setName(getAttributeName());
-        samlAttribute.setNameFormat(getNameFormat());
-        samlAttribute.setFriendlyName(getFriendlyName());
         
         for(Object o: attribute.getValues()) {
             XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);

@@ -16,22 +16,21 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A {@link MatchFunctor} that returns true to evaluations. Note, the result may still be negated.
+ * A match function that returns true to evaluations. Note, the result may still be negated.
  */
 public class AnyMatchFunctor extends AbstractMatchFunctor {
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(FilterContext filterContext) throws FilterProcessingException {
+    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
         return true;
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(FilterContext filterContext, String attributeId, Object attributeValue)
+    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
         return true;
     }

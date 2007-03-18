@@ -19,12 +19,11 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A {@link MatchFunctor} that evaluates an attribute's value against the given match string.
+ * A match function that evaluates an attribute's value against the given match string.
  */
 public class AttributeValueStringMatchFunctor extends AbstractStringMatchFunctor {
 
@@ -54,7 +53,7 @@ public class AttributeValueStringMatchFunctor extends AbstractStringMatchFunctor
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluate(FilterContext filterContext) throws FilterProcessingException {
+    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
         if(attributeId == null){
             throw new FilterProcessingException("No attribute ID specified");
         }
@@ -67,7 +66,7 @@ public class AttributeValueStringMatchFunctor extends AbstractStringMatchFunctor
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluate(FilterContext filterContext, String id, Object attributeValue)
+    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
             throws FilterProcessingException {
         
         if(attributeId == null){
@@ -84,7 +83,7 @@ public class AttributeValueStringMatchFunctor extends AbstractStringMatchFunctor
      * 
      * @return true if a value of the given attribute matches the match string
      */
-    protected boolean matchAttributeValues(FilterContext filterContext){
+    protected boolean matchAttributeValues(ShibbolethFilteringContext filterContext){
         Attribute attribute = filterContext.getAttributes().get(attributeId);
         if(attribute == null || attribute.getValues() == null){
             return false;

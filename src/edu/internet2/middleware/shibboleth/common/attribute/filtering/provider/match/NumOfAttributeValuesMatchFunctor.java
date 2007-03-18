@@ -17,9 +17,9 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
  * A match functor that checks if the given attribute has more than the minimum number of values but less than the
@@ -50,12 +50,12 @@ public class NumOfAttributeValuesMatchFunctor implements MatchFunctor {
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(FilterContext filterContext) throws FilterProcessingException {
+    public boolean evaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
         return isWithinRange(filterContext.getAttributes().get(attributeId));
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(FilterContext filterContext, String id, Object value)
+    public boolean evaluate(ShibbolethFilteringContext filterContext, String id, Object value)
             throws FilterProcessingException {
         return isWithinRange(filterContext.getAttributes().get(attributeId));
     }

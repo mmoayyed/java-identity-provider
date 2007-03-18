@@ -17,9 +17,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
 /**
  * <code>DataConnectorPlugIn</code> implementation that allows static values to be declared in the resolver
@@ -39,8 +39,8 @@ public class StaticDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
-        log.debug("Resolving connector: (" + getId() + ") for principal: (" + resolutionContext.getPrincipalName()
+    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+        log.debug("Resolving connector: (" + getId() + ") for principal: (" + resolutionContext.getAttributeRequestContext().getPrincipalName()
                 + ")");
 
         Map<String, Attribute> attributes = new HashMap<String, Attribute>();
@@ -49,7 +49,7 @@ public class StaticDataConnector extends BaseDataConnector {
             newAttribute.setId(a.getId());
 
             for (String value : a.getValues()) {
-                String newValue = value.replaceAll("%PRINCIPAL%", resolutionContext.getPrincipalName());
+                String newValue = value.replaceAll("%PRINCIPAL%", resolutionContext.getAttributeRequestContext().getPrincipalName());
                 newAttribute.getValues().add(newValue);
             }
 

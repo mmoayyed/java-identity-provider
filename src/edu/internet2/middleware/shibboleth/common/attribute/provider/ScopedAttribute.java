@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import org.opensaml.xml.util.DatatypeHelper;
 

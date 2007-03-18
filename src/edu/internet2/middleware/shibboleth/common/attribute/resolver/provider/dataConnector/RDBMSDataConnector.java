@@ -37,9 +37,9 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
 
 /**
@@ -213,13 +213,13 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         String query = queryCreator.createStatement(queryTemplateName, resolutionContext,
                 getDataConnectorDependencyIds(), getDataConnectorDependencyIds());
 
         Set<Attribute> resolvedAttributes = null;
 
-        resolvedAttributes = retrieveAttributesFromCache(resolutionContext.getPrincipalName(), query);
+        resolvedAttributes = retrieveAttributesFromCache(resolutionContext.getAttributeRequestContext().getPrincipalName(), query);
 
         if (resolvedAttributes == null) {
             resolvedAttributes = retrieveAttributesFromDatabase(query);
@@ -227,10 +227,10 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
         if (cacheResults) {
             Map<String, SoftReference<Set<Attribute>>> individualCache = resultsCache.get(resolutionContext
-                    .getPrincipalName());
+                    .getAttributeRequestContext().getPrincipalName());
             if (individualCache == null) {
                 individualCache = new HashMap<String, SoftReference<Set<Attribute>>>();
-                resultsCache.put(resolutionContext.getPrincipalName(), individualCache);
+                resultsCache.put(resolutionContext.getAttributeRequestContext().getPrincipalName(), individualCache);
             }
             individualCache.put(query, new SoftReference<Set<Attribute>>(resolvedAttributes));
         }

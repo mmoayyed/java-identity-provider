@@ -18,11 +18,14 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering;
 
 import java.util.Map;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 
 /**
  * The engine that applies attribute acceptance policies to a collection of attributes.
+ * 
+ * @param <ContextType> type of request context expected by this filtering engine
  */
-public interface FilteringEngine {
+public interface AttributeFilteringEngine<ContextType extends AttributeRequestContext> {
 
     /**
      * Processes the given collection of attributes using the effective attribute acceptance policy for the identity
@@ -30,11 +33,14 @@ public interface FilteringEngine {
      * accepted from the identity provider and may optionally transform the given attributes (e.g. changing the format
      * of values, concatinating values).
      * 
-     * @param filterContext contextual information for filtering attributes
+     * @param attributes attribtues to be filtered
+     * @param context attribute request context
      * 
      * @return the filtered attributes, attribute ID is the key, attribute object is the value
      * 
-     * @throws FilteringException thrown if there is a problem retrieving or applying the attribute acceptance policy
+     * @throws AttributeFilteringException thrown if there is a problem retrieving or applying the attribute acceptance
+     *             policy
      */
-    public Map<String, Attribute> filterAttributes(FilterContext filterContext) throws FilteringException;
+    public Map<String, Attribute> filterAttributes(Map<String, Attribute> attributes, ContextType context)
+            throws AttributeFilteringException;
 }

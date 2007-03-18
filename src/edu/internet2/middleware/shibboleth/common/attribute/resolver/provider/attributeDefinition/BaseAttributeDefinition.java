@@ -25,8 +25,8 @@ import java.util.Set;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AbstractResolutionPlugIn;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
 /**
@@ -75,7 +75,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * @param context resolution context
      * @return collection of values
      */
-    protected Collection<Object> getValuesFromAllDependencies(ResolutionContext context) {
+    protected Collection<Object> getValuesFromAllDependencies(ShibbolethResolutionContext context) {
         Set<Object> values = new HashSet<Object>();
 
         if (!getAttributeDefinitionDependencyIds().isEmpty()) {
@@ -95,7 +95,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * @param context resolution context
      * @return collection of values
      */
-    protected Collection<Object> getValuesFromAttributeDependencies(ResolutionContext context) {
+    protected Collection<Object> getValuesFromAttributeDependencies(ShibbolethResolutionContext context) {
         Set<Object> values = new HashSet<Object>();
 
         for (String id : getAttributeDefinitionDependencyIds()) {
@@ -121,7 +121,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * @param context resolution context
      * @return collection of values
      */
-    protected Collection<Object> getValuesFromConnectorDependencies(ResolutionContext context) {
+    protected Collection<Object> getValuesFromConnectorDependencies(ShibbolethResolutionContext context) {
         Set<Object> values = new HashSet<Object>();
 
         for (String connectorId : getDataConnectorDependencyIds()) {

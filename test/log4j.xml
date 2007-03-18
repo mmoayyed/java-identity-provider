@@ -58,7 +58,7 @@
    <!-- ================ -->
 
    <category name="edu.internet2.middleware.shibboleth.common">
-      <priority value="WARN"/>
+      <priority value="DEBUG"/>
    </category>
    
    <category name="org.springframework">

@@ -16,33 +16,23 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.SAMLFilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A {@link MatchFunctor} that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the
+ * A match function that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the
  * provided entity group name.
  */
 public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
 
     /** {@inheritDoc} */
-    public boolean evaluate(FilterContext filterContext) throws FilterProcessingException {
-        if (filterContext instanceof SAMLFilterContext) {
-            return isEntityInGroup(((SAMLFilterContext) filterContext).getRequesterMetadata());
-        }else{
-            throw new FilterProcessingException("Given filter context is not a SAMLFilterContext");
-        }
+    public boolean evaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+        return isEntityInGroup(filterContext.getAttribtueRequestContext().getAttributeRequesterMetadata());
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(FilterContext filterContext, String attributeId, Object attributeValue)
+    public boolean evaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
-        if (filterContext instanceof SAMLFilterContext) {
-            return isEntityInGroup(((SAMLFilterContext) filterContext).getRequesterMetadata());
-        }else{
-            throw new FilterProcessingException("Given filter context is not a SAMLFilterContext");
-        }
+        return isEntityInGroup(filterContext.getAttribtueRequestContext().getAttributeRequesterMetadata());
     }
 }

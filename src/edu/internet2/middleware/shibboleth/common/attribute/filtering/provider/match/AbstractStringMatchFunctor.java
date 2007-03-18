@@ -16,11 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 
 
 /**
- * Base class for {@link MatchFunctor} that match one string value against a given string value.
+ * Base class for match function that match one string value against a given string value.
  */
 public abstract class AbstractStringMatchFunctor extends AbstractMatchFunctor {
 

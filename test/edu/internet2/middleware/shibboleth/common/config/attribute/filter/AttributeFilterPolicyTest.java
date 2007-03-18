@@ -26,11 +26,33 @@ import edu.internet2.middleware.shibboleth.common.config.filter.AttributeFilterP
  */
 public class AttributeFilterPolicyTest extends BaseConfigTestCase {
 
-    public void testParsePolicy3(){
+//    public void testParsePolicy1() {
+//        String[] configs = { DATA_PATH + "/attribute/filtering/policy1.xml", };
+//        ApplicationContext appContext = createSpringContext(configs);
+//
+//        assertNotNull(appContext.containsBean("/AttributeFilterPolicyGroup:PolicyExample3"));
+//        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext
+//                .getBean("/AttributeFilterPolicyGroup:PolicyExample3");
+//        System.out.println(policy);
+//    }
+//
+//    public void testParsePolicy2() {
+//        String[] configs = { DATA_PATH + "/attribute/filtering/policy2.xml", };
+//        ApplicationContext appContext = createSpringContext(configs);
+//
+//        assertNotNull(appContext.containsBean("/AttributeFilterPolicyGroup:PolicyExample3"));
+//        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext
+//                .getBean("/AttributeFilterPolicyGroup:PolicyExample3");
+//        System.out.println(policy);
+//    }
+
+    public void testParsePolicy3() {
         String[] configs = { DATA_PATH + "/attribute/filtering/policy3.xml", };
         ApplicationContext appContext = createSpringContext(configs);
-        
-        assertNotNull(appContext.containsBean("PolicyExample3"));
-        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext.getBean("PolicyExample3");
+
+        assertNotNull(appContext.containsBean("/AttributeFilterPolicyGroup:PolicyExample3"));
+        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext
+                .getBean("/AttributeFilterPolicyGroup:PolicyExample3");
+        System.out.println(policy);
     }
 }

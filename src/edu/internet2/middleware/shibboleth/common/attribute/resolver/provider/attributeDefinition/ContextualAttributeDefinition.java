@@ -22,10 +22,10 @@ import java.util.Set;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
 /**
- * Wrapper for an {@link AttributeDefinition} within a {@link ResolutionContext}. This wrapper ensures that the
+ * Wrapper for an {@link AttributeDefinition} within a {@link AttributeResolutionContext}. This wrapper ensures that the
  * definition is resolved only once per context.
  */
 public class ContextualAttributeDefinition implements AttributeDefinition {
@@ -81,7 +81,7 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public Attribute resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         if (attribute == null) {
             attribute = definition.resolve(resolutionContext);
         }

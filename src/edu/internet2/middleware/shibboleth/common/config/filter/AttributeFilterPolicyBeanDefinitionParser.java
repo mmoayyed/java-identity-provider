@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.filter;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -58,8 +59,13 @@ public class AttributeFilterPolicyBeanDefinitionParser extends AbstractBeanDefin
         if (log.isDebugEnabled()) {
             log.debug("Processing configuration for filter policy " + policyId);
         }
-        processPolicyRequirement(builder, filterPolicyElem, parserContext);
-        processAttributeRule(builder, filterPolicyElem, parserContext);
+
+        Map<QName, List<Element>> children = XMLHelper.getChildElements(filterPolicyElem);
+
+        processPolicyRequirement(builder, children
+                .get(AttributeFilterPolicyGroupBeanDefinitionParser.POLICY_REQUIREMENT_ELEMENT_NAME), parserContext);
+        FilterEngineBeanDefinitionParserUtil.processChildElements("attributeRules", builder, children
+                .get(AttributeRuleBeanDefinitionParser.ELEMENT_NAME), parserContext);
 
         return builder.getBeanDefinition();
     }
@@ -68,23 +74,22 @@ public class AttributeFilterPolicyBeanDefinitionParser extends AbstractBeanDefin
      * Process the policy requirement definition for this policy, if one exists.
      * 
      * @param builder policy bean builder
-     * @param filterPolicyElem policy configuration element
+     * @param policyRequirements policy requirement elements
      * @param parserContext current parsing context
      */
-    protected void processPolicyRequirement(BeanDefinitionBuilder builder, Element filterPolicyElem,
+    protected void processPolicyRequirement(BeanDefinitionBuilder builder, List<Element> policyRequirements,
             ParserContext parserContext) {
         if (log.isDebugEnabled()) {
             log.debug("Processing policy requirement definition");
         }
 
-        List<Element> policyRequirements = XMLHelper.getChildElementsByTagNameNS(filterPolicyElem,
-                AttributeFilterPolicyGroupBeanDefinitionParser.POLICY_REQUIREMENT_ELEMENT_NAME.getNamespaceURI(),
-                AttributeFilterPolicyGroupBeanDefinitionParser.POLICY_REQUIREMENT_ELEMENT_NAME.getLocalPart());
-
+        String reference;
         for (Element policyRequirement : policyRequirements) {
             if (policyRequirement.hasAttributeNS(null, "ref")) {
-                builder.addPropertyReference("policyRequirement", DatatypeHelper.safeTrimOrNullString(policyRequirement
-                        .getAttributeNS(null, "ref")));
+                reference = policyRequirement.getAttributeNS(null, "ref");
+                reference = FilterEngineBeanDefinitionParserUtil.getQualifiedId(policyRequirement, policyRequirement
+                        .getLocalName(), reference);
+                builder.addPropertyReference("policyRequirement", reference);
             } else {
                 builder.addPropertyValue("policyRequirement", SpringConfigurationUtils.parseCustomElement(
                         policyRequirement, parserContext));
@@ -92,33 +97,9 @@ public class AttributeFilterPolicyBeanDefinitionParser extends AbstractBeanDefin
         }
     }
 
-    /**
-     * Process the attribute rule definitions for this policy, if any exists.
-     * 
-     * @param builder policy bean builder
-     * @param filterPolicyElem policy configuration element
-     * @param parserContext current parsing context
-     */
-    protected void processAttributeRule(BeanDefinitionBuilder builder, Element filterPolicyElem,
-            ParserContext parserContext) {
-//        if (log.isDebugEnabled()) {
-//            log.debug("Processing attribute rule definitions");
-//        }
-//        List<Element> attributeRules = XMLHelper.getChildElementsByTagNameNS(filterPolicyElem,
-//                AttributeRuleBeanDefinitionParser.ELEMENT_NAME.getNamespaceURI(),
-//                AttributeRuleBeanDefinitionParser.ELEMENT_NAME.getLocalPart());
-//
-//        builder.addPropertyValue("attributeRules", SpringConfigurationUtils.parseCustomElements(attributeRules, "ref",
-//                parserContext));
-    }
-
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
-        Element afpgElement = element.getOwnerDocument().getDocumentElement();
-        String policyGroupId = DatatypeHelper.safeTrimOrNullString(afpgElement.getAttributeNS(null, "id"));
-        String localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
-        String absId = "/{" + AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME.getLocalPart() + "}"
-                + policyGroupId + "/{" + ELEMENT_NAME.getLocalPart() + "}" + localId;
-        return absId;
+        return FilterEngineBeanDefinitionParserUtil.getQualifiedId(element, ELEMENT_NAME.getLocalPart(), element
+                .getAttributeNS(null, "id"));
     }
 }

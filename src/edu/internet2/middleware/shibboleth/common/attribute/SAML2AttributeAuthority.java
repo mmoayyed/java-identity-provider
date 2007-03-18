@@ -19,52 +19,43 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.AttributeStatement;
-import org.opensaml.saml2.core.NameID;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 
 /**
  * An attribute authority that can take an attribute query and produce a resultant attribute statement.
  */
-public interface SAML2AttributeAuthority {
+public interface SAML2AttributeAuthority extends AttributeAuthority<ShibbolethAttributeRequestContext> {
 
     /**
      * Performs a SAML 2 attribute query based on the given query. This includes fetching of the requested attributes,
      * filtering the attributes and values, and finally creating an attribute statement in respone to the query.
      * 
      * @param query the SAML 2 attribute query
-     * @param resolutionContext for resolving attributes
-     * @param filterContext for filtering attributes
+     * @param requestContext contextual information for the attribute request
      * 
      * @return the attribute statement in response to the attribute query
      * 
-     * @throws AttributeResolutionException if the attributes in the query cannot be resolved
-     * @throws FilteringException if the attributes in the query cannot be filtered
+     * @throws AttributeRequestException thrown if there is a problem retrieving the attributes
      * 
      */
-    public AttributeStatement performAttributeQuery(AttributeQuery query, ResolutionContext resolutionContext,
-            FilterContext filterContext) throws AttributeResolutionException,
-            FilteringException;
+    public AttributeStatement performAttributeQuery(AttributeQuery query,
+            ShibbolethAttributeRequestContext requestContext) throws AttributeRequestException;
 
     /**
      * Performs a query for attributes to be released to the given entity. This includes fetching of the requested
      * attributes, filtering the attributes and values, and finally creating an attribute statement in respone to the
      * query.
      * 
-     * @param entity the entity to release the attributes to
-     * @param subject the subject of the attributes
+     * @param requestContext contextual information for the attribute request
      * 
      * @return the attribute statement for the entity
      * 
-     * @throws AttributeResolutionException if the attributes in the query cannot be resolved
-     * @throws FilteringException if the attributes in the query cannot be filtered
+     * @throws AttributeRequestException thrown if there is a problem retrieving the attributes
      * 
      */
-    public AttributeStatement performAttributeQuery(String entity, NameID subject) throws AttributeResolutionException,
-            FilteringException;
+    public AttributeStatement performAttributeQuery(ShibbolethAttributeRequestContext requestContext)
+            throws AttributeRequestException;
 
     /**
      * Translates SAML 2 attribute naming information into the internal attribute ID used by the resolver and filtering

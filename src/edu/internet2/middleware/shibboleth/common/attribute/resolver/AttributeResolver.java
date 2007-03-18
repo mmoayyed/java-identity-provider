@@ -17,55 +17,29 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
 import java.util.Map;
-import java.util.Set;
-
-import org.opensaml.saml2.core.NameID;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 
 /**
  * The service that resolves the attribtues for a particular subject.
+ * 
+ * @param <RequestContextType> the type of attribute request context used by the resolver.
  */
-public interface AttributeResolver {
-
-    /**
-     * Creates a resolution context for the given user and attribute requester.
-     * 
-     * @param principal the principal whose attributes will be resolved
-     * @param attributeRequester the party requesting the attributes
-     * 
-     * @return resolution context containing the principal name for subject
-     */
-    public ResolutionContext createResolutionContext(String principal, String attributeRequester);
-
-    /**
-     * Creates a resolution context for the given user and attribute requester. The subject's nameID is resolved into a
-     * system specific principal name.
-     * 
-     * @param subject the subject whose attributes will be resolved
-     * @param attributeRequester the party requesting the attributes
-     * 
-     * @return resolution context containing the principal name for subject
-     * 
-     * @throws AttributeResolutionException thrown if the NameID can not be resolved into a principal name
-     */
-    public ResolutionContext createResolutionContext(NameID subject, String attributeRequester)
-            throws AttributeResolutionException;
+public interface AttributeResolver<RequestContextType extends AttributeRequestContext> {
 
     /**
      * Gets all the attributes for a given subject. While an initial attribute producer is given this does not mean
      * every returned attribute is from that producer. The producer may return information that can be used by data
      * connectors to contact other producers and retrieve attributes from them.
      * 
-     * @param attributes list of attributes to resolve or null to resolve all attributes
      * @param resolutionContext the attribute resolution context to use to resolve attributes
      * 
      * @return the attributes describing the subject
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public Map<String, Attribute> resolveAttributes(Set<String> attributes, ResolutionContext resolutionContext)
+    public Map<String, Attribute> resolveAttributes(RequestContextType resolutionContext)
             throws AttributeResolutionException;
 
     /**
@@ -74,19 +48,4 @@ public interface AttributeResolver {
      * @throws AttributeResolutionException if resolver is in an invalid state
      */
     public void validate() throws AttributeResolutionException;
-    // TODO: does it really make sense to throw an AttributeResolutionException? Perhaps a ConfigurationException?
-
-    /**
-     * Gets the metadata provider used during attribute resolution.
-     * 
-     * @return metadata provider used during attribute resolution
-     */
-    public MetadataProvider getMetadataProvider();
-    
-    /**
-     * Sets the metadata provider used during attribute resolution.
-     * 
-     * @param provider metadata provider used during attribute resolution
-     */
-    public void setMetadataProvider(MetadataProvider provider);
 }

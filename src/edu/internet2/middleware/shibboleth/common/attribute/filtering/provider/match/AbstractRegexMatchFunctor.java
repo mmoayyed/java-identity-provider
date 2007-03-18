@@ -18,10 +18,8 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 
 import java.util.regex.Pattern;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
-
 /**
- * Base class for {@link MatchFunctor} that match a string value against a given regular expression.
+ * Base class for match function that match a string value against a given regular expression.
  */
 public abstract class AbstractRegexMatchFunctor extends AbstractMatchFunctor {
 

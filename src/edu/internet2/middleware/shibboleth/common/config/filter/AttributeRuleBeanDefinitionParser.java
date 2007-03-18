@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.filter;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -47,10 +48,10 @@ public class AttributeRuleBeanDefinitionParser extends AbstractBeanDefinitionPar
     private static Logger log = Logger.getLogger(AttributeFilterPolicyGroupBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
+    protected AbstractBeanDefinition parseInternal(Element attributeRuleElem, ParserContext parserContext) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(AttributeRule.class);
 
-        String ruleId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
+        String ruleId = DatatypeHelper.safeTrimOrNullString(attributeRuleElem.getAttributeNS(null, "attributeID"));
         if (log.isDebugEnabled()) {
             log.debug("Processing configuration for attribute rule " + ruleId);
         }
@@ -60,36 +61,51 @@ public class AttributeRuleBeanDefinitionParser extends AbstractBeanDefinitionPar
         if (log.isDebugEnabled()) {
             log.debug("Processing permit value definition");
         }
-        List<Element> permitValues = XMLHelper.getChildElementsByTagNameNS(element,
-                AttributeFilterPolicyGroupBeanDefinitionParser.PERMIT_VALUE_ELEMENT_NAME.getNamespaceURI(),
-                AttributeFilterPolicyGroupBeanDefinitionParser.PERMIT_VALUE_ELEMENT_NAME.getLocalPart());
 
+        Map<QName, List<Element>> children = XMLHelper.getChildElements(attributeRuleElem);
+
+        processPermitValue(builder, children
+                .get(AttributeFilterPolicyGroupBeanDefinitionParser.PERMIT_VALUE_ELEMENT_NAME), parserContext);
+
+        return builder.getBeanDefinition();
+    }
+
+    /**
+     * Process the policy requirement definition for this policy, if one exists.
+     * 
+     * @param builder policy bean builder
+     * @param permitValues policy requirement elements
+     * @param parserContext current parsing context
+     */
+    protected void processPermitValue(BeanDefinitionBuilder builder, List<Element> permitValues,
+            ParserContext parserContext) {
+        if (log.isDebugEnabled()) {
+            log.debug("Processing permit value definition");
+        }
+
+        String reference;
         for (Element permitValue : permitValues) {
             if (permitValue.hasAttributeNS(null, "ref")) {
-                builder.addPropertyReference("permitValue", DatatypeHelper.safeTrimOrNullString(permitValue
-                        .getAttributeNS(null, "ref")));
+                reference = permitValue.getAttributeNS(null, "ref");
+                reference = FilterEngineBeanDefinitionParserUtil.getQualifiedId(permitValue,
+                        permitValue.getLocalName(), reference);
+                builder.addPropertyReference("permitValue", reference);
             } else {
                 builder.addPropertyValue("permitValue", SpringConfigurationUtils.parseCustomElement(permitValue,
                         parserContext));
             }
         }
-
-        return builder.getBeanDefinition();
     }
 
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
-        Element afpgElement = element.getOwnerDocument().getDocumentElement();
-        String policyGroupId = DatatypeHelper.safeTrimOrNullString(afpgElement.getAttributeNS(null, "id"));
-
         String localId;
         if (element.hasAttributeNS(null, "id")) {
             localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
         } else {
             localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "attributeID"));
         }
-        String absId = "/{" + AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME.getLocalPart() + "}"
-                + policyGroupId + "/{" + ELEMENT_NAME.getLocalPart() + "}" + localId;
-        return absId;
+
+        return FilterEngineBeanDefinitionParserUtil.getQualifiedId(element, ELEMENT_NAME.getLocalPart(), localId);
     }
 }

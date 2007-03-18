@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering;
+package edu.internet2.middleware.shibboleth.common.attribute;
 
-import java.util.Map;
-
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import java.util.Set;
 
 /**
- * A context for an attribute filtering request. This provides access to the information about the subject the
- * attributes describe, the requester of the attributes, and the attributes.
- * 
- * All information in this object is read-only to the resolution plugins it is given to.
+ * Contextual information for requesting attributes from an attribute authority.
  */
-public interface FilterContext {
-
+public interface AttributeRequestContext {
+    
     /**
      * Gets the principal name (userid) of the user the attributes in this context describe.
      * 
@@ -36,30 +31,30 @@ public interface FilterContext {
     public String getPrincipalName();
     
     /**
-     * Gets the method used to authenticate the principal.
+     * Gets the method used to authenticate the principal to the attribute requester.
      * 
-     * @return method used to authenticate the principal
+     * @return method used to authenticate the principal to the attribute requester
      */
-    public String getAuthenticationMethod();
+    public String getPrincipalAuthenticationMethod();
 
     /**
-     * Gets the requester of the attributes.
+     * Gets the ID of the requester of the attributes.
      * 
      * @return requester of the attributes
      */
     public String getAttributeRequester();
     
     /**
-     * Get the issuer of the attributes.
+     * Gets the ID of the issuer of the attributes.
      * 
-     * @return issuer of the attributes
+     * @return ID of the issuer of the attributes
      */
     public String getAttributeIssuer();
-
+    
     /**
-     * Gets the attributes indexed by the attributes ID.
+     * Gets the set of attributes, identified by their ID, that should be resolved.
      * 
-     * @return unfiltered attributes
+     * @return set of attributes that should be resolved
      */
-    public Map<String, Attribute> getAttributes();
+    public Set<String> getRequestedAttributes();
 }

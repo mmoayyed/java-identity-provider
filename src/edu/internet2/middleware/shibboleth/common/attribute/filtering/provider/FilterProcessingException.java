@@ -16,14 +16,14 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
 
 
 
 /**
  * An exception resulting from the application of an attribute acceptance policy to a collection of attributes.
  */
-public class FilterProcessingException extends FilteringException {
+public class FilterProcessingException extends AttributeFilteringException {
 
     /** Serial version UID. */
     private static final long serialVersionUID = -8400445663950882824L;

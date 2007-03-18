@@ -21,11 +21,11 @@ import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
 /**
- * Wrapper for a {@link DataConnector} within a {@link ResolutionContext}. This wrapper ensures that the connector is
- * resolved only once per context.
+ * Wrapper for a {@link DataConnector} within a resolution context. This wrapper ensures that the connector is resolved
+ * only once per context.
  */
 public class ContextualDataConnector implements DataConnector {
 
@@ -48,7 +48,7 @@ public class ContextualDataConnector implements DataConnector {
     public boolean equals(Object obj) {
         return connector.equals(obj);
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         return connector.hashCode();
@@ -80,7 +80,8 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext)
+            throws AttributeResolutionException {
         // TODO: should we be dealing with failovers here?
         if (attributes == null) {
             attributes = connector.resolve(resolutionContext);

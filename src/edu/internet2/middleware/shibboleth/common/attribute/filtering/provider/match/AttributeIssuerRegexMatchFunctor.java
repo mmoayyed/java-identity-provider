@@ -16,24 +16,23 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A {@link MatchFunctor} that evaluates to true if {@link FilterContext#getAttributeIssuer()} matches the provided
+ * A match function that evaluates to true if {@link FilterContext#getAttributeIssuer()} matches the provided
  * regular expression.
  */
 public class AttributeIssuerRegexMatchFunctor extends AbstractRegexMatchFunctor {
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(FilterContext filterContext) throws FilterProcessingException {
-        return isMatch(filterContext.getAttributeIssuer());
+    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+        return isMatch(filterContext.getAttribtueRequestContext().getAttributeIssuer());
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(FilterContext filterContext, String attributeId, Object attributeValue)
+    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
-        return isMatch(filterContext.getAttributeIssuer());
+        return isMatch(filterContext.getAttribtueRequestContext().getAttributeIssuer());
     }
 }

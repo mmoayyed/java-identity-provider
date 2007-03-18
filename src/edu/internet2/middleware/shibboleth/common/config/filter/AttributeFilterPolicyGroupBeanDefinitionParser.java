@@ -24,10 +24,8 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -66,7 +64,7 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser extends AbstractBean
         builder.addConstructorArg(policyId);
 
         if (log.isDebugEnabled()) {
-            log.debug("Parsing attribute filter policy " + policyId);
+            log.debug("Parsing attribute filter policy group" + policyId);
         }
 
         Map<QName, List<Element>> children = XMLHelper.getChildElements(policyGroup);
@@ -74,53 +72,21 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser extends AbstractBean
         builder.addPropertyValue("filterPolicies", SpringConfigurationUtils.parseCustomElements(children
                 .get(AttributeFilterPolicyBeanDefinitionParser.ELEMENT_NAME), parserContext));
 
-        processChildElements("policyRequirements", builder, policyId, children.get(POLICY_REQUIREMENT_ELEMENT_NAME),
-                parserContext);
+        FilterEngineBeanDefinitionParserUtil.processChildElements("policyRequirements", builder, children
+                .get(POLICY_REQUIREMENT_ELEMENT_NAME), parserContext);
 
-        processChildElements("permitValues", builder, policyId, children.get(PERMIT_VALUE_ELEMENT_NAME), parserContext);
+        FilterEngineBeanDefinitionParserUtil.processChildElements("permitValues", builder, children
+                .get(PERMIT_VALUE_ELEMENT_NAME), parserContext);
 
-        processChildElements("attributeRules", builder, policyId, children
+        FilterEngineBeanDefinitionParserUtil.processChildElements("attributeRules", builder, children
                 .get(AttributeRuleBeanDefinitionParser.ELEMENT_NAME), parserContext);
 
         return builder.getBeanDefinition();
     }
 
-    /**
-     * Processes child elements with references.
-     * 
-     * @param builderProperty the builder property to set
-     * @param builder the bean definition builder
-     * @param policyGroupId the attribute filter policy group ID
-     * @param children the children to process
-     * @param context the parser context
-     */
-    protected void processChildElements(String builderProperty, BeanDefinitionBuilder builder, String policyGroupId,
-            List<Element> children, ParserContext context) {
-        if (children.size() == 0) {
-            return;
-        }
-
-        String reference;
-        ManagedList builderPropertyValue = new ManagedList();
-        for (Element child : children) {
-            if (child.hasAttributeNS(null, "ref")) {
-                reference = DatatypeHelper.safeTrimOrNullString(child.getAttributeNS(null, "ref"));
-                if (!reference.startsWith("/")) {
-                    reference = "/{" + ELEMENT_NAME.getLocalPart() + "}" + policyGroupId + "/{" + child.getLocalName()
-                            + "}" + reference;
-                }
-                builderPropertyValue.add(new RuntimeBeanReference(reference));
-            } else {
-                builderPropertyValue.add(SpringConfigurationUtils.parseCustomElement(child, context));
-            }
-        }
-
-        builder.addPropertyValue(builderProperty, builderPropertyValue);
-    }
-
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         String localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
-        return "/{" + ELEMENT_NAME.getLocalPart() + "}" + localId;
+        return "/" + ELEMENT_NAME.getLocalPart() + ":" + localId;
     }
 }

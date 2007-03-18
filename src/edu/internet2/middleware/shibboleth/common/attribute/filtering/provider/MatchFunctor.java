@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
 
 /**
  * A function that evaluates whether an expressed criteria is met by the current filter context.
@@ -33,7 +32,7 @@ public interface MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    public boolean evaluate(FilterContext filterContext) throws FilterProcessingException;
+    public boolean evaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException;
 
     /**
      * Evaluates this matching criteria. This evaluation is used while the filtering engine is filtering attribute
@@ -47,6 +46,6 @@ public interface MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    public boolean evaluate(FilterContext filterContext, String attributeId, Object attributeValue)
+    public boolean evaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException;
 }

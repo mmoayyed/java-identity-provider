@@ -19,7 +19,6 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 
 /**
  * A base interface for plugins that provide attributes.
@@ -66,7 +65,7 @@ public interface ResolutionPlugIn<ResolvedType> {
      * 
      * @throws AttributeResolutionException the problem that occured during the resolution
      */
-    public ResolvedType resolve(ResolutionContext resolutionContext) throws AttributeResolutionException;
+    public ResolvedType resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException;
     
     /**
      * Validate the internal state of this plug-in.

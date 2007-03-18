@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.impl;
+package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,25 +25,20 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.opensaml.Configuration;
 import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.binding.SAMLSecurityPolicy;
 import org.opensaml.saml1.core.AttributeDesignator;
 import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeEncoder;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringEngine;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.BasicFilterContext;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
-import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
  * SAML 1 Attribute Authority.
@@ -61,37 +55,28 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
     private SAMLObjectBuilder<org.opensaml.saml1.core.Attribute> attributeBuilder;
 
     /** Attribute resolver. */
-    private AttributeResolver attributeResolver;
-
-    /** Security policy. */
-    private SAMLSecurityPolicy securityPolicy;
-
-    /** Relying party configuration. */
-    private RelyingPartyConfiguration relyingPartyConfiguration;
+    private AttributeResolver<ShibbolethAttributeRequestContext> attributeResolver;
 
     /** To determine releasable attributes. */
-    private FilteringEngine filteringEngine;
+    private AttributeFilteringEngine<ShibbolethAttributeRequestContext> filteringEngine;
 
     /**
      * This creates a new attribute authority.
      * 
-     * @param ar The attribute resolver to set.
-     * @param sp The security policy to set.
-     * @param rpc The relying party configuration to set.
-     * @param fe The filtering engine to set.
+     * @param resolver The attribute resolver to set.
+     * @param filterEngine The filtering engine to set.
      */
-    public SAML1AttributeAuthorityImpl(AttributeResolver ar, SAMLSecurityPolicy sp, RelyingPartyConfiguration rpc,
-            FilteringEngine fe) {
+    public SAML1AttributeAuthorityImpl(AttributeResolver<ShibbolethAttributeRequestContext> resolver,
+            AttributeFilteringEngine<ShibbolethAttributeRequestContext> filterEngine) {
+
         XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
         statementBuilder = (SAMLObjectBuilder<AttributeStatement>) builderFactory
                 .getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
         attributeBuilder = (SAMLObjectBuilder<org.opensaml.saml1.core.Attribute>) builderFactory
                 .getBuilder(org.opensaml.saml1.core.Attribute.DEFAULT_ELEMENT_NAME);
 
-        attributeResolver = ar;
-        securityPolicy = sp;
-        relyingPartyConfiguration = rpc;
-        filteringEngine = fe;
+        attributeResolver = resolver;
+        filteringEngine = filterEngine;
     }
 
     /**
@@ -99,7 +84,7 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
      * 
      * @return Returns the attributeResolver.
      */
-    public AttributeResolver getAttributeResolver() {
+    public AttributeResolver<ShibbolethAttributeRequestContext> getAttributeResolver() {
         return attributeResolver;
     }
 
@@ -108,84 +93,44 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
      * 
      * @return Returns the filteringEngine.
      */
-    public FilteringEngine getFilteringEngine() {
+    public AttributeFilteringEngine<ShibbolethAttributeRequestContext> getFilteringEngine() {
         return filteringEngine;
     }
 
-    /**
-     * Gets the relying party configuration.
-     * 
-     * @return Returns the relyingPartyConfiguration.
-     */
-    public RelyingPartyConfiguration getRelyingPartyConfiguration() {
-        return relyingPartyConfiguration;
-    }
-
-    /**
-     * Gets the security policy.
-     * 
-     * @return Returns the securityPolicy.
-     */
-    public SAMLSecurityPolicy getSecurityPolicy() {
-        return securityPolicy;
-    }
-
-    /**
-     * Creates a <code>ResolutionContext</code> that can be passed to
-     * {@link #performAttributeQuery(AttributeQuery, ResolutionContext, FilterContext)}.
-     * 
-     * @param principal to create resolution context with
-     * @return <code>ResolutionContext</code>
-     */
-    public ResolutionContext createResolutionContext(String principal) {
-        return attributeResolver.createResolutionContext(principal, securityPolicy.getIssuer().toString());
-    }
-
-    /**
-     * Creates a <code>FilterContext</code> that can be passed to
-     * {@link #performAttributeQuery(AttributeQuery, ResolutionContext, FilterContext)}.
-     * 
-     * @param resolutionContext to create filter context with
-     * @param authenticationMethod to create filter context with
-     * @return <code>FilterContext</code>
-     */
-    public FilterContext createFilterContext(ResolutionContext resolutionContext, String authenticationMethod) {
-        String filterPrincipal = resolutionContext.getPrincipalName();
-        String filterRequester = securityPolicy.getIssuerMetadata().getID();
-        String filterIssuer = relyingPartyConfiguration.getProviderID();
-        return new BasicFilterContext(filterRequester, filterIssuer, filterPrincipal, authenticationMethod,
-                new HashMap<String, Attribute>());
-    }
-
     /** {@inheritDoc} */
-    public AttributeStatement performAttributeQuery(AttributeQuery query, ResolutionContext resolutionContext,
-            FilterContext filterContext) throws AttributeResolutionException, FilteringException {
+    public AttributeStatement performAttributeQuery(AttributeQuery query,
+            ShibbolethAttributeRequestContext requestContext) throws AttributeRequestException {
+
         // get attributes from the message
-        List<AttributeDesignator> queryAttributes = query.getAttributeDesignators();
-        Set<String> queryAttributeIds = getAttributeIds(queryAttributes);
-        if (log.isDebugEnabled()) {
-            log.debug("query message contains the following attributes: " + queryAttributeIds);
-        }
-        // TODO get attributes from the metadata
-        Set<String> metadataAttributeIds = null;
+        Set<String> queryAttributeIds = getAttributeIds(query);
+
+        // get attributes from metadata
+        Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getAttributeRequesterMetadata());
 
         // union the attribute id sets
-        Set<String> attributeIds = new HashSet<String>(queryAttributeIds);
-        attributeIds.addAll(metadataAttributeIds);
+        requestContext.getRequestedAttributes().addAll(queryAttributeIds);
+        requestContext.getRequestedAttributes().addAll(metadataAttributeIds);
 
-        // get resolved attributes from the resolver
-        Map<String, Attribute> resolvedAttributes = getResolvedAttributes(resolutionContext, attributeIds);
-
-        // filter attributes
-        filterContext.getAttributes().clear();
-        filterContext.getAttributes().putAll(resolvedAttributes);
-        Map<String, Attribute> filteredAttributes = filteringEngine.filterAttributes(filterContext);
+        // Resolve and filter attributes
+        Map<String, Attribute> attributes = getAttributes(requestContext);
 
         // encode attributes
-        List<org.opensaml.saml1.core.Attribute> encodedAttributes = encodeAttributes(filteredAttributes);
+        List<org.opensaml.saml1.core.Attribute> encodedAttributes = encodeAttributes(attributes);
 
         // return attribute statement
         return buildAttributeStatement(encodedAttributes);
+    }
+
+    /** {@inheritDoc} */
+    public AttributeStatement performAttributeQuery(ShibbolethAttributeRequestContext requestContext)
+            throws AttributeRequestException {
+        return performAttributeQuery(null, requestContext);
+    }
+
+    /** {@inheritDoc} */
+    public Map<String, Attribute> getAttributes(ShibbolethAttributeRequestContext requestContext)
+            throws AttributeRequestException {
+        return filteringEngine.filterAttributes(attributeResolver.resolveAttributes(requestContext), requestContext);
     }
 
     /** {@inheritDoc} */
@@ -206,6 +151,38 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
         attribute.setAttributeName(id);
         return attribute;
     }
+    
+
+    /**
+     * Gets the attribute IDs for those attributes requested in the attribute query.
+     * 
+     * @param query the attribute query
+     * 
+     * @return attribute IDs for those attributes requested in the attribute query
+     */
+    protected Set<String> getAttributeIds(AttributeQuery query){
+        if(query != null){
+            List<AttributeDesignator> queryAttributes = query.getAttributeDesignators();
+            Set<String> queryAttributeIds = getAttributeIds(queryAttributes);
+            if (log.isDebugEnabled()) {
+                log.debug("query message contains the following attributes: " + queryAttributeIds);
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Gets the attribute IDs for those attributes requested in the entity metadata.
+     * 
+     * @param metadata the entity metadata
+     * 
+     * @return attribute IDs for those attributes requested in the entity metadata
+     */
+    protected Set<String> getAttribtueIds(EntityDescriptor metadata){
+        // TODO
+        return null;
+    }
 
     /**
      * This parses the attribute ids from the supplied list of attributes.
@@ -220,24 +197,6 @@ public class SAML1AttributeAuthorityImpl implements SAML1AttributeAuthority {
             attributeIds.add(attrId);
         }
         return attributeIds;
-    }
-
-    /**
-     * This resolves the supplied attribute names using the supplied resolution context.
-     * 
-     * @param context <code>ResolutionContext</code>
-     * @param releasedAttributes <code>Set</code>
-     * @return <code>Map</code> of attribute ID to attribute
-     * @throws AttributeResolutionException if an attribute cannot be resolved
-     */
-    private Map<String, Attribute> getResolvedAttributes(ResolutionContext context, Set<String> releasedAttributes)
-            throws AttributeResolutionException {
-        // call Attribute resolver
-        Map<String, Attribute> resolvedAttributes = attributeResolver.resolveAttributes(releasedAttributes, context);
-        if (log.isDebugEnabled()) {
-            log.debug("attribute resolver resolved the following attributes: " + resolvedAttributes);
-        }
-        return resolvedAttributes;
     }
 
     /**

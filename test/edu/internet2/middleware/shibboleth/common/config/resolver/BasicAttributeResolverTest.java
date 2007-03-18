@@ -2,18 +2,17 @@
 package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
 /**
@@ -30,10 +29,6 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
     /** Constructor. */
     public BasicAttributeResolverTest() {
 
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
-        Logger.getRootLogger().setLevel(Level.INFO);
-        Logger.getLogger("edu.internet2.middleware.shibboleth").setLevel(Level.DEBUG);
     }
 
     /** {@inheritDoc} */
@@ -48,18 +43,22 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
     public void testResolverInstantiation() {
         AttributeResolver resolver = (AttributeResolver) ac
                 .getBean("edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverFactoryBean");
-        ResolutionContext context = resolver.createResolutionContext("ttrojan", "http://example.com/");
+        
+        ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
+        context.setPrincipalName("ttrojan");
         
         SortedSet<String> expected = new TreeSet<String>();
         expected.add("gpburdell");
         expected.add("ttrojan");
         
         try {
-            Attribute[] actual = resolver.resolveAttributes(null, context).values().toArray(new Attribute[0]);
+                Collection<Attribute> actual = resolver.resolveAttributes(context).values();
             
-            assertEquals(1, actual.length);
-            assertEquals(2, actual[0].getValues().size());
-            assertEquals(expected, actual[0].getValues());
+            assertEquals(1, actual.size());
+            
+            Attribute attribute = actual.iterator().next();
+            assertEquals(2, attribute.getValues().size());
+            assertEquals(expected, attribute.getValues());
         } catch (AttributeResolutionException e) {
             fail(e.getMessage());
         }

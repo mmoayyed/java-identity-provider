@@ -25,39 +25,25 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilterContext;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringEngine;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.FilteringException;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.AndMatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 
 /**
- * Implementation of {@link FilteringEngine}.
+ * Implementation of {@link AttributeFilteringEngine}.
  */
-public class AFPEngine implements FilteringEngine {
+public class ShibbolethFilteringEngine implements AttributeFilteringEngine<ShibbolethAttributeRequestContext> {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(AFPEngine.class);
+    private static Logger log = Logger.getLogger(ShibbolethFilteringEngine.class);
 
     /** Active attribute rules. */
     private List<AttributeFilterPolicy> filterPolicies;
 
     /** Constructor. */
-    public AFPEngine() {
+    public ShibbolethFilteringEngine() {
 
-    }
-
-    /** {@inheritDoc} */
-    public Map<String, Attribute> filterAttributes(FilterContext filterContext) throws FilteringException {
-        if (getFilterPolicies() == null) {
-            return new HashMap<String, Attribute>();
-        }
-
-        Collection<AttributeRule> rules = generateEffectiveAttributeRules(filterContext);
-        for (AttributeRule rule : rules) {
-            filterAttributeValues(rule, filterContext);
-        }
-
-        return filterContext.getAttributes();
     }
 
     /**
@@ -78,6 +64,23 @@ public class AFPEngine implements FilteringEngine {
         filterPolicies = policies;
     }
 
+    /** {@inheritDoc} */
+    public Map<String, Attribute> filterAttributes(Map<String, Attribute> attributes,
+            ShibbolethAttributeRequestContext context) throws AttributeFilteringException {
+
+        if (getFilterPolicies() == null) {
+            return new HashMap<String, Attribute>();
+        }
+
+        ShibbolethFilteringContext filterContext = new ShibbolethFilteringContext(attributes, context);
+        Collection<AttributeRule> rules = generateEffectiveAttributeRules(filterContext);
+        for (AttributeRule rule : rules) {
+            filterAttributeValues(rule, filterContext);
+        }
+
+        return filterContext.getAttributes();
+    }
+
     /**
      * Evaluates all the filter policies and returns the list of effective attribute rules. An effective attribute rule
      * is created by logically ORing all the value filters for each IDed attribute in all polcies whose requirements are
@@ -89,24 +92,25 @@ public class AFPEngine implements FilteringEngine {
      * 
      * @throws FilterProcessingException thrown the requirements for a filter policy can not be evaluated
      */
-    protected Collection<AttributeRule> generateEffectiveAttributeRules(FilterContext filterContext)
+    protected Collection<AttributeRule> generateEffectiveAttributeRules(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
         if (log.isDebugEnabled()) {
-            log.debug("Determing effective filter policies for principal " + filterContext.getPrincipalName());
+            log.debug("Determing effective filter policies for principal "
+                    + filterContext.getAttribtueRequestContext().getPrincipalName());
         }
         ArrayList<AttributeFilterPolicy> effectivePolicies = new ArrayList<AttributeFilterPolicy>();
         for (AttributeFilterPolicy policy : getFilterPolicies()) {
             if (policy.getPolicyRequirement().evaluate(filterContext)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Filter policy " + policy.getPolicyId() + " is in effect for principal "
-                            + filterContext.getPrincipalName());
+                            + filterContext.getAttribtueRequestContext().getPrincipalName());
                 }
                 effectivePolicies.add(policy);
             } else {
                 if (log.isDebugEnabled()) {
                     log.debug("Filter policy " + policy.getPolicyId()
                             + " policy requirements not met, policy is not in effect for principal "
-                            + filterContext.getPrincipalName());
+                            + filterContext.getAttribtueRequestContext().getPrincipalName());
                 }
             }
         }
@@ -122,31 +126,31 @@ public class AFPEngine implements FilteringEngine {
      * @return list of merged rules
      */
     protected Collection<AttributeRule> mergeAttributeRules(List<AttributeFilterPolicy> policies) {
-        if(policies.size() == 0){
+        if (policies.size() == 0) {
             return null;
         }
-        
-        if(log.isDebugEnabled()){
+
+        if (log.isDebugEnabled()) {
             log.debug("Determine effective attribute rules");
         }
-        
+
         Map<String, AttributeRule> effectiveRules = new HashMap<String, AttributeRule>();
         AttributeRule effectiveRule;
         AndMatchFunctor effectiveFilter;
-        for(AttributeFilterPolicy policy : policies){
-            for(AttributeRule rule : policy.getAttributeRules()){
+        for (AttributeFilterPolicy policy : policies) {
+            for (AttributeRule rule : policy.getAttributeRules()) {
                 effectiveRule = effectiveRules.get(rule.getAttributeId());
-                if(effectiveRule == null){
+                if (effectiveRule == null) {
                     effectiveRule = new AttributeRule(rule.getAttributeId());
                     effectiveRule.setPermitValue(new AndMatchFunctor());
                     effectiveRules.put(rule.getAttributeId(), effectiveRule);
                 }
-                
+
                 effectiveFilter = (AndMatchFunctor) effectiveRule.getPermitValue();
                 effectiveFilter.getFunctors().add(rule.getPermitValue());
             }
         }
-        
+
         return effectiveRules.values();
     }
 
@@ -158,7 +162,7 @@ public class AFPEngine implements FilteringEngine {
      * 
      * @throws FilterProcessingException thrown if the value filter criteria can not be evaluated
      */
-    protected void filterAttributeValues(AttributeRule rule, FilterContext filterContext)
+    protected void filterAttributeValues(AttributeRule rule, ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
         Attribute attribute = filterContext.getAttributes().get(rule.getAttributeId());
         if (attribute.getValues() == null) {
@@ -185,8 +189,7 @@ public class AFPEngine implements FilteringEngine {
 
         if (attribute.getValues().size() == 0) {
             if (log.isDebugEnabled()) {
-                log
-                        .debug("No values left for attribute " + attribute.getId()
+                log.debug("No values left for attribute " + attribute.getId()
                                 + ", removing it from list of attributes");
             }
             filterContext.getAttributes().remove(attribute.getId());

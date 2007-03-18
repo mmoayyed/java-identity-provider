@@ -19,65 +19,43 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletRequest;
-
-import org.opensaml.saml2.core.NameID;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
-
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
 /**
- * Basic implementation of {@link ResolutionContext}.
+ * Contextual information for performing an attribute resolution.
  */
-public class ShibbolethResolutionContext implements ResolutionContext {
+public class ShibbolethResolutionContext {
 
-    /** ID of entity making request. */
-    private String attributeRequester;
-
-    /** Metadata provider. */
-    private MetadataProvider metadataProvider;
-
-    /** Name of principal that the request is for. */
-    private String principalName;
-
-    /** Servlet request. */
-    private ServletRequest servletRequest;
+    /** Attribute request context. */
+    private ShibbolethAttributeRequestContext requestContext;
 
     /** Attribute Definitions that have been resolved for this request. */
     private Map<String, AttributeDefinition> definitions;
 
     /** Data Connectors that have been resolved for this request. */
     private Map<String, DataConnector> connectors;
-
-    /** NameID of the subject this request is for. */
-    private NameID subject;
-
-    /** Constructor. */
-    public ShibbolethResolutionContext() {
+    
+    /**
+     * Constructor.
+     *
+     * @param context the attribute request this resolution is being performed for
+     */
+    public ShibbolethResolutionContext(ShibbolethAttributeRequestContext context) {
+        requestContext = context;
         definitions = new HashMap<String, AttributeDefinition>();
         connectors = new HashMap<String, DataConnector>();
     }
-
-    /** {@inheritDoc} */
-    public String getAttributeRequester() {
-        return attributeRequester;
-    }
-
-    /** {@inheritDoc} */
-    public MetadataProvider getMetadataProvider() {
-        return metadataProvider;
-    }
-
-    /** {@inheritDoc} */
-    public String getPrincipalName() {
-        return principalName;
-    }
-
-    /** {@inheritDoc} */
-    public ServletRequest getRequest() {
-        return servletRequest;
+    
+    /**
+     * Gets the attribute request that started this resolution.
+     * 
+     * @return attribute request that started this resolution
+     */
+    public AttributeRequestContext getAttributeRequestContext(){
+        return requestContext;
     }
 
     /** {@inheritDoc} */
@@ -89,55 +67,4 @@ public class ShibbolethResolutionContext implements ResolutionContext {
     public Map<String, DataConnector> getResolvedDataConnectors() {
         return connectors;
     }
-
-    /** {@inheritDoc} */
-    public NameID getSubject() {
-        return subject;
-    }
-
-    /**
-     * Set the ID of the entity making the request.
-     * 
-     * @param newAttributeRequester The attributeRequester to set.
-     */
-    public void setAttributeRequester(String newAttributeRequester) {
-        attributeRequester = newAttributeRequester;
-    }
-
-    /**
-     * Set the metadata provider.
-     * 
-     * @param newMetadataProvider The metadataProvider to set.
-     */
-    public void setMetadataProvider(MetadataProvider newMetadataProvider) {
-        metadataProvider = newMetadataProvider;
-    }
-
-    /**
-     * Set the principal name the request is for.
-     * 
-     * @param newPrincipalName The principalName to set.
-     */
-    public void setPrincipalName(String newPrincipalName) {
-        principalName = newPrincipalName;
-    }
-
-    /**
-     * Set the servlet request.
-     * 
-     * @param newServletRequest The servletRequest to set.
-     */
-    public void setRequest(ServletRequest newServletRequest) {
-        servletRequest = newServletRequest;
-    }
-
-    /**
-     * Set the NameID for the subject this request is for.
-     * 
-     * @param newSubject The subject to set.
-     */
-    public void setSubject(NameID newSubject) {
-        subject = newSubject;
-    }
-
 }

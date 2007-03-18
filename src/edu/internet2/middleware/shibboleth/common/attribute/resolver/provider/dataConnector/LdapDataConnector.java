@@ -31,9 +31,9 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.impl.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.LdapConfig;
@@ -453,9 +453,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
-            log.debug("Begin resolve for " + resolutionContext.getPrincipalName());
+            log.debug("Begin resolve for " + resolutionContext.getAttributeRequestContext().getPrincipalName());
         }
 
         String searchFilter = filterCreator.createStatement(filter, resolutionContext, getDataConnectorDependencyIds(),
@@ -483,7 +483,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             // check for empty result set
             if (noResultsIsError && !results.hasNext()) {
                 throw new AttributeResolutionException("No LDAP entry found for "
-                        + resolutionContext.getPrincipalName());
+                        + resolutionContext.getAttributeRequestContext().getPrincipalName());
             }
             // build resolved attributes from LDAP attributes
             attributes = buildBaseAttributes(results);
@@ -590,10 +590,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * @param searchFiler the searchFilter that produced the attributes
      * @param attributes <code>Map</code> of attribute ids to attributes
      */
-    protected void setCachedAttributes(ResolutionContext resolutionContext, String searchFiler,
+    protected void setCachedAttributes(ShibbolethResolutionContext resolutionContext, String searchFiler,
             Map<String, Attribute> attributes) {
         Map<String, Map<String, Attribute>> results = null;
-        String principal = resolutionContext.getPrincipalName();
+        String principal = resolutionContext.getAttributeRequestContext().getPrincipalName();
         if (cache.containsKey(principal)) {
             results = cache.get(principal);
         } else {
@@ -611,10 +611,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * 
      * @return <code>Map</code> of attributes ids to attributes
      */
-    protected Map<String, Attribute> getCachedAttributes(ResolutionContext resolutionContext, String searchFilter) {
+    protected Map<String, Attribute> getCachedAttributes(ShibbolethResolutionContext resolutionContext, String searchFilter) {
         Map<String, Attribute> attributes = null;
         if (cacheResults) {
-            String principal = resolutionContext.getPrincipalName();
+            String principal = resolutionContext.getAttributeRequestContext().getPrincipalName();
             if (cache.containsKey(principal)) {
                 Map<String, Map<String, Attribute>> results = cache.get(principal);
                 attributes = results.get(searchFilter);

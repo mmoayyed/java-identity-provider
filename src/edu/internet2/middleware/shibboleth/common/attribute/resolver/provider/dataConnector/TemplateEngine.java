@@ -29,7 +29,7 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.ResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
 
 /**
@@ -39,30 +39,30 @@ public class TemplateEngine {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(TemplateEngine.class);
-    
+
     /** Velocity engine to use to render templates. */
     private VelocityEngine velocity;
-    
+
     /**
      * Constructor.
-     *
+     * 
      * @param engine velocity engine used to evaluate templates
      */
-    public TemplateEngine(VelocityEngine engine){
+    public TemplateEngine(VelocityEngine engine) {
         velocity = engine;
     }
-    
+
     /**
      * Registers a template under a given name.
      * 
      * @param templateName name to register the template under
      * @param template template to register
      */
-    public void registerTemplate(String templateName, String template){
+    public void registerTemplate(String templateName, String template) {
         StringResourceRepository repository = StringResourceLoader.getRepository();
         repository.putStringResource(templateName, template);
     }
-    
+
     /**
      * Create a statement from a give template by replacing it's macro's with information within the resolution context.
      * 
@@ -76,15 +76,15 @@ public class TemplateEngine {
      * @throws AttributeResolutionException thrown if the given template can not be populated because it is malformed or
      *             the given data connectors or attribute definitions error out during resolution
      */
-    public String createStatement(String templateName, ResolutionContext resolutionContext, Set<String> dataConnectors,
-            Set<String> attributeDefinitions) throws AttributeResolutionException {
+    public String createStatement(String templateName, ShibbolethResolutionContext resolutionContext,
+            Set<String> dataConnectors, Set<String> attributeDefinitions) throws AttributeResolutionException {
         VelocityContext vContext = createVelocityContext(resolutionContext, dataConnectors, attributeDefinitions);
 
         try {
-            if(log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug("Populating the following " + templateName + " template");
             }
-            
+
             StringWriter output = new StringWriter();
             Template template = velocity.getTemplate(templateName);
             template.merge(vContext, output);
@@ -106,19 +106,19 @@ public class TemplateEngine {
      * 
      * @throws AttributeResolutionException thrown if a resolution plugin errors out while resolving its attributes
      */
-    protected VelocityContext createVelocityContext(ResolutionContext resolutionContext, Set<String> dataConnectors,
-            Set<String> attributeDefinitions) throws AttributeResolutionException {
-        if(log.isDebugEnabled()){
+    protected VelocityContext createVelocityContext(ShibbolethResolutionContext resolutionContext,
+            Set<String> dataConnectors, Set<String> attributeDefinitions) throws AttributeResolutionException {
+        if (log.isDebugEnabled()) {
             log.debug("Populating velocity context");
         }
         VelocityContext vCtx = new VelocityContext();
-        vCtx.put("principal", resolutionContext.getPrincipalName());
+        vCtx.put("principal", resolutionContext.getAttributeRequestContext().getPrincipalName());
 
         Map<String, Attribute> attributes;
         DataConnector dataConnector;
         for (String connectorId : dataConnectors) {
             dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorId);
-            if(log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug("Resolving attributes from data connector " + connectorId);
             }
             attributes = dataConnector.resolve(resolutionContext);
@@ -131,7 +131,7 @@ public class TemplateEngine {
         AttributeDefinition attributeDefinition;
         for (String definitionId : attributeDefinitions) {
             attributeDefinition = resolutionContext.getResolvedAttributeDefinitions().get(definitionId);
-            if(log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug("Resolving attributes from attribute definition " + definitionId);
             }
             attribute = attributeDefinition.resolve(resolutionContext);
