@@ -9,7 +9,7 @@
     <complexType name="Simple">
         <annotation>
             <documentation>
-                An attribute definition the gets its information from a static 
+                A basic attribute definition.
             </documentation>
         </annotation>
         <complexContent>
