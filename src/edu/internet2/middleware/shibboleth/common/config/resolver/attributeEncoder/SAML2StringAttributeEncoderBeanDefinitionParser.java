@@ -29,7 +29,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2String
 public class SAML2StringAttributeEncoderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:resolver:encoder", "SAML2String");
+    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML2String");
     
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {

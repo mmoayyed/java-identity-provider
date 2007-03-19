@@ -1,5 +1,5 @@
-<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:encoder" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:encoder="urn:mace:shibboleth:2.0:resolver:encoder" xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
+<schema targetNamespace="urn:mace:shibboleth:2.0:attribute:encoder" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:encoder="urn:mace:shibboleth:2.0:attribute:encoder" xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
