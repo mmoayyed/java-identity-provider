@@ -16,11 +16,14 @@
 
 package edu.internet2.middleware.shibboleth.common.config.resolver.dataConnector;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.config.resolver.AbstractResolutionPlugInBeanDefinitionParser;
 import edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverNamespaceHandler;
@@ -36,15 +39,24 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractReso
     /** Failover data connector attribute name. */
     public static final String FAILOVER_DATA_CONNECTOR_ELEMENT_LOCAL_NAME = "failoverDataConnector";
 
+    /** Log4j logger. */
+    private static Logger log = Logger.getLogger(BaseDataConnectorBeanDefinitionParser.class);
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         // parse failover connector
-        NodeList elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
-                FAILOVER_DATA_CONNECTOR_ELEMENT_LOCAL_NAME);
-        if (elements != null && elements.getLength() > 0) {
-            builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
+
+        List<Element> elements = XMLHelper.getChildElementsByTagNameNS(element,
+                AttributeResolverNamespaceHandler.NAMESPACE, FAILOVER_DATA_CONNECTOR_ELEMENT_LOCAL_NAME);
+        if (elements != null && elements.size() > 0) {
+            if (elements.size() > 1) {
+                log.warn("Data Connector (" + element.getAttribute("id")
+                        + "may only contain a single failover connector.  Only the first one is being used.");
+            }
+            
+            builder.addPropertyValue("failoverDependencyId", elements.get(0).getAttribute("ref"));
         }
     }
 
