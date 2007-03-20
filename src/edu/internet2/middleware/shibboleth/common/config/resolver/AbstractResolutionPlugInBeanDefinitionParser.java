@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -53,17 +54,17 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
         builder.addPropertyValue("propagateErrors", element.getAttribute(PROPAGATE_ERRORS_ATTRIBUTE_NAME));
 
         // parse child elements
-        NodeList elements;
+        List<Element> elements;
 
-        elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
+        elements = XMLHelper.getChildElementsByTagNameNS(element, AttributeResolverNamespaceHandler.NAMESPACE,
                 ATTRIBUTE_DEFINITION_DEPENDENCY_ELEMENT_LOCAL_NAME);
-        if (elements != null && elements.getLength() > 0) {
+        if (elements != null && elements.size() > 0) {
             builder.addPropertyValue("attributeDefinitionDependencyIds", parseDependencies(elements));
         }
 
-        elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
+        elements = XMLHelper.getChildElementsByTagNameNS(element, AttributeResolverNamespaceHandler.NAMESPACE,
                 DATA_CONNECTOR_DEPENDENCY_ELEMENT_LOCAL_NAME);
-        if (elements != null && elements.getLength() > 0) {
+        if (elements != null && elements.size() > 0) {
             builder.addPropertyValue("dataConnectorDependencyIds", parseDependencies(elements));
         }
     }
@@ -73,29 +74,11 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
      * 
      * @param elements DOM elements of type <code>resolver:PluginDependencyType</code>
      * @return the dependency IDs
-     * @deprecated use {@link #parseDependencies(List)} instead
-     */
-    protected Set<String> parseDependencies(NodeList elements) {
-        Set<String> dependencyIds = new HashSet<String>();
-
-        for (int i = 0; i < elements.getLength(); ++i) {
-            Element dependency = (Element) elements.item(i);
-            dependencyIds.add(dependency.getAttribute("ref"));
-        }
-
-        return dependencyIds;
-    }
-    
-    /**
-     * Parse dependency elements.
-     * 
-     * @param elements DOM elements of type <code>resolver:PluginDependencyType</code>
-     * @return the dependency IDs
      */
     protected Set<String> parseDependencies(List<Element> elements) {
         Set<String> dependencyIds = new HashSet<String>();
 
-        for (Element dependency: elements) {
+        for (Element dependency : elements) {
             dependencyIds.add(dependency.getAttribute("ref"));
         }
 
