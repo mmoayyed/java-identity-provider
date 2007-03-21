@@ -57,6 +57,9 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** JDBC data source for retrieving connections. */
     private DataSource dataSource;
+    
+    /** Whether the JDBC connection is read-only. */
+    private boolean readOnlyConnection;
 
     /** Whether queries might use stored procedures. */
     private boolean usesStoredProcedure;
@@ -74,7 +77,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     private String queryTemplate;
 
     /** Set of column descriptors for managing returned data. [columnName => colmentDescriptr] */
-    private Map<String, ColumnDescriptor> columnDescriptors;
+    private Map<String, RDBMSColumnDescriptor> columnDescriptors;
 
     /** Query result cache. [principalName => [query => attributeSetReference]] */
     private Map<String, Map<String, SoftReference<Set<Attribute>>>> resultsCache;
@@ -94,7 +97,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         validationQuery = validation;
         cacheResults = resultCaching;
         usesStoredProcedure = false;
-        columnDescriptors = new HashMap<String, ColumnDescriptor>();
+        columnDescriptors = new HashMap<String, RDBMSColumnDescriptor>();
     }
 
     /**
@@ -105,6 +108,24 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         if (cacheResults) {
             resultsCache = new HashMap<String, Map<String, SoftReference<Set<Attribute>>>>();
         }
+    }
+    
+    /**
+     * Gets whether this data connector uses read-only connections.
+     * 
+     * @return whether this data connector uses read-only connections
+     */
+    public boolean isConnectionReadOnly(){
+        return readOnlyConnection;
+    }
+    
+    /**
+     * Sets whether this data connector uses read-only connections.
+     * 
+     * @param isReadOnly whether this data connector uses read-only connections
+     */
+    public void setConnectionReadOnly(boolean isReadOnly){
+        readOnlyConnection = isReadOnly;
     }
 
     /**
@@ -188,7 +209,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @return column descriptors used to deal with result set data
      */
-    public Map<String, ColumnDescriptor> getColumnDescriptor() {
+    public Map<String, RDBMSColumnDescriptor> getColumnDescriptor() {
         return Collections.unmodifiableMap(columnDescriptors);
     }
 
@@ -197,8 +218,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @param descriptors column descriptors used to deal with result set data
      */
-    public void setColumnDescriptors(Map<String, ColumnDescriptor> descriptors) {
-        columnDescriptors = new HashMap<String, ColumnDescriptor>(descriptors);
+    public void setColumnDescriptors(Map<String, RDBMSColumnDescriptor> descriptors) {
+        columnDescriptors = new HashMap<String, RDBMSColumnDescriptor>(descriptors);
         clearCache();
     }
 
@@ -373,7 +394,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
             // loop over result and add values to attributes
             String columnName;
-            ColumnDescriptor columnDescriptor;
+            RDBMSColumnDescriptor columnDescriptor;
             Set attributeValueSet;
             while (resultSet.next()) {
                 for (int i = 0; i < numOfCols; i++) {
@@ -488,61 +509,6 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                 break;
             default:
                 valueSet.add(resultSet.getString(columnIndex));
-        }
-    }
-
-    /**
-     * Describes how to express a given result set column as an attribute and value.
-     */
-    public class ColumnDescriptor {
-
-        /** Name of the database column. */
-        private String columnName;
-
-        /** Name of the attribute to map the column to. */
-        private String attributeName;
-
-        /** Java data type to express the database value as. */
-        private DATA_TYPES dataType;
-
-        /**
-         * Constructor.
-         * 
-         * @param column name of the database column
-         * @param attribute name of the attribute to map the column to
-         * @param type Java data type to express the database value as
-         */
-        public ColumnDescriptor(String column, String attribute, DATA_TYPES type) {
-            columnName = column;
-            attributeName = attribute;
-            dataType = type;
-        }
-
-        /**
-         * Gets the name of the database column.
-         * 
-         * @return name of the database column
-         */
-        public String getColumnName() {
-            return columnName;
-        }
-
-        /**
-         * Gets the name of the attribute to map the column to.
-         * 
-         * @return name of the attribute to map the column to
-         */
-        public String getAttributeName() {
-            return attributeName;
-        }
-
-        /**
-         * Gets the Java data type to express the database value as.
-         * 
-         * @return Java data type to express the database value as
-         */
-        public DATA_TYPES getDataType() {
-            return dataType;
         }
     }
 }

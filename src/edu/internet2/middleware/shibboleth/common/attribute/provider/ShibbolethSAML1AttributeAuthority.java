@@ -202,7 +202,7 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
      * @param attributes <code>List</code>
      * @return <code>Set</code> of attribute ids
      */
-    private Set<String> getAttributeIds(List<AttributeDesignator> attributes) {
+    protected Set<String> getAttributeIds(List<AttributeDesignator> attributes) {
         final Set<String> attributeIds = new HashSet<String>();
         for (AttributeDesignator a : attributes) {
             String attrId = getAttributeIDBySAMLAttribute(a);
@@ -217,13 +217,29 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
      * @param resolvedAttributes <code>Map</code>
      * @return <code>List</code> of core attributes
      */
-    private List<org.opensaml.saml1.core.Attribute> encodeAttributes(Map<String, Attribute> resolvedAttributes) {
-        // encode attributes
+    protected List<org.opensaml.saml1.core.Attribute> encodeAttributes(Map<String, Attribute> resolvedAttributes) {
         List<org.opensaml.saml1.core.Attribute> encodedAttributes = new ArrayList<org.opensaml.saml1.core.Attribute>();
 
+        Attribute shibbolethAttribute;
+        AttributeEncoder<org.opensaml.saml1.core.Attribute> enc;
+        AttributeDesignator samlAttribute;
+        SAML1StringAttributeEncoder defaultAttributeEncoder;
         for (Map.Entry<String, Attribute> entry : resolvedAttributes.entrySet()) {
-            AttributeEncoder<org.opensaml.saml1.core.Attribute> enc = entry.getValue().getEncoderByCategory(
-                    SAML1AttributeEncoder.CATEGORY);
+            shibbolethAttribute = entry.getValue();
+            enc = shibbolethAttribute.getEncoderByCategory(SAML1AttributeEncoder.CATEGORY);
+            if(enc == null){
+                defaultAttributeEncoder = new SAML1StringAttributeEncoder();
+                samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
+                if(samlAttribute != null){
+                    defaultAttributeEncoder.setAttributeName(samlAttribute.getAttributeName());
+                    defaultAttributeEncoder.setNamespace(samlAttribute.getAttributeNamespace());
+                }else{
+                    defaultAttributeEncoder.setAttributeName(shibbolethAttribute.getId());
+                    defaultAttributeEncoder.setNamespace("urn:mace:shibboleth:1.0:attributeNamespace:uri");
+                }
+                enc = defaultAttributeEncoder;
+            }
+            
             encodedAttributes.add(enc.encode(entry.getValue()));
         }
         if (log.isDebugEnabled()) {
@@ -238,7 +254,7 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
      * @param encodedAttributes <code>List</code> of attributes
      * @return <code>AttributeStatement</code>
      */
-    private AttributeStatement buildAttributeStatement(List<org.opensaml.saml1.core.Attribute> encodedAttributes) {
+    protected AttributeStatement buildAttributeStatement(List<org.opensaml.saml1.core.Attribute> encodedAttributes) {
         AttributeStatement statement = statementBuilder.buildObject();
         statement.getAttributes().addAll(encodedAttributes);
         return statement;

@@ -20,8 +20,10 @@ import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 
 /**
  * Base class for {@link AttributeEncoder}s.
+ * 
+ * @param <EncodedType> the type of object created by encoding the attribute
  */
-public abstract class AbstractAttributeEncoder implements AttributeEncoder {
+public abstract class AbstractAttributeEncoder<EncodedType> implements AttributeEncoder<EncodedType> {
 
     /** Name of the attribute. */
     private String attributeName;

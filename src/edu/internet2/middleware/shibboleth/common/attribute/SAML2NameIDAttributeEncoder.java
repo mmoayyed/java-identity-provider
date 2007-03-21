@@ -16,12 +16,12 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute;
 
+import org.opensaml.saml2.core.NameID;
+
 /**
  * SAML 2.0 NameID attribute encoder.
- * 
- * @param <ValueType> the type of attribute values this encoder can operate on
  */
-public interface SAML2NameIDAttributeEncoder<ValueType> extends XMLObjectAttributeEncoder {
+public interface SAML2NameIDAttributeEncoder extends XMLObjectAttributeEncoder<NameID> {
 
     /**
      * Gets the name domain qualifier for the NameID.

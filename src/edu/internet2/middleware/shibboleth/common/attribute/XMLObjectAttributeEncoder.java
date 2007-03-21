@@ -21,9 +21,9 @@ import org.opensaml.xml.XMLObject;
 /**
  * Attribute encoder that encodes attributes into XMLObjects.
  * 
- * @param <AttributeType> the type of attribute encoded
+ * @param <XMLObjectType> type of {@link XMLObject} the encoder produces
  */
-public interface XMLObjectAttributeEncoder<AttributeType extends Attribute> extends
-        AttributeEncoder<XMLObject> {
+public interface XMLObjectAttributeEncoder<XMLObjectType extends XMLObject> extends
+        AttributeEncoder<XMLObjectType> {
 
 }

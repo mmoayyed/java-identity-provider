@@ -18,7 +18,6 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
-import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
@@ -28,27 +27,28 @@ import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeEncode
 /**
  * Implementation of SAML 2.0 attribute encoder.
  */
-public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder implements SAML2AttributeEncoder<String> {
+public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.opensaml.saml2.core.Attribute> implements
+        SAML2AttributeEncoder {
 
     /** Attribute factory. */
     private static AttributeBuilder attributeBuilder;
-    
+
     /** XSString factory. */
     private static XSStringBuilder stringBuilder;
-    
+
     /** Format of attribute. */
     private String format;
 
     /** Friendly name of attribute. */
     private String friendlyName;
-    
+
     /** Constructor. */
     public SAML2StringAttributeEncoder() {
         attributeBuilder = new AttributeBuilder();
         stringBuilder = new XSStringBuilder();
         setEncoderCategory(SAML2AttributeEncoder.CATEGORY);
     }
-    
+
     /** {@inheritDoc} */
     public String getNameFormat() {
         return format;
@@ -70,22 +70,20 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder implem
     }
 
     /** {@inheritDoc} */
-    public XMLObject encode(Attribute attribute) {
+    public org.opensaml.saml2.core.Attribute encode(Attribute attribute) {
         org.opensaml.saml2.core.Attribute samlAttribute;
         samlAttribute = attributeBuilder.buildObject();
-        
+
         samlAttribute.setName(getAttributeName());
         samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.setFriendlyName(getFriendlyName());
-        
-        for(Object o: attribute.getValues()) {
+
+        for (Object o : attribute.getValues()) {
             XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
             xsstring.setValue(o.toString());
             samlAttribute.getAttributeValues().add(xsstring);
         }
-        
-        // TODO support scoped attributes
-        
+
         return samlAttribute;
     }
 

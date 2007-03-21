@@ -20,10 +20,8 @@ import org.opensaml.common.xml.SAMLConstants;
 
 /**
  * SAML 1.X attribute encoder.
- * 
- * @param <ValueType> the type of attribute values this encoder can operate on
  */
-public interface SAML1AttributeEncoder<ValueType> extends XMLObjectAttributeEncoder {
+public interface SAML1AttributeEncoder extends XMLObjectAttributeEncoder<org.opensaml.saml1.core.Attribute> {
 
     /** Category for attribute encoders. */
     public static final String CATEGORY = SAMLConstants.SAML1P_NS ;

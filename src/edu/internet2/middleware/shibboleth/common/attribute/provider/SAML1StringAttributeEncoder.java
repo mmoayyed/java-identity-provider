@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
-import org.opensaml.saml1.core.impl.AttributeBuilder;
 import org.opensaml.saml1.core.AttributeValue;
-import org.opensaml.xml.XMLObject;
+import org.opensaml.saml1.core.impl.AttributeBuilder;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
@@ -27,23 +27,24 @@ import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeEncode
 /**
  * Implementation of SAML 1.X attribute encoder.
  */
-public class SAML1StringAttributeEncoder extends AbstractAttributeEncoder implements SAML1AttributeEncoder<String> {
-    
+public class SAML1StringAttributeEncoder extends AbstractAttributeEncoder<org.opensaml.saml1.core.Attribute> implements
+        SAML1AttributeEncoder {
+
     /** Attribute factory. */
     private static AttributeBuilder attributeBuilder;
-    
+
     /** XSString factory. */
     private static XSStringBuilder stringBuilder;
 
     /** Namespace of attribute. */
     private String namespace;
-    
+
     /** Constructor. */
     public SAML1StringAttributeEncoder() {
         attributeBuilder = new AttributeBuilder();
         stringBuilder = new XSStringBuilder();
     }
-    
+
     /** {@inheritDoc} */
     public String getNamespace() {
         return namespace;
@@ -55,18 +56,16 @@ public class SAML1StringAttributeEncoder extends AbstractAttributeEncoder implem
     }
 
     /** {@inheritDoc} */
-    public XMLObject encode(Attribute attribute) {
+    public org.opensaml.saml1.core.Attribute encode(Attribute attribute) {
         org.opensaml.saml1.core.Attribute samlAttribute;
         samlAttribute = attributeBuilder.buildObject();
-        
-        for(Object o: attribute.getValues()) {
+
+        for (Object o : attribute.getValues()) {
             XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
             xsstring.setValue(o.toString());
             samlAttribute.getAttributeValues().add(xsstring);
         }
-        
-        // TODO support scoped attributes
-        
+
         return samlAttribute;
     }
 

@@ -59,7 +59,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
 
     /** To determine releasable attributes. */
     private AttributeFilteringEngine<ShibbolethAttributeRequestContext> filteringEngine;
-
+    
     /**
      * This creates a new attribute authority.
      * 
@@ -72,7 +72,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
                 .getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
         attributeBuilder = (SAMLObjectBuilder<org.opensaml.saml2.core.Attribute>) builderFactory
                 .getBuilder(org.opensaml.saml2.core.Attribute.DEFAULT_ELEMENT_NAME);
-
+        
         attributeResolver = resolver;
     }
 
@@ -230,12 +230,31 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * @return <code>List</code> of core attributes
      */
     protected List<org.opensaml.saml2.core.Attribute> encodeAttributes(Map<String, Attribute> resolvedAttributes) {
-        // encode attributes
         List<org.opensaml.saml2.core.Attribute> encodedAttributes = new ArrayList<org.opensaml.saml2.core.Attribute>();
 
+        Attribute shibbolethAttribute;
+        AttributeEncoder<org.opensaml.saml2.core.Attribute> enc;
+        org.opensaml.saml2.core.Attribute samlAttribute;
+        SAML2StringAttributeEncoder defaultAttributeEncoder;
         for (Map.Entry<String, Attribute> entry : resolvedAttributes.entrySet()) {
-            AttributeEncoder<org.opensaml.saml2.core.Attribute> enc = entry.getValue().getEncoderByCategory(
-                    SAML2AttributeEncoder.CATEGORY);
+            shibbolethAttribute = entry.getValue();
+            enc = shibbolethAttribute.getEncoderByCategory(SAML2AttributeEncoder.CATEGORY);
+            if(enc == null){
+                defaultAttributeEncoder = new SAML2StringAttributeEncoder();
+                samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
+                if(samlAttribute != null){
+                    
+                    defaultAttributeEncoder.setAttributeName(samlAttribute.getName());
+                    defaultAttributeEncoder.setNameFormat(samlAttribute.getNameFormat());
+                    defaultAttributeEncoder.setFriendlyName(samlAttribute.getFriendlyName());
+                }else{
+                    defaultAttributeEncoder.setAttributeName(shibbolethAttribute.getId());
+                    defaultAttributeEncoder.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
+                }
+                
+                enc = defaultAttributeEncoder;
+            }
+            
             encodedAttributes.add(enc.encode(entry.getValue()));
         }
         if (log.isDebugEnabled()) {
