@@ -47,6 +47,11 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="scopeValue" type="string" use="required">
+                    <annotation>
+                        <documentation>The actual scoping value to be used on the attribute.</documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="scopeType" type="string" use="required">
                     <annotation>
                         <documentation>
