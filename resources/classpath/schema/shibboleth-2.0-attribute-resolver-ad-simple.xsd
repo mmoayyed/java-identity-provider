@@ -8,13 +8,25 @@
 
     <complexType name="Simple">
         <annotation>
-            <documentation>
-                A basic attribute definition.
-            </documentation>
+            <documentation>A basic attribute definition.</documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType" />
         </complexContent>
     </complexType>
 
+    <complexType name="Scoped">
+        <annotation>
+            <documentation>A basic attribute definition which supports attribute scoping.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="scope" type="string" use="required">
+                    <annotation>
+                        <documentation>Value to use for scoping the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 </schema>

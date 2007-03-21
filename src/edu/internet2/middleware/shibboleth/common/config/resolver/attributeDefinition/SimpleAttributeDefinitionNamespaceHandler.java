@@ -15,6 +15,8 @@ public class SimpleAttributeDefinitionNamespaceHandler extends BaseSpringNamespa
     public void init() {
         registerBeanDefinitionParser(SimpleAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new SimpleAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(ScopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new ScopedAttributeDefinitionBeanDefinitionParser());
     }
 
 }
