@@ -235,7 +235,8 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
                     defaultAttributeEncoder.setNamespace(samlAttribute.getAttributeNamespace());
                 }else{
                     defaultAttributeEncoder.setAttributeName(shibbolethAttribute.getId());
-                    defaultAttributeEncoder.setNamespace("urn:mace:shibboleth:1.0:attributeNamespace:uri");
+                    // TODO add namespace with something that mean "unspecified"
+                    defaultAttributeEncoder.setNamespace("");
                 }
                 enc = defaultAttributeEncoder;
             }
