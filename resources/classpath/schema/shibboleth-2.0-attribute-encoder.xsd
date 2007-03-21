@@ -47,12 +47,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="scopeValue" type="string" use="required">
-                    <annotation>
-                        <documentation>The actual scoping value to be used on the attribute.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="scopeType" type="string" use="required">
+                <attribute name="scopeType" type="string" use="optional">
                     <annotation>
                         <documentation>
                             The type of scoping to use for the encoded attribute. Valid values are "inline" or
@@ -76,14 +71,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="smartScope" type="boolean" use="optional" default="true">
-                    <annotation>
-                        <documentation>
-                            If true, the encoder will check if an attribute value already appears to have the
-                            appropriate scope value attached to it. This only has an effect if scopeType is "inline".
-                        </documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -100,7 +87,7 @@
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeType" type="string" use="required" default="attribute" />
+                <attribute name="scopeType" type="string" use="optional" default="attribute" />
             </extension>
         </complexContent>
     </complexType>
@@ -122,7 +109,7 @@
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeType" type="string" use="required" default="inline" />
+                <attribute name="scopeType" type="string" use="optional" default="inline" />
             </extension>
         </complexContent>
     </complexType>
