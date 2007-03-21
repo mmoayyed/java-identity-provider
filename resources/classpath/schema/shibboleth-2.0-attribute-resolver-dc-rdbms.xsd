@@ -25,7 +25,7 @@
                                 </documentation>
                             </annotation>
                         </element>
-                        <element ref="rdbms:ConnectorManagedConnection">
+                        <element ref="rdbms:ApplicationManagedConnection">
                             <annotation>
                                 <documentation>
                                     A connection, or pool of connections, to the database managed the data connector.
@@ -43,7 +43,7 @@
                     </element>
                     <element ref="rdbms:Column" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
-                <attribute name="readOnlyConnection" type="boolean" default="trure">
+                <attribute name="readOnlyConnection" type="boolean" default="true">
                     <annotation>
                         <documentation>
                             A boolean flag that determines whether the connection to the database is read-only, if the
@@ -245,7 +245,7 @@
     </complexType>
 
     <simpleType name="ColumnDataType">
-        <restriction>
+        <restriction base="string">
             <enumeration value="BigDecimal" />
             <enumeration value="Boolean" />
             <enumeration value="Byte" />

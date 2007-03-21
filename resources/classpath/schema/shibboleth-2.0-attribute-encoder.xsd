@@ -10,8 +10,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="namespace" type="string" use="required"
-                    default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -26,8 +25,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" use="required"
-                    default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
@@ -54,6 +52,12 @@
                             "attribute".
                         </documentation>
                     </annotation>
+                    <simpleType>
+                        <restriction base="string">
+                            <enumeration value="inline" />
+                            <enumeration value="attribute" />
+                        </restriction>
+                    </simpleType>
                 </attribute>
                 <attribute name="scopeDelimiter" type="string" use="optional" default="@">
                     <annotation>
@@ -81,8 +85,7 @@
         </annotation>
         <complexContent>
             <extension base="encoder:BaseScopedAttributeEncoderType">
-                <attribute name="namespace" type="string" use="required"
-                    default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -98,8 +101,7 @@
         </annotation>
         <complexContent>
             <extension base="encoder:BaseScopedAttributeEncoderType">
-                <attribute name="nameFormat" type="string" use="required"
-                    default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
