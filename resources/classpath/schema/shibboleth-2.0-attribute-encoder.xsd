@@ -71,6 +71,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="smartScope" type="boolean" use="optional" default="true">
+                    <annotation>
+                        <documentation>
+                            If true, the encoder will check if an attribute value already appears to have the
+                            appropriate scope value attached to it. This only has an effect if scopeType is "inline".
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
