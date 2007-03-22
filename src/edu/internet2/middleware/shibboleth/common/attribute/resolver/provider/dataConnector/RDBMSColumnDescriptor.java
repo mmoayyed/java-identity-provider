@@ -1,3 +1,4 @@
+
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.RDBMSDataConnector.DATA_TYPES;
@@ -43,7 +44,7 @@ public class RDBMSColumnDescriptor {
      * 
      * @return name of the attribute to map the column to
      */
-    public String getAttributeName() {
+    public String getAttributeID() {
         return attributeName;
     }
 
@@ -54,5 +55,11 @@ public class RDBMSColumnDescriptor {
      */
     public DATA_TYPES getDataType() {
         return dataType;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "RBDMSColumnDescriptor{columnName=" + columnName + ", attributeId=" + attributeName + ", dataType="
+                + dataType + "}";
     }
 }

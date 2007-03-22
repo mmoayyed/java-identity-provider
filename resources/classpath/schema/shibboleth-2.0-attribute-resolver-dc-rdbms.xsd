@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc:rdbms" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:rdbms="urn:mace:shibboleth:2.0:resolver:dc:rdbms">
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:rdbms="urn:mace:shibboleth:2.0:resolver:dc:rdbms" elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
@@ -76,6 +76,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
+                    <annotation>
+                        <documentation>
+                            Name of the template engine defined within the applicaiton.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -89,7 +96,7 @@
     </element>
     <complexType name="ContainerManagedConnectionType">
         <sequence>
-            <element name="JNDIConnectionProperty" type="rdbms:PropertyType">
+            <element name="JNDIConnectionProperty" type="rdbms:PropertyType" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         A property used when contrusting a JNDI initial context which in turn is used to lookup the
@@ -113,25 +120,18 @@
         </annotation>
     </element>
     <complexType name="ApplicationManagedConnectionType">
-        <sequence>
-            <element name="ConnectionProperty" type="rdbms:PropertyType" minOccurs="0" maxOccurs="unbounded">
-                <annotation>
-                    <documentation>A property used constructing a connection from the DriverManager.</documentation>
-                </annotation>
-            </element>
-        </sequence>
+        <attribute name="jdbcDriver" type="string" use="required">
+            <annotation>
+                <documentation>
+                    This is the full qualified class name of the JDBC driver used to connect to the database.
+                </documentation>
+            </annotation>
+        </attribute>
         <attribute name="jdbcURL" type="string" use="required">
             <annotation>
                 <documentation>
                     The JDBC URL for the database. These are usually of the form
                     jdbc:databaseProduceName:databaseSpecificInformation. For example, jdbc:hsql:mem:MyDatabase
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="jdbcDriver" type="string" use="required">
-            <annotation>
-                <documentation>
-                    This is the full qualified class name of the JDBC driver used to connect to the database.
                 </documentation>
             </annotation>
         </attribute>
@@ -253,7 +253,7 @@
             <enumeration value="Date" />
             <enumeration value="Double" />
             <enumeration value="Float" />
-            <enumeration value="Int" />
+            <enumeration value="Integer" />
             <enumeration value="Long" />
             <enumeration value="Object" />
             <enumeration value="Short" />

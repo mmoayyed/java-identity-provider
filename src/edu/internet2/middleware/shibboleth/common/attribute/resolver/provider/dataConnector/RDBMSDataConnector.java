@@ -49,7 +49,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** Data types understood by this connector. */
     public static enum DATA_TYPES {
-        BigDecimal, Boolean, Byte, ByteArray, Date, Double, Float, Int, Long, Object, Short, String, Time, Timestamp, URL
+        BigDecimal, Boolean, Byte, ByteArray, Date, Double, Float, Integer, Long, Object, Short, String, Time, Timestamp, URL
     };
 
     /** Class logger. */
@@ -57,7 +57,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** JDBC data source for retrieving connections. */
     private DataSource dataSource;
-    
+
     /** Whether the JDBC connection is read-only. */
     private boolean readOnlyConnection;
 
@@ -79,8 +79,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** Set of column descriptors for managing returned data. [columnName => colmentDescriptr] */
     private Map<String, RDBMSColumnDescriptor> columnDescriptors;
 
-    /** Query result cache. [principalName => [query => attributeSetReference]] */
-    private Map<String, Map<String, SoftReference<Set<Attribute>>>> resultsCache;
+    /** Query result cache. [principalName => [query => attributeResultSetReference]] */
+    private Map<String, Map<String, SoftReference<Map<String, Attribute>>>> resultsCache;
 
     /** Template engine used to change query template into actual query. */
     private TemplateEngine queryCreator;
@@ -94,7 +94,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     public RDBMSDataConnector(DataSource source, String validation, boolean resultCaching) {
         dataSource = source;
-        validationQuery = validation;
+        validationQuery = DatatypeHelper.safeTrimOrNullString(validation);
         cacheResults = resultCaching;
         usesStoredProcedure = false;
         columnDescriptors = new HashMap<String, RDBMSColumnDescriptor>();
@@ -106,25 +106,25 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     public void initialize() {
         registerTemplate();
         if (cacheResults) {
-            resultsCache = new HashMap<String, Map<String, SoftReference<Set<Attribute>>>>();
+            resultsCache = new HashMap<String, Map<String, SoftReference<Map<String, Attribute>>>>();
         }
     }
-    
+
     /**
      * Gets whether this data connector uses read-only connections.
      * 
      * @return whether this data connector uses read-only connections
      */
-    public boolean isConnectionReadOnly(){
+    public boolean isConnectionReadOnly() {
         return readOnlyConnection;
     }
-    
+
     /**
      * Sets whether this data connector uses read-only connections.
      * 
      * @param isReadOnly whether this data connector uses read-only connections
      */
-    public void setConnectionReadOnly(boolean isReadOnly){
+    public void setConnectionReadOnly(boolean isReadOnly) {
         readOnlyConnection = isReadOnly;
     }
 
@@ -169,7 +169,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @return engine used to evaluate the query template
      */
-    public TemplateEngine getTemplateEneing() {
+    public TemplateEngine getTemplateEngine() {
         return queryCreator;
     }
 
@@ -234,36 +234,35 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext)
+            throws AttributeResolutionException {
         String query = queryCreator.createStatement(queryTemplateName, resolutionContext,
                 getDataConnectorDependencyIds(), getDataConnectorDependencyIds());
 
-        Set<Attribute> resolvedAttributes = null;
+        if (log.isDebugEnabled()) {
+            log.debug("Data connector " + getId() + " resolving attributes with query: " + query);
+        }
 
-        resolvedAttributes = retrieveAttributesFromCache(resolutionContext.getAttributeRequestContext().getPrincipalName(), query);
+        Map<String, Attribute> resolvedAttributes = null;
+
+        resolvedAttributes = retrieveAttributesFromCache(resolutionContext.getAttributeRequestContext()
+                .getPrincipalName(), query);
 
         if (resolvedAttributes == null) {
             resolvedAttributes = retrieveAttributesFromDatabase(query);
         }
 
         if (cacheResults) {
-            Map<String, SoftReference<Set<Attribute>>> individualCache = resultsCache.get(resolutionContext
+            Map<String, SoftReference<Map<String, Attribute>>> individualCache = resultsCache.get(resolutionContext
                     .getAttributeRequestContext().getPrincipalName());
             if (individualCache == null) {
-                individualCache = new HashMap<String, SoftReference<Set<Attribute>>>();
+                individualCache = new HashMap<String, SoftReference<Map<String, Attribute>>>();
                 resultsCache.put(resolutionContext.getAttributeRequestContext().getPrincipalName(), individualCache);
             }
-            individualCache.put(query, new SoftReference<Set<Attribute>>(resolvedAttributes));
-        }
-        
-        // TODO: this was kind of a quick and dirty way to get convert a Map.  Ideally the whole class 
-        // should probably be updated to use Maps throughout
-        Map<String, Attribute> attributeMap = new HashMap<String, Attribute>();
-        for(Attribute attr : resolvedAttributes) {
-            attributeMap.put(attr.getId(), attr);
+            individualCache.put(query, new SoftReference<Map<String, Attribute>>(resolvedAttributes));
         }
 
-        return attributeMap;
+        return resolvedAttributes;
     }
 
     /** {@inheritDoc} */
@@ -302,13 +301,13 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** Clears the result cache. */
     protected void clearCache() {
-        if (cacheResults) {
+        if (resultsCache != null && cacheResults) {
             resultsCache.clear();
         }
     }
-    
+
     /** Registers the query template with template engine. */
-    protected void registerTemplate(){
+    protected void registerTemplate() {
         queryTemplateName = "shibboleth.resolver.dc." + getId();
         queryCreator.registerTemplate(queryTemplateName, queryTemplate);
     }
@@ -323,13 +322,21 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @throws AttributeResolutionException thrown if there is a problem retrieving data from the cache
      */
-    protected Set<Attribute> retrieveAttributesFromCache(String princpal, String query)
+    protected Map<String, Attribute> retrieveAttributesFromCache(String princpal, String query)
             throws AttributeResolutionException {
         if (!cacheResults) {
             return null;
         }
 
-        return resultsCache.get(princpal).get(query).get();
+        Map<String, SoftReference<Map<String, Attribute>>> queryCache = resultsCache.get(princpal);
+        if (queryCache != null) {
+            SoftReference<Map<String, Attribute>> cachedAttributes = queryCache.get(query);
+            if (cachedAttributes != null) {
+                return cachedAttributes.get();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -342,16 +349,17 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * @throws AttributeResolutionException thrown if there is a problem retrieving data from the database or
      *             transforming that data into {@link Attribute}s
      */
-    protected Set<Attribute> retrieveAttributesFromDatabase(String query) throws AttributeResolutionException {
-        Set<Attribute> resolvedAttributes;
+    protected Map<String, Attribute> retrieveAttributesFromDatabase(String query) throws AttributeResolutionException {
+        Map<String, Attribute> resolvedAttributes;
         Connection connection = null;
         ResultSet queryResult = null;
         try {
             connection = dataSource.getConnection();
+            if (readOnlyConnection) {
+                connection.setReadOnly(true);
+            }
             queryResult = connection.createStatement().executeQuery(query);
             resolvedAttributes = processResultSet(queryResult);
-            queryResult.close();
-            connection.close();
             return resolvedAttributes;
         } catch (SQLException e) {
             log.error("RDBMS Data Connector " + getId() + ": Unable to execute SQL query\n" + query, e);
@@ -382,71 +390,47 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @throws AttributeResolutionException thrown if there is a problem converting the result set into attributes
      */
-    protected Set<Attribute> processResultSet(ResultSet resultSet) throws AttributeResolutionException {
+    protected Map<String, Attribute> processResultSet(ResultSet resultSet) throws AttributeResolutionException {
+        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         try {
-            if (!resultSet.first()) {
-                return new HashSet<Attribute>();
+            if (!resultSet.next()) {
+                return attributes;
             }
 
             ResultSetMetaData resultMD = resultSet.getMetaData();
             int numOfCols = resultMD.getColumnCount();
-            Map<String, Attribute> attributes = prepareAttributeSetFromResultSet(resultMD);
-
-            // loop over result and add values to attributes
             String columnName;
             RDBMSColumnDescriptor columnDescriptor;
+            Attribute attribute;
             Set attributeValueSet;
-            while (resultSet.next()) {
-                for (int i = 0; i < numOfCols; i++) {
+            do {
+                for(int i = 1; i <= numOfCols; i++){
                     columnName = resultMD.getColumnName(i);
                     columnDescriptor = columnDescriptors.get(columnName);
-
-                    attributeValueSet = attributes.get(columnName).getValues();
-                    if (columnDescriptor == null || columnDescriptor.getDataType() == null) {
+                    
+                    if(columnDescriptor == null || columnDescriptor.getAttributeID() == null){
+                        attribute = attributes.get(columnName);
+                        if(attribute == null){
+                            attribute = new BasicAttribute(columnName);
+                        }
+                    }else{
+                        attribute = attributes.get(columnDescriptor.getAttributeID());
+                        if(attribute == null){
+                            attribute = new BasicAttribute(columnDescriptor.getAttributeID());
+                        }
+                    }
+                    
+                    attributes.put(attribute.getId(), attribute);
+                    attributeValueSet = attribute.getValues();
+                    if(columnDescriptor == null || columnDescriptor.getDataType() == null){
                         attributeValueSet.add(resultSet.getObject(i));
-                    } else {
+                    }else{
                         addValueByType(attributeValueSet, columnDescriptor.getDataType(), resultSet, i);
                     }
                 }
-            }
-
+            }while (resultSet.next());
         } catch (SQLException e) {
-            log.error("RDBMS Data Connector " + getId() + ": Unable to read data from query result set");
-        }
-        return null;
-    }
-
-    /**
-     * Prepares skeletal attributes ready to recieve values.
-     * 
-     * @param resultMetadata result set metadata
-     * 
-     * @return attributes ready to recieve values indexed by column name
-     * 
-     * @throws SQLException thrown if the given result set metadata can not be read
-     */
-    protected Map<String, Attribute> prepareAttributeSetFromResultSet(ResultSetMetaData resultMetadata)
-            throws SQLException {
-        int numOfCols = resultMetadata.getColumnCount();
-
-        BasicAttribute attribute;
-        HashMap<String, Attribute> attributes = new HashMap<String, Attribute>();
-        String columnName = null;
-        String attributeName = null;
-
-        // Create attributes that can place values in when looping through the result set
-        for (int i = 0; i < numOfCols; i++) {
-            columnName = resultMetadata.getColumnName(i);
-            if (columnDescriptors.containsKey(columnName)) {
-                attributeName = columnDescriptors.get(columnName).getAttributeName();
-            }
-            if (DatatypeHelper.isEmpty(attributeName)) {
-                attributeName = columnName;
-            }
-
-            attribute = new BasicAttribute();
-            attribute.setId(attributeName);
-            attributes.put(columnName, attribute);
+            log.error("RDBMS Data Connector " + getId() + ": Unable to read data from query result set", e);
         }
 
         return attributes;
@@ -486,7 +470,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             case Float:
                 valueSet.add(resultSet.getFloat(columnIndex));
                 break;
-            case Int:
+            case Integer:
                 valueSet.add(resultSet.getInt(columnIndex));
                 break;
             case Long:

@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.opensaml.xml.util.DatatypeHelper;
+
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
 
@@ -46,6 +48,17 @@ public class BasicAttribute<ValueType> extends Attribute<ValueType> implements C
 
     /** Constructor. */
     public BasicAttribute() {
+        encoders = new HashMap<String, AttributeEncoder>();
+        values = new TreeSet<ValueType>();
+    }
+    
+    /**
+     * Constructor.
+     *
+     * @param attributeId the ID of this attribute
+     */
+    public BasicAttribute(String attributeId){
+        id = DatatypeHelper.safeTrimOrNullString(attributeId);
         encoders = new HashMap<String, AttributeEncoder>();
         values = new TreeSet<ValueType>();
     }

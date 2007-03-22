@@ -3,7 +3,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" default-autowire="byType">
 
-    <bean id="shibboleth.VelocityEngine" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer" >
+    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" >
         <property name="velocityProperties">
             <props>
                 <prop key="resource.loader">classpath, string</prop>
@@ -17,7 +17,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.TemplateEngine" class="du.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.TemplateEngine" lazy-init="true">
+    <bean id="shibboleth.TemplateEngine" class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.TemplateEngine" lazy-init="true">
         <constructor-arg ref="shibboleth.VelocityEngine" />
     </bean>
     

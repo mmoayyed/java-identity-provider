@@ -286,24 +286,24 @@ public class AttributeAuthorityCLI {
         out.println("usage: java edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthorityCLI");
         out.println();
         out.println("Required Parameters:");
-        out.println(String.format("  --%-13s %s", CLIParserBuilder.CONFIG_DIR,
+        out.println(String.format("  --%-16s %s", CLIParserBuilder.CONFIG_DIR,
                 "Directory containing attribute authority configuration files"));
-        out.println(String.format("  --%-13s %s", CLIParserBuilder.PRINCIPAL,
+        out.println(String.format("  --%-16s %s", CLIParserBuilder.PRINCIPAL,
                 "Principal name (user id) of the person whose attributes will be retrieved"));
 
         out.println();
 
         out.println("Optional Parameters:");
-        out.println(String.format("  --%-13s %s", CLIParserBuilder.HELP, "Print this message"));
-        out.println(String.format("  --%-13s %s", CLIParserBuilder.REQUESTER,
+        out.println(String.format("  --%-16s %s", CLIParserBuilder.HELP, "Print this message"));
+        out.println(String.format("  --%-16s %s", CLIParserBuilder.REQUESTER,
                 "SAML entity ID of the relying party requesting the attributes. For example, the SPs entity ID"));
-        out.println(String.format("  --%-13s %s", CLIParserBuilder.ISSUER,
+        out.println(String.format("  --%-16s %s", CLIParserBuilder.ISSUER,
                 "SAML entity ID of the attribute issuer. For example, the IdPs entity ID"));
         out.println(String
-                .format("  --%-13s %s", CLIParserBuilder.AUTHN_METHOD, "Method used to authenticate the user"));
+                .format("  --%-16s %s", CLIParserBuilder.AUTHN_METHOD, "Method used to authenticate the user"));
         out
                 .println(String
-                        .format("  --%-13s %s", CLIParserBuilder.SAML1,
+                        .format("  --%-16s %s", CLIParserBuilder.SAML1,
                                 "No-value parameter indicating the attribute authority should answer as if it received a SAML 1 request"));
 
         out.println();

@@ -62,7 +62,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/ldap-2.7.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.1.1.jar"/>
+	<classpathentry kind="lib" path="build-lib/hsqldb-1.8.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
