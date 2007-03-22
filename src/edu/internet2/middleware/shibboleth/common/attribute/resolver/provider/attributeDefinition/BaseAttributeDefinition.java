@@ -40,6 +40,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
 
     /** Attribute encoders associated with this definition. */
     private Map<String, AttributeEncoder> encoders;
+    
+    /** Name of the attribute from data connectors to use to populate this definition. */
+    private String sourceAttribute;
 
     /**
      * Constructor.
@@ -130,7 +133,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
                 try {
                     Map<String, Attribute> attributes = connector.resolve(context);
                     for (String attributeId : attributes.keySet()) {
-                        if (attributeId != null && attributeId.equals(this.getId())) {
+                        if (attributeId != null && attributeId.equals(getSourceAttribute())) {
                             // TODO do we need any kind of connector mapping like in previous versions?
                             for (Object o : attributes.get(attributeId).getValues()) {
                                 values.add(o);
@@ -144,6 +147,26 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
         }
 
         return values;
+    }
+
+    /**
+     * Return the source attribute.  If the source attribute is null, return the definition ID.
+     * @return Returns the sourceAttribute.
+     */
+    public String getSourceAttribute() {
+        if (sourceAttribute != null) {
+            return sourceAttribute;
+        } else {
+            return getId();
+        }
+    }
+
+    /**
+     * Set the source attribute.
+     * @param newSourceAttribute The sourceAttribute to set.
+     */
+    public void setSourceAttribute(String newSourceAttribute) {
+        sourceAttribute = newSourceAttribute;
     }
 
 }

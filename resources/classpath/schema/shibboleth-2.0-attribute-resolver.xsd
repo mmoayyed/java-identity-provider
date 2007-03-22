@@ -85,6 +85,17 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="sourceAttribute" type="string" use="optional">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute from the data connector which should be used to populate this
+                            attribute definition. For example, an attribute definition for "eduPersonPrincipalName" may
+                            have a source attribute of "uid" along with an appropriate scope value. This is an optional
+                            attribute, and if left empty the ID of the attribute definition will be used for the source
+                            attribute.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
