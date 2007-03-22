@@ -30,8 +30,12 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
     public void init() {
         registerBeanDefinitionParser(SAML2StringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML2StringAttributeEncoderBeanDefinitionParser());
+        registerBeanDefinitionParser(SAML2ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML2ScopedStringAttributeEncoderBeanDefinitionParser());
         registerBeanDefinitionParser(SAML1StringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML1StringAttributeEncoderBeanDefinitionParser());
+        registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML1ScopedStringAttributeEncoderBeanDefinitionParser());
     }
 
 }

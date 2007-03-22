@@ -21,19 +21,19 @@ import javax.xml.namespace.QName;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2StringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1ScopedStringAttributeEncoder;
 
 /**
- * Spring Bean Definition Parser for SAML2 string attribute encoder.
+ * Spring Bean Definition Parser for SAML1 string attribute encoder.
  */
-public class SAML2StringAttributeEncoderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class SAML1ScopedStringAttributeEncoderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML2String");
-    
+    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1ScopedString");
+
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return SAML2StringAttributeEncoder.class;
+        return SAML1ScopedStringAttributeEncoder.class;
     }
 
 }

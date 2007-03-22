@@ -30,11 +30,10 @@ public class SAML1StringAttributeEncoderBeanDefinitionParser extends AbstractSim
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1String");
-    
+
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
         return SAML1StringAttributeEncoder.class;
     }
 
-  
 }
