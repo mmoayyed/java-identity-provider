@@ -85,7 +85,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sourceAttribute" type="string" use="optional">
+                <attribute name="sourceAttributeID" type="string" use="optional">
                     <annotation>
                         <documentation>
                             The name of the attribute from the data connector which should be used to populate this

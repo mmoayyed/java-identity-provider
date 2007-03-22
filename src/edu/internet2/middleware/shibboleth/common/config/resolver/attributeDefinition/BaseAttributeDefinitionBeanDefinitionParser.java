@@ -38,10 +38,16 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
     /** Local name of attribute encoder. */
     public static final String ATTRIBUTE_ENCODER_ELEMENT_LOCAL_NAME = "AttributeEncoder";
 
+    /** Local name of attribute encoder. */
+    public static final String SOURCE_ATTRIBUTEID_ATTRIBUTE_NAME = "sourceAttributeID";
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
+        // get source Attribute ID
+        builder.addPropertyValue("sourceAttributeID", element.getAttribute(SOURCE_ATTRIBUTEID_ATTRIBUTE_NAME));
+        
         // parse attribute encoders
         NodeList elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
                 ATTRIBUTE_ENCODER_ELEMENT_LOCAL_NAME);

@@ -42,7 +42,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     private Map<String, AttributeEncoder> encoders;
     
     /** Name of the attribute from data connectors to use to populate this definition. */
-    private String sourceAttribute;
+    private String sourceAttributeID;
 
     /**
      * Constructor.
@@ -133,7 +133,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
                 try {
                     Map<String, Attribute> attributes = connector.resolve(context);
                     for (String attributeId : attributes.keySet()) {
-                        if (attributeId != null && attributeId.equals(getSourceAttribute())) {
+                        if (attributeId != null && attributeId.equals(getSourceAttributeID())) {
                             // TODO do we need any kind of connector mapping like in previous versions?
                             for (Object o : attributes.get(attributeId).getValues()) {
                                 values.add(o);
@@ -153,9 +153,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * Return the source attribute.  If the source attribute is null, return the definition ID.
      * @return Returns the sourceAttribute.
      */
-    public String getSourceAttribute() {
-        if (sourceAttribute != null) {
-            return sourceAttribute;
+    public String getSourceAttributeID() {
+        if (sourceAttributeID != null) {
+            return sourceAttributeID;
         } else {
             return getId();
         }
@@ -163,10 +163,10 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
 
     /**
      * Set the source attribute.
-     * @param newSourceAttribute The sourceAttribute to set.
+     * @param newSourceAttributeID The sourceAttribute to set.
      */
-    public void setSourceAttribute(String newSourceAttribute) {
-        sourceAttribute = newSourceAttribute;
+    public void setSourceAttributeID(String newSourceAttributeID) {
+        sourceAttributeID = newSourceAttributeID;
     }
 
 }
