@@ -133,8 +133,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
                 try {
                     Map<String, Attribute> attributes = connector.resolve(context);
                     for (String attributeId : attributes.keySet()) {
-                        if (attributeId != null && attributeId.equals(getSourceAttributeID())) {
-                            // TODO do we need any kind of connector mapping like in previous versions?
+                        if (attributeId != null && 
+                                (getSourceAttributeID() != null && attributeId.equals(getSourceAttributeID())) ||
+                                    attributeId.equals(getId())){
                             for (Object o : attributes.get(attributeId).getValues()) {
                                 values.add(o);
                             }
