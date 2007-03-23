@@ -25,6 +25,7 @@ import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
 import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeEncoder;
 
 /**
@@ -76,12 +77,11 @@ public class SAML2ScopedStringAttributeEncoder extends
     }
 
     /** {@inheritDoc} */
-    public org.opensaml.saml2.core.Attribute encode(Attribute attribute) {
+    public org.opensaml.saml2.core.Attribute encode(Attribute attribute) throws AttributeEncodingException {
 
         if (!(attribute instanceof ScopedAttribute)) {
-            // TODO what should the appropriate action REALLY be here?
             log.error("This attribute encoder (" + getAttributeName() + ") expects a scoped attribute.");
-            throw new RuntimeException("This attribute encoder (" + getAttributeName()
+            throw new AttributeEncodingException("This attribute encoder (" + getAttributeName()
                     + ") expects a scoped attribute.");
         }
 

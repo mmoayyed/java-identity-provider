@@ -65,6 +65,8 @@ public interface AttributeEncoder<EncodedType> {
      * @param attribute the attribute to encode
      * 
      * @return the Object the attribute was encoded into
+     * 
+     * @throws AttributeEncodingException if unable to successfully encode attribute
      */
-    public EncodedType encode(Attribute attribute);
+    public EncodedType encode(Attribute attribute) throws AttributeEncodingException;
 }

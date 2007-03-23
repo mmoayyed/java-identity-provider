@@ -31,6 +31,8 @@ public interface DataConnector extends ResolutionPlugIn<Map<String, Attribute>> 
     /**
      * Returns the ID of a data connector to use if this one fails.
      * 
+     * TODO: at some point it'd be nice to support multiple failover dependencies
+     * 
      * @return String an Id
      */
     public String getFailoverDependencyId();

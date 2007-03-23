@@ -34,6 +34,7 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeEncoder;
@@ -255,7 +256,11 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
                 enc = defaultAttributeEncoder;
             }
             
-            encodedAttributes.add(enc.encode(entry.getValue()));
+            try {
+                encodedAttributes.add(enc.encode(entry.getValue()));
+            } catch (AttributeEncodingException e) {
+                log.warn("unable to encode attribute (" + entry.getKey() + "): " + e.getMessage());
+            }
         }
         if (log.isDebugEnabled()) {
             log.debug("attribute encoder encoded the following attributes: " + encodedAttributes);
