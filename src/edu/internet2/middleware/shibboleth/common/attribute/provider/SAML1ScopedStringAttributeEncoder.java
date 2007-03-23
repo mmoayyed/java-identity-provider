@@ -19,12 +19,13 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 import org.apache.log4j.Logger;
 import org.opensaml.saml1.core.AttributeValue;
 import org.opensaml.saml1.core.impl.AttributeBuilder;
+import org.opensaml.xml.XMLObjectBuilder;
 import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
 import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
 
 /**
  * Implementation of SAML 1.X scoped attribute encoder.
@@ -39,7 +40,7 @@ public class SAML1ScopedStringAttributeEncoder extends
     private static AttributeBuilder attributeBuilder;
 
     /** XSString factory. */
-    private static XSStringBuilder stringBuilder;
+    private static XMLObjectBuilder<? extends XSString> valueBuilder;
 
     /** Namespace of attribute. */
     private String namespace;
@@ -47,7 +48,7 @@ public class SAML1ScopedStringAttributeEncoder extends
     /** Constructor. */
     public SAML1ScopedStringAttributeEncoder() {
         attributeBuilder = new AttributeBuilder();
-        stringBuilder = new XSStringBuilder();
+        // valueBuilder = new ShibbolethScopedValueBuilder();
     }
 
     /** {@inheritDoc} */
@@ -78,15 +79,25 @@ public class SAML1ScopedStringAttributeEncoder extends
         // get attribute values
         for (Object o : attribute.getValues()) {
             String stringValue = o.toString();
+            
+            XSString xsstring;
 
-            // handle scopeType
-            if ("inline".equals(getScopeType())) {
-                stringValue += getScopeDelimiter() + ((ScopedAttribute) attribute).getScope();
-            } else if ("attribute".equals(getScopeType())) {
-                // TODO: how do we handle attribute scopeType for SAML1?
+            // handle "attribute" scopeType
+            if ("attribute".equals(getScopeType())) {
+                xsstring = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME,
+                        ShibbolethScopedValue.TYPE_NAME);
+                
+                ((ShibbolethScopedValue) xsstring).setScopeAttributeName(getScopeAttribute());
+                ((ShibbolethScopedValue) xsstring).setScope(((ScopedAttribute) attribute).getScope());
+            } else {
+                xsstring = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
             }
 
-            XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+            // handle "inline" scopeType
+            if ("inline".equals(getScopeType())) {
+                stringValue += getScopeDelimiter() + ((ScopedAttribute) attribute).getScope();
+            }
+
             xsstring.setValue(stringValue);
             samlAttribute.getAttributeValues().add(xsstring);
         }
