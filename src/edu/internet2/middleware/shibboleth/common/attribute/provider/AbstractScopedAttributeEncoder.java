@@ -18,8 +18,10 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 /**
  * Base class for scoped attribute encoders.
+ * 
+ * @param <EncodedType> the type of object created by encoding the attribute
  */
-public abstract class AbstractScopedAttributeEncoder extends AbstractAttributeEncoder {
+public abstract class AbstractScopedAttributeEncoder<EncodedType> extends AbstractAttributeEncoder<EncodedType> {
 
     /** Type of scoping to use. */
     private String scopeType;

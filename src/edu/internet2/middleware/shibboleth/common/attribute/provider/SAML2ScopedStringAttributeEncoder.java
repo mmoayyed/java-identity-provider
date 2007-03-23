@@ -21,7 +21,6 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
-import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
@@ -31,8 +30,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeEncode
 /**
  * Implementation of SAML 2.0 scoped attribute encoder.
  */
-public class SAML2ScopedStringAttributeEncoder extends AbstractScopedAttributeEncoder implements
-        SAML2AttributeEncoder<String> {
+public class SAML2ScopedStringAttributeEncoder extends
+        AbstractScopedAttributeEncoder<org.opensaml.saml2.core.Attribute> implements SAML2AttributeEncoder {
 
     /** Attribute factory. */
     private static AttributeBuilder attributeBuilder;
@@ -77,7 +76,7 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractScopedAttributeEn
     }
 
     /** {@inheritDoc} */
-    public XMLObject encode(Attribute attribute) {
+    public org.opensaml.saml2.core.Attribute encode(Attribute attribute) {
 
         if (!(attribute instanceof ScopedAttribute)) {
             // TODO what should the appropriate action REALLY be here?
@@ -97,14 +96,14 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractScopedAttributeEn
         if ("attribute".equals(getScopeType())) {
             QName scopeAttribute = new QName(null, getScopeAttribute());
             String scopeValue = ((ScopedAttribute) attribute).getScope();
-            
+
             samlAttribute.getUnknownAttributes().put(scopeAttribute, scopeValue);
         }
 
         // get attribute values
         for (Object o : attribute.getValues()) {
             String stringValue = o.toString();
-            
+
             // handle "inline" scopeType
             if ("inline".equals(getScopeType())) {
                 stringValue += getScopeDelimiter() + ((ScopedAttribute) attribute).getScope();
