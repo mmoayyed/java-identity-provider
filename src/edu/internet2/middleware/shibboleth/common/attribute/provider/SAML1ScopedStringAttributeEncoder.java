@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.opensaml.saml1.core.AttributeValue;
 import org.opensaml.saml1.core.impl.AttributeBuilder;
 import org.opensaml.xml.XMLObjectBuilder;
-import org.opensaml.xml.schema.XSString;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
@@ -40,7 +39,7 @@ public class SAML1ScopedStringAttributeEncoder extends
     private static AttributeBuilder attributeBuilder;
 
     /** XSString factory. */
-    private static XMLObjectBuilder<? extends XSString> valueBuilder;
+    private static XMLObjectBuilder<ShibbolethScopedValue> valueBuilder;
 
     /** Namespace of attribute. */
     private String namespace;
@@ -80,17 +79,14 @@ public class SAML1ScopedStringAttributeEncoder extends
         for (Object o : attribute.getValues()) {
             String stringValue = o.toString();
             
-            XSString xsstring;
+            ShibbolethScopedValue scopedValue;
+            scopedValue = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME,
+                    ShibbolethScopedValue.TYPE_NAME);
 
             // handle "attribute" scopeType
             if ("attribute".equals(getScopeType())) {
-                xsstring = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME,
-                        ShibbolethScopedValue.TYPE_NAME);
-                
-                ((ShibbolethScopedValue) xsstring).setScopeAttributeName(getScopeAttribute());
-                ((ShibbolethScopedValue) xsstring).setScope(((ScopedAttribute) attribute).getScope());
-            } else {
-                xsstring = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+                scopedValue.setScopeAttributeName(getScopeAttribute());
+                scopedValue.setScope(((ScopedAttribute) attribute).getScope());
             }
 
             // handle "inline" scopeType
@@ -98,8 +94,8 @@ public class SAML1ScopedStringAttributeEncoder extends
                 stringValue += getScopeDelimiter() + ((ScopedAttribute) attribute).getScope();
             }
 
-            xsstring.setValue(stringValue);
-            samlAttribute.getAttributeValues().add(xsstring);
+            scopedValue.setValue(stringValue);
+            samlAttribute.getAttributeValues().add(scopedValue);
         }
 
         return samlAttribute;
