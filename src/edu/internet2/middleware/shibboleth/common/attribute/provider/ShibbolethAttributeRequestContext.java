@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.ServletRequest;
@@ -62,7 +63,7 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
 
     /** Constructor. */
     public ShibbolethAttributeRequestContext(){
-        
+        requestedAttributes = new HashSet<String>();
     }
     
     /**

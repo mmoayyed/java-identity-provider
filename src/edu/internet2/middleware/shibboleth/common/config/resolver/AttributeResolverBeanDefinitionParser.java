@@ -47,11 +47,6 @@ public class AttributeResolverBeanDefinitionParser extends AbstractBeanDefinitio
     public static final String PRINCIPAL_CONNECTOR_ELEMENT_LOCAL_NAME = "PrincipalConnector";
 
     /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
         BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(AttributeResolverFactoryBean.class);
         BeanDefinitionBuilder resolver = BeanDefinitionBuilder.rootBeanDefinition(ShibbolethAttributeResolver.class);

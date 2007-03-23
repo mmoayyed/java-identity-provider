@@ -58,6 +58,14 @@
             <element ref="resolver:DataConnector" />
             <element ref="resolver:PrincipalConnector" />
         </choice>
+        <attribute name="id" type="string" default="shibboleth.AttributeResolver">
+            <annotation>
+                <documentation>
+                    Unique identifier for the attribute resolver instance created from this configuration. Deployers
+                    should not change this unless they know exactly what they are doing.
+                </documentation>
+            </annotation>
+        </attribute>
     </complexType>
 
     <element name="AttributeDefinition" type="resolver:BaseAttributeDefinitionType">

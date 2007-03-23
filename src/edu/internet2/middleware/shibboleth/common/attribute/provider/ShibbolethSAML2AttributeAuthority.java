@@ -155,14 +155,13 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
     /** {@inheritDoc} */
     public String getAttributeIDBySAMLAttribute(org.opensaml.saml2.core.Attribute attribute) {
         // TODO not implemented yet
-        return attribute.getName();
+        return null;
     }
 
     /** {@inheritDoc} */
     public org.opensaml.saml2.core.Attribute getSAMLAttributeByAttributeID(String id) {
-        org.opensaml.saml2.core.Attribute attribute = attributeBuilder.buildObject();
-        attribute.setName(id);
-        return attribute;
+        // TODO not implemented yet
+        return null;
     }
 
     /**
@@ -173,15 +172,16 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * @return attribute IDs for those attributes requested in the attribute query
      */
     protected Set<String> getAttributeIds(AttributeQuery query){
+        Set<String> queryAttributeIds = new HashSet<String>();
         if(query != null){
             List<org.opensaml.saml2.core.Attribute> queryAttributes = query.getAttributes();
-            Set<String> queryAttributeIds = getAttributeIds(queryAttributes);
+           queryAttributeIds = getAttributeIds(queryAttributes);
             if (log.isDebugEnabled()) {
                 log.debug("query message contains the following attributes: " + queryAttributeIds);
             }
         }
         
-        return null;
+        return queryAttributeIds;
     }
     
     /**
@@ -192,21 +192,20 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * @return attribute IDs for those attributes requested in the entity metadata
      */
     protected Set<String> getAttribtueIds(EntityDescriptor metadata){
+        Set<String> metadataAttributeIds = new HashSet<String>();
         AttributeAuthorityDescriptor aaDescriptor;
         if (metadata != null) {
             aaDescriptor = metadata.getAttributeAuthorityDescriptor(SAMLConstants.SAML20P_NS);
             if(aaDescriptor != null){
                 List<org.opensaml.saml2.core.Attribute> metadataAttributes = aaDescriptor.getAttributes();
-                Set<String> metadataAttributeIds = getAttributeIds(metadataAttributes);
+                metadataAttributeIds = getAttributeIds(metadataAttributes);
                 if (log.isDebugEnabled()) {
                     log.debug("metadata contains the following attributes: " + metadataAttributeIds);
                 }
-                
-                return metadataAttributeIds;
             }
         }
         
-        return null;
+        return metadataAttributeIds;
     }
     
     /**
@@ -276,7 +275,8 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      */
     protected AttributeStatement buildAttributeStatement(List<org.opensaml.saml2.core.Attribute> encodedAttributes) {
         AttributeStatement statement = statementBuilder.buildObject();
-        statement.getAttributes().addAll(encodedAttributes);
+        List<org.opensaml.saml2.core.Attribute> attributes = statement.getAttributes();
+        attributes.addAll(encodedAttributes);
         return statement;
     }
 }

@@ -45,19 +45,13 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="scopeType" type="string" use="optional">
+                <attribute name="scopeType" type="encoder:ScopeType" use="optional">
                     <annotation>
                         <documentation>
                             The type of scoping to use for the encoded attribute. Valid values are "inline" or
                             "attribute".
                         </documentation>
                     </annotation>
-                    <simpleType>
-                        <restriction base="string">
-                            <enumeration value="inline" />
-                            <enumeration value="attribute" />
-                        </restriction>
-                    </simpleType>
                 </attribute>
                 <attribute name="scopeDelimiter" type="string" use="optional" default="@">
                     <annotation>
@@ -90,7 +84,6 @@
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeType" type="string" use="optional" default="attribute" />
             </extension>
         </complexContent>
     </complexType>
@@ -111,9 +104,15 @@
                         <documentation>The SAML 2 FriendlyName of the attribute.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeType" type="string" use="optional" default="inline" />
             </extension>
         </complexContent>
     </complexType>
+
+    <simpleType name="ScopeType">
+        <restriction base="string">
+            <enumeration value="inline" />
+            <enumeration value="attribute" />
+        </restriction>
+    </simpleType>
 
 </schema>

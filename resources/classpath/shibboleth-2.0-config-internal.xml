@@ -30,22 +30,20 @@
         <property name="namespaceAware" value="true" />
     </bean>
     
-    <bean id="shibboleth.AttributeResolver" class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver">
-    
-    </bean>
-    
+    <!-- 
     <bean id="shibboleth.AttributeFilterEngine" class="edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine">
     
     </bean>
+    -->
     
     <bean id="shibboleth.SAML1AttributeAuthority" class="edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAML1AttributeAuthority">
         <constructor-arg ref="shibboleth.AttributeResolver" />
-        <property name="filteringEngine" ref="shibboleth.AttributeFilterEngine" />
+        <!-- property name="filteringEngine" ref="shibboleth.AttributeFilterEngine" /-->
     </bean>
     
     <bean id="shibboleth.SAML2AttributeAuthority" class="edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAML2AttributeAuthority">
         <constructor-arg ref="shibboleth.AttributeResolver" />
-        <property name="filteringEngine" ref="shibboleth.AttributeFilterEngine" />
+        <!-- property name="filteringEngine" ref="shibboleth.AttributeFilterEngine" /-->
     </bean>
     
 </beans>

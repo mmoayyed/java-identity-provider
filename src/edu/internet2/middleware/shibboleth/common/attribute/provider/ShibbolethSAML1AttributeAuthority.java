@@ -174,15 +174,16 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
      * @return attribute IDs for those attributes requested in the attribute query
      */
     protected Set<String> getAttributeIds(AttributeQuery query){
+        Set<String> queryAttributeIds = new HashSet<String>();
         if(query != null){
             List<AttributeDesignator> queryAttributes = query.getAttributeDesignators();
-            Set<String> queryAttributeIds = getAttributeIds(queryAttributes);
+            queryAttributeIds = getAttributeIds(queryAttributes);
             if (log.isDebugEnabled()) {
                 log.debug("query message contains the following attributes: " + queryAttributeIds);
             }
         }
         
-        return null;
+        return queryAttributeIds;
     }
     
     /**
@@ -193,8 +194,9 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
      * @return attribute IDs for those attributes requested in the entity metadata
      */
     protected Set<String> getAttribtueIds(EntityDescriptor metadata){
+        Set<String> metadataAttributeIds = new HashSet<String>();
         // TODO
-        return null;
+        return metadataAttributeIds;
     }
 
     /**
