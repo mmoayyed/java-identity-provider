@@ -6,3 +6,4 @@ urn\:mace\:shibboleth\:2.0\:afp = schema/shibboleth-2.0-afp.xsd
 urn\:mace\:shibboleth\:2.0\:afp\:mf\:basic = schema/shibboleth-2.0-afp-mf-basic.xsd
 urn\:mace\:shibboleth\:2.0\:metadata = schema/shibboleth-2.0-metadata.xsd
 urn\:mace\:shibboleth\:2.0\:credential = schema/shibboleth-2.0-credential.xsd
+urn\:mace\:shibboleth\:2.0\:attribute\:encoder = schema/shibboleth-2.0-attribute-encoder.xsd

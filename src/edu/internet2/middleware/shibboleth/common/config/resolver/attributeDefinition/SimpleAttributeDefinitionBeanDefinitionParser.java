@@ -20,9 +20,6 @@ import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.SimpleAttributeDefinition;
-
 /**
  * Spring Bean Definition Parser for static data connector.
  */
@@ -32,7 +29,7 @@ public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseAttribute
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:resolver:ad:simple", "Simple");
 
     /** {@inheritDoc} */
-    protected Class<? extends ResolutionPlugIn> getBeanClass(Element element) {
-        return SimpleAttributeDefinition.class;
+    protected Class getBeanClass(Element element) {
+        return SimpleAttributeDefinitionFactoryBean.class;
     }
 }

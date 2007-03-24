@@ -38,15 +38,14 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
     /** {@inheritDoc} */
     public void setUp() throws IOException {
         String[] configs = { "shibboleth-2.0-config-internal.xml",
-                                  "data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver-db.xml",};
-        
+                "data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver-db.xml", };
+
         ac = createSpringContext(configs);
     }
 
     /** Test Handle Request. */
     public void testResolverInstantiation() {
-        AttributeResolver resolver = (AttributeResolver) ac
-                .getBean("edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverFactoryBean");
+        AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
 
         ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
         context.setPrincipalName("lajoie");
@@ -56,7 +55,7 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
 
             assertEquals(4, attributes.size());
 
-            for(Attribute attribute : attributes){
+            for (Attribute attribute : attributes) {
                 System.out.println(attribute.getId() + ":" + attribute.getValues());
             }
         } catch (AttributeResolutionException e) {

@@ -25,9 +25,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 
 /**
  * Base class for Spring bean definition parser for Shibboleth resolver plug-ins.
@@ -44,7 +41,7 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
     public static final String PROPAGATE_ERRORS_ATTRIBUTE_NAME = "propagateErrors";
 
     /** {@inheritDoc} */
-    protected abstract Class<? extends ResolutionPlugIn> getBeanClass(Element element);
+    protected abstract Class getBeanClass(Element element);
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

@@ -16,36 +16,31 @@
 
 package edu.internet2.middleware.shibboleth.common.config.resolver.attributeEncoder;
 
-import javax.xml.namespace.QName;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1ScopedStringAttributeEncoder;
-
 /**
- * Spring Bean Definition Parser for SAML1 string attribute encoder.
+ * Base class for Spring bean definition parser for Shibboleth scoped attribute encoders.
  */
-public class SAML1ScopedStringAttributeEncoderBeanDefinitionParser extends
-        BaseScopedAttributeEncoderBeanDefinitionParser {
+public abstract class BaseScopedAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
 
-    /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1ScopedString");
+    /** Local name of scope type attribute. */
+    public static final String SCOPE_TYPE_ATTRIBUTE_NAME = "scopeType";
 
-    /** Local name of namespace attribute. */
-    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+    /** Local name of scope delimiter attribute. */
+    public static final String SCOPE_DELIMITER_ATTRIBUTE_NAME = "scopeDelimiter";
+
+    /** Local name of scope attribute attribute. */
+    public static final String SCOPE_ATTRIBUTE_ATTRIBUTE_NAME = "scopeAttribute";
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("namespace", element.getAttribute(NAMESPACE_ATTRIBUTE_NAME));
-    }
-
-    /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return SAML1ScopedStringAttributeEncoder.class;
+        builder.addPropertyValue("scopeType", element.getAttribute(SCOPE_TYPE_ATTRIBUTE_NAME));
+        builder.addPropertyValue("scopeDelimiter", element.getAttribute(SCOPE_DELIMITER_ATTRIBUTE_NAME));
+        builder.addPropertyValue("scopeAttribute", element.getAttribute(SCOPE_ATTRIBUTE_ATTRIBUTE_NAME));
     }
 
 }

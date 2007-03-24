@@ -22,9 +22,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ScopedAttributeDefinition;
-
 /**
  * Spring Bean Definition Parser for static data connector.
  */
@@ -37,8 +34,8 @@ public class ScopedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
     public static final String SCOPE_ATTRIBUTE_NAME = "scope";
     
     /** {@inheritDoc} */
-    protected Class<? extends ResolutionPlugIn> getBeanClass(Element element) {
-        return ScopedAttributeDefinition.class;
+    protected Class getBeanClass(Element element) {
+        return ScopedAttributeDefinitionFactoryBean.class;
     }
 
     /** {@inheritDoc} */

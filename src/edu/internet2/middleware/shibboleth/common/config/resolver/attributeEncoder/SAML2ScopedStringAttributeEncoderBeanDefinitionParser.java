@@ -18,7 +18,8 @@ package edu.internet2.middleware.shibboleth.common.config.resolver.attributeEnco
 
 import javax.xml.namespace.QName;
 
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2ScopedStringAttributeEncoder;
@@ -26,10 +27,25 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2Scoped
 /**
  * Spring Bean Definition Parser for SAML2 string attribute encoder.
  */
-public class SAML2ScopedStringAttributeEncoderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class SAML2ScopedStringAttributeEncoderBeanDefinitionParser extends
+        BaseScopedAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML2ScopedString");
+
+    /** Local name of name format attribute. */
+    public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
+
+    /** Local name of friendly name attribute. */
+    public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
+
+    /** {@inheritDoc} */
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+
+        builder.addPropertyValue("nameFormat", element.getAttribute(NAME_FORMAT_ATTRIBUTE_NAME));
+        builder.addPropertyValue("friendlyName", element.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
+    }
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {

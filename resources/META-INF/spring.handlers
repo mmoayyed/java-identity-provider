@@ -6,3 +6,4 @@ urn\:mace\:shibboleth\:2.0\:afp = edu.internet2.middleware.shibboleth.common.con
 urn\:mace\:shibboleth\:2.0\:afp\:mf\:basic = edu.internet2.middleware.shibboleth.common.config.filter.match.BasicMatchFunctorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:metadata = edu.internet2.middleware.shibboleth.common.config.metadata.MetadataNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:credential = edu.internet2.middleware.shibboleth.common.config.credential.CredentialNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:attribute\:encoder = edu.internet2.middleware.shibboleth.common.config.resolver.attributeEncoder.AttributeEncoderNamespaceHandler

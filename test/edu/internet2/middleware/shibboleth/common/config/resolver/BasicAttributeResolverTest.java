@@ -41,28 +41,27 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
      * 
      */
     public void testResolverInstantiation() {
-        AttributeResolver resolver = (AttributeResolver) ac
-                .getBean("edu.internet2.middleware.shibboleth.common.config.resolver.AttributeResolverFactoryBean");
-        
+        AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
+
         ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
         context.setPrincipalName("ttrojan");
-        
+
         SortedSet<String> expected = new TreeSet<String>();
         expected.add("gpburdell");
         expected.add("ttrojan");
-        
+
         try {
-                Collection<Attribute> actual = resolver.resolveAttributes(context).values();
-            
+            Collection<Attribute> actual = resolver.resolveAttributes(context).values();
+
             assertEquals(1, actual.size());
-            
+
             Attribute attribute = actual.iterator().next();
             assertEquals(2, attribute.getValues().size());
             assertEquals(expected, attribute.getValues());
         } catch (AttributeResolutionException e) {
             fail(e.getMessage());
         }
-        
+
     }
 
 }

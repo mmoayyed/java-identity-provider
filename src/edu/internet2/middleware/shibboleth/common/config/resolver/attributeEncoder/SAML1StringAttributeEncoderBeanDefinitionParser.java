@@ -18,7 +18,8 @@ package edu.internet2.middleware.shibboleth.common.config.resolver.attributeEnco
 
 import javax.xml.namespace.QName;
 
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1StringAttributeEncoder;
@@ -26,10 +27,20 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1String
 /**
  * Spring Bean Definition Parser for SAML1 string attribute encoder.
  */
-public class SAML1StringAttributeEncoderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class SAML1StringAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1String");
+
+    /** Local name of namespace attribute. */
+    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+
+    /** {@inheritDoc} */
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+
+        builder.addPropertyValue("namespace", element.getAttribute(NAMESPACE_ATTRIBUTE_NAME));
+    }
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {

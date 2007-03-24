@@ -38,8 +38,11 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
     /** Local name of attribute encoder. */
     public static final String ATTRIBUTE_ENCODER_ELEMENT_LOCAL_NAME = "AttributeEncoder";
 
-    /** Local name of attribute encoder. */
+    /** Local name of source attribute id attribute. */
     public static final String SOURCE_ATTRIBUTEID_ATTRIBUTE_NAME = "sourceAttributeID";
+
+    /** Local name of dependency only attribute. */
+    public static final String DEPENDENCY_ONLY_ATTRIBUTE_NAME = "dependencyOnly";
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -47,6 +50,8 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
 
         // get source Attribute ID
         builder.addPropertyValue("sourceAttributeID", element.getAttribute(SOURCE_ATTRIBUTEID_ATTRIBUTE_NAME));
+        
+        builder.addPropertyValue("dependencyOnly", element.getAttribute(DEPENDENCY_ONLY_ATTRIBUTE_NAME));
         
         // parse attribute encoders
         NodeList elements = element.getElementsByTagNameNS(AttributeResolverNamespaceHandler.NAMESPACE,
