@@ -52,21 +52,21 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="poolInitialSize" type="integer">
+                <attribute name="poolInitialSize" type="nonNegativeInteger" default="0">
                     <annotation>
                         <documentation>
                             Initial number of connections established to the directory when this connector starts up.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="poolMaxIdleSize" type="integer" default="3">
+                <attribute name="poolMaxIdleSize" type="nonNegativeInteger" default="3">
                     <annotation>
                         <documentation>
                             The maximum number of idle connections that will remain in the pool.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="searchTimeLimit" type="integer" default="3000">
+                <attribute name="searchTimeLimit" type="positiveInteger" default="3000">
                     <annotation>
                         <documentation>
                             The maximum amount of time, in milliseconds, to wait for search results. If this limit is
@@ -74,7 +74,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxResultSize" type="long" default="10">
+                <attribute name="maxResultSize" type="positiveInteger" default="1">
                     <annotation>
                         <documentation>The maximum number of results that may be returned from a query.</documentation>
                     </annotation>
@@ -91,7 +91,8 @@
                     <annotation>
                         <documentation>
                             A boolean flag inidicating that if multiple results are returned they should be merged into
-                            a single result that contains the combined attributes and values of all the results.
+                            a single result that contains the combined attributes and values of all the results. If more
+                            than one result is returned and this is set to false and exception will be thrown.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -131,5 +132,5 @@
             <enumeration value="OBJECT" />
         </restriction>
     </simpleType>
-    
+
 </schema>

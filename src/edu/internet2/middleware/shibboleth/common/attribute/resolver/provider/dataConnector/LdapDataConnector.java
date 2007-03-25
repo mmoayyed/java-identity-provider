@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.log4j.Logger;
@@ -45,6 +46,9 @@ import edu.vt.middleware.ldap.LdapUtil;
  */
 public class LdapDataConnector extends BaseDataConnector implements ApplicationListener {
 
+    /** Search scope values. */
+    public static enum SEARCH_SCOPE { OBJECT, ONELEVEL, SUBTREE };
+    
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnector.class);
 
@@ -282,32 +286,30 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * 
      * @return <code>int</code>
      */
-    public int getSearchScope() {
-        return ldapConfig.getSearchScope();
+    public SEARCH_SCOPE getSearchScope() {
+        int scope = ldapConfig.getSearchScope();
+        if(scope == SearchControls.OBJECT_SCOPE){
+            return SEARCH_SCOPE.OBJECT;
+        }else if(scope == SearchControls.ONELEVEL_SCOPE){
+            return SEARCH_SCOPE.ONELEVEL;
+        }else if(scope == SearchControls.SUBTREE_SCOPE){
+            return SEARCH_SCOPE.SUBTREE;
+        }else{
+            return null;
+        }
     }
 
     /**
      * Sets the searchScope.
      * 
-     * @param i <code>int</code>
+     * @param scope directory search scope
      */
-    public void setSearchScope(int i) {
-        ldapConfig.setSearchScope(i);
-        clearCache();
-        initializeLdapPool();
-    }
-
-    /**
-     * Sets the searchScope.
-     * 
-     * @param s <code>String</code>
-     */
-    public void setSearchScope(String s) {
-        if (s.equals("OBJECT_SCOPE")) {
+    public void setSearchScope(SEARCH_SCOPE scope) {
+        if (scope == SEARCH_SCOPE.OBJECT) {
             ldapConfig.useObjectScopeSearch();
-        } else if (s.equals("SUBTREE_SCOPE")) {
+        } else if (scope == SEARCH_SCOPE.SUBTREE) {
             ldapConfig.useSubTreeSearch();
-        } else if (s.equals("ONELEVEL_SCOPE")) {
+        } else if (scope == SEARCH_SCOPE.ONELEVEL) {
             ldapConfig.useOneLevelSearch();
         }
         clearCache();
