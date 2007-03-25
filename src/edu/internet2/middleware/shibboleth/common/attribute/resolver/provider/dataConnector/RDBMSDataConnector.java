@@ -54,6 +54,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(RDBMSDataConnector.class);
+    
+    private boolean initialized;
 
     /** JDBC data source for retrieving connections. */
     private DataSource dataSource;
@@ -93,6 +95,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * @param resultCaching whether query results should be cached
      */
     public RDBMSDataConnector(DataSource source, String validation, boolean resultCaching) {
+        initialized = false;
         dataSource = source;
         validationQuery = DatatypeHelper.safeTrimOrNullString(validation);
         cacheResults = resultCaching;
@@ -108,6 +111,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         if (cacheResults) {
             resultsCache = new HashMap<String, Map<String, SoftReference<Map<String, Attribute>>>>();
         }
+        initialized = true;
     }
 
     /**
@@ -181,7 +185,6 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     public void setTemplateEngine(TemplateEngine engine) {
         queryCreator = engine;
         registerTemplate();
-        clearCache();
     }
 
     /**
@@ -200,7 +203,6 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     public void setQueryTemplate(String template) {
         queryTemplate = template;
-        clearCache();
     }
 
     /**
@@ -210,17 +212,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * @return column descriptors used to deal with result set data
      */
     public Map<String, RDBMSColumnDescriptor> getColumnDescriptor() {
-        return Collections.unmodifiableMap(columnDescriptors);
-    }
-
-    /**
-     * Sets the column descriptors used to deal with result set data. The name of the database column is the map's key.
-     * 
-     * @param descriptors column descriptors used to deal with result set data
-     */
-    public void setColumnDescriptors(Map<String, RDBMSColumnDescriptor> descriptors) {
-        columnDescriptors = new HashMap<String, RDBMSColumnDescriptor>(descriptors);
-        clearCache();
+        return columnDescriptors;
     }
 
     /** {@inheritDoc} */
@@ -300,8 +292,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     }
 
     /** Clears the result cache. */
-    protected void clearCache() {
-        if (resultsCache != null && cacheResults) {
+    public void clearCache() {
+        if (initialized && cacheResults) {
             resultsCache.clear();
         }
     }

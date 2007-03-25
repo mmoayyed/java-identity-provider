@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.filter;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
-import edu.internet2.middleware.shibboleth.common.config.filter.AttributeFilterPolicyGroup;
+import edu.internet2.middleware.shibboleth.common.config.attribute.filtering.AttributeFilterPolicyGroup;
 
 /**
  * Tests parsing an attribute filter policy configuration.

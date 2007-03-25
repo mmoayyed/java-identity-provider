@@ -185,22 +185,13 @@
                 A base type for all attribute resolver plugins: data and principal connectors and attribute definitions
             </documentation>
         </annotation>
-        <choice minOccurs="0" maxOccurs="unbounded">
+        <sequence minOccurs="0" maxOccurs="unbounded">
             <element ref="resolver:AttributeDefinitionDependency" minOccurs="0" maxOccurs="unbounded" />
             <element ref="resolver:DataConnectorDependency" minOccurs="0" maxOccurs="unbounded" />
-        </choice>
+        </sequence>
         <attribute name="id" type="string" use="required">
             <annotation>
                 <documentation>A unique identifier for this definition.</documentation>
-            </annotation>
-        </attribute>
-        <attribute name="propagateErrors" type="boolean" default="true">
-            <annotation>
-                <documentation>
-                    A boolean flag indiciating whether errors within a definition should be propogated outside the
-                    resolver. Errors exposed outside the resolver will likely result in an error being returned to the
-                    relying party.
-                </documentation>
             </annotation>
         </attribute>
     </complexType>

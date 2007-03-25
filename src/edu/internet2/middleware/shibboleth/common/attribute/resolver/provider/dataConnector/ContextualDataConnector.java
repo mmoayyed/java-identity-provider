@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,8 +66,8 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public String getFailoverDependencyId() {
-        return connector.getFailoverDependencyId();
+    public List<String> getFailoverDependencyIds() {
+        return connector.getFailoverDependencyIds();
     }
 
     /** {@inheritDoc} */
@@ -75,14 +76,8 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public boolean getPropagateErrors() {
-        return connector.getPropagateErrors();
-    }
-
-    /** {@inheritDoc} */
     public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        // TODO: should we be dealing with failovers here?
         if (attributes == null) {
             attributes = connector.resolve(resolutionContext);
         }
@@ -94,5 +89,4 @@ public class ContextualDataConnector implements DataConnector {
     public void validate() throws AttributeResolutionException {
         connector.validate();
     }
-
 }

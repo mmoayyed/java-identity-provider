@@ -105,6 +105,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
+                    <annotation>
+                        <documentation>
+                            Name of the template engine defined within the applicaiton.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

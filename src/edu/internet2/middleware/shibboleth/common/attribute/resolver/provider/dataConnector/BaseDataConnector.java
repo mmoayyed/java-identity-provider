@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
+import java.util.List;
 import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
@@ -28,19 +29,19 @@ public abstract class BaseDataConnector extends AbstractResolutionPlugIn<Map<Str
         DataConnector {
 
     /** ID of the data connector to use if this one fails. */
-    private String failoverDependencyId;
+    private List<String> failoverDependencyIds;
 
     /** {@inheritDoc} */
-    public String getFailoverDependencyId() {
-        return failoverDependencyId;
+    public List<String> getFailoverDependencyIds() {
+        return failoverDependencyIds;
     }
 
     /**
-     * Set Id of FailoverDataConnector.
+     * Set the IDs of data connectors to use if this one fails.
      * 
-     * @param newFailoverDependencyId id of failover connector
+     * @param ids IDs of data connectors to use if this one fails
      */
-    public void setFailoverDependencyId(String newFailoverDependencyId) {
-        failoverDependencyId = newFailoverDependencyId;
+    public void setFailoverDependencyIds(List<String> ids) {
+        failoverDependencyIds = ids;
     }
 }

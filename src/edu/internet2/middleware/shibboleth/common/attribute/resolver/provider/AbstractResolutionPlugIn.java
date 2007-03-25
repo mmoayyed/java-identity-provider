@@ -33,9 +33,6 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
     /** The identifier for this plug-in. */
     private String id;
 
-    /** Whether to propagate errors out of the plug-in as exceptions. */
-    private boolean propagateErrors;
-
     /** IDs of the {@link AttributeDefinition}s this plug-in depends on. */
     private Set<String> attributeDefinitionDependencyIds;
 
@@ -88,19 +85,5 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
      */
     public void setId(String newId) {
         id = newId;
-    }
-
-    /** {@inheritDoc} */
-    public boolean getPropagateErrors() {
-        return propagateErrors;
-    }
-
-    /**
-     * Set propagate errors flag.
-     * 
-     * @param newPropagateErrors new flag value
-     */
-    public void setPropagateErrors(boolean newPropagateErrors) {
-        propagateErrors = newPropagateErrors;
     }
 }

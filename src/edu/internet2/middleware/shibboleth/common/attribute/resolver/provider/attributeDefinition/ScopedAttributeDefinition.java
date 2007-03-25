@@ -34,6 +34,15 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     /** Scope value. */
     private String scope;
     
+    /**
+     * Constructor.
+     *
+     * @param newScope scope of the attribute
+     */
+    public ScopedAttributeDefinition(String newScope){
+        this.scope = newScope;
+    }
+    
     /** {@inheritDoc} */
     public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving attribute: (" + getId() + ")");
@@ -54,14 +63,6 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
      */
     public String getScope() {
         return scope;
-    }
-
-    /**
-     * Set the scope value.
-     * @param newScope The scope to set.
-     */
-    public void setScope(String newScope) {
-        scope = newScope;
     }
 
     /** {@inheritDoc} */

@@ -63,11 +63,6 @@ public class ContextualPrincipalConnector implements PrincipalConnector {
     }
 
     /** {@inheritDoc} */
-    public boolean getPropagateErrors() {
-        return connector.getPropagateErrors();
-    }
-
-    /** {@inheritDoc} */
     public Set<String> getRelyingParties() {
         return connector.getRelyingParties();
     }

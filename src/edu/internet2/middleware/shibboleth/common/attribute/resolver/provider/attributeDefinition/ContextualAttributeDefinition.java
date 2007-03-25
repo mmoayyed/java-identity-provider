@@ -76,11 +76,6 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public boolean getPropagateErrors() {
-        return definition.getPropagateErrors();
-    }
-
-    /** {@inheritDoc} */
     public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         if (attribute == null) {
             attribute = definition.resolve(resolutionContext);

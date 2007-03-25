@@ -35,14 +35,6 @@ public interface ResolutionPlugIn<ResolvedType> {
     public String getId();
 
     /**
-     * Gets whether resolution exceptions should be propagated or just logged. If exceptions are not propagated the
-     * plugin is treated as if returned null during resolution.
-     * 
-     * @return whether resolution exceptions should be propagated or just logged
-     */
-    public boolean getPropagateErrors();
-
-    /**
      * Gets the IDs of the attribute definitions this plugin is dependent on.
      * 
      * @return IDs of the attribute definitions this plugin is dependent on
