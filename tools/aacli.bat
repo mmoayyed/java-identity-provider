@@ -1,9 +1,6 @@
 @echo off
 setlocal
 
-REM Find the necessary resources
-set ANT_HOME=.
-
 REM We need a JVM
 if not defined JAVA_HOME  (
   echo Error: JAVA_HOME is not defined.
@@ -28,6 +25,9 @@ REM add in the dependency .jar files
 for %%i in (%ANT_HOME%\build-lib\*.jar) do (
 	call %ANT_HOME%\tools\cpappend.bat %%i
 )
+for %%i in (%ANT_HOME%\lib\*.jar) do (
+	call %ANT_HOME%\tools\cpappend.bat %%i
+)
 
 if exist %JAVA_HOME%\lib\tools.jar (
     set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\tools.jar
@@ -37,4 +37,4 @@ if exist %JAVA_HOME%\lib\classes.zip (
     set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\classes.zip
 )
 
-%JAVACMD% -cp "%LOCALCLASSPATH%" -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e %*
+%JAVACMD% -cp "%LOCALCLASSPATH%" edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthorityCLI %*
