@@ -44,7 +44,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     }
     
     /** {@inheritDoc} */
-    public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Attribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving attribute: (" + getId() + ")");
 
         ScopedAttribute attribute = new ScopedAttribute();
@@ -54,6 +54,8 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
             attribute.getValues().add(o.toString());
         }
 
+        
+        
         return attribute;
     }
 

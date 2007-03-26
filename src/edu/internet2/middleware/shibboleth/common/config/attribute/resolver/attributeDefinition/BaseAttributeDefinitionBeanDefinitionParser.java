@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AbstractResolutionPlugInBeanDefinitionParser;
-import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeEncoder.AttributeEncoderNamespaceHandler;
+import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AttributeResolverNamespaceHandler;
 
 /**
  * Base spring bean definition parser for attribute definitions. AttributeDefinition implementations should
@@ -42,7 +42,7 @@ import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attr
 public abstract class BaseAttributeDefinitionBeanDefinitionParser extends AbstractResolutionPlugInBeanDefinitionParser {
 
     /** Local name of attribute encoder. */
-    public static final QName ATTRIBUTE_ENCODER_ELEMENT_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+    public static final QName ATTRIBUTE_ENCODER_ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "AttributeEncoder");
 
     /** Class logger. */

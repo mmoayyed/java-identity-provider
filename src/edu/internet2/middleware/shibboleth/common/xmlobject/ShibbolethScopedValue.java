@@ -18,12 +18,13 @@ package edu.internet2.middleware.shibboleth.common.xmlobject;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.common.SAMLObject;
 import org.opensaml.xml.schema.XSString;
 
 /**
  * Represents a string value that contains an attribute containing a scope.
  */
-public interface ShibbolethScopedValue extends XSString {
+public interface ShibbolethScopedValue extends XSString, SAMLObject {
 
     /** Local name of the XSI type. */
     public static final String TYPE_LOCAL_NAME = "ScopedValue";

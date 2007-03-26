@@ -32,7 +32,7 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
     private static Logger log = Logger.getLogger(SimpleAttributeDefinition.class);
 
     /** {@inheritDoc} */
-    public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    protected Attribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving attribute: (" + getId() + ")");
 
         BasicAttribute<Object> attribute = new BasicAttribute<Object>();

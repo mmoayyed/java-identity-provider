@@ -40,7 +40,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
 
     /** Attribute encoders associated with this definition. */
     private Map<String, AttributeEncoder> encoders;
-    
+
     /** Name of the attribute from data connectors to use to populate this definition. */
     private String sourceAttributeID;
 
@@ -71,6 +71,30 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     public Map<String, AttributeEncoder> getAttributeEncoders() {
         return encoders;
     }
+
+    /** {@inheritDoc} */
+    public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+        Attribute resolvedAttribute = doResolve(resolutionContext);
+
+        if (getAttributeEncoders() != null) {
+            resolvedAttribute.getEncoders().putAll(getAttributeEncoders());
+        }
+
+        return resolvedAttribute;
+    }
+
+    /**
+     * Creates and populates the values for the resolved attribute. Implimentations should *not* set, or otherwise
+     * manage, the attribute encoders for the resolved attribute.
+     * 
+     * @param resolutionContext current attribute resolution context
+     * 
+     * @return resolved attribute
+     * 
+     * @throws AttributeResolutionException thrown if there is a problem resolving and creating the attribute
+     */
+    protected abstract Attribute doResolve(ShibbolethResolutionContext resolutionContext)
+            throws AttributeResolutionException;
 
     /**
      * Get values from dependencies.
@@ -133,9 +157,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
                 try {
                     Map<String, Attribute> attributes = connector.resolve(context);
                     for (String attributeId : attributes.keySet()) {
-                        if (attributeId != null && 
-                                (getSourceAttributeID() != null && attributeId.equals(getSourceAttributeID())) ||
-                                    attributeId.equals(getId())){
+                        if (attributeId != null
+                                && (getSourceAttributeID() != null && attributeId.equals(getSourceAttributeID()))
+                                || attributeId.equals(getId())) {
                             for (Object o : attributes.get(attributeId).getValues()) {
                                 values.add(o);
                             }
@@ -151,7 +175,8 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     }
 
     /**
-     * Return the source attribute.  If the source attribute is null, return the definition ID.
+     * Return the source attribute. If the source attribute is null, return the definition ID.
+     * 
      * @return Returns the sourceAttribute.
      */
     public String getSourceAttributeID() {
@@ -164,6 +189,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
 
     /**
      * Set the source attribute.
+     * 
      * @param newSourceAttributeID The sourceAttribute to set.
      */
     public void setSourceAttributeID(String newSourceAttributeID) {
