@@ -58,7 +58,7 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
         if (log.isInfoEnabled()) {
             log.info("Parsing configuration for " + element.getLocalName() + " plugin with ID: " + pluginId);
         }
-        builder.addPropertyValue("id", pluginId);
+        builder.addPropertyValue("pluginId", pluginId);
 
         Map<QName, List<Element>> children = XMLHelper.getChildElements(element);
 
@@ -95,8 +95,7 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
 
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
-        // TODO Generate ID with scope so that there is no chance for conflicts
-        return super.resolveId(element, definition, parserContext);
+        return element.getAttributeNS(null, "id");
     }
 
     /**

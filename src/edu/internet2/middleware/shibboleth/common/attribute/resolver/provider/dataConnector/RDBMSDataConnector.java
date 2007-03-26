@@ -23,9 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,6 +53,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** Class logger. */
     private static Logger log = Logger.getLogger(RDBMSDataConnector.class);
     
+    /** Indicates whether this connector has been initialized. */
     private boolean initialized;
 
     /** JDBC data source for retrieving connections. */
@@ -95,6 +94,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * @param resultCaching whether query results should be cached
      */
     public RDBMSDataConnector(DataSource source, String validation, boolean resultCaching) {
+        super();
         initialized = false;
         dataSource = source;
         validationQuery = DatatypeHelper.safeTrimOrNullString(validation);

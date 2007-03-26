@@ -35,11 +35,18 @@ public class SimpleAttributeDefinitionFactoryBean extends BaseAttributeDefinitio
     protected Object createInstance() throws Exception {
         SimpleAttributeDefinition definition = new SimpleAttributeDefinition();
         definition.setId(getPluginId());
-        definition.setAttributeDefinitionDependencyIds(getAttributeDefinitionDependencyIds());
-        definition.setDataConnectorDependencyIds(getDataConnectorDependencyIds());
+        
+        if(getAttributeDefinitionDependencyIds() != null){
+            definition.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
+        }
+        
+        if(getDataConnectorDependencyIds() != null){
+            definition.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        }
+        
         definition.setSourceAttributeID(getSourceAttributeId());
 
-        List<AttributeEncoder> encoders = getAttributeEncoder();
+        List<AttributeEncoder> encoders = getAttributeEncoders();
         if (encoders != null && encoders.size() > 0) {
             for (AttributeEncoder encoder : encoders) {
                 definition.getAttributeEncoders().put(encoder.getEncoderCategory(), encoder);

@@ -48,12 +48,12 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
         AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
 
         ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
-        context.setPrincipalName("lajoie");
+        context.setPrincipalName("astone");
 
         try {
             Collection<Attribute> attributes = resolver.resolveAttributes(context).values();
 
-            assertEquals(4, attributes.size());
+            assertEquals(3, attributes.size());
 
             for (Attribute attribute : attributes) {
                 System.out.println(attribute.getId() + ":" + attribute.getValues());

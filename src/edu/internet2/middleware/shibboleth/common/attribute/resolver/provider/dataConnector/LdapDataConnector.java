@@ -99,6 +99,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * @param initIdleCapacity <code>int</code> initial capacity of the pool
      */
     public LdapDataConnector(boolean startTls, int maxIdle, int initIdleCapacity) {
+        super();
         ldapConfig = new LdapConfig();
         ldapConfig.useTls(startTls);
         poolMaxIdle = maxIdle;

@@ -56,9 +56,19 @@ public class StaticDataConnectorFactoryBean extends BaseDataConnectorBeanFactory
     protected Object createInstance() throws Exception {
         StaticDataConnector connector = new StaticDataConnector(staticAttributes);
         connector.setId(getPluginId());
-        connector.setAttributeDefinitionDependencyIds(getAttributeDefinitionDependencyIds());
-        connector.setDataConnectorDependencyIds(getDataConnectorDependencyIds());
-        connector.setFailoverDependencyIds(getFailoverDataConnectorIds());
+
+        if(getAttributeDefinitionDependencyIds() != null){
+            connector.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
+        }
+        
+        if(getDataConnectorDependencyIds() != null){
+            connector.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        }
+        
+        if(getFailoverDataConnectorIds()!= null){
+            connector.getFailoverDependencyIds().addAll(getFailoverDataConnectorIds());
+        }
+        
         return connector;
     }
 }

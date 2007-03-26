@@ -40,7 +40,7 @@ public abstract class BaseAttributeDefinitionFactoryBean extends AbstractResolut
      * 
      * @return encoders for the attributes
      */
-    public List<AttributeEncoder> getAttributeEncoder() {
+    public List<AttributeEncoder> getAttributeEncoders() {
         return attributeEncoders;
     }
 
@@ -49,7 +49,7 @@ public abstract class BaseAttributeDefinitionFactoryBean extends AbstractResolut
      * 
      * @param encoders encoders for the attributes
      */
-    public void setAttributeEncoder(List<AttributeEncoder> encoders) {
+    public void setAttributeEncoders(List<AttributeEncoder> encoders) {
         attributeEncoders = encoders;
     }
 

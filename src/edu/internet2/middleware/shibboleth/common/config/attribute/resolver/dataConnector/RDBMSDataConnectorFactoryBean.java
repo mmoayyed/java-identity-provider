@@ -208,9 +208,6 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory 
         RDBMSDataConnector connector = new RDBMSDataConnector(getConnectionDataSource(),
                 getConnectionValidationQuery(), getCacheResults());
         connector.setId(getPluginId());
-        connector.setAttributeDefinitionDependencyIds(getAttributeDefinitionDependencyIds());
-        connector.setDataConnectorDependencyIds(getDataConnectorDependencyIds());
-        connector.setFailoverDependencyIds(getFailoverDataConnectorIds());
         connector.setTemplateEngine(getTemplateEngine());
         connector.setQueryTemplate(getQueryTemplate());
         connector.setUsesStoredProcedure(getQueryUsesStoredProcedures());
@@ -221,6 +218,18 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory 
             for (RDBMSColumnDescriptor descriptor : getColumnDescriptors()) {
                 columnDecriptors.put(descriptor.getColumnName(), descriptor);
             }
+        }
+        
+        if(getAttributeDefinitionDependencyIds() != null){
+            connector.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
+        }
+        
+        if(getDataConnectorDependencyIds() != null){
+            connector.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        }
+        
+        if(getFailoverDataConnectorIds()!= null){
+            connector.getFailoverDependencyIds().addAll(getFailoverDataConnectorIds());
         }
 
         connector.initialize();

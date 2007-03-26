@@ -307,22 +307,31 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        LdapDataConnector ldapDC = new LdapDataConnector(useStartTLS, poolInitialSize, poolMaxIdle);
-        ldapDC.setLdapProperties(ldapProperties);
-        ldapDC.setCountLimit(maxResultSize);
-        ldapDC.setMergeMultipleResults(mergeResults);
-        ldapDC.setNoResultsIsError(noResultsIsError);
-        ldapDC.setReturnAttributes(returnAttributes);
-        ldapDC.setSearchScope(searchScope);
-        ldapDC.setTimeLimit(searchTimeLimit);
-        ldapDC.setTemplateEngine(templateEngine);
-        ldapDC.setAttributeDefinitionDependencyIds(getAttributeDefinitionDependencyIds());
-        ldapDC.setDataConnectorDependencyIds(getDataConnectorDependencyIds());
-        ldapDC.setFailoverDependencyIds(getFailoverDataConnectorIds());
-        ldapDC.setId(getPluginId());
+        LdapDataConnector connector = new LdapDataConnector(useStartTLS, poolInitialSize, poolMaxIdle);
+        connector.setId(getPluginId());
+        connector.setLdapProperties(ldapProperties);
+        connector.setCountLimit(maxResultSize);
+        connector.setMergeMultipleResults(mergeResults);
+        connector.setNoResultsIsError(noResultsIsError);
+        connector.setReturnAttributes(returnAttributes);
+        connector.setSearchScope(searchScope);
+        connector.setTimeLimit(searchTimeLimit);
+        connector.setTemplateEngine(templateEngine);
         
-        ldapDC.initialize();
+        if(getAttributeDefinitionDependencyIds() != null){
+            connector.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
+        }
         
-        return ldapDC;
+        if(getDataConnectorDependencyIds() != null){
+            connector.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        }
+        
+        if(getFailoverDataConnectorIds()!= null){
+            connector.getFailoverDependencyIds().addAll(getFailoverDataConnectorIds());
+        }
+        
+        connector.initialize();
+        
+        return connector;
     }
 }
