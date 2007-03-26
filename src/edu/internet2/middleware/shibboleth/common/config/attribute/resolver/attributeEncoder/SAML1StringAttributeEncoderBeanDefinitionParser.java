@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.att
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -32,14 +33,12 @@ public class SAML1StringAttributeEncoderBeanDefinitionParser extends BaseAttribu
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1String");
 
-    /** Local name of namespace attribute. */
-    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
-
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("namespace", element.getAttribute(NAMESPACE_ATTRIBUTE_NAME));
+        String namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "namespace"));
+        builder.addPropertyValue("namespace", namespace);
     }
 
     /** {@inheritDoc} */

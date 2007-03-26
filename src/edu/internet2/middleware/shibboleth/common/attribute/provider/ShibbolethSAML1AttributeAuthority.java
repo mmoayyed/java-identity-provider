@@ -160,9 +160,8 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
 
     /** {@inheritDoc} */
     public AttributeDesignator getSAMLAttributeByAttributeID(String id) {
-        AttributeDesignator attribute = attributeBuilder.buildObject();
-        attribute.setAttributeName(id);
-        return attribute;
+        // TODO
+        return null;
     }
     
 
@@ -229,6 +228,10 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
         SAML1StringAttributeEncoder defaultAttributeEncoder;
         for (Map.Entry<String, Attribute> entry : resolvedAttributes.entrySet()) {
             shibbolethAttribute = entry.getValue();
+            if(shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() ==0){
+                continue;
+            }
+            
             enc = shibbolethAttribute.getEncoderByCategory(SAML1AttributeEncoder.CATEGORY);
             if(enc == null){
                 defaultAttributeEncoder = new SAML1StringAttributeEncoder();

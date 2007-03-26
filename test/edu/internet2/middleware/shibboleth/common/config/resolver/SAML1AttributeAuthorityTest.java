@@ -17,20 +17,20 @@
 package edu.internet2.middleware.shibboleth.common.config.resolver;
 
 import org.opensaml.Configuration;
-import org.opensaml.saml2.core.AttributeStatement;
+import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
 /**
- * Unit tests for {@link SAML2AttributeAuthority}
+ * Unit tests for {@link SAML1AttributeAuthority}.
  */
-public class SAML2AttributeAuthorityTest extends BaseConfigTestCase {
+public class SAML1AttributeAuthorityTest extends BaseConfigTestCase {
 
     /** Application Context. */
     private ApplicationContext ac;
@@ -45,17 +45,15 @@ public class SAML2AttributeAuthorityTest extends BaseConfigTestCase {
     }
 
     public void testResolution() throws Exception {
-        SAML2AttributeAuthority aa = (SAML2AttributeAuthority) ac.getBean("shibboleth.SAML2AttributeAuthority");
+        SAML1AttributeAuthority aa = (SAML1AttributeAuthority) ac.getBean("shibboleth.SAML1AttributeAuthority");
 
         ShibbolethAttributeRequestContext requestContext = new ShibbolethAttributeRequestContext();
-        requestContext.setPrincipalName("astone");
-        requestContext.getRequestedAttributes().add("uid");
-        requestContext.getRequestedAttributes().add("email");
+        requestContext.setPrincipalName("ptracy");
 
-            AttributeStatement attributes = aa.performAttributeQuery(requestContext);
+        AttributeStatement attributes = aa.performAttributeQuery(requestContext);
 
-            Marshaller marshaller = Configuration.getMarshallerFactory().getMarshaller(attributes);
-            Element asElem = marshaller.marshall(attributes);
-            System.out.println(XMLHelper.nodeToString(asElem));
+        Marshaller marshaller = Configuration.getMarshallerFactory().getMarshaller(attributes);
+        Element asElem = marshaller.marshall(attributes);
+        System.out.println(XMLHelper.nodeToString(asElem));
     }
 }

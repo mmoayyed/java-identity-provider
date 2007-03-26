@@ -238,6 +238,10 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
         SAML2StringAttributeEncoder defaultAttributeEncoder;
         for (Map.Entry<String, Attribute> entry : resolvedAttributes.entrySet()) {
             shibbolethAttribute = entry.getValue();
+            if(shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() ==0){
+                continue;
+            }
+            
             enc = shibbolethAttribute.getEncoderByCategory(SAML2AttributeEncoder.CATEGORY);
             if(enc == null){
                 defaultAttributeEncoder = new SAML2StringAttributeEncoder();
