@@ -437,7 +437,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     public void setLdapProperties(Map<String, String> ldapProperties) {
         for (Map.Entry<String, String> entry : ldapProperties.entrySet()) {
-            ldapConfig.setExtraProperties(entry.getKey(), entry.getValue());
+            ldapConfig.setEnvironmentProperties(entry.getKey(), entry.getValue());
         }
         clearCache();
         initializeLdapPool();

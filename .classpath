@@ -61,7 +61,7 @@
 			<attribute name="javadoc_location" value="http://www.jgrapht.org/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/ldap-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/vt-ldap-2.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.1.1.jar"/>
 	<classpathentry kind="lib" path="build-lib/hsqldb-1.8.0.7.jar"/>
