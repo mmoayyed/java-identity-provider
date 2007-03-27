@@ -52,7 +52,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(RDBMSDataConnector.class);
-    
+
     /** Indicates whether this connector has been initialized. */
     private boolean initialized;
 
@@ -324,6 +324,10 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         if (queryCache != null) {
             SoftReference<Map<String, Attribute>> cachedAttributes = queryCache.get(query);
             if (cachedAttributes != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("RDBMS Data Connector " + getId() + ": Fetched attributes from cache for principal "
+                            + princpal + " with query " + query);
+                }
                 return cachedAttributes.get();
             }
         }
@@ -350,8 +354,16 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             if (readOnlyConnection) {
                 connection.setReadOnly(true);
             }
+            if (log.isDebugEnabled()) {
+                log.debug("RDBMS Data Connector " + getId() + ": Querying database for attributes with query: "
+                                + query);
+            }
             queryResult = connection.createStatement().executeQuery(query);
             resolvedAttributes = processResultSet(queryResult);
+            if (log.isDebugEnabled()) {
+                log.debug("RDBMS Data Connector " + getId() + ": Retrieved  " + resolvedAttributes.size()
+                        + " attributes: " + resolvedAttributes.keySet());
+            }
             return resolvedAttributes;
         } catch (SQLException e) {
             log.error("RDBMS Data Connector " + getId() + ": Unable to execute SQL query\n" + query, e);
@@ -396,31 +408,31 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             Attribute attribute;
             Set attributeValueSet;
             do {
-                for(int i = 1; i <= numOfCols; i++){
+                for (int i = 1; i <= numOfCols; i++) {
                     columnName = resultMD.getColumnName(i);
                     columnDescriptor = columnDescriptors.get(columnName);
-                    
-                    if(columnDescriptor == null || columnDescriptor.getAttributeID() == null){
+
+                    if (columnDescriptor == null || columnDescriptor.getAttributeID() == null) {
                         attribute = attributes.get(columnName);
-                        if(attribute == null){
+                        if (attribute == null) {
                             attribute = new BasicAttribute(columnName);
                         }
-                    }else{
+                    } else {
                         attribute = attributes.get(columnDescriptor.getAttributeID());
-                        if(attribute == null){
+                        if (attribute == null) {
                             attribute = new BasicAttribute(columnDescriptor.getAttributeID());
                         }
                     }
-                    
+
                     attributes.put(attribute.getId(), attribute);
                     attributeValueSet = attribute.getValues();
-                    if(columnDescriptor == null || columnDescriptor.getDataType() == null){
+                    if (columnDescriptor == null || columnDescriptor.getDataType() == null) {
                         attributeValueSet.add(resultSet.getObject(i));
-                    }else{
+                    } else {
                         addValueByType(attributeValueSet, columnDescriptor.getDataType(), resultSet, i);
                     }
                 }
-            }while (resultSet.next());
+            } while (resultSet.next());
         } catch (SQLException e) {
             log.error("RDBMS Data Connector " + getId() + ": Unable to read data from query result set", e);
         }
