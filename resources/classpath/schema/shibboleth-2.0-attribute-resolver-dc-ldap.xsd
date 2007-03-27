@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc:ldap" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:ldap="urn:mace:shibboleth:2.0:resolver:dc:ldap">
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:ldap="urn:mace:shibboleth:2.0:resolver:dc:ldap"
+    elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
@@ -22,14 +23,6 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="SearchScope" type="ldap:SearchScopeType" minOccurs="0">
-                        <annotation>
-                            <documentation>
-                                The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTRE. If no scope is
-                                given SUBTREE is used.
-                            </documentation>
-                        </annotation>
-                    </element>
                     <element name="ReturnAttributes" type="string" minOccurs="0">
                         <annotation>
                             <documentation>
@@ -45,6 +38,31 @@
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="ldapUrl" type="string" use="required">
+                    <annotation>
+                        <documentation>The URL to the LDAP server.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principal" type="string">
+                    <annotation>
+                        <documentation>The DN for the principal connecting the LDAP directory.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principalCredential" type="string">
+                    <annotation>
+                        <documentation>
+                            The credential for the principal connecting to the LDAP directory.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchScope" type="ldap:SearchScopeType">
+                    <annotation>
+                        <documentation>
+                            The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTRE. If no scope is given
+                            SUBTREE is used.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="useStartTLS" type="boolean" default="false">
                     <annotation>
                         <documentation>
@@ -107,9 +125,7 @@
                 </attribute>
                 <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
                     <annotation>
-                        <documentation>
-                            Name of the template engine defined within the applicaiton.
-                        </documentation>
+                        <documentation>Name of the template engine defined within the applicaiton.</documentation>
                     </annotation>
                 </attribute>
             </extension>

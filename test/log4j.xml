@@ -48,7 +48,7 @@
          <!-- param name="ConversionPattern" value="%d %-5p [%c] %m%n"/-->
          
          <!-- The debug pattern (very slow): Date Priority [Class#Method:Line Number] Message -->
-         <param name="ConversionPattern" value="%d %-5p [%C#%M:%L] %m%n"/>
+         <param name="ConversionPattern" value="%d %-5p [%C{1}#%M:%L] %m%n"/>
       </layout>
    </appender>
 

@@ -202,7 +202,7 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
      * 
      * @return maximum number of idle connection that will be kept in the connection pool
      */
-    public int getPoolMaxIdle() {
+    public int getPoolMaxIdleSize() {
         return poolMaxIdle;
     }
 
@@ -211,7 +211,7 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
      * 
      * @param maxIdle maximum number of idle connection that will be kept in the connection pool
      */
-    public void setPoolMaxIdle(int maxIdle) {
+    public void setPoolMaxIdleSize(int maxIdle) {
         poolMaxIdle = maxIdle;
     }
 
@@ -310,6 +310,7 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
         LdapDataConnector connector = new LdapDataConnector(useStartTLS, poolInitialSize, poolMaxIdle);
         connector.setId(getPluginId());
         connector.setLdapProperties(ldapProperties);
+        connector.setFilterTemplate(getFilterTemplate());
         connector.setCountLimit(maxResultSize);
         connector.setMergeMultipleResults(mergeResults);
         connector.setNoResultsIsError(noResultsIsError);
