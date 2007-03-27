@@ -24,7 +24,6 @@ import java.util.StringTokenizer;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.log4j.Logger;
@@ -47,8 +46,15 @@ import edu.vt.middleware.ldap.LdapUtil;
 public class LdapDataConnector extends BaseDataConnector implements ApplicationListener {
 
     /** Search scope values. */
-    public static enum SEARCH_SCOPE { OBJECT, ONELEVEL, SUBTREE };
-    
+    public static enum SEARCH_SCOPE {
+        OBJECT, ONELEVEL, SUBTREE
+    };
+
+    /** Authentication type values. */
+    public static enum AUTHENTICATION_TYPE {
+        ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI
+    };
+
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnector.class);
 
@@ -94,13 +100,15 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /**
      * This creates a new ldap data connector with the supplied pool properties.
      * 
+     * @param ldapUrl <code>String</code> to connect to
+     * @param ldapBaseDn <code>String</code> to begin searching at
      * @param startTls <code>boolean</code> whether connection should startTls
      * @param maxIdle <code>int</code> maximum number of idle pool objects
      * @param initIdleCapacity <code>int</code> initial capacity of the pool
      */
-    public LdapDataConnector(boolean startTls, int maxIdle, int initIdleCapacity) {
+    public LdapDataConnector(String ldapUrl, String ldapBaseDn, boolean startTls, int maxIdle, int initIdleCapacity) {
         super();
-        ldapConfig = new LdapConfig();
+        ldapConfig = new LdapConfig(ldapUrl, ldapBaseDn);
         ldapConfig.useTls(startTls);
         poolMaxIdle = maxIdle;
         poolInitIdleCapacity = initIdleCapacity;
@@ -156,20 +164,20 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the mergeMultipleResults.
+     * Returns the mergeResults.
      * 
      * @return <code>boolean</code>
      */
-    public boolean isMergeMultipleResults() {
+    public boolean isMergeResults() {
         return mergeMultipleResults;
     }
 
     /**
-     * Sets the mergeMultipleResults.
+     * Sets the mergeResults.
      * 
      * @param b <code>boolean</code>
      */
-    public void setMergeMultipleResults(boolean b) {
+    public void setMergeResults(boolean b) {
         mergeMultipleResults = b;
         clearCache();
     }
@@ -274,6 +282,24 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
+     * Returns the ldapUrl.
+     * 
+     * @return <code>String</code>
+     */
+    public String getLdapUrl() {
+        return ldapConfig.getHost();
+    }
+
+    /**
+     * Returns the baseDn.
+     * 
+     * @return <code>String</code>
+     */
+    public String getBaseDn() {
+        return ldapConfig.getBase();
+    }
+
+    /**
      * Returns the useStartTls.
      * 
      * @return <code>boolean</code>
@@ -283,21 +309,110 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
+     * Returns the sslSocketFactory.
+     * 
+     * @return <code>String</code>
+     */
+    public String getSslSocketFactory() {
+        return ldapConfig.getSslSocketFactory();
+    }
+
+    /**
+     * Sets the sslSocketFactory.
+     * 
+     * @param s <code>String</code>
+     */
+    public void setSslSocketFactory(String s) {
+        ldapConfig.setSslSocketFactory(s);
+        clearCache();
+        initializeLdapPool();
+    }
+
+    /**
+     * Returns the hostnameVerifier.
+     * 
+     * @return <code>String</code>
+     */
+    public String getHostnameVerifier() {
+        return ldapConfig.getHostnameVerifier();
+    }
+
+    /**
+     * Sets the hostnameVerifier.
+     * 
+     * @param s <code>String</code>
+     */
+    public void setHostnameVerifier(String s) {
+        ldapConfig.setHostnameVerifier(s);
+        clearCache();
+        initializeLdapPool();
+    }
+
+    /**
+     * Returns the authenticationType.
+     * 
+     * @return <code>AUTHENTICATION_TYPE</code>
+     */
+    public AUTHENTICATION_TYPE getAuthenticationType() {
+        AUTHENTICATION_TYPE type = null;
+        if (ldapConfig.isAnonymousAuth()) {
+            type = AUTHENTICATION_TYPE.ANONYMOUS;
+        } else if (ldapConfig.isSimpleAuth()) {
+            type = AUTHENTICATION_TYPE.SIMPLE;
+        } else if (ldapConfig.isStrongAuth()) {
+            type = AUTHENTICATION_TYPE.STRONG;
+        } else if (ldapConfig.isExternalAuth()) {
+            type = AUTHENTICATION_TYPE.EXTERNAL;
+        } else if (ldapConfig.isDigestMD5Auth()) {
+            type = AUTHENTICATION_TYPE.DIGEST_MD5;
+        } else if (ldapConfig.isCramMD5Auth()) {
+            type = AUTHENTICATION_TYPE.CRAM_MD5;
+        } else if (ldapConfig.isGSSAPIAuth()) {
+            type = AUTHENTICATION_TYPE.GSSAPI;
+        }
+        return type;
+    }
+
+    /**
+     * Sets the authenticationType.
+     * 
+     * @param type <code>AUTHENTICATION_TYPE</code>
+     */
+    public void setAuthenticationType(AUTHENTICATION_TYPE type) {
+        if (type == AUTHENTICATION_TYPE.ANONYMOUS) {
+            ldapConfig.useAnonymousAuth();
+        } else if (type == AUTHENTICATION_TYPE.SIMPLE) {
+            ldapConfig.useSimpleAuth();
+        } else if (type == AUTHENTICATION_TYPE.STRONG) {
+            ldapConfig.useStrongAuth();
+        } else if (type == AUTHENTICATION_TYPE.EXTERNAL) {
+            ldapConfig.useExternalAuth();
+        } else if (type == AUTHENTICATION_TYPE.DIGEST_MD5) {
+            ldapConfig.useDigestMD5Auth();
+        } else if (type == AUTHENTICATION_TYPE.CRAM_MD5) {
+            ldapConfig.useCramMD5Auth();
+        } else if (type == AUTHENTICATION_TYPE.GSSAPI) {
+            ldapConfig.useGSSAPIAuth();
+        }
+        clearCache();
+        initializeLdapPool();
+    }
+
+    /**
      * Returns the searchScope.
      * 
      * @return <code>int</code>
      */
     public SEARCH_SCOPE getSearchScope() {
-        int scope = ldapConfig.getSearchScope();
-        if(scope == SearchControls.OBJECT_SCOPE){
-            return SEARCH_SCOPE.OBJECT;
-        }else if(scope == SearchControls.ONELEVEL_SCOPE){
-            return SEARCH_SCOPE.ONELEVEL;
-        }else if(scope == SearchControls.SUBTREE_SCOPE){
-            return SEARCH_SCOPE.SUBTREE;
-        }else{
-            return null;
+        SEARCH_SCOPE scope = null;
+        if (ldapConfig.isObjectSearchScope()) {
+            scope = SEARCH_SCOPE.OBJECT;
+        } else if (ldapConfig.isOneLevelSearchScope()) {
+            scope = SEARCH_SCOPE.ONELEVEL;
+        } else if (ldapConfig.isSubTreeSearchScope()) {
+            scope = SEARCH_SCOPE.SUBTREE;
         }
+        return scope;
     }
 
     /**
@@ -307,14 +422,13 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     public void setSearchScope(SEARCH_SCOPE scope) {
         if (scope == SEARCH_SCOPE.OBJECT) {
-            ldapConfig.useObjectScopeSearch();
+            ldapConfig.useObjectSearchScope();
         } else if (scope == SEARCH_SCOPE.SUBTREE) {
-            ldapConfig.useSubTreeSearch();
+            ldapConfig.useSubTreeSearchScope();
         } else if (scope == SEARCH_SCOPE.ONELEVEL) {
-            ldapConfig.useOneLevelSearch();
+            ldapConfig.useOneLevelSearchScope();
         }
         clearCache();
-        initializeLdapPool();
     }
 
     /**
@@ -351,43 +465,41 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the timeLimit.
+     * Returns the searchTimeLimit.
      * 
      * @return <code>int</code>
      */
-    public int getTimeLimit() {
+    public int getSearchTimeLimit() {
         return ldapConfig.getTimeLimit();
     }
 
     /**
-     * Sets the timeLimit.
+     * Sets the searchTimeLimit.
      * 
      * @param i <code>int</code>
      */
-    public void setTimeLimit(int i) {
+    public void setSearchTimeLimit(int i) {
         ldapConfig.setTimeLimit(i);
         clearCache();
-        initializeLdapPool();
     }
 
     /**
-     * Returns the countLimit.
+     * Returns the maxResultSize.
      * 
      * @return <code>long</code>
      */
-    public long getCountLimit() {
+    public long getMaxResultSize() {
         return ldapConfig.getCountLimit();
     }
 
     /**
-     * Sets the countLimit.
+     * Sets the maxResultSize.
      * 
      * @param l <code>long</code>
      */
-    public void setCountLimit(long l) {
+    public void setMaxResultSize(long l) {
         ldapConfig.setCountLimit(l);
         clearCache();
-        initializeLdapPool();
     }
 
     /**
@@ -407,7 +519,6 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     public void setReturningObjects(boolean b) {
         ldapConfig.setReturningObjFlag(b);
         clearCache();
-        initializeLdapPool();
     }
 
     /**
@@ -426,6 +537,45 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     public void setLinkDereferencing(boolean b) {
         ldapConfig.setDerefLinkFlag(b);
+        clearCache();
+    }
+
+    /**
+     * Returns the principal.
+     * 
+     * @return <code>String</code>
+     */
+    public String getPrincipal() {
+        return ldapConfig.getServiceUser();
+    }
+
+    /**
+     * Sets the principal.
+     * 
+     * @param s <code>String</code>
+     */
+    public void setPrincipal(String s) {
+        ldapConfig.setServiceUser(s);
+        clearCache();
+        initializeLdapPool();
+    }
+
+    /**
+     * Returns the principalCredential.
+     * 
+     * @return <code>String</code>
+     */
+    public String getPrincipalCredential() {
+        return (String) ldapConfig.getServiceCredential();
+    }
+
+    /**
+     * Sets the principalCredential.
+     * 
+     * @param s <code>String</code>
+     */
+    public void setPrincipalCredential(String s) {
+        ldapConfig.setServiceCredential(s);
         clearCache();
         initializeLdapPool();
     }
@@ -456,7 +606,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext)
+            throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
             log.debug("Begin resolve for " + resolutionContext.getAttributeRequestContext().getPrincipalName());
         }
@@ -614,7 +765,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * 
      * @return <code>Map</code> of attributes ids to attributes
      */
-    protected Map<String, Attribute> getCachedAttributes(ShibbolethResolutionContext resolutionContext, String searchFilter) {
+    protected Map<String, Attribute> getCachedAttributes(ShibbolethResolutionContext resolutionContext,
+            String searchFilter) {
         Map<String, Attribute> attributes = null;
         if (cacheResults) {
             String principal = resolutionContext.getAttributeRequestContext().getPrincipalName();
