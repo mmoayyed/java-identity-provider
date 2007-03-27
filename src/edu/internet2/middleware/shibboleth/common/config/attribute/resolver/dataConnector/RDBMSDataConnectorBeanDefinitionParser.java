@@ -207,8 +207,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
             datasource.setIdleConnectionTestPeriod(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
                     "poolIdleTestPeriod"))));
             if (log.isDebugEnabled()) {
-                log.debug("Created data source for data connector " + pluginId + " with properties "
-                        + datasource.getProperties());
+                log.debug("Created application managed data source for data connector " + pluginId);
             }
             return datasource;
         } catch (PropertyVetoException e) {
