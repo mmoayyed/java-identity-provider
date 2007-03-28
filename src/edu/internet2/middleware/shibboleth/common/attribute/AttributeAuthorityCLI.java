@@ -106,8 +106,8 @@ public class AttributeAuthorityCLI {
      * @throws Exception thrown if the underlying libraries could not be initialized
      */
     private static CmdLineParser initialize(String[] args) throws Exception {
-        DefaultBootstrap.bootstrap();
         configureLogging();
+        DefaultBootstrap.bootstrap();
 
         if (args.length < 2) {
             printHelp(System.out);
@@ -263,12 +263,14 @@ public class AttributeAuthorityCLI {
         console.setWriter(new PrintWriter(System.err));
         console.setName("stderr");
         console.setLayout(new PatternLayout("%d{ABSOLUTE} %-5p [%c{1}] %m%n"));
+        
+        Logger root = Logger.getRootLogger();
+        root.addAppender(console);
+        root.setLevel(Level.ERROR);
 
         log = Logger.getLogger("edu.internet2.middleware.shibboleth.common.attribute");
         log.addAppender(console);
         log.setLevel(Level.ERROR);
-
-        Logger.getRootLogger().setLevel(Level.OFF);
     }
 
     /**
