@@ -45,7 +45,7 @@ done
 case "$COMMAND" in
   
   aacli.sh)
-    #$JAVACMD -classpath '$LOCALCLASSPATH' 'edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthorityCLI' $@
+    "$JAVACMD" '-classpath' "$LOCALCLASSPATH" 'edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthorityCLI' "$@"
   ;;
 
 esac

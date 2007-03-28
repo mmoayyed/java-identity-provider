@@ -141,7 +141,7 @@
 
         <jar destfile="${dist.dir}/${jar.name}" basedir="${core-classes.dir}" whenempty="fail">
         	<fileset dir="${classpathres.dir}" />
-        	<fileset dir="${metainf.dir}" />
+        	<metainf dir="${metainf.dir}" />
     	</jar>
 
     </target>
