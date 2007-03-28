@@ -32,7 +32,6 @@ import org.opensaml.Configuration;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.util.DatatypeHelper;
@@ -40,6 +39,7 @@ import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
@@ -82,9 +82,8 @@ public class AttributeAuthorityCLI {
         CmdLineParser parser = initialize(args);
         ApplicationContext appCtx = loadConfigurations((String) parser.getOptionValue(CLIParserBuilder.CONFIG_DIR_ARG));
 
-        metadataProvider = (MetadataProvider) appCtx.getBean("SAMLMetadataProvider");
-        saml1AA = (SAML1AttributeAuthority) appCtx.getBean("SAML1AttributeAuthority");
-        saml2AA = (SAML2AttributeAuthority) appCtx.getBean("SAML2AttributeAuthority");
+        saml1AA = (SAML1AttributeAuthority) appCtx.getBean("shibboleth.SAML1AttributeAuthority");
+        saml2AA = (SAML2AttributeAuthority) appCtx.getBean("shibboleth.SAML2AttributeAuthority");
 
         SAMLObject attributeStatement;
         Boolean saml1 = (Boolean) parser.getOptionValue(CLIParserBuilder.SAML1_ARG, Boolean.FALSE);
@@ -156,11 +155,13 @@ public class AttributeAuthorityCLI {
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(gContext);
         configReader.setDocumentLoader(new SpringDocumentLoader());
 
+        int numOfConfigs = configs.length + 1;
         File config;
-        Resource[] configSources = new Resource[configs.length];
-        for (int i = 0; i < configs.length; i++) {
-            config = configs[i];
-            if (configDirectory.isDirectory() || !configDirectory.canRead()) {
+        Resource[] configSources = new Resource[numOfConfigs];
+        configSources[0] = new ClassPathResource("/shibboleth-2.0-config-internal.xml");
+        for (int i = 1; i <= configs.length; i++) {
+            config = configs[i - 1];
+            if (config.isDirectory() || !config.canRead()) {
                 errorAndExit("Configuration file " + config.getAbsolutePath() + " is a directory or is not readable",
                         null);
             }
@@ -226,22 +227,15 @@ public class AttributeAuthorityCLI {
         String requester = (String) parser.getOptionValue(CLIParserBuilder.REQUESTER_ARG);
         SimpleRelyingPartyConfiguration rpConfig = new SimpleRelyingPartyConfiguration(issuer, requester);
 
-        try {
-            ShibbolethAttributeRequestContext attribReqCtx = new ShibbolethAttributeRequestContext(metadataProvider,
-                    rpConfig);
+        ShibbolethAttributeRequestContext attribReqCtx = new ShibbolethAttributeRequestContext();
 
-            String principal = (String) parser.getOptionValue(CLIParserBuilder.PRINCIPAL_ARG);
-            attribReqCtx.setPrincipalName(principal);
+        String principal = (String) parser.getOptionValue(CLIParserBuilder.PRINCIPAL_ARG);
+        attribReqCtx.setPrincipalName(principal);
 
-            String authnMethod = (String) parser.getOptionValue(CLIParserBuilder.AUTHN_METHOD_ARG);
-            attribReqCtx.setPrincipalAuthenticationMethod(authnMethod);
+        String authnMethod = (String) parser.getOptionValue(CLIParserBuilder.AUTHN_METHOD_ARG);
+        attribReqCtx.setPrincipalAuthenticationMethod(authnMethod);
 
-            return attribReqCtx;
-        } catch (MetadataProviderException e) {
-            errorAndExit("Error looking up metadata for issuer or requester", e);
-        }
-
-        return null;
+        return attribReqCtx;
     }
 
     /**
@@ -254,7 +248,8 @@ public class AttributeAuthorityCLI {
 
         try {
             Element statement = statementMarshaller.marshall(attributeStatement);
-            System.out.println(XMLHelper.nodeToString(statement));
+            System.out.println();
+            System.out.println(XMLHelper.prettyPrintXML(statement));
         } catch (MarshallingException e) {
             errorAndExit("Unable to marshall attribute statement", e);
         }
