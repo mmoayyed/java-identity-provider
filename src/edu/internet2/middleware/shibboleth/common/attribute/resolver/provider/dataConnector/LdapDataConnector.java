@@ -62,19 +62,19 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     private boolean mergeMultipleResults;
 
     /** Whether an empty result set is an error. */
-    private boolean noResultsIsError = true;
+    private boolean noResultsIsError;
 
     /** Whether to cache search results for the duration of the session. */
     private boolean cacheResults;
 
-    /** Template that produces the query to use. */
-    private String filterTemplate;
-
     /** Template engine used to change filter template into actual filter. */
     private TemplateEngine filterCreator;
-
-    /** Ldap search filter. */
-    private String filter;
+    
+    /** Name the filter template is registered under within the template engine. */
+    private String filterTemplateName;
+    
+    /** Template that produces the query to use. */
+    private String filterTemplate;
 
     /** Attributes to return from ldap searches. */
     private String[] returnAttributes;
@@ -159,7 +159,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     protected void registerTemplate() {
         if (initialized) {
-            filterCreator.registerTemplate("shibboleth.resolver.dc." + getId(), filterTemplate);
+            filterTemplateName = "shibboleth.resolver.dc." + getId();
+            filterCreator.registerTemplate(filterTemplateName, filterTemplate);
         }
     }
 
@@ -259,25 +260,6 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     public void setFilterTemplate(String template) {
         filterTemplate = template;
-        clearCache();
-    }
-
-    /**
-     * Returns the filter.
-     * 
-     * @return <code>String</code>
-     */
-    public String getFilter() {
-        return filter;
-    }
-
-    /**
-     * Sets the filter.
-     * 
-     * @param s <code>String</code>
-     */
-    public void setFilter(String s) {
-        filter = s;
         clearCache();
     }
 
@@ -612,7 +594,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             log.debug("Begin resolve for " + resolutionContext.getAttributeRequestContext().getPrincipalName());
         }
 
-        String searchFilter = filterCreator.createStatement(filter, resolutionContext, getDataConnectorDependencyIds(),
+        String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDataConnectorDependencyIds(),
                 getDataConnectorDependencyIds());
         if (log.isDebugEnabled()) {
             log.debug("search filter = " + searchFilter);

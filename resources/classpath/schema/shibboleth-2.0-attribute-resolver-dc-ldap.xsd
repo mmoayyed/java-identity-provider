@@ -40,7 +40,9 @@
                 </sequence>
                 <attribute name="ldapUrl" type="string" use="required">
                     <annotation>
-                        <documentation>The URL to the LDAP server.</documentation>
+                        <documentation>
+                        The URL to the LDAP server.  This URL MUST NOT include the base DN.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="principal" type="string">
@@ -55,10 +57,19 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="searchScope" type="ldap:SearchScopeType">
+                <attribute name="baseDN" type="string" use="required">
                     <annotation>
                         <documentation>
-                            The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTRE. If no scope is given
+                            The base DN from which to search from.  If the search scope is set to ONELEVEL only the entries 
+                            within this node will be search, if SUBTREE is specified entries within this node and descendant 
+                            nodes will be searched.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchScope" type="ldap:SearchScopeType" default="SUBTREE">
+                    <annotation>
+                        <documentation>
+                            The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE. If no scope is given
                             SUBTREE is used.
                         </documentation>
                     </annotation>

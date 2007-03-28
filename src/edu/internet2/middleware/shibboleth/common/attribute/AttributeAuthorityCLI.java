@@ -282,8 +282,13 @@ public class AttributeAuthorityCLI {
      * @param out output to print the help message to
      */
     private static void printHelp(PrintStream out) {
-        // TODO fix the usage statement to reflect invocation by script
-        out.println("usage: java edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthorityCLI");
+        out.println("Attribute Authority, Command Line Interface");
+        out.println("  This tools provides a command line interface to the Shibboleth Attribute Authority,");
+        out.println("  providing deployers a means to test their attribute resolution and configurations.");
+        out.println();
+        out.println("usage:");
+        out.println("  On Unix systems:       ./aacli.sh <PARAMETERS>");
+        out.println("  On Windows systems:    .\\aacli.bat <PARAMETERS>");
         out.println();
         out.println("Required Parameters:");
         out.println(String.format("  --%-16s %s", CLIParserBuilder.CONFIG_DIR,

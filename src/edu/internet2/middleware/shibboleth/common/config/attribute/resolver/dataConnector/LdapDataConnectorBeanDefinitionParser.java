@@ -40,7 +40,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
 
     /** LDAP data connector type name. */
     public static final QName TYPE_NAME = new QName(LdapDataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
-    
+
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnectorBeanDefinitionParser.class);
 
@@ -66,9 +66,22 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
+        String ldapURL = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "ldapUrl"));
+        if (log.isDebugEnabled()) {
+            log.debug("Data connector " + pluginId + " LDAP URL: " + ldapURL);
+        }
+        pluginBuilder.addPropertyValue("ldapUrl", ldapURL);
+
+        String principal = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "principal"));
+        pluginBuilder.addPropertyValue("principal", principal);
+
+        String credential = DatatypeHelper.safeTrimOrNullString(pluginConfig
+                .getAttributeNS(null, "principalCredential"));
+        pluginBuilder.addPropertyValue("principalCredential", credential);
+
         String filterTemplate = DatatypeHelper.safeTrimOrNullString(pluginConfigChildren.get(
                 FILTER_TEMPLATE_ELEMENT_NAME).get(0).getTextContent());
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("Data connector " + pluginId + " LDAP filter template: " + filterTemplate);
         }
         pluginBuilder.addPropertyValue("filterTemplate", filterTemplate);
@@ -79,7 +92,8 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         String[] returnAttributes = processReturnAttributes(pluginConfigChildren.get(RETURN_ATTRIBUTES_ELEMENT_NAME));
         pluginBuilder.addPropertyValue("returnAttributes", returnAttributes);
 
-        Map<String, String> ldapProperties = processLDAPProperties(pluginId, pluginConfig, pluginConfigChildren.get(LDAP_PROPERTY_ELEMENT_NAME));
+        Map<String, String> ldapProperties = processLDAPProperties(pluginId, pluginConfig, pluginConfigChildren
+                .get(LDAP_PROPERTY_ELEMENT_NAME));
         pluginBuilder.addPropertyValue("ldapProperties", ldapProperties);
 
         boolean useStartTLS = XMLHelper
@@ -144,25 +158,9 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
      * 
      * @return LDAP properties provided in the configuration
      */
-    protected Map<String, String> processLDAPProperties(String pluginId, Element pluginConfigElem, List<Element> propertyElems) {
+    protected Map<String, String> processLDAPProperties(String pluginId, Element pluginConfigElem,
+            List<Element> propertyElems) {
         HashMap<String, String> properties = new HashMap<String, String>();
-
-        String ldapURL = DatatypeHelper.safeTrimOrNullString(pluginConfigElem.getAttributeNS(null, "ldapUrl"));
-        if(log.isDebugEnabled()){
-            log.debug("Data connector " + pluginId + " LDAP URL: " + ldapURL);
-        }
-        properties.put(Context.PROVIDER_URL, ldapURL);
-
-        String principal = DatatypeHelper.safeTrimOrNullString(pluginConfigElem.getAttributeNS(null, "principal"));
-        if(principal != null){
-            properties.put(Context.SECURITY_PRINCIPAL, principal);
-        }
-
-        String credential = DatatypeHelper.safeTrimOrNullString(pluginConfigElem.getAttributeNS(null,
-                "principalCredential"));
-        if(credential != null){
-            properties.put(Context.SECURITY_CREDENTIALS, credential);
-        }
 
         String propName;
         String propValue;

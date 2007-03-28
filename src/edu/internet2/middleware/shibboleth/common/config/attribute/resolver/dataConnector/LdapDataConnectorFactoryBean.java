@@ -30,6 +30,18 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
     /** Template engine used to construct filter queries. */
     private TemplateEngine templateEngine;
     
+    /** URL of the LDAP server. */
+    private String ldapURL;
+    
+    /** Base search DN. */
+    private String baseDN;
+    
+    /** DN of the principal to bind to the directory as. */
+    private String principal;
+    
+    /** Credential for the binding principal. */
+    private String principalCredential;
+    
     /** LDAP query filter template. */
     private String filterTemplate;
 
@@ -69,6 +81,24 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
     /** {@inheritDoc} */
     public Class getObjectType() {
         return LdapDataConnector.class;
+    }
+    
+    /**
+     * Gets the base search DN.
+     * 
+     * @return the base search DN
+     */
+    public String getBaseDN(){
+        return baseDN;
+    }
+    
+    /**
+     * Sets the base search DN.
+     * 
+     * @param dn the base search DN
+     */
+    public void setBaseDN(String dn){
+        baseDN = dn;
     }
 
     /**
@@ -123,6 +153,24 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
      */
     public void setLdapProperties(Map<String, String> properties) {
         ldapProperties = properties;
+    }
+    
+    /**
+     * Gets the LDAP server's URL.
+     * 
+     * @return LDAP server's URL
+     */
+    public String getLdapUrl(){
+        return ldapURL;
+    }
+    
+    /**
+     * Sets the LDAP server's URL.
+     * 
+     * @param url LDAP server's URL
+     */
+    public void setLdapUrl(String url){
+        ldapURL = url;
     }
 
     /**
@@ -213,6 +261,42 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
      */
     public void setPoolMaxIdleSize(int maxIdle) {
         poolMaxIdle = maxIdle;
+    }
+    
+    /**
+     * Gets the principal DN used to bind to the directory.
+     * 
+     * @return principal DN used to bind to the directory
+     */
+    public String getPrincipal(){
+        return principal;
+    }
+    
+    /**
+     * Sets the principal DN used to bind to the directory.
+     * 
+     * @param principalName principal DN used to bind to the directory
+     */
+    public void setPrincipal(String principalName){
+        principal = principalName;
+    }
+    
+    /**
+     * Gets the credential of the principal DN used to bind to the directory.
+     * 
+     * @return credential of the principal DN used to bind to the directory
+     */
+    public String getPrincipalCredential(){
+        return principalCredential;
+    }
+    
+    /**
+     * Sets the credential of the principal DN used to bind to the directory.
+     * 
+     * @param credential credential of the principal DN used to bind to the directory
+     */
+    public void setPrincipalCredential(String credential){
+        principalCredential = credential;
     }
 
     /**
@@ -307,16 +391,18 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        LdapDataConnector connector = new LdapDataConnector(useStartTLS, poolInitialSize, poolMaxIdle);
+        LdapDataConnector connector = new LdapDataConnector(ldapURL, baseDN, useStartTLS, poolInitialSize, poolMaxIdle);
         connector.setId(getPluginId());
+        connector.setPrincipal(principal);
+        connector.setPrincipalCredential(principalCredential);
         connector.setLdapProperties(ldapProperties);
         connector.setFilterTemplate(getFilterTemplate());
-        connector.setCountLimit(maxResultSize);
-        connector.setMergeMultipleResults(mergeResults);
+        connector.setMaxResultSize(maxResultSize);
+        connector.setMergeResults(mergeResults);
         connector.setNoResultsIsError(noResultsIsError);
         connector.setReturnAttributes(returnAttributes);
         connector.setSearchScope(searchScope);
-        connector.setTimeLimit(searchTimeLimit);
+        connector.setSearchTimeLimit(searchTimeLimit);
         connector.setTemplateEngine(templateEngine);
         
         if(getAttributeDefinitionDependencyIds() != null){
