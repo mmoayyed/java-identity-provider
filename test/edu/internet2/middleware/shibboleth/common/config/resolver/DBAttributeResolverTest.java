@@ -26,6 +26,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethA
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
+import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
 
 /**
  * Unit test for database data connector.
@@ -51,17 +52,27 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
         context.setPrincipalName("astone");
 
         try {
+            long pass1Start = System.currentTimeMillis();
             Collection<Attribute> attributes = resolver.resolveAttributes(context).values();
-
+            long pass1Stop = System.currentTimeMillis();
             assertEquals(3, attributes.size());
 
             for (Attribute attribute : attributes) {
                 System.out.println(attribute.getId() + ":" + attribute.getValues());
             }
+            
+            context = new ShibbolethAttributeRequestContext();
+            context.setPrincipalName("astone");
+            long pass2Start = System.currentTimeMillis();
+            attributes = resolver.resolveAttributes(context).values();
+            long pass2Stop = System.currentTimeMillis();
+            assertEquals(3, attributes.size());
+            
+            System.out.println("Pass 1: " + (pass1Stop - pass1Start) + "ms");
+            System.out.println("Pass 2: " + (pass2Stop - pass2Start) + "ms");
         } catch (AttributeResolutionException e) {
             fail(e.getMessage());
         }
-
     }
 
 }

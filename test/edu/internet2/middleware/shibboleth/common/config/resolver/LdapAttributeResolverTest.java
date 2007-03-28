@@ -51,13 +51,16 @@ public class LdapAttributeResolverTest extends BaseConfigTestCase {
         context.setPrincipalName("lajoie");
 
         try {
-            Collection<Attribute> attributes = resolver.resolveAttributes(context).values();
+            Collection<Attribute> attributes;
+            
+            attributes = resolver.resolveAttributes(context).values();
 
             assertEquals(3, attributes.size());
 
             for (Attribute attribute : attributes) {
                 System.out.println(attribute.getId() + ":" + attribute.getValues());
             }
+            
         } catch (AttributeResolutionException e) {
             fail(e.getMessage());
         }

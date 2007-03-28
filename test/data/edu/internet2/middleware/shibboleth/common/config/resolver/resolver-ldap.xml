@@ -28,6 +28,7 @@
     <resolver:DataConnector xsi:type="ldap:LDAPDirectory"
                                        id="LocalDirectory"
                                        ldapUrl="ldap://localhost:10389/"
+                                       baseDN="dc=georgetown,dc=edu"
                                        principal="uid=admin,ou=system"
                                        principalCredential="secret">
                                        

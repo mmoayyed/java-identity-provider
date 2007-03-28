@@ -33,7 +33,7 @@
                     <element name="LDAPProperty" type="ldap:PropertyType" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
-                                LDAP connection properties relevant to the underlying JNDI provider being used.
+                                LDAP connection properties relevant to the underlying provider being used.
                             </documentation>
                         </annotation>
                     </element>
