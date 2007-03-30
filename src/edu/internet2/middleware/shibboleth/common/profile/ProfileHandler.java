@@ -17,8 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.profile;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 /**
  * A processor for a communication profile supported by the IdP.
@@ -31,12 +29,13 @@ public interface ProfileHandler {
     /**
      * Processes an incoming request.
      * 
-     * @param request the request
-     * @param response the response
+     * @param 
+     * @param request the profile request
+     * @param response the profile response
      * 
      * @return true if this handler has processed the request, false if not
      * 
      * @throws ServletException throw if there was a problem while processing the request
      */
-    public boolean processRequest(ServletRequest request, ServletResponse response) throws ServletException;
+    public boolean processRequest(ProfileRequest request, ProfileResponse response) throws ServletException;
 }
