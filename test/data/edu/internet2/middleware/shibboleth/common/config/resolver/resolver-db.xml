@@ -5,18 +5,36 @@
     xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
     xmlns:encoder="urn:mace:shibboleth:2.0:attribute:encoder"
     xmlns:simple="urn:mace:shibboleth:2.0:resolver:ad:simple"
+    xmlns:script="urn:mace:shibboleth:2.0:resolver:ad:script"
     xmlns:db="urn:mace:shibboleth:2.0:resolver:dc:rdbms"
     xsi:schemaLocation="
         urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
         urn:mace:shibboleth:2.0:attribute:encoder classpath:/schema/shibboleth-2.0-attribute-encoder.xsd
         urn:mace:shibboleth:2.0:resolver:ad:simple classpath:/schema/shibboleth-2.0-attribute-resolver-ad-simple.xsd
+        urn:mace:shibboleth:2.0:resolver:ad:script classpath:/schema/shibboleth-2.0-attribute-resolver-ad-scripted.xsd
         urn:mace:shibboleth:2.0:resolver:dc:rdbms classpath:/schema/shibboleth-2.0-attribute-resolver-dc-rdbms.xsd">
         
     <resolver:AttributeDefinition xsi:type="simple:Simple" id="uid" sourceAttributeID="NETID">
         <resolver:DataConnectorDependency ref="LocalDatabase" />
     </resolver:AttributeDefinition>
     
+    <resolver:AttributeDefinition xsi:type="script:Script" id="fullname">
+        <resolver:AttributeDefinitionDependency ref="FIRSTNAME" />
+        <resolver:AttributeDefinitionDependency ref="LASTNAME" />
+        <script:Script>
+            <![CDATA[
+                importPackage(Packages.edu.internet2.middleware.shibboleth.common.attribute.provider);
+                fullname = new BasicAttribute("fullname");
+                fullname.getValues().add(FIRSTNAME.getValues().first() + " " + LASTNAME.getValues().first());
+            ]]>
+        </script:Script>
+    </resolver:AttributeDefinition>
+    
     <resolver:AttributeDefinition xsi:type="simple:Simple" id="FIRSTNAME">
+        <resolver:DataConnectorDependency ref="LocalDatabase" />
+    </resolver:AttributeDefinition>
+    
+    <resolver:AttributeDefinition xsi:type="simple:Simple" id="LASTNAME">
         <resolver:DataConnectorDependency ref="LocalDatabase" />
     </resolver:AttributeDefinition>
     

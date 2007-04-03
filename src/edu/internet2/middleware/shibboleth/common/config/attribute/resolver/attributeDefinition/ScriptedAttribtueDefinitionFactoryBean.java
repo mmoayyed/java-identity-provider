@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.opensaml.xml.util.DatatypeHelper;
@@ -119,15 +120,22 @@ public class ScriptedAttribtueDefinitionFactoryBean extends BaseAttributeDefinit
             }
         }
 
+        try{
         if (DatatypeHelper.isEmpty(script)) {
             FileInputStream ins = new FileInputStream(scriptFile);
             byte[] scriptBytes = new byte[ins.available()];
             ins.read(scriptBytes);
             script = new String(script);
         }
+        }catch(IOException e){
+            
+            throw e;
+        }
 
         definition.setScript(script);
 
+        definition.initialize();
+        
         return definition;
     }
 }

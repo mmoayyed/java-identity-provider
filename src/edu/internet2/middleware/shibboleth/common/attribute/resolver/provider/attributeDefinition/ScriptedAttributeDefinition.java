@@ -16,6 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -30,6 +33,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
 /**
  * An attribute definition the computes the attribute definition by executing a script written in some JSR-223
@@ -42,7 +46,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
     /** The scripting language. */
     private String scriptLanguage;
-    
+
     /** The script to execute. */
     private String script;
 
@@ -108,17 +112,16 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     protected Attribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
-        SimpleScriptContext sctx = new SimpleScriptContext();
-        sctx.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
+        ScriptContext context = getScriptContext(resolutionContext);
 
         try {
             if (compiledScript != null) {
-                compiledScript.eval(sctx);
+                compiledScript.eval(context);
             } else {
-                scriptEngine.eval(script, sctx);
+                scriptEngine.eval(script, context);
             }
 
-            return (Attribute) sctx.getAttribute(getId());
+            return (Attribute) context.getAttribute(getId());
         } catch (ScriptException e) {
             log.error("ScriptletAttributeDefinition " + getId() + " unable to execute script", e);
             throw new AttributeResolutionException("ScriptletAttributeDefinition " + getId()
@@ -140,5 +143,38 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             log.warn("ScriptletAttributeDefinition " + getId()
                     + " unable to compile even though the scripting engine supports this functionality.");
         }
+    }
+    
+    protected ScriptContext getScriptContext(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException{
+        SimpleScriptContext scriptContext = new SimpleScriptContext();
+        scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
+        
+        DataConnector dc;
+        Map<String, Attribute> attributes;
+        if(!getDataConnectorDependencyIds().isEmpty()){
+            for(String dependency : getDataConnectorDependencyIds()){
+                dc = resolutionContext.getResolvedDataConnectors().get(dependency);
+                attributes = dc.resolve(resolutionContext);
+                if(attributes != null){
+                    for(Attribute attribute : attributes.values()){
+                        scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
+                    }
+                }
+            }
+        }
+        
+        AttributeDefinition ad;
+        Attribute attribute;
+        if(!getAttributeDefinitionDependencyIds().isEmpty()){
+            for(String dependency : getAttributeDefinitionDependencyIds()){
+                ad = resolutionContext.getResolvedAttributeDefinitions().get(dependency);
+                attribute = ad.resolve(resolutionContext);
+                if(attribute != null){
+                    scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
+                }
+            }
+        }
+        
+        return scriptContext;
     }
 }

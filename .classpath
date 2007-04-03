@@ -65,6 +65,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.1.1.jar"/>
 	<classpathentry kind="lib" path="build-lib/hsqldb-1.8.0.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/script-api-1.0-ri.jar"/>
+	<classpathentry kind="lib" path="lib/script-1.0ri-api.jar"/>
+	<classpathentry kind="lib" path="lib/rhino-engine.jar"/>
+	<classpathentry kind="lib" path="lib/rhino-1.6R5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
