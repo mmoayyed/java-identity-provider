@@ -47,12 +47,30 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
 
     /** Search scope values. */
     public static enum SEARCH_SCOPE {
-        OBJECT, ONELEVEL, SUBTREE
+        /** Object level search scope. */
+        OBJECT,
+        /** One level search scope. */
+        ONELEVEL,
+        /** Subtree search scope. */
+        SUBTREE
     };
 
     /** Authentication type values. */
     public static enum AUTHENTICATION_TYPE {
-        ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI
+        /** Anonymous authentication type. */
+        ANONYMOUS,
+        /** Simple authentication type. */
+        SIMPLE,
+        /** Strong authentication type. */
+        STRONG,
+        /** External authentication type. */
+        EXTERNAL,
+        /** Digest MD5 authentication type. */
+        DIGEST_MD5,
+        /** Cram MD5 authentication type. */
+        CRAM_MD5,
+        /** Kerberos authentication type. */
+        GSSAPI
     };
 
     /** Class logger. */
@@ -69,10 +87,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
 
     /** Template engine used to change filter template into actual filter. */
     private TemplateEngine filterCreator;
-    
+
     /** Name the filter template is registered under within the template engine. */
     private String filterTemplateName;
-    
+
     /** Template that produces the query to use. */
     private String filterTemplate;
 
@@ -98,7 +116,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     private boolean initialized;
 
     /**
-     * This creates a new ldap data connector with the supplied pool properties.
+     * This creates a new ldap data connector with the supplied properties.
      * 
      * @param ldapUrl <code>String</code> to connect to
      * @param ldapBaseDn <code>String</code> to begin searching at
@@ -165,7 +183,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the mergeResults.
+     * This returns whether this connector will merge multiple search results into one result. The default is false.
      * 
      * @return <code>boolean</code>
      */
@@ -174,7 +192,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the mergeResults.
+     * This sets whether this connector will merge multiple search results into one result. This method will remove any
+     * cached results.
+     * 
+     * @see {@link #clearCache()}.
      * 
      * @param b <code>boolean</code>
      */
@@ -184,7 +205,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the cacheResults.
+     * This returns whether this connector will cache search results. The default is false.
      * 
      * @return <code>boolean</code>
      */
@@ -193,7 +214,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the cacheResults.
+     * This sets whether this connector will cache search results.
+     * 
+     * @see {@link #initializeCache()}.
      * 
      * @param b <code>boolean</code>
      */
@@ -207,7 +230,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the noResultsIsError.
+     * This returns whether this connector will throw an exception if no search results are found. The default is false.
      * 
      * @return <code>boolean</code>
      */
@@ -216,7 +239,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the noResultsIsError.
+     * This sets whether this connector will throw an exception if no search results are found.
      * 
      * @param b <code>boolean</code>
      */
@@ -264,7 +287,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the ldapUrl.
+     * This returns the URL this connector is using.
      * 
      * @return <code>String</code>
      */
@@ -273,7 +296,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the baseDn.
+     * This returns the base DN this connector is using.
      * 
      * @return <code>String</code>
      */
@@ -282,7 +305,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the useStartTls.
+     * This returns whether this connector will start TLS for all connections to the ldap.
      * 
      * @return <code>boolean</code>
      */
@@ -291,7 +314,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the sslSocketFactory.
+     * This returns the SSL Socket Factory that will be used for all TLS and SSL connections to the ldap.
      * 
      * @return <code>String</code>
      */
@@ -300,7 +323,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the sslSocketFactory.
+     * This sets the SSL Socket Factory that will be used for all TLS and SSL connections to the ldap. s should be a
+     * fully qualified class name. This method will remove any cached results and initialize the ldap pool.
+     * 
+     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
      * 
      * @param s <code>String</code>
      */
@@ -311,7 +337,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the hostnameVerifier.
+     * This returns the hostname verifier that will be used for all TLS and SSL connections to the ldap.
      * 
      * @return <code>String</code>
      */
@@ -320,7 +346,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the hostnameVerifier.
+     * This sets the hostname verifier that will be used for all TLS and SSL connections to the ldap. s should be a
+     * fully qualified class name. This method will remove any cached results and initialize the ldap pool.
+     * 
+     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
      * 
      * @param s <code>String</code>
      */
@@ -331,7 +360,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the authenticationType.
+     * This returns the authentication type used when binding to the ldap.
      * 
      * @return <code>AUTHENTICATION_TYPE</code>
      */
@@ -356,7 +385,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the authenticationType.
+     * This sets the authentication type used when binding to the ldap. This method will remove any cached results and
+     * initialize the ldap pool.
+     * 
+     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
      * 
      * @param type <code>AUTHENTICATION_TYPE</code>
      */
@@ -381,7 +413,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the searchScope.
+     * This returns the search scope used when searching the ldap.
      * 
      * @return <code>int</code>
      */
@@ -398,7 +430,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the searchScope.
+     * This sets the search scope used when searching the ldap. This method will remove any cached results.
+     * 
+     * @see {@link #clearCache()}.
      * 
      * @param scope directory search scope
      */
@@ -414,7 +448,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the returnAttributes.
+     * This returns the attributes that all searches will request from the ldap.
      * 
      * @return <code>String[]</code>
      */
@@ -423,7 +457,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the returnAttributes.
+     * This sets the attributes that all searches will request from the ldap. This method will remove any cached
+     * results.
+     * 
+     * @see {@link #clearCache()}.
      * 
      * @param s <code>String[]</code>
      */
@@ -433,7 +470,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the returnAttributes.
+     * This sets the attributes that all searches will request from the ldap. s should be a comma delimited string.
      * 
      * @param s <code>String[]</code> comma delimited returnAttributes
      */
@@ -447,18 +484,22 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the searchTimeLimit.
+     * This returns the time in milliseconds that the ldap will wait for search results. A value of 0 means to wait
+     * indefinitely.
      * 
-     * @return <code>int</code>
+     * @return <code>int</code> milliseconds
      */
     public int getSearchTimeLimit() {
         return ldapConfig.getTimeLimit();
     }
 
     /**
-     * Sets the searchTimeLimit.
+     * This sets the time in milliseconds that the ldap will wait for search results. A value of 0 means to wait
+     * indefinitely. This method will remove any cached results.
      * 
-     * @param i <code>int</code>
+     * @see {@link #clearCache()}.
+     * 
+     * @param i <code>int</code> milliseconds
      */
     public void setSearchTimeLimit(int i) {
         ldapConfig.setTimeLimit(i);
@@ -466,18 +507,22 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the maxResultSize.
+     * This returns the maximum number of search results the ldap will return. A value of 0 all entries will be
+     * returned.
      * 
-     * @return <code>long</code>
+     * @return <code>long</code> maximum number of search results
      */
     public long getMaxResultSize() {
         return ldapConfig.getCountLimit();
     }
 
     /**
-     * Sets the maxResultSize.
+     * This sets the maximum number of search results the ldap will return. A value of 0 all entries will be returned.
+     * This method will remove any cached results.
      * 
-     * @param l <code>long</code>
+     * @see {@link #clearCache()}.
+     * 
+     * @param l <code>long</code> maximum number of search results
      */
     public void setMaxResultSize(long l) {
         ldapConfig.setCountLimit(l);
@@ -485,7 +530,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the returningObjects.
+     * This returns whether objects will be returned in the search results. The default is false.
      * 
      * @return <code>boolean</code>
      */
@@ -494,7 +539,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the returningObjects.
+     * This sets whether objects will be returned in the search results. This method will remove any cached results.
+     * 
+     * @see {@link #clearCache()}.
      * 
      * @param b <code>boolean</code>
      */
@@ -504,7 +551,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the linkDereferencing.
+     * This returns whether link dereferencing will be used during the search. The default is false.
      * 
      * @return <code>boolean</code>
      */
@@ -513,7 +560,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the linkDereferencing.
+     * This sets whether link dereferencing will be used during the search. This method will remove any cached results.
+     * 
+     * @see {@link #clearCache()}.
      * 
      * @param b <code>boolean</code>
      */
@@ -523,18 +572,21 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the principal.
+     * This returns the principal dn used to bind to the ldap for all searches.
      * 
-     * @return <code>String</code>
+     * @return <code>String</code> principal dn
      */
     public String getPrincipal() {
         return ldapConfig.getServiceUser();
     }
 
     /**
-     * Sets the principal.
+     * This sets the principal dn used to bind to the ldap for all searches. This method will remove any cached results
+     * and initialize the ldap pool.
      * 
-     * @param s <code>String</code>
+     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * 
+     * @param s <code>String</code> principal dn
      */
     public void setPrincipal(String s) {
         ldapConfig.setServiceUser(s);
@@ -543,18 +595,21 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Returns the principalCredential.
+     * This returns the principal credential used to bind to the ldap for all searches.
      * 
-     * @return <code>String</code>
+     * @return <code>String</code> principal credential
      */
     public String getPrincipalCredential() {
         return (String) ldapConfig.getServiceCredential();
     }
 
     /**
-     * Sets the principalCredential.
+     * This sets the principal credential used to bind to the ldap for all searches. This method will remove any cached
+     * results and initialize the ldap pool.
      * 
-     * @param s <code>String</code>
+     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * 
+     * @param s <code>String</code> principal credential
      */
     public void setPrincipalCredential(String s) {
         ldapConfig.setServiceCredential(s);
@@ -563,7 +618,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /**
-     * Sets the ldapProperties.
+     * This sets additional ldap context environment properties. This method will remove any cached results and
+     * initialize the ldap pool.
+     * 
+     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
      * 
      * @param ldapProperties <code>Map</code> of name/value pairs
      */
@@ -594,8 +652,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             log.debug("Begin resolve for " + resolutionContext.getAttributeRequestContext().getPrincipalName());
         }
 
-        String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDataConnectorDependencyIds(),
-                getDataConnectorDependencyIds());
+        String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext,
+                getDataConnectorDependencyIds(), getDataConnectorDependencyIds());
         if (log.isDebugEnabled()) {
             log.debug("search filter = " + searchFilter);
         }
