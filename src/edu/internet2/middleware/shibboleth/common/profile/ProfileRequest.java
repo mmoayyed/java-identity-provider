@@ -16,27 +16,55 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-import javax.servlet.ServletRequest;
-
+import org.opensaml.common.binding.BindingException;
 import org.opensaml.common.binding.MessageDecoder;
+import org.opensaml.xml.XMLObject;
+
+import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
+import edu.internet2.middleware.shibboleth.common.session.Session;
 
 /**
  * Contextual information for requesting and receiving a response from a profile handler.
+ * 
+ * @param <RawRequestType> the type of the raw requests encapsulated in the profile request
+ * @param <SessionType> the type of user session active during this request
  */
-public interface ProfileRequest {
+public interface ProfileRequest<RawRequestType, SessionType extends Session> {
 
     /**
-     * Gets the servlet request containing the profile request.
+     * Gets the raw, usually transport specific, request that was made.
      * 
-     * @return servlet request that can be decoded
+     * @return raw request that was made
      */
-    public ServletRequest getRequest();
-
+    public RawRequestType getRawRequest();
+    
+    /**
+     * Gets the current session for the user.
+     * 
+     * @return current session for the user
+     */
+    public SessionType getSession();
+    
     /**
      * Gets a decoder that can be used to decode the servlet request.
      * 
      * @return message decoder
      */
-    public MessageDecoder<ServletRequest> getMessageDecoder();
-
+    public MessageDecoder getMessageDecoder();
+    
+    /**
+     * Gets configuration information for the requester (relying party).
+     * 
+     * @return configuration information for the requester
+     */
+    public RelyingPartyConfiguration getRelyingPartyConfiguration();
+    
+    /**
+     * Gets the decoded request message.
+     * 
+     * @return decoded request message
+     * 
+     * @throws BindingException thrown if there is a problem decoding the message from the request
+     */
+    public XMLObject getRequest() throws BindingException;
 }
