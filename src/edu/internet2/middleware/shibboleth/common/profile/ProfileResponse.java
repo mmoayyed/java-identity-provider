@@ -16,9 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-import org.opensaml.common.binding.BindingException;
-import org.opensaml.common.binding.MessageEncoder;
-import org.opensaml.xml.XMLObject;
 
 /**
  * Contextual information for receiving a response from a profile handler.
@@ -33,20 +30,5 @@ public interface ProfileResponse<RawResponseType> {
      * @return raw response
      */
     public RawResponseType getRawResponse();
-    
-    /**
-     * Gets an encoder that can be used to encode the profile response.
-     * 
-     * @return message encoder
-     */
-    public MessageEncoder getMessageEncoder();
 
-    /**
-     * Encodes and sends the response back to the peer.
-     * 
-     * @param response the response to send
-     * 
-     * @throws BindingException thrown if the message can not be encoded and sent to the relying party
-     */
-    public void sendResponse(XMLObject response) throws BindingException;
 }

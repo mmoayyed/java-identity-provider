@@ -16,10 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-import org.opensaml.common.binding.BindingException;
-import org.opensaml.common.binding.MessageDecoder;
-import org.opensaml.xml.XMLObject;
-
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.session.Session;
 
@@ -46,25 +42,9 @@ public interface ProfileRequest<RawRequestType, SessionType extends Session> {
     public SessionType getSession();
     
     /**
-     * Gets a decoder that can be used to decode the servlet request.
-     * 
-     * @return message decoder
-     */
-    public MessageDecoder getMessageDecoder();
-    
-    /**
      * Gets configuration information for the requester (relying party).
      * 
      * @return configuration information for the requester
      */
     public RelyingPartyConfiguration getRelyingPartyConfiguration();
-    
-    /**
-     * Gets the decoded request message.
-     * 
-     * @return decoded request message
-     * 
-     * @throws BindingException thrown if there is a problem decoding the message from the request
-     */
-    public XMLObject getRequest() throws BindingException;
 }
