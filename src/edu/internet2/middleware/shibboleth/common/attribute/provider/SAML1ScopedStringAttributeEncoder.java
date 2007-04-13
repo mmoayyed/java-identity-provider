@@ -25,6 +25,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
 import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
+import edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethScopedValueBuilder;
 
 /**
  * Implementation of SAML 1.X scoped attribute encoder.
@@ -47,7 +48,8 @@ public class SAML1ScopedStringAttributeEncoder extends
     /** Constructor. */
     public SAML1ScopedStringAttributeEncoder() {
         attributeBuilder = new AttributeBuilder();
-        // valueBuilder = new ShibbolethScopedValueBuilder();
+        valueBuilder = new ShibbolethScopedValueBuilder();
+        setEncoderCategory(SAML1AttributeEncoder.CATEGORY);
     }
 
     /** {@inheritDoc} */
@@ -78,10 +80,10 @@ public class SAML1ScopedStringAttributeEncoder extends
         // get attribute values
         for (Object o : attribute.getValues()) {
             String stringValue = o.toString();
-            
+
             ShibbolethScopedValue scopedValue;
-            scopedValue = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME,
-                    ShibbolethScopedValue.TYPE_NAME);
+            scopedValue = valueBuilder
+                    .buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, ShibbolethScopedValue.TYPE_NAME);
 
             // handle "attribute" scopeType
             if ("attribute".equals(getScopeType())) {

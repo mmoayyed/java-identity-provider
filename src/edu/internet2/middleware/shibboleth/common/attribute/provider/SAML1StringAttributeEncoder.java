@@ -43,6 +43,7 @@ public class SAML1StringAttributeEncoder extends AbstractAttributeEncoder<org.op
     public SAML1StringAttributeEncoder() {
         attributeBuilder = new AttributeBuilder();
         stringBuilder = new XSStringBuilder();
+        setEncoderCategory(SAML1AttributeEncoder.CATEGORY);
     }
 
     /** {@inheritDoc} */
@@ -62,7 +63,7 @@ public class SAML1StringAttributeEncoder extends AbstractAttributeEncoder<org.op
 
         samlAttribute.setAttributeName(getAttributeName());
         samlAttribute.setAttributeNamespace(getNamespace());
-        
+
         for (Object o : attribute.getValues()) {
             XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
             xsstring.setValue(o.toString());
