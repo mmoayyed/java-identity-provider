@@ -34,6 +34,7 @@ import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
+import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -225,7 +226,8 @@ public class AttributeAuthorityCLI {
             ApplicationContext appCtx) {
         String issuer = (String) parser.getOptionValue(CLIParserBuilder.ISSUER_ARG);
         String requester = (String) parser.getOptionValue(CLIParserBuilder.REQUESTER_ARG);
-        SimpleRelyingPartyConfiguration rpConfig = new SimpleRelyingPartyConfiguration(issuer, requester);
+        
+        RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration(issuer, requester);
 
         ShibbolethAttributeRequestContext attribReqCtx = new ShibbolethAttributeRequestContext();
 
@@ -382,43 +384,4 @@ public class AttributeAuthorityCLI {
             return parser;
         }
     }
-
-    /**
-     * Simple implemenation of {@link RelyingPartyConfiguration} that does not allow profile configurations.
-     */
-    private static class SimpleRelyingPartyConfiguration implements RelyingPartyConfiguration {
-
-        /** Entity ID of the issuer. */
-        private String issuerId;
-
-        /** Entity ID of the relying party. */
-        private String relyingPartyId;
-
-        /**
-         * Constructor.
-         * 
-         * @param issuer entity ID of the issuer
-         * @param relyingParty entity ID of the relying party
-         */
-        public SimpleRelyingPartyConfiguration(String issuer, String relyingParty) {
-            issuerId = DatatypeHelper.safeTrimOrNullString(issuer);
-            relyingPartyId = DatatypeHelper.safeTrimOrNullString(relyingParty);
-        }
-
-        /** {@inheritDoc} */
-        public String getProviderID() {
-            return issuerId;
-        }
-
-        /** {@inheritDoc} */
-        public String getRelyingPartyID() {
-            return relyingPartyId;
-        }
-
-        /** {@inheritDoc} */
-        public Map<String, ProfileConfiguration> getProfileConfigurations() {
-            return null;
-        }
-    }
-
 }

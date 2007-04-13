@@ -79,8 +79,8 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
             throws MetadataProviderException {
         relyingPartyConfiguration = rpConfig;
         metadata = provider;
-        issuerMetadata = provider.getEntityDescriptor(rpConfig.getProviderID());
-        requesterMetadata = provider.getEntityDescriptor(rpConfig.getRelyingPartyID());
+        issuerMetadata = provider.getEntityDescriptor(rpConfig.getProviderId());
+        requesterMetadata = provider.getEntityDescriptor(rpConfig.getRelyingPartyId());
     }
 
     /** {@inheritDoc} */
