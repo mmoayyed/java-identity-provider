@@ -30,5 +30,26 @@ public class SAMLRelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler
     public void init() {
         registerBeanDefinitionParser(SAMLRelyingPartyManagerBeanDefinitionParser.TYPE_NAME,
                 new SAMLRelyingPartyManagerBeanDefinitionParser());
+
+        registerBeanDefinitionParser(ShibbolethSSOProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new ShibbolethSSOProfileConfigurationBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML1AttributeQueryProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new SAML1AttributeQueryProfileConfigurationBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML1ArtifactQueryProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new SAML1ArtifactQueryProfileConfigurationBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2SSOProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new SAML2SSOProfileConfigurationBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2LogoutRequestProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new SAML2LogoutRequestProfileConfigurationBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2AttributeQueryProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new SAML2AttributeQueryProfileConfigurationBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2ArtifactResolutionProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new SAML2ArtifactResolutionProfileConfigurationBeanDefinitionParser());
     }
 }

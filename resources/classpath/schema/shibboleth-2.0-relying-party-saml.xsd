@@ -73,6 +73,11 @@
             <extension base="samlrp:SAMLProfileConfigurationType">
                 <sequence>
                     <!--  TODO Encryption related credentials -->
+                    <element name="ProxyAudience" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>List of audiences for proxied assertions.</documentation>
+                        </annotation>
+                    </element>
                 </sequence>
                 <attribute name="encryptNameIds" type="boolean" default="false">
                     <annotation>
@@ -84,7 +89,7 @@
                         <documentation>A boolean flag indicating whether assertions should be encrypted.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="proxyCount" type="nonNegativeInteger" default="0">
+                <attribute name="assertionProxyCount" type="nonNegativeInteger" default="0">
                     <annotation>
                         <documentation>The maximum number of times an assertion may be proxied.</documentation>
                     </annotation>
@@ -150,7 +155,7 @@
                 <attribute name="assertionLifetime" type="long" default="300000">
                     <annotation>
                         <documentation>
-                            The amount of time, in milliseconds, an before an issued assertion expires. A negative value
+                            The amount of time, in milliseconds, before an issued assertion expires. A negative value
                             indicates the assertion never expires.
                         </documentation>
                     </annotation>

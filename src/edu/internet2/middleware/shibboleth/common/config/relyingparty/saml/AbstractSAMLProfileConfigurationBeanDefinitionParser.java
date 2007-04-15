@@ -1,0 +1,66 @@
+/*
+ * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
+import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
+
+/**
+ * Base Spring configuration parser for SAML profile configurations.
+ */
+public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+
+    /** {@inheritDoc} */
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+
+        Map<QName, List<Element>> children = XMLHelper.getChildElements(element);
+
+        // TODO signing credential
+
+        List<Element> audienceElems = children.get(new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE, "Audience"));
+        if (audienceElems != null && audienceElems.size() > 0) {
+            ArrayList<String> audiences = new ArrayList<String>();
+            for (Element audienceElem : audienceElems) {
+                audiences.add(DatatypeHelper.safeTrimOrNullString(audienceElem.getTextContent()));
+            }
+            builder.addPropertyValue("audiences", audiences);
+        }
+
+        builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
+                .getAttributeNS(null, "assertionLifetime"))));
+        
+        builder.addPropertyValue("defaultNameFormat", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
+                "defaultNameFormat")));
+        
+        builder.addPropertyValue("defaultArtifactType", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
+                .getAttributeNS(null, "defaultArtifactType"))));
+        
+        builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                null, "signAssertions")));
+    }
+}
