@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.relyingparty.saml1;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.AbstractSAMLProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**
  * SAML 1 communication profile configuration settings.

@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.relyingparty;
+package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
 /**
  * Spring namespace handler for the Shibboleth relying party namespace.
  */
-public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
+public class SAMLRelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:relying-party";
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:relying-party:saml";
 
     /** {@inheritDoc} */
     public void init() {
-        UnidentifiedRelyingPartyBeanDefinitionParser parser = new UnidentifiedRelyingPartyBeanDefinitionParser();
-        registerBeanDefinitionParser(UnidentifiedRelyingPartyBeanDefinitionParser.TYPE_NAME, parser);
-        registerBeanDefinitionParser(UnidentifiedRelyingPartyBeanDefinitionParser.ANON_RP_ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(UnidentifiedRelyingPartyBeanDefinitionParser.DEFAULT_RP_ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(SAMLRelyingPartyManagerBeanDefinitionParser.TYPE_NAME,
+                new SAMLRelyingPartyManagerBeanDefinitionParser());
     }
 }

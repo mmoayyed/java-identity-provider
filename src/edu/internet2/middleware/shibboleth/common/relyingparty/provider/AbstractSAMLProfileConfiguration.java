@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.relyingparty;
+package edu.internet2.middleware.shibboleth.common.relyingparty.provider;
 
 import java.util.Collection;
 import java.util.HashSet;
 
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.util.DatatypeHelper;
+
+import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
 /**
  * Profile settings common to SAML 1 and SAML 2.

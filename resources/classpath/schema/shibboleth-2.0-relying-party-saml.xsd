@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:relying-party:saml"
+    xmlns:samlrp="urn:mace:shibboleth:2.0:relying-party:saml" xmlns:rp="urn:mace:shibboleth:2.0:relying-party"
+    xmlns:cred="urn:mace:shibboleth:2.0:credential" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:relying-party"
+        schemaLocation="classpath:/schema/shibboleth-2.0-relying-party.xsd" />
+
+    <import namespace="urn:mace:shibboleth:2.0:credential"
+        schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
+
+    <complexType name="SAMLRelyingPartyManager">
+        <annotation>
+            <documentation>Relying party manager based on SAML metadata.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="rp:RelyingPartyManagerType">
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The name of a defined metadata provider that should be used by this relying party
+                            configuration group to retrieve information about an entity.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2ArtifactResolutionProfile">
+        <annotation>
+            <documentation>SAML 2.0 artifact query communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2AttributesQueryProfile">
+        <annotation>
+            <documentation>SAML 2.0 attribute query communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2LogoutRequestProfile">
+        <annotation>
+            <documentation>SAML 2.0 logout request communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2SSOProfile">
+        <annotation>
+            <documentation>SAML 2.0 single sign-on communication profile configuration.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML2ProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2ProfileConfigurationType" abstract="true">
+        <annotation>
+            <documentation>Base type for SAML 2.0 communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAMLProfileConfigurationType">
+                <sequence>
+                    <!--  TODO Encryption related credentials -->
+                </sequence>
+                <attribute name="encryptNameIds" type="boolean" default="false">
+                    <annotation>
+                        <documentation>A boolean flag indicating whether NameIDs should be encrypted.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="encryptAssertions" type="boolean" default="false">
+                    <annotation>
+                        <documentation>A boolean flag indicating whether assertions should be encrypted.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyCount" type="nonNegativeInteger" default="0">
+                    <annotation>
+                        <documentation>The maximum number of times an assertion may be proxied.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1ArtifactQueryProfile">
+        <annotation>
+            <documentation>SAML 1.0 and 1.1 artifact query communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML1ProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1AttributeQueryProfile">
+        <annotation>
+            <documentation>SAML 1.0 and 1.1 attribute query communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML1ProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="ShibbolethSSOProfile">
+        <annotation>
+            <documentation>Shibboleth 1 single sign-on communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAML1ProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1ProfileConfigurationType" abstract="true">
+        <annotation>
+            <documentation>Base type for SAML 1.0 and 1.1 communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="samlrp:SAMLProfileConfigurationType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAMLProfileConfigurationType" abstract="true">
+        <annotation>
+            <documentation>Base type for SAML (1.0, 1.1, and 2.0) communication profile configurations.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="rp:ProfileConfigurationType">
+                <sequence>
+                    <element ref="cred:SigningCredential" minOccurs="0">
+                        <annotation>
+                            <documentation>Credential to use to sign SAML assertions.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="Audience" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>List of audiences for issued assertions.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="assertionLifetime" type="long" default="300000">
+                    <annotation>
+                        <documentation>
+                            The amount of time, in milliseconds, an before an issued assertion expires. A negative value
+                            indicates the assertion never expires.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="defaultNameFormat" type="anyURI">
+                    <annotation>
+                        <documentation>The default subject name format to use.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="defaultArtifactType" type="integer" default="4">
+                    <annotation>
+                        <documentation>The default artifact type to use.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signAssertions" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether issued assertions should be signed. If no signing
+                            credential is provided on this configuration and no default signing credential is provided
+                            on the relying party configuration than signing will not occur regardless of this setting.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

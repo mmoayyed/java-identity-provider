@@ -16,9 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.relyingparty;
 
-import java.util.List;
-
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import java.util.Map;
 
 /**
  * Locates the configuration for a given relying party.
@@ -28,14 +26,6 @@ public interface RelyingPartyManager {
     /**
      * Gets the configuration for the given relying party.
      * 
-     * If the given entity ID is null, empty, or contains only whitespace the anonymous relying party configuration is
-     * returned. Otherwise, the given relying party entity ID is looked for in the list of registered
-     * {@link RelyingPartyConfiguration}s and if found is returned. If no configuration is registered for the specific
-     * entity ID the entity descriptor for the relying party is located using the {@link MetadataProvider}. The name of
-     * ancestral entities descriptors are then looked up, in ascending order (i.e. the parent entities descriptor, then
-     * the grandparent, great-grandparent, etc.), with the first configuration found being returned. If no configuration
-     * is found once the top of the tree is reached the default configuration is returned.
-     * 
      * @param relyingPartyEntityID the entity of the relying part to get the configuration for
      * 
      * @return configuration for the given relying party
@@ -43,18 +33,11 @@ public interface RelyingPartyManager {
     public RelyingPartyConfiguration getRelyingPartyConfiguration(String relyingPartyEntityID);
 
     /**
-     * Gets the metadata provider used to lookup information about relying parties.
-     * 
-     * @return metadata provider used to lookup information about relying parties
-     */
-    public MetadataProvider getMetadataProvider();
-
-    /**
-     * Gets the registered relying party configurations.
+     * Gets the registered relying party configurations indexed by relying party ID.
      * 
      * @return the registered relying party configurations
      */
-    public List<RelyingPartyConfiguration> getRelyingPartyConfigurations();
+    public Map<String, RelyingPartyConfiguration> getRelyingPartyConfigurations();
 
     /**
      * Gets the default relying party configuration.

@@ -42,6 +42,16 @@ public class RelyingPartyConfiguration {
     /**
      * Constructor.
      * 
+     * @param provider entity ID of the responder when communicating with the relying party
+     */
+    public RelyingPartyConfiguration(String provider) {
+        setProviderId(provider);
+        profiles = new HashMap<String, ProfileConfiguration>();
+    }
+    
+    /**
+     * Constructor.
+     * 
      * @param relyingParty ID of the relying party this configuration is for
      * @param provider entity ID of the responder when communicating with the relying party
      */
