@@ -21,7 +21,7 @@
         <constructor-arg ref="shibboleth.VelocityEngine" />
     </bean>
     
-    <bean id="shibboleth.ParserPool" class="org.opensaml.xml.parse.ParserPool">
+    <bean id="shibboleth.ParserPool" class="org.opensaml.xml.parse.BasicParserPool">
         <property name="maxPoolSize" value="50" />
         <property name="createBuildersAtPoolLimit" value="true" />
         <property name="coalescing" value="true" />
