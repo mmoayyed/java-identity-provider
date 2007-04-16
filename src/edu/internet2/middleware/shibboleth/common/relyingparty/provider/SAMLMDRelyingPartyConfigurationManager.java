@@ -22,7 +22,7 @@ import java.util.Map;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
-import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyManager;
+import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
 
 /**
  * A relying party manager that uses SAML metadata to lookup information about requested entities. Relying party
@@ -36,7 +36,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyManag
  * grandparent, great-grandparent, etc.), with the first configuration found being returned. If no configuration is
  * found once the top of the tree is reached the default configuration is returned.
  */
-public class SAMLMDRelyingPartyManager implements RelyingPartyManager {
+public class SAMLMDRelyingPartyConfigurationManager implements RelyingPartyConfigurationManager {
 
     /** Metadata provider used to lookup information about entities. */
     private MetadataProvider metadata;
@@ -56,7 +56,7 @@ public class SAMLMDRelyingPartyManager implements RelyingPartyManager {
      * @param provider metadata provider used to lookup information about entities
      * 
      */
-    public SAMLMDRelyingPartyManager(MetadataProvider provider) {
+    public SAMLMDRelyingPartyConfigurationManager(MetadataProvider provider) {
         metadata = provider;
         rpConfigs = new HashMap<String, RelyingPartyConfiguration>();
     }

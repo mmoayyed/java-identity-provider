@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Locates the configuration for a given relying party.
  */
-public interface RelyingPartyManager {
+public interface RelyingPartyConfigurationManager {
 
     /**
      * Gets the configuration for the given relying party.

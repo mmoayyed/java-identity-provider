@@ -20,10 +20,10 @@ import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
 import edu.internet2.middleware.shibboleth.common.config.relyingparty.AbstractRelyingPartyManagerFactoryBean;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
-import edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRelyingPartyManager;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRelyingPartyConfigurationManager;
 
 /**
- * Spring factory bean for creating {@link SAMLMDRelyingPartyManager}s.
+ * Spring factory bean for creating {@link SAMLMDRelyingPartyConfigurationManager}s.
  */
 public class SAMLRelyingPartyManagerFactoryBean extends AbstractRelyingPartyManagerFactoryBean {
 
@@ -32,7 +32,7 @@ public class SAMLRelyingPartyManagerFactoryBean extends AbstractRelyingPartyMana
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return SAMLMDRelyingPartyManager.class;
+        return SAMLMDRelyingPartyConfigurationManager.class;
     }
 
     /**
@@ -55,7 +55,7 @@ public class SAMLRelyingPartyManagerFactoryBean extends AbstractRelyingPartyMana
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        SAMLMDRelyingPartyManager manager = new SAMLMDRelyingPartyManager(metadataProvider);
+        SAMLMDRelyingPartyConfigurationManager manager = new SAMLMDRelyingPartyConfigurationManager(metadataProvider);
         manager.setAnonymousRelyingConfiguration(getAnonymousRelyingParty());
         manager.setDefaultRelyingPartyConfiguration(getDefaultRelyingParty());
         
