@@ -16,22 +16,22 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import javax.xml.namespace.QName;
-
+import org.opensaml.xml.util.DatatypeHelper;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring configuration parser for SAML 1 attribute query profile configurations.
+ * Base Spring configuration parser for SAML 1 profile configurations.
  */
-public class SAML1AttributeQueryProfileConfigurationBeanDefinitionParser extends
-        AbstractSAML1ProfileConfigurationBeanDefinitionParser {
-
-    /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE,
-            "SAML1AttributeQueryProfile");
+public abstract class AbstractSAML1ProfileConfigurationBeanDefinitionParser extends
+        AbstractSAMLProfileConfigurationBeanDefinitionParser {
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return SAML1AttributeQueryProfileConfigurationFactoryBean.class;
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+        
+        builder.addPropertyReference("attributeAuthority", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
+                null, "attributeAuthority")));
     }
 }

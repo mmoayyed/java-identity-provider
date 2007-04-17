@@ -17,7 +17,9 @@
 package edu.internet2.middleware.shibboleth.common.relyingparty.saml2;
 
 import java.util.Collection;
+import java.util.HashSet;
 
+import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**
@@ -25,6 +27,9 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.Abstract
  */
 public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration {
 
+    /** Attribute authority to use. */
+    private SAML2AttributeAuthority attributeAuthority;
+    
     /** Whether to encrypt NameIDs. */
     private boolean encryptNameID;
 
@@ -36,6 +41,29 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
 
     /** Audiences for the proxy. */
     private Collection<String> proxyAudiences;
+    
+    /** Constructor. */
+    protected AbstractSAML2ProfileConfiguration(){
+        proxyAudiences = new HashSet<String>();
+    }
+    
+    /**
+     * Gets the Attribute authority to use.
+     * 
+     * @return Attribute authority to use
+     */
+    public SAML2AttributeAuthority getAttributeAuthority(){
+        return attributeAuthority;
+    }
+    
+    /**
+     * Sets the Attribute authority to use.
+     * 
+     * @param authority Attribute authority to use
+     */
+    public void setAttributeAuthority(SAML2AttributeAuthority authority){
+        attributeAuthority = authority;
+    }
 
     /**
      * Gets whether NameIDs should be encrypted.
@@ -98,14 +126,5 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      */
     public Collection<String> getProxyAudiences() {
         return proxyAudiences;
-    }
-
-    /**
-     * Gets the audiences for a proxied assertion.
-     * 
-     * @param audiences audiences for a proxied assertion
-     */
-    public void setProxyAudiences(Collection<String> audiences) {
-        proxyAudiences = audiences;
     }
 }

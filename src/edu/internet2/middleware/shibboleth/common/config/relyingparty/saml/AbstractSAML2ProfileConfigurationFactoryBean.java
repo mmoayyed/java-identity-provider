@@ -18,11 +18,17 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
 import java.util.List;
 
+import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.relyingparty.saml2.AbstractSAML2ProfileConfiguration;
+
 /**
  * Base Spring factory bean for SAML 2 profile configurations.
  */
 public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends AbstractSAMLProfileConfigurationFactoryBean {
 
+    /** Attribute authority for the profile configuration. */
+    private SAML2AttributeAuthority attributeAuthority;
+    
     /** Whether to encrypt NameIDs. */
     private boolean encryptNameIds;
 
@@ -35,6 +41,24 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
     /** Audiences for proxied assertions. */
     private List<String> proxyAudiences;
 
+    /**
+     * Gets the attribute authority for the profile configuration.
+     * 
+     * @return attribute authority for the profile configuration
+     */
+    public SAML2AttributeAuthority getAttributeAuthority(){
+        return attributeAuthority;
+    }
+    
+    /**
+     * Sets the attribute authority for the profile configuration.
+     * 
+     * @param authority attribute authority for the profile configuration
+     */
+    public void setAttributeAuthority(SAML2AttributeAuthority authority){
+        attributeAuthority = authority;
+    }
+    
     /**
      * Gets the maximum number of times an assertion may be proxied.
      * 
@@ -105,5 +129,28 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
      */
     public void setProxyAudiences(List<String> audiences){
         proxyAudiences = audiences;
+    }
+    
+    /**
+     * Populates the given profile configuration with standard information.
+     * 
+     * @param configuration configuration to populate
+     */
+    protected void populateBean(AbstractSAML2ProfileConfiguration configuration){
+        configuration.setAttributeAuthority(getAttributeAuthority());
+        configuration.setAssertionAudiences(getAudiences());
+        configuration.setAssertionLifetime(getAssertionLifetime());
+        configuration.setDefaultArtifactType(getDefaultArtifactType());
+        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
+        configuration.setEncryptAssertion(isEncryptAssertions());
+        configuration.setEncryptNameID(isEncryptNameIds());
+        
+        if(getProxyAudiences() != null){
+            configuration.getProxyAudiences().addAll(getProxyAudiences());
+        }
+        
+        configuration.setProxyCount(getAssertionProxyCount());
+        configuration.setSignAssertions(isSignAssertions());
+        configuration.setSigningCredential(getSigningCredential());
     }
 }

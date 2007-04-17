@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
  * Spring configuration parser for SAML 1 artifact query profile configurations.
  */
 public class SAML1ArtifactQueryProfileConfigurationBeanDefinitionParser extends
-        AbstractSAMLProfileConfigurationBeanDefinitionParser {
+        AbstractSAML1ProfileConfigurationBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE,

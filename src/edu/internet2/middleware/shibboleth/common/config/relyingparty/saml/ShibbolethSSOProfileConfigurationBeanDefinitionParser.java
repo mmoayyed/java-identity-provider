@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
  * Spring configuration parser for Shibboleth SSO profile configurations.
  */
 public class ShibbolethSSOProfileConfigurationBeanDefinitionParser extends
-        AbstractSAMLProfileConfigurationBeanDefinitionParser {
+        AbstractSAML1ProfileConfigurationBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE, "ShibbolethSSOProfile");

@@ -48,6 +48,9 @@ public abstract class AbstractSAML2ProfileConfigurationBeanDefinitionParser exte
             builder.addPropertyValue("proxyAudiences", audiences);
         }
 
+        builder.addPropertyReference("attributeAuthority", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
+                null, "attributeAuthority")));
+
         builder.addPropertyValue("encryptNameIds", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
                 null, "encryptNameIds")));
 

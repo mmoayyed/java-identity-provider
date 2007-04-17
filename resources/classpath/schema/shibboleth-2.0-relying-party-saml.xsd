@@ -94,6 +94,13 @@
                         <documentation>The maximum number of times an assertion may be proxied.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="attributeAuthority" type="string" default="shibboleth.SAML2AttributeAuthority">
+                    <annotation>
+                        <documentation>
+                            Name of the attribute authority component to make available within this configuration.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -130,7 +137,15 @@
             <documentation>Base type for SAML 1.0 and 1.1 communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAMLProfileConfigurationType" />
+            <extension base="samlrp:SAMLProfileConfigurationType">
+                <attribute name="attributeAuthority" type="string" default="shibboleth.SAML1AttributeAuthority">
+                    <annotation>
+                        <documentation>
+                            Name of the attribute authority component to make available within this configuration.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 

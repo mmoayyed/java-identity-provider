@@ -21,7 +21,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.saml1.ShibbolethS
 /**
  * Spring factory for Shibboleth SSO profile configurations.
  */
-public class ShibbolethSSOProfileConfigurationFactoryBean extends AbstractSAMLProfileConfigurationFactoryBean {
+public class ShibbolethSSOProfileConfigurationFactoryBean extends AbstractSAML1ProfileConfigurationFactoryBean {
 
     /** {@inheritDoc} */
     public Class getObjectType() {
@@ -31,12 +31,8 @@ public class ShibbolethSSOProfileConfigurationFactoryBean extends AbstractSAMLPr
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         ShibbolethSSOConfiguration configuration = new ShibbolethSSOConfiguration();
-        configuration.setAssertionAudiences(getAudiences());
-        configuration.setAssertionLifetime(getAssertionLifetime());
-        configuration.setDefaultArtifactType(getDefaultArtifactType());
-        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
-        configuration.setSignAssertions(isSignAssertions());
-        configuration.setSigningCredential(getSigningCredential());
+
+        populateBean(configuration);
 
         return configuration;
     }

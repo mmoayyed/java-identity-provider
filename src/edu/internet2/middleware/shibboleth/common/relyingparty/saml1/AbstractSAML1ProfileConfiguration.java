@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.relyingparty.saml1;
 
+import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**
@@ -23,4 +24,24 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.Abstract
  */
 public abstract class AbstractSAML1ProfileConfiguration extends AbstractSAMLProfileConfiguration {
 
+    /** Attribute authority to use. */
+    private SAML1AttributeAuthority attributeAuthority;
+    
+    /**
+     * Gets the Attribute authority to use.
+     * 
+     * @return Attribute authority to use
+     */
+    public SAML1AttributeAuthority getAttributeAuthority(){
+        return attributeAuthority;
+    }
+    
+    /**
+     * Sets the Attribute authority to use.
+     * 
+     * @param authority Attribute authority to use
+     */
+    public void setAttributeAuthority(SAML1AttributeAuthority authority){
+        attributeAuthority = authority;
+    }
 }

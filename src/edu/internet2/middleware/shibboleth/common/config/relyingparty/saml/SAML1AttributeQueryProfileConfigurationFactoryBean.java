@@ -21,7 +21,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.saml1.AttributeQu
 /**
  * Spring factory for SAML 1 attribute query profile configurations.
  */
-public class SAML1AttributeQueryProfileConfigurationFactoryBean extends AbstractSAMLProfileConfigurationFactoryBean {
+public class SAML1AttributeQueryProfileConfigurationFactoryBean extends AbstractSAML1ProfileConfigurationFactoryBean {
 
     /** {@inheritDoc} */
     public Class getObjectType() {
@@ -31,12 +31,8 @@ public class SAML1AttributeQueryProfileConfigurationFactoryBean extends Abstract
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         AttributeQueryConfiguration configuration = new AttributeQueryConfiguration();
-        configuration.setAssertionAudiences(getAudiences());
-        configuration.setAssertionLifetime(getAssertionLifetime());
-        configuration.setDefaultArtifactType(getDefaultArtifactType());
-        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
-        configuration.setSignAssertions(isSignAssertions());
-        configuration.setSigningCredential(getSigningCredential());
+        
+        populateBean(configuration);
 
         return configuration;
     }

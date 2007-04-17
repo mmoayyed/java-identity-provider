@@ -32,16 +32,8 @@ public class SAML2ArtifactResolutionProfileConfigurationFactoryBean extends
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         ArtifactResolutionConfiguration configuration = new ArtifactResolutionConfiguration();
-        configuration.setAssertionAudiences(getAudiences());
-        configuration.setAssertionLifetime(getAssertionLifetime());
-        configuration.setDefaultArtifactType(getDefaultArtifactType());
-        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
-        configuration.setEncryptAssertion(isEncryptAssertions());
-        configuration.setEncryptNameID(isEncryptNameIds());
-        configuration.setProxyAudiences(getProxyAudiences());
-        configuration.setProxyCount(getAssertionProxyCount());
-        configuration.setSignAssertions(isSignAssertions());
-        configuration.setSigningCredential(getSigningCredential());
+
+        populateBean(configuration);
 
         return configuration;
     }

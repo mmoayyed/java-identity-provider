@@ -31,16 +31,8 @@ public class SAML2AttributeQueryProfileConfigurationFactoryBean extends Abstract
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         AttributeQueryConfiguration configuration = new AttributeQueryConfiguration();
-        configuration.setAssertionAudiences(getAudiences());
-        configuration.setAssertionLifetime(getAssertionLifetime());
-        configuration.setDefaultArtifactType(getDefaultArtifactType());
-        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
-        configuration.setEncryptAssertion(isEncryptAssertions());
-        configuration.setEncryptNameID(isEncryptNameIds());
-        configuration.setProxyAudiences(getProxyAudiences());
-        configuration.setProxyCount(getAssertionProxyCount());
-        configuration.setSignAssertions(isSignAssertions());
-        configuration.setSigningCredential(getSigningCredential());
+        
+        populateBean(configuration);
 
         return configuration;
     }
