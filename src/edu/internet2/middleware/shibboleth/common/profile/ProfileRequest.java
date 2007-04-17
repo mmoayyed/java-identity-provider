@@ -16,16 +16,13 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
-import edu.internet2.middleware.shibboleth.common.session.Session;
-
 /**
- * Contextual information for requesting and receiving a response from a profile handler.
+ * Wrapper for incoming profile requests. Currently serves as a future extension point allowing additional information
+ * to be added before the request is provided to the profile handler.
  * 
  * @param <RawRequestType> the type of the raw requests encapsulated in the profile request
- * @param <SessionType> the type of user session active during this request
  */
-public interface ProfileRequest<RawRequestType, SessionType extends Session> {
+public interface ProfileRequest<RawRequestType> {
 
     /**
      * Gets the raw, usually transport specific, request that was made.
@@ -33,18 +30,4 @@ public interface ProfileRequest<RawRequestType, SessionType extends Session> {
      * @return raw request that was made
      */
     public RawRequestType getRawRequest();
-    
-    /**
-     * Gets the current session for the user.
-     * 
-     * @return current session for the user
-     */
-    public SessionType getSession();
-    
-    /**
-     * Gets configuration information for the requester (relying party).
-     * 
-     * @return configuration information for the requester
-     */
-    public RelyingPartyConfiguration getRelyingPartyConfiguration();
 }

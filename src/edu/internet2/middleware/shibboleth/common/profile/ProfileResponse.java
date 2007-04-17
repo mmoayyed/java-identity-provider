@@ -16,9 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-
 /**
- * Contextual information for receiving a response from a profile handler.
+ * Wrapper for incoming profile response. Currently serves as a future extension point allowing additional information
+ * to be added before the response is provided to the profile handler.
  * 
  * @param <RawResponseType> the type of the raw response encapsulated in the profile response
  */
