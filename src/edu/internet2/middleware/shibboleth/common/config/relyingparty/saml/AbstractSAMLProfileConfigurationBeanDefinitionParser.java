@@ -60,6 +60,12 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
         builder.addPropertyValue("defaultArtifactType", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "defaultArtifactType"))));
         
+        builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                null, "signRequests")));
+        
+        builder.addPropertyValue("signResponses", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                null, "signResponses")));
+        
         builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
                 null, "signAssertions")));
     }

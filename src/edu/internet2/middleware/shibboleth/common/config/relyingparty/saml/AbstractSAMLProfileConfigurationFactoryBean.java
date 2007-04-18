@@ -21,6 +21,8 @@ import java.util.List;
 import org.opensaml.xml.security.credential.Credential;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
+
 /**
  * Base Spring factory bean for creating SAML profile configurations.
  */
@@ -40,6 +42,12 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
 
     /** Whether assertions should be signed. */
     private boolean signAssertions;
+    
+    /** Whether to sign protocol requests. */
+    private boolean signRequests;
+    
+    /** Whether to sign protocol responses. */
+    private boolean signResponses;
 
     /** Credential used to sign assertions. */
     private Credential signingCredential;
@@ -116,13 +124,49 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     public void setDefaultNameFormat(String format) {
         defaultNameFormat = format;
     }
+    
+    /**
+     * Gets whether to sign protocol requests.
+     * 
+     * @return whether to sign protocol requests
+     */
+    public boolean getSignRequests(){
+        return signRequests;
+    }
+    
+    /**
+     * Sets whether to sign protocol requests.
+     * 
+     * @param sign whether to sign protocol requests
+     */
+    public void setSignRequests(boolean sign){
+        signRequests = sign;
+    }
+    
+    /**
+     * Gets whether to sign protocol responses.
+     * 
+     * @return whether to sign protocol responses
+     */
+    public boolean getSignResposnes(){
+        return signResponses;
+    }
+    
+    /**
+     * Sets whether to sign protocol responses.
+     * 
+     * @param sign whether to sign protocol responses
+     */
+    public void setSignResponses(boolean sign){
+        signResponses = sign;
+    }
 
     /**
      * Gets whether assertions should be signed.
      * 
      * @return whether assertions should be signed
      */
-    public boolean isSignAssertions() {
+    public boolean getSignAssertions() {
         return signAssertions;
     }
 
@@ -151,5 +195,21 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      */
     public void setSigningCredential(Credential credential) {
         signingCredential = credential;
+    }
+    
+    /**
+     * Populates the given profile configuration with standard information.
+     * 
+     * @param configuration configuration to populate
+     */
+    protected void populateBean(AbstractSAMLProfileConfiguration configuration){
+        configuration.setAssertionAudiences(getAudiences());
+        configuration.setAssertionLifetime(getAssertionLifetime());
+        configuration.setDefaultArtifactType(getDefaultArtifactType());
+        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
+        configuration.setSignRequests(getSignRequests());
+        configuration.setSignResponses(getSignResposnes());
+        configuration.setSignAssertions(getSignAssertions());
+        configuration.setSigningCredential(getSigningCredential());
     }
 }

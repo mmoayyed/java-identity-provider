@@ -46,6 +46,12 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
 
     /** Whether to sign assertions. */
     private boolean signAssertions;
+    
+    /** Whether to sign protocol requests. */
+    private boolean signRequests;
+    
+    /** Whether to sign protocol responses. */
+    private boolean signResponses;
 
     /** Constructor. */
     protected AbstractSAMLProfileConfiguration() {
@@ -146,6 +152,42 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
             throw new IllegalArgumentException("Credential does not contain a private key");
         }
         signingCredential = credential;
+    }
+    
+    /**
+     * Gets whether to sign protocol requests.
+     * 
+     * @return whether to sign protocol requests
+     */
+    public boolean getSignRequests(){
+        return signRequests;
+    }
+    
+    /**
+     * Sets whether to sign protocol requests.
+     * 
+     * @param sign whether to sign protocol requests
+     */
+    public void setSignRequests(boolean sign){
+        signRequests = sign;
+    }
+    
+    /**
+     * Gets whether to sign protocol responses.
+     * 
+     * @return whether to sign protocol responses
+     */
+    public boolean getSignResposnes(){
+        return signResponses;
+    }
+    
+    /**
+     * Sets whether to sign protocol responses.
+     * 
+     * @param sign whether to sign protocol responses
+     */
+    public void setSignResponses(boolean sign){
+        signResponses = sign;
     }
 
     /**

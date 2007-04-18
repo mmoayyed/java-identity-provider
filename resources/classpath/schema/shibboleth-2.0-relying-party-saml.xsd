@@ -194,6 +194,24 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="signRequests" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether protocol requests should be signed. If no signing
+                            credential is provided on this configuration and no default signing credential is provided
+                            on the relying party configuration than signing will not occur regardless of this setting.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signResponses" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether protocol responses should be signed. If no signing
+                            credential is provided on this configuration and no default signing credential is provided
+                            on the relying party configuration than signing will not occur regardless of this setting.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

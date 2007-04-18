@@ -51,12 +51,7 @@ abstract class AbstractSAML1ProfileConfigurationFactoryBean extends AbstractSAML
      * @param configuration configuration to populate
      */
     protected void populateBean(AbstractSAML1ProfileConfiguration configuration){
+        super.populateBean(configuration);
         configuration.setAttributeAuthority(getAttributeAuthority());
-        configuration.setAssertionAudiences(getAudiences());
-        configuration.setAssertionLifetime(getAssertionLifetime());
-        configuration.setDefaultArtifactType(getDefaultArtifactType());
-        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
-        configuration.setSignAssertions(isSignAssertions());
-        configuration.setSigningCredential(getSigningCredential());
     }
 }
