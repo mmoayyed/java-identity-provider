@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-import javax.servlet.ServletException;
-
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
 import edu.internet2.middleware.shibboleth.common.session.Session;
 import edu.internet2.middleware.shibboleth.common.session.SessionManager;
@@ -65,9 +63,7 @@ public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyC
      * @param request the profile request
      * @param response the profile response
      * 
-     * @return true if this handler has processed the request, false if not
-     * 
-     * @throws ServletException throw if there was a problem while processing the request
+     * @throws ProfileException throw if there was a problem while processing the request
      */
-    public abstract boolean processRequest(ProfileRequest request, ProfileResponse response) throws ServletException;
+    public abstract void processRequest(ProfileRequest request, ProfileResponse response) throws ProfileException;
 }
