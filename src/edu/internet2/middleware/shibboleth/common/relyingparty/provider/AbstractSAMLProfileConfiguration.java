@@ -177,7 +177,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @return whether to sign protocol responses
      */
-    public boolean getSignResposnes(){
+    public boolean getSignResponses(){
         return signResponses;
     }
     
