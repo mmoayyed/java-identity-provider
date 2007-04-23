@@ -125,4 +125,20 @@ public class RelyingPartyConfiguration {
     public Map<String, ProfileConfiguration> getProfileConfigurations() {
         return profiles;
     }
+    
+    /**
+     * Convenience method for retrieving a given profile configuration from the {@link Map} returned by 
+     * {@link #getProfileConfigurations()}.
+     * 
+     * @param profileId unique Id of the profile
+     * 
+     * @return the profile configuration or null
+     */
+    public ProfileConfiguration getProfileConfiguration(String profileId){
+        if(profiles != null){
+            return profiles.get(profileId);
+        }
+        
+        return null;
+    }
 }
