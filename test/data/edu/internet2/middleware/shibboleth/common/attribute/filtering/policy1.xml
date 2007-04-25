@@ -9,10 +9,12 @@
         Release attributes if the person is not an alumni or a student with FERPA suppression.
     -->
     <afp:PermitValue id="studentWithSuppression" xsi:type="basic:OR">
-        <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="student"
-            negateResult="true" />
-        <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="alum"
-            negateResult="true" />
+        <afp:PermitValue xsi:type="basic:NOT">
+            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="student" />
+        </afp:PermitValue>
+        <afp:PermitValue xsi:type="basic:NOT">
+            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="alum" />
+        </afp:PermitValue>
         <afp:PermitValue xsi:type="basic:AND">
             <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="student" />
             <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="ferpa" value="false" />
