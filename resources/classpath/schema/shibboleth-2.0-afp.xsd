@@ -112,42 +112,42 @@
         </annotation>
     </element>
     <complexType name="AttributeRuleType">
-        <sequence>
-            <element ref="afp:PermitValue">
-                <annotation>
-                    <documentation>
-                        A filter for attribute values. If the filter evaluates to true the value is permitted, otherwise
-                        it is filtered out.
-                    </documentation>
-                </annotation>
-            </element>
-        </sequence>
-        <attribute name="attributeID" type="string" use="required">
-            <annotation>
-                <documentation>
-                    The unique ID of the attribute to which this rule applies. Also serves as the unique ID for the rule
-                    if no id attribute is specified.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="id" type="string">
-            <annotation>
-                <documentation>A unique ID for this attribute rule.</documentation>
-            </annotation>
-        </attribute>
-        <attribute name="ref" type="string">
-            <annotation>
-                <documentation>A reference to globally declared attribute rule.</documentation>
-            </annotation>
-        </attribute>
+        <complexContent>
+            <extension base="afp:ReferableObject">
+                <sequence>
+                    <element ref="afp:PermitValue">
+                        <annotation>
+                            <documentation>
+                                A filter for attribute values. If the filter evaluates to true the value is permitted,
+                                otherwise it is filtered out.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="attributeID" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The unique ID of the attribute to which this rule applies. Also serves as the unique ID for
+                            the rule if no id attribute is specified.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
     </complexType>
 
-    <element name="PolicyRequirement" type="afp:MatchFunctorType">
+    <element name="PolicyRequirement">
         <annotation>
             <documentation>A requirement that if met signals that a filter policy should be used.</documentation>
         </annotation>
     </element>
-    <element name="PermitValue" type="afp:MatchFunctorType">
+    <complexType name="PolicyRequirementType" abstract="true">
+        <complexContent>
+            <extension base="afp:ReferableObject"></extension>
+        </complexContent>
+    </complexType>
+
+    <element name="PermitValue">
         <annotation>
             <documentation>
                 A filter for attribtue values. If the filter evaluates to true the value is permitted, otherwise it is
@@ -155,7 +155,13 @@
             </documentation>
         </annotation>
     </element>
-    <complexType name="MatchFunctorType">
+    <complexType name="PermitValueType" abstract="true">
+        <complexContent>
+            <extension base="afp:ReferableObject"></extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ReferableObject">
         <attribute name="id" type="string">
             <annotation>
                 <documentation>
@@ -167,11 +173,6 @@
         <attribute name="ref" type="string">
             <annotation>
                 <documentation>Used to reference a globally defined functor.</documentation>
-            </annotation>
-        </attribute>
-        <attribute name="negateResult" type="boolean" default="false">
-            <annotation>
-                <documentation>Used to negate the result of a match evaluation.</documentation>
             </annotation>
         </attribute>
     </complexType>
