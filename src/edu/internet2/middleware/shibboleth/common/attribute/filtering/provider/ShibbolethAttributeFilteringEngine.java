@@ -17,17 +17,17 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.AndMatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 
 /**
@@ -43,7 +43,7 @@ public class ShibbolethAttributeFilteringEngine implements AttributeFilteringEng
 
     /** Constructor. */
     public ShibbolethAttributeFilteringEngine() {
-
+        filterPolicies = new ArrayList<AttributeFilterPolicy>();
     }
 
     /**
@@ -55,144 +55,83 @@ public class ShibbolethAttributeFilteringEngine implements AttributeFilteringEng
         return filterPolicies;
     }
 
-    /**
-     * Sets the filter policies active for this engine.
-     * 
-     * @param policies filter policies active for this engine
-     */
-    public void setFilterPolicies(List<AttributeFilterPolicy> policies) {
-        filterPolicies = policies;
-    }
-
     /** {@inheritDoc} */
     public Map<String, Attribute> filterAttributes(Map<String, Attribute> attributes,
             ShibbolethAttributeRequestContext context) throws AttributeFilteringException {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Filtering " + attributes.size() + " attributes for principal " + context.getPrincipalName());
+        }
 
         if (getFilterPolicies() == null) {
             return new HashMap<String, Attribute>();
         }
 
         ShibbolethFilteringContext filterContext = new ShibbolethFilteringContext(attributes, context);
-        Collection<AttributeRule> rules = generateEffectiveAttributeRules(filterContext);
-        for (AttributeRule rule : rules) {
-            filterAttributeValues(rule, filterContext);
+        for (AttributeFilterPolicy filterPolicy : filterPolicies) {
+            filterAttributes(filterContext, filterPolicy);
         }
 
-        return filterContext.getAttributes();
+        Attribute attribute;
+        for (Entry<String, Attribute> attributeEntry : attributes.entrySet()) {
+            attribute = attributeEntry.getValue();
+            attribute.getValues().retainAll(filterContext.getRetainedValues(attribute.getId()));
+        }
+
+        return filterContext.getUnfilteredAttributes();
     }
 
     /**
-     * Evaluates all the filter policies and returns the list of effective attribute rules. An effective attribute rule
-     * is created by logically ORing all the value filters for each IDed attribute in all polcies whose requirements are
-     * met.
+     * Evaluates the given policy's requirement and, if the requirement is met, filters the attributes according to the
+     * policy.
      * 
-     * @param filterContext the current filtering context
+     * @param filterContext current filtering context
+     * @param filterPolicy current filter policy
      * 
-     * @return the effective attribute rules for the given context
-     * 
-     * @throws FilterProcessingException thrown the requirements for a filter policy can not be evaluated
+     * @throws FilterProcessingException thrown if the given policy can be evaluated
      */
-    protected Collection<AttributeRule> generateEffectiveAttributeRules(ShibbolethFilteringContext filterContext)
+    protected void filterAttributes(ShibbolethFilteringContext filterContext, AttributeFilterPolicy filterPolicy)
             throws FilterProcessingException {
         if (log.isDebugEnabled()) {
-            log.debug("Determing effective filter policies for principal "
+            log.debug("Evaluating if filter policy " + filterPolicy.getPolicyId() + " is active for principal "
                     + filterContext.getAttribtueRequestContext().getPrincipalName());
         }
-        ArrayList<AttributeFilterPolicy> effectivePolicies = new ArrayList<AttributeFilterPolicy>();
-        for (AttributeFilterPolicy policy : getFilterPolicies()) {
-            if (policy.getPolicyRequirement().evaluate(filterContext)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Filter policy " + policy.getPolicyId() + " is in effect for principal "
-                            + filterContext.getAttribtueRequestContext().getPrincipalName());
-                }
-                effectivePolicies.add(policy);
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("Filter policy " + policy.getPolicyId()
-                            + " policy requirements not met, policy is not in effect for principal "
-                            + filterContext.getAttribtueRequestContext().getPrincipalName());
-                }
-            }
-        }
-
-        return mergeAttributeRules(effectivePolicies);
-    }
-
-    /**
-     * Merges all the attribute rules for the given policies.
-     * 
-     * @param policies policies whose attribute rules should be merged
-     * 
-     * @return list of merged rules
-     */
-    protected Collection<AttributeRule> mergeAttributeRules(List<AttributeFilterPolicy> policies) {
-        if (policies.size() == 0) {
-            return null;
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Determine effective attribute rules");
-        }
-
-        Map<String, AttributeRule> effectiveRules = new HashMap<String, AttributeRule>();
-        AttributeRule effectiveRule;
-        AndMatchFunctor effectiveFilter;
-        for (AttributeFilterPolicy policy : policies) {
-            for (AttributeRule rule : policy.getAttributeRules()) {
-                effectiveRule = effectiveRules.get(rule.getAttributeId());
-                if (effectiveRule == null) {
-                    effectiveRule = new AttributeRule(rule.getAttributeId());
-                    effectiveRule.setPermitValue(new AndMatchFunctor());
-                    effectiveRules.put(rule.getAttributeId(), effectiveRule);
-                }
-
-                effectiveFilter = (AndMatchFunctor) effectiveRule.getPermitValue();
-                effectiveFilter.getFunctors().add(rule.getPermitValue());
-            }
-        }
-
-        return effectiveRules.values();
-    }
-
-    /**
-     * Filters the values of the attribute the rule applies to.
-     * 
-     * @param rule the attribute rule being evaluated
-     * @param filterContext the current filtering context
-     * 
-     * @throws FilterProcessingException thrown if the value filter criteria can not be evaluated
-     */
-    protected void filterAttributeValues(AttributeRule rule, ShibbolethFilteringContext filterContext)
-            throws FilterProcessingException {
-        Attribute attribute = filterContext.getAttributes().get(rule.getAttributeId());
-        if (attribute.getValues() == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("No values present for attribute " + attribute.getId()
-                        + ", removing it from list of attributes");
-            }
-            filterContext.getAttributes().remove(attribute.getId());
+        MatchFunctor policyRequirement = filterPolicy.getPolicyRequirement();
+        if (policyRequirement == null || !policyRequirement.evaluatePolicyRequirement(filterContext)) {
             return;
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Filtering values for attribute " + rule.getAttributeId());
+            log.debug("Filter policy " + filterPolicy.getPolicyId() + " is active for principal "
+                    + filterContext.getAttribtueRequestContext().getPrincipalName());
         }
-        MatchFunctor valueFilter = rule.getPermitValue();
-        for (Object value : attribute.getValues()) {
-            if (!valueFilter.evaluate(filterContext, attribute.getId(), value)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("The following attribute value was filtered out: " + value.toString());
-                }
-                attribute.getValues().remove(value);
-            }
+        for (AttributeRule attributeRule : filterPolicy.getAttributeRules()) {
+            filterAttributes(filterContext, attributeRule);
+        }
+    }
+
+    /**
+     * Evaluates the given attribute rules, filtering out attribute values based on the rule's permit value clause.
+     * 
+     * @param filterContext current filtering context
+     * @param attributeRule current attribute rule
+     * 
+     * @throws FilterProcessingException thrown if the given attribute rule can be evaluated
+     */
+    protected void filterAttributes(ShibbolethFilteringContext filterContext, AttributeRule attributeRule)
+            throws FilterProcessingException {
+        SortedSet attributeValues = filterContext.getRetainedValues(attributeRule.getAttributeId());
+        MatchFunctor permitValue = attributeRule.getPermitValue();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Filtering values of attribute " + attributeRule.getAttributeId() + " for principal "
+                    + filterContext.getAttribtueRequestContext().getPrincipalName());
         }
 
-        if (attribute.getValues().size() == 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("No values left for attribute " + attribute.getId()
-                                + ", removing it from list of attributes");
+        for (Object attributeValue : attributeValues) {
+            if (!permitValue.evaluatePermitValue(filterContext, attributeRule.getAttributeId(), attributeValue)) {
+                attributeValues.remove(attributeValue);
             }
-            filterContext.getAttributes().remove(attribute.getId());
         }
     }
 }

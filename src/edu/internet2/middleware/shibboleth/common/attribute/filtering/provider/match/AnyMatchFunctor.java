@@ -25,13 +25,14 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.S
 public class AnyMatchFunctor extends AbstractMatchFunctor {
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+    protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
         return true;
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
-            throws FilterProcessingException {
+    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+            Object attributeValue) throws FilterProcessingException {
         return true;
     }
 }

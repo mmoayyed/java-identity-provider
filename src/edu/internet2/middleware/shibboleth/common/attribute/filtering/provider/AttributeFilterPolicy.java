@@ -73,18 +73,9 @@ public class AttributeFilterPolicy {
     /**
      * Gets the attribute rules that are in effect if this policy is in effect.
      * 
-     * @return attribute rules that are in effect if this policy is in effect
+     * @return attribute rules that are in effect if this policy is in effect, never null
      */
     public List<AttributeRule> getAttributeRules(){
         return attribtueRules;
-    }
-    
-    /**
-     * Sets the attribute rules that are in effect if this policy is in effect.
-     * 
-     * @param rules attribute rules that are in effect if this policy is in effect
-     */
-    public void setAttributeRules(List<AttributeRule> rules){
-        attribtueRules = rules;
     }
 }

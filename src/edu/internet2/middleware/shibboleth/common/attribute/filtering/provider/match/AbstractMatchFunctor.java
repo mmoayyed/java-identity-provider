@@ -22,49 +22,20 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.S
 
 /**
  * Base class for {@link MatchFunctor}s that delegate the evaluation and negate the result if necessary.
+ * 
+ * This class provides an extension point for functionality across all match functors.
  */
 public abstract class AbstractMatchFunctor implements MatchFunctor {
 
-    /** Whether evaluation results should be negated. */
-    private boolean negateResult;
-
-    /**
-     * Gets whether evaluation results should be negated.
-     * 
-     * @return whether evaluation results should be negated
-     */
-    public boolean getNegateResult() {
-        return negateResult;
-    }
-
-    /**
-     * Sets whether evaluation results should be negated.
-     * 
-     * @param negate whether evaluation results should be negated
-     */
-    public void setNegateResult(boolean negate) {
-        negateResult = negate;
+    /** {@inheritDoc} */
+    public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+        return doEvaluatePolicyRequirement(filterContext);
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
-        boolean result = doEvaluate(filterContext);
-        if (negateResult) {
-            return !result;
-        }
-
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    public boolean evaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
-            throws FilterProcessingException {
-        boolean result = doEvaluate(filterContext, attributeId, attributeValue);
-        if (negateResult) {
-            return !result;
-        }
-
-        return result;
+    public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+            Object attributeValue) throws FilterProcessingException {
+        return doEvaluatePermitValue(filterContext, attributeId, attributeValue);
     }
 
     /**
@@ -77,7 +48,8 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    protected abstract boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException;
+    protected abstract boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException;
 
     /**
      * Evaluates this matching criteria. This evaluation is used while the filtering engine is filtering attribute
@@ -91,6 +63,6 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    protected abstract boolean doEvaluate(ShibbolethFilteringContext filterContext, String attributeId,
+    protected abstract boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException;
 }

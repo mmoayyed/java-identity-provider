@@ -50,14 +50,14 @@ public class NumOfAttributeValuesMatchFunctor implements MatchFunctor {
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
-        return isWithinRange(filterContext.getAttributes().get(attributeId));
+    public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+        return isWithinRange(filterContext.getUnfilteredAttributes().get(attributeId));
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(ShibbolethFilteringContext filterContext, String id, Object value)
+    public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String id, Object value)
             throws FilterProcessingException {
-        return isWithinRange(filterContext.getAttributes().get(attributeId));
+        return isWithinRange(filterContext.getUnfilteredAttributes().get(attributeId));
     }
 
     /**

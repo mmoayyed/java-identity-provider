@@ -29,32 +29,33 @@ public class AttributeValueStringMatchFunctor extends AbstractStringMatchFunctor
 
     /** ID of the attribute whose values will be evaluated. */
     private String attributeId;
-    
+
     /**
      * Gets the ID of the attribute whose values will be evaluated.
      * 
      * @return ID of the attribute whose values will be evaluated
      */
-    public String getAttributeId(){
+    public String getAttributeId() {
         return attributeId;
     }
-    
+
     /**
      * Sets the ID of the attribute whose values will be evaluated.
      * 
      * @param id ID of the attribute whose values will be evaluated
      */
-    public void setAttributeId(String id){
+    public void setAttributeId(String id) {
         attributeId = DatatypeHelper.safeTrimOrNullString(id);
     }
-    
+
     /**
      * Evaluates to true if any value for the specified attribute matches the given match string.
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
-        if(attributeId == null){
+    protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
+        if (attributeId == null) {
             throw new FilterProcessingException("No attribute ID specified");
         }
 
@@ -66,16 +67,16 @@ public class AttributeValueStringMatchFunctor extends AbstractStringMatchFunctor
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
+    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
             throws FilterProcessingException {
-        
-        if(attributeId == null){
+
+        if (attributeId == null) {
             return isMatch(attributeValue);
         }
-        
+
         return matchAttributeValues(filterContext);
     }
-    
+
     /**
      * Returns true if any value of the given attribute matches the match string.
      * 
@@ -83,18 +84,18 @@ public class AttributeValueStringMatchFunctor extends AbstractStringMatchFunctor
      * 
      * @return true if a value of the given attribute matches the match string
      */
-    protected boolean matchAttributeValues(ShibbolethFilteringContext filterContext){
-        Attribute attribute = filterContext.getAttributes().get(attributeId);
-        if(attribute == null || attribute.getValues() == null){
+    protected boolean matchAttributeValues(ShibbolethFilteringContext filterContext) {
+        Attribute attribute = filterContext.getUnfilteredAttributes().get(attributeId);
+        if (attribute == null || attribute.getValues() == null) {
             return false;
         }
-        
-        for(Object value : attribute.getValues()){
-            if(isMatch(value)){
+
+        for (Object value : attribute.getValues()) {
+            if (isMatch(value)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 }

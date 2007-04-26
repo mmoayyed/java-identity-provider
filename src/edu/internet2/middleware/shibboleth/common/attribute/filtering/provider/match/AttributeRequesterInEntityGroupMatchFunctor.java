@@ -20,19 +20,19 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A match function that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the
- * provided entity group name.
+ * A match function that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the provided
+ * entity group name.
  */
 public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
 
     /** {@inheritDoc} */
-    public boolean evaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+    public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
         return isEntityInGroup(filterContext.getAttribtueRequestContext().getAttributeRequesterMetadata());
     }
 
     /** {@inheritDoc} */
-    public boolean evaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
-            throws FilterProcessingException {
+    public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+            Object attributeValue) throws FilterProcessingException {
         return isEntityInGroup(filterContext.getAttribtueRequestContext().getAttributeRequesterMetadata());
     }
 }

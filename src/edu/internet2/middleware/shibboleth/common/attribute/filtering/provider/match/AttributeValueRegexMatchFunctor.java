@@ -53,7 +53,8 @@ public class AttributeValueRegexMatchFunctor extends AbstractRegexMatchFunctor {
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+    protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
         if (attributeId == null) {
             throw new FilterProcessingException("No attribute ID specified");
         }
@@ -66,7 +67,7 @@ public class AttributeValueRegexMatchFunctor extends AbstractRegexMatchFunctor {
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
+    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
             throws FilterProcessingException {
 
         if (attributeId == null) {
@@ -84,7 +85,7 @@ public class AttributeValueRegexMatchFunctor extends AbstractRegexMatchFunctor {
      * @return true if a value of the given attribute matches the provided regular expression
      */
     protected boolean matchAttributeValues(ShibbolethFilteringContext filterContext) {
-        Attribute attribute = filterContext.getAttributes().get(attributeId);
+        Attribute attribute = filterContext.getUnfilteredAttributes().get(attributeId);
         if (attribute == null || attribute.getValues() == null) {
             return false;
         }

@@ -26,57 +26,58 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.S
  * A {@link MatchFunctor} that logical ANDs the results of contained functors.
  */
 public class AndMatchFunctor extends AbstractMatchFunctor {
-    
+
     /** Contained functors. */
-    private List<MatchFunctor> childFunctors;
-    
+    private List<MatchFunctor> targetFunctors;
+
     /**
      * Gets the functors whose results will be ANDed.
      * 
      * @return functors whose results will be ANDed
      */
-    public List<MatchFunctor> getFunctors(){
-        return childFunctors;
+    public List<MatchFunctor> getTargetFunctors() {
+        return targetFunctors;
     }
-    
+
     /**
      * Sets the functors whose results will be ANDed.
      * 
      * @param functors functors whose results will be ANDed
      */
-    public void setFunctors(List<MatchFunctor> functors){
-        childFunctors = functors; 
+    public void setTargetFunctors(List<MatchFunctor> functors) {
+        targetFunctors = functors;
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
-        
-        if(childFunctors == null){
+    protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
+
+        if (targetFunctors == null) {
             return false;
         }
-        
-        for(MatchFunctor child : childFunctors){
-            if(!child.evaluate(filterContext)){
+
+        for (MatchFunctor child : targetFunctors) {
+            if (!child.evaluatePolicyRequirement(filterContext)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
-            throws FilterProcessingException {
-        if(childFunctors == null){
+    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+            Object attributeValue) throws FilterProcessingException {
+        if (targetFunctors == null) {
             return false;
         }
-        
-        for(MatchFunctor child : childFunctors){
-            if(!child.evaluate(filterContext, attributeId, attributeValue)){
+
+        for (MatchFunctor child : targetFunctors) {
+            if (!child.evaluatePermitValue(filterContext, attributeId, attributeValue)) {
                 return false;
             }
         }
-        
+
         return true;
     }
 }

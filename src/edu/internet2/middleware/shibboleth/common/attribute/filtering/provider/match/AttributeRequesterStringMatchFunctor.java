@@ -20,19 +20,20 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A match function that evaluates to true if {@link FilterContext#getAttributeRequester()} matches the given
- * match string.
+ * A match function that evaluates to true if {@link FilterContext#getAttributeRequester()} matches the given match
+ * string.
  */
 public class AttributeRequesterStringMatchFunctor extends AbstractStringMatchFunctor {
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+    protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
         return isMatch(filterContext.getAttribtueRequestContext().getAttributeRequester());
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluate(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
-            throws FilterProcessingException {
+    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+            Object attributeValue) throws FilterProcessingException {
         return isMatch(filterContext.getAttribtueRequestContext().getAttributeRequester());
     }
 }
