@@ -118,4 +118,9 @@ public class HttpResource implements Resource {
     public String getLocation() {
         return resourceUrl;
     }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return getLocation();
+    }
 }

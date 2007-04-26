@@ -94,4 +94,9 @@ public class FilesystemResource implements Resource {
     public String getLocation() {
         return resource.getAbsolutePath();
     }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return getLocation();
+    }
 }
