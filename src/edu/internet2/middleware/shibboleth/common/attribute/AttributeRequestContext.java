@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 
 import java.util.Set;
 
+import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
+
 /**
  * Contextual information for requesting attributes from an attribute authority.
  */
@@ -36,6 +38,13 @@ public interface AttributeRequestContext {
      * @return method used to authenticate the principal to the attribute requester
      */
     public String getPrincipalAuthenticationMethod();
+    
+    /**
+     * Gets the configuration for the relying party.
+     * 
+     * @return configuration for the relying party
+     */
+    public RelyingPartyConfiguration getRelyingPartyConfiguration();
 
     /**
      * Gets the ID of the requester of the attributes.

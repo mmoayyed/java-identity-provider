@@ -26,13 +26,12 @@ import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.xml.util.DatatypeHelper;
 
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.SAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.WebApplicationAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
- * Shibboleth {@link AttributeRequestContext}.
+ * Shibboleth attribute request context.
  */
 public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestContext,
         WebApplicationAttributeRequestContext {
@@ -81,6 +80,11 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
         metadata = provider;
         issuerMetadata = provider.getEntityDescriptor(rpConfig.getProviderId());
         requesterMetadata = provider.getEntityDescriptor(rpConfig.getRelyingPartyId());
+    }
+    
+    /** {@inheritDoc} */
+    public RelyingPartyConfiguration getRelyingPartyConfiguration() {
+        return relyingPartyConfiguration;
     }
 
     /** {@inheritDoc} */

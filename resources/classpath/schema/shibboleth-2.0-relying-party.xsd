@@ -4,6 +4,12 @@
     xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:cred="urn:mace:shibboleth:2.0:credential"
     elementFormDefault="qualified">
 
+    <annotation>
+        <documentation>
+            Schema describing relying party configurations.
+        </documentation>
+    </annotation>
+
     <import namespace="urn:mace:shibboleth:2.0:credential"
         schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
 
