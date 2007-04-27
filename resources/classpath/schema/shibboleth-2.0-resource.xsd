@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:resource"
+    xmlns:res="urn:mace:shibboleth:2.0:resource" elementFormDefault="qualified">
+
+    <element name="FileSystemResource" type="res:FilesystemResourceType">
+        <annotation>
+            <documentation>Identifies a resource (file) to be loaded from the file system.</documentation>
+        </annotation>
+    </element>
+    <complexType name="FilesystemResourceType">
+        <simpleContent>
+            <extension base="string" />
+        </simpleContent>
+    </complexType>
+
+    <element name="HttpResource" type="res:HttpResourceType">
+        <annotation>
+            <documentation>Identifies a resource (document) to be loaded from an HTTP(S) URL.</documentation>
+        </annotation>
+    </element>
+    <complexType name="HttpResourceType">
+        <simpleContent>
+            <extension base="string" />
+        </simpleContent>
+    </complexType>
+    
+</schema>
