@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<schema targetNamespace="urn:mace:shibboleth:2.0:attribute-map"
-        xmlns="http://www.w3.org/2001/XMLSchema"
-        xmlns:am="urn:mace:shibboleth:2.0:attribute-map">
+<schema targetNamespace="urn:mace:shibboleth:2.0:attribute-map" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:am="urn:mace:shibboleth:2.0:attribute-map">
 
     <annotation>
         <documentation>
@@ -16,7 +15,7 @@
         </annotation>
         <complexType>
             <sequence>
-                <element name="Attribute" type="am:AttributeType" maxOccurs="unbounded"/>
+                <element name="Attribute" type="am:AttributeType" maxOccurs="unbounded" />
             </sequence>
         </complexType>
     </element>
@@ -26,31 +25,28 @@
             <documentation>Rule for mapping a SAML 1/2 attribute to an internal attribute ID.</documentation>
         </annotation>
         <sequence>
-            <element name="AttributeDecoder" type="am:AttributeDecoderType" minOccurs="0"/>
+            <element name="AttributeDecoder" type="am:AttributeDecoderType" minOccurs="0" />
         </sequence>
-        <attribute name="id" type="string">
+        <attribute name="id" type="string" use="required">
             <annotation>
                 <documentation>The internal attribute ID to which this SAML attribute maps.</documentation>
             </annotation>
         </attribute>
-        <attribute name="name" type="string">
+        <attribute name="name" type="string" use="required">
             <annotation>
                 <documentation>The name of the attribute.</documentation>
             </annotation>
         </attribute>
-        <attribute name="nameFormat" type="string" use="optional"
-            default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <attribute name="nameFormat" type="string default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
             <annotation>
                 <documentation>The SAML 1 Namespace or SAML 2 NameFormat of the attribute.</documentation>
             </annotation>
         </attribute>
     </complexType>
-    
+
     <complexType name="ScopedAttributeDecoder">
         <annotation>
-            <documentation>
-                Decoder for attributes with scoped values.
-            </documentation>
+            <documentation>Decoder for attributes with scoped values.</documentation>
         </annotation>
         <complexContent>
             <extension base="am:AttributeDecoderType">
@@ -64,24 +60,20 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="StringAttributeDecoder">
         <annotation>
-            <documentation>
-                Decoder for attributes with string values.
-            </documentation>
+            <documentation>Decoder for attributes with string values.</documentation>
         </annotation>
         <complexContent>
             <extension base="am:AttributeDecoderType" />
         </complexContent>
     </complexType>
-    
+
     <complexType name="AttributeDecoderType" abstract="true">
         <annotation>
-            <documentation>
-                Decodes a SAML attribute into its shibboleth-internal representation.
-            </documentation>
+            <documentation>Decodes a SAML attribute into its shibboleth-internal representation.</documentation>
         </annotation>
     </complexType>
-    
- </schema>
+
+</schema>
