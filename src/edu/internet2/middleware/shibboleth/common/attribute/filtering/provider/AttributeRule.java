@@ -22,10 +22,10 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 public class AttributeRule {
 
     /** Unique ID of the attribute this rule applies to. */
-    private String ruleId;
+    private String attributeId;
     
     /** Value filters for this attribute. */
-    private MatchFunctor permitValue;
+    private MatchFunctor permitValueRule;
     
     /**
      * Constructor.
@@ -33,7 +33,7 @@ public class AttributeRule {
      * @param id unique ID of this rule
      */
     public AttributeRule(String id){
-        ruleId = id;
+        attributeId = id;
     }
     
     /**
@@ -42,7 +42,7 @@ public class AttributeRule {
      * @return ID of the attribute to which this rule applies
      */
     public String getAttributeId(){
-        return ruleId;
+        return attributeId;
     }
 
     /**
@@ -50,8 +50,8 @@ public class AttributeRule {
      * 
      * @return value filter for this attribute
      */
-    public MatchFunctor getPermitValue(){
-        return permitValue;
+    public MatchFunctor getPermitValueRule(){
+        return permitValueRule;
     }
     
     /**
@@ -59,7 +59,7 @@ public class AttributeRule {
      * 
      * @param filter value filter for this attribute
      */
-    public void setPermitValue(MatchFunctor filter){
-        permitValue = filter;
+    public void setPermitValueRule(MatchFunctor filter){
+        permitValueRule = filter;
     }
 }

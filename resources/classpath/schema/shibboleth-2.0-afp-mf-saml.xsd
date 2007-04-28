@@ -46,4 +46,15 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="AttributeScopeMatchesShibMDScope">
+        <annotation>
+            <documentation>
+                A match function that ensures that an attributes value's scope matches a scope given in metadata for the entity or role.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:MatchFunctorType" />
+        </complexContent>
+    </complexType>
 </schema>

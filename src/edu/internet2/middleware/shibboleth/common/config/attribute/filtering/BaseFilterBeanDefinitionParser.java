@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.filtering;
 
+import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -27,10 +29,61 @@ import org.w3c.dom.Element;
  */
 public abstract class BaseFilterBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
+    /** Generator of unique IDs. */
+    private static SecureRandomIdentifierGenerator idGen = new SecureRandomIdentifierGenerator();
+
     /** {@inheritDoc} */
     protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
+        return getQualifiedId(configElement, configElement.getLocalName(), configElement.getAttributeNS(null, "id"));
+    }
 
-        return FilterEngineBeanDefinitionParserUtil.getQualifiedId(configElement, configElement.getLocalName(),
-                configElement.getAttributeNS(null, "id"));
+    /**
+     * Generates an ID for a filter engine component. If the given localId is null a random one will be generated.
+     * 
+     * @param configElement component configuration element
+     * @param componentNamespace namespace for the component
+     * @param localId local id or null
+     * 
+     * @return unique ID for the componenent
+     */
+    protected String getQualifiedId(Element configElement, String componentNamespace, String localId) {
+        Element afpgElement = configElement.getOwnerDocument().getDocumentElement();
+        String policyGroupId = DatatypeHelper.safeTrimOrNullString(afpgElement.getAttributeNS(null, "id"));
+
+        StringBuilder qualifiedId = new StringBuilder();
+        qualifiedId.append("/");
+        qualifiedId.append(AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME.getLocalPart());
+        qualifiedId.append(":");
+        qualifiedId.append(policyGroupId);
+        if(!DatatypeHelper.isEmpty(componentNamespace)){
+            qualifiedId.append("/");
+            qualifiedId.append(componentNamespace);
+            qualifiedId.append(":");
+    
+            if (DatatypeHelper.isEmpty(localId)) {
+                qualifiedId.append(idGen.generateIdentifier());
+            } else {
+                qualifiedId.append(localId);
+            }
+        }
+
+        return qualifiedId.toString();
+    }
+
+    /**
+     * Gets the absolute refrence given a possibly relative reference.
+     * 
+     * @param configElement component configuration element
+     * @param componentNamespace namespace for the component
+     * @param reference reference to convert into absolute form
+     * 
+     * @return absolute form of the reference
+     */
+    protected String getAbsoluteReference(Element configElement, String componentNamespace, String reference) {
+        if (reference.startsWith("/")) {
+            return reference;
+        } else {
+            return getQualifiedId(configElement, componentNamespace, reference);
+        }
     }
 }

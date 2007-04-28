@@ -28,10 +28,10 @@ public class AttributeFilterPolicy {
     private String policyId;
     
     /** Requirement that must be met for this policy to apply. */
-    private MatchFunctor policyRequirement;
+    private MatchFunctor policyRequirementRule;
 
     /** Filters to be used on attribute values. */
-    private List<AttributeRule> attribtueRules;
+    private List<AttributeRule> attributeRules;
 
     /**
      * Constructor.
@@ -40,7 +40,7 @@ public class AttributeFilterPolicy {
      */
     public AttributeFilterPolicy(String id) {
         policyId = id;
-        attribtueRules = new ArrayList<AttributeRule>();
+        attributeRules = new ArrayList<AttributeRule>();
     }
     
     /**
@@ -57,8 +57,8 @@ public class AttributeFilterPolicy {
      * 
      * @return requirement for this policy
      */
-    public MatchFunctor getPolicyRequirement() {
-        return policyRequirement;
+    public MatchFunctor getPolicyRequirementRule() {
+        return policyRequirementRule;
     }
 
     /**
@@ -66,8 +66,8 @@ public class AttributeFilterPolicy {
      * 
      * @param requirement requirement for this policy
      */
-    public void setPolicyRequirement(MatchFunctor requirement) {
-        policyRequirement = requirement;
+    public void setPolicyRequirementRule(MatchFunctor requirement) {
+        policyRequirementRule = requirement;
     }
     
     /**
@@ -76,6 +76,6 @@ public class AttributeFilterPolicy {
      * @return attribute rules that are in effect if this policy is in effect, never null
      */
     public List<AttributeRule> getAttributeRules(){
-        return attribtueRules;
+        return attributeRules;
     }
 }

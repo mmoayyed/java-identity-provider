@@ -26,7 +26,6 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -35,7 +34,7 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 /**
  * Spring bean definition parser for Shibboleth attribute filtering engine attribute filter policy.
  */
-public class AttributeFilterPolicyGroupBeanDefinitionParser extends AbstractBeanDefinitionParser {
+public class AttributeFilterPolicyGroupBeanDefinitionParser extends BaseFilterBeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
@@ -57,36 +56,43 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser extends AbstractBean
     private static Logger log = Logger.getLogger(AttributeFilterPolicyGroupBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected AbstractBeanDefinition parseInternal(Element policyGroup, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(AttributeFilterPolicyGroup.class);
+    protected Class getBeanClass(Element arg0) {
+        return AttributeFilterPolicyGroup.class;
+    }
 
-        String policyId = DatatypeHelper.safeTrimOrNullString(policyGroup.getAttributeNS(null, "id"));
+    /** {@inheritDoc} */
+    protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(configElement, parserContext, builder);
+
+        String policyId = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "id"));
         builder.addConstructorArg(policyId);
 
         if (log.isDebugEnabled()) {
             log.debug("Parsing attribute filter policy group" + policyId);
         }
 
-        Map<QName, List<Element>> children = XMLHelper.getChildElements(policyGroup);
+        List<Element> children;
+        Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(configElement);
 
-        builder.addPropertyValue("filterPolicies", SpringConfigurationUtils.parseCustomElements(children
-                .get(AttributeFilterPolicyBeanDefinitionParser.ELEMENT_NAME), parserContext));
+        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
+        builder.addPropertyValue("policyRequirementRules", SpringConfigurationUtils.parseCustomElements(children,
+                parserContext));
 
-        FilterEngineBeanDefinitionParserUtil.processChildElements("policyRequirements", builder, children
-                .get(POLICY_REQUIREMENT_ELEMENT_NAME), parserContext);
+        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule"));
+        builder.addPropertyValue("attributeRules", SpringConfigurationUtils
+                .parseCustomElements(children, parserContext));
 
-        FilterEngineBeanDefinitionParserUtil.processChildElements("permitValues", builder, children
-                .get(PERMIT_VALUE_ELEMENT_NAME), parserContext);
+        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PermitValueRule"));
+        builder.addPropertyValue("permitValueRules", SpringConfigurationUtils.parseCustomElements(children,
+                parserContext));
 
-        FilterEngineBeanDefinitionParserUtil.processChildElements("attributeRules", builder, children
-                .get(AttributeRuleBeanDefinitionParser.ELEMENT_NAME), parserContext);
-
-        return builder.getBeanDefinition();
+        children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeFilterPolicy"));
+        builder.addPropertyValue("attributeFilterPolicies", SpringConfigurationUtils.parseCustomElements(children,
+                parserContext));
     }
 
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
-        String localId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
-        return "/" + ELEMENT_NAME.getLocalPart() + ":" + localId;
+        return getQualifiedId(element, null, null);
     }
 }

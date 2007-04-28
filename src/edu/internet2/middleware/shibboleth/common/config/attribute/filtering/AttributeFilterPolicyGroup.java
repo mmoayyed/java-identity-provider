@@ -31,16 +31,16 @@ public class AttributeFilterPolicyGroup {
     private String afpId;
     
     /** Declared filter policies. */
-    private Collection<AttributeFilterPolicy> filterPolicies;
+    private Collection<AttributeFilterPolicy> attributeFilterPolicies;
     
     /** Globally declared policy requirements. */
-    private Collection<MatchFunctor> policyRequirements;
+    private Collection<MatchFunctor> policyRequirementRules;
     
     /** Globally declared attribute rules. */
     private Collection<AttributeRule> attributeRules;
     
     /** Globally declared permit value rules. */
-    private Collection<MatchFunctor> permitValues;
+    private Collection<MatchFunctor> permitValueRules;
     
     /**
      * Constructor.
@@ -74,8 +74,8 @@ public class AttributeFilterPolicyGroup {
      * 
      * @return declared filter policies
      */
-    public Collection<AttributeFilterPolicy> getFilterPolicies() {
-        return filterPolicies;
+    public Collection<AttributeFilterPolicy> getAttributeFilterPolicies() {
+        return attributeFilterPolicies;
     }
 
     /**
@@ -83,8 +83,8 @@ public class AttributeFilterPolicyGroup {
      * 
      * @param policies declared filter policies
      */
-    public void setFilterPolicies(Collection<AttributeFilterPolicy> policies) {
-        filterPolicies = policies;
+    public void setAttributeFilterPolicies(Collection<AttributeFilterPolicy> policies) {
+        attributeFilterPolicies = policies;
     }
 
     /**
@@ -92,8 +92,8 @@ public class AttributeFilterPolicyGroup {
      * 
      * @return globally declared policy requirements
      */
-    public Collection<MatchFunctor> getPolicyRequirements() {
-        return policyRequirements;
+    public Collection<MatchFunctor> getPolicyRequirementRules() {
+        return policyRequirementRules;
     }
 
     /**
@@ -101,8 +101,8 @@ public class AttributeFilterPolicyGroup {
      * 
      * @param requirements globally declared policy requirements
      */
-    public void setPolicyRequirements(Collection<MatchFunctor> requirements) {
-        policyRequirements = requirements;
+    public void setPolicyRequirementRules(Collection<MatchFunctor> requirements) {
+        policyRequirementRules = requirements;
     }
 
     /**
@@ -110,8 +110,8 @@ public class AttributeFilterPolicyGroup {
      * 
      * @return globally declared value filters
      */
-    public Collection<MatchFunctor> getPermitValues() {
-        return permitValues;
+    public Collection<MatchFunctor> getPermitValueRules() {
+        return permitValueRules;
     }
 
     /**
@@ -119,8 +119,8 @@ public class AttributeFilterPolicyGroup {
      * 
      * @param filters globally declared value filters
      */
-    public void setPermitValues(Collection<MatchFunctor> filters) {
-        permitValues = filters;
+    public void setPermitValueRules(Collection<MatchFunctor> filters) {
+        permitValueRules = filters;
     }
 
     /**

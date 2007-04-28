@@ -91,7 +91,7 @@
                             </annotation>
                         </element>
                     </choice>
-                    <choice maxOccurs="unbounded">
+                    <choice minOccurs="0" maxOccurs="unbounded">
                         <element ref="afp:AttributeRule">
                             <annotation>
                                 <documentation>
