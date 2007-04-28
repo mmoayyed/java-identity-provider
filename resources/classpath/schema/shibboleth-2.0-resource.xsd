@@ -9,9 +9,9 @@
         </annotation>
     </element>
     <complexType name="FilesystemResourceType">
-        <simpleContent>
-            <extension base="string" />
-        </simpleContent>
+        <complexContent>
+            <extension base="res:ResourceType" />
+        </complexContent>
     </complexType>
 
     <element name="HttpResource" type="res:HttpResourceType">
@@ -20,9 +20,11 @@
         </annotation>
     </element>
     <complexType name="HttpResourceType">
-        <simpleContent>
-            <extension base="string" />
-        </simpleContent>
+        <complexContent>
+            <extension base="res:ResourceType" />
+        </complexContent>
     </complexType>
+    
+    <complexType name="ResourceType" abstract="true" />
     
 </schema>
