@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 
 import org.apache.log4j.Logger;
+import org.opensaml.resource.Resource;
+import org.opensaml.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
@@ -32,8 +34,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeF
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
-import edu.internet2.middleware.shibboleth.common.storage.Resource;
-import edu.internet2.middleware.shibboleth.common.storage.ResourceException;
 
 /**
  * Implementation of {@link AttributeFilteringEngine}.

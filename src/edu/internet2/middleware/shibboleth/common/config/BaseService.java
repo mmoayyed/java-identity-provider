@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.opensaml.resource.Resource;
+import org.opensaml.resource.ResourceException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
@@ -27,8 +29,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 import org.xml.sax.InputSource;
 
-import edu.internet2.middleware.shibboleth.common.storage.Resource;
-import edu.internet2.middleware.shibboleth.common.storage.ResourceException;
 
 /**
  * A service is a component whose Spring beans are loaded into a service specific {@link ApplicationContext} that is a

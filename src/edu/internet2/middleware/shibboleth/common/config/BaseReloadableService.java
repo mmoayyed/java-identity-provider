@@ -22,16 +22,16 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.log4j.Logger;
+import org.opensaml.resource.Resource;
+import org.opensaml.resource.ResourceChangeListener;
+import org.opensaml.resource.ResourceChangeWatcher;
+import org.opensaml.resource.ResourceException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.xml.sax.InputSource;
 
-import edu.internet2.middleware.shibboleth.common.storage.Resource;
-import edu.internet2.middleware.shibboleth.common.storage.ResourceChangeWatcher;
-import edu.internet2.middleware.shibboleth.common.storage.ResourceException;
-import edu.internet2.middleware.shibboleth.common.storage.ResourceListener;
 
 /**
  * An extension to {@link BaseService} that allows the service's context to be reloaded if the underlying configuration
@@ -97,7 +97,7 @@ public abstract class BaseReloadableService extends BaseService {
     public void initialize() throws ResourceException {
         if (resourcePollingFrequency > 0) {
             ResourceChangeWatcher changeWatcher;
-            ResourceListener changeListener = new ConfigurationResourceListener();
+            ResourceChangeListener changeListener = new ConfigurationResourceListener();
             for (Resource configurationResournce : getServiceConfigurations()) {
                 changeWatcher = new ResourceChangeWatcher(configurationResournce, resourcePollingFrequency,
                         resourcePollingRetryAttempts);
@@ -157,7 +157,7 @@ public abstract class BaseReloadableService extends BaseService {
     protected abstract void newContextCreated(ApplicationContext newServiceContext) throws ResourceException;
 
     /** A listener for policy resource changes that triggers a reloading of the AFP context. */
-    protected class ConfigurationResourceListener implements ResourceListener {
+    protected class ConfigurationResourceListener implements ResourceChangeListener {
 
         /** {@inheritDoc} */
         public void onResourceCreate(Resource resource) {

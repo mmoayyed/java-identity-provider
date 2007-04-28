@@ -24,9 +24,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.opensaml.log.Level;
+import org.opensaml.resource.Resource;
+import org.opensaml.resource.ResourceChangeListener;
 
-import edu.internet2.middleware.shibboleth.common.storage.Resource;
-import edu.internet2.middleware.shibboleth.common.storage.ResourceListener;
 
 /**
  * Resource listener that watchs a Log4J configuration file and reconfigures Log4J if the file changes.
@@ -35,7 +35,7 @@ import edu.internet2.middleware.shibboleth.common.storage.ResourceListener;
  * 
  * Do <strong>not</strong> use this if logging is controlled by an external system such as a servlet container.
  */
-public class Log4jConfigFileResourceListener implements ResourceListener {
+public class Log4jConfigFileResourceListener implements ResourceChangeListener {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(Log4jConfigFileResourceListener.class);
