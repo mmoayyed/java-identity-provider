@@ -24,19 +24,18 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <choice>
-                    <element ref="afp:PolicyRequirement" minOccurs="0" maxOccurs="unbounded">
+                <choice minOccurs="2" maxOccurs="unbounded">
+                    <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
-                                A requirement that if met signals that this filter policy should be used.
+                                The set of match function rules to be ANDed.
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="afp:PermitValue" minOccurs="0" maxOccurs="unbounded">
+                    <element name="RuleReference" type="afp:ReferenceType">
                         <annotation>
                             <documentation>
-                                A filter for attribute values. If any filter for a value evaluates to false the value is
-                                filtered out. If all filters evaluate to true the value is kept and released.
+                                The set of match function rules to be ANDed.
                             </documentation>
                         </annotation>
                     </element>
@@ -53,19 +52,18 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <choice>
-                    <element ref="afp:PolicyRequirement" minOccurs="0" maxOccurs="unbounded">
+                <choice minOccurs="2" maxOccurs="unbounded">
+                    <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
-                                A requirement that if met signals that this filter policy should be used.
+                                The set of match function rules to be ANDed.
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="afp:PermitValue" minOccurs="0" maxOccurs="unbounded">
+                    <element name="RuleReference" type="afp:ReferenceType">
                         <annotation>
                             <documentation>
-                                A filter for attribute values. If any filter for a value evaluates to false the value is
-                                filtered out. If all filters evaluate to true the value is kept and released.
+                                The set of match function rules to be ANDed.
                             </documentation>
                         </annotation>
                     </element>
@@ -83,18 +81,17 @@
         <complexContent>
             <extension base="afp:MatchFunctorType">
                 <choice>
-                    <element ref="afp:PolicyRequirement" minOccurs="0">
+                    <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
-                                A requirement that if met signals that this filter policy should be used.
+                                The set of match function rules to be ANDed.
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="afp:PermitValue" minOccurs="0">
+                    <element name="RuleReference" type="afp:ReferenceType">
                         <annotation>
                             <documentation>
-                                A filter for attribute values. If any filter for a value evaluates to false the value is
-                                filtered out. If all filters evaluate to true the value is kept and released.
+                                The set of match function rules to be ANDed.
                             </documentation>
                         </annotation>
                     </element>
@@ -333,7 +330,6 @@
             </extension>
         </complexContent>
     </complexType>
-
 
     <complexType name="NumberOfAttributeValues">
         <annotation>

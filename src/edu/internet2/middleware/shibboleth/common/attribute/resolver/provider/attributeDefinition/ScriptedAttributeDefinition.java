@@ -17,7 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -140,41 +139,53 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
                 compiledScript = ((Compilable) scriptEngine).compile(script);
             }
         } catch (ScriptException e) {
+            compiledScript = null;
             log.warn("ScriptletAttributeDefinition " + getId()
                     + " unable to compile even though the scripting engine supports this functionality.");
         }
     }
-    
-    protected ScriptContext getScriptContext(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException{
+
+    /**
+     * Creates the script execution context from the resolution context.
+     * 
+     * @param resolutionContext current resolution context
+     * 
+     * @return constructed script context
+     * 
+     * @throws AttributeResolutionException thrown if dependent data connectors or attribute defintions can not be
+     *             resolved
+     */
+    protected ScriptContext getScriptContext(ShibbolethResolutionContext resolutionContext)
+            throws AttributeResolutionException {
         SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
-        
+
         DataConnector dc;
         Map<String, Attribute> attributes;
-        if(!getDataConnectorDependencyIds().isEmpty()){
-            for(String dependency : getDataConnectorDependencyIds()){
+        if (!getDataConnectorDependencyIds().isEmpty()) {
+            for (String dependency : getDataConnectorDependencyIds()) {
                 dc = resolutionContext.getResolvedDataConnectors().get(dependency);
                 attributes = dc.resolve(resolutionContext);
-                if(attributes != null){
-                    for(Attribute attribute : attributes.values()){
+                if (attributes != null) {
+                    for (Attribute attribute : attributes.values()) {
                         scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
                     }
                 }
             }
         }
-        
+
         AttributeDefinition ad;
         Attribute attribute;
-        if(!getAttributeDefinitionDependencyIds().isEmpty()){
-            for(String dependency : getAttributeDefinitionDependencyIds()){
+        if (!getAttributeDefinitionDependencyIds().isEmpty()) {
+            for (String dependency : getAttributeDefinitionDependencyIds()) {
                 ad = resolutionContext.getResolvedAttributeDefinitions().get(dependency);
                 attribute = ad.resolve(resolutionContext);
-                if(attribute != null){
+                if (attribute != null) {
                     scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
                 }
             }
         }
-        
+
         return scriptContext;
     }
 }
