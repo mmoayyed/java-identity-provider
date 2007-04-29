@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.log;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -31,8 +32,11 @@ public class AuditLogEntry {
     /** UTC IS8601 timestamp of the audit event. */
     private DateTime auditEventTime;
     
+    /** Entity ID of the provider (message issuer). */
+    private String providerId;
+    
     /** Entity ID of the relying party. */
-    private String relyingParty;
+    private String relyingPartyId;
     
     /** URI of binding used by the relying party. */
     private String requestBinding;
@@ -50,7 +54,7 @@ public class AuditLogEntry {
     private String principalId;
     
     /** URIs of the authentication methods currently active for the user. */
-    private List<String> principalAuthenticationMethods;
+    private String principalAuthenticationMethod;
     
     /** Internal ID of the user attributes released. */
     private List<String> releasedAttributes;
@@ -58,6 +62,7 @@ public class AuditLogEntry {
     /** Constructor. */
     public AuditLogEntry(){
         auditEventTime = new DateTime();
+        releasedAttributes = new ArrayList<String>();
     }
 
     /**
@@ -79,21 +84,21 @@ public class AuditLogEntry {
     }
 
     /**
-     * Gets the authentication methods, identified by their URI, currently active for the user.
+     * Gets the authentication method, identified by their URI, used to log into the relying party.
      * 
-     * @return  authentication methods, identified by their URI, currently active for the user
+     * @return  authentication method, identified by their URI, used to log into the relying party
      */
-    public List<String> getPrincipalAuthenticationMethods() {
-        return principalAuthenticationMethods;
+    public String getPrincipalAuthenticationMethod() {
+        return principalAuthenticationMethod;
     }
 
     /**
-     * Sets the authentication methods, identified by their URI, currently active for the user.
+     * Sets the authentication method, identified by their URI, used to log into the relying party.
      * 
-     * @param methods authentication methods, identified by their URI, currently active for the user
+     * @param method authentication method, identified by their URI, used to log into the relying party
      */
-    public void setPrincipalAuthenticationMethods(List<String> methods) {
-        principalAuthenticationMethods = methods;
+    public void setPrincipalAuthenticationMethod(String method) {
+        principalAuthenticationMethod = method;
     }
 
     /**
@@ -113,6 +118,24 @@ public class AuditLogEntry {
     public void setPrincipalId(String id) {
         principalId = id;
     }
+    
+    /**
+     * Gets the provider (message issuer) ID.
+     * 
+     * @return provider (message issuer) ID
+     */
+    public String getProviderId(){
+        return providerId;
+    }
+    
+    /**
+     * Sets the provider (message issuer) ID.
+     * 
+     * @param id provider (message issuer) ID
+     */
+    public void setProviderId(String id){
+        providerId = id;
+    }
 
     /**
      * Gets the list of internal IDs of the attributes that were released.
@@ -124,21 +147,12 @@ public class AuditLogEntry {
     }
 
     /**
-     * Sets the internal IDs of the attributes that were released.
-     * 
-     * @param attributes internal IDs of the attributes that were released
-     */
-    public void setReleasedAttributes(List<String> attributes) {
-        releasedAttributes = attributes;
-    }
-
-    /**
      * Gets the entity ID of the relying party.
      * 
      * @return  entity ID of the relying party
      */
-    public String getRelyingParty() {
-        return relyingParty;
+    public String getRelyingPartyId() {
+        return relyingPartyId;
     }
 
     /**
@@ -146,8 +160,8 @@ public class AuditLogEntry {
      * 
      * @param entityId entity ID of the relying party
      */
-    public void setRelyingParty(String entityId) {
-        relyingParty = entityId;
+    public void setRelyingPartyId(String entityId) {
+        relyingPartyId = entityId;
     }
 
     /**

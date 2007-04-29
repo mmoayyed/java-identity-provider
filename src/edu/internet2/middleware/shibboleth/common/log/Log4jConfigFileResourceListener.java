@@ -86,7 +86,7 @@ public class Log4jConfigFileResourceListener implements ResourceChangeListener {
         
         Logger auditLog = Logger.getLogger(AuditLogEntry.AUDIT_LOGGER_NAME);
         auditLog.setAdditivity(false);
-        auditLog.setLevel(Level.INFO);
+        auditLog.setLevel(Level.CRITICAL);
 
         Logger shibLog = Logger.getLogger("edu.internet2.middleware.shibboleth");
         shibLog.setAdditivity(false);

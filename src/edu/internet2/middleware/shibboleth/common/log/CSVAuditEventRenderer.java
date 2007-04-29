@@ -26,7 +26,7 @@ import org.opensaml.xml.util.DatatypeHelper;
  * Renders a {@link AuditLogEntry} as a character seperated string. The format of the string is, which makes up the
  * message component of a Lo4J entry, is:
  * 
- * <code>timestamp|relyingParty|requestBinding|responseBinding|messageProfile|requestID|principalID|authNMethod1,authNMethod2,etc,|attributeID1,attributeID2,|</code>
+ * <code>timestamp|providerId|relyingParty|requestBinding|responseBinding|messageProfile|requestID|principalID|authNMethod|attributeID1,attributeID2,|</code>
  */
 public class CSVAuditEventRenderer implements ObjectRenderer {
 
@@ -45,7 +45,10 @@ public class CSVAuditEventRenderer implements ObjectRenderer {
         entryString.append(entry.getAuditEventTime().toString(dateFormatter.withZone(DateTimeZone.UTC)));
         entryString.append("|");
         
-        entryString.append(entry.getRelyingParty());
+        entryString.append(entry.getProviderId());
+        entryString.append("|");
+        
+        entryString.append(entry.getRelyingPartyId());
         entryString.append("|");
         
         entryString.append(entry.getRequestBinding());
@@ -65,10 +68,7 @@ public class CSVAuditEventRenderer implements ObjectRenderer {
         entryString.append(entry.getPrincipalId());
         entryString.append("|");
         
-        for(String method : entry.getPrincipalAuthenticationMethods()){
-            entryString.append(method);
-            entryString.append(",");
-        }
+        entryString.append(entry.getPrincipalAuthenticationMethod());            
         entryString.append("|");
         
         for(String attribute : entry.getReleasedAttributes()){

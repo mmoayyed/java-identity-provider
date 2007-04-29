@@ -14,6 +14,9 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
+    <renderer renderedClass="edu.internet2.middleware.shibboleth.common.log.AuditLogEntry"
+                   renderingClass="edu.internet2.middleware.shibboleth.common.log.CSVAuditEventRenderer" />
+
    <!-- ================================= -->
    <!-- Preserve messages in a local file -->
    <!-- ================================= -->
@@ -56,6 +59,10 @@
    <!-- ================ -->
    <!-- Limit categories -->
    <!-- ================ -->
+   
+   <category name="Shibboleth-Audit">
+      <priority value="CRITICAL" />
+   </category>
 
    <category name="edu.internet2.middleware.shibboleth.common">
       <priority value="DEBUG"/>
