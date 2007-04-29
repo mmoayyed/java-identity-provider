@@ -24,6 +24,9 @@ import org.joda.time.DateTime;
  * Represents an auditable event in the system.
  */
 public class AuditLogEntry {
+    
+    /** Name of the Logger for the shibboleth audit log. */
+    public static final String AUDIT_LOGGER_NAME = "Shibboleth-Audit";
 
     /** UTC IS8601 timestamp of the audit event. */
     private DateTime auditEventTime;

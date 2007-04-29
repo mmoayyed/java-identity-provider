@@ -27,7 +27,6 @@ import org.opensaml.log.Level;
 import org.opensaml.resource.Resource;
 import org.opensaml.resource.ResourceChangeListener;
 
-
 /**
  * Resource listener that watchs a Log4J configuration file and reconfigures Log4J if the file changes.
  * 
@@ -39,9 +38,6 @@ public class Log4jConfigFileResourceListener implements ResourceChangeListener {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(Log4jConfigFileResourceListener.class);
-    
-    /** Parser used to read in
-    private static DocumentBuilder parser;
 
     /** Default logging layout pattern for appenders. */
     private static String defaultLayoutPattern = "%d %-5p [%c] %m%n";
@@ -84,19 +80,20 @@ public class Log4jConfigFileResourceListener implements ResourceChangeListener {
     protected void loadDefaultConfiguration() {
         ConsoleAppender console = new ConsoleAppender(new PatternLayout(defaultLayoutPattern),
                 ConsoleAppender.SYSTEM_OUT);
-        Logger txLog = Logger.getLogger("Shibboleth-TRANSACTION");
-        txLog.setAdditivity(false);
-        txLog.setLevel(Level.INFO);
-        txLog.addAppender(console);
+        Logger root = Logger.getRootLogger();
+        root.setLevel(Level.WARN);
+        root.addAppender(console);
+        
+        Logger auditLog = Logger.getLogger(AuditLogEntry.AUDIT_LOGGER_NAME);
+        auditLog.setAdditivity(false);
+        auditLog.setLevel(Level.INFO);
 
         Logger shibLog = Logger.getLogger("edu.internet2.middleware.shibboleth");
         shibLog.setAdditivity(false);
         shibLog.setLevel(Level.INFO);
-        shibLog.addAppender(console);
 
         Logger osLog = Logger.getLogger("org.opensaml");
         osLog.setAdditivity(false);
         osLog.setLevel(Level.INFO);
-        osLog.addAppender(console);
     }
 }
