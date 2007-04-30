@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.Timer;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 
@@ -37,6 +38,8 @@ import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
 
 /**
  * Implementation of {@link AttributeFilteringEngine}.
+ * 
+ * TODO consider using Log4J NDC for filter engine name
  */
 public class ShibbolethAttributeFilteringEngine extends BaseReloadableService implements
         AttributeFilteringEngine<ShibbolethAttributeRequestContext> {
@@ -60,14 +63,16 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     /**
      * Constructor.
      * 
+     * @param timer timer resource polling tasks are scheduled with
      * @param resources list of policy resources
      * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
      *            than zero
      * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
      *            must be greater than zero
      */
-    public ShibbolethAttributeFilteringEngine(List<Resource> resources, long pollingFrequency, int pollingRetryAttempts) {
-        super(resources, pollingFrequency, pollingRetryAttempts);
+    public ShibbolethAttributeFilteringEngine(Timer timer, List<Resource> resources, long pollingFrequency,
+            int pollingRetryAttempts) {
+        super(timer, resources, pollingFrequency, pollingRetryAttempts);
         filterPolicies = new ArrayList<AttributeFilterPolicy>();
     }
 
@@ -85,10 +90,15 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             ShibbolethAttributeRequestContext context) throws AttributeFilteringException {
 
         if (log.isDebugEnabled()) {
-            log.debug("Filtering " + attributes.size() + " attributes for principal " + context.getPrincipalName());
+            log.debug(getServiceName() + " filtering " + attributes.size() + " attributes for principal "
+                    + context.getPrincipalName());
         }
 
         if (getFilterPolicies() == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No filter policies were loaded in " + getServiceName()
+                        + ", filtering out all attributes for " + context.getPrincipalName());
+            }
             return new HashMap<String, Attribute>();
         }
 
@@ -104,9 +114,16 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         for (Entry<String, Attribute> attributeEntry : attributes.entrySet()) {
             attribute = attributeEntry.getValue();
             attribute.getValues().retainAll(filterContext.getRetainedValues(attribute.getId()));
+            if (attribute.getValues().size() == 0) {
+                attributes.remove(attribute.getId());
+            }
         }
 
-        return filterContext.getUnfilteredAttributes();
+        if (log.isDebugEnabled()) {
+            log.debug(getServiceName() + " filtered attributes for principal " + context.getPrincipalName() + ".  "
+                    + attributes.size() + " attributes remain.");
+        }
+        return attributes;
     }
 
     /**
@@ -121,8 +138,8 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     protected void filterAttributes(ShibbolethFilteringContext filterContext, AttributeFilterPolicy filterPolicy)
             throws FilterProcessingException {
         if (log.isDebugEnabled()) {
-            log.debug("Evaluating if filter policy " + filterPolicy.getPolicyId() + " is active for principal "
-                    + filterContext.getAttribtueRequestContext().getPrincipalName());
+            log.debug(getServiceName() + " evaluating if filter policy " + filterPolicy.getPolicyId()
+                    + " is active for principal " + filterContext.getAttribtueRequestContext().getPrincipalName());
         }
         MatchFunctor policyRequirement = filterPolicy.getPolicyRequirementRule();
         if (policyRequirement == null || !policyRequirement.evaluatePolicyRequirement(filterContext)) {
@@ -152,8 +169,8 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         MatchFunctor permitValue = attributeRule.getPermitValueRule();
 
         if (log.isDebugEnabled()) {
-            log.debug("Filtering values of attribute " + attributeRule.getAttributeId() + " for principal "
-                    + filterContext.getAttribtueRequestContext().getPrincipalName());
+            log.debug(getServiceName() + " filtering values of attribute " + attributeRule.getAttributeId()
+                    + " for principal " + filterContext.getAttribtueRequestContext().getPrincipalName());
         }
 
         for (Object attributeValue : attributeValues) {

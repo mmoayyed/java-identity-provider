@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:services"
+    xmlns:service="urn:mace:shibboleth:2.0:services" xmlns:res="urn:mace:shibboleth:2.0:resource"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:resource" schemaLocation="/schema/shibboleth-2.0-resource.xsd" />
+
+    <annotation>
+        <documentation>Schema describing a set of isolated services used by Shibboleth.</documentation>
+    </annotation>
+
+    <element name="LoggingManager" type="service:ReloadableServiceType" />
+    <element name="AttributeFilteringEngine" type="service:ReloadableServiceType" />
+    <element name="AttributeResolver" type="service:ReloadableServiceType" />
+    <element name="ProfileHandlerManager" type="service:ReloadableServiceType" />
+    <element name="RelyingPartyConfigurationManager" type="service:ReloadableServiceType" />
+
+    <complexType name="ReloadableServiceType">
+        <annotation>
+            <documentation>
+                A service that periodically checks if its configuration resources have changed. If a change has occured
+                the service will reload its configuration.
+
+                If no polling frequency is specified this service will not reload its configuration files.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="service:ServiceType">
+                <attribute name="configurationResourcePollingFrequency" type="nonNegativeInteger">
+                    <annotation>
+                        <documentation>
+                            The frequency, in seconds, the configuration resources should be polled for changes.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="configurationResourcePollingRetryAttempts" type="nonNegativeInteger" default="3">
+                    <annotation>
+                        <documentation>
+                            The number of times a particular resource should be retried if an error is encountered
+                            reading its content.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ServiceType">
+        <annotation>
+            <documentation>
+                A service that maintains its own Spring ApplicationContext loaded with the given configuration
+                resources.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="ConfigurationResource" type="res:ResourceType" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                        The configuration resources to load into the services ApplicationContext.
+                    </documentation>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="name" type="string" use="required">
+            <annotation>
+                <documentation>The application unique name of the service.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+</schema>

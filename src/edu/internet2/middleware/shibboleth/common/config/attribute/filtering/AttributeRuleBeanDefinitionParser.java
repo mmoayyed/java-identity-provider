@@ -47,8 +47,8 @@ public class AttributeRuleBeanDefinitionParser extends BaseFilterBeanDefinitionP
     protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
-        builder.addPropertyValue("attributeId", DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
-                "attributeID")));
+        builder.addConstructorArg(DatatypeHelper
+                .safeTrimOrNullString(configElement.getAttributeNS(null, "attributeID")));
 
         Element permitValueRule = XMLHelper.getFirstChildElement(configElement);
         if (permitValueRule.getLocalName().equals("PermitValueRule")) {

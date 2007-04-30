@@ -6,11 +6,11 @@
                                                     urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd ">
 
     <afp:AttributeFilterPolicy id="MostBasicExample">
-        <afp:PolicyRequirement xsi:type="basic:ANY" />
+        <afp:PolicyRequirementRule xsi:type="basic:ANY" />
         
         <afp:AttributeRule attributeID="email">
-            <afp:PermitValue xsi:type="basic:ANY" />
+            <afp:PermitValueRule xsi:type="basic:ANY" />
         </afp:AttributeRule>
     </afp:AttributeFilterPolicy>
     
-</afp:AttributeFilterPolicyGroup>
+</afp:AttributeFilterPolicyGroup> 

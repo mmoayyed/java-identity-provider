@@ -68,6 +68,10 @@
       <priority value="DEBUG"/>
    </category>
    
+      <category name="org.opensaml.resource">
+      <priority value="DEBUG"/>
+   </category>
+   
    <category name="org.springframework">
       <priority value="WARN"/>
    </category>

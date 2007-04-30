@@ -19,14 +19,20 @@ package edu.internet2.middleware.shibboleth.common.config;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.opensaml.resource.Resource;
+import org.opensaml.resource.ResourceException;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.core.io.InputStreamResource;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -40,6 +46,34 @@ public final class SpringConfigurationUtils {
 
     /** Private Constructor. */
     private SpringConfigurationUtils() {
+    }
+
+    /**
+     * Loads a set of spring configuration resources into a given application context.
+     * 
+     * @param beanRegistry registry of spring beans to be populated with information from the given configurations
+     * @param configurationResources list of spring configuration resources
+     * 
+     * @throws ResourceException thrown if there is a problem reading the spring configuration resources into the
+     *             registry
+     */
+    public static void populateRegistry(BeanDefinitionRegistry beanRegistry, List<Resource> configurationResources)
+            throws ResourceException {
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(beanRegistry);
+        configReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+        configReader.setDocumentLoader(new SpringDocumentLoader());
+
+        int numOfResources = configurationResources.size();
+        org.springframework.core.io.Resource[] configSources = new org.springframework.core.io.Resource[numOfResources];
+        for (int i = 0; i < numOfResources; i++) {
+            configSources[i] = new InputStreamResource(configurationResources.get(i).getInputStream());
+        }
+
+        try {
+            configReader.loadBeanDefinitions(configSources);
+        } catch (BeanDefinitionStoreException e) {
+            throw new ResourceException("Unable to load Spring bean registry with configuration resources", e);
+        }
     }
 
     /**
@@ -105,7 +139,7 @@ public final class SpringConfigurationUtils {
 
         return definitions;
     }
-    
+
     /**
      * Parse list of elements into bean definitions.
      * 
@@ -115,12 +149,12 @@ public final class SpringConfigurationUtils {
      * @return list of bean references
      */
     public static ManagedList parseCustomElements(List<Element> elements, ParserContext parserContext) {
-        if(elements == null){
+        if (elements == null) {
             return null;
         }
-        
+
         ManagedList definitions = new ManagedList(elements.size());
-        for(Element e: elements){
+        for (Element e : elements) {
             definitions.add(parseCustomElement(e, parserContext));
         }
 

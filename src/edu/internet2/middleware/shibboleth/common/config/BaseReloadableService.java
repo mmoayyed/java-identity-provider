@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config;
 
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -26,12 +27,8 @@ import org.opensaml.resource.Resource;
 import org.opensaml.resource.ResourceChangeListener;
 import org.opensaml.resource.ResourceChangeWatcher;
 import org.opensaml.resource.ResourceException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.xml.sax.InputSource;
-
 
 /**
  * An extension to {@link BaseService} that allows the service's context to be reloaded if the underlying configuration
@@ -61,6 +58,9 @@ public abstract class BaseReloadableService extends BaseService {
     /** Read/Write lock for the AFP context. */
     private ReentrantReadWriteLock serviceContextRWLock;
 
+    /** Timer used to schedule resource polling tasks. */
+    private Timer pollingTimer;
+
     /**
      * Constructor. Configuration resources are not monitored for changes.
      * 
@@ -76,25 +76,35 @@ public abstract class BaseReloadableService extends BaseService {
     /**
      * Constructor.
      * 
+     * @param timer timer resource polling tasks are scheduled with
      * @param configurations configuration resources for this service
      * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
      *            than zero
      * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
      *            must be greater than zero
      */
-    public BaseReloadableService(List<Resource> configurations, long pollingFrequency, int pollingRetryAttempts) {
+    public BaseReloadableService(Timer timer, List<Resource> configurations, long pollingFrequency,
+            int pollingRetryAttempts) {
         super(configurations);
-        serviceContextRWLock = new ReentrantReadWriteLock(true);
+        if (timer == null) {
+            throw new IllegalArgumentException("Resource polling timer may not be null");
+        }
+        pollingTimer = timer;
 
         if (pollingFrequency <= 0 || pollingRetryAttempts <= 0) {
             throw new IllegalArgumentException("Polling frequency and retry attempts must be greater than zero.");
         }
         resourcePollingFrequency = pollingFrequency;
         resourcePollingRetryAttempts = pollingRetryAttempts;
+
+        serviceContextRWLock = new ReentrantReadWriteLock(true);
     }
 
     /** {@inheritDoc} */
     public void initialize() throws ResourceException {
+        if (log.isDebugEnabled()) {
+            log.debug("Initializing " + getServiceName() + " service with resources: " + getServiceConfigurations());
+        }
         if (resourcePollingFrequency > 0) {
             ResourceChangeWatcher changeWatcher;
             ResourceChangeListener changeListener = new ConfigurationResourceListener();
@@ -102,11 +112,11 @@ public abstract class BaseReloadableService extends BaseService {
                 changeWatcher = new ResourceChangeWatcher(configurationResournce, resourcePollingFrequency,
                         resourcePollingRetryAttempts);
                 changeWatcher.getResourceListeners().add(changeListener);
-                changeWatcher.run();
+                pollingTimer.schedule(changeWatcher, resourcePollingFrequency, resourcePollingFrequency);
             }
         }
 
-        reloadContext();
+        loadContext();
     }
 
     /**
@@ -121,28 +131,25 @@ public abstract class BaseReloadableService extends BaseService {
     /**
      * Reloads the service context.
      */
-    protected void reloadContext() {
+    protected void loadContext() {
+        if (log.isDebugEnabled()) {
+            log.debug("Loading configuration for service: " + getServiceName());
+        }
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(newServiceContext);
-
-        Resource configurationResource = null;
         try {
-            for (Resource resource : getServiceConfigurations()) {
-                configurationResource = resource;
-                configReader.loadBeanDefinitions(new InputSource(configurationResource.getInputStream()));
-            }
+            SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
 
             Lock writeLock = getReadWriteLock().writeLock();
             writeLock.lock();
             newContextCreated(newServiceContext);
             setServiceContext(newServiceContext);
             writeLock.unlock();
+            if (log.isInfoEnabled()) {
+                log.info(getServiceName() + " service configuration loaded");
+            }
         } catch (ResourceException e) {
-            log.error("New filter policy configuration was not loaded, unable to load resource: "
-                    + configurationResource, e);
-        } catch (BeanDefinitionStoreException e) {
-            log.error("New filter policy configuration was not loaded, error parsing policy resource: "
-                    + configurationResource, e);
+            log.error("New filter configuration was not loaded for " + getServiceName()
+                    + " service, unable to load resource", e);
         }
     }
 
@@ -161,17 +168,17 @@ public abstract class BaseReloadableService extends BaseService {
 
         /** {@inheritDoc} */
         public void onResourceCreate(Resource resource) {
-            reloadContext();
+            loadContext();
         }
 
         /** {@inheritDoc} */
         public void onResourceDelete(Resource resource) {
-            reloadContext();
+            loadContext();
         }
 
         /** {@inheritDoc} */
         public void onResourceUpdate(Resource resource) {
-            reloadContext();
+            loadContext();
         }
     }
 }

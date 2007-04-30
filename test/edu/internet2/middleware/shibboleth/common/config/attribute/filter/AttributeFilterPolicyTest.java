@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.filter;
 
 import org.springframework.context.ApplicationContext;
 
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 import edu.internet2.middleware.shibboleth.common.config.attribute.filtering.AttributeFilterPolicyGroup;
 
@@ -46,13 +47,17 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
 //        System.out.println(policy);
 //    }
 
-    public void testParsePolicy3() {
-        String[] configs = { DATA_PATH + "/attribute/filtering/policy3.xml", };
+    public void testParsePolicy3() throws InterruptedException {
+        String[] configs = { "/shibboleth-2.0-config-internal.xml", };
         ApplicationContext appContext = createSpringContext(configs);
 
-        assertNotNull(appContext.containsBean("/AttributeFilterPolicyGroup:PolicyExample3"));
-        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext
-                .getBean("/AttributeFilterPolicyGroup:PolicyExample3");
-        System.out.println(policy);
+        assertNotNull(appContext.containsBean("shibboleth.AttributeFilterEngine"));
+        ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext.getBean("shibboleth.AttributeFilterEngine");
+        
+        Thread.currentThread().sleep(60000);
+        return;
+//        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext
+//                .getBean("/AttributeFilterPolicyGroup:PolicyExample3");
+//        System.out.println(policy);
     }
 }

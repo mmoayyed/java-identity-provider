@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" default-autowire="byType">
+<beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd" default-autowire="byType">
+
+    <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel">
+        <constructor-arg value="true" type="boolean" />
+    </bean>
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" >
         <property name="velocityProperties">
@@ -29,12 +34,19 @@
         <property name="ignoreElementContentWhitespace" value="true"/>
         <property name="namespaceAware" value="true" />
     </bean>
-    
-    <!-- 
-    <bean id="shibboleth.AttributeFilterEngine" class="edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine">
-    
+
+    <bean id="shibboleth.AttributeFilterEngine" class="edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine" init-method="initialize">
+        <constructor-arg ref="shibboleth.TaskTimer" />
+        <constructor-arg>
+            <list>
+                <bean id="file1" class="org.opensaml.resource.FilesystemResource">
+                    <constructor-arg value="/Users/lajoie/eclipse-workspace/java-shib-common/test/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/policy3.xml" />
+                </bean>
+            </list>
+        </constructor-arg>
+        <constructor-arg value="10000" type="long" />
+        <constructor-arg value="5" type="int" />
     </bean>
-    -->
     
     <bean id="shibboleth.SAML1AttributeAuthority" class="edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAML1AttributeAuthority">
         <constructor-arg ref="shibboleth.AttributeResolver" />
