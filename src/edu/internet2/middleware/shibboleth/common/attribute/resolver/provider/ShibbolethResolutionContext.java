@@ -33,10 +33,10 @@ public class ShibbolethResolutionContext {
     private ShibbolethAttributeRequestContext requestContext;
 
     /** Attribute Definitions that have been resolved for this request. */
-    private Map<String, AttributeDefinition> definitions;
+    private Map<String, AttributeDefinition> resolvedDefinitions;
 
     /** Data Connectors that have been resolved for this request. */
-    private Map<String, DataConnector> connectors;
+    private Map<String, DataConnector> resolvedConnectors;
     
     /**
      * Constructor.
@@ -45,8 +45,8 @@ public class ShibbolethResolutionContext {
      */
     public ShibbolethResolutionContext(ShibbolethAttributeRequestContext context) {
         requestContext = context;
-        definitions = new HashMap<String, AttributeDefinition>();
-        connectors = new HashMap<String, DataConnector>();
+        resolvedDefinitions = new HashMap<String, AttributeDefinition>();
+        resolvedConnectors = new HashMap<String, DataConnector>();
     }
     
     /**
@@ -60,11 +60,11 @@ public class ShibbolethResolutionContext {
 
     /** {@inheritDoc} */
     public Map<String, AttributeDefinition> getResolvedAttributeDefinitions() {
-        return definitions;
+        return resolvedDefinitions;
     }
 
     /** {@inheritDoc} */
     public Map<String, DataConnector> getResolvedDataConnectors() {
-        return connectors;
+        return resolvedConnectors;
     }
 }
