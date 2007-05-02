@@ -54,7 +54,7 @@ public class ShibbolethFilteringContext {
      * 
      * @return context for the attribute request
      */
-    public ShibbolethAttributeRequestContext getAttribtueRequestContext() {
+    public ShibbolethAttributeRequestContext getAttributeRequestContext() {
         return attributeRequestContext;
     }
 

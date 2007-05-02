@@ -139,7 +139,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             throws FilterProcessingException {
         if (log.isDebugEnabled()) {
             log.debug(getServiceName() + " evaluating if filter policy " + filterPolicy.getPolicyId()
-                    + " is active for principal " + filterContext.getAttribtueRequestContext().getPrincipalName());
+                    + " is active for principal " + filterContext.getAttributeRequestContext().getPrincipalName());
         }
         MatchFunctor policyRequirement = filterPolicy.getPolicyRequirementRule();
         if (policyRequirement == null || !policyRequirement.evaluatePolicyRequirement(filterContext)) {
@@ -148,7 +148,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
 
         if (log.isDebugEnabled()) {
             log.debug("Filter policy " + filterPolicy.getPolicyId() + " is active for principal "
-                    + filterContext.getAttribtueRequestContext().getPrincipalName());
+                    + filterContext.getAttributeRequestContext().getPrincipalName());
         }
         for (AttributeRule attributeRule : filterPolicy.getAttributeRules()) {
             filterAttributes(filterContext, attributeRule);
@@ -170,7 +170,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
 
         if (log.isDebugEnabled()) {
             log.debug(getServiceName() + " filtering values of attribute " + attributeRule.getAttributeId()
-                    + " for principal " + filterContext.getAttribtueRequestContext().getPrincipalName());
+                    + " for principal " + filterContext.getAttributeRequestContext().getPrincipalName());
         }
 
         for (Object attributeValue : attributeValues) {

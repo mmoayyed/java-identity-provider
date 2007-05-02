@@ -28,12 +28,12 @@ public class PrincipalRegexMatchFunctor extends AbstractRegexMatchFunctor {
     /** {@inheritDoc} */
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
-        return isMatch(filterContext.getAttribtueRequestContext().getPrincipalName());
+        return isMatch(filterContext.getAttributeRequestContext().getPrincipalName());
     }
 
     /** {@inheritDoc} */
     protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        return isMatch(filterContext.getAttribtueRequestContext().getPrincipalName());
+        return isMatch(filterContext.getAttributeRequestContext().getPrincipalName());
     }
 }

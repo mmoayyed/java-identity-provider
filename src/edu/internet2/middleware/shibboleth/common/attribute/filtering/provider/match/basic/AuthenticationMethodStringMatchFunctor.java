@@ -27,12 +27,12 @@ public class AuthenticationMethodStringMatchFunctor extends AbstractStringMatchF
     /** {@inheritDoc} */
     protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        return isMatch(filterContext.getAttribtueRequestContext().getPrincipalAuthenticationMethod());
+        return isMatch(filterContext.getAttributeRequestContext().getPrincipalAuthenticationMethod());
     }
 
     /** {@inheritDoc} */
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
-        return isMatch(filterContext.getAttribtueRequestContext().getPrincipalAuthenticationMethod());
+        return isMatch(filterContext.getAttributeRequestContext().getPrincipalAuthenticationMethod());
     }
 }
