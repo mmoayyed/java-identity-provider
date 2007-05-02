@@ -23,8 +23,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.opensaml.xml.util.DatatypeHelper;
 
 /**
- * Renders a {@link AuditLogEntry} as a character seperated string. The format of the string is, which makes up the
- * message component of a Lo4J entry, is:
+ * Renders a {@link AuditLogEntry} as a character seperated string. The format of the string is:
  * 
  * <code>timestamp|providerId|relyingParty|requestBinding|responseBinding|messageProfile|requestID|principalID|authNMethod|attributeID1,attributeID2,|</code>
  */
