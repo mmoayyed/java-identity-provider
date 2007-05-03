@@ -4,36 +4,26 @@
     xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:cred="urn:mace:shibboleth:2.0:credential"
     elementFormDefault="qualified">
 
+    <import namespace="urn:mace:shibboleth:2.0:credential"
+        schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
+
     <annotation>
-        <documentation>
-            Schema describing relying party configurations.
-        </documentation>
+        <documentation>Schema describing relying party configurations.</documentation>
     </annotation>
 
     <import namespace="urn:mace:shibboleth:2.0:credential"
         schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
 
-    <element name="RelyingPartyManager" type="rp:RelyingPartyManagerType">
-        <annotation>
-            <documentation>Contains relying party configuration information for the system.</documentation>
-        </annotation>
+    <element name="RelyingPartyGroup">
+        <complexType>
+            <sequence>
+                <element ref="rp:AnonymousRelyingParty" minOccurs="0" />
+                <element ref="rp:DefaultRelyingParty" minOccurs="0" />
+                <element ref="rp:RelyingParty" maxOccurs="unbounded" />
+                <element name="Credential" type="cred:CredentialType" minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+        </complexType>
     </element>
-
-    <complexType name="RelyingPartyManagerType" abstract="true">
-        <sequence>
-            <element ref="rp:AnonymousRelyingParty" minOccurs="0" />
-            <element ref="rp:DefaultRelyingParty" minOccurs="0" />
-            <element ref="rp:RelyingParty" minOccurs="0" maxOccurs="unbounded" />
-        </sequence>
-        <attribute name="id" type="string" default="shibboleth.RelyingPartyManager">
-            <annotation>
-                <documentation>
-                    An application-wide unique identifier used internally to refer to this collection of relying party
-                    information. This should not be changed by general users.
-                </documentation>
-            </annotation>
-        </attribute>
-    </complexType>
 
     <element name="RelyingParty" type="rp:IdentifiedRelyingPartyType">
         <annotation>
@@ -84,28 +74,6 @@
             </documentation>
         </annotation>
         <sequence>
-            <choice minOccurs="0">
-                <element name="DefaultSigningCredential" type="cred:CredentialType">
-                    <annotation>
-                        <documentation>
-                            The default signing credential for the relying party. This is provided as a convenience
-                            method so that this credential need not be defined on every signing supporting profile
-                            configuration. If a profile configuration has a defined signing credential it must be used
-                            in place of the credential retrieved here.
-                        </documentation>
-                    </annotation>
-                </element>
-                <element name="DefaultSingingCredentialRef" type="string">
-                    <annotation>
-                        <documentation>
-                            Reference to a signing credential for the relying party. This is provided as a convenience
-                            method so that this credential need not be defined on every signing supporting profile
-                            configuration. If a profile configuration has a defined signing credential it must be used
-                            in place of the credential retrieved here.
-                        </documentation>
-                    </annotation>
-                </element>
-            </choice>
             <element ref="rp:ProfileConfiguration" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>Profile specific configuration information.</documentation>
@@ -116,6 +84,16 @@
             <annotation>
                 <documentation>
                     The entity ID the responder should use when communicating with the relying party.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="defaultSigningCredentialRef" type="string">
+            <annotation>
+                <documentation>
+                    The ID of the default signing credential for the relying party. This is provided as a convenience
+                    method so that this credential need not be defined on every signing supporting profile
+                    configuration. If a profile configuration has a defined signing credential it must be used in place
+                    of the credential retrieved here.
                 </documentation>
             </annotation>
         </attribute>

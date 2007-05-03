@@ -2,32 +2,10 @@
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:relying-party:saml"
     xmlns:samlrp="urn:mace:shibboleth:2.0:relying-party:saml" xmlns:rp="urn:mace:shibboleth:2.0:relying-party"
-    xmlns:cred="urn:mace:shibboleth:2.0:credential" xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
     elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:relying-party"
         schemaLocation="classpath:/schema/shibboleth-2.0-relying-party.xsd" />
-
-    <import namespace="urn:mace:shibboleth:2.0:credential"
-        schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
-
-    <complexType name="SAMLRelyingPartyManager">
-        <annotation>
-            <documentation>Relying party manager based on SAML metadata.</documentation>
-        </annotation>
-        <complexContent>
-            <extension base="rp:RelyingPartyManagerType">
-                <attribute name="metadataProviderRef" type="string" use="required">
-                    <annotation>
-                        <documentation>
-                            The name of a defined metadata provider that should be used by this relying party
-                            configuration group to retrieve information about an entity.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
 
     <complexType name="SAML2ArtifactResolutionProfile">
         <annotation>
@@ -72,13 +50,19 @@
         <complexContent>
             <extension base="samlrp:SAMLProfileConfigurationType">
                 <sequence>
-                    <!--  TODO Encryption related credentials -->
                     <element name="ProxyAudience" type="string" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>List of audiences for proxied assertions.</documentation>
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="decryptionCredentialRef" type="string">
+                    <annotation>
+                        <documentation>
+                            ID of the Credential used to decrypt information from the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="encryptNameIds" type="boolean" default="false">
                     <annotation>
                         <documentation>A boolean flag indicating whether NameIDs should be encrypted.</documentation>
@@ -156,11 +140,6 @@
         <complexContent>
             <extension base="rp:ProfileConfigurationType">
                 <sequence>
-                    <element ref="cred:SigningCredential" minOccurs="0">
-                        <annotation>
-                            <documentation>Credential to use to sign SAML assertions.</documentation>
-                        </annotation>
-                    </element>
                     <element name="Audience" type="string" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>List of audiences for issued assertions.</documentation>
@@ -183,6 +162,11 @@
                 <attribute name="defaultArtifactType" type="integer" default="4">
                     <annotation>
                         <documentation>The default artifact type to use.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="singingCredentialRef" type="string">
+                    <annotation>
+                        <documentation>ID of the credential to use to sign SAML assertions.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="signAssertions" type="boolean" default="true">

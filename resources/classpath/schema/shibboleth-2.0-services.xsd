@@ -9,8 +9,7 @@
     <annotation>
         <documentation>Schema describing a set of isolated services used by Shibboleth.</documentation>
     </annotation>
-
-    <element name="LoggingManager" type="service:ReloadableServiceType" />
+    
     <element name="AttributeFilteringEngine" type="service:ReloadableServiceType" />
     <element name="AttributeResolver" type="service:ReloadableServiceType" />
     <element name="ProfileHandlerManager" type="service:ReloadableServiceType" />
