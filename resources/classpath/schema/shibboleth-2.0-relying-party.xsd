@@ -2,7 +2,7 @@
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:relying-party"
     xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:cred="urn:mace:shibboleth:2.0:credential"
-    elementFormDefault="qualified">
+    xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:credential"
         schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
@@ -14,12 +14,15 @@
     <import namespace="urn:mace:shibboleth:2.0:credential"
         schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
 
+    <import namespace="urn:mace:shibboleth:2.0:metadata" schemaLocation="classpath:/schema/shibboleth-2.0-metadata.xsd" />
+
     <element name="RelyingPartyGroup">
         <complexType>
             <sequence>
                 <element ref="rp:AnonymousRelyingParty" minOccurs="0" />
                 <element ref="rp:DefaultRelyingParty" minOccurs="0" />
                 <element ref="rp:RelyingParty" maxOccurs="unbounded" />
+                <element ref="shibmd:MetadataProvider" />
                 <element name="Credential" type="cred:CredentialType" minOccurs="0" maxOccurs="unbounded" />
             </sequence>
         </complexType>
