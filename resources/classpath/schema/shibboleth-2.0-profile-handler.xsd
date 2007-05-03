@@ -1,8 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
-        targetNamespace="urn:mace:shibboleth:2.0:profile-handler" 
-        xmlns:ph="urn:mace:shibboleth:2.0:profile-handler">
-        
-        
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:profile-handler"
+    xmlns:ph="urn:mace:shibboleth:2.0:profile-handler">
+
+    <annotation>
+        <documentation>Schema for configuring and mapping request paths to profile handlers.</documentation>
+    </annotation>
+
+    <element name="ProfileHandlers">
+        <complexType>
+            <sequence>
+                <element ref="ph:ErrorHandler" minOccurs="1" />
+                <element ref="ph:ProfileHandler" minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+        </complexType>
+    </element>
+
+    <element name="ErrorHandler" type="ph:ErrorHandlerType">
+        <annotation>
+            <documentation>A special handler invoked if an error occurs in a profile handler.</documentation>
+        </annotation>
+    </element>
+
+    <complexType name="VelocityErrorHandler">
+        <annotation>
+            <documentation>Error handler that renders an error page by evaluating a velocity template.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="ph:ErrorHandlerType">
+                <attribute name="errorTemplatePath" type="string" default="/error.vm">
+                    <annotation>
+                        <documentation>
+                            Classpath path to the velocity template used to render the error page output.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="velocityEngine" type="string" default="shibboleth.VelocityEngine">
+                    <annotation>
+                        <documentation>
+                            Name of the Spring configured Velocity engine. Deployers should almost never change this
+                            value.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="JSPErrorHandler">
+        <annotation>
+            <documentation>
+                Error handler that redirects to a JSP page in order to render an error message to the user.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="ph:ErrorHandlerType">
+                <attribute name="jspPagePath" type="string" default="/error.jsp">
+                    <annotation>
+                        <documentation>
+                            Path to the JSP page. This path may be absolute (i.e. start with a "/"), in which case the
+                            path is * assumed to be from the root of the servlet context, or relative, in which case the
+                            page is assumed to be relative * from the request dispatcher location. Deployers are
+                            strongly encouraged to use absolute paths.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ErrorHandlerType" abstract="true" />
+
+    <element name="ProfileHandler" type="ph:ProfileHandlerType">
+        <annotation>
+            <documentation>Defines a general profile handler meant to handler incoming requests.</documentation>
+        </annotation>
+    </element>
+    <complexType name="ProfileHandlerType" abstract="true">
+        <sequence>
+            <element name="RequestPath" maxOccurs="unbounded" type="string">
+                <annotation>
+                    <documentation>Indicates the request path that maps to this profile handler.</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+
 </schema>

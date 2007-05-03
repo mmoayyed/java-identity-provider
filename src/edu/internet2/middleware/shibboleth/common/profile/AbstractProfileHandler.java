@@ -35,7 +35,7 @@ import edu.internet2.middleware.shibboleth.common.session.Session;
 import edu.internet2.middleware.shibboleth.common.session.SessionManager;
 
 /**
- * A processor for a communication profile supported by the IdP.
+ * A processor for a communication profile supported by Shibboleth.
  * 
  * Profile handlers must be stateless and thread-safe as a single instance may be used to service every incoming
  * request.
@@ -43,7 +43,8 @@ import edu.internet2.middleware.shibboleth.common.session.SessionManager;
  * @param <RPManagerType> type of relying party configuration manager used by this profile handler
  * @param <SessionType> type of sessions managed by the session manager used by this profile handler
  */
-public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyConfigurationManager, SessionType extends Session> {
+public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyConfigurationManager, SessionType extends Session>
+        implements RequestHandler {
 
     /** Relying party configuration manager for the profile handler. */
     private RPManagerType rpManager;
@@ -184,14 +185,7 @@ public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyC
         return builderFactory;
     }
 
-    /**
-     * Processes an incoming request.
-     * 
-     * @param request the profile request
-     * @param response the profile response
-     * 
-     * @throws ProfileException throw if there was a problem while processing the request
-     */
+    /** {@inheritDoc} */
     public abstract void processRequest(ProfileRequest<ServletRequest> request,
             ProfileResponse<ServletResponse> response) throws ProfileException;
 
@@ -208,7 +202,7 @@ public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyC
 
         decoder.setTrustEngine(trustEngine);
     }
-    
+
     /**
      * Currently this method does not effect the message encoder but it serves as a future extension point.
      * 
