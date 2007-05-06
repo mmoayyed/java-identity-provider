@@ -113,7 +113,7 @@
     </target>
 
     <!-- Create JAR file -->
-    <target name="package" depends="compile-core, test" description="Creates the project library jar file.">
+    <target name="package" depends="compile-core" description="Creates the project library jar file.">
         <mkdir dir="${dist.dir}" />
 
         <if>
@@ -153,7 +153,7 @@
     <!-- **************************************************************** -->
 	
 	<!-- Checks code against style guidelines -->
-	<target name="checkstyle" description="Developer task: Produces coding standard compliance report.">
+	<target name="_checkstyle" description="Developer task: Produces coding standard compliance report.">
 		<mkdir dir="${reports.dir}" />
 		
 		<checkstyle config="${basedir}/checkstyle.xml"
