@@ -111,11 +111,18 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         }
         readLock.unlock();
 
+        Iterator<Entry<String, Attribute>> attributeEntryItr = attributes.entrySet().iterator();
+        Entry<String, Attribute> attributeEntry;
         Attribute attribute;
-        for (Entry<String, Attribute> attributeEntry : attributes.entrySet()) {
+        SortedSet retainedValues;
+        while(attributeEntryItr.hasNext()){
+            attributeEntry = attributeEntryItr.next();
             attribute = attributeEntry.getValue();
-            SortedSet retainedValues = filterContext.getRetainedValues(attribute.getId(), false);
+            retainedValues = filterContext.getRetainedValues(attribute.getId(), false);
             attribute.getValues().retainAll(retainedValues);
+            if(attribute.getValues().size() == 0){
+                attributeEntryItr.remove();
+            }
         }
 
         if (log.isDebugEnabled()) {

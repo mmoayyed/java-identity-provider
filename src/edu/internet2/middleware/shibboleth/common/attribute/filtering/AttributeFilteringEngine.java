@@ -29,7 +29,7 @@ public interface AttributeFilteringEngine<ContextType extends AttributeRequestCo
 
     /**
      * Filters values for the given attribute, removing or allowing attributes per some implementation specific policy.
-     * This filtering process should not remove or add attributes and should not add values.
+     * This filtering process may remove attributes with no values but must not add attributes or attribute values.
      * 
      * @param attributes attribtues to be filtered
      * @param context attribute request context

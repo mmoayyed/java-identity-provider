@@ -78,20 +78,20 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
                 .getBean("engineA");
         Map<String, Attribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
 
-        assertEquals(4, filteredAttributes.size());
+        assertEquals(1, filteredAttributes.size());
 
         Attribute attribute;
         attribute = filteredAttributes.get("firstName");
-        assertEquals(0, attribute.getValues().size());
+        assertNull(attribute);
         
         attribute = filteredAttributes.get("lastName");
-        assertEquals(0, attribute.getValues().size());
+        assertNull(attribute);
         
         attribute = filteredAttributes.get("email");
         assertEquals(2, attribute.getValues().size());
         
         attribute = filteredAttributes.get("affiliation");
-        assertEquals(0, attribute.getValues().size());
+        assertNull(attribute);
     }
     
     public void testEngineB() throws ResourceException, AttributeFilteringException {
@@ -99,17 +99,17 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
                 .getBean("engineB");
         Map<String, Attribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
 
-        assertEquals(4, filteredAttributes.size());
+        assertEquals(1, filteredAttributes.size());
 
         Attribute attribute;
         attribute = filteredAttributes.get("firstName");
-        assertEquals(0, attribute.getValues().size());
+        assertNull(attribute);
         
         attribute = filteredAttributes.get("lastName");
-        assertEquals(0, attribute.getValues().size());
+        assertNull(attribute);
         
         attribute = filteredAttributes.get("email");
-        assertEquals(0, attribute.getValues().size());
+        assertNull(attribute);
         
         attribute = filteredAttributes.get("affiliation");
         assertEquals(2, attribute.getValues().size());
