@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -43,10 +44,10 @@ public class ShibbolethFilteringContext {
      * @param attributes unfiltered attribute set
      * @param context attribute request context
      */
-    public ShibbolethFilteringContext(Map<String, Attribute> attributes,
-            ShibbolethAttributeRequestContext context) {
+    public ShibbolethFilteringContext(Map<String, Attribute> attributes, ShibbolethAttributeRequestContext context) {
         attributeRequestContext = context;
         unfilteredAttributes = attributes;
+        retainedValues = new HashMap<String, SortedSet>();
     }
 
     /**
@@ -71,24 +72,29 @@ public class ShibbolethFilteringContext {
      * Gets the values, for the given attribute, that have no yet been filtered out.
      * 
      * @param attributeId attribute to retreive the values for
+     * @param prepopulate whether to preopulate the retained value list from the unfiltered value list if there is
+     *            currently no set of values retained for the given attribute
      * 
      * @return attribtue values not yet filtered out, never null
      */
-    public SortedSet getRetainedValues(String attributeId) {
-        SortedSet attributeValues;
-        if (!retainedValues.containsKey(attributeId)) {
-            Attribute attribute = unfilteredAttributes.get(attributeId);
-            if (attribute != null) {
-                attributeValues = attribute.getValues();
-            } else {
-                attributeValues = new TreeSet<Object>();
+    public SortedSet getRetainedValues(String attributeId, boolean prepopulate) {
+        SortedSet attributeValues = null;
+        if (!retainedValues.containsKey(attributeId) && prepopulate) {
+            if (prepopulate) {
+                Attribute attribute = unfilteredAttributes.get(attributeId);
+                if (attribute != null) {
+                    attributeValues = attribute.getValues();
+                }
+                
+                retainedValues.put(attributeId, attributeValues);
             }
-
-            retainedValues.put(attributeId, attributeValues);
         } else {
             attributeValues = retainedValues.get(attributeId);
         }
 
+        if(attributeValues == null){
+            attributeValues = new TreeSet<Object>();
+        }
         return attributeValues;
     }
 }

@@ -1,18 +1,16 @@
 <afp:AttributeFilterPolicyGroup id="PolicyExample2"
                                 xmlns:afp="urn:mace:shibboleth:2.0:afp"
                                 xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
-                                xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                                xsi:schemaLocation="urn:mace:shibboleth:2.0:afp ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp.xsd
-                                                    urn:mace:shibboleth:2.0:afp:mf:saml ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-saml.xsd
-                                                    urn:mace:shibboleth:2.0:afp:mf:basic ../../../../../../../../../resources/classpath/schema/shibboleth-2.0-afp-mf-basic.xsd ">
+                                xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
+                                                    urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd ">
 
     <!-- Release affiliation to anyone in the InCommon group -->
     <afp:AttributeFilterPolicy id="InCommonRelease">
-        <afp:PolicyRequirementRule xsi:type="saml:AttributeIssuerInEntityGroup" groupID="urn:mace:incommon"/>
+        <afp:PolicyRequirementRule xsi:type="basic:ANY" />
         
-        <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
-            <afp:PermitValueRule id="eduPersonAffiliationValues" xsi:type="OR" xmlns="urn:mace:shibboleth:2.0:afp:mf:basic">
+        <afp:AttributeRule attributeID="affiliation">
+            <afp:PermitValueRule xsi:type="OR" xmlns="urn:mace:shibboleth:2.0:afp:mf:basic">
                 <Rule xsi:type="AttributeValueString" value="faculty" />
                 <Rule xsi:type="AttributeValueString" value="student" />
                 <Rule xsi:type="AttributeValueString" value="staff" />

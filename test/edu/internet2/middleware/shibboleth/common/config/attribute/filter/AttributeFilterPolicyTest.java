@@ -16,10 +16,17 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.filter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opensaml.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
+import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
 /**
@@ -27,32 +34,84 @@ import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
  */
 public class AttributeFilterPolicyTest extends BaseConfigTestCase {
 
-//    public void testParsePolicy1() {
-//        String[] configs = { DATA_PATH + "/attribute/filtering/policy1.xml", };
-//        ApplicationContext appContext = createSpringContext(configs);
-//
-//        assertNotNull(appContext.containsBean("/AttributeFilterPolicyGroup:PolicyExample3"));
-//        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext
-//                .getBean("/AttributeFilterPolicyGroup:PolicyExample3");
-//        System.out.println(policy);
-//    }
-//
-//    public void testParsePolicy2() {
-//        String[] configs = { DATA_PATH + "/attribute/filtering/policy2.xml", };
-//        ApplicationContext appContext = createSpringContext(configs);
-//
-//        assertNotNull(appContext.containsBean("/AttributeFilterPolicyGroup:PolicyExample3"));
-//        AttributeFilterPolicyGroup policy = (AttributeFilterPolicyGroup) appContext
-//                .getBean("/AttributeFilterPolicyGroup:PolicyExample3");
-//        System.out.println(policy);
-//    }
+    private Map<String, Attribute> attributes;
 
-    public void testParsePolicy3() throws ResourceException {
-        String[] configs = { "/shibboleth-2.0-config-internal.xml", };
-        ApplicationContext appContext = createSpringContext(configs);
+    private ShibbolethAttributeRequestContext requestContext;
+    
+    private ApplicationContext appContext;
 
-        assertNotNull(appContext.containsBean("shibboleth.AttributeFilterEngine"));
-        ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext.getBean("shibboleth.AttributeFilterEngine");
+    /** {@inheritDoc} */
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        attributes = new HashMap<String, Attribute>();
+
+        BasicAttribute<String> firstName = new BasicAttribute<String>("firstName");
+        firstName.getValues().add("john");
+        attributes.put(firstName.getId(), firstName);
+
+        BasicAttribute<String> lastName = new BasicAttribute<String>("lastName");
+        lastName.getValues().add("smith");
+        attributes.put(lastName.getId(), lastName);
+
+        BasicAttribute<String> email = new BasicAttribute<String>("email");
+        email.getValues().add("jsmith@example.edu");
+        email.getValues().add("john.smith@example.edu");
+        attributes.put(email.getId(), email);
+
+        BasicAttribute<String> affiliation = new BasicAttribute<String>("affiliation");
+        affiliation.getValues().add("employee");
+        affiliation.getValues().add("staff");
+        affiliation.getValues().add("illegalValue");
+        attributes.put(affiliation.getId(), affiliation);
+
+        requestContext = new ShibbolethAttributeRequestContext();
+        requestContext.setPrincipalName("jsmith");
+        requestContext.setRequestedAttributes(attributes.keySet());
         
+        String[] configs = { DATA_PATH + "/config/attribute/filter/filter-engine-config.xml" , };
+        appContext = createSpringContext(configs);
+    }
+    
+    public void testEngineA() throws ResourceException, AttributeFilteringException {
+        ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext
+                .getBean("engineA");
+        Map<String, Attribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
+
+        assertEquals(4, filteredAttributes.size());
+
+        Attribute attribute;
+        attribute = filteredAttributes.get("firstName");
+        assertEquals(0, attribute.getValues().size());
+        
+        attribute = filteredAttributes.get("lastName");
+        assertEquals(0, attribute.getValues().size());
+        
+        attribute = filteredAttributes.get("email");
+        assertEquals(2, attribute.getValues().size());
+        
+        attribute = filteredAttributes.get("affiliation");
+        assertEquals(0, attribute.getValues().size());
+    }
+    
+    public void testEngineB() throws ResourceException, AttributeFilteringException {
+        ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext
+                .getBean("engineB");
+        Map<String, Attribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
+
+        assertEquals(4, filteredAttributes.size());
+
+        Attribute attribute;
+        attribute = filteredAttributes.get("firstName");
+        assertEquals(0, attribute.getValues().size());
+        
+        attribute = filteredAttributes.get("lastName");
+        assertEquals(0, attribute.getValues().size());
+        
+        attribute = filteredAttributes.get("email");
+        assertEquals(0, attribute.getValues().size());
+        
+        attribute = filteredAttributes.get("affiliation");
+        assertEquals(2, attribute.getValues().size());
     }
 }

@@ -29,6 +29,15 @@ public class OrMatchFunctor extends AbstractMatchFunctor {
 
     /** Contained functors. */
     private List<MatchFunctor> targetRules;
+    
+    /**
+     * Constructor.
+     *
+     * @param rules rules to AND together
+     */
+    public OrMatchFunctor(List<MatchFunctor> rules){
+        targetRules = rules;
+    }
 
     /**
      * Gets the functors whose results will be ORed.

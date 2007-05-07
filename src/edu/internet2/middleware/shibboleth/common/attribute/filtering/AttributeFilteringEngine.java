@@ -28,10 +28,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestCont
 public interface AttributeFilteringEngine<ContextType extends AttributeRequestContext> {
 
     /**
-     * Processes the given collection of attributes using the effective attribute acceptance policy for the identity
-     * provider identified by its entity ID. Processing filters out attributes, or attribute values, that will not be
-     * accepted from the identity provider and may optionally transform the given attributes (e.g. changing the format
-     * of values, concatinating values).
+     * Filters values for the given attribute, removing or allowing attributes per some implementation specific policy.
+     * This filtering process should not remove or add attributes and should not add values.
      * 
      * @param attributes attribtues to be filtered
      * @param context attribute request context

@@ -36,16 +36,13 @@
     </bean>
 
     <bean id="shibboleth.AttributeFilterEngine" class="edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine" init-method="initialize">
-        <constructor-arg ref="shibboleth.TaskTimer" />
-        <constructor-arg>
+        <constructor-arg type="java.util.List">
             <list>
                 <bean id="policy" class="org.opensaml.resource.ClasspathResource">
                     <constructor-arg value="/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/policy3.xml" />
                 </bean>
             </list>
         </constructor-arg>
-        <constructor-arg value="10000" type="long" />
-        <constructor-arg value="5" type="int" />
     </bean>
     
     <bean id="shibboleth.AttributeResolver" class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver" init-method="initialize">

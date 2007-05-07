@@ -27,6 +27,15 @@ public class NotMatchFunctor extends AbstractMatchFunctor {
 
     /** Match functor to negate. */
     private MatchFunctor targetRule;
+    
+    /**
+     * Constructor.
+     *
+     * @param rule rule to NOT
+     */
+    public NotMatchFunctor(MatchFunctor rule){
+        targetRule = rule;
+    }
 
     /**
      * Gets the match functor that will be the target of the logical NOT.

@@ -31,6 +31,15 @@ public class AndMatchFunctor extends AbstractMatchFunctor {
     private List<MatchFunctor> targetRules;
 
     /**
+     * Constructor.
+     *
+     * @param rules rules to AND together
+     */
+    public AndMatchFunctor(List<MatchFunctor> rules){
+        targetRules = rules;
+    }
+    
+    /**
      * Gets the functors whose results will be ANDed.
      * 
      * @return functors whose results will be ANDed

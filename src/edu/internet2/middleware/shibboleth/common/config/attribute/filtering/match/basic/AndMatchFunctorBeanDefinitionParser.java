@@ -49,7 +49,7 @@ public class AndMatchFunctorBeanDefinitionParser extends BaseFilterBeanDefinitio
         List<Element> ruleElements = XMLHelper.getChildElementsByTagNameNS(configElement,
                 BasicMatchFunctorNamespaceHandler.NAMESPACE, "Rule");
 
-        builder.addPropertyValue("targetMatchFunctors", SpringConfigurationUtils.parseCustomElements(ruleElements,
+        builder.addConstructorArg(SpringConfigurationUtils.parseCustomElements(ruleElements,
                 parserContext));
     }
 }

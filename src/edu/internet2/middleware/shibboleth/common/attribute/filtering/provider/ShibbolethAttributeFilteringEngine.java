@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -113,10 +114,8 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         Attribute attribute;
         for (Entry<String, Attribute> attributeEntry : attributes.entrySet()) {
             attribute = attributeEntry.getValue();
-            attribute.getValues().retainAll(filterContext.getRetainedValues(attribute.getId()));
-            if (attribute.getValues().size() == 0) {
-                attributes.remove(attribute.getId());
-            }
+            SortedSet retainedValues = filterContext.getRetainedValues(attribute.getId(), false);
+            attribute.getValues().retainAll(retainedValues);
         }
 
         if (log.isDebugEnabled()) {
@@ -165,7 +164,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
      */
     protected void filterAttributes(ShibbolethFilteringContext filterContext, AttributeRule attributeRule)
             throws FilterProcessingException {
-        SortedSet attributeValues = filterContext.getRetainedValues(attributeRule.getAttributeId());
+        SortedSet attributeValues = filterContext.getRetainedValues(attributeRule.getAttributeId(), true);
         MatchFunctor permitValue = attributeRule.getPermitValueRule();
 
         if (log.isDebugEnabled()) {
@@ -173,9 +172,12 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
                     + " for principal " + filterContext.getAttributeRequestContext().getPrincipalName());
         }
 
-        for (Object attributeValue : attributeValues) {
+        Iterator<Object> attributeValueItr = attributeValues.iterator();
+        Object attributeValue;
+        while(attributeValueItr.hasNext()){
+            attributeValue = attributeValueItr.next();
             if (!permitValue.evaluatePermitValue(filterContext, attributeRule.getAttributeId(), attributeValue)) {
-                attributeValues.remove(attributeValue);
+                attributeValueItr.remove();
             }
         }
     }
