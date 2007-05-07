@@ -1,17 +1,16 @@
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.opensaml.resource.ClasspathResource;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
@@ -26,31 +25,25 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
     /** Application Context. */
     private ApplicationContext ac;
 
-    /** Constructor. */
-    public BasicAttributeResolverTest() {
-
-    }
-
     /** {@inheritDoc} */
-    public void setUp() throws IOException {
-        ac = createSpringContext("data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver.xml");
+    public void setUp() throws Exception {
+        super.setUp();
+        configResources.add(new ClasspathResource("/shibboleth-2.0-config-internal.xml"));
+        ac = createSpringContext();
     }
 
-    /**
-     * Test Handle Request.
-     * 
-     */
+    /** Test Handle Request. */
     public void testResolverInstantiation() {
-        AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
-
-        ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
-        context.setPrincipalName("ttrojan");
-
-        SortedSet<String> expected = new TreeSet<String>();
-        expected.add("gpburdell");
-        expected.add("ttrojan");
-
         try {
+            AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
+
+            ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
+            context.setPrincipalName("ttrojan");
+
+            SortedSet<String> expected = new TreeSet<String>();
+            expected.add("gpburdell");
+            expected.add("ttrojan");
+
             Collection<Attribute> actual = resolver.resolveAttributes(context).values();
 
             assertEquals(1, actual.size());
@@ -58,10 +51,9 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
             Attribute attribute = actual.iterator().next();
             assertEquals(2, attribute.getValues().size());
             assertEquals(expected, attribute.getValues());
-        } catch (AttributeResolutionException e) {
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
             fail(e.getMessage());
         }
-
     }
-
 }

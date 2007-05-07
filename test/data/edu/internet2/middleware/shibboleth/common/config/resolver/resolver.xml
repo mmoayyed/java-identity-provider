@@ -26,7 +26,7 @@
 
 	<resolver:DataConnector xsi:type="static:Static" id="static2">
 		<static:Attribute id="uid">
-			<static:Value>%PRINCIPAL%</static:Value>
+			<static:Value>ttrojan</static:Value>
 		</static:Attribute>
 		<static:Attribute id="cn">
 			<static:Value>Tommy Trojan</static:Value>

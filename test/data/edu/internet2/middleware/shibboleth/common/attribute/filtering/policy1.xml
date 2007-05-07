@@ -8,45 +8,55 @@
     <!--
         Release attributes if the person is not an alumni or a student with FERPA suppression.
     -->
-    <afp:PermitValue id="studentWithSuppression" xsi:type="basic:OR">
-        <afp:PermitValue xsi:type="basic:NOT">
-            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="student" />
-        </afp:PermitValue>
-        <afp:PermitValue xsi:type="basic:NOT">
-            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="alum" />
-        </afp:PermitValue>
-        <afp:PermitValue xsi:type="basic:AND">
-            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="affilition" value="student" />
-            <afp:PermitValue xsi:type="basic:AttributeValueString" attributeID="ferpa" value="false" />
-        </afp:PermitValue>
-    </afp:PermitValue>
+    <afp:PermitValueRule id="studentWithSuppression" xsi:type="OR" xmlns="urn:mace:shibboleth:2.0:afp:mf:basic">
+        <Rule xsi:type="NOT">
+            <Rule xsi:type="AttributeValueString" attributeID="affilition" value="student" />
+        </Rule>
+        <Rule xsi:type="NOT">
+            <Rule xsi:type="AttributeValueString" attributeID="affilition" value="alum" />
+        </Rule>
+        <Rule xsi:type="AND">
+            <Rule xsi:type="AttributeValueString" attributeID="affilition" value="student" />
+            <Rule xsi:type="AttributeValueString" attributeID="ferpa" value="false" />
+        </Rule>
+    </afp:PermitValueRule>
+    
+    <afp:PermitValueRule id="eduPersonAffiliationValues" xsi:type="OR"  xmlns="urn:mace:shibboleth:2.0:afp:mf:basic">
+                    <Rule xsi:type="AttributeValueString" value="faculty" />
+                    <Rule xsi:type="AttributeValueString" value="student" />
+                    <Rule xsi:type="AttributeValueString" value="staff" />
+                    <Rule xsi:type="AttributeValueString" value="alum" />
+                    <Rule xsi:type="AttributeValueString" value="member" />
+                    <Rule xsi:type="AttributeValueString" value="affiliate" />
+                    <Rule xsi:type="AttributeValueString" value="employee" />
+                </afp:PermitValueRule>
 
     <!-- Release some attributes to JSTOR -->
     <afp:AttributeFilterPolicy id="JSTORRelease">
         <!-- This policy is in effect if the requester entity ID is JSTORs -->
-        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="https://www.jstor.org/shibboleth" />
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://www.jstor.org/shibboleth" />
 
         <!-- Release a transient ID -->
         <afp:AttributeRule attributeID="transientID">
-            <afp:PermitValue xsi:type="basic:ANY" />
+            <afp:PermitValueRule xsi:type="basic:ANY" />
         </afp:AttributeRule>
 
         <!-- Release user's first name if not an alum or a student with FERPA suppresion  -->
         <afp:AttributeRule attributeID="firstName">
-            <afp:PermitValue ref="studentWithSuppression" />
+            <afp:PermitValueRuleReference ref="studentWithSuppression" />
         </afp:AttributeRule>
 
         <!-- Release email address if not an alum or a student with FERPA suppresion  -->
         <afp:AttributeRule attributeID="email">
-            <afp:PermitValue ref="studentWithSuppression" />
+            <afp:PermitValueRuleReference ref="studentWithSuppression" />
         </afp:AttributeRule>
 
         <!-- Release primary affiliation and verify that there is only one value -->
         <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
-            <afp:PermitValue xsi:type="basic:AND">
-                <afp:PermitValue ref="eduPersonAffiliationValues" />
-                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" maximum="1" />
-            </afp:PermitValue>
+            <afp:PermitValueRule xsi:type="AND" xmlns="urn:mace:shibboleth:2.0:afp:mf:basic"> 
+                <RuleReference ref="eduPersonAffiliationValues" />
+                <Rule xsi:type="basic:NumberOfAttributeValues" maximum="1" />
+            </afp:PermitValueRule>
         </afp:AttributeRule>
 
     </afp:AttributeFilterPolicy>
@@ -54,50 +64,34 @@
     <!-- Release some attributes to ScienceDirect -->
     <afp:AttributeFilterPolicy id="ScienceDirect">
         <!-- This policy is in effect if the requester entity ID is ScienceDirect -->
-        <afp:PolicyRequirement xsi:type="basic:AttributeRequesterString" value="https://sdauth.sciencedirect.com/" />
+        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sdauth.sciencedirect.com/" />
 
         <!-- Release a persistent ID -->
         <afp:AttributeRule attributeID="persistentID">
-            <afp:PermitValue xsi:type="basic:ANY" />
+            <afp:PermitValueRule xsi:type="basic:ANY" />
         </afp:AttributeRule>
 
         <!-- Release user's first name if not an alum or a student with FERPA suppresion  -->
         <afp:AttributeRule attributeID="firstName">
-            <afp:PermitValue ref="studentWithSuppression" />
+            <afp:PermitValueRuleReference ref="studentWithSuppression" />
         </afp:AttributeRule>
 
         <!-- Release email address if not an alum or a student with FERPA suppresion  -->
         <afp:AttributeRule attributeID="email">
-            <afp:PermitValue ref="studentWithSuppression" />
+            <afp:PermitValueRuleReference ref="studentWithSuppression" />
         </afp:AttributeRule>
 
         <!-- Release primary affiliation and verify that there is only one value -->
         <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
-            <afp:PermitValue xsi:type="basic:AND">
-                <afp:PermitValue id="eduPersonAffiliationValues" xsi:type="basic:OR">
-                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="faculty" />
-                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="student" />
-                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="staff" />
-                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="alum" />
-                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="member" />
-                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="affiliate" />
-                    <afp:PermitValue xsi:type="basic:AttributeValueString" value="employee" />
-                </afp:PermitValue>
-                <afp:PermitValue xsi:type="basic:NumberOfAttributeValues" maximum="1" />
-            </afp:PermitValue>
+            <afp:PermitValueRule xsi:type="AND" xmlns="urn:mace:shibboleth:2.0:afp:mf:basic">
+                <RuleReference ref="eduPersonAffiliationValues" />
+                <Rule xsi:type="NumberOfAttributeValues" maximum="1" />
+            </afp:PermitValueRule>
         </afp:AttributeRule>
 
         <!-- Release affiliation -->
         <afp:AttributeRule attributeID="eduPersonPrimaryAffiliation">
-            <afp:PermitValue id="eduPersonAffiliationValues" xsi:type="basic:OR">
-                <afp:PermitValue xsi:type="basic:AttributeValueString" value="faculty" />
-                <afp:PermitValue xsi:type="basic:AttributeValueString" value="student" />
-                <afp:PermitValue xsi:type="basic:AttributeValueString" value="staff" />
-                <afp:PermitValue xsi:type="basic:AttributeValueString" value="alum" />
-                <afp:PermitValue xsi:type="basic:AttributeValueString" value="member" />
-                <afp:PermitValue xsi:type="basic:AttributeValueString" value="affiliate" />
-                <afp:PermitValue xsi:type="basic:AttributeValueString" value="employee" />
-            </afp:PermitValue>
+            <afp:PermitValueRuleReference ref="eduPersonAffiliationValues" />
         </afp:AttributeRule>
 
     </afp:AttributeFilterPolicy>

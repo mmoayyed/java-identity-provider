@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.resolver;
+package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
 import java.io.IOException;
 import java.util.Collection;
 
+import org.opensaml.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
@@ -37,7 +38,7 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
     private ApplicationContext ac;
 
     /** {@inheritDoc} */
-    public void setUp() throws IOException {
+    public void setUp() throws ResourceException {
         String[] configs = { "shibboleth-2.0-config-internal.xml",
                 "data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver-db.xml", };
 
