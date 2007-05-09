@@ -74,6 +74,6 @@ public class NumOfAttributeValuesMatchFunctor implements MatchFunctor {
 
         int numOfValues = attribute.getValues().size();
 
-        return numOfValues > minimumValues && numOfValues < maximumValues;
+        return numOfValues >= minimumValues && numOfValues <= maximumValues;
     }
 }
