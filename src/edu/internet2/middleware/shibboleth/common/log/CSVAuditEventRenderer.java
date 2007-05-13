@@ -20,12 +20,11 @@ import org.apache.log4j.or.ObjectRenderer;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.opensaml.xml.util.DatatypeHelper;
 
 /**
  * Renders a {@link AuditLogEntry} as a character seperated string. The format of the string is:
  * 
- * <code>timestamp|providerId|relyingParty|requestBinding|responseBinding|messageProfile|requestID|principalID|authNMethod|attributeID1,attributeID2,|</code>
+ * <code>timestamp|requestBinding|requestID|relyingParty|messageProfile|providerId|responseBinding|responseID|principalID|authNMethod|attributeID1,attributeID2,|</code>
  */
 public class CSVAuditEventRenderer implements ObjectRenderer {
 
@@ -44,24 +43,25 @@ public class CSVAuditEventRenderer implements ObjectRenderer {
         entryString.append(entry.getAuditEventTime().toString(dateFormatter.withZone(DateTimeZone.UTC)));
         entryString.append("|");
         
-        entryString.append(entry.getProviderId());
+        entryString.append(entry.getRequestBinding());
+        entryString.append("|");
+        
+        entryString.append(entry.getRequestId());
         entryString.append("|");
         
         entryString.append(entry.getRelyingPartyId());
         entryString.append("|");
         
-        entryString.append(entry.getRequestBinding());
+        entryString.append(entry.getMessageProfile());        
+        entryString.append("|");
+        
+        entryString.append(entry.getProviderId());
         entryString.append("|");
         
         entryString.append(entry.getResponseBinding());
         entryString.append("|");
         
-        entryString.append(entry.getMessageProfile());        
-        entryString.append("|");
-        
-        if(!DatatypeHelper.isEmpty(entry.getRequestId())){
-            entryString.append(entry.getRequestId());
-        }
+        entryString.append(entry.getResponseId());
         entryString.append("|");
         
         entryString.append(entry.getPrincipalId());

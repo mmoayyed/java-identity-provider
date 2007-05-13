@@ -20,9 +20,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.opensaml.Configuration;
-import org.opensaml.common.binding.MessageDecoder;
-import org.opensaml.common.binding.MessageEncoder;
-import org.opensaml.common.binding.SAMLSecurityPolicy;
+import org.opensaml.common.binding.decoding.MessageDecoder;
+import org.opensaml.common.binding.encoding.MessageEncoder;
+import org.opensaml.common.binding.security.SAMLSecurityPolicy;
 import org.opensaml.saml2.core.Issuer;
 import org.opensaml.ws.security.SecurityPolicyFactory;
 import org.opensaml.xml.XMLObjectBuilderFactory;
@@ -65,6 +65,13 @@ public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyC
     protected AbstractProfileHandler() {
         builderFactory = Configuration.getBuilderFactory();
     }
+    
+    /**
+     * Gets the ID of the profile supported by this handler.
+     * 
+     * @return ID of the profile supported by this handler
+     */
+    public abstract String getProfileId();
 
     /**
      * Gets the relying party manager for this profile handler.

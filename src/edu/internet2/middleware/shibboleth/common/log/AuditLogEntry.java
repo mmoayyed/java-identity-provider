@@ -25,42 +25,45 @@ import org.joda.time.DateTime;
  * Represents an auditable event in the system.
  */
 public class AuditLogEntry {
-    
+
     /** Name of the Logger for the shibboleth audit log. */
     public static final String AUDIT_LOGGER_NAME = "Shibboleth-Audit";
 
     /** UTC IS8601 timestamp of the audit event. */
     private DateTime auditEventTime;
-    
+
     /** Entity ID of the provider (message issuer). */
     private String providerId;
-    
+
     /** Entity ID of the relying party. */
     private String relyingPartyId;
-    
+
     /** URI of binding used by the relying party. */
     private String requestBinding;
-    
+
     /** URI of binding used to respond to relying party. */
     private String responseBinding;
-    
+
     /** URI of profile in use. */
     private String messageProfile;
-    
+
     /** Unique ID of the request message. */
     private String requestId;
-    
+
+    /** Unqiue ID of the response message. */
+    private String responseId;
+
     /** Principal ID of the user the request was made about. */
     private String principalId;
-    
+
     /** URIs of the authentication methods currently active for the user. */
     private String principalAuthenticationMethod;
-    
+
     /** Internal ID of the user attributes released. */
     private List<String> releasedAttributes;
-    
+
     /** Constructor. */
-    public AuditLogEntry(){
+    public AuditLogEntry() {
         auditEventTime = new DateTime();
         releasedAttributes = new ArrayList<String>();
     }
@@ -86,7 +89,7 @@ public class AuditLogEntry {
     /**
      * Gets the authentication method, identified by their URI, used to log into the relying party.
      * 
-     * @return  authentication method, identified by their URI, used to log into the relying party
+     * @return authentication method, identified by their URI, used to log into the relying party
      */
     public String getPrincipalAuthenticationMethod() {
         return principalAuthenticationMethod;
@@ -118,22 +121,22 @@ public class AuditLogEntry {
     public void setPrincipalId(String id) {
         principalId = id;
     }
-    
+
     /**
      * Gets the provider (message issuer) ID.
      * 
      * @return provider (message issuer) ID
      */
-    public String getProviderId(){
+    public String getProviderId() {
         return providerId;
     }
-    
+
     /**
      * Sets the provider (message issuer) ID.
      * 
      * @param id provider (message issuer) ID
      */
-    public void setProviderId(String id){
+    public void setProviderId(String id) {
         providerId = id;
     }
 
@@ -149,7 +152,7 @@ public class AuditLogEntry {
     /**
      * Gets the entity ID of the relying party.
      * 
-     * @return  entity ID of the relying party
+     * @return entity ID of the relying party
      */
     public String getRelyingPartyId() {
         return relyingPartyId;
@@ -216,6 +219,24 @@ public class AuditLogEntry {
      */
     public void setResponseBinding(String bindingURI) {
         responseBinding = bindingURI;
+    }
+
+    /**
+     * Gets the unique ID of the response message.
+     * 
+     * @return unique ID of the response message
+     */
+    public String getResponseId() {
+        return responseId;
+    }
+
+    /**
+     * Sets the unique ID of the response message.
+     * 
+     * @param id unique ID of the response message
+     */
+    public void setResponseId(String id) {
+        responseId = id;
     }
 
     /**
