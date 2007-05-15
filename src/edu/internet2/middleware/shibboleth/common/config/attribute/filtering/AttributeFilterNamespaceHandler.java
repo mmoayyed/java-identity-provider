@@ -30,14 +30,17 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
 
     /** {@inheritDoc} */
     public void init() {
+        registerBeanDefinitionParser(ShibbolethAttributeFilteringEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new ShibbolethAttributeFilteringEngineBeanDefinitionParser());
+
         BeanDefinitionParser parser = new AttributeFilterPolicyGroupBeanDefinitionParser();
         registerBeanDefinitionParser(AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(AttributeFilterPolicyGroupBeanDefinitionParser.TYPE_NAME, parser);
-        
+
         parser = new AttributeFilterPolicyBeanDefinitionParser();
         registerBeanDefinitionParser(AttributeFilterPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(AttributeFilterPolicyBeanDefinitionParser.TYPE_NAME, parser);
-        
+
         parser = new AttributeRuleBeanDefinitionParser();
         registerBeanDefinitionParser(AttributeRuleBeanDefinitionParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(AttributeRuleBeanDefinitionParser.TYPE_NAME, parser);

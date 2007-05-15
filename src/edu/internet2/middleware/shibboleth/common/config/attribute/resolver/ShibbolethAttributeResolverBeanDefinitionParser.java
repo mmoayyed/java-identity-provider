@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.service;
+package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
 import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
+import edu.internet2.middleware.shibboleth.common.config.service.AbstractReloadableServiceBeanDefinitionParser;
 
 /**
- * Bean definition parser for {@link ShibbolethAttributeFilteringEngine}s.
+ * Spring bean definition parser for {@link ShibbolethAttributeResolver} services.
  */
-public class AttributeFilterEngineBeanDefinitionParser extends AbstractReloadableServiceBeanDefinitionParser {
-    
-    /** Service element name. */
-    public static final QName ELEMENT_NAME = new QName(ServiceNamespaceHandler.NAMESPACE, "AttributeFilteringEngine");
+public class ShibbolethAttributeResolverBeanDefinitionParser extends AbstractReloadableServiceBeanDefinitionParser {
+
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+            "ShibbolethAttributeResolver");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
-        return ShibbolethAttributeFilteringEngine.class;
+        return ShibbolethAttributeResolver.class;
     }
 }

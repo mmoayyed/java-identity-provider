@@ -28,7 +28,6 @@ public class ServiceNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(AttributeFilterEngineBeanDefinitionParser.ELEMENT_NAME,
-                new AttributeFilterEngineBeanDefinitionParser());
+        // No bean definitions are currently declared in this namespace
     }
 }

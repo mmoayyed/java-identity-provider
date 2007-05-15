@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:resolver" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:resolver="urn:mace:shibboleth:2.0:resolver">
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:service="urn:mace:shibboleth:2.0:services"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:services" schemaLocation="classpath:/schema/shibboleth-2.0-services.xsd" />
 
     <annotation>
         <documentation>Shibboleth 2.0 Attribute Resolver configuration schema</documentation>
     </annotation>
+
+    <complexType name="ShibbolethAttributeResolver">
+        <annotation>
+            <documentation>Service definition for the Shibboleth attribute resolver.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="service:ReloadableServiceType" />
+        </complexContent>
+    </complexType>
 
     <element name="AttributeResolver" type="resolver:AttributeResolverType">
         <annotation>

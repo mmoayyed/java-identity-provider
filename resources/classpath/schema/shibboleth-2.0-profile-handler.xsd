@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:profile-handler"
-    xmlns:ph="urn:mace:shibboleth:2.0:profile-handler">
+    xmlns:ph="urn:mace:shibboleth:2.0:profile-handler" xmlns:service="urn:mace:shibboleth:2.0:services"
+    elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:services" schemaLocation="classpath:/schema/shibboleth-2.0-services.xsd" />
 
     <annotation>
         <documentation>Schema for configuring and mapping request paths to profile handlers.</documentation>
     </annotation>
 
+    <complexType name="ShibbolethProfileHandlerManager">
+        <annotation>
+            <documentation>Definition for the basic Shibboleth profile handler manager service.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="service:ReloadableServiceType" />
+        </complexContent>
+    </complexType>
+
     <element name="ProfileHandlers">
+        <annotation>
+            <documentation>Root of a profile handler configuration file.</documentation>
+        </annotation>
         <complexType>
             <sequence>
                 <element ref="ph:ErrorHandler" minOccurs="1" />

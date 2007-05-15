@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:afp" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" elementFormDefault="qualified">
+    xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:service="urn:mace:shibboleth:2.0:services" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:services" schemaLocation="classpath:/schema/shibboleth-2.0-services.xsd" />
 
     <import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="classpath:/schema/xmldsig-core-schema.xsd" />
 
     <annotation>
         <documentation>Schema for the attribute filter policies.</documentation>
     </annotation>
+
+    <complexType name="ShibbolethAttributeFilteringEngine">
+        <annotation>
+            <documentation>Service defintion for creating Shibboleth attribute filtering engines.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="service:ReloadableServiceType" />
+        </complexContent>
+    </complexType>
 
     <element name="AttributeFilterPolicyGroup" type="afp:AttributeFilterPolicyGroupType">
         <annotation>

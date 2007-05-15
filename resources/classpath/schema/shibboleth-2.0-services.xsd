@@ -10,12 +10,9 @@
         <documentation>Schema describing a set of isolated services used by Shibboleth.</documentation>
     </annotation>
     
-    <element name="AttributeFilteringEngine" type="service:ReloadableServiceType" />
-    <element name="AttributeResolver" type="service:ReloadableServiceType" />
-    <element name="ProfileHandlerManager" type="service:ReloadableServiceType" />
-    <element name="RelyingPartyConfigurationManager" type="service:ReloadableServiceType" />
-
-    <complexType name="ReloadableServiceType">
+    <element name="Service" type="service:ServiceType" />
+    
+    <complexType name="ReloadableServiceType" abstract="true">
         <annotation>
             <documentation>
                 A service that periodically checks if its configuration resources have changed. If a change has occured
@@ -45,7 +42,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="ServiceType">
+    <complexType name="ServiceType" abstract="true">
         <annotation>
             <documentation>
                 A service that maintains its own Spring ApplicationContext loaded with the given configuration
