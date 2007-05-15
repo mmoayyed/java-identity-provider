@@ -17,10 +17,21 @@
 package edu.internet2.middleware.shibboleth.common.relyingparty.provider;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.concurrent.locks.Lock;
 
+import org.apache.log4j.Logger;
+import org.opensaml.resource.Resource;
+import org.opensaml.resource.ResourceException;
+import org.opensaml.saml2.metadata.EntitiesDescriptor;
+import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.saml2.metadata.provider.MetadataProviderException;
+import org.springframework.context.ApplicationContext;
 
+import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
 
@@ -36,10 +47,14 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfi
  * grandparent, great-grandparent, etc.), with the first configuration found being returned. If no configuration is
  * found once the top of the tree is reached the default configuration is returned.
  */
-public class SAMLMDRelyingPartyConfigurationManager implements RelyingPartyConfigurationManager {
+public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableService implements
+        RelyingPartyConfigurationManager {
+
+    /** Class logger. */
+    private final Logger log = Logger.getLogger(SAMLMDRelyingPartyConfigurationManager.class);
 
     /** Metadata provider used to lookup information about entities. */
-    private MetadataProvider metadata;
+    private MetadataProvider metadataProvider;
 
     /** Relying party config used for anonymous parties. */
     private RelyingPartyConfiguration anonymousRPConfig;
@@ -53,11 +68,26 @@ public class SAMLMDRelyingPartyConfigurationManager implements RelyingPartyConfi
     /**
      * Constructor.
      * 
-     * @param provider metadata provider used to lookup information about entities
-     * 
+     * @param configurations configuration resources for this service
      */
-    public SAMLMDRelyingPartyConfigurationManager(MetadataProvider provider) {
-        metadata = provider;
+    public SAMLMDRelyingPartyConfigurationManager(List<Resource> configurations) {
+        super(configurations);
+        rpConfigs = new HashMap<String, RelyingPartyConfiguration>();
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param timer timer resource polling tasks are scheduled with
+     * @param configurations configuration resources for this service
+     * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
+     *            than zero
+     * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
+     *            must be greater than zero
+     */
+    public SAMLMDRelyingPartyConfigurationManager(Timer timer, List<Resource> configurations, long pollingFrequency,
+            int pollingRetryAttempts) {
+        super(timer, configurations, pollingFrequency, pollingRetryAttempts);
         rpConfigs = new HashMap<String, RelyingPartyConfiguration>();
     }
 
@@ -95,17 +125,82 @@ public class SAMLMDRelyingPartyConfigurationManager implements RelyingPartyConfi
      * @return metadata provider used to lookup information about entities
      */
     public MetadataProvider getMetadataProvider() {
-        return metadata;
+        return metadataProvider;
+    }
+
+    /**
+     * Sets the metadata provider used to lookup information about entities.
+     * 
+     * @param provider metadata provider used to lookup information about entities
+     */
+    public void setMetadataProvider(MetadataProvider provider) {
+        metadataProvider = provider;
     }
 
     /** {@inheritDoc} */
     public RelyingPartyConfiguration getRelyingPartyConfiguration(String relyingPartyEntityID) {
-        // TODO Auto-generated method stub
-        return null;
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        if (log.isDebugEnabled()) {
+            log.debug("Looking up relying party configuration for " + relyingPartyEntityID);
+        }
+        if (rpConfigs.containsKey(relyingPartyEntityID)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Relying party configuration found for " + relyingPartyEntityID);
+            }
+            readLock.unlock();
+            return rpConfigs.get(relyingPartyEntityID);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("No relying party configuration was registered for " + relyingPartyEntityID
+                    + " looking up configuration based on metadata groups");
+        }
+        try {
+            EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
+            EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
+            do {
+                if (rpConfigs.containsKey(entityGroup.getName())) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Relying party configuration found for " + relyingPartyEntityID
+                                + " as member of metadata group " + entityGroup.getName());
+                    }
+                    readLock.unlock();
+                    return rpConfigs.get(entityGroup.getName());
+                }
+                entityGroup = (EntitiesDescriptor) entityGroup.getParent();
+            } while (entityGroup != null);
+        } catch (MetadataProviderException e) {
+            log.error("Error fetching metadata for relying party " + relyingPartyEntityID, e);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("No realying party configuration found for " + relyingPartyEntityID
+                    + " using default configuration");
+        }
+        readLock.unlock();
+        return defaultRPConfig;
     }
 
     /** {@inheritDoc} */
     public Map<String, RelyingPartyConfiguration> getRelyingPartyConfigurations() {
         return rpConfigs;
+    }
+
+    /** {@inheritDoc} */
+    protected void newContextCreated(ApplicationContext newServiceContext) throws ResourceException {
+        String[] configNames = newServiceContext.getBeanNamesForType(RelyingPartyConfiguration.class);
+
+        Lock writeLock = getReadWriteLock().writeLock();
+        writeLock.lock();
+
+        rpConfigs.clear();
+        RelyingPartyConfiguration rpConfg;
+        for (String configName : configNames) {
+            rpConfg = (RelyingPartyConfiguration) newServiceContext.getBean(configName);
+            rpConfigs.put(rpConfg.getRelyingPartyId(), rpConfg);
+        }
+
+        writeLock.unlock();
     }
 }
