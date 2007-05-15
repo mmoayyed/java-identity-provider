@@ -28,8 +28,6 @@ public class SAMLRelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(SAMLRelyingPartyManagerBeanDefinitionParser.TYPE_NAME,
-                new SAMLRelyingPartyManagerBeanDefinitionParser());
 
         registerBeanDefinitionParser(ShibbolethSSOProfileConfigurationBeanDefinitionParser.TYPE_NAME,
                 new ShibbolethSSOProfileConfigurationBeanDefinitionParser());
