@@ -64,9 +64,16 @@ public final class SpringConfigurationUtils {
         configReader.setDocumentLoader(new SpringDocumentLoader());
 
         int numOfResources = configurationResources.size();
+        Resource configurationResource;
         org.springframework.core.io.Resource[] configSources = new org.springframework.core.io.Resource[numOfResources];
         for (int i = 0; i < numOfResources; i++) {
-            configSources[i] = new InputStreamResource(configurationResources.get(i).getInputStream());
+            configurationResource = configurationResources.get(i);
+            if (configurationResource != null && configurationResource.exists()) {
+                configSources[i] = new InputStreamResource(configurationResources.get(i).getInputStream());
+            } else {
+                log.warn("Configuration resource not loaded because it does not exist: "
+                        + configurationResource.getLocation());
+            }
         }
 
         try {

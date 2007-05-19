@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources/conf"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry excluding="*|classpath/" including="META-INF/" kind="src" path="resources"/>
+	<classpathentry excluding="*|classpath/|conf/" including="META-INF/" kind="src" path="resources"/>
 	<classpathentry kind="src" path="resources/classpath"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="build-lib/servlet-2.4.jar">

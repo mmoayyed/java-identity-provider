@@ -178,7 +178,7 @@
                 <documentation>A unique identifier that may be used to identify a particular provider</documentation>
             </annotation>
         </attribute>
-        <attribute name="requireValidMetadata" type="boolean">
+        <attribute name="requireValidMetadata" type="boolean" default="false">
             <annotation>
                 <documentation>
                     A boolean flag indicating whether the metadata retrieved must be valid. At a minimum,
