@@ -154,7 +154,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="defaultNameFormat" type="anyURI">
+                <attribute name="defaultNameFormat" type="anyURI" default="urn:oasis:names:tc:SAML:2.0:nameid-format:transient">
                     <annotation>
                         <documentation>The default subject name format to use.</documentation>
                     </annotation>
