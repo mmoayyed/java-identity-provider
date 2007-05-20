@@ -65,7 +65,7 @@ public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyC
     protected AbstractProfileHandler() {
         builderFactory = Configuration.getBuilderFactory();
     }
-    
+
     /**
      * Gets the ID of the profile supported by this handler.
      * 

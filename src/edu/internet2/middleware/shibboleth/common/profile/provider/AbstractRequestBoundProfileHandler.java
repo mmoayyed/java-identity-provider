@@ -45,9 +45,18 @@ public abstract class AbstractRequestBoundProfileHandler<RPManagerType extends R
     /**
      * Gets the request paths that to which this profile handler will respond.
      * 
-     * @return equest paths that to which this profile handler will respond
+     * @return request paths that to which this profile handler will respond
      */
     public List<String> getRequestPaths() {
         return requestPaths;
+    }
+
+    /**
+     * Sets the request paths that to which this profile handler will respond.
+     * 
+     * @param paths request paths that to which this profile handler will respond
+     */
+    public void setRequestPaths(List<String> paths) {
+        requestPaths = paths;
     }
 }

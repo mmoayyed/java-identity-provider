@@ -74,9 +74,9 @@
                     <annotation>
                         <documentation>
                             Path to the JSP page. This path may be absolute (i.e. start with a "/"), in which case the
-                            path is * assumed to be from the root of the servlet context, or relative, in which case the
-                            page is assumed to be relative * from the request dispatcher location. Deployers are
-                            strongly encouraged to use absolute paths.
+                            path is assumed to be from the root of the servlet context, or relative, in which case the
+                            page is assumed to be relative from the request dispatcher location. Deployers are strongly
+                            encouraged to use absolute paths.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -88,7 +88,7 @@
 
     <element name="ProfileHandler" type="ph:ProfileHandlerType">
         <annotation>
-            <documentation>Defines a general profile handler meant to handler incoming requests.</documentation>
+            <documentation>Defines a general profile handler meant to process incoming requests.</documentation>
         </annotation>
     </element>
     <complexType name="ProfileHandlerType" abstract="true">
@@ -99,6 +99,46 @@
                 </annotation>
             </element>
         </sequence>
+        <attribute name="relyingPartyManagerId" type="string" default="shibboleth.RelyingPartyConfigurationManager">
+            <annotation>
+                <documentation>
+                    The component ID of the relying party configuration manager to use with the profile handler.
+
+                    This setting should not be changed from its default unless the deployer fully understands the
+                    inter-relationship between IdP components.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="sessionManagerId" type="string" default="shibboleth.SessionManager">
+            <annotation>
+                <documentation>
+                    The component ID of the session manager to use with the profile handler.
+
+                    This setting should not be changed from its default unless the deployer fully understands the
+                    inter-relationship between IdP components.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="securityPolicyFactoryId" type="string" default="shibboleth.SecurityPolicyFactory">
+            <annotation>
+                <documentation>
+                    The component ID of the security policy factory to use with the profile handler.
+
+                    This setting should not be changed from its default unless the deployer fully understands the
+                    inter-relationship between IdP components.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="trustEngineId" type="string" default="shibboleth.TrustEngine">
+            <annotation>
+                <documentation>
+                    The component ID of the trust engine to use with the profile handler.
+
+                    This setting should not be changed from its default unless the deployer fully understands the
+                    inter-relationship between IdP components.
+                </documentation>
+            </annotation>
+        </attribute>
     </complexType>
 
 </schema>
