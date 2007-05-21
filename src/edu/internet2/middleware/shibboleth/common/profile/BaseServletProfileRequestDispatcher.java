@@ -39,23 +39,13 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
     /** Access logger. */
     private final Logger accessLog = Logger.getLogger(AccessLogEntry.ACCESS_LOGGER_NAME);
 
-    /** Manager used to retrieve handlers for requests. */
-    private ProfileHandlerManager handlerManager;
-    
-    /** {@inheritDoc} */
-    public void init() throws ServletException {
-        super.init();
-        
-        handlerManager = (ProfileHandlerManager) getServletContext().getAttribute("profileHandler");
-    }
-
     /**
      * Gets the manager used to retrieve handlers for requests.
      * 
      * @return manager used to retrieve handlers for requests
      */
     public ProfileHandlerManager getHandlerManager() {
-        return handlerManager;
+        return (ProfileHandlerManager) getServletContext().getAttribute("profileHandler");
     }
 
     /** {@inheritDoc} */
@@ -69,8 +59,8 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
         ProfileRequest profileReq = getProfileRequest(request);
         ProfileResponse profileResp = getProfileResponse(response);
 
-        AbstractErrorHandler errorHandler = handlerManager.getErrorHandler();
-        AbstractProfileHandler handler = handlerManager.getProfileHandler(request);
+        AbstractErrorHandler errorHandler = getHandlerManager().getErrorHandler();
+        AbstractProfileHandler handler = getHandlerManager().getProfileHandler(request);
         if (handler != null) {
             try {
                 if (log.isDebugEnabled()) {
