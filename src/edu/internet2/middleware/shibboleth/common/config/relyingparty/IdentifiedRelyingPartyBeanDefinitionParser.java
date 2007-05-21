@@ -53,4 +53,9 @@ public class IdentifiedRelyingPartyBeanDefinitionParser extends UnidentifiedRely
         }
         builder.addPropertyValue("relyingPartyId", id);
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }

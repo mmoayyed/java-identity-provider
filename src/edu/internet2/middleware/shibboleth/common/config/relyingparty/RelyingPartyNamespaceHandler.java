@@ -29,6 +29,9 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
     /** {@inheritDoc} */
     public void init() {
 
+        registerBeanDefinitionParser(RelyingPartyGroupBeanDefinitionParser.ELEMENT_NAME,
+                new RelyingPartyGroupBeanDefinitionParser());
+
         registerBeanDefinitionParser(SAMLMDRelyingPartyConfigurationManagerBeanDefinitionParser.SCHEMA_TYPE,
                 new SAMLMDRelyingPartyConfigurationManagerBeanDefinitionParser());
 

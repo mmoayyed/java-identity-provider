@@ -53,7 +53,7 @@ public class UnidentifiedRelyingPartyBeanDefinitionParser extends AbstractSingle
     protected Class getBeanClass(Element element) {
         return UnidentifiedRelyingPartyFactoryBean.class;
     }
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
@@ -105,11 +105,11 @@ public class UnidentifiedRelyingPartyBeanDefinitionParser extends AbstractSingle
             factory.addPropertyReference("defaultSigningCredential", anonRPRef.get(0).getTextContent());
         }
     }
-    
+
     /**
      * Processes profile configurations.
      * 
-      * @param factory bean factory accepting profile configurations
+     * @param factory bean factory accepting profile configurations
      * @param configElement configuration element
      * @param parserContext current parsing context
      */
@@ -124,5 +124,10 @@ public class UnidentifiedRelyingPartyBeanDefinitionParser extends AbstractSingle
             factory.addPropertyValue("profileConfigurations", SpringConfigurationUtils.parseCustomElements(
                     profileConfigs, parserContext));
         }
+    }
+
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
     }
 }
