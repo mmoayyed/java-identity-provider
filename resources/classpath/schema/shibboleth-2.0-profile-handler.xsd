@@ -19,7 +19,7 @@
         </complexContent>
     </complexType>
 
-    <element name="ProfileHandlers">
+    <element name="ProfileHandlerGroup">
         <annotation>
             <documentation>Root of a profile handler configuration file.</documentation>
         </annotation>

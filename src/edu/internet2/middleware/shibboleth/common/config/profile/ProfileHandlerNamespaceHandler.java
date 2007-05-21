@@ -28,6 +28,9 @@ public class ProfileHandlerNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     public void init() {
+        registerBeanDefinitionParser(ProfileHandlerGroupBeanDefinitionParser.ELEMENT_NAME,
+                new ProfileHandlerGroupBeanDefinitionParser());
+
         registerBeanDefinitionParser(ShibbolethProfileHandlerManagerBeanDefinitionParser.SCHEMA_TYPE,
                 new ShibbolethProfileHandlerManagerBeanDefinitionParser());
 
