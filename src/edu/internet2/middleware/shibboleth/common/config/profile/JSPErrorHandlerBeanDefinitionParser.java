@@ -43,4 +43,9 @@ public class JSPErrorHandlerBeanDefinitionParser extends AbstractSingleBeanDefin
 
         builder.addConstructorArg(config.getAttributeNS(null, "jspPagePath"));
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }

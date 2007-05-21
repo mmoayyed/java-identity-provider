@@ -44,4 +44,9 @@ public class VelocityErrorHandlerBeanDefinitionParser extends AbstractSingleBean
         builder.addConstructorArg(config.getAttributeNS(null, "errorTemplatePath"));
         builder.addConstructorArgReference(config.getAttributeNS(null, "velocityEngine"));
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }

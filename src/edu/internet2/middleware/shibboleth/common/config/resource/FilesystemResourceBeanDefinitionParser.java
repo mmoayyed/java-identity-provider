@@ -43,4 +43,9 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractSingleBeanDe
 
         builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "file")));
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }

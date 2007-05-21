@@ -65,4 +65,9 @@ public abstract class AbstractProfileHandlerBeanDefinitionParser extends Abstrac
 
         return requestPaths;
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }

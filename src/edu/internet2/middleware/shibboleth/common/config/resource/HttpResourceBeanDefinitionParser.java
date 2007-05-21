@@ -43,4 +43,9 @@ public class HttpResourceBeanDefinitionParser extends AbstractSingleBeanDefiniti
 
         builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "url")));
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }
