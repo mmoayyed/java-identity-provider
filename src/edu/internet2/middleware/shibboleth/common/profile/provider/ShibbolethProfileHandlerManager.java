@@ -65,12 +65,9 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
      * @param configurations configuration resources for this service
      * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
      *            than zero
-     * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
-     *            must be greater than zero
      */
-    public ShibbolethProfileHandlerManager(List<Resource> configurations, Timer timer, long pollingFrequency,
-            int pollingRetryAttempts) {
-        super(timer, configurations, pollingFrequency, pollingRetryAttempts);
+    public ShibbolethProfileHandlerManager(List<Resource> configurations, Timer timer, long pollingFrequency) {
+        super(timer, configurations, pollingFrequency);
         profileHandlers = new HashMap<String, AbstractProfileHandler>();
     }
 

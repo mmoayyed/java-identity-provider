@@ -82,12 +82,9 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
      * @param configurations configuration resources for this service
      * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
      *            than zero
-     * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
-     *            must be greater than zero
      */
-    public SAMLMDRelyingPartyConfigurationManager(List<Resource> configurations, Timer timer, long pollingFrequency,
-            int pollingRetryAttempts) {
-        super(timer, configurations, pollingFrequency, pollingRetryAttempts);
+    public SAMLMDRelyingPartyConfigurationManager(List<Resource> configurations, Timer timer, long pollingFrequency) {
+        super(timer, configurations, pollingFrequency);
         rpConfigs = new HashMap<String, RelyingPartyConfiguration>();
     }
 

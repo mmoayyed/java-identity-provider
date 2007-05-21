@@ -83,21 +83,47 @@ public abstract class BaseReloadableService extends BaseService {
      * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
      *            must be greater than zero
      */
-    public BaseReloadableService(Timer timer, List<Resource> configurations, long pollingFrequency,
-            int pollingRetryAttempts) {
+    public BaseReloadableService(Timer timer, List<Resource> configurations, long pollingFrequency) {
         super(configurations);
         if (timer == null) {
             throw new IllegalArgumentException("Resource polling timer may not be null");
         }
         pollingTimer = timer;
 
-        if (pollingFrequency <= 0 || pollingRetryAttempts <= 0) {
-            throw new IllegalArgumentException("Polling frequency and retry attempts must be greater than zero.");
+        if (pollingFrequency <= 0 ) {
+            throw new IllegalArgumentException("Polling frequency must be greater than zero.");
         }
         resourcePollingFrequency = pollingFrequency;
-        resourcePollingRetryAttempts = pollingRetryAttempts;
+        resourcePollingRetryAttempts = 5;
 
         serviceContextRWLock = new ReentrantReadWriteLock(true);
+    }
+    
+    /**
+     * Gets the frequency, in millseconds, that the configuration resources are polled.
+     * 
+     * @return frequency, in millseconds, that the configuration resources are polled
+     */
+    public long getPollingFrequency(){
+        return resourcePollingFrequency;
+    }
+    
+    /**
+     * Gets the number of times a resource may error out before it is considered permanently invalid.
+     * 
+     * @return number of times a resource may error out before it is considered permanently invalid
+     */
+    public int getPollingRetryAttempts(){
+        return resourcePollingRetryAttempts;
+    }
+    
+    /**
+     * Sets the number of times a resource may error out before it is considered permanently invalid.
+     * 
+     * @param attempts number of times a resource may error out before it is considered permanently invalid
+     */
+    public void setPollingRetryAttempts(int attempts){
+        resourcePollingRetryAttempts = attempts;
     }
 
     /** {@inheritDoc} */

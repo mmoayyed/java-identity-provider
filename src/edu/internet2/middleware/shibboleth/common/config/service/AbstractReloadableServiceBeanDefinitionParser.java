@@ -21,10 +21,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
-
 /**
- * Base bean definition parser for {@link BaseReloadableService}s.
+ * Base bean definition parser for reloadable services.
  */
 public abstract class AbstractReloadableServiceBeanDefinitionParser extends AbstractServiceBeanDefinitionParser {
 
@@ -43,7 +41,7 @@ public abstract class AbstractReloadableServiceBeanDefinitionParser extends Abst
 
             int retryAttempts = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
                     "configurationResourcePollingRetryAttempts")));
-            builder.addConstructorArg(retryAttempts);
+            builder.addPropertyValue("pollingRetryAttempts", retryAttempts);
         }
     }
 }

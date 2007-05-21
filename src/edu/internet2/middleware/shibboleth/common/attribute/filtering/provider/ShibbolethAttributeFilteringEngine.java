@@ -68,12 +68,9 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
      * @param resources list of policy resources
      * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
      *            than zero
-     * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
-     *            must be greater than zero
      */
-    public ShibbolethAttributeFilteringEngine(List<Resource> resources, Timer timer, long pollingFrequency,
-            int pollingRetryAttempts) {
-        super(timer, resources, pollingFrequency, pollingRetryAttempts);
+    public ShibbolethAttributeFilteringEngine(List<Resource> resources, Timer timer, long pollingFrequency) {
+        super(timer, resources, pollingFrequency);
         filterPolicies = new ArrayList<AttributeFilterPolicy>();
     }
 

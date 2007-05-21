@@ -85,12 +85,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      * @param resources list of resolver configuration files
      * @param pollingFrequency the frequency, in milliseconds, to poll the configuration resources for changes, must be
      *            greater than zero
-     * @param pollingRetryAttempts maximum number of poll attempts before a configuration resource is considered
-     *            inaccessible, must be greater than zero
      */
-    public ShibbolethAttributeResolver(List<Resource> resources, Timer timer, long pollingFrequency,
-            int pollingRetryAttempts) {
-        super(timer, resources, pollingFrequency, pollingRetryAttempts);
+    public ShibbolethAttributeResolver(List<Resource> resources, Timer timer, long pollingFrequency) {
+        super(timer, resources, pollingFrequency);
         dataConnectors = new HashMap<String, DataConnector>();
         definitions = new HashMap<String, AttributeDefinition>();
         principalConnectors = new HashMap<String, PrincipalConnector>();
