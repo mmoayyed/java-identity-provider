@@ -49,12 +49,12 @@ public class Log4jConfigFileResourceListener implements ResourceChangeListener {
 
     /** {@inheritDoc} */
     public void onResourceDelete(Resource log4jConfig) {
-        loadConfiguration(log4jConfig);
+        loadDefaultConfiguration();
     }
 
     /** {@inheritDoc} */
     public void onResourceUpdate(Resource log4jConfig) {
-        loadDefaultConfiguration();
+        loadConfiguration(log4jConfig);
     }
 
     /**

@@ -48,6 +48,6 @@ public abstract class AbstractServiceBeanDefinitionParser extends AbstractSingle
 
     /** {@inheritDoc} */
     protected String resolveId(Element configElement, AbstractBeanDefinition beanDef, ParserContext parserContext) {
-        return configElement.getAttributeNS(null, "name");
+        return configElement.getAttributeNS(null, "id");
     }
 }

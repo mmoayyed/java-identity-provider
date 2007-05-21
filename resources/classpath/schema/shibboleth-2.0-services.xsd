@@ -58,7 +58,7 @@
                 </annotation>
             </element>
         </sequence>
-        <attribute name="name" type="string" use="required">
+        <attribute name="id" type="string" use="required">
             <annotation>
                 <documentation>The application unique name of the service.</documentation>
             </annotation>
