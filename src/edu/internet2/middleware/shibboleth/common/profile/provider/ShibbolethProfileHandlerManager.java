@@ -68,7 +68,7 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
      * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
      *            must be greater than zero
      */
-    public ShibbolethProfileHandlerManager(Timer timer, List<Resource> configurations, long pollingFrequency,
+    public ShibbolethProfileHandlerManager(List<Resource> configurations, Timer timer, long pollingFrequency,
             int pollingRetryAttempts) {
         super(timer, configurations, pollingFrequency, pollingRetryAttempts);
         profileHandlers = new HashMap<String, AbstractProfileHandler>();

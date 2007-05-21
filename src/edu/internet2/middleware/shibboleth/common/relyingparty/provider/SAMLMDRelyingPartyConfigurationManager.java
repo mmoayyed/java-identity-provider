@@ -85,7 +85,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
      * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
      *            must be greater than zero
      */
-    public SAMLMDRelyingPartyConfigurationManager(Timer timer, List<Resource> configurations, long pollingFrequency,
+    public SAMLMDRelyingPartyConfigurationManager(List<Resource> configurations, Timer timer, long pollingFrequency,
             int pollingRetryAttempts) {
         super(timer, configurations, pollingFrequency, pollingRetryAttempts);
         rpConfigs = new HashMap<String, RelyingPartyConfiguration>();

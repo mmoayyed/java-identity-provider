@@ -71,7 +71,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
      * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
      *            must be greater than zero
      */
-    public ShibbolethAttributeFilteringEngine(Timer timer, List<Resource> resources, long pollingFrequency,
+    public ShibbolethAttributeFilteringEngine(List<Resource> resources, Timer timer, long pollingFrequency,
             int pollingRetryAttempts) {
         super(timer, resources, pollingFrequency, pollingRetryAttempts);
         filterPolicies = new ArrayList<AttributeFilterPolicy>();
