@@ -45,7 +45,7 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
      * @return manager used to retrieve handlers for requests
      */
     public ProfileHandlerManager getHandlerManager() {
-        return (ProfileHandlerManager) getServletContext().getAttribute("profileHandler");
+        return (ProfileHandlerManager) getServletContext().getAttribute("handlerManager");
     }
 
     /** {@inheritDoc} */
