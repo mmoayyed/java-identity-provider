@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.resource;
 import javax.xml.namespace.QName;
 
 import org.opensaml.resource.FilesystemResource;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -29,7 +30,7 @@ import org.w3c.dom.Element;
 public class FilesystemResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "FilesystemResourceType");
+    public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "FilesystemResource");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -40,6 +41,6 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractSingleBeanDe
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
         super.doParse(configElement, builder);
 
-        builder.addConstructorArg(configElement.getTextContent());
+        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "file")));
     }
 }

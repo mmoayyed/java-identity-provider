@@ -3,25 +3,31 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:resource"
     xmlns:res="urn:mace:shibboleth:2.0:resource" elementFormDefault="qualified">
 
-    <element name="FileSystemResource" type="res:FilesystemResourceType">
-        <annotation>
-            <documentation>Identifies a resource (file) to be loaded from the file system.</documentation>
-        </annotation>
-    </element>
-    <complexType name="FilesystemResourceType">
+    <complexType name="FilesystemResource">
         <complexContent>
-            <extension base="res:ResourceType" />
+            <extension base="res:ResourceType">
+                <attribute name="file" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The file this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
-    <element name="HttpResource" type="res:HttpResourceType">
-        <annotation>
-            <documentation>Identifies a resource (document) to be loaded from an HTTP(S) URL.</documentation>
-        </annotation>
-    </element>
-    <complexType name="HttpResourceType">
+    <complexType name="HttpResource">
         <complexContent>
-            <extension base="res:ResourceType" />
+            <extension base="res:ResourceType">
+                <attribute name="url" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The URL this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
     
