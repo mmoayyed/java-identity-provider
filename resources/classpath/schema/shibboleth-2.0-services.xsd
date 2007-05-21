@@ -23,6 +23,13 @@
         </annotation>
         <complexContent>
             <extension base="service:ServiceType">
+                <attribute name="timerId" type="string" default="shibboleth.TaskTimer">
+                    <annotation>
+                        <documentation>
+                            Component ID for the task timer used to schedule configuration file polling.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="configurationResourcePollingFrequency" type="nonNegativeInteger">
                     <annotation>
                         <documentation>

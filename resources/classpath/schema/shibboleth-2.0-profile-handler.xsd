@@ -15,7 +15,7 @@
             <documentation>Definition for the basic Shibboleth profile handler manager service.</documentation>
         </annotation>
         <complexContent>
-            <extension base="service:ReloadableServiceType" />
+            <extension base="service:ReloadableServiceType"/>
         </complexContent>
     </complexType>
 
