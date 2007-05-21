@@ -19,19 +19,19 @@ package edu.internet2.middleware.shibboleth.common.profile;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.opensaml.log.Level;
-import org.springframework.web.servlet.HttpServletBean;
 
 import edu.internet2.middleware.shibboleth.common.log.AccessLogEntry;
 
 /**
  * Servlet responsible for dispatching incoming requests to the appropriate {@link AbstractProfileHandler}.
  */
-public abstract class BaseServletProfileRequestDispatcher extends HttpServletBean {
+public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
 
     /** Class logger. */
     private final Logger log = Logger.getLogger(BaseServletProfileRequestDispatcher.class);
@@ -41,6 +41,13 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServletBea
 
     /** Manager used to retrieve handlers for requests. */
     private ProfileHandlerManager handlerManager;
+    
+    /** {@inheritDoc} */
+    public void init() throws ServletException {
+        super.init();
+        
+        handlerManager = (ProfileHandlerManager) getServletContext().getAttribute("profileHandler");
+    }
 
     /**
      * Gets the manager used to retrieve handlers for requests.
@@ -49,15 +56,6 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServletBea
      */
     public ProfileHandlerManager getHandlerManager() {
         return handlerManager;
-    }
-
-    /**
-     * Sets the manager used to retrieve handlers for requests.
-     * 
-     * @param manager manager used to retrieve handlers for requests
-     */
-    public void setHandlerManager(ProfileHandlerManager manager) {
-        handlerManager = manager;
     }
 
     /** {@inheritDoc} */
