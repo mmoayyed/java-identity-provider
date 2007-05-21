@@ -13,3 +13,4 @@ urn\:mace\:shibboleth\:2.0\:relying-party = schema/shibboleth-2.0-relying-party.
 urn\:mace\:shibboleth\:2.0\:relying-party:saml = schema/shibboleth-2.0-relying-party-saml.xsd
 urn\:mace\:shibboleth\:2.0\:resource = schema/shibboleth-2.0-resource.xsd
 urn\:mace\:shibboleth\:2.0\:services = schema/shibboleth-2.0-services.xsd
+urn\:mace\:shibboleth\:2.0\:profile-handler = schema/shibboleth-2.0-profile-handler.xsd
