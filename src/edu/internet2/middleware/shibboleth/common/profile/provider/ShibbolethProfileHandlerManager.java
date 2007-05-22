@@ -25,6 +25,7 @@ import java.util.concurrent.locks.Lock;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.opensaml.resource.Resource;
 import org.opensaml.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
@@ -33,6 +34,7 @@ import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
 import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
 import edu.internet2.middleware.shibboleth.common.profile.AbstractProfileHandler;
 import edu.internet2.middleware.shibboleth.common.profile.ProfileHandlerManager;
+import edu.internet2.middleware.shibboleth.common.profile.RequestHandler;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
 import edu.internet2.middleware.shibboleth.common.session.Session;
 
@@ -41,6 +43,9 @@ import edu.internet2.middleware.shibboleth.common.session.Session;
  * profile handler.
  */
 public class ShibbolethProfileHandlerManager extends BaseReloadableService implements ProfileHandlerManager {
+
+    /** Class logger. */
+    private final Logger log = Logger.getLogger(ShibbolethProfileHandlerManager.class);
 
     /** Handler used for errors. */
     private AbstractErrorHandler errorHandler;
@@ -89,13 +94,22 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
     }
 
     /** {@inheritDoc} */
-    public AbstractProfileHandler getProfileHandler(ServletRequest request) {
-        AbstractProfileHandler handler;
+    public RequestHandler getProfileHandler(ServletRequest request) {
+        RequestHandler handler;
 
+        String requestPath = ((HttpServletRequest) request).getPathInfo();
+        if (log.isDebugEnabled()) {
+            log.debug("Looking up profile handler for request path: " + requestPath);
+        }
         Lock readLock = getReadWriteLock().readLock();
         readLock.lock();
-        handler = profileHandlers.get(((HttpServletRequest) request).getPathInfo());
+        handler = profileHandlers.get(requestPath);
         readLock.unlock();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Located profile handler of the following type for request path " + requestPath + ": "
+                    + handler.getClass().getName());
+        }
         return handler;
     }
 
@@ -110,6 +124,9 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
 
     /** {@inheritDoc} */
     protected void newContextCreated(ApplicationContext newServiceContext) throws ResourceException {
+        if (log.isDebugEnabled()) {
+            log.debug("Loading new configuration into service");
+        }
         String[] errorBeanNames = newServiceContext.getBeanNamesForType(AbstractErrorHandler.class);
         String[] profileBeanNames = newServiceContext.getBeanNamesForType(AbstractRequestBoundProfileHandler.class);
 
@@ -117,6 +134,9 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
         writeLock.lock();
 
         errorHandler = (AbstractErrorHandler) newServiceContext.getBean(errorBeanNames[0]);
+        if (log.isDebugEnabled()) {
+            log.debug("Loaded new error handler of type: " + errorHandler.getClass().getName());
+        }
 
         profileHandlers.clear();
         AbstractRequestBoundProfileHandler<RelyingPartyConfigurationManager, Session> profileHandler;
@@ -124,6 +144,10 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
             profileHandler = (AbstractRequestBoundProfileHandler) newServiceContext.getBean(profileBeanName);
             for (String requestPath : profileHandler.getRequestPaths()) {
                 profileHandlers.put(requestPath, profileHandler);
+                if (log.isDebugEnabled()) {
+                    log.debug("request path " + requestPath + " mapped to profile handler of type: "
+                            + profileHandler.getClass().getName());
+                }
             }
         }
 

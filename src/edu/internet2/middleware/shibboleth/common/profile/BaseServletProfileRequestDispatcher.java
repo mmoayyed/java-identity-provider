@@ -60,22 +60,18 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
         ProfileResponse profileResp = getProfileResponse(response);
 
         AbstractErrorHandler errorHandler = getHandlerManager().getErrorHandler();
-        AbstractProfileHandler handler = getHandlerManager().getProfileHandler(request);
+        RequestHandler handler = getHandlerManager().getProfileHandler(request);
         if (handler != null) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Request to " + request.getPathInfo() + " being handled by profile handler of type "
-                            + handler.getClass().getName());
-                }
                 handler.processRequest(profileReq, profileResp);
                 return;
             } catch (Throwable t) {
-                log.error("Encountered rrror processing request to " + request.getPathInfo()
+                log.error("Encountered error processing request to " + request.getPathInfo()
                         + ", invoking error handler", t);
                 errorHandler.setError(t);
             }
         } else {
-            log.warn("No profile handler for request to " + request.getPathInfo() + ", invokike error handler");
+            log.warn("No profile handler for request to " + request.getPathInfo() + ", invoking error handler");
             errorHandler.setError(new NoProfileHandlerException());
         }
 
