@@ -106,9 +106,15 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
         handler = profileHandlers.get(requestPath);
         readLock.unlock();
 
-        if (log.isDebugEnabled()) {
-            log.debug("Located profile handler of the following type for request path " + requestPath + ": "
-                    + handler.getClass().getName());
+        if (handler != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Located profile handler of the following type for request path " + requestPath + ": "
+                        + handler.getClass().getName());
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("No profile handler registered for request path " + requestPath);
+            }
         }
         return handler;
     }
@@ -139,13 +145,16 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
         }
 
         profileHandlers.clear();
+        if(log.isDebugEnabled()){
+            log.debug(profileBeanNames.length + " profile handlers loaded");
+        }
         AbstractRequestBoundProfileHandler<RelyingPartyConfigurationManager, Session> profileHandler;
         for (String profileBeanName : profileBeanNames) {
             profileHandler = (AbstractRequestBoundProfileHandler) newServiceContext.getBean(profileBeanName);
             for (String requestPath : profileHandler.getRequestPaths()) {
                 profileHandlers.put(requestPath, profileHandler);
                 if (log.isDebugEnabled()) {
-                    log.debug("request path " + requestPath + " mapped to profile handler of type: "
+                    log.debug("Request path " + requestPath + " mapped to profile handler of type: "
                             + profileHandler.getClass().getName());
                 }
             }
