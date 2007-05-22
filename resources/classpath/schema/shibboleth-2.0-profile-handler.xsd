@@ -144,13 +144,17 @@
     </complexType>
 
     <complexType name="RequestURIMappedProfileHandlerType" abstract="true">
-        <sequence>
-            <element name="RequestPath" maxOccurs="unbounded" type="string">
-                <annotation>
-                    <documentation>Indicates the request path that maps to this profile handler.</documentation>
-                </annotation>
-            </element>
-        </sequence>
+        <complexContent>
+            <extension base="ph:RequestHandlerType">
+                <sequence>
+                    <element name="RequestPath" maxOccurs="unbounded" type="string">
+                        <annotation>
+                            <documentation>Indicates the request path that maps to this profile handler.</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
     </complexType>
 
     <complexType name="RequestHandlerType" abstract="true" />
