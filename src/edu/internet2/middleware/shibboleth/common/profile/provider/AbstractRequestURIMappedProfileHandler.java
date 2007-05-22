@@ -19,26 +19,18 @@ package edu.internet2.middleware.shibboleth.common.profile.provider;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.internet2.middleware.shibboleth.common.profile.AbstractProfileHandler;
-import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
-import edu.internet2.middleware.shibboleth.common.session.Session;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 
 /**
- * A specialization of profile handlers that binds the handler to a particular servlet request path. This assume the
- * request is an HTTP request.
- * 
- * @param <RPManagerType> type of relying party configuration manager used by this profile handler
- * @param <SessionType> type of sessions managed by the session manager used by this profile handler
+ * A request handler that is associated with a list of request URI, as defined by the HTTP servlet request.
  */
-public abstract class AbstractRequestBoundProfileHandler<RPManagerType extends RelyingPartyConfigurationManager, SessionType extends Session>
-        extends AbstractProfileHandler<RPManagerType, SessionType> {
+public abstract class AbstractRequestURIMappedProfileHandler implements ProfileHandler {
 
     /** Request paths that to which this profile handler will respond. */
     private List<String> requestPaths;
 
     /** Constructor. */
-    public AbstractRequestBoundProfileHandler() {
-        super();
+    protected AbstractRequestURIMappedProfileHandler() {
         requestPaths = new ArrayList<String>();
     }
 

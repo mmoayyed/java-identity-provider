@@ -1,5 +1,5 @@
 /*
- * Copyright [2006] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.profile;
+package edu.internet2.middleware.shibboleth.common.profile.provider;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -28,6 +28,10 @@ import org.opensaml.ws.security.SecurityPolicyFactory;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.security.trust.TrustEngine;
 
+import edu.internet2.middleware.shibboleth.common.profile.ProfileException;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileRequest;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileResponse;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
@@ -43,8 +47,8 @@ import edu.internet2.middleware.shibboleth.common.session.SessionManager;
  * @param <RPManagerType> type of relying party configuration manager used by this profile handler
  * @param <SessionType> type of sessions managed by the session manager used by this profile handler
  */
-public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyConfigurationManager, SessionType extends Session>
-        implements RequestHandler {
+public abstract class AbstractShibbolethProfileHandler<RPManagerType extends RelyingPartyConfigurationManager, SessionType extends Session>
+        extends AbstractRequestURIMappedProfileHandler implements ProfileHandler {
 
     /** Relying party configuration manager for the profile handler. */
     private RPManagerType rpManager;
@@ -62,7 +66,8 @@ public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyC
     private XMLObjectBuilderFactory builderFactory;
 
     /** Constructor. */
-    protected AbstractProfileHandler() {
+    protected AbstractShibbolethProfileHandler() {
+        super();
         builderFactory = Configuration.getBuilderFactory();
     }
 
@@ -218,4 +223,5 @@ public abstract class AbstractProfileHandler<RPManagerType extends RelyingPartyC
     protected void populateMessageEncoder(MessageEncoder<ServletResponse> encoder) {
         // Do nothing, future extension point.
     }
+
 }

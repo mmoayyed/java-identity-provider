@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.profile;
 import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
-import edu.internet2.middleware.shibboleth.common.profile.AbstractProfileHandler;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 
 /**
  * Container for a single profile handler group configuration.
@@ -30,7 +30,7 @@ public class ProfileHandlerGroup {
     private AbstractErrorHandler errorHandler;
 
     /** List of profile handlers for the group. */
-    private List<AbstractProfileHandler> profileHandlers;
+    private List<ProfileHandler> profileHandlers;
 
     /**
      * Gets the error handler for the group.
@@ -55,7 +55,7 @@ public class ProfileHandlerGroup {
      * 
      * @return profile handlers for the group
      */
-    public List<AbstractProfileHandler> getProfileHandlers() {
+    public List<ProfileHandler> getProfileHandlers() {
         return profileHandlers;
     }
 
@@ -64,7 +64,7 @@ public class ProfileHandlerGroup {
      * 
      * @param handlers profile handlers for the group
      */
-    public void setProfileHandlers(List<AbstractProfileHandler> handlers) {
+    public void setProfileHandlers(List<ProfileHandler> handlers) {
         profileHandlers = handlers;
     }
 }

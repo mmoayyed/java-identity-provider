@@ -15,7 +15,7 @@
             <documentation>Definition for the basic Shibboleth profile handler manager service.</documentation>
         </annotation>
         <complexContent>
-            <extension base="service:ReloadableServiceType"/>
+            <extension base="service:ReloadableServiceType" />
         </complexContent>
     </complexType>
 
@@ -84,14 +84,66 @@
         </complexContent>
     </complexType>
 
-    <complexType name="ErrorHandlerType" abstract="true" />
+    <complexType name="ErrorHandlerType" abstract="true">
+        <complexContent>
+            <extension base="ph:RequestHandlerType" />
+        </complexContent>
+    </complexType>
 
     <element name="ProfileHandler" type="ph:ProfileHandlerType">
         <annotation>
             <documentation>Defines a general profile handler meant to process incoming requests.</documentation>
         </annotation>
     </element>
-    <complexType name="ProfileHandlerType" abstract="true">
+    <complexType name="ShibbolethProfileHandlerType" abstract="true">
+        <complexContent>
+            <extension base="ph:RequestURIMappedProfileHandlerType">
+                <attribute name="relyingPartyManagerId" type="string"
+                    default="shibboleth.RelyingPartyConfigurationManager">
+                    <annotation>
+                        <documentation>
+                            The component ID of the relying party configuration manager to use with the profile handler.
+
+                            This setting should not be changed from its default unless the deployer fully understands
+                            the inter-relationship between IdP components.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sessionManagerId" type="string" default="shibboleth.SessionManager">
+                    <annotation>
+                        <documentation>
+                            The component ID of the session manager to use with the profile handler.
+
+                            This setting should not be changed from its default unless the deployer fully understands
+                            the inter-relationship between IdP components.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="securityPolicyFactoryId" type="string" default="shibboleth.SecurityPolicyFactory">
+                    <annotation>
+                        <documentation>
+                            The component ID of the security policy factory to use with the profile handler.
+
+                            This setting should not be changed from its default unless the deployer fully understands
+                            the inter-relationship between IdP components.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="trustEngineId" type="string" default="shibboleth.TrustEngine">
+                    <annotation>
+                        <documentation>
+                            The component ID of the trust engine to use with the profile handler.
+
+                            This setting should not be changed from its default unless the deployer fully understands
+                            the inter-relationship between IdP components.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RequestURIMappedProfileHandlerType" abstract="true">
         <sequence>
             <element name="RequestPath" maxOccurs="unbounded" type="string">
                 <annotation>
@@ -99,46 +151,8 @@
                 </annotation>
             </element>
         </sequence>
-        <attribute name="relyingPartyManagerId" type="string" default="shibboleth.RelyingPartyConfigurationManager">
-            <annotation>
-                <documentation>
-                    The component ID of the relying party configuration manager to use with the profile handler.
-
-                    This setting should not be changed from its default unless the deployer fully understands the
-                    inter-relationship between IdP components.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="sessionManagerId" type="string" default="shibboleth.SessionManager">
-            <annotation>
-                <documentation>
-                    The component ID of the session manager to use with the profile handler.
-
-                    This setting should not be changed from its default unless the deployer fully understands the
-                    inter-relationship between IdP components.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="securityPolicyFactoryId" type="string" default="shibboleth.SecurityPolicyFactory">
-            <annotation>
-                <documentation>
-                    The component ID of the security policy factory to use with the profile handler.
-
-                    This setting should not be changed from its default unless the deployer fully understands the
-                    inter-relationship between IdP components.
-                </documentation>
-            </annotation>
-        </attribute>
-        <attribute name="trustEngineId" type="string" default="shibboleth.TrustEngine">
-            <annotation>
-                <documentation>
-                    The component ID of the trust engine to use with the profile handler.
-
-                    This setting should not be changed from its default unless the deployer fully understands the
-                    inter-relationship between IdP components.
-                </documentation>
-            </annotation>
-        </attribute>
     </complexType>
+
+    <complexType name="RequestHandlerType" abstract="true" />
 
 </schema>

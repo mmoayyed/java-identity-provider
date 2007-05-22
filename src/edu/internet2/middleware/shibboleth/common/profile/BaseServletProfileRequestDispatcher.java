@@ -60,7 +60,7 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
         ProfileResponse profileResp = getProfileResponse(response);
 
         AbstractErrorHandler errorHandler = getHandlerManager().getErrorHandler();
-        RequestHandler handler = getHandlerManager().getProfileHandler(request);
+        ProfileHandler handler = getHandlerManager().getProfileHandler(request);
         if (handler != null) {
             try {
                 handler.processRequest(profileReq, profileResp);

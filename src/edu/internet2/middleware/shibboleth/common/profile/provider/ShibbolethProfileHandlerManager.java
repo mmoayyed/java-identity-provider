@@ -32,11 +32,8 @@ import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
 import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
-import edu.internet2.middleware.shibboleth.common.profile.AbstractProfileHandler;
 import edu.internet2.middleware.shibboleth.common.profile.ProfileHandlerManager;
-import edu.internet2.middleware.shibboleth.common.profile.RequestHandler;
-import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
-import edu.internet2.middleware.shibboleth.common.session.Session;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 
 /**
  * Implementation of a {@link ProfileHandlerManager} that maps the request path, without the servlet context, to a
@@ -51,7 +48,7 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
     private AbstractErrorHandler errorHandler;
 
     /** Map of request paths to profile handlers. */
-    private Map<String, AbstractProfileHandler> profileHandlers;
+    private Map<String, AbstractRequestURIMappedProfileHandler> profileHandlers;
 
     /**
      * Constructor. Configuration resources are not monitored for changes.
@@ -60,7 +57,7 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
      */
     public ShibbolethProfileHandlerManager(List<Resource> configurations) {
         super(configurations);
-        profileHandlers = new HashMap<String, AbstractProfileHandler>();
+        profileHandlers = new HashMap<String, AbstractRequestURIMappedProfileHandler>();
     }
 
     /**
@@ -73,7 +70,7 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
      */
     public ShibbolethProfileHandlerManager(List<Resource> configurations, Timer timer, long pollingFrequency) {
         super(timer, configurations, pollingFrequency);
-        profileHandlers = new HashMap<String, AbstractProfileHandler>();
+        profileHandlers = new HashMap<String, AbstractRequestURIMappedProfileHandler>();
     }
 
     /** {@inheritDoc} */
@@ -94,8 +91,8 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
     }
 
     /** {@inheritDoc} */
-    public RequestHandler getProfileHandler(ServletRequest request) {
-        RequestHandler handler;
+    public ProfileHandler getProfileHandler(ServletRequest request) {
+        ProfileHandler handler;
 
         String requestPath = ((HttpServletRequest) request).getPathInfo();
         if (log.isDebugEnabled()) {
@@ -124,7 +121,7 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
      * 
      * @return registered profile handlers
      */
-    public Map<String, AbstractProfileHandler> getProfileHandlers() {
+    public Map<String, AbstractRequestURIMappedProfileHandler> getProfileHandlers() {
         return profileHandlers;
     }
 
@@ -134,7 +131,7 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
             log.debug("Loading new configuration into service");
         }
         String[] errorBeanNames = newServiceContext.getBeanNamesForType(AbstractErrorHandler.class);
-        String[] profileBeanNames = newServiceContext.getBeanNamesForType(AbstractRequestBoundProfileHandler.class);
+        String[] profileBeanNames = newServiceContext.getBeanNamesForType(AbstractRequestURIMappedProfileHandler.class);
 
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
@@ -148,9 +145,9 @@ public class ShibbolethProfileHandlerManager extends BaseReloadableService imple
         if(log.isDebugEnabled()){
             log.debug(profileBeanNames.length + " profile handlers loaded");
         }
-        AbstractRequestBoundProfileHandler<RelyingPartyConfigurationManager, Session> profileHandler;
+        AbstractRequestURIMappedProfileHandler profileHandler;
         for (String profileBeanName : profileBeanNames) {
-            profileHandler = (AbstractRequestBoundProfileHandler) newServiceContext.getBean(profileBeanName);
+            profileHandler = (AbstractRequestURIMappedProfileHandler) newServiceContext.getBean(profileBeanName);
             for (String requestPath : profileHandler.getRequestPaths()) {
                 profileHandlers.put(requestPath, profileHandler);
                 if (log.isDebugEnabled()) {

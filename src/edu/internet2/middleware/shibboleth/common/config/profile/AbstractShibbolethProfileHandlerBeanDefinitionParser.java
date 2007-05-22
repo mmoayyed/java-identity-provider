@@ -16,19 +16,14 @@
 
 package edu.internet2.middleware.shibboleth.common.config.profile;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.opensaml.xml.util.DatatypeHelper;
-import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
 
 /**
  * Base class for request bound profile handler configuration parsers.
  */
-public abstract class AbstractProfileHandlerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public abstract class AbstractShibbolethProfileHandlerBeanDefinitionParser extends
+        AbstractRequestURIMappedProfileHandlerBeanDefinitionParser {
 
     /** {@inheritDoc} */
     protected void doParse(Element config, BeanDefinitionBuilder builder) {
@@ -42,32 +37,6 @@ public abstract class AbstractProfileHandlerBeanDefinitionParser extends Abstrac
         builder.addPropertyReference("sessionManager", config.getAttributeNS(null, "sessionManagerId"));
 
         builder.addPropertyReference("trustEngine", config.getAttributeNS(null, "trustEngineId"));
-
-        builder.addPropertyValue("requestPaths", getRequestPaths(config));
     }
 
-    /**
-     * Gets the list of request paths the profile handler handles.
-     * 
-     * @param config profile handler configuration element
-     * 
-     * @return list of request paths the profile handler handles
-     */
-    protected List<String> getRequestPaths(Element config) {
-        ArrayList<String> requestPaths = new ArrayList<String>();
-        List<Element> requestPathElems = XMLHelper.getChildElementsByTagNameNS(config,
-                "urn:mace:shibboleth:2.0:profile-handler", "RequestPath");
-        if (requestPathElems != null) {
-            for (Element requestPathElem : requestPathElems) {
-                requestPaths.add(DatatypeHelper.safeTrimOrNullString(requestPathElem.getTextContent()));
-            }
-        }
-
-        return requestPaths;
-    }
-    
-    /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
-        return true;
-    }
 }

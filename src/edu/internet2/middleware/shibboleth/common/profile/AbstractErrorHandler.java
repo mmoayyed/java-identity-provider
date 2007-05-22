@@ -22,7 +22,7 @@ import javax.servlet.ServletResponse;
 /**
  * Error handlers are invoked when an error is encountered during request processing.
  */
-public abstract class AbstractErrorHandler implements RequestHandler {
+public abstract class AbstractErrorHandler implements ProfileHandler {
 
     /** Error that occured during request processing. */
     private Throwable error;

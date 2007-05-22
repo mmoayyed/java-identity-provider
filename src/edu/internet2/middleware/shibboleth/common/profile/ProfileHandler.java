@@ -22,7 +22,7 @@ import javax.servlet.ServletResponse;
 /**
  * Basic interfaces for classes that handler incoming requests.
  */
-public interface RequestHandler {
+public interface ProfileHandler {
 
     /**
      * Processes an incoming request.

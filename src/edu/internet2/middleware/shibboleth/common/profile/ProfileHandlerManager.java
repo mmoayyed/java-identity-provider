@@ -32,7 +32,7 @@ public interface ProfileHandlerManager {
      * 
      * @return the profile handler that should be used to service the given request
      */
-    public RequestHandler getProfileHandler(ServletRequest request);
+    public ProfileHandler getProfileHandler(ServletRequest request);
     
     /**
      * Gets the error handler for this manager.
