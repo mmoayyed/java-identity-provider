@@ -36,7 +36,7 @@ public abstract class AbstractReloadableServiceBeanDefinitionParser extends Abst
             builder.addConstructorArgReference(configElement.getAttributeNS(null, "timerId"));
 
             long frequency = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
-                    "configurationResourcePollingFrequency"))) * 1000;
+                    "configurationResourcePollingFrequency")));
             builder.addConstructorArg(frequency);
 
             int retryAttempts = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
