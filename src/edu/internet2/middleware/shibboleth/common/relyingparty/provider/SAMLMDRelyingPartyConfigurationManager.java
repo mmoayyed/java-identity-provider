@@ -186,10 +186,11 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
     /** {@inheritDoc} */
     protected void newContextCreated(ApplicationContext newServiceContext) throws ResourceException {
-        if(log.isDebugEnabled()){
-            log.debug("Loading new relying party manager configuration.");
-        }
         String[] configNames = newServiceContext.getBeanNamesForType(RelyingPartyConfiguration.class);
+        
+        if(log.isDebugEnabled()){
+            log.debug("Loading " + configNames.length + " new configurations into relying party manager.");
+        }
 
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
