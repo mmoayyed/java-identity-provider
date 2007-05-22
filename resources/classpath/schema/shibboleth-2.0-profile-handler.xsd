@@ -90,7 +90,7 @@
         </complexContent>
     </complexType>
 
-    <element name="ProfileHandler" type="ph:ProfileHandlerType">
+    <element name="ProfileHandler" type="ph:RequestHandlerType">
         <annotation>
             <documentation>Defines a general profile handler meant to process incoming requests.</documentation>
         </annotation>
