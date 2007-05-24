@@ -53,6 +53,9 @@ public class OrMatchFunctor extends AbstractMatchFunctor {
             throws FilterProcessingException {
 
         if (targetRules == null) {
+            //
+            // we should treat the null case the same as the empty list OR(null == OR({}) == FALSE
+            //
             return false;
         }
 

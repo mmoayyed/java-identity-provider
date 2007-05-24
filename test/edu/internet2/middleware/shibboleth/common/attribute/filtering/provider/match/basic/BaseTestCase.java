@@ -26,6 +26,7 @@ import org.bouncycastle.jce.provider.JDKDSASigner.stdDSA;
 import org.opensaml.DefaultBootstrap;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
@@ -80,15 +81,48 @@ public class BaseTestCase extends TestCase {
         sAttribute = sa;
         TreeSet<String> sTree = new TreeSet<String>();
         sTree.add("one");
-        sTree.add("two");
-        sTree.add("three");
         sa.setValues(sTree);
         
         Map<String,Attribute> map = new HashMap<String, Attribute>(5);
         map.put(sAttribute.getId(), sAttribute);
         map.put(iAttribute.getId(), iAttribute);
         
-        filterContext = new ShibbolethFilteringContext(map, null);
-        
+        filterContext = new ShibbolethFilteringContext(map, null);   
+    }
+    
+    /**
+     * Test for the expected result with the given function, (both PermitValue and PolicyRequirement)
+     * 
+     * @param testName the error message to extrude
+     * @param functor what to test
+     * @param expectedResult whether we expect the test to succeed for fail
+     */
+    protected void performTest(String testName, MatchFunctor functor, boolean expectedResult) {
+        try {
+            if (expectedResult) {
+                assertTrue(testName + " (permitValue)", functor.evaluatePermitValue(filterContext, iAttribute.getId(), null)); 
+                assertTrue(testName + " (policyRequirement)", functor.evaluatePolicyRequirement(filterContext)); 
+            } else {
+                assertFalse(testName + " (permitValue)", functor.evaluatePermitValue(filterContext, iAttribute.getId(), null)); 
+                assertFalse(testName + " (policyRequirement)", functor.evaluatePolicyRequirement(filterContext));
+            }
+        } catch (FilterProcessingException e) {
+           fail(testName + " threw " + e.getLocalizedMessage());
+        }
+    }
+    
+    /**
+     * 
+     * Test for the expected result with base clase functor, (both PermitValue and PolicyRequirement)
+     */
+    protected void performTest(String testName, boolean expectedResult) {
+        performTest(testName, matchFunctor, expectedResult);
+    }
+    
+    public void testBase()
+    {
+        //
+        // placeholder to allow us to test an entire folder
+        //
     }
 }

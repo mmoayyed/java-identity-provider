@@ -21,7 +21,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.M
 import junit.framework.TestCase;
 
 /**
- *
+ * test the @link(AnyMatchFunctor}
  */
 public class TestAnyMatchFunctor extends BaseTestCase {
 

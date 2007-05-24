@@ -53,7 +53,10 @@ public class AndMatchFunctor extends AbstractMatchFunctor {
             throws FilterProcessingException {
 
         if (targetRules == null) {
-            return false;
+            //
+            // we should treat the null case the same as the empty list AND(NULL == AND({}) == TRUE 
+            //
+            return true;
         }
 
         for (MatchFunctor child : targetRules) {
@@ -69,7 +72,10 @@ public class AndMatchFunctor extends AbstractMatchFunctor {
     protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         if (targetRules == null) {
-            return false;
+            //
+            // we should treat the null case the same as the empty list AND(NULL == AND({}) == TRUE 
+            //
+            return true;
         }
 
         for (MatchFunctor child : targetRules) {
