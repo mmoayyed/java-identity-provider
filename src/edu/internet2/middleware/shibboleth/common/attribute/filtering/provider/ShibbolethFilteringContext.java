@@ -72,10 +72,10 @@ public class ShibbolethFilteringContext {
      * Gets the values, for the given attribute, that have no yet been filtered out.
      * 
      * @param attributeId attribute to retreive the values for
-     * @param prepopulate whether to preopulate the retained value list from the unfiltered value list if there is
+     * @param prepopulate whether to pre-populate the retained value list from the unfiltered value list if there is
      *            currently no set of values retained for the given attribute
      * 
-     * @return attribtue values not yet filtered out, never null
+     * @return attribute values not yet filtered out, never null
      */
     public SortedSet getRetainedValues(String attributeId, boolean prepopulate) {
         SortedSet attributeValues = null;
