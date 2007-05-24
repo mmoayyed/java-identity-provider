@@ -52,11 +52,14 @@ public class AndMatchFunctor extends AbstractMatchFunctor {
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
 
-        if (targetRules == null) {
+        if (targetRules == null  ||
+            targetRules.isEmpty()) {
             //
-            // we should treat the null case the same as the empty list AND(NULL == AND({}) == TRUE 
+            // we should treat the null case the same as the empty list. 
+            // Based on a "default deny" we make AND(null) false, (just like
+            // if (null))
             //
-            return true;
+            return false;
         }
 
         for (MatchFunctor child : targetRules) {
@@ -71,11 +74,12 @@ public class AndMatchFunctor extends AbstractMatchFunctor {
     /** {@inheritDoc} */
     protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        if (targetRules == null) {
+        if (targetRules == null ||
+            targetRules.isEmpty()) {
             //
-            // we should treat the null case the same as the empty list AND(NULL == AND({}) == TRUE 
+            // Treat the null case the same as the empty list. 
             //
-            return true;
+            return false;
         }
 
         for (MatchFunctor child : targetRules) {

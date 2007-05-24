@@ -39,10 +39,10 @@ public class TestAndMatchFunctor extends BaseTestCase {
     
     public void testAndFunction() {
         
-        performTest("null", new AndMatchFunctor(null), true);
+        performTest("null", new AndMatchFunctor(null), false);
         
         functors.clear();
-        performTest("Empty", true);
+        performTest("Empty", false);
         
         //
         // And (TRUE)
