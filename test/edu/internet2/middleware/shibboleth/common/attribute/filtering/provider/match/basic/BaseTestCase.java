@@ -16,20 +16,25 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
+import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
-import org.bouncycastle.jce.provider.JDKDSASigner.stdDSA;
 import org.opensaml.DefaultBootstrap;
+import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
+import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 
 /**
  * Base class for JUnit test cases.
@@ -37,7 +42,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttrib
 public class BaseTestCase extends TestCase {
 
     /** Base path for data files. */
-    public static final String DATA_PATH = "/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/provider/match/basic";
+    public static final String DATA_PATH = "/test/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/provider/match/basic";
     
 
     /**
@@ -53,17 +58,20 @@ public class BaseTestCase extends TestCase {
      * A simple attribute included in filterContext. 
      */
     protected Attribute<String> sAttribute;
+    
+    /**
+     * Request Context included in filter context;
+     */
+    protected ShibbolethAttributeRequestContext requestContext; 
 
     /**
      * The Functor under test. 
      */
     MatchFunctor matchFunctor; 
     
-  
     /** {@inheritDoc} */
     protected void setUp() throws Exception {
         super.setUp();
-        
         //
         // Set up the two simple Attributes and then put them into our
         // filtering context
@@ -87,11 +95,15 @@ public class BaseTestCase extends TestCase {
         map.put(sAttribute.getId(), sAttribute);
         map.put(iAttribute.getId(), iAttribute);
         
-        filterContext = new ShibbolethFilteringContext(map, null);   
-    }
+        requestContext = new ShibbolethAttributeRequestContext();
+        
+        filterContext = new ShibbolethFilteringContext(map, requestContext);   
+ 
+}
     
+     
     /**
-     * Test for the expected result with the given function, (both PermitValue and PolicyRequirement)
+     * Test for the expected result with the given function, (both PermitValue and PolicyRequirement).
      * 
      * @param testName the error message to extrude
      * @param functor what to test
