@@ -21,29 +21,29 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAttributeIssuerStringMatchFunctor extends BaseTestCaseMetadata {
+public class TestAttributeRequesterStringMatchFunctor extends BaseTestCaseMetadata {
 
     /** {@inheritDoc} */
 
     public void setUp() throws Exception {
         super.setUp();
         
-        AttributeIssuerStringMatchFunctor functor = new AttributeIssuerStringMatchFunctor();
-        functor.setMatchString("provide");
+        AttributeRequesterStringMatchFunctor functor = new AttributeRequesterStringMatchFunctor();
+        functor.setMatchString("rely");
         functor.setCaseSensitive(true);
         matchFunctor = functor;
       
     }
     
     /**
-     * test against the issuer name ("Provide") in the metadata. 
+     * test against the Requester name ("Rely") in the metadata. 
      */
     public void testIssuerCaseSensitive() {
-        AttributeIssuerStringMatchFunctor functor = (AttributeIssuerStringMatchFunctor) matchFunctor;
+        AttributeRequesterStringMatchFunctor functor = (AttributeRequesterStringMatchFunctor) matchFunctor;
         try {
             assertFalse(matchFunctor.evaluatePermitValue(filterContext, null, null));
             assertFalse(matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setMatchString("Provide");
+            functor.setMatchString("Rely");
             assertTrue(matchFunctor.evaluatePolicyRequirement(filterContext));
             } catch (FilterProcessingException e) {
             fail(e.getLocalizedMessage());
@@ -53,8 +53,8 @@ public class TestAttributeIssuerStringMatchFunctor extends BaseTestCaseMetadata 
     /**
      * test against almost the issuer name in the metadata. 
      */
-    public void testIssuerCaseInsensitive() {
-        AttributeIssuerStringMatchFunctor functor = (AttributeIssuerStringMatchFunctor) matchFunctor;
+    public void testRequesterCaseInsensitive() {
+        AttributeRequesterStringMatchFunctor functor = (AttributeRequesterStringMatchFunctor) matchFunctor;
         functor.setCaseSensitive(false);
         try {
             assertTrue(matchFunctor.evaluatePermitValue(filterContext, null, null));
@@ -67,9 +67,9 @@ public class TestAttributeIssuerStringMatchFunctor extends BaseTestCaseMetadata 
     /**
      * test against nothing like the issuer name in the metadata. 
      */
-    public void testIssuerMismatch() {
-        AttributeIssuerStringMatchFunctor functor = (AttributeIssuerStringMatchFunctor) matchFunctor;
-        functor.setMatchString("Rely");
+    public void testRequesterMismatch() {
+        AttributeRequesterStringMatchFunctor functor = (AttributeRequesterStringMatchFunctor) matchFunctor;
+        functor.setMatchString("Provide");
         try {
             assertFalse(matchFunctor.evaluatePermitValue(filterContext, null, null));
             assertFalse(matchFunctor.evaluatePolicyRequirement(filterContext));

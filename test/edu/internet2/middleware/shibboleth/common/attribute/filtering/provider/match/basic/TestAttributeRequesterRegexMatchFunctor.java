@@ -17,33 +17,38 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
-import junit.framework.TestCase;
 
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAnyMatchFunctor extends BaseTestCase {
+public class TestAttributeRequesterRegexMatchFunctor extends BaseTestCaseMetadata {
 
     /** {@inheritDoc} */
+
     public void setUp() throws Exception {
         super.setUp();
-        matchFunctor = new AnyMatchFunctor();
+        
+        AttributeRequesterRegexMatchFunctor functor = new AttributeRequesterRegexMatchFunctor();
+        //
+        // requester is setup as being called "Rely"
+        //
+        functor.setRegularExpression("[rR].*[lL].");
+        matchFunctor = functor;
+      
     }
     
-    public void testPermitValue() {
+    /**
+     * test against the issuer name ("Rely") in the metadata. 
+     */
+    public void testIssuerRegexp() {
+        AttributeRequesterRegexMatchFunctor functor = (AttributeRequesterRegexMatchFunctor) matchFunctor;
         try {
-            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, iAttribute.getId(), null));
-        } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
-        }
-    }
-
-    public void testPolicyRequirement() {
-        try {
-            assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-        } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
+            assertTrue(matchFunctor.evaluatePermitValue(filterContext, null, null));
+            assertTrue(matchFunctor.evaluatePolicyRequirement(filterContext));
+            functor.setRegularExpression(".*r");
+            assertFalse(matchFunctor.evaluatePolicyRequirement(filterContext));
+            } catch (FilterProcessingException e) {
+            fail(e.getLocalizedMessage());
         }
     }
 }

@@ -17,33 +17,35 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
-import junit.framework.TestCase;
 
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAnyMatchFunctor extends BaseTestCase {
+public class TestAttributeIssuerRegexMatchFunctor extends BaseTestCaseMetadata {
 
     /** {@inheritDoc} */
+
     public void setUp() throws Exception {
         super.setUp();
-        matchFunctor = new AnyMatchFunctor();
+        
+        AttributeIssuerRegexMatchFunctor functor = new AttributeIssuerRegexMatchFunctor();
+        functor.setRegularExpression("[pP].*v[iI]d.");
+        matchFunctor = functor;
+      
     }
     
-    public void testPermitValue() {
+    /**
+     * test against the issuer name ("Provide") in the metadata. 
+     */
+    public void testIssuerRegexp() {
+        AttributeIssuerRegexMatchFunctor functor = (AttributeIssuerRegexMatchFunctor) matchFunctor;
         try {
-            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, iAttribute.getId(), null));
-        } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
-        }
-    }
-
-    public void testPolicyRequirement() {
-        try {
-            assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-        } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
+            assertTrue(matchFunctor.evaluatePermitValue(filterContext, null, null));
+            assertTrue(matchFunctor.evaluatePolicyRequirement(filterContext));
+            functor.setRegularExpression(".*r");
+            assertFalse(matchFunctor.evaluatePolicyRequirement(filterContext));
+            } catch (FilterProcessingException e) {
+            fail(e.getLocalizedMessage());
         }
     }
 }

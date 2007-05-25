@@ -46,9 +46,9 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfi
 public class BaseTestCaseMetadata extends TestCase {
 
     /** Base path for data files. */
-    public static final String DATA_PATH = "/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/provider/match/basic";
+    public static final String DATA_PATH = 
+         "/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/provider/match/basic";
     
-
     /**
      * Simple filtering context for use by tests.
      */
@@ -64,23 +64,22 @@ public class BaseTestCaseMetadata extends TestCase {
     protected Attribute<String> sAttribute;
     
     /**
-     * Request Context included in filter context;
+     * Request Context included in filter context.
      */
     protected ShibbolethAttributeRequestContext requestContext; 
 
     /**
      * The Functor under test. 
      */
-    MatchFunctor matchFunctor; 
+    protected MatchFunctor matchFunctor; 
     
     /**
-     * Parse for metadata
+     * Parser for metadata.
      */
-    BasicParserPool parser;
+    protected BasicParserPool parser;
   
     /**
-     * Constructor
-     *
+     * Constructor.
      */
     public BaseTestCaseMetadata(){
         //
@@ -138,7 +137,6 @@ public class BaseTestCaseMetadata extends TestCase {
     /**
      * placeholder to allow us to test an entire folder.
      */
-    public void testBase()
-    {
+    public void testBase() {
     }
 }

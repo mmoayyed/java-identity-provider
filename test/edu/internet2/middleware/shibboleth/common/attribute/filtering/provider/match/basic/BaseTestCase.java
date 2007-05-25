@@ -16,19 +16,11 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
-import java.io.File;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
 import junit.framework.TestCase;
-
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
@@ -42,7 +34,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethA
 public class BaseTestCase extends TestCase {
 
     /** Base path for data files. */
-    public static final String DATA_PATH = "/test/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/provider/match/basic";
+    public static final String DATA_PATH = 
+         "/test/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/provider/match/basic";
     
 
     /**
@@ -60,14 +53,14 @@ public class BaseTestCase extends TestCase {
     protected Attribute<String> sAttribute;
     
     /**
-     * Request Context included in filter context;
+     * Request Context included in filter context.
      */
     protected ShibbolethAttributeRequestContext requestContext; 
 
     /**
      * The Functor under test. 
      */
-    MatchFunctor matchFunctor; 
+    protected MatchFunctor matchFunctor; 
     
     /** {@inheritDoc} */
     protected void setUp() throws Exception {
@@ -112,10 +105,15 @@ public class BaseTestCase extends TestCase {
     protected void performTest(String testName, MatchFunctor functor, boolean expectedResult) {
         try {
             if (expectedResult) {
-                assertTrue(testName + " (permitValue)", functor.evaluatePermitValue(filterContext, iAttribute.getId(), null)); 
-                assertTrue(testName + " (policyRequirement)", functor.evaluatePolicyRequirement(filterContext)); 
+                assertTrue(testName + " (permitValue)", 
+                           functor.evaluatePermitValue(filterContext, 
+                           iAttribute.getId(), null)); 
+                assertTrue(testName + " (policyRequirement)", 
+                           functor.evaluatePolicyRequirement(filterContext)); 
             } else {
-                assertFalse(testName + " (permitValue)", functor.evaluatePermitValue(filterContext, iAttribute.getId(), null)); 
+                assertFalse(testName + " (permitValue)", 
+                            functor.evaluatePermitValue(filterContext, 
+                            iAttribute.getId(), null)); 
                 assertFalse(testName + " (policyRequirement)", functor.evaluatePolicyRequirement(filterContext));
             }
         } catch (FilterProcessingException e) {
@@ -125,16 +123,17 @@ public class BaseTestCase extends TestCase {
     
     /**
      * 
-     * Test for the expected result with base clase functor, (both PermitValue and PolicyRequirement)
+     * Test for the expected result with base clase functor, (both PermitValue and PolicyRequirement).
+     * @param testName error string to exit
+     * @param expectedResult whether we expect to pass or fail.
      */
     protected void performTest(String testName, boolean expectedResult) {
         performTest(testName, matchFunctor, expectedResult);
     }
     
-    public void testBase()
-    {
-        //
-        // placeholder to allow us to test an entire folder
-        //
+    /**
+     * placeholder to allow us to test an entire folder. 
+     */
+    public void testBase() {
     }
 }

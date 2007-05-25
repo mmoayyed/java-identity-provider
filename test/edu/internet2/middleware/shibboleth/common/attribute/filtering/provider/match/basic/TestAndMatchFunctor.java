@@ -32,11 +32,15 @@ public class TestAndMatchFunctor extends BaseTestCase {
      */
     private ArrayList<MatchFunctor> functors = new ArrayList<MatchFunctor>(3);
 
+    /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
         matchFunctor = new AndMatchFunctor(functors);
     }
     
+    /**
+     * Test several possible configurations of and.
+     */
     public void testAndFunction() {
         
         performTest("null", new AndMatchFunctor(null), false);
