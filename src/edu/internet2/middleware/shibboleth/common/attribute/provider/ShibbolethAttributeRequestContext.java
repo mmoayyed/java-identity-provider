@@ -109,7 +109,7 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
 
     /** {@inheritDoc} */
     public String getAttributeRequester() {
-        return issuerMetadata.getEntityID();
+        return requesterMetadata.getEntityID();
     }
 
     /** {@inheritDoc} */
