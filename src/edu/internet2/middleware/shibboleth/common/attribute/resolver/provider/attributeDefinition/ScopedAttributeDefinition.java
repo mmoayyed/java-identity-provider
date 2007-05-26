@@ -19,7 +19,8 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 import org.apache.log4j.Logger;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
@@ -47,15 +48,12 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     public Attribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving attribute: (" + getId() + ")");
 
-        ScopedAttribute attribute = new ScopedAttribute();
+        BasicAttribute<ScopedAttributeValue> attribute = new BasicAttribute<ScopedAttributeValue>();
         attribute.setId(getId());
-        attribute.setScope(scope);
         for (Object o : getValuesFromAllDependencies(resolutionContext)) {
-            attribute.getValues().add(o.toString());
+            attribute.getValues().add(new ScopedAttributeValue(o.toString(), scope));
         }
 
-        
-        
         return attribute;
     }
 

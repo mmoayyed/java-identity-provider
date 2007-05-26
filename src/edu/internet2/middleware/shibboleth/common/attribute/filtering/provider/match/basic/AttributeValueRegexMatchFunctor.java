@@ -32,11 +32,16 @@ public class AttributeValueRegexMatchFunctor extends AbstractAttributeTargetedRe
      */
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
-        if (getAttributeId() == null) {
-            throw new FilterProcessingException("No attribute ID specified");
+        Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
+        if (attribute == null || attribute.getValues() == null) {
+            for (Object value : attribute.getValues()) {
+                if (isMatch(value)) {
+                    return true;
+                }
+            }
         }
-
-        return matchAttributeValues(filterContext);
+        
+        return false;
     }
 
     /**
@@ -47,32 +52,6 @@ public class AttributeValueRegexMatchFunctor extends AbstractAttributeTargetedRe
     protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
             throws FilterProcessingException {
 
-        if (getAttributeId() == null) {
-            return isMatch(attributeValue);
-        }
-
-        return matchAttributeValues(filterContext);
-    }
-
-    /**
-     * Returns true if any value of the given attribute matches the provided regular expression.
-     * 
-     * @param filterContext current filter context
-     * 
-     * @return true if a value of the given attribute matches the provided regular expression
-     */
-    protected boolean matchAttributeValues(ShibbolethFilteringContext filterContext) {
-        Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
-        if (attribute == null || attribute.getValues() == null) {
-            return false;
-        }
-
-        for (Object value : attribute.getValues()) {
-            if (isMatch(value)) {
-                return true;
-            }
-        }
-
-        return false;
+        return isMatch(attributeValue);
     }
 }

@@ -16,40 +16,47 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
-import org.opensaml.xml.util.DatatypeHelper;
+import java.util.SortedSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
 
 /**
- * Match functor that checks if a {@link ScopedAttribute} scope is equal to a given regular expression.
+ * Match functor that checks if an attribute's scoped values are equal to a given regular expression.
+ * 
+ * Attribute values evaluated by this functor <strong>must</strong> be of type {@link ScopedAttributeValue}.
  */
 public class AttributeScopeRegexMatchFunctor extends AbstractAttributeTargetedRegexMatchFunctor {
 
-    /** {@inheritDoc} */
+    /**
+     * Checks if the given attribute value's scope matchs the given regular expression.
+     * 
+     * {@inheritDoc}
+     */
     protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        String id = attributeId;
-        if (DatatypeHelper.isEmpty(id)) {
-            id = getAttributeId();
-        }
-
-        Attribute attribute = filterContext.getUnfilteredAttributes().get(id);
-        if (attribute != null && attribute instanceof ScopedAttribute) {
-            return isMatch(((ScopedAttribute) attribute).getScope());
-        }
-
-        return false;
+        return isMatch(((ScopedAttributeValue) attributeValue).getScope());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Checks if any of the scopes for the values of the given attribute match the given regular expression.
+     * 
+     * {@inheritDoc}
+     */
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
         Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
-        if (attribute != null && attribute instanceof ScopedAttribute) {
-            return isMatch(((ScopedAttribute) attribute).getScope());
+        if (attribute != null) {
+            SortedSet<ScopedAttributeValue> values = attribute.getValues();
+            if (values != null) {
+                for (ScopedAttributeValue value : values) {
+                    if (isMatch(value.getScope())) {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;

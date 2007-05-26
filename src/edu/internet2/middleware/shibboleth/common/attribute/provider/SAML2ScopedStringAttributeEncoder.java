@@ -16,13 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
-import javax.xml.namespace.QName;
-
-import org.apache.log4j.Logger;
 import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
-import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
@@ -37,12 +32,6 @@ public class SAML2ScopedStringAttributeEncoder extends
     /** Attribute factory. */
     private static AttributeBuilder attributeBuilder;
 
-    /** XSString factory. */
-    private static XSStringBuilder stringBuilder;
-
-    /** Log4j logger. */
-    private static Logger log = Logger.getLogger(SAML2ScopedStringAttributeEncoder.class);
-
     /** Format of attribute. */
     private String format;
 
@@ -51,8 +40,8 @@ public class SAML2ScopedStringAttributeEncoder extends
 
     /** Constructor. */
     public SAML2ScopedStringAttributeEncoder() {
+        super();
         attributeBuilder = new AttributeBuilder();
-        stringBuilder = new XSStringBuilder();
         setEncoderCategory(SAML2AttributeEncoder.CATEGORY);
     }
 
@@ -78,43 +67,14 @@ public class SAML2ScopedStringAttributeEncoder extends
 
     /** {@inheritDoc} */
     public org.opensaml.saml2.core.Attribute encode(Attribute attribute) throws AttributeEncodingException {
-
-        if (!(attribute instanceof ScopedAttribute)) {
-            log.error("This attribute encoder (" + getAttributeName() + ") expects a scoped attribute.");
-            throw new AttributeEncodingException("This attribute encoder (" + getAttributeName()
-                    + ") expects a scoped attribute.");
-        }
-
         org.opensaml.saml2.core.Attribute samlAttribute;
         samlAttribute = attributeBuilder.buildObject();
 
         samlAttribute.setName(getAttributeName());
         samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.setFriendlyName(getFriendlyName());
-
-        // handle "attribute" scopeType
-        if ("attribute".equals(getScopeType())) {
-            QName scopeAttribute = new QName(null, getScopeAttribute());
-            String scopeValue = ((ScopedAttribute) attribute).getScope();
-
-            samlAttribute.getUnknownAttributes().put(scopeAttribute, scopeValue);
-        }
-
-        // get attribute values
-        for (Object o : attribute.getValues()) {
-            String stringValue = o.toString();
-
-            // handle "inline" scopeType
-            if ("inline".equals(getScopeType())) {
-                stringValue += getScopeDelimiter() + ((ScopedAttribute) attribute).getScope();
-            }
-
-            XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-            xsstring.setValue(stringValue);
-            samlAttribute.getAttributeValues().add(xsstring);
-        }
+        samlAttribute.getAttributeValues().addAll(encodeAttributeValue(AttributeValue.DEFAULT_ELEMENT_NAME, attribute));
 
         return samlAttribute;
     }
-
 }

@@ -16,6 +16,18 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.namespace.QName;
+
+import org.opensaml.Configuration;
+import org.opensaml.common.SAMLObject;
+import org.opensaml.xml.XMLObjectBuilder;
+
+import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
+
 /**
  * Base class for scoped attribute encoders.
  * 
@@ -86,4 +98,40 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
         scopeType = newScopeType;
     }
 
+    /**
+     * Encodes attributes whose values are scoped.
+     * 
+     * @param valueElementQName name of the attribute value element to create for each value
+     * @param attribute the attribute whose values will be encoded
+     * 
+     * @return the list of encoded attribute values
+     */
+    protected List<SAMLObject> encodeAttributeValue(QName valueElementQName, Attribute<ScopedAttributeValue> attribute) {
+        ArrayList<SAMLObject> encodedValues = new ArrayList<SAMLObject>();
+
+        XMLObjectBuilder<ShibbolethScopedValue> valueBuilder = Configuration.getBuilderFactory().getBuilder(
+                ShibbolethScopedValue.TYPE_NAME);
+
+        ShibbolethScopedValue scopedValue;
+        for (ScopedAttributeValue attributeValue : attribute.getValues()) {
+
+            scopedValue = valueBuilder.buildObject(valueElementQName, ShibbolethScopedValue.TYPE_NAME);
+
+            // handle "attribute" scopeType
+            if ("attribute".equals(getScopeType())) {
+                scopedValue.setScopeAttributeName(getScopeAttribute());
+                scopedValue.setScope(attributeValue.getScope());
+                scopedValue.setValue(attributeValue.getValue());
+            }
+
+            // handle "inline" scopeType
+            if ("inline".equals(getScopeType())) {
+                scopedValue.setValue(attributeValue.getValue() + getScopeDelimiter() + attributeValue.getScope());
+            }
+
+            encodedValues.add(scopedValue);
+        }
+
+        return encodedValues;
+    }
 }
