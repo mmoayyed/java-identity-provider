@@ -53,10 +53,19 @@ public class AttributeScopeStringMatchFunctor extends AbstractAttributeTargetedS
         }
         
         SortedSet values = attribute.getValues();
+        ScopedAttributeValue scoped;
+  
+        //
+        // Let's make some sense of this.  If there are values, then we look at every member.
+        // If the member is a scopedAttribute we will look at the scope and see if it fits.
+        // Otherwise keep on going - we may find something which fits.  If we get to the end
+        // and nothing has fit, say false.
+        //
+
         if (values != null) {
             for (Object value : values) {
                 if (value instanceof ScopedAttributeValue) {
-                    ScopedAttributeValue scoped = (ScopedAttributeValue) value;
+                    scoped = (ScopedAttributeValue) value;
                     if (isMatch(scoped.getScope())) {
                         return true;
                     }                  

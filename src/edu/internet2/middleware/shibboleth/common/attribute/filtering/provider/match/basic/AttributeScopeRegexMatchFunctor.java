@@ -48,12 +48,22 @@ public class AttributeScopeRegexMatchFunctor extends AbstractAttributeTargetedRe
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
         Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
+
         if (attribute != null) {
+            ScopedAttributeValue value;
             SortedSet values = attribute.getValues();
+            
+            //
+            // Let's make some sense of this.  If there are values, then we look at every member.
+            // If the member is a scopedAttribute we will look at the scope and see if it fits.
+            // Otherwise keep on going - we may find something which fits.  If we get to the end
+            // and nothing has fit, say false.
+            //
+            
             if (values != null) {
                 for (Object object: values) {
                     if (object instanceof ScopedAttributeValue) {
-                        ScopedAttributeValue value = (ScopedAttributeValue) object;
+                        value  = (ScopedAttributeValue) object;
                         if (isMatch(value.getScope())) {
                             return true;
                             
