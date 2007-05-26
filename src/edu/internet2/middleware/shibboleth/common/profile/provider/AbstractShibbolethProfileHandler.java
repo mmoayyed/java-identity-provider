@@ -57,7 +57,7 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends Rel
     private SessionManager<SessionType> sessionManager;
 
     /** Factory used to get security policies to evaluate against a request. */
-    private SecurityPolicyFactory<ServletRequest, Issuer> securityPolicyFactory;
+    private SecurityPolicyFactory<ServletRequest> securityPolicyFactory;
 
     /** Trust engine used to validate peer credentials. */
     private TrustEngine trustEngine;
@@ -157,7 +157,7 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends Rel
      * 
      * @return factory used to produce security policies to evaluate requests against
      */
-    public SecurityPolicyFactory<ServletRequest, Issuer> getSecurityPolicyFactory() {
+    public SecurityPolicyFactory<ServletRequest> getSecurityPolicyFactory() {
         return securityPolicyFactory;
     }
 
@@ -166,7 +166,7 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends Rel
      * 
      * @param factory factory used to produce security policies to evaluate requests against
      */
-    public void setSecurityPolicyFactory(SecurityPolicyFactory<ServletRequest, Issuer> factory) {
+    public void setSecurityPolicyFactory(SecurityPolicyFactory<ServletRequest> factory) {
         securityPolicyFactory = factory;
     }
 
