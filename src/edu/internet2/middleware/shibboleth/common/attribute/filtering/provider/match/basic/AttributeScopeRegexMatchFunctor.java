@@ -49,11 +49,15 @@ public class AttributeScopeRegexMatchFunctor extends AbstractAttributeTargetedRe
             throws FilterProcessingException {
         Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
         if (attribute != null) {
-            SortedSet<ScopedAttributeValue> values = attribute.getValues();
+            SortedSet values = attribute.getValues();
             if (values != null) {
-                for (ScopedAttributeValue value : values) {
-                    if (isMatch(value.getScope())) {
-                        return true;
+                for (Object object: values) {
+                    if (object instanceof ScopedAttributeValue) {
+                        ScopedAttributeValue value = (ScopedAttributeValue) object;
+                        if (isMatch(value.getScope())) {
+                            return true;
+                            
+                        }
                     }
                 }
             }

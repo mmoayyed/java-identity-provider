@@ -52,12 +52,15 @@ public class AttributeScopeStringMatchFunctor extends AbstractAttributeTargetedS
             return false;
         }
         
-        SortedSet<ScopedAttributeValue> values = attribute.getValues();
+        SortedSet values = attribute.getValues();
         if (values != null) {
-            for (ScopedAttributeValue value : values) {
-                if (isMatch(value.getScope())) {
-                    return true;
-                }
+            for (Object value : values) {
+                if (value instanceof ScopedAttributeValue) {
+                    ScopedAttributeValue scoped = (ScopedAttributeValue) value;
+                    if (isMatch(scoped.getScope())) {
+                        return true;
+                    }                  
+                } 
             }
         }
         
