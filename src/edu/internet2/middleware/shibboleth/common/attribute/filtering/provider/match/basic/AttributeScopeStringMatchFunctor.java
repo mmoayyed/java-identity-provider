@@ -48,16 +48,18 @@ public class AttributeScopeStringMatchFunctor extends AbstractAttributeTargetedS
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
         Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
-        SortedSet<ScopedAttributeValue> values = attribute.getValues();
-        if (values != null) {
-            for (ScopedAttributeValue value : values) {
-                if (isMatch(value.getScope())) {
-                    return true;
-                }
-            }
-            return true;
+        if (attribute == null) {
+            return false;
         }
-
-        return false;
-    }
+        SortedSet<ScopedAttributeValue> values = attribute.getValues();
+        if (values == null || values.isEmpty()) {
+            return false;
+        }
+        for (ScopedAttributeValue value : values) {
+            if (isMatch(value.getScope())) {
+                return true;
+            }
+        }
+        return true;
+        }
 }

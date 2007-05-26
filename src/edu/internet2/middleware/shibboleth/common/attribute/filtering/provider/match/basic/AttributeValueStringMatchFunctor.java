@@ -33,7 +33,7 @@ public class AttributeValueStringMatchFunctor extends AbstractAttributeTargetedS
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
         Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
-        if (attribute == null || attribute.getValues() == null) {
+        if (attribute != null && attribute.getValues() != null && !attribute.getValues().isEmpty()) {
             for (Object value : attribute.getValues()) {
                 if (isMatch(value)) {
                     return true;
