@@ -99,7 +99,6 @@ public class BaseTestCase extends TestCase {
         requestContext = new ShibbolethAttributeRequestContext();
         
         filterContext = new ShibbolethFilteringContext(map, requestContext);   
- 
 }
     
      

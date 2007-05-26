@@ -21,17 +21,27 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAnyMatchFunctor extends BaseTestCase {
+public class TestPrincipalRegexMatchFunctor extends BaseTestCase {
 
     /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        matchFunctor = new AnyMatchFunctor();
+        PrincipalRegexMatchFunctor functor = new PrincipalRegexMatchFunctor();
+        matchFunctor = functor;
+        functor.setRegularExpression("[jJ].*");
+        requestContext.setPrincipalName("Jim");
     }
     
     public void testPermitValue() {
         try {
-            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, iAttribute.getId(), null));
+            assertTrue("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
+            requestContext.setPrincipalName(" John ");
+            assertTrue("evaluatePermitValue", 
+                    matchFunctor.evaluatePermitValue(filterContext, null, null));
+            requestContext.setPrincipalName(" Fred ");
+            assertFalse("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }
@@ -40,6 +50,14 @@ public class TestAnyMatchFunctor extends BaseTestCase {
     public void testPolicyRequirement() {
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            requestContext.setPrincipalName(" John ");
+            assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            requestContext.setPrincipalName(" Fred ");
+            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            PrincipalRegexMatchFunctor functor = (PrincipalRegexMatchFunctor) matchFunctor;
+            functor.setRegularExpression("F.*d");
+            assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }

@@ -32,6 +32,9 @@ public class TestAttributeValueRegexMatchFunctor extends BaseTestCase {
         functor.setRegularExpression("o.e");
     }
     
+    /**
+     * Test that values to permit value test. 
+     */
     public void testPermitValue() {
         try {
             assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "one"));
@@ -41,6 +44,9 @@ public class TestAttributeValueRegexMatchFunctor extends BaseTestCase {
         }
     }
 
+    /**
+     * Test the policy.
+     */
     public void testPolicyRequirement() {
         try {
             AttributeValueRegexMatchFunctor functor = (AttributeValueRegexMatchFunctor) matchFunctor;

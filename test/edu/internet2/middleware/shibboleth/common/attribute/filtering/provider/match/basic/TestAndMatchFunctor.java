@@ -18,17 +18,15 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 
 import java.util.ArrayList;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
-import junit.framework.TestCase;
 
 /**
- * test the @link(AnyMatchFunctor}
+ * test the @link(AnyMatchFunctor}.
  */
 public class TestAndMatchFunctor extends BaseTestCase {
 
     /**
-     *  Conatins the list of functors we continaully test
+     *  Conatins the list of functors we continaully test.
      */
     private ArrayList<MatchFunctor> functors = new ArrayList<MatchFunctor>(3);
 

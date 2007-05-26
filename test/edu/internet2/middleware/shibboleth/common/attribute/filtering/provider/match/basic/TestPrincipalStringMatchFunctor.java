@@ -21,17 +21,24 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAnyMatchFunctor extends BaseTestCase {
+public class TestPrincipalStringMatchFunctor extends BaseTestCase {
 
     /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        matchFunctor = new AnyMatchFunctor();
+        PrincipalStringMatchFunctor functor = new PrincipalStringMatchFunctor();
+        matchFunctor = functor;
+        functor.setMatchString("Jim");
+        requestContext.setPrincipalName("Jim");
     }
     
     public void testPermitValue() {
         try {
-            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, iAttribute.getId(), null));
+            assertTrue("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
+            requestContext.setPrincipalName(" John ");
+            assertFalse("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }
@@ -40,6 +47,12 @@ public class TestAnyMatchFunctor extends BaseTestCase {
     public void testPolicyRequirement() {
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            requestContext.setPrincipalName(" John ");
+            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            PrincipalStringMatchFunctor functor = (PrincipalStringMatchFunctor) matchFunctor;
+            functor.setMatchString("John");
+            assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }

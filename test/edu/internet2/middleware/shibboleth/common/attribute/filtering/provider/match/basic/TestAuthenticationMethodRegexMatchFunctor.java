@@ -21,17 +21,24 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAnyMatchFunctor extends BaseTestCase {
+public class TestAuthenticationMethodRegexMatchFunctor extends BaseTestCase {
 
     /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        matchFunctor = new AnyMatchFunctor();
+        AuthenticationMethodRegexMatchFunctor functor = new AuthenticationMethodRegexMatchFunctor();
+        matchFunctor = functor;
+        functor.setRegularExpression("B.*h");
+        requestContext.setPrincipalAuthenticationMethod("Blind Faith");
     }
     
     public void testPermitValue() {
         try {
-            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, iAttribute.getId(), null));
+            assertTrue("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
+            requestContext.setPrincipalAuthenticationMethod(" Retinal Scan ");
+            assertFalse("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }
@@ -40,6 +47,12 @@ public class TestAnyMatchFunctor extends BaseTestCase {
     public void testPolicyRequirement() {
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            requestContext.setPrincipalAuthenticationMethod(" Retinal Scan ");
+            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            AuthenticationMethodRegexMatchFunctor functor = (AuthenticationMethodRegexMatchFunctor) matchFunctor;
+            functor.setRegularExpression("[rR]etinal [sS]can");
+            assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+            
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }
