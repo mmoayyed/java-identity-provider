@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.relyingparty.saml2.AbstractSAML2ProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AbstractSAML2ProfileConfiguration;
 
 /**
  * Base Spring factory bean for SAML 2 profile configurations.

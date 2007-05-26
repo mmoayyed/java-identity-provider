@@ -49,18 +49,18 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfi
  */
 public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableService implements
         RelyingPartyConfigurationManager {
+    
+    /** ID used for anonymous relying party. */
+    public static final String ANONYMOUS_RP_NAME = "anonymous";
+    
+    /** ID used for default relying party. */
+    public static final String DEFAULT_RP_NAME = "default";
 
     /** Class logger. */
     private final Logger log = Logger.getLogger(SAMLMDRelyingPartyConfigurationManager.class);
 
     /** Metadata provider used to lookup information about entities. */
     private MetadataProvider metadataProvider;
-
-    /** Relying party config used for anonymous parties. */
-    private RelyingPartyConfiguration anonymousRPConfig;
-
-    /** Relying party config used as the default config. */
-    private RelyingPartyConfiguration defaultRPConfig;
 
     /** Regisered relying party configurations. */
     private HashMap<String, RelyingPartyConfiguration> rpConfigs;
@@ -90,30 +90,12 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
     /** {@inheritDoc} */
     public RelyingPartyConfiguration getAnonymousRelyingConfiguration() {
-        return anonymousRPConfig;
-    }
-
-    /**
-     * Sets the anonymous relying party configuration.
-     * 
-     * @param configuration anonymous relying party configuration
-     */
-    public void setAnonymousRelyingConfiguration(RelyingPartyConfiguration configuration) {
-        anonymousRPConfig = configuration;
+        return rpConfigs.get(ANONYMOUS_RP_NAME);
     }
 
     /** {@inheritDoc} */
     public RelyingPartyConfiguration getDefaultRelyingPartyConfiguration() {
-        return defaultRPConfig;
-    }
-
-    /**
-     * Sets the default relying party configuration.
-     * 
-     * @param configuration default relying party configuration
-     */
-    public void setDefaultRelyingPartyConfiguration(RelyingPartyConfiguration configuration) {
-        defaultRPConfig = configuration;
+        return rpConfigs.get(DEFAULT_RP_NAME);
     }
 
     /**
@@ -176,7 +158,8 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                     + " using default configuration");
         }
         readLock.unlock();
-        return defaultRPConfig;
+        
+        return getDefaultRelyingPartyConfiguration();
     }
 
     /** {@inheritDoc} */
@@ -186,6 +169,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
     /** {@inheritDoc} */
     protected void newContextCreated(ApplicationContext newServiceContext) throws ResourceException {
+        String[] metadataProviderNames = newServiceContext.getBeanNamesForType(MetadataProvider.class);
         String[] configNames = newServiceContext.getBeanNamesForType(RelyingPartyConfiguration.class);
         
         if(log.isDebugEnabled()){
@@ -194,6 +178,10 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
+        
+        if(metadataProviderNames.length > 0){
+            metadataProvider = (MetadataProvider) newServiceContext.getBean(metadataProviderNames[0]);
+        }
 
         rpConfigs.clear();
         RelyingPartyConfiguration rpConfg;

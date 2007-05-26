@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
 /**
@@ -35,11 +37,11 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(SAMLMDRelyingPartyConfigurationManagerBeanDefinitionParser.SCHEMA_TYPE,
                 new SAMLMDRelyingPartyConfigurationManagerBeanDefinitionParser());
 
-        registerBeanDefinitionParser(IdentifiedRelyingPartyBeanDefinitionParser.TYPE_NAME,
-                new IdentifiedRelyingPartyBeanDefinitionParser());
-
-        UnidentifiedRelyingPartyBeanDefinitionParser parser = new UnidentifiedRelyingPartyBeanDefinitionParser();
-        registerBeanDefinitionParser(UnidentifiedRelyingPartyBeanDefinitionParser.ANON_RP_ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(UnidentifiedRelyingPartyBeanDefinitionParser.DEFAULT_RP_ELEMENT_NAME, parser);
+        BeanDefinitionParser parser = new RelyingPartyConfigurationBeanDefinitionParser();
+        registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.URP_TYPE_NAME, parser);
+        registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.RP_TYPE_NAME, parser);
+        registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.ANON_RP_ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.DEFAULT_RP_ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.RP_ELEMENT_NAME, parser);
     }
 }

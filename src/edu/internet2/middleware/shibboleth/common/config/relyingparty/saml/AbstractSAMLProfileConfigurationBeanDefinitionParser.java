@@ -69,4 +69,9 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
         builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
                 null, "signAssertions")));
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }

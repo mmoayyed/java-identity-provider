@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.relyingparty.saml2;
+package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2;
 
 /**
- * SAML 2 Attribute Query configuration settings.
+ * SAML 2 Artifact Resolution configuration settings.
  */
-public class AttributeQueryConfiguration extends AbstractSAML2ProfileConfiguration {
+public class ArtifactResolutionConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:query:attribute";
+    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:query:artifact";
     
     /** {@inheritDoc} */
     public String getProfileId() {

@@ -59,12 +59,6 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
         }
 
         children = configChildren.get(new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingParty"));
-        if (children != null && children.size() > 0) {
-            builder.addPropertyValue("relyingParties", SpringConfigurationUtils.parseCustomElements(children,
-                    parserContext));
-        }
-
-        children = configChildren.get(new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingParty"));
         builder.addPropertyValue("relyingParties", SpringConfigurationUtils
                 .parseCustomElements(children, parserContext));
 

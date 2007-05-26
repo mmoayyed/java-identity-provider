@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.relyingparty.saml2;
+package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1;
 
 /**
- * SAML 2 SSO configuration settings.
+ * SAML 1 Attribute Query configuration settings.
  */
-public class SSOConfiguration extends AbstractSAML2ProfileConfiguration {
+public class AttributeQueryConfiguration extends AbstractSAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:sso";
+    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml1:query:attribute";
     
     /** {@inheritDoc} */
     public String getProfileId() {

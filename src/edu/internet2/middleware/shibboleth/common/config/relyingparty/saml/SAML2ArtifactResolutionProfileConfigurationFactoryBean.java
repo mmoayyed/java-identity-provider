@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.saml2.ArtifactResolutionConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.ArtifactResolutionConfiguration;
 
 /**
  * Spring factory for SAML 2 artifact query profile configurations.

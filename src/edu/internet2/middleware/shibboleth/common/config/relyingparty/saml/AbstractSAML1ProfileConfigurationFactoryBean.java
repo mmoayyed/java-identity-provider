@@ -17,7 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
 import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.relyingparty.saml1.AbstractSAML1ProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.AbstractSAML1ProfileConfiguration;
 
 /**
  * Base Spring factory bean for SAML 1 profile configurations.

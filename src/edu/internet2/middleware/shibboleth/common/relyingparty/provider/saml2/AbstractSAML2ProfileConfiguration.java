@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.relyingparty.saml2;
+package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2;
 
 import java.util.Collection;
 import java.util.HashSet;

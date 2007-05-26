@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.relyingparty.saml1;
+package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1;
 
 import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;

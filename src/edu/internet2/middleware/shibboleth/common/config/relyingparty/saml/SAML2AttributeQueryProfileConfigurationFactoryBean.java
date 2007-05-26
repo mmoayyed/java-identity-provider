@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.saml2.AttributeQueryConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AttributeQueryConfiguration;
 
 /**
  * Spring factory for SAML 2 attribute query profile configurations.

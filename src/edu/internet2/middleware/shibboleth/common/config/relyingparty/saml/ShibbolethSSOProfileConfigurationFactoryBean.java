@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.saml1.ShibbolethSSOConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.ShibbolethSSOConfiguration;
 
 /**
  * Spring factory for Shibboleth SSO profile configurations.

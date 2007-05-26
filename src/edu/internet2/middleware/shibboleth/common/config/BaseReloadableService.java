@@ -90,7 +90,7 @@ public abstract class BaseReloadableService extends BaseService {
         }
         pollingTimer = timer;
 
-        if (pollingFrequency <= 0 ) {
+        if (pollingFrequency <= 0) {
             throw new IllegalArgumentException("Polling frequency must be greater than zero.");
         }
         resourcePollingFrequency = pollingFrequency;
@@ -98,31 +98,31 @@ public abstract class BaseReloadableService extends BaseService {
 
         serviceContextRWLock = new ReentrantReadWriteLock(true);
     }
-    
+
     /**
      * Gets the frequency, in millseconds, that the configuration resources are polled.
      * 
      * @return frequency, in millseconds, that the configuration resources are polled
      */
-    public long getPollingFrequency(){
+    public long getPollingFrequency() {
         return resourcePollingFrequency;
     }
-    
+
     /**
      * Gets the number of times a resource may error out before it is considered permanently invalid.
      * 
      * @return number of times a resource may error out before it is considered permanently invalid
      */
-    public int getPollingRetryAttempts(){
+    public int getPollingRetryAttempts() {
         return resourcePollingRetryAttempts;
     }
-    
+
     /**
      * Sets the number of times a resource may error out before it is considered permanently invalid.
      * 
      * @param attempts number of times a resource may error out before it is considered permanently invalid
      */
-    public void setPollingRetryAttempts(int attempts){
+    public void setPollingRetryAttempts(int attempts) {
         resourcePollingRetryAttempts = attempts;
     }
 
@@ -174,8 +174,8 @@ public abstract class BaseReloadableService extends BaseService {
                 log.info(getServiceName() + " service configuration loaded");
             }
         } catch (ResourceException e) {
-            log.error("New filter configuration was not loaded for " + getServiceName()
-                    + " service, unable to load resource", e);
+            log.error("New configuration was not loaded for " + getServiceName() + " service, unable to load resource",
+                    e);
         }
     }
 

@@ -26,10 +26,12 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfigurat
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
- * A spring factory bean that creates {@link RelyingPartyConfiguration} that do not contain relying party identifing
- * information.
+ * Relying party configuration factory bean.
  */
-public class UnidentifiedRelyingPartyFactoryBean extends AbstractFactoryBean {
+public class RelyingPartyFactoryBean extends AbstractFactoryBean {
+    
+    /** ID of the relying party. */
+    private String relyingPartyId;
 
     /** ID of the provider to use for this relying party. */
     private String providerId;
@@ -43,6 +45,24 @@ public class UnidentifiedRelyingPartyFactoryBean extends AbstractFactoryBean {
     /** {@inheritDoc} */
     public Class getObjectType() {
         return RelyingPartyConfiguration.class;
+    }
+    
+    /**
+     * Gets the ID of the relying party.
+     * 
+     * @return ID of the provider to use for this relying party
+     */
+    public String getRelyingPartyId() {
+        return relyingPartyId;
+    }
+
+    /**
+     * Sets the ID of the relying party.
+     * 
+     * @param id ID of the relying party
+     */
+    public void setRelyingPartyId(String id) {
+        relyingPartyId = id;
     }
 
     /**
@@ -101,7 +121,7 @@ public class UnidentifiedRelyingPartyFactoryBean extends AbstractFactoryBean {
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        RelyingPartyConfiguration configuration = new RelyingPartyConfiguration(providerId);
+        RelyingPartyConfiguration configuration = new RelyingPartyConfiguration(relyingPartyId, providerId);
         configuration.setDefaultSigningCredential(defaultSigningCredential);
 
         if (profileConfigurations != null) {

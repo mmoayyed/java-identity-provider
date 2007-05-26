@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.saml1.ArtifactQueryConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.ArtifactQueryConfiguration;
 
 /**
  * Spring factory for SAML 1 artifact query profile configurations.
