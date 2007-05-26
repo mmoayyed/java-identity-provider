@@ -26,6 +26,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 
 /**
@@ -83,10 +84,17 @@ public class BaseTestCase extends TestCase {
         TreeSet<String> sTree = new TreeSet<String>();
         sTree.add("one");
         sa.setValues(sTree);
+
+        BasicAttribute<ScopedAttributeValue> scope = new BasicAttribute<ScopedAttributeValue>("Scope");
+        TreeSet<ScopedAttributeValue> tree = new TreeSet<ScopedAttributeValue>();
+        tree.add(new ScopedAttributeValue("ScopedValue","ScopedScope"));
+        scope.setValues(tree);
+
         
         Map<String,Attribute> map = new HashMap<String, Attribute>(5);
         map.put(sAttribute.getId(), sAttribute);
         map.put(iAttribute.getId(), iAttribute);
+        map.put(scope.getId(), scope);
         
         requestContext = new ShibbolethAttributeRequestContext();
         
@@ -97,12 +105,13 @@ public class BaseTestCase extends TestCase {
      
     /**
      * Test for the expected result with the given function, (both PermitValue and PolicyRequirement).
+     * Thuis method is particularly useful for the boolean cases.
      * 
      * @param testName the error message to extrude
      * @param functor what to test
      * @param expectedResult whether we expect the test to succeed for fail
      */
-    protected void performTest(String testName, MatchFunctor functor, boolean expectedResult) {
+    protected void testBoth(String testName, MatchFunctor functor, boolean expectedResult) {
         try {
             if (expectedResult) {
                 assertTrue(testName + " (permitValue)", 
@@ -127,8 +136,8 @@ public class BaseTestCase extends TestCase {
      * @param testName error string to exit
      * @param expectedResult whether we expect to pass or fail.
      */
-    protected void performTest(String testName, boolean expectedResult) {
-        performTest(testName, matchFunctor, expectedResult);
+    protected void testBoth(String testName, boolean expectedResult) {
+        testBoth(testName, matchFunctor, expectedResult);
     }
     
     /**

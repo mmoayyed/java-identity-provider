@@ -43,46 +43,46 @@ public class TestAndMatchFunctor extends BaseTestCase {
      */
     public void testAndFunction() {
         
-        performTest("null", new AndMatchFunctor(null), false);
+        testBoth("null", new AndMatchFunctor(null), false);
         
         functors.clear();
-        performTest("Empty", false);
+        testBoth("Empty", false);
         
         //
         // And (TRUE)
         //
         functors.add(new AnyMatchFunctor());           
-        performTest("(TRUE)", true);
+        testBoth("(TRUE)", true);
         
         //
         // And (TRUE, TRUE);
         //
         functors.add(new AnyMatchFunctor());           
-        performTest("(TRUE, TRUE)", true);
+        testBoth("(TRUE, TRUE)", true);
         
         //
         // And (TRUE, TRUE, TRUE);
         //
         functors.add(new AnyMatchFunctor());           
-        performTest("(TRUE, TRUE, TRUE)", true);
+        testBoth("(TRUE, TRUE, TRUE)", true);
 
         //
         // And (TRUE, FALSE, TRUE);
         //
         functors.set(1, new NotMatchFunctor(new AnyMatchFunctor()));           
-        performTest("(TRUE, FALSE, TRUE)", false);
+        testBoth("(TRUE, FALSE, TRUE)", false);
 
         //
         // And (TRUE, FALSE);
         //
         functors.remove(2);           
-        performTest("(TRUE, FALSE)", false);
+        testBoth("(TRUE, FALSE)", false);
         
         //
         // And (FALSE)
         //
         functors.remove(0);           
-        performTest("(FALSE)", false);
+        testBoth("(FALSE)", false);
             
     }
 

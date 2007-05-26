@@ -30,19 +30,8 @@ public class TestNotMatchFunctor extends BaseTestCase {
         matchFunctor = new NotMatchFunctor(new AnyMatchFunctor());
     }
     
-    public void testPermitValue() {
-        try {
-            assertFalse("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, iAttribute.getId(), null));
-        } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
-        }
-    }
-
-    public void testPolicyRequirement() {
-        try {
-            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-        } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
-        }
+    public void testNot() {
+        testBoth("Not for false", false);
+        testBoth("Not for true", new NotMatchFunctor(matchFunctor), true);
     }
 }

@@ -41,39 +41,39 @@ public class TestOrMatchFunctor extends BaseTestCase {
         // Or (TRUE)
         //
         functors.add(new AnyMatchFunctor());           
-        performTest("(TRUE)", true);
+        testBoth("(TRUE)", true);
         
         //
         // Or(TRUE, TRUE);
         //
         functors.add(new AnyMatchFunctor());           
-        performTest("(TRUE, TRUE)", true);
+        testBoth("(TRUE, TRUE)", true);
         
         //
         // Or (TRUE, TRUE, TRUE);
         //
         functors.add(new AnyMatchFunctor());           
-        performTest("(TRUE, TRUE, TRUE)", true);
+        testBoth("(TRUE, TRUE, TRUE)", true);
 
         //
         // And (TRUE, TRUE, FALSE);
         //
         functors.set(2, new NotMatchFunctor(new AnyMatchFunctor()));           
-        performTest("(TRUE, TRUE, FALSE)", true);
+        testBoth("(TRUE, TRUE, FALSE)", true);
 
         //
         // Or (FALSE, FALSE, FALSE);
         //
         functors.set(0, new NotMatchFunctor(new AnyMatchFunctor()));           
         functors.set(1, new NotMatchFunctor(new AnyMatchFunctor()));           
-        performTest("(FALSE, FALSE, FALSE)", false);
+        testBoth("(FALSE, FALSE, FALSE)", false);
         
         //
         // Or (FALSE)
         //
         functors.remove(0);           
         functors.remove(0);           
-        performTest("(FALSE)", false);
+        testBoth("(FALSE)", false);
             
     }
 

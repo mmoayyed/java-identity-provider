@@ -34,20 +34,20 @@ public class TestNumAttributeValuesMatchFunctor extends BaseTestCase {
         //
         // In Base we set up "StringAttr" with 1 attribute and "IntAttr" with three.
         //
-        performTest("InRange (1: 0-4)", new NumOfAttributeValuesMatchFunctor("StringAttr", 0, 4), true);
-        performTest("InRange (1: 1-1)", new NumOfAttributeValuesMatchFunctor("StringAttr", 1, 1), true);
-        performTest("InRange (3: 3-4)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 3, 4), true);
-        performTest("InRange (3: 1-3)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 1, 3), true);
+        testBoth("InRange (1: 0-4)", new NumOfAttributeValuesMatchFunctor("StringAttr", 0, 4), true);
+        testBoth("InRange (1: 1-1)", new NumOfAttributeValuesMatchFunctor("StringAttr", 1, 1), true);
+        testBoth("InRange (3: 3-4)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 3, 4), true);
+        testBoth("InRange (3: 1-3)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 1, 3), true);
     }
     
     public void testOutOfRange() {
         //
         // In Base we set up "StringAttr" with 1 attribute and "IntAttr" with three.
         //
-        performTest("OutRange (1: 2-4)", new NumOfAttributeValuesMatchFunctor("StringAttr", 2, 4), false);
-        performTest("OutRange (1: 0-0)", new NumOfAttributeValuesMatchFunctor("StringAttr", 0, 0), false);
-        performTest("OutRange (3: 0-3)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 0, 2), false);
-        performTest("OutRange (3: 9-77)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 9, 77), false);
+        testBoth("OutRange (1: 2-4)", new NumOfAttributeValuesMatchFunctor("StringAttr", 2, 4), false);
+        testBoth("OutRange (1: 0-0)", new NumOfAttributeValuesMatchFunctor("StringAttr", 0, 0), false);
+        testBoth("OutRange (3: 0-3)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 0, 2), false);
+        testBoth("OutRange (3: 9-77)", new NumOfAttributeValuesMatchFunctor("IntegerAttr", 9, 77), false);
         
     }
 }
