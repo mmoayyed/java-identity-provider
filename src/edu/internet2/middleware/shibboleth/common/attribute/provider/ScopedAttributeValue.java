@@ -61,4 +61,9 @@ public class ScopedAttributeValue {
     public String getScope() {
         return scope;
     }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return value;
+    }
 }
