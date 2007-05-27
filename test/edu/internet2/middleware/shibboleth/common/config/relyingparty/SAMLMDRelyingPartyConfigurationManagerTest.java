@@ -22,12 +22,13 @@ import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRelyingPartyConfigurationManager;
 
 /**
- * 
+ * Unit test of {@link SAMLMDRelyingPartyConfigurationManager}.
  */
 public class SAMLMDRelyingPartyConfigurationManagerTest extends BaseConfigTestCase {
 
+    /** Test loading the relying party configuration manager. */
     public void testManager() throws Exception {
-        ApplicationContext appContext = createSpringContext(DATA_PATH + "/config/relyingparty/manager-config.xml");
+        ApplicationContext appContext = createSpringContext(DATA_PATH + "/config/relyingparty/service-config.xml");
         SAMLMDRelyingPartyConfigurationManager rpConfigMgr = (SAMLMDRelyingPartyConfigurationManager) appContext
                 .getBean("relyingPartyManager");
         

@@ -69,7 +69,7 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
         requestContext.setPrincipalName("jsmith");
         requestContext.setRequestedAttributes(attributes.keySet());
         
-        String[] configs = { DATA_PATH + "/config/attribute/filter/filter-engine-config.xml" , };
+        String[] configs = { DATA_PATH + "/config/attribute/filter/service-config.xml" , };
         appContext = createSpringContext(configs);
     }
     
