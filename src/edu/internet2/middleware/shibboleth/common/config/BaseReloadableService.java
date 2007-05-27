@@ -80,8 +80,6 @@ public abstract class BaseReloadableService extends BaseService {
      * @param configurations configuration resources for this service
      * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
      *            than zero
-     * @param pollingRetryAttempts maximum number of poll attempts before a policy resource is considered inaccessible,
-     *            must be greater than zero
      */
     public BaseReloadableService(Timer timer, List<Resource> configurations, long pollingFrequency) {
         super(configurations);

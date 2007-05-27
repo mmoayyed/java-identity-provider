@@ -73,7 +73,7 @@
    </category>
    
    <category name="org.springframework">
-      <priority value="WARN"/>
+      <priority value="INFO"/>
    </category>
    
 

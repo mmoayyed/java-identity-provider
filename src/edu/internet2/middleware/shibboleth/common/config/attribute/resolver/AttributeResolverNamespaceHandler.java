@@ -1,6 +1,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 import edu.internet2.middleware.shibboleth.common.config.profile.ShibbolethProfileHandlerManagerBeanDefinitionParser;
 
@@ -14,7 +16,11 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(ShibbolethAttributeResolverBeanDefinitionParser.SCHEMA_TYPE,
-                new ShibbolethProfileHandlerManagerBeanDefinitionParser());
+        BeanDefinitionParser parser = new ShibbolethProfileHandlerManagerBeanDefinitionParser();
+        registerBeanDefinitionParser(ShibbolethAttributeResolverBeanDefinitionParser.SCHEMA_TYPE, parser);
+        
+        parser = new AttributeResolverBeanDefinitionParser();
+        registerBeanDefinitionParser(AttributeResolverBeanDefinitionParser.SCHEMA_TYPE, parser);
+        registerBeanDefinitionParser(AttributeResolverBeanDefinitionParser.ELEMENT_NAME, parser);
     }
 }

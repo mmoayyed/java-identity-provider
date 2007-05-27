@@ -378,6 +378,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         principalConnectors.clear();
         PrincipalConnector pConnector;
         beanNames = newServiceContext.getBeanNamesForType(PrincipalConnector.class);
+        if(log.isDebugEnabled()){
+            log.debug("Loading " + beanNames.length + " principal connectors");
+        }
         for (String beanName : beanNames) {
             pConnector = (PrincipalConnector) newServiceContext.getBean(beanName);
             principalConnectors.put(pConnector.getId(), pConnector);
@@ -386,6 +389,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         dataConnectors.clear();
         DataConnector dConnector;
         beanNames = newServiceContext.getBeanNamesForType(DataConnector.class);
+        if(log.isDebugEnabled()){
+            log.debug("Loading " + beanNames.length + " data connectors");
+        }
         for (String beanName : beanNames) {
             dConnector = (DataConnector) newServiceContext.getBean(beanName);
             dataConnectors.put(dConnector.getId(), dConnector);
@@ -394,6 +400,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         definitions.clear();
         AttributeDefinition aDefinition;
         beanNames = newServiceContext.getBeanNamesForType(AttributeDefinition.class);
+        if(log.isDebugEnabled()){
+            log.debug("Loading " + beanNames.length + " attribute defintions");
+        }
         for (String beanName : beanNames) {
             aDefinition = (AttributeDefinition) newServiceContext.getBean(beanName);
             definitions.put(aDefinition.getId(), aDefinition);

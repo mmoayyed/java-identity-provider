@@ -101,7 +101,8 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
         parser = parsers.get(elementType);
 
         if (parser == null) {
-            parser = parsers.get(XMLHelper.getNodeQName(element));
+            QName elementName = XMLHelper.getNodeQName(element);
+            parser = parsers.get(elementName);
         }
 
         if (parser == null) {

@@ -23,15 +23,14 @@ import org.opensaml.Configuration;
 import org.opensaml.common.binding.decoding.MessageDecoder;
 import org.opensaml.common.binding.encoding.MessageEncoder;
 import org.opensaml.common.binding.security.SAMLSecurityPolicy;
-import org.opensaml.saml2.core.Issuer;
 import org.opensaml.ws.security.SecurityPolicyFactory;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.security.trust.TrustEngine;
 
 import edu.internet2.middleware.shibboleth.common.profile.ProfileException;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 import edu.internet2.middleware.shibboleth.common.profile.ProfileRequest;
 import edu.internet2.middleware.shibboleth.common.profile.ProfileResponse;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
