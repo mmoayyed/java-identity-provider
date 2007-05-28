@@ -39,11 +39,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/script-1.0ri-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/rhino-engine.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/rhino-1.6R5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.4-webmvc.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.4-web.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.4-support.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.4-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.4-context.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.4-beans.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0.5-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0.5-web.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0.5-support.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0.5-core.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0.5-context.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.0.5-beans.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
