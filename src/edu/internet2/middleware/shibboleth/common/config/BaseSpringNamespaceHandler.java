@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -40,6 +41,9 @@ import org.w3c.dom.Node;
  * type is preferred.
  */
 public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
+    
+    /** Class logger. */
+    private final Logger log = Logger.getLogger(BaseSpringNamespaceHandler.class);
 
     /**
      * Stores the {@link BeanDefinitionParser} implementations keyed by the local name of the {@link Element Elements}
@@ -95,19 +99,25 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
      * @return the parser for the given bean element
      */
     protected BeanDefinitionParser findParserForElement(Element element) {
+        QName parserId;
         BeanDefinitionParser parser;
 
-        QName elementType = XMLHelper.getXSIType(element);
-        parser = parsers.get(elementType);
+        parserId = XMLHelper.getXSIType(element);
+        if(log.isDebugEnabled() && parserId != null){
+            log.debug("Attempting to find parser for element of type: " + parserId);
+        }
+        parser = parsers.get(parserId);
 
         if (parser == null) {
-            QName elementName = XMLHelper.getNodeQName(element);
-            parser = parsers.get(elementName);
+            parserId = XMLHelper.getNodeQName(element);
+            if(log.isDebugEnabled()){
+                log.debug("Attempting to find parser with element name: " + parserId);
+            }
+            parser = parsers.get(parserId);
         }
 
         if (parser == null) {
-            throw new IllegalArgumentException("Cannot locate BeanDefinitionParser for element {"
-                    + element.getNamespaceURI() + "}" + element.getLocalName());
+            throw new IllegalArgumentException("Cannot locate BeanDefinitionParser for element: " + parserId);
         }
 
         return parser;
