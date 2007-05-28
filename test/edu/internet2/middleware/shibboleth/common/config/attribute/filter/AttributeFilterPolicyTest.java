@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.filter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.opensaml.resource.ResourceException;
+import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;

@@ -24,8 +24,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.opensaml.log.Level;
-import org.opensaml.resource.Resource;
-import org.opensaml.resource.ResourceChangeListener;
+import org.opensaml.util.resource.Resource;
+import org.opensaml.util.resource.ResourceChangeListener;
 
 /**
  * Resource listener that watchs a Log4J configuration file and reconfigures Log4J if the file changes.

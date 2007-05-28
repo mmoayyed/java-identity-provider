@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.opensaml.resource.ResourceException;
+import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;

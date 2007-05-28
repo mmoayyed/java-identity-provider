@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.opensaml.resource.Resource;
+import org.opensaml.util.resource.Resource;
 import org.opensaml.xml.XMLConfigurator;
 import org.springframework.beans.factory.InitializingBean;
 

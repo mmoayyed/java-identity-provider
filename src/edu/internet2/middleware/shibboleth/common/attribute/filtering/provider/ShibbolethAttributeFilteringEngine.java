@@ -27,8 +27,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 
 import org.apache.log4j.Logger;
-import org.opensaml.resource.Resource;
-import org.opensaml.resource.ResourceException;
+import org.opensaml.util.resource.Resource;
+import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.Attribute;

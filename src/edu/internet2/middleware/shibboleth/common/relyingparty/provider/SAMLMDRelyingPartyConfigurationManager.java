@@ -23,12 +23,12 @@ import java.util.Timer;
 import java.util.concurrent.locks.Lock;
 
 import org.apache.log4j.Logger;
-import org.opensaml.resource.Resource;
-import org.opensaml.resource.ResourceException;
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
+import org.opensaml.util.resource.Resource;
+import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;

@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.resource;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.resource.FilesystemResource;
+import org.opensaml.util.resource.FilesystemResource;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;

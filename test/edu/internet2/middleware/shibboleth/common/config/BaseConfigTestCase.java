@@ -19,9 +19,9 @@ package edu.internet2.middleware.shibboleth.common.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opensaml.resource.ClasspathResource;
-import org.opensaml.resource.Resource;
-import org.opensaml.resource.ResourceException;
+import org.opensaml.util.resource.ClasspathResource;
+import org.opensaml.util.resource.Resource;
+import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
