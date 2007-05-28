@@ -3,6 +3,20 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:resource"
     xmlns:res="urn:mace:shibboleth:2.0:resource" elementFormDefault="qualified">
 
+    <complexType name="ClasspathResource">
+        <complexContent>
+            <extension base="res:ResourceType">
+                <attribute name="file" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The file, within the JVM classpath, this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="FilesystemResource">
         <complexContent>
             <extension base="res:ResourceType">

@@ -28,6 +28,9 @@ public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     public void init() {
+        registerBeanDefinitionParser(ClasspathResourceBeanDefinitionParser.SCHEMA_TYPE,
+                new ClasspathResourceBeanDefinitionParser());
+        
         registerBeanDefinitionParser(FilesystemResourceBeanDefinitionParser.SCHEMA_TYPE,
                 new FilesystemResourceBeanDefinitionParser());
 

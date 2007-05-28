@@ -26,11 +26,10 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.config.BaseService;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /**
- * Base bean definition parser for {@link BaseService}s.
+ * Base bean definition parser for services.
  */
 public abstract class AbstractServiceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
@@ -44,6 +43,7 @@ public abstract class AbstractServiceBeanDefinitionParser extends AbstractSingle
         builder.addConstructorArg(resources);
         
         builder.setInitMethodName("initialize");
+        builder.setSingleton(true);
     }
 
     /** {@inheritDoc} */

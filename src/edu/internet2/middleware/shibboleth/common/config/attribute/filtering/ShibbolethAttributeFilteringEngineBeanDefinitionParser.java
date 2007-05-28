@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.config.service.AbstractReloadableServiceBeanDefinitionParser;
 
 /**
@@ -33,6 +34,6 @@ public class ShibbolethAttributeFilteringEngineBeanDefinitionParser extends Abst
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
-        return ShibbolethAttributeFilteringEngineBeanDefinitionParser.class;
+        return ShibbolethAttributeFilteringEngine.class;
     }
 }
