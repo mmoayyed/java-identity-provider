@@ -30,7 +30,7 @@ public class ShibbolethAttributeResolverBeanDefinitionParser extends AbstractRel
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-            "ShibbolethAttributeResolverType");
+            "ShibbolethAttributeResolver");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
