@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.profile.provider;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.Configuration;
 import org.opensaml.common.binding.decoding.MessageDecoder;
@@ -34,6 +35,7 @@ import edu.internet2.middleware.shibboleth.common.profile.ProfileResponse;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRelyingPartyConfigurationManager;
 import edu.internet2.middleware.shibboleth.common.session.Session;
 import edu.internet2.middleware.shibboleth.common.session.SessionManager;
 
@@ -46,8 +48,8 @@ import edu.internet2.middleware.shibboleth.common.session.SessionManager;
  * @param <RPManagerType> type of relying party configuration manager used by this profile handler
  * @param <SessionType> type of sessions managed by the session manager used by this profile handler
  */
-public abstract class AbstractShibbolethProfileHandler<RPManagerType extends RelyingPartyConfigurationManager, SessionType extends Session>
-        extends AbstractRequestURIMappedProfileHandler implements ProfileHandler {
+public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAMLMDRelyingPartyConfigurationManager, 
+    SessionType extends Session> extends AbstractRequestURIMappedProfileHandler implements ProfileHandler {
 
     /** Relying party configuration manager for the profile handler. */
     private RPManagerType rpManager;
@@ -208,7 +210,10 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends Rel
     @SuppressWarnings("unchecked")
     protected void populateMessageDecoder(MessageDecoder<ServletRequest> decoder) {
         if (securityPolicyFactory != null) {
-            decoder.setSecurityPolicy((SAMLSecurityPolicy) securityPolicyFactory.createPolicyInstance());
+            SAMLSecurityPolicy<HttpServletRequest> securityPolicy = (SAMLSecurityPolicy) securityPolicyFactory
+                    .createPolicyInstance();
+            securityPolicy.setMetadataProvider(rpManager.getMetadataProvider());
+            decoder.setSecurityPolicy(securityPolicy);
         }
 
         decoder.setTrustEngine(trustEngine);
@@ -220,7 +225,6 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends Rel
      * @param encoder the message encoder to populate
      */
     protected void populateMessageEncoder(MessageEncoder<ServletResponse> encoder) {
-        // Do nothing, future extension point.
+        encoder.setMetadataProvider(rpManager.getMetadataProvider());
     }
-
 }
