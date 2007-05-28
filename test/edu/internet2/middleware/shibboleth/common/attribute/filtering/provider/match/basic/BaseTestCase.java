@@ -54,6 +54,11 @@ public class BaseTestCase extends TestCase {
     protected Attribute<String> sAttribute;
     
     /**
+     * A Scoped attributed included in filter context.
+     */
+    protected BasicAttribute<ScopedAttributeValue> scope;
+    
+    /**
      * Request Context included in filter context.
      */
     protected ShibbolethAttributeRequestContext requestContext; 
@@ -85,7 +90,7 @@ public class BaseTestCase extends TestCase {
         sTree.add("one");
         sa.setValues(sTree);
 
-        BasicAttribute<ScopedAttributeValue> scope = new BasicAttribute<ScopedAttributeValue>("Scope");
+        scope = new BasicAttribute<ScopedAttributeValue>("Scope");
         TreeSet<ScopedAttributeValue> tree = new TreeSet<ScopedAttributeValue>();
         tree.add(new ScopedAttributeValue("ScopedValue","ScopedScope"));
         scope.setValues(tree);
