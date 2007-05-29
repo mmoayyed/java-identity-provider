@@ -35,8 +35,6 @@ public abstract class AbstractShibbolethProfileHandlerBeanDefinitionParser exten
         builder.addPropertyReference("securityPolicyFactory", config.getAttributeNS(null, "securityPolicyFactoryId"));
 
         builder.addPropertyReference("sessionManager", config.getAttributeNS(null, "sessionManagerId"));
-
-        builder.addPropertyReference("trustEngine", config.getAttributeNS(null, "trustEngineId"));
     }
 
 }

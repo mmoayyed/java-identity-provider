@@ -26,7 +26,6 @@ import org.opensaml.common.binding.encoding.MessageEncoder;
 import org.opensaml.common.binding.security.SAMLSecurityPolicy;
 import org.opensaml.ws.security.SecurityPolicyFactory;
 import org.opensaml.xml.XMLObjectBuilderFactory;
-import org.opensaml.xml.security.trust.TrustEngine;
 
 import edu.internet2.middleware.shibboleth.common.profile.ProfileException;
 import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
@@ -59,9 +58,6 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
 
     /** Factory used to get security policies to evaluate against a request. */
     private SecurityPolicyFactory<ServletRequest> securityPolicyFactory;
-
-    /** Trust engine used to validate peer credentials. */
-    private TrustEngine trustEngine;
 
     /** For building XML. */
     private XMLObjectBuilderFactory builderFactory;
@@ -172,24 +168,6 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
     }
 
     /**
-     * Gets the trust engine used to validate peer credentials.
-     * 
-     * @return trust engine used to validate peer credentials
-     */
-    public TrustEngine getTrustEngine() {
-        return trustEngine;
-    }
-
-    /**
-     * Sets the trust engine used to validate peer credentials.
-     * 
-     * @param engine trust engine used to validate peer credentials
-     */
-    public void setTrustEngine(TrustEngine engine) {
-        trustEngine = engine;
-    }
-
-    /**
      * Convenience method for getting the XML object builder factory.
      * 
      * @return XML object builder factory
@@ -215,8 +193,6 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
             securityPolicy.setMetadataProvider(rpManager.getMetadataProvider());
             decoder.setSecurityPolicy(securityPolicy);
         }
-
-        decoder.setTrustEngine(trustEngine);
     }
 
     /**

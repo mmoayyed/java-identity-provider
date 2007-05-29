@@ -129,16 +129,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="trustEngineId" type="string" default="shibboleth.TrustEngine">
-                    <annotation>
-                        <documentation>
-                            The component ID of the trust engine to use with the profile handler.
-
-                            This setting should not be changed from its default unless the deployer fully understands
-                            the inter-relationship between IdP components.
-                        </documentation>
-                    </annotation>
-                </attribute>
             </extension>
         </complexContent>
     </complexType>

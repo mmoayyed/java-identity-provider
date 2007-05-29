@@ -33,8 +33,6 @@ public abstract class AbstractRequestURIMappedProfileHandlerBeanDefinitionParser
 
     /** {@inheritDoc} */
     protected void doParse(Element config, BeanDefinitionBuilder builder) {
-        super.doParse(config, builder);
-
         builder.addPropertyValue("requestPaths", getRequestPaths(config));
     }
 
