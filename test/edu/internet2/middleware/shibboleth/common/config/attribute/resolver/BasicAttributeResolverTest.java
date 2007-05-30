@@ -18,8 +18,7 @@ import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 public class BasicAttributeResolverTest extends BaseConfigTestCase {
 
     /** Test Handle Request. */
-    public void testResolverInstantiation() {
-        try {
+    public void testResolverInstantiation() throws Exception{
             ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/resolver/service-config.xml");
             AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver");
 
@@ -37,8 +36,5 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
             Attribute attribute = actual.iterator().next();
             assertEquals(2, attribute.getValues().size());
             assertEquals(expected, attribute.getValues());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
     }
 }

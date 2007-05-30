@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute;
 
+import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 
@@ -23,6 +24,20 @@ import org.opensaml.saml2.metadata.provider.MetadataProvider;
  *{@link AttributeRequestContext} that adds in SAML information.
  */
 public interface SAMLAttributeRequestContext extends AttributeRequestContext{
+    
+    /**
+     * Gets the SAML 1 NameIdentifier or SAML 2 NameID value of the subject.
+     * 
+     * @return SAML 1 NameIdentifier or SAML 2 NameID value of the subject
+     */
+    public String getSubjectNameId();
+    
+    /**
+     * Gets the format of the subject name ID.
+     * 
+     * @return format of the subject name ID
+     */
+    public String getSubjectNameIdFormat();
 
     /**
      * Gets the metadata provider that may be used to lookup information about entities.
@@ -44,4 +59,11 @@ public interface SAMLAttributeRequestContext extends AttributeRequestContext{
      * @return SAML metadata for the attribute issuing entity
      */
     public EntityDescriptor getAttributeIssuerMetadata();
+    
+    /**
+     * Gets the SAML 1 or SAML 2 attribute query message.
+     * 
+     * @return SAML 1 or SAML 2 attribute query message
+     */
+    public SAMLObject getAttributeQuery();
 }

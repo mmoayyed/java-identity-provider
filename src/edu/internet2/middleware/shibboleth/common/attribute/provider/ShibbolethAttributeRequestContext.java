@@ -16,11 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.ServletRequest;
 
+import org.apache.log4j.Logger;
+import org.opensaml.common.SAMLObject;
+import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml2.core.Issuer;
+import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
@@ -28,7 +33,9 @@ import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.attribute.SAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.WebApplicationAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
+import edu.internet2.middleware.shibboleth.common.session.Session;
 
 /**
  * Shibboleth attribute request context.
@@ -36,85 +43,231 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfi
 public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestContext,
         WebApplicationAttributeRequestContext {
 
-    /** Configuration information related to relying party. */
+    /** Class logger. */
+    private final Logger log = Logger.getLogger(ShibbolethAttributeRequestContext.class);
+
+    /** Metadata provider used to look up entity information. */
+    private MetadataProvider metadatProvider;
+
+    /** Relying party configuration in effect for the attribute request. */
     private RelyingPartyConfiguration relyingPartyConfiguration;
 
-    /** Metadata provider used to lookup entity information. */
-    private MetadataProvider metadata;
+    /** Profile configuration in effect for the attribute request. */
+    private ProfileConfiguration profileConfiguration;
 
-    /** SAML metadata of attribute issuing entity. */
-    private EntityDescriptor issuerMetadata;
+    /** Attribute requester ID. */
+    private String attributeRequester;
 
-    /** SAML metadata of attribute requesting entity. */
-    private EntityDescriptor requesterMetadata;
+    /** SAML 1 or SAML 2 attribute query. */
+    private SAMLObject attributeQuery;
 
-    /** Principal name of user described by attributes. */
-    private String principal;
+    /** Name of the principal that requested attributes describe. */
+    private String principalName;
 
-    /** Method used to authenticate principal. */
-    private String principalAuthenticationMethod;
+    /** Method used to authenticate the principal. */
+    private String princpalAuthenticationMethod;
 
-    /** Servlet request that started attribute request. */
-    private ServletRequest attributeRequest;
+    /** Current user session. */
+    private Session userSession;
 
-    /** IDs of requested attributes. */
+    /** Metadata for the attribute issuer. */
+    private EntityDescriptor attributeIssuerMetadata;
+
+    /** Metadata for the attribute requester. */
+    private EntityDescriptor attributeRequestMetadata;
+
+    /** Name identifier of the SAML subject of the attribute query. */
+    private String subjectNameId;
+
+    /** Format of the subject name identifier. */
+    private String subjectNameIdFormat;
+
+    /** Attributes being requested. */
     private Set<String> requestedAttributes;
 
+    /** Servlet request that carried the attribute query. */
+    private ServletRequest servletRequest;
+
     /** Constructor. */
-    public ShibbolethAttributeRequestContext(){
-        requestedAttributes = new HashSet<String>();
+    public ShibbolethAttributeRequestContext() {
+        initialize();
     }
-    
+
     /**
      * Constructor.
      * 
      * @param provider metadata provider used to look up entity information
-     * @param rpConfig relying party configuration information
-     * 
-     * @throws MetadataProviderException thrown if their is a problem locating entity information within the metadata
-     *             provider
+     * @param rpConfig relying party configuration in effect for the attribute request
+     * @param profileConfig profile configuration in effect for the attribute request
      */
-    public ShibbolethAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig)
-            throws MetadataProviderException {
+    public ShibbolethAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig) {
+        metadatProvider = provider;
         relyingPartyConfiguration = rpConfig;
-        metadata = provider;
-        issuerMetadata = provider.getEntityDescriptor(rpConfig.getProviderId());
-        requesterMetadata = provider.getEntityDescriptor(rpConfig.getRelyingPartyId());
+
+        if (metadatProvider == null || relyingPartyConfiguration == null) {
+            throw new IllegalArgumentException("Metadata provider and relying party configuration may not be null");
+        }
+        initialize();
     }
-    
-    /** {@inheritDoc} */
-    public RelyingPartyConfiguration getRelyingPartyConfiguration() {
-        return relyingPartyConfiguration;
+
+    /**
+     * Constructor.
+     * 
+     * @param provider metadata provider used to look up entity information
+     * @param rpConfig relying party configuration in effect for the attribute request
+     * @param profileConfig profile configuration in effect for the attribute request
+     * @param query SAML 1 attribute query of this request
+     */
+    public ShibbolethAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig,
+            ProfileConfiguration profileConfig, org.opensaml.saml1.core.AttributeQuery query) {
+        metadatProvider = provider;
+        relyingPartyConfiguration = rpConfig;
+        profileConfiguration = profileConfig;
+        attributeQuery = query;
+
+        if (metadatProvider == null || relyingPartyConfiguration == null || profileConfiguration == null
+                || query == null) {
+            throw new IllegalArgumentException(
+                    "Metadata provider, relying party and profile configuration, and attribute query may not be null");
+        }
+        initialize();
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param provider metadata provider used to look up entity information
+     * @param rpConfig relying party configuration in effect for the attribute request
+     * @param profileConfig profile configuration in effect for the attribute request
+     * @param query SAML 2 attribute query of this request
+     */
+    public ShibbolethAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig,
+            ProfileConfiguration profileConfig, org.opensaml.saml2.core.AttributeQuery query) {
+        metadatProvider = provider;
+        relyingPartyConfiguration = rpConfig;
+        profileConfiguration = profileConfig;
+        attributeQuery = query;
+
+        if (metadatProvider == null || relyingPartyConfiguration == null || profileConfiguration == null
+                || query == null) {
+            throw new IllegalArgumentException(
+                    "Metadata provider, relying party and profile configuration, and attribute query may not be null");
+        }
+        initialize();
     }
 
     /** {@inheritDoc} */
     public EntityDescriptor getAttributeIssuerMetadata() {
-        return issuerMetadata;
+        return attributeIssuerMetadata;
     }
 
     /** {@inheritDoc} */
-    public MetadataProvider getMetadataProvider() {
-        return metadata;
+    public SAMLObject getAttributeQuery() {
+        return attributeQuery;
     }
 
     /** {@inheritDoc} */
     public EntityDescriptor getAttributeRequesterMetadata() {
-        return requesterMetadata;
+        return attributeRequestMetadata;
     }
 
     /** {@inheritDoc} */
-    public String getAttributeIssuer() {
-        return issuerMetadata.getEntityID();
+    public MetadataProvider getMetadataProvider() {
+        return metadatProvider;
+    }
+
+    /** {@inheritDoc} */
+    public String getSubjectNameId() {
+        return subjectNameId;
+    }
+
+    /**
+     * Sets the subject name identifier.
+     * 
+     * @param id subject name identifier
+     * 
+     * @throws IllegalArgumentException thrown if this method is called when an attribute query has been provided
+     */
+    public void setSubjectNameId(String id) {
+        if (attributeQuery != null) {
+            throw new IllegalArgumentException("A subject name ID may not be given if an attribute query is present.");
+        }
+
+        subjectNameId = DatatypeHelper.safeTrimOrNullString(id);
+    }
+
+    /** {@inheritDoc} */
+    public String getSubjectNameIdFormat() {
+        return subjectNameIdFormat;
+    }
+
+    /**
+     * Sets the format of subject name identifier.
+     * 
+     * @param format format of subject name identifier
+     * 
+     * @throws IllegalArgumentException thrown if this method is called when an attribute query has been provided
+     */
+    public void setSubjectNameIdFormat(String format) {
+        if (attributeQuery != null) {
+            throw new IllegalArgumentException(
+                    "A subject name ID format may not be given if an attribute query is present.");
+        }
+
+        subjectNameIdFormat = DatatypeHelper.safeTrimOrNullString(format);
     }
 
     /** {@inheritDoc} */
     public String getAttributeRequester() {
-        return requesterMetadata.getEntityID();
+        return attributeRequester;
+    }
+
+    /**
+     * Sets the entity ID of the attribute request.
+     * 
+     * @param requester entity ID of the attribute request
+     * 
+     * @throws IllegalArgumentException thrown if this method is called when a SAML 2 attribute query has been provided
+     */
+    public void setAttributeRequester(String requester) {
+        if (attributeQuery != null && attributeQuery instanceof org.opensaml.saml2.core.AttributeQuery) {
+            throw new IllegalArgumentException(
+                    "An attribute requester may not be given if a SAML 2 attribute query is present.");
+        }
+
+        attributeRequester = DatatypeHelper.safeTrimOrNullString(requester);
+        try {
+            attributeRequestMetadata = metadatProvider.getEntityDescriptor(attributeRequester);
+        } catch (MetadataProviderException e) {
+            log.warn("Unable to look up metadata for attribute requester: " + attributeRequester, e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public ProfileConfiguration getEffectiveProfileConfiguration() {
+        return profileConfiguration;
+    }
+
+    /**
+     * Sets the profile configuration in effect for this attribute request.
+     * 
+     * @param config profile configuration in effect for this attribute request
+     * 
+     * @throws IllegalArgumentException thrown if the given configuration is not one of the configuration contained with
+     *             the relying party configuration provided at construction time
+     */
+    public void setEffectiveProfileConfiguration(ProfileConfiguration config) {
+        if (relyingPartyConfiguration != null
+                && !relyingPartyConfiguration.getProfileConfigurations().values().contains(config)) {
+            throw new IllegalArgumentException(
+                    "Profile configuration is not a valid configuration for the provided relying party.");
+        }
+        profileConfiguration = config;
     }
 
     /** {@inheritDoc} */
     public String getPrincipalAuthenticationMethod() {
-        return principalAuthenticationMethod;
+        return princpalAuthenticationMethod;
     }
 
     /**
@@ -123,21 +276,32 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
      * @param method method used to authenticate the principal
      */
     public void setPrincipalAuthenticationMethod(String method) {
-        principalAuthenticationMethod = DatatypeHelper.safeTrimOrNullString(method);
+        princpalAuthenticationMethod = DatatypeHelper.safeTrimOrNullString(method);
     }
 
     /** {@inheritDoc} */
     public String getPrincipalName() {
-        return principal;
+        return principalName;
     }
 
     /**
-     * Sets the name of the principal that the requested attributes describe.
+     * Sets the name of the principal that requested attributes describe.
      * 
-     * @param name name of the principal that the requested attributes describe
+     * @param name name of the principal that requested attributes describe
+     * 
+     * @throws IllegalArgumentException thrown if this method is called when a user session has been provided
      */
     public void setPrincipalName(String name) {
-        principal = DatatypeHelper.safeTrimOrNullString(name);
+        if (userSession != null) {
+            throw new IllegalArgumentException("A principal name may not be given if a user session is present.");
+        }
+
+        principalName = DatatypeHelper.safeTrimOrNullString(name);
+    }
+
+    /** {@inheritDoc} */
+    public RelyingPartyConfiguration getRelyingPartyConfiguration() {
+        return relyingPartyConfiguration;
     }
 
     /** {@inheritDoc} */
@@ -145,26 +309,74 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
         return requestedAttributes;
     }
 
+    /** {@inheritDoc} */
+    public Session getUserSession() {
+        return userSession;
+    }
+
     /**
-     * Sets the attributes being requested.
+     * Sets the session of the current user. If a principal name was previously set it will be overwritten with the
+     * principal name given in the user session.
      * 
-     * @param attributes attributes being requested
+     * @param session session of the current user
      */
-    public void setRequestedAttributes(Set<String> attributes) {
-        requestedAttributes = attributes;
+    public void setUserSession(Session session) {
+        userSession = session;
+        principalName = null;
     }
 
     /** {@inheritDoc} */
     public ServletRequest getRequest() {
-        return attributeRequest;
+        return servletRequest;
     }
 
     /**
-     * Sets the servlet request that started the attribute request.
+     * Sets the servlet request that started this request.
      * 
-     * @param request servlet request that started the attribute request
+     * @param request servlet request that started this request
      */
     public void setRequest(ServletRequest request) {
-        attributeRequest = request;
+        servletRequest = request;
+    }
+
+    /**
+     * Initializes various internal variables given information provided during object construction.
+     */
+    protected void initialize() {
+        requestedAttributes = new TreeSet<String>();
+
+        if (attributeQuery != null) {
+            if (attributeQuery instanceof org.opensaml.saml1.core.AttributeQuery) {
+                org.opensaml.saml1.core.Subject subject = ((org.opensaml.saml1.core.AttributeQuery) attributeQuery)
+                        .getSubject();
+                NameIdentifier nameId = subject.getNameIdentifier();
+                subjectNameId = nameId.getNameIdentifier();
+                subjectNameIdFormat = nameId.getFormat();
+            } else {
+                org.opensaml.saml2.core.Subject subject = ((org.opensaml.saml2.core.AttributeQuery) attributeQuery)
+                        .getSubject();
+                NameID nameId = subject.getNameID();
+                subjectNameId = nameId.getValue();
+                subjectNameIdFormat = nameId.getFormat();
+
+                Issuer issuer = ((org.opensaml.saml2.core.AttributeQuery) attributeQuery).getIssuer();
+                attributeRequester = issuer.getValue();
+                try {
+                    attributeRequestMetadata = metadatProvider.getEntityDescriptor(attributeRequester);
+                } catch (MetadataProviderException e) {
+                    log.warn("Unable to look up metadata for attribute requester: " + attributeRequester, e);
+                }
+            }
+        }
+
+        if (relyingPartyConfiguration != null) {
+            try {
+                attributeIssuerMetadata = metadatProvider
+                        .getEntityDescriptor(relyingPartyConfiguration.getProviderId());
+            } catch (MetadataProviderException e) {
+                log.warn("Unable to look up metadata for attribute issuer: "
+                        + relyingPartyConfiguration.getProviderId(), e);
+            }
+        }
     }
 }

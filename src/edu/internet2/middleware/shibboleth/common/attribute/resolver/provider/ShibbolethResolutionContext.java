@@ -19,7 +19,6 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
@@ -54,7 +53,7 @@ public class ShibbolethResolutionContext {
      * 
      * @return attribute request that started this resolution
      */
-    public AttributeRequestContext getAttributeRequestContext(){
+    public ShibbolethAttributeRequestContext getAttributeRequestContext(){
         return requestContext;
     }
 

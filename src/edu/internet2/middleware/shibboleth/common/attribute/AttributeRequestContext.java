@@ -18,33 +18,37 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 
 import java.util.Set;
 
+import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
+import edu.internet2.middleware.shibboleth.common.session.Session;
 
 /**
  * Contextual information for requesting attributes from an attribute authority.
  */
 public interface AttributeRequestContext {
-    
+
     /**
-     * Gets the principal name (userid) of the user the attributes in this context describe.
+     * Gets the principal name (userid) of the user the attributes in this context describe.  If a user session 
+     * is available the results of this method must be the same as the principal name with that session.
      * 
      * @return principal name of the user the attributes in this context describe
      */
     public String getPrincipalName();
     
     /**
-     * Gets the method used to authenticate the principal to the attribute requester.
+     * Gets the method used to authenticate the principal.
      * 
-     * @return method used to authenticate the principal to the attribute requester
+     * @return method used to authenticate the principal
      */
     public String getPrincipalAuthenticationMethod();
-    
+
     /**
-     * Gets the configuration for the relying party.
+     * Gets the current user session. This may be null if, for example, an unsolicited SAML attribute query were made by
+     * the SP.
      * 
-     * @return configuration for the relying party
+     * @return current user session
      */
-    public RelyingPartyConfiguration getRelyingPartyConfiguration();
+    public Session getUserSession();
 
     /**
      * Gets the ID of the requester of the attributes.
@@ -52,14 +56,23 @@ public interface AttributeRequestContext {
      * @return requester of the attributes
      */
     public String getAttributeRequester();
+
+    /**
+     * Gets the configuration for the relying party.  The relying party ID associated with this configuration 
+     * may differ from the attribute requester ID, for example, in a case where the relying party configuration 
+     * is for a group of requesters of which the actual request is a member.
+     * 
+     * @return configuration for the relying party
+     */
+    public RelyingPartyConfiguration getRelyingPartyConfiguration();
     
     /**
-     * Gets the ID of the issuer of the attributes.
+     * Gets the effective profile configuration for the attribute requester.
      * 
-     * @return ID of the issuer of the attributes
+     * @return effective profile configuration for the attribute requester
      */
-    public String getAttributeIssuer();
-    
+    public ProfileConfiguration getEffectiveProfileConfiguration();
+
     /**
      * Gets the set of attributes, identified by their ID, that should be resolved.
      * 

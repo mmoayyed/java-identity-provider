@@ -4,12 +4,12 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
     default-autowire="byType">
 
-    <bean id="staticConfig" class="org.opensaml.resource.ClasspathResource">
+    <bean id="staticConfig" class="org.opensaml.util.resource.ClasspathResource">
         <constructor-arg
             value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver.xml" />
     </bean>
 
-    <bean id="dbConfig" class="org.opensaml.resource.ClasspathResource">
+    <bean id="dbConfig" class="org.opensaml.util.resource.ClasspathResource">
         <constructor-arg
             value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-db.xml" />
     </bean>

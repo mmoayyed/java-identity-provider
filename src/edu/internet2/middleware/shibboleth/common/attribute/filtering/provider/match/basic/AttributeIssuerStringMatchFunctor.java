@@ -27,12 +27,12 @@ public class AttributeIssuerStringMatchFunctor extends AbstractStringMatchFuncto
     /** {@inheritDoc} */
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
-        return isMatch(filterContext.getAttributeRequestContext().getAttributeIssuer());
+        return isMatch(filterContext.getAttributeRequestContext().getRelyingPartyConfiguration().getProviderId());
     }
 
     /** {@inheritDoc} */
     protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        return isMatch(filterContext.getAttributeRequestContext().getAttributeIssuer());
+        return isMatch(filterContext.getAttributeRequestContext().getRelyingPartyConfiguration().getProviderId());
     }
 }

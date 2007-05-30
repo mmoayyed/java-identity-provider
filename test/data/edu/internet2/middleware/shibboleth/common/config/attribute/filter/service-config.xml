@@ -17,11 +17,11 @@
         <property name="namespaceAware" value="true" />
     </bean>
 
-    <bean id="policy2" class="org.opensaml.resource.ClasspathResource">
+    <bean id="policy2" class="org.opensaml.util.resource.ClasspathResource">
         <constructor-arg value="/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/policy2.xml" />
     </bean>
 
-    <bean id="policy3" class="org.opensaml.resource.ClasspathResource">
+    <bean id="policy3" class="org.opensaml.util.resource.ClasspathResource">
         <constructor-arg value="/data/edu/internet2/middleware/shibboleth/common/attribute/filtering/policy3.xml" />
     </bean>
 
