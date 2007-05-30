@@ -30,52 +30,56 @@ public class CSVAuditEventRenderer implements ObjectRenderer {
 
     /** Formatter used to convert timestamps to strings. */
     private static DateTimeFormatter dateFormatter = ISODateTimeFormat.basicDateTimeNoMillis();
-    
+
     /** {@inheritDoc} */
     public String doRender(Object obj) {
-        if(!(obj instanceof AuditLogEntry)){
+        if (!(obj instanceof AuditLogEntry)) {
             return null;
         }
-        
+
         AuditLogEntry entry = (AuditLogEntry) obj;
         StringBuilder entryString = new StringBuilder();
-        
+
         entryString.append(entry.getAuditEventTime().toString(dateFormatter.withZone(DateTimeZone.UTC)));
         entryString.append("|");
-        
+
         entryString.append(entry.getRequestBinding());
         entryString.append("|");
-        
+
         entryString.append(entry.getRequestId());
         entryString.append("|");
-        
+
         entryString.append(entry.getRelyingPartyId());
         entryString.append("|");
-        
-        entryString.append(entry.getMessageProfile());        
+
+        entryString.append(entry.getMessageProfile());
         entryString.append("|");
-        
+
         entryString.append(entry.getProviderId());
         entryString.append("|");
-        
+
         entryString.append(entry.getResponseBinding());
         entryString.append("|");
-        
+
         entryString.append(entry.getResponseId());
         entryString.append("|");
-        
-        entryString.append(entry.getPrincipalId());
+
+        if (entry.getPrincipalId() != null) {
+            entryString.append(entry.getPrincipalId());
+        }
         entryString.append("|");
-        
-        entryString.append(entry.getPrincipalAuthenticationMethod());            
+
+        if (entry.getPrincipalAuthenticationMethod() != null) {
+            entryString.append(entry.getPrincipalAuthenticationMethod());
+        }
         entryString.append("|");
-        
-        for(String attribute : entry.getReleasedAttributes()){
+
+        for (String attribute : entry.getReleasedAttributes()) {
             entryString.append(attribute);
             entryString.append(",");
         }
         entryString.append("|");
-        
+
         return entryString.toString();
     }
 }
