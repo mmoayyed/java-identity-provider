@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -195,6 +196,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                         + resolutionContext.getAttributeRequestContext().getAttributeRequester());
             }
             String nameFormat = resolutionContext.getAttributeRequestContext().getSubjectNameIdFormat();
+            if(DatatypeHelper.isEmpty(nameFormat)){
+                nameFormat = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
+            }
             PrincipalConnector effectiveConnector = null;
             for (PrincipalConnector connector : principalConnectors.values()) {
                 if (connector.getFormat().equals(nameFormat)) {
@@ -223,12 +227,6 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             resolveDependencies(effectiveConnector, resolutionContext);
 
             principal = effectiveConnector.resolve(resolutionContext);
-        }
-
-        if (log.isDebugEnabled()) {
-            log.debug(getServiceName() + ": No principal connector available to resolve a subject name with format "
-                    + resolutionContext.getAttributeRequestContext().getSubjectNameIdFormat() + " for relying party "
-                    + resolutionContext.getAttributeRequestContext().getAttributeRequester());
         }
 
         return principal;
@@ -394,27 +392,31 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     protected void cleanResolvedAttributes(Map<String, Attribute> resolvedAttributes,
             ShibbolethResolutionContext resolutionContext) {
         AttributeDefinition attributeDefinition;
-        for (Entry<String, Attribute> resolvedAttribute : resolvedAttributes.entrySet()) {
-            if (resolvedAttribute.getValue().getValues().size() == 0) {
+        
+        Iterator<Entry<String, Attribute>> attributeItr = resolvedAttributes.entrySet().iterator();
+        Attribute<?> resolvedAttribute;
+        while(attributeItr.hasNext()){
+            resolvedAttribute = attributeItr.next().getValue();
+            if (resolvedAttribute.getValues().size() == 0) {
                 if (log.isDebugEnabled()) {
-                    log.debug(getServiceName() + "removing attribute " + resolvedAttribute.getKey()
+                    log.debug(getServiceName() + "removing attribute " + resolvedAttribute.getId()
                             + "  from resolution result for principal "
                             + resolutionContext.getAttributeRequestContext().getPrincipalName()
                             + ".  It contains no values.");
                 }
-                resolvedAttributes.remove(resolvedAttribute.getKey());
+                attributeItr.remove();
                 continue;
             }
 
-            attributeDefinition = getAttributeDefinitions().get(resolvedAttribute.getKey());
+            attributeDefinition = getAttributeDefinitions().get(resolvedAttribute.getId());
             if (attributeDefinition.isDependencyOnly()) {
                 if (log.isDebugEnabled()) {
-                    log.debug(getServiceName() + "removing attribute " + resolvedAttribute.getKey()
+                    log.debug(getServiceName() + "removing attribute " + resolvedAttribute.getId()
                             + "  from resolution result for principal "
                             + resolutionContext.getAttributeRequestContext().getPrincipalName()
                             + ".  It is a dependency-only attribute.");
                 }
-                resolvedAttributes.remove(resolvedAttribute.getKey());
+                attributeItr.remove();
             }
         }
     }

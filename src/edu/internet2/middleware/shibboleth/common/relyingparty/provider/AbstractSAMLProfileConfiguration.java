@@ -148,7 +148,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * @param credential credential that should be used for sign a message
      */
     public void setSigningCredential(Credential credential) {
-        if (credential.getPrivateKey() == null) {
+        if (credential != null && credential.getPrivateKey() == null) {
             throw new IllegalArgumentException("Credential does not contain a private key");
         }
         signingCredential = credential;

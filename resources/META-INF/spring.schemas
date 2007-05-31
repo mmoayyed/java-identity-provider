@@ -1,9 +1,10 @@
-urn\:mace\:shibboleth\:2.0\:resolver= schema/shibboleth-2.0-attribute-resolver.xsd
-urn\:mace\:shibboleth\:2.0\:resolver\:dc\:static= schema/shibboleth-2.0-attribute-resolver-dc-static.xsd
+urn\:mace\:shibboleth\:2.0\:resolver = schema/shibboleth-2.0-attribute-resolver.xsd
+urn\:mace\:shibboleth\:2.0\:resolver\:pc\:direct = schema/shibboleth-2.0-attribute-resolver-pc-direct.xsd
+urn\:mace\:shibboleth\:2.0\:resolver\:dc\:static = schema/shibboleth-2.0-attribute-resolver-dc-static.xsd
 urn\:mace\:shibboleth\:2.0\:resolver\:dc\:rdbms = schema/shibboleth-2.0-attribute-resolver-dc-rdbms.xsd
 urn\:mace\:shibboleth\:2.0\:resolver\:dc\:ldap = schema/shibboleth-2.0-attribute-resolver-dc-ldap.xsd
-urn\:mace\:shibboleth\:2.0\:resolver\:ad\:simple= schema/shibboleth-2.0-attribute-resolver-ad-simple.xsd
-urn\:mace\:shibboleth\:2.0\:resolver\:ad\:script= schema/shibboleth-2.0-attribute-resolver-ad-scripted.xsd
+urn\:mace\:shibboleth\:2.0\:resolver\:ad\:simple = schema/shibboleth-2.0-attribute-resolver-ad-simple.xsd
+urn\:mace\:shibboleth\:2.0\:resolver\:ad\:script = schema/shibboleth-2.0-attribute-resolver-ad-scripted.xsd
 urn\:mace\:shibboleth\:2.0\:afp = schema/shibboleth-2.0-afp.xsd
 urn\:mace\:shibboleth\:2.0\:afp\:mf\:basic = schema/shibboleth-2.0-afp-mf-basic.xsd
 urn\:mace\:shibboleth\:2.0\:metadata = schema/shibboleth-2.0-metadata.xsd

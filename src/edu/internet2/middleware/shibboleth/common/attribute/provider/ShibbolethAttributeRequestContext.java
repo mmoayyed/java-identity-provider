@@ -98,7 +98,6 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
      * 
      * @param provider metadata provider used to look up entity information
      * @param rpConfig relying party configuration in effect for the attribute request
-     * @param profileConfig profile configuration in effect for the attribute request
      */
     public ShibbolethAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig) {
         metadatProvider = provider;
@@ -115,20 +114,17 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
      * 
      * @param provider metadata provider used to look up entity information
      * @param rpConfig relying party configuration in effect for the attribute request
-     * @param profileConfig profile configuration in effect for the attribute request
      * @param query SAML 1 attribute query of this request
      */
     public ShibbolethAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig,
-            ProfileConfiguration profileConfig, org.opensaml.saml1.core.AttributeQuery query) {
+            org.opensaml.saml1.core.AttributeQuery query) {
         metadatProvider = provider;
         relyingPartyConfiguration = rpConfig;
-        profileConfiguration = profileConfig;
         attributeQuery = query;
 
-        if (metadatProvider == null || relyingPartyConfiguration == null || profileConfiguration == null
-                || query == null) {
+        if (metadatProvider == null || relyingPartyConfiguration == null || query == null) {
             throw new IllegalArgumentException(
-                    "Metadata provider, relying party and profile configuration, and attribute query may not be null");
+                    "Metadata provider, relying party configuration, and attribute query may not be null");
         }
         initialize();
     }
@@ -138,20 +134,17 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
      * 
      * @param provider metadata provider used to look up entity information
      * @param rpConfig relying party configuration in effect for the attribute request
-     * @param profileConfig profile configuration in effect for the attribute request
      * @param query SAML 2 attribute query of this request
      */
     public ShibbolethAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig,
-            ProfileConfiguration profileConfig, org.opensaml.saml2.core.AttributeQuery query) {
+            org.opensaml.saml2.core.AttributeQuery query) {
         metadatProvider = provider;
         relyingPartyConfiguration = rpConfig;
-        profileConfiguration = profileConfig;
         attributeQuery = query;
 
-        if (metadatProvider == null || relyingPartyConfiguration == null || profileConfiguration == null
-                || query == null) {
+        if (metadatProvider == null || relyingPartyConfiguration == null || query == null) {
             throw new IllegalArgumentException(
-                    "Metadata provider, relying party and profile configuration, and attribute query may not be null");
+                    "Metadata provider, relying party configuration, and attribute query may not be null");
         }
         initialize();
     }
@@ -257,7 +250,7 @@ public class ShibbolethAttributeRequestContext implements SAMLAttributeRequestCo
      *             the relying party configuration provided at construction time
      */
     public void setEffectiveProfileConfiguration(ProfileConfiguration config) {
-        if (relyingPartyConfiguration != null
+        if (relyingPartyConfiguration != null && config != null
                 && !relyingPartyConfiguration.getProfileConfigurations().values().contains(config)) {
             throw new IllegalArgumentException(
                     "Profile configuration is not a valid configuration for the provided relying party.");

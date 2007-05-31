@@ -28,7 +28,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Ab
 /**
  * Abstract base class for principal connectors.
  */
-public abstract class AbstractPrincipalConnector extends AbstractResolutionPlugIn<String> implements PrincipalConnector {
+public abstract class AbstractPrincipalConnector extends AbstractResolutionPlugIn<String> implements
+        PrincipalConnector {
 
     /** Log4j logger. */
     private static Logger log = Logger.getLogger(AbstractPrincipalConnector.class);

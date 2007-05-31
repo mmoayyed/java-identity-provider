@@ -137,7 +137,7 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
      * @param configuration configuration to populate
      */
     protected void populateBean(AbstractSAML2ProfileConfiguration configuration){
-        populateBean(configuration);
+        super.populateBean(configuration);
         
         configuration.setAttributeAuthority(getAttributeAuthority());
         configuration.setEncryptAssertion(isEncryptAssertions());

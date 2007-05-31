@@ -39,7 +39,7 @@ public abstract class BasePrincipalConnectrBeanDefinitionParser extends Abstract
             java.util.Map<javax.xml.namespace.QName, java.util.List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         
-        pluginBuilder.addPropertyValue("nameIDFormat", DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(
+        pluginBuilder.addPropertyValue("nameIdFormat", DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(
                 null, NAMEID_FORMAT_ATTRIBUTE_NAME)));
     }
 }
