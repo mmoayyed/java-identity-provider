@@ -24,15 +24,15 @@ import java.util.TreeSet;
 
 import org.opensaml.xml.util.DatatypeHelper;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 
 /**
  * Basic {@Attribute} implementation.
  * 
  * @param <ValueType> value type
  */
-public class BasicAttribute<ValueType> extends Attribute<ValueType> implements Cloneable {
+public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implements Cloneable {
 
     /** ID of this attribute. */
     private String id;

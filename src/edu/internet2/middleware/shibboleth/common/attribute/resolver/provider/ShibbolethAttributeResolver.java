@@ -30,13 +30,16 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
+import org.opensaml.common.SAMLObject;
+import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml2.core.NameID;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.context.ApplicationContext;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
@@ -55,7 +58,7 @@ import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
  * implementations must use a directed dependency graph when performing the resolution.
  */
 public class ShibbolethAttributeResolver extends BaseReloadableService implements
-        AttributeResolver<ShibbolethAttributeRequestContext> {
+        AttributeResolver<ShibbolethSAMLAttributeRequestContext> {
 
     /** Log4j logger. */
     private static Logger log = Logger.getLogger(ShibbolethAttributeResolver.class.getName());
@@ -124,12 +127,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolveAttributes(ShibbolethAttributeRequestContext attributeRequestContext)
+    public Map<String, BaseAttribute> resolveAttributes(ShibbolethSAMLAttributeRequestContext attributeRequestContext)
             throws AttributeResolutionException {
         ShibbolethResolutionContext resolutionContext = new ShibbolethResolutionContext(attributeRequestContext);
-
-        String principal = resolvePrincipalName(resolutionContext);
-        attributeRequestContext.setPrincipalName(principal);
 
         if (log.isDebugEnabled()) {
             log.debug(getServiceName() + " resolving attributes for principal "
@@ -141,10 +141,10 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                         + " so no attributes can be resolved for principal "
                         + attributeRequestContext.getPrincipalName());
             }
-            return new HashMap<String, Attribute>();
+            return new HashMap<String, BaseAttribute>();
         }
 
-        Map<String, Attribute> resolvedAttributes = resolveAttributes(resolutionContext);
+        Map<String, BaseAttribute> resolvedAttributes = resolveAttributes(resolutionContext);
         cleanResolvedAttributes(resolvedAttributes, resolutionContext);
 
         if (log.isDebugEnabled()) {
@@ -180,56 +180,71 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     /**
      * Resolves the principal name for the subject of the request.
      * 
-     * @param resolutionContext current resolution context
+     * @param requestContext current request context
      * 
      * @return principal name for the subject of the request
      * 
      * @throws AttributeResolutionException thrown if the subject identifier information can not be resolved into a
      *             principal name
      */
-    protected String resolvePrincipalName(ShibbolethResolutionContext resolutionContext)
+    public String resolvePrincipalName(ShibbolethSAMLAttributeRequestContext requestContext)
             throws AttributeResolutionException {
-        String principal = resolutionContext.getAttributeRequestContext().getPrincipalName();
-        if (DatatypeHelper.isEmpty(principal)) {
-            if (log.isDebugEnabled()) {
-                log.debug(getServiceName() + ": Resolving principal name for request from relying party "
-                        + resolutionContext.getAttributeRequestContext().getAttributeRequester());
-            }
-            String nameFormat = resolutionContext.getAttributeRequestContext().getSubjectNameIdFormat();
-            if(DatatypeHelper.isEmpty(nameFormat)){
-                nameFormat = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
-            }
-            PrincipalConnector effectiveConnector = null;
-            for (PrincipalConnector connector : principalConnectors.values()) {
-                if (connector.getFormat().equals(nameFormat)) {
-                    if (connector.getRelyingParties().contains(
-                            resolutionContext.getAttributeRequestContext().getAttributeRequester())) {
-                        effectiveConnector = connector;
-                        break;
-                    }
 
-                    if (connector.getRelyingParties().isEmpty()) {
-                        effectiveConnector = connector;
-                    }
+        String nameIdFormat = getNameIdentifierFormat(requestContext.getSubjectNameIdentifier());
+
+        PrincipalConnector effectiveConnector = null;
+        for (PrincipalConnector connector : principalConnectors.values()) {
+            if (connector.getFormat().equals(nameIdFormat)) {
+                if (connector.getRelyingParties().contains(requestContext.getAttributeRequester())) {
+                    effectiveConnector = connector;
+                    break;
+                }
+
+                if (connector.getRelyingParties().isEmpty()) {
+                    effectiveConnector = connector;
                 }
             }
-
-            if (effectiveConnector == null) {
-                throw new AttributeResolutionException(
-                        "No principal connector available to resolve a subject name with format " + nameFormat
-                                + " for relying party "
-                                + resolutionContext.getAttributeRequestContext().getAttributeRequester());
-            }
-
-            effectiveConnector = new ContextualPrincipalConnector(effectiveConnector);
-
-            // resolve all the connectors dependencies
-            resolveDependencies(effectiveConnector, resolutionContext);
-
-            principal = effectiveConnector.resolve(resolutionContext);
         }
 
-        return principal;
+        if (effectiveConnector == null) {
+            throw new AttributeResolutionException(
+                    "No principal connector available to resolve a subject name with format " + nameIdFormat
+                            + " for relying party " + requestContext.getAttributeRequester());
+        }
+
+        effectiveConnector = new ContextualPrincipalConnector(effectiveConnector);
+
+        ShibbolethResolutionContext resolutionContext = new ShibbolethResolutionContext(requestContext);
+
+        // resolve all the connectors dependencies
+        resolveDependencies(effectiveConnector, resolutionContext);
+
+        return effectiveConnector.resolve(resolutionContext);
+    }
+
+    /**
+     * Gets the format of the name identifier used to identify the subject.
+     * 
+     * @param nameIdentifier name identifier used to identify the subject
+     * 
+     * @return format of the name identifier used to identify the subject
+     */
+    protected String getNameIdentifierFormat(SAMLObject nameIdentifier) {
+        String subjectNameFormat = null;
+
+        if (nameIdentifier instanceof NameIdentifier) {
+            NameIdentifier identifier = (NameIdentifier) nameIdentifier;
+            subjectNameFormat = identifier.getFormat();
+        } else if (nameIdentifier instanceof NameID) {
+            NameID identifier = (NameID) nameIdentifier;
+            subjectNameFormat = identifier.getFormat();
+        }
+
+        if (DatatypeHelper.isEmpty(subjectNameFormat)) {
+            subjectNameFormat = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
+        }
+
+        return subjectNameFormat;
     }
 
     /**
@@ -242,10 +257,10 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      * 
      * @throws AttributeResolutionException thrown if the attributes could not be resolved
      */
-    protected Map<String, Attribute> resolveAttributes(ShibbolethResolutionContext resolutionContext)
+    protected Map<String, BaseAttribute> resolveAttributes(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         Set<String> attributeIDs = resolutionContext.getAttributeRequestContext().getRequestedAttributes();
-        Map<String, Attribute> resolvedAttributes = new HashMap<String, Attribute>();
+        Map<String, BaseAttribute> resolvedAttributes = new HashMap<String, BaseAttribute>();
 
         // if no attributes requested, then resolve everything
         if (attributeIDs == null || attributeIDs.isEmpty()) {
@@ -260,7 +275,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         Lock readLock = getReadWriteLock().readLock();
         readLock.lock();
         for (String attributeID : attributeIDs) {
-            Attribute resolvedAttribute = resolveAttribute(attributeID, resolutionContext);
+            BaseAttribute resolvedAttribute = resolveAttribute(attributeID, resolutionContext);
             if (resolvedAttribute != null) {
                 resolvedAttributes.put(resolvedAttribute.getId(), resolvedAttribute);
             }
@@ -286,7 +301,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      * 
      * @throws AttributeResolutionException if unable to resolve the requested attribute definition
      */
-    protected Attribute resolveAttribute(String attributeID, ShibbolethResolutionContext resolutionContext)
+    protected BaseAttribute resolveAttribute(String attributeID, ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
         AttributeDefinition definition = resolutionContext.getResolvedAttributeDefinitions().get(attributeID);
@@ -389,13 +404,13 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      * @param resolvedAttributes attribute set to clean up
      * @param resolutionContext current resolution context
      */
-    protected void cleanResolvedAttributes(Map<String, Attribute> resolvedAttributes,
+    protected void cleanResolvedAttributes(Map<String, BaseAttribute> resolvedAttributes,
             ShibbolethResolutionContext resolutionContext) {
         AttributeDefinition attributeDefinition;
-        
-        Iterator<Entry<String, Attribute>> attributeItr = resolvedAttributes.entrySet().iterator();
-        Attribute<?> resolvedAttribute;
-        while(attributeItr.hasNext()){
+
+        Iterator<Entry<String, BaseAttribute>> attributeItr = resolvedAttributes.entrySet().iterator();
+        BaseAttribute<?> resolvedAttribute;
+        while (attributeItr.hasNext()) {
             resolvedAttribute = attributeItr.next().getValue();
             if (resolvedAttribute.getValues().size() == 0) {
                 if (log.isDebugEnabled()) {

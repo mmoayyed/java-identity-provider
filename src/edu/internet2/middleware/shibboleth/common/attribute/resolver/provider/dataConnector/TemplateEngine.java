@@ -27,7 +27,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
@@ -114,7 +114,7 @@ public class TemplateEngine {
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("principal", resolutionContext.getAttributeRequestContext().getPrincipalName());
 
-        Map<String, Attribute> attributes;
+        Map<String, BaseAttribute> attributes;
         DataConnector dataConnector;
         for (String connectorId : dataConnectors) {
             dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorId);
@@ -127,7 +127,7 @@ public class TemplateEngine {
             }
         }
 
-        Attribute attribute;
+        BaseAttribute attribute;
         AttributeDefinition attributeDefinition;
         for (String definitionId : attributeDefinitions) {
             attributeDefinition = resolutionContext.getResolvedAttributeDefinitions().get(definitionId);

@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.d
 import java.util.List;
 import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 
 /**
@@ -27,7 +27,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Re
  * 
  * Data connectors must be stateless and thread-safe as a single instance may be used to service every request.
  */
-public interface DataConnector extends ResolutionPlugIn<Map<String, Attribute>> {
+public interface DataConnector extends ResolutionPlugIn<Map<String, BaseAttribute>> {
 
     /**
      * Returns the IDs of data connectors to use if this one fails.

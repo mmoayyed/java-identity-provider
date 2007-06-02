@@ -34,8 +34,6 @@ import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
@@ -45,9 +43,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.SpringDocumentLoader;
-import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
@@ -183,10 +182,11 @@ public class AttributeAuthorityCLI {
      * @return SAML 1 attribute statement
      */
     private static SAMLObject performSAML1AttributeResolution(CmdLineParser parser, ApplicationContext appCtx) {
-        ShibbolethAttributeRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
+        ShibbolethSAMLAttributeRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
 
         try {
-            return saml1AA.performAttributeQuery(requestCtx);
+            Map<String, BaseAttribute> attributes = saml1AA.getAttributes(requestCtx);
+            return saml1AA.buildAttributeStatement(null, attributes.values());
         } catch (AttributeRequestException e) {
             errorAndExit("Error encountered during attribute resolution and filtering", e);
         }
@@ -203,10 +203,11 @@ public class AttributeAuthorityCLI {
      * @return SAML 2 attribute statement
      */
     private static SAMLObject performSAML2AttributeResolution(CmdLineParser parser, ApplicationContext appCtx) {
-        ShibbolethAttributeRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
+        ShibbolethSAMLAttributeRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
 
         try {
-            return saml2AA.performAttributeQuery(requestCtx);
+            Map<String, BaseAttribute> attributes = saml2AA.getAttributes(requestCtx);
+            return saml2AA.buildAttributeStatement(null, attributes.values());
         } catch (AttributeRequestException e) {
             errorAndExit("Error encountered during attribute resolution and filtering", e);
         }
@@ -222,14 +223,16 @@ public class AttributeAuthorityCLI {
      * 
      * @return attribute request context
      */
-    private static ShibbolethAttributeRequestContext buildAttributeRequestContext(CmdLineParser parser,
+    private static ShibbolethSAMLAttributeRequestContext buildAttributeRequestContext(CmdLineParser parser,
             ApplicationContext appCtx) {
         String issuer = (String) parser.getOptionValue(CLIParserBuilder.ISSUER_ARG);
         String requester = (String) parser.getOptionValue(CLIParserBuilder.REQUESTER_ARG);
-        
+
         RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration(issuer, requester);
 
-        ShibbolethAttributeRequestContext attribReqCtx = new ShibbolethAttributeRequestContext();
+        ShibbolethSAMLAttributeRequestContext attribReqCtx = new ShibbolethSAMLAttributeRequestContext();
+        attribReqCtx.setAttributeRequest(requester);
+        attribReqCtx.setRelyingPartyConfiguration(rpConfig);
 
         String principal = (String) parser.getOptionValue(CLIParserBuilder.PRINCIPAL_ARG);
         attribReqCtx.setPrincipalName(principal);
@@ -265,7 +268,7 @@ public class AttributeAuthorityCLI {
         console.setWriter(new PrintWriter(System.err));
         console.setName("stderr");
         console.setLayout(new PatternLayout("%d{ABSOLUTE} %-5p [%c{1}] %m%n"));
-        
+
         Logger root = Logger.getRootLogger();
         root.addAppender(console);
         root.setLevel(Level.ERROR);
@@ -305,10 +308,9 @@ public class AttributeAuthorityCLI {
                 "SAML entity ID of the attribute issuer. For example, the IdPs entity ID"));
         out.println(String
                 .format("  --%-16s %s", CLIParserBuilder.AUTHN_METHOD, "Method used to authenticate the user"));
-        out
-                .println(String
-                        .format("  --%-16s %s", CLIParserBuilder.SAML1,
-                                "No-value parameter indicating the attribute authority should answer as if it received a SAML 1 request"));
+        out.println(String
+                .format("  --%-16s %s", CLIParserBuilder.SAML1,
+                    "No-value parameter indicating the attribute authority should answer as if it received a SAML 1 request"));
 
         out.println();
     }

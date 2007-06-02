@@ -22,7 +22,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1ScopedStringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1ScopedStringAttributeEncoder;
 
 /**
  * Spring Bean Definition Parser for SAML1 string attribute encoder.

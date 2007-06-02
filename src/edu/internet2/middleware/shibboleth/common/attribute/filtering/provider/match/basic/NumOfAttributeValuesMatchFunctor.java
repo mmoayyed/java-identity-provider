@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
@@ -67,7 +67,7 @@ public class NumOfAttributeValuesMatchFunctor implements MatchFunctor {
      * 
      * @return true if the attribute has more than the minimum number of values and less than the maximum.
      */
-    protected boolean isWithinRange(Attribute attribute) {
+    protected boolean isWithinRange(BaseAttribute attribute) {
         if (attribute == null) {
             return false;
         }

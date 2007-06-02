@@ -53,23 +53,26 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
 
         builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "assertionLifetime"))));
-        
-        builder.addPropertyValue("defaultNameFormat", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
-                "defaultNameFormat")));
-        
+
+        builder.addPropertyValue("subjectNameAttributeId", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
+                null, "subjectNameAttributeID")));
+
+        builder.addPropertyValue("subjectNameFormat", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
+                "subjectNameFormat")));
+
         builder.addPropertyValue("defaultArtifactType", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "defaultArtifactType"))));
-        
-        builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                null, "signRequests")));
-        
-        builder.addPropertyValue("signResponses", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                null, "signResponses")));
-        
+
+        builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
+                "signRequests")));
+
+        builder.addPropertyValue("signResponses", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
+                "signResponses")));
+
         builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
                 null, "signAssertions")));
     }
-    
+
     /** {@inheritDoc} */
     protected boolean shouldGenerateId() {
         return true;

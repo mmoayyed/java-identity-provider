@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute;
+package edu.internet2.middleware.shibboleth.common.attribute.encoding;
 
 import org.opensaml.common.xml.SAMLConstants;
 

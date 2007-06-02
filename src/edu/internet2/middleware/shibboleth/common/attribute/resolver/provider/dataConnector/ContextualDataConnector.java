@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
@@ -34,7 +34,7 @@ public class ContextualDataConnector implements DataConnector {
     private DataConnector connector;
 
     /** Cached result of resolving the data connector. */
-    private Map<String, Attribute> attributes;
+    private Map<String, BaseAttribute> attributes;
 
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext)
+    public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         if (attributes == null) {
             attributes = connector.resolve(resolutionContext);

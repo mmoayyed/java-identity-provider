@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2;
 import java.util.Collection;
 import java.util.HashSet;
 
-import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**

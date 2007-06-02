@@ -16,6 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector;
 
+import org.opensaml.common.SAMLObject;
+import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml2.core.NameID;
+
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
@@ -26,7 +30,15 @@ public class DirectPrincipalConnector extends AbstractPrincipalConnector {
 
     /** {@inheritDoc} */
     public String resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
-        return resolutionContext.getAttributeRequestContext().getSubjectNameId();
+        SAMLObject nameIdentifier = resolutionContext.getAttributeRequestContext().getSubjectNameIdentifier();
+
+        if (nameIdentifier instanceof NameIdentifier) {
+            return ((NameIdentifier) nameIdentifier).getNameIdentifier();
+        } else if (nameIdentifier instanceof NameID) {
+            return ((NameID) nameIdentifier).getValue();
+        } else {
+            return null;
+        }
     }
 
     /** {@inheritDoc} */

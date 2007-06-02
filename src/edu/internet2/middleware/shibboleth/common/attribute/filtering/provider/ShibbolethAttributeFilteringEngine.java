@@ -31,10 +31,10 @@ import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
 
 /**
@@ -43,7 +43,7 @@ import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
  * TODO consider using Log4J NDC for filter engine name
  */
 public class ShibbolethAttributeFilteringEngine extends BaseReloadableService implements
-        AttributeFilteringEngine<ShibbolethAttributeRequestContext> {
+        AttributeFilteringEngine<ShibbolethSAMLAttributeRequestContext> {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(ShibbolethAttributeFilteringEngine.class);
@@ -84,8 +84,8 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> filterAttributes(Map<String, Attribute> attributes,
-            ShibbolethAttributeRequestContext context) throws AttributeFilteringException {
+    public Map<String, BaseAttribute> filterAttributes(Map<String, BaseAttribute> attributes,
+            ShibbolethSAMLAttributeRequestContext context) throws AttributeFilteringException {
 
         if (log.isDebugEnabled()) {
             log.debug(getServiceName() + " filtering " + attributes.size() + " attributes for principal "
@@ -97,7 +97,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
                 log.debug("No filter policies were loaded in " + getServiceName()
                         + ", filtering out all attributes for " + context.getPrincipalName());
             }
-            return new HashMap<String, Attribute>();
+            return new HashMap<String, BaseAttribute>();
         }
 
         ShibbolethFilteringContext filterContext = new ShibbolethFilteringContext(attributes, context);
@@ -108,9 +108,9 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         }
         readLock.unlock();
 
-        Iterator<Entry<String, Attribute>> attributeEntryItr = attributes.entrySet().iterator();
-        Entry<String, Attribute> attributeEntry;
-        Attribute attribute;
+        Iterator<Entry<String, BaseAttribute>> attributeEntryItr = attributes.entrySet().iterator();
+        Entry<String, BaseAttribute> attributeEntry;
+        BaseAttribute attribute;
         SortedSet retainedValues;
         while(attributeEntryItr.hasNext()){
             attributeEntry = attributeEntryItr.next();

@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
@@ -29,7 +29,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 public class ShibbolethResolutionContext {
 
     /** Attribute request context. */
-    private ShibbolethAttributeRequestContext requestContext;
+    private ShibbolethSAMLAttributeRequestContext requestContext;
 
     /** Attribute Definitions that have been resolved for this request. */
     private Map<String, AttributeDefinition> resolvedDefinitions;
@@ -42,7 +42,7 @@ public class ShibbolethResolutionContext {
      *
      * @param context the attribute request this resolution is being performed for
      */
-    public ShibbolethResolutionContext(ShibbolethAttributeRequestContext context) {
+    public ShibbolethResolutionContext(ShibbolethSAMLAttributeRequestContext context) {
         requestContext = context;
         resolvedDefinitions = new HashMap<String, AttributeDefinition>();
         resolvedConnectors = new HashMap<String, DataConnector>();
@@ -53,7 +53,7 @@ public class ShibbolethResolutionContext {
      * 
      * @return attribute request that started this resolution
      */
-    public ShibbolethAttributeRequestContext getAttributeRequestContext(){
+    public ShibbolethSAMLAttributeRequestContext getAttributeRequestContext(){
         return requestContext;
     }
 

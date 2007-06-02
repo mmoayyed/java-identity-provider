@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AbstractResolutionPlugIn;
 
 /**
  * Base class for {@link DataConnector} plug-ins.
  */
-public abstract class BaseDataConnector extends AbstractResolutionPlugIn<Map<String, Attribute>> implements
+public abstract class BaseDataConnector extends AbstractResolutionPlugIn<Map<String, BaseAttribute>> implements
         DataConnector {
 
     /** ID of the data connector to use if this one fails. */

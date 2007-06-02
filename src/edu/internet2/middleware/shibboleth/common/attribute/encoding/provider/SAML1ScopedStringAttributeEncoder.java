@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
 import org.opensaml.saml1.core.AttributeValue;
 import org.opensaml.saml1.core.impl.AttributeBuilder;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
-import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML1AttributeEncoder;
 
 /**
  * Implementation of SAML 1.X scoped attribute encoder.
@@ -53,7 +53,7 @@ public class SAML1ScopedStringAttributeEncoder extends
     }
 
     /** {@inheritDoc} */
-    public org.opensaml.saml1.core.Attribute encode(Attribute attribute) throws AttributeEncodingException {
+    public org.opensaml.saml1.core.Attribute encode(BaseAttribute attribute) throws AttributeEncodingException {
 
         org.opensaml.saml1.core.Attribute samlAttribute;
         samlAttribute = attributeBuilder.buildObject();

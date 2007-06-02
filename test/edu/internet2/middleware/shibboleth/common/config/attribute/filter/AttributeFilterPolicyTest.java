@@ -22,11 +22,11 @@ import java.util.Map;
 import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
 /**
@@ -34,9 +34,9 @@ import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
  */
 public class AttributeFilterPolicyTest extends BaseConfigTestCase {
 
-    private Map<String, Attribute> attributes;
+    private Map<String, BaseAttribute> attributes;
 
-    private ShibbolethAttributeRequestContext requestContext;
+    private ShibbolethSAMLAttributeRequestContext requestContext;
     
     private ApplicationContext appContext;
 
@@ -44,7 +44,7 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        attributes = new HashMap<String, Attribute>();
+        attributes = new HashMap<String, BaseAttribute>();
 
         BasicAttribute<String> firstName = new BasicAttribute<String>("firstName");
         firstName.getValues().add("john");
@@ -65,7 +65,7 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
         affiliation.getValues().add("illegalValue");
         attributes.put(affiliation.getId(), affiliation);
 
-        requestContext = new ShibbolethAttributeRequestContext();
+        requestContext = new ShibbolethSAMLAttributeRequestContext();
         requestContext.setPrincipalName("jsmith");
         requestContext.getRequestedAttributes().addAll(attributes.keySet());
         
@@ -76,11 +76,11 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
     public void testEngineA() throws ResourceException, AttributeFilteringException {
         ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext
                 .getBean("engineA");
-        Map<String, Attribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
+        Map<String, BaseAttribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
 
         assertEquals(1, filteredAttributes.size());
 
-        Attribute attribute;
+        BaseAttribute attribute;
         attribute = filteredAttributes.get("firstName");
         assertNull(attribute);
         
@@ -97,11 +97,11 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
     public void testEngineB() throws ResourceException, AttributeFilteringException {
         ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext
                 .getBean("engineB");
-        Map<String, Attribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
+        Map<String, BaseAttribute> filteredAttributes = filterEngine.filterAttributes(attributes, requestContext);
 
         assertEquals(1, filteredAttributes.size());
 
-        Attribute attribute;
+        BaseAttribute attribute;
         attribute = filteredAttributes.get("firstName");
         assertNull(attribute);
         

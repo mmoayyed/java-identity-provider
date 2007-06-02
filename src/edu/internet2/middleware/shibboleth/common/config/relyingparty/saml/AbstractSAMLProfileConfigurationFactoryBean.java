@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 import java.util.List;
 
 import org.opensaml.xml.security.credential.Credential;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
@@ -34,18 +35,21 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     /** Amount of time before an issued assertion expires. */
     private long assertionLifetime;
 
-    /** Default name identifier format for the relying party. */
-    private String defaultNameFormat;
+    /** ID of the attribute to use as the subject name. */
+    private String subjectNameAttributeId;
+
+    /** Format for the subject name. */
+    private String subjectNameFormat;
 
     /** Default artifact type for the relying party. */
     private int defaultArtifactType;
 
     /** Whether assertions should be signed. */
     private boolean signAssertions;
-    
+
     /** Whether to sign protocol requests. */
     private boolean signRequests;
-    
+
     /** Whether to sign protocol responses. */
     private boolean signResponses;
 
@@ -108,12 +112,30 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     }
 
     /**
+     * Gets the ID of the attribute used the provide the subject name.
+     * 
+     * @return ID of the attribute used the provide the subject name
+     */
+    public String getSubjectNameAttributeId() {
+        return subjectNameAttributeId;
+    }
+
+    /**
+     * Sets the ID of the attribute used to provide the subject name.
+     * 
+     * @param id ID of the attribute used the provide the subject name
+     */
+    public void setSubjectNameAttributeId(String id) {
+        subjectNameAttributeId = DatatypeHelper.safeTrimOrNullString(id);
+    }
+
+    /**
      * Gets the default name identifier format for the relying party.
      * 
      * @return default name identifier format for the relying party
      */
-    public String getDefaultNameFormat() {
-        return defaultNameFormat;
+    public String getSubjectNameFormat() {
+        return subjectNameFormat;
     }
 
     /**
@@ -121,43 +143,43 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @param format default name identifier format for the relying party
      */
-    public void setDefaultNameFormat(String format) {
-        defaultNameFormat = format;
+    public void setSubjectNameFormat(String format) {
+        subjectNameFormat = format;
     }
-    
+
     /**
      * Gets whether to sign protocol requests.
      * 
      * @return whether to sign protocol requests
      */
-    public boolean getSignRequests(){
+    public boolean getSignRequests() {
         return signRequests;
     }
-    
+
     /**
      * Sets whether to sign protocol requests.
      * 
      * @param sign whether to sign protocol requests
      */
-    public void setSignRequests(boolean sign){
+    public void setSignRequests(boolean sign) {
         signRequests = sign;
     }
-    
+
     /**
      * Gets whether to sign protocol responses.
      * 
      * @return whether to sign protocol responses
      */
-    public boolean getSignResposnes(){
+    public boolean getSignResposnes() {
         return signResponses;
     }
-    
+
     /**
      * Sets whether to sign protocol responses.
      * 
      * @param sign whether to sign protocol responses
      */
-    public void setSignResponses(boolean sign){
+    public void setSignResponses(boolean sign) {
         signResponses = sign;
     }
 
@@ -196,17 +218,18 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     public void setSigningCredential(Credential credential) {
         signingCredential = credential;
     }
-    
+
     /**
      * Populates the given profile configuration with standard information.
      * 
      * @param configuration configuration to populate
      */
-    protected void populateBean(AbstractSAMLProfileConfiguration configuration){
+    protected void populateBean(AbstractSAMLProfileConfiguration configuration) {
         configuration.setAssertionAudiences(getAudiences());
         configuration.setAssertionLifetime(getAssertionLifetime());
         configuration.setDefaultArtifactType(getDefaultArtifactType());
-        configuration.setDefaultNameIDFormat(getDefaultNameFormat());
+        configuration.setSubjectNameAttributeId(getSubjectNameAttributeId());
+        configuration.setSubjectNameFormat(getSubjectNameFormat());
         configuration.setSignRequests(getSignRequests());
         configuration.setSignResponses(getSignResposnes());
         configuration.setSignAssertions(getSignAssertions());

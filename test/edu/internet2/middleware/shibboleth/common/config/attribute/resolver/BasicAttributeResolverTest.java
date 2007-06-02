@@ -7,8 +7,8 @@ import java.util.TreeSet;
 
 import org.springframework.context.ApplicationContext;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
@@ -19,22 +19,22 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
 
     /** Test Handle Request. */
     public void testResolverInstantiation() throws Exception{
-            ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/resolver/service-config.xml");
-            AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver");
+        ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/resolver/service-config.xml");
+        AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver");
 
-            ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
-            context.setPrincipalName("ttrojan");
+        ShibbolethSAMLAttributeRequestContext context = new ShibbolethSAMLAttributeRequestContext();
+        context.setPrincipalName("ttrojan");
 
-            SortedSet<String> expected = new TreeSet<String>();
-            expected.add("gpburdell");
-            expected.add("ttrojan");
+        SortedSet<String> expected = new TreeSet<String>();
+        expected.add("gpburdell");
+        expected.add("ttrojan");
 
-            Collection<Attribute> actual = resolver.resolveAttributes(context).values();
+        Collection<BaseAttribute> actual = resolver.resolveAttributes(context).values();
 
-            assertEquals(1, actual.size());
+        assertEquals(1, actual.size());
 
-            Attribute attribute = actual.iterator().next();
-            assertEquals(2, attribute.getValues().size());
-            assertEquals(expected, attribute.getValues());
+        BaseAttribute attribute = actual.iterator().next();
+        assertEquals(2, attribute.getValues().size());
+        assertEquals(expected, attribute.getValues());
     }
 }

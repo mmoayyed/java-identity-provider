@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 
 /**
  * Contextual information for performing attribute filtering.
@@ -30,10 +30,10 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethA
 public class ShibbolethFilteringContext {
 
     /** The attribute request. */
-    private ShibbolethAttributeRequestContext attributeRequestContext;
+    private ShibbolethSAMLAttributeRequestContext attributeRequestContext;
 
     /** Attributes being filtered. */
-    private Map<String, Attribute> unfilteredAttributes;
+    private Map<String, BaseAttribute> unfilteredAttributes;
 
     /** Retained values for a given attribute. */
     private Map<String, SortedSet> retainedValues;
@@ -44,7 +44,7 @@ public class ShibbolethFilteringContext {
      * @param attributes unfiltered attribute set
      * @param context attribute request context
      */
-    public ShibbolethFilteringContext(Map<String, Attribute> attributes, ShibbolethAttributeRequestContext context) {
+    public ShibbolethFilteringContext(Map<String, BaseAttribute> attributes, ShibbolethSAMLAttributeRequestContext context) {
         attributeRequestContext = context;
         unfilteredAttributes = attributes;
         retainedValues = new HashMap<String, SortedSet>();
@@ -55,7 +55,7 @@ public class ShibbolethFilteringContext {
      * 
      * @return context for the attribute request
      */
-    public ShibbolethAttributeRequestContext getAttributeRequestContext() {
+    public ShibbolethSAMLAttributeRequestContext getAttributeRequestContext() {
         return attributeRequestContext;
     }
 
@@ -64,7 +64,7 @@ public class ShibbolethFilteringContext {
      * 
      * @return attributes being filtered
      */
-    public Map<String, Attribute> getUnfilteredAttributes() {
+    public Map<String, BaseAttribute> getUnfilteredAttributes() {
         return unfilteredAttributes;
     }
 
@@ -81,7 +81,7 @@ public class ShibbolethFilteringContext {
         SortedSet attributeValues = null;
         if (!retainedValues.containsKey(attributeId) && prepopulate) {
             if (prepopulate) {
-                Attribute attribute = unfilteredAttributes.get(attributeId);
+                BaseAttribute attribute = unfilteredAttributes.get(attributeId);
                 if (attribute != null) {
                     attributeValues = attribute.getValues();
                 }

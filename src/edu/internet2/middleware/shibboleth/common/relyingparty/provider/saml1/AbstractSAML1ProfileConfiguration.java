@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1;
 
-import edu.internet2.middleware.shibboleth.common.attribute.SAML1AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**

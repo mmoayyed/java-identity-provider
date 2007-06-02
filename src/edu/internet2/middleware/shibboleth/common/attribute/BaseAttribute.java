@@ -20,12 +20,14 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.SortedSet;
 
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
+
 /**
  * A resolved attribute.
  * 
  * @param <ValueType> the object type of the values for this attribute
  */
-public abstract class Attribute<ValueType> {
+public abstract class BaseAttribute<ValueType> {
 
     /**
      * Gets the unique ID of the attribute.
@@ -67,7 +69,7 @@ public abstract class Attribute<ValueType> {
 
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
-        if(obj instanceof Attribute){
+        if(obj instanceof BaseAttribute){
             return obj.hashCode() == hashCode();
         }
         

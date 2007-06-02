@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.opensaml.xml.util.DatatypeHelper;
 
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ScriptedAttributeDefinition;
 
 /**

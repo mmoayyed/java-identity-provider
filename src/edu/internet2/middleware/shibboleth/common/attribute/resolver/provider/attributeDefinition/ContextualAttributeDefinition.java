@@ -19,8 +19,8 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 import java.util.Map;
 import java.util.Set;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
@@ -34,7 +34,7 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     private AttributeDefinition definition;
 
     /** Cached result of resolving the attribute definition. */
-    private Attribute attribute;
+    private BaseAttribute attribute;
 
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    public BaseAttribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         if (attribute == null) {
             attribute = definition.resolve(resolutionContext);
         }

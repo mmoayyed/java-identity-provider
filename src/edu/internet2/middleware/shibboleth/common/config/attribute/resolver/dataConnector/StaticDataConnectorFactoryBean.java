@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dat
 
 import java.util.List;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.StaticDataConnector;
 
 /**
@@ -27,7 +27,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 public class StaticDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
 
     /** Static attributes returned by the created data connector. */
-    private List<Attribute<String>> staticAttributes;
+    private List<BaseAttribute<String>> staticAttributes;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
@@ -39,7 +39,7 @@ public class StaticDataConnectorFactoryBean extends BaseDataConnectorBeanFactory
      * 
      * @return static attributes returned by the created data connector
      */
-    public List<Attribute<String>> getStaticAttributes() {
+    public List<BaseAttribute<String>> getStaticAttributes() {
         return staticAttributes;
     }
 
@@ -48,7 +48,7 @@ public class StaticDataConnectorFactoryBean extends BaseDataConnectorBeanFactory
      * 
      * @param attributes static attributes returned by the created data connector
      */
-    public void setStaticAttributes(List<Attribute<String>> attributes) {
+    public void setStaticAttributes(List<BaseAttribute<String>> attributes) {
         staticAttributes = attributes;
     }
 

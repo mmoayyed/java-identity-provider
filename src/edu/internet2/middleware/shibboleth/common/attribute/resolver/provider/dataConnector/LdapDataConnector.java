@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
@@ -110,7 +110,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     private int poolInitIdleCapacity;
 
     /** Data cache. */
-    private Map<String, Map<String, Map<String, Attribute>>> cache;
+    private Map<String, Map<String, Map<String, BaseAttribute>>> cache;
 
     /** Whether this data connector has been initialized. */
     private boolean initialized;
@@ -158,7 +158,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     protected void initializeCache() {
         if (cacheResults && initialized) {
-            cache = new HashMap<String, Map<String, Map<String, Attribute>>>();
+            cache = new HashMap<String, Map<String, Map<String, BaseAttribute>>>();
         }
     }
 
@@ -646,7 +646,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext)
+    public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
             log.debug("Begin resolve for " + resolutionContext.getAttributeRequestContext().getPrincipalName());
@@ -659,7 +659,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
         }
 
         // create Attribute objects to return
-        Map<String, Attribute> attributes = null;
+        Map<String, BaseAttribute> attributes = null;
 
         // check for cached data
         if (cacheResults) {
@@ -754,9 +754,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * @return <code>Map</code> of attribute ids to attributes
      * @throws AttributeResolutionException if an error occurs parsing attribute results
      */
-    protected Map<String, Attribute> buildBaseAttributes(Iterator<SearchResult> results)
+    protected Map<String, BaseAttribute> buildBaseAttributes(Iterator<SearchResult> results)
             throws AttributeResolutionException {
-        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+        Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
         SearchResult sr = results.next();
         Map<String, List<String>> attrs = mergeAttributes(new HashMap<String, List<String>>(), sr.getAttributes());
         // merge additional results if requested
@@ -785,13 +785,13 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * @param attributes <code>Map</code> of attribute ids to attributes
      */
     protected void setCachedAttributes(ShibbolethResolutionContext resolutionContext, String searchFiler,
-            Map<String, Attribute> attributes) {
-        Map<String, Map<String, Attribute>> results = null;
+            Map<String, BaseAttribute> attributes) {
+        Map<String, Map<String, BaseAttribute>> results = null;
         String principal = resolutionContext.getAttributeRequestContext().getPrincipalName();
         if (cache.containsKey(principal)) {
             results = cache.get(principal);
         } else {
-            results = new HashMap<String, Map<String, Attribute>>();
+            results = new HashMap<String, Map<String, BaseAttribute>>();
             cache.put(principal, results);
         }
         results.put(searchFiler, attributes);
@@ -805,13 +805,13 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * 
      * @return <code>Map</code> of attributes ids to attributes
      */
-    protected Map<String, Attribute> getCachedAttributes(ShibbolethResolutionContext resolutionContext,
+    protected Map<String, BaseAttribute> getCachedAttributes(ShibbolethResolutionContext resolutionContext,
             String searchFilter) {
-        Map<String, Attribute> attributes = null;
+        Map<String, BaseAttribute> attributes = null;
         if (cacheResults) {
             String principal = resolutionContext.getAttributeRequestContext().getPrincipalName();
             if (cache.containsKey(principal)) {
-                Map<String, Map<String, Attribute>> results = cache.get(principal);
+                Map<String, Map<String, BaseAttribute>> results = cache.get(principal);
                 attributes = results.get(searchFilter);
             }
         }

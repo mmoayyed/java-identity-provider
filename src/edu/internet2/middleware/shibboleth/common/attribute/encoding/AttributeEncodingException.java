@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute;
+package edu.internet2.middleware.shibboleth.common.attribute.encoding;
+
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 
 /**
  * Indicates a problem during the encoding of an attribute.

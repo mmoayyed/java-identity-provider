@@ -34,9 +34,12 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
 
     /** Audiences for the assertion. */
     private Collection<String> assertionAudiences;
+    
+    /** ID of the attribute to use as the subject name. */
+    private String subjectNameAttributeId;
 
-    /** Default NameID format. */
-    private String defaultNameIDFormat;
+    /** Format of the subject name identifier. */
+    private String subjectNameFormat;
 
     /** Default artifact type. */
     private int defaultArtifactType;
@@ -95,14 +98,32 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     public void setAssertionAudiences(Collection<String> audiences) {
         assertionAudiences = audiences;
     }
+    
+    /**
+     * Gets the ID of the attribute used the provide the subject name.
+     * 
+     * @return ID of the attribute used the provide the subject name
+     */
+    public String getSubjectNameAttributeId(){
+        return subjectNameAttributeId;
+    }
+    
+    /**
+     * Sets the ID of the attribute used to provide the subject name.
+     * 
+     * @param id ID of the attribute used the provide the subject name
+     */
+    public void setSubjectNameAttributeId(String id){
+        subjectNameAttributeId = DatatypeHelper.safeTrimOrNullString(id);
+    }
 
     /**
      * Gets the URI for the default NameID format.
      * 
      * @return URI for the default NameID format
      */
-    public String getDefaultNameIDFormat() {
-        return defaultNameIDFormat;
+    public String getSubjectNameFormat() {
+        return subjectNameFormat;
     }
 
     /**
@@ -110,8 +131,8 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @param format URI for the default NameID format
      */
-    public void setDefaultNameIDFormat(String format) {
-        defaultNameIDFormat = DatatypeHelper.safeTrimOrNullString(format);
+    public void setSubjectNameFormat(String format) {
+        subjectNameFormat = DatatypeHelper.safeTrimOrNullString(format);
     }
 
     /**

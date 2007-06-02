@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,8 @@ import org.opensaml.Configuration;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.xml.XMLObjectBuilder;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
 
 /**
@@ -106,7 +107,7 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
      * 
      * @return the list of encoded attribute values
      */
-    protected List<SAMLObject> encodeAttributeValue(QName valueElementQName, Attribute<ScopedAttributeValue> attribute) {
+    protected List<SAMLObject> encodeAttributeValue(QName valueElementQName, BaseAttribute<ScopedAttributeValue> attribute) {
         ArrayList<SAMLObject> encodedValues = new ArrayList<SAMLObject>();
 
         XMLObjectBuilder<ShibbolethScopedValue> valueBuilder = Configuration.getBuilderFactory().getBuilder(

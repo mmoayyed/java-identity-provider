@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AbstractResolutionPlugIn;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
@@ -32,7 +32,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 /**
  * Base class for {@link AttributeDefinition} plug-ins.
  */
-public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<Attribute> implements
+public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<BaseAttribute> implements
         AttributeDefinition {
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
@@ -73,8 +73,8 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
     }
 
     /** {@inheritDoc} */
-    public Attribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
-        Attribute resolvedAttribute = doResolve(resolutionContext);
+    public BaseAttribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+        BaseAttribute resolvedAttribute = doResolve(resolutionContext);
 
         if (getAttributeEncoders() != null) {
             resolvedAttribute.getEncoders().putAll(getAttributeEncoders());
@@ -93,7 +93,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving and creating the attribute
      */
-    protected abstract Attribute doResolve(ShibbolethResolutionContext resolutionContext)
+    protected abstract BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException;
 
     /**
@@ -129,7 +129,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
             AttributeDefinition definition = context.getResolvedAttributeDefinitions().get(id);
             if (definition != null) {
                 try {
-                    Attribute attribute = definition.resolve(context);
+                    BaseAttribute attribute = definition.resolve(context);
                     for (Object o : attribute.getValues()) {
                         values.add(o);
                     }
@@ -155,7 +155,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<A
             DataConnector connector = context.getResolvedDataConnectors().get(connectorId);
             if (connector != null) {
                 try {
-                    Map<String, Attribute> attributes = connector.resolve(context);
+                    Map<String, BaseAttribute> attributes = connector.resolve(context);
                     for (String attributeId : attributes.keySet()) {
                         if (attributeId != null
                                 && (getSourceAttributeID() != null && attributeId.equals(getSourceAttributeID()))

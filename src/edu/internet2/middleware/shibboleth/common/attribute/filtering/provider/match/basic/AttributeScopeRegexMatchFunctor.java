@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 
 import java.util.SortedSet;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
@@ -47,7 +47,7 @@ public class AttributeScopeRegexMatchFunctor extends AbstractAttributeTargetedRe
      */
     protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
-        Attribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
+        BaseAttribute attribute = filterContext.getUnfilteredAttributes().get(getAttributeId());
 
         if (attribute != null) {
             ScopedAttributeValue value;

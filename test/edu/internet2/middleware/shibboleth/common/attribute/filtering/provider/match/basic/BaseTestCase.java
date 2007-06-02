@@ -21,13 +21,13 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import junit.framework.TestCase;
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 
 /**
  * Base class for JUnit test cases.
@@ -47,11 +47,11 @@ public class BaseTestCase extends TestCase {
     /**
      * A simple attribute included in filterContext. 
      */
-    protected Attribute<Integer> iAttribute;
+    protected BaseAttribute<Integer> iAttribute;
     /**
      * A simple attribute included in filterContext. 
      */
-    protected Attribute<String> sAttribute;
+    protected BaseAttribute<String> sAttribute;
     
     /**
      * A Scoped attributed included in filter context.
@@ -61,7 +61,7 @@ public class BaseTestCase extends TestCase {
     /**
      * Request Context included in filter context.
      */
-    protected ShibbolethAttributeRequestContext requestContext; 
+    protected ShibbolethSAMLAttributeRequestContext requestContext; 
 
     /**
      * The Functor under test. 
@@ -96,12 +96,12 @@ public class BaseTestCase extends TestCase {
         scope.setValues(tree);
 
         
-        Map<String,Attribute> map = new HashMap<String, Attribute>(5);
+        Map<String,BaseAttribute> map = new HashMap<String, BaseAttribute>(5);
         map.put(sAttribute.getId(), sAttribute);
         map.put(iAttribute.getId(), iAttribute);
         map.put(scope.getId(), scope);
         
-        requestContext = new ShibbolethAttributeRequestContext();
+        requestContext = new ShibbolethSAMLAttributeRequestContext();
         
         filterContext = new ShibbolethFilteringContext(map, requestContext);   
 }

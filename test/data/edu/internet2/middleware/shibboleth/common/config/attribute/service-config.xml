@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+    default-autowire="byType">
+
+    <bean id="staticConfig" class="org.opensaml.util.resource.ClasspathResource">
+        <constructor-arg
+            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver.xml" />
+    </bean>
+
+    <bean id="resolver"
+        class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
+        init-method="initialize">
+        <constructor-arg>
+            <list>
+                <ref bean="staticConfig" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.SAML2AttributeAuthority"
+        class="edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAML2AttributeAuthority">
+        <constructor-arg ref="resolver" />
+    </bean>
+
+    <bean id="shibboleth.SAML1AttributeAuthority"
+        class="edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAML1AttributeAuthority">
+        <constructor-arg ref="resolver" />
+    </bean>
+</beans>

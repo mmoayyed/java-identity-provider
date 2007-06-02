@@ -34,7 +34,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
@@ -81,7 +81,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     private Map<String, RDBMSColumnDescriptor> columnDescriptors;
 
     /** Query result cache. [principalName => [query => attributeResultSetReference]] */
-    private Map<String, Map<String, SoftReference<Map<String, Attribute>>>> resultsCache;
+    private Map<String, Map<String, SoftReference<Map<String, BaseAttribute>>>> resultsCache;
 
     /** Template engine used to change query template into actual query. */
     private TemplateEngine queryCreator;
@@ -109,7 +109,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     public void initialize() {
         registerTemplate();
         if (cacheResults) {
-            resultsCache = new HashMap<String, Map<String, SoftReference<Map<String, Attribute>>>>();
+            resultsCache = new HashMap<String, Map<String, SoftReference<Map<String, BaseAttribute>>>>();
         }
         initialized = true;
     }
@@ -226,7 +226,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     }
 
     /** {@inheritDoc} */
-    public Map<String, Attribute> resolve(ShibbolethResolutionContext resolutionContext)
+    public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         String query = queryCreator.createStatement(queryTemplateName, resolutionContext,
                 getDataConnectorDependencyIds(), getDataConnectorDependencyIds());
@@ -235,7 +235,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             log.debug("Data connector " + getId() + " resolving attributes with query: " + query);
         }
 
-        Map<String, Attribute> resolvedAttributes = null;
+        Map<String, BaseAttribute> resolvedAttributes = null;
 
         resolvedAttributes = retrieveAttributesFromCache(resolutionContext.getAttributeRequestContext()
                 .getPrincipalName(), query);
@@ -245,13 +245,13 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         }
 
         if (cacheResults) {
-            Map<String, SoftReference<Map<String, Attribute>>> individualCache = resultsCache.get(resolutionContext
+            Map<String, SoftReference<Map<String, BaseAttribute>>> individualCache = resultsCache.get(resolutionContext
                     .getAttributeRequestContext().getPrincipalName());
             if (individualCache == null) {
-                individualCache = new HashMap<String, SoftReference<Map<String, Attribute>>>();
+                individualCache = new HashMap<String, SoftReference<Map<String, BaseAttribute>>>();
                 resultsCache.put(resolutionContext.getAttributeRequestContext().getPrincipalName(), individualCache);
             }
-            individualCache.put(query, new SoftReference<Map<String, Attribute>>(resolvedAttributes));
+            individualCache.put(query, new SoftReference<Map<String, BaseAttribute>>(resolvedAttributes));
         }
 
         return resolvedAttributes;
@@ -314,15 +314,15 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @throws AttributeResolutionException thrown if there is a problem retrieving data from the cache
      */
-    protected Map<String, Attribute> retrieveAttributesFromCache(String princpal, String query)
+    protected Map<String, BaseAttribute> retrieveAttributesFromCache(String princpal, String query)
             throws AttributeResolutionException {
         if (!cacheResults) {
             return null;
         }
 
-        Map<String, SoftReference<Map<String, Attribute>>> queryCache = resultsCache.get(princpal);
+        Map<String, SoftReference<Map<String, BaseAttribute>>> queryCache = resultsCache.get(princpal);
         if (queryCache != null) {
-            SoftReference<Map<String, Attribute>> cachedAttributes = queryCache.get(query);
+            SoftReference<Map<String, BaseAttribute>> cachedAttributes = queryCache.get(query);
             if (cachedAttributes != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("RDBMS Data Connector " + getId() + ": Fetched attributes from cache for principal "
@@ -343,10 +343,10 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * @return attributes gotten from the database
      * 
      * @throws AttributeResolutionException thrown if there is a problem retrieving data from the database or
-     *             transforming that data into {@link Attribute}s
+     *             transforming that data into {@link BaseAttribute}s
      */
-    protected Map<String, Attribute> retrieveAttributesFromDatabase(String query) throws AttributeResolutionException {
-        Map<String, Attribute> resolvedAttributes;
+    protected Map<String, BaseAttribute> retrieveAttributesFromDatabase(String query) throws AttributeResolutionException {
+        Map<String, BaseAttribute> resolvedAttributes;
         Connection connection = null;
         ResultSet queryResult = null;
         try {
@@ -386,7 +386,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     }
 
     /**
-     * Converts a SQL query results set into a set of {@link Attribute}s.
+     * Converts a SQL query results set into a set of {@link BaseAttribute}s.
      * 
      * @param resultSet the result set to convert
      * 
@@ -394,8 +394,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @throws AttributeResolutionException thrown if there is a problem converting the result set into attributes
      */
-    protected Map<String, Attribute> processResultSet(ResultSet resultSet) throws AttributeResolutionException {
-        Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+    protected Map<String, BaseAttribute> processResultSet(ResultSet resultSet) throws AttributeResolutionException {
+        Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
         try {
             if (!resultSet.next()) {
                 return attributes;
@@ -405,7 +405,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             int numOfCols = resultMD.getColumnCount();
             String columnName;
             RDBMSColumnDescriptor columnDescriptor;
-            Attribute attribute;
+            BaseAttribute attribute;
             Set attributeValueSet;
             do {
                 for (int i = 1; i <= numOfCols; i++) {

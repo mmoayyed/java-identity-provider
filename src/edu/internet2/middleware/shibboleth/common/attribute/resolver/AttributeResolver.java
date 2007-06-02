@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 
 import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 
 /**
@@ -39,7 +39,7 @@ public interface AttributeResolver<RequestContextType extends AttributeRequestCo
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public Map<String, Attribute> resolveAttributes(RequestContextType resolutionContext)
+    public Map<String, BaseAttribute> resolveAttributes(RequestContextType resolutionContext)
             throws AttributeResolutionException;
 
     /**

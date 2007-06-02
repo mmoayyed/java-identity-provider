@@ -22,8 +22,8 @@ import java.util.Collection;
 import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
@@ -49,13 +49,13 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
     public void testResolverInstantiation() {
         AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
 
-        ShibbolethAttributeRequestContext context = new ShibbolethAttributeRequestContext();
+        ShibbolethSAMLAttributeRequestContext context = new ShibbolethSAMLAttributeRequestContext();
         context.setPrincipalName("astone");
 
         try {
-            Collection<Attribute> attributes = resolver.resolveAttributes(context).values();
+            Collection<BaseAttribute> attributes = resolver.resolveAttributes(context).values();
             
-            for (Attribute attribute : attributes) {
+            for (BaseAttribute attribute : attributes) {
                 System.out.println(attribute.getId() + ":" + attribute.getValues());
             }
 

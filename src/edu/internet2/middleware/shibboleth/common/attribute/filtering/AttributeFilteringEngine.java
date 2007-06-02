@@ -17,7 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering;
 
 import java.util.Map;
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 
 /**
@@ -39,6 +39,6 @@ public interface AttributeFilteringEngine<ContextType extends AttributeRequestCo
      * @throws AttributeFilteringException thrown if there is a problem retrieving or applying the attribute acceptance
      *             policy
      */
-    public Map<String, Attribute> filterAttributes(Map<String, Attribute> attributes, ContextType context)
+    public Map<String, BaseAttribute> filterAttributes(Map<String, BaseAttribute> attributes, ContextType context)
             throws AttributeFilteringException;
 }

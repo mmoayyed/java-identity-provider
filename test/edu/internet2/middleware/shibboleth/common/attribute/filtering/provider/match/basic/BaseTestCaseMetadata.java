@@ -27,10 +27,10 @@ import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
 import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.parse.BasicParserPool;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
@@ -50,16 +50,16 @@ public class BaseTestCaseMetadata extends TestCase {
     /**
      * A simple attribute included in filterContext. 
      */
-    protected Attribute<Integer> iAttribute;
+    protected BaseAttribute<Integer> iAttribute;
     /**
      * A simple attribute included in filterContext. 
      */
-    protected Attribute<String> sAttribute;
+    protected BaseAttribute<String> sAttribute;
     
     /**
      * Request Context included in filter context.
      */
-    protected ShibbolethAttributeRequestContext requestContext; 
+    protected ShibbolethSAMLAttributeRequestContext requestContext; 
 
     /**
      * The Functor under test. 
@@ -117,13 +117,13 @@ public class BaseTestCaseMetadata extends TestCase {
         // Build the request context from the metadata (with attached parser) and config
         //
         
-        requestContext = new ShibbolethAttributeRequestContext(provider, rpConfig);
+        requestContext = new ShibbolethSAMLAttributeRequestContext(provider, rpConfig);
         
         //
         // And the filter context from the request context (with no attributes)
         //
         
-        filterContext = new ShibbolethFilteringContext(new TreeMap<String, Attribute>(), requestContext);   
+        filterContext = new ShibbolethFilteringContext(new TreeMap<String, BaseAttribute>(), requestContext);   
     }
     
 

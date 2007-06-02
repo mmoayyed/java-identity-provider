@@ -154,9 +154,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="defaultNameFormat" type="anyURI" default="urn:oasis:names:tc:SAML:2.0:nameid-format:transient">
+                <attribute name="subjectNameAttributeID" type="anyURI" default="subject">
                     <annotation>
-                        <documentation>The default subject name format to use.</documentation>
+                        <documentation>ID of the attribute to use as the subject for assertions.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="subjectNameFormat" type="anyURI" default="urn:oasis:names:tc:SAML:2.0:nameid-format:transient">
+                    <annotation>
+                        <documentation>The format for the subject name identifier.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="defaultArtifactType" type="integer" default="4">

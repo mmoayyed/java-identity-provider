@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.att
 
 import java.util.List;
 
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.SimpleAttributeDefinition;
 
 /**

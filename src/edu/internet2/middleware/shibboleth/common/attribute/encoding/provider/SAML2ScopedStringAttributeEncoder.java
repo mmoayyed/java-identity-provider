@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.provider;
+package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
 import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
-import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.schema.impl.XSStringBuilder;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
 
 /**
- * Implementation of SAML 2.0 attribute encoder.
+ * Implementation of SAML 2.0 scoped attribute encoder.
  */
-public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.opensaml.saml2.core.Attribute> implements
-        SAML2AttributeEncoder {
+public class SAML2ScopedStringAttributeEncoder extends
+        AbstractScopedAttributeEncoder<org.opensaml.saml2.core.Attribute> implements SAML2AttributeEncoder {
 
     /** Attribute factory. */
     private static AttributeBuilder attributeBuilder;
-
-    /** XSString factory. */
-    private static XSStringBuilder stringBuilder;
 
     /** Format of attribute. */
     private String format;
@@ -43,9 +39,9 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.op
     private String friendlyName;
 
     /** Constructor. */
-    public SAML2StringAttributeEncoder() {
+    public SAML2ScopedStringAttributeEncoder() {
+        super();
         attributeBuilder = new AttributeBuilder();
-        stringBuilder = new XSStringBuilder();
         setEncoderCategory(SAML2AttributeEncoder.CATEGORY);
     }
 
@@ -70,21 +66,15 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.op
     }
 
     /** {@inheritDoc} */
-    public org.opensaml.saml2.core.Attribute encode(Attribute attribute) {
+    public org.opensaml.saml2.core.Attribute encode(BaseAttribute attribute) throws AttributeEncodingException {
         org.opensaml.saml2.core.Attribute samlAttribute;
         samlAttribute = attributeBuilder.buildObject();
 
         samlAttribute.setName(getAttributeName());
         samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.setFriendlyName(getFriendlyName());
-
-        for (Object o : attribute.getValues()) {
-            XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-            xsstring.setValue(o.toString());
-            samlAttribute.getAttributeValues().add(xsstring);
-        }
+        samlAttribute.getAttributeValues().addAll(encodeAttributeValue(AttributeValue.DEFAULT_ELEMENT_NAME, attribute));
 
         return samlAttribute;
     }
-
 }

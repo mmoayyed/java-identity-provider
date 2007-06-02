@@ -16,46 +16,45 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute;
 
-import org.opensaml.Configuration;
-import org.opensaml.saml2.core.AttributeStatement;
-import org.opensaml.xml.io.Marshaller;
-import org.opensaml.xml.util.XMLHelper;
-import org.springframework.context.ApplicationContext;
-import org.w3c.dom.Element;
+import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethAttributeRequestContext;
+import org.opensaml.saml2.core.AttributeQuery;
+import org.opensaml.saml2.core.NameID;
+import org.opensaml.saml2.metadata.provider.URLMetadataProvider;
+import org.opensaml.xml.parse.BasicParserPool;
+import org.opensaml.xml.parse.ParserPool;
+import org.springframework.context.ApplicationContext;
+
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
+import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
  * Unit tests for {@link SAML2AttributeAuthority}
  */
 public class SAML2AttributeAuthorityTest extends BaseConfigTestCase {
 
-    /** Application Context. */
-    private ApplicationContext ac;
-
-    /** {@inheritDoc} */
-    public void setUp() throws Exception {
-        super.setUp();
-        String[] configs = { "shibboleth-2.0-config-internal.xml",
-                "data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver-db.xml", };
-
-        ac = createSpringContext(configs);
-    }
-
     public void testResolution() throws Exception {
+        ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/service-config.xml");
+        
+        ParserPool parserPool = new BasicParserPool();
+
+        URLMetadataProvider mdProvider = new URLMetadataProvider(
+                "http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml", 500);
+        mdProvider.setParserPool(parserPool);
+        mdProvider.initialize();
+        
+        RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration("mySP", "myIdP");
+
+        ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> context = new ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery>(
+                mdProvider, rpConfig);
+        context.setPrincipalName("aUser");
+        
         SAML2AttributeAuthority aa = (SAML2AttributeAuthority) ac.getBean("shibboleth.SAML2AttributeAuthority");
-
-        ShibbolethAttributeRequestContext requestContext = new ShibbolethAttributeRequestContext();
-        requestContext.setPrincipalName("astone");
-        requestContext.getRequestedAttributes().add("uid");
-        requestContext.getRequestedAttributes().add("email");
-
-            AttributeStatement attributes = aa.performAttributeQuery(requestContext);
-
-            Marshaller marshaller = Configuration.getMarshallerFactory().getMarshaller(attributes);
-            Element asElem = marshaller.marshall(attributes);
-            System.out.println(XMLHelper.nodeToString(asElem));
+        Map<String, BaseAttribute> attributes = aa.getAttributes(context);
+        
+        assertEquals(1, attributes.size());
     }
 }

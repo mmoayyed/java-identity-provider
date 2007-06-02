@@ -36,6 +36,6 @@ public interface AttributeAuthority<ContextType extends AttributeRequestContext>
      * 
      * @throws AttributeRequestException thrown if there is a problem retrieving the attributes
      */
-    public Map<String, Attribute> getAttributes(ContextType requestContext)
+    public Map<String, BaseAttribute> getAttributes(ContextType requestContext)
             throws AttributeRequestException;
 }

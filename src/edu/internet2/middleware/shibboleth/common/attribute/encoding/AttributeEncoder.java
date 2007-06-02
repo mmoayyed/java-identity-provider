@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute;
+package edu.internet2.middleware.shibboleth.common.attribute.encoding;
+
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 
 
 /**
- * Attribute encoders convert {@link Attribute}s into protocol specific representations.
+ * Attribute encoders convert {@link BaseAttribute}s into protocol specific representations.
  * 
  * Encoders may have contain a category that can be used to distingush encoder types from
  * each other.  This inteded to be used to look up an encoder that can be used to encode 
@@ -36,7 +38,6 @@ public interface AttributeEncoder<EncodedType> {
      * @return category for this encoder
      */
     public String getEncoderCategory();
-    
     
     /**
      * Sets the category for this encoder.
@@ -68,5 +69,5 @@ public interface AttributeEncoder<EncodedType> {
      * 
      * @throws AttributeEncodingException if unable to successfully encode attribute
      */
-    public EncodedType encode(Attribute attribute) throws AttributeEncodingException;
+    public EncodedType encode(BaseAttribute attribute) throws AttributeEncodingException;
 }

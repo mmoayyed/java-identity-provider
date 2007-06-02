@@ -28,7 +28,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 
 /**
@@ -53,24 +53,24 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        List<Attribute<String>> attributes = processAttributes(pluginConfigChildren.get(ATTRIBUTE_ELEMENT_NAME));
+        List<BaseAttribute<String>> attributes = processAttributes(pluginConfigChildren.get(ATTRIBUTE_ELEMENT_NAME));
 
         pluginBuilder.addPropertyValue("staticAttributes", attributes);
     }
 
     /**
-     * Parses the configuration elements defining the static {@link Attribute}s.
+     * Parses the configuration elements defining the static {@link BaseAttribute}s.
      * 
-     * @param attributeElems configuration elements defining the static {@link Attribute}s
+     * @param attributeElems configuration elements defining the static {@link BaseAttribute}s
      * 
-     * @return the static {@link Attribute}s
+     * @return the static {@link BaseAttribute}s
      */
-    protected List<Attribute<String>> processAttributes(List<Element> attributeElems) {
+    protected List<BaseAttribute<String>> processAttributes(List<Element> attributeElems) {
         if (attributeElems == null || attributeElems.size() == 0) {
             return null;
         }
 
-        List<Attribute<String>> attributes = new ArrayList<Attribute<String>>();
+        List<BaseAttribute<String>> attributes = new ArrayList<BaseAttribute<String>>();
         BasicAttribute<String> attribute;
         for (Element attributeElem : attributeElems) {
             attribute = new BasicAttribute<String>(DatatypeHelper.safeTrimOrNullString(attributeElem.getAttributeNS(

@@ -29,7 +29,7 @@ import javax.script.SimpleScriptContext;
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
@@ -110,7 +110,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Attribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         ScriptContext context = getScriptContext(resolutionContext);
 
         try {
@@ -120,7 +120,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
                 scriptEngine.eval(script, context);
             }
 
-            return (Attribute) context.getAttribute(getId());
+            return (BaseAttribute) context.getAttribute(getId());
         } catch (ScriptException e) {
             log.error("ScriptletAttributeDefinition " + getId() + " unable to execute script", e);
             throw new AttributeResolutionException("ScriptletAttributeDefinition " + getId()
@@ -161,13 +161,13 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
 
         DataConnector dc;
-        Map<String, Attribute> attributes;
+        Map<String, BaseAttribute> attributes;
         if (!getDataConnectorDependencyIds().isEmpty()) {
             for (String dependency : getDataConnectorDependencyIds()) {
                 dc = resolutionContext.getResolvedDataConnectors().get(dependency);
                 attributes = dc.resolve(resolutionContext);
                 if (attributes != null) {
-                    for (Attribute attribute : attributes.values()) {
+                    for (BaseAttribute attribute : attributes.values()) {
                         scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
                     }
                 }
@@ -175,7 +175,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         }
 
         AttributeDefinition ad;
-        Attribute attribute;
+        BaseAttribute attribute;
         if (!getAttributeDefinitionDependencyIds().isEmpty()) {
             for (String dependency : getAttributeDefinitionDependencyIds()) {
                 ad = resolutionContext.getResolvedAttributeDefinitions().get(dependency);

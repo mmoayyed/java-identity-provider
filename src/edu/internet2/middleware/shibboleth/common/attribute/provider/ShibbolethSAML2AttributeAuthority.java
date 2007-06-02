@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,20 +27,23 @@ import org.apache.log4j.Logger;
 import org.opensaml.Configuration;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.AttributeStatement;
+import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.AttributeAuthorityDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncodingException;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
-import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.attribute.SAML2AttributeEncoder;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**
  * SAML 2.0 Attribute Authority.
@@ -52,28 +56,24 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
     /** For building attribute statements. */
     private SAMLObjectBuilder<AttributeStatement> statementBuilder;
 
-    /** For building attributes. */
-    private SAMLObjectBuilder<org.opensaml.saml2.core.Attribute> attributeBuilder;
-
     /** Attribute resolver. */
-    private AttributeResolver<ShibbolethAttributeRequestContext> attributeResolver;
+    private ShibbolethAttributeResolver attributeResolver;
 
     /** To determine releasable attributes. */
-    private AttributeFilteringEngine<ShibbolethAttributeRequestContext> filteringEngine;
-    
+    private ShibbolethAttributeFilteringEngine filteringEngine;
+
     /**
      * This creates a new attribute authority.
      * 
      * @param resolver The attribute resolver to set
      */
-    public ShibbolethSAML2AttributeAuthority(AttributeResolver<ShibbolethAttributeRequestContext> resolver) {
-        
+    @SuppressWarnings("unchecked")
+    public ShibbolethSAML2AttributeAuthority(ShibbolethAttributeResolver resolver) {
+
         XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
         statementBuilder = (SAMLObjectBuilder<AttributeStatement>) builderFactory
                 .getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
-        attributeBuilder = (SAMLObjectBuilder<org.opensaml.saml2.core.Attribute>) builderFactory
-                .getBuilder(org.opensaml.saml2.core.Attribute.DEFAULT_ELEMENT_NAME);
-        
+
         attributeResolver = resolver;
     }
 
@@ -82,7 +82,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * 
      * @return Returns the attributeResolver.
      */
-    public AttributeResolver<ShibbolethAttributeRequestContext> getAttributeResolver() {
+    public ShibbolethAttributeResolver getAttributeResolver() {
         return attributeResolver;
     }
 
@@ -91,22 +91,65 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * 
      * @return Returns the filteringEngine.
      */
-    public AttributeFilteringEngine<ShibbolethAttributeRequestContext> getFilteringEngine() {
+    public ShibbolethAttributeFilteringEngine getFilteringEngine() {
         return filteringEngine;
     }
-    
+
     /**
      * Sets the attribute filtering engine.
      * 
      * @param engine attribute filtering engine
      */
-    public void setFilteringEngine(AttributeFilteringEngine<ShibbolethAttributeRequestContext> engine){
+    public void setFilteringEngine(ShibbolethAttributeFilteringEngine engine) {
         filteringEngine = engine;
     }
 
     /** {@inheritDoc} */
-    public AttributeStatement performAttributeQuery(AttributeQuery query,
-            ShibbolethAttributeRequestContext requestContext) throws AttributeRequestException {
+    public AttributeStatement buildAttributeStatement(AttributeQuery query, Collection<BaseAttribute> attributes)
+            throws AttributeEncodingException {
+
+        Collection<Attribute> encodedAttributes = encodeAttributes(attributes);
+
+        filterAttributesByValue(query, encodedAttributes);
+
+        AttributeStatement statement = statementBuilder.buildObject();
+        List<org.opensaml.saml2.core.Attribute> samlAttributes = statement.getAttributes();
+        samlAttributes.addAll(encodedAttributes);
+
+        return statement;
+    }
+
+    /** {@inheritDoc} */
+    public String getAttributeIDBySAMLAttribute(Attribute attribute) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public Attribute getSAMLAttributeByAttributeID(String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public String getPrincipal(ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> requestContext)
+            throws AttributeRequestException {
+        if (requestContext.getAttributeRequester() == null || requestContext.getSubjectNameIdentifier() == null) {
+            throw new AttributeRequestException(
+                    "Unable to resolve principal, attribute request ID and subject name identifier may not be null");
+        }
+
+        return attributeResolver.resolvePrincipalName(requestContext);
+    }
+
+    /** {@inheritDoc} */
+    public Map<String, BaseAttribute> getAttributes(
+            ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> requestContext)
+            throws AttributeRequestException {
+        AttributeQuery query = requestContext.getAttributeQuery();
+
+        // get ID of attribute used for NameID
+        String nameIdAttributeId = getNameIDAttributeId(requestContext);
 
         // get attributes from the message
         Set<String> queryAttributeIds = getAttributeIds(query);
@@ -115,52 +158,107 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
         Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getAttributeRequesterMetadata());
 
         // union the attribute id sets
+        if (nameIdAttributeId != null) {
+            requestContext.getRequestedAttributes().add(nameIdAttributeId);
+        }
         requestContext.getRequestedAttributes().addAll(queryAttributeIds);
         requestContext.getRequestedAttributes().addAll(metadataAttributeIds);
 
-        // Resolve and filter attributes
-        Map<String, Attribute> attributes = getAttributes(requestContext);
+        // Resolve attributes
+        Map<String, BaseAttribute> attributes = attributeResolver.resolveAttributes(requestContext);
 
-        // encode attributes
-        List<org.opensaml.saml2.core.Attribute> encodedAttributes = encodeAttributes(attributes);
-
-        // return attribute statement
-        AttributeStatement statement = buildAttributeStatement(encodedAttributes);
-
-        if(query != null){
-            // TODO filter out attribute values specified in the query
-        }
-        
-        return statement;
-    }
-
-    /** {@inheritDoc} */
-    public AttributeStatement performAttributeQuery(ShibbolethAttributeRequestContext requestContext)
-            throws AttributeRequestException {
-        return performAttributeQuery(null, requestContext);
-    }
-
-    /** {@inheritDoc} */
-    public Map<String, Attribute> getAttributes(ShibbolethAttributeRequestContext requestContext)
-            throws AttributeRequestException {
-        Map<String, Attribute> attributes = attributeResolver.resolveAttributes(requestContext);
-        
-        if(filteringEngine != null){
+        // Filter resulting attributes
+        if (filteringEngine != null) {
             attributes = filteringEngine.filterAttributes(attributes, requestContext);
         }
-        
+
         return attributes;
     }
 
-    /** {@inheritDoc} */
-    public String getAttributeIDBySAMLAttribute(org.opensaml.saml2.core.Attribute attribute) {
-        // TODO not implemented yet
-        return null;
+    /**
+     * This encodes the supplied attributes with that attribute's SAML2 encoder.
+     * 
+     * @param attributes the attributes to encode
+     * 
+     * @return the encoded attributes
+     * 
+     * @throws AttributeEncodingException thrown if an attribute could not be encoded
+     */
+    @SuppressWarnings("unchecked")
+    protected Collection<Attribute> encodeAttributes(Collection<BaseAttribute> attributes)
+            throws AttributeEncodingException {
+        Collection<Attribute> encodedAttributes = new ArrayList<Attribute>();
+
+        AttributeEncoder<Attribute> encoder;
+        Attribute samlAttribute;
+        SAML2StringAttributeEncoder defaultAttributeEncoder;
+        for (BaseAttribute<?> shibbolethAttribute : attributes) {
+            if (shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() == 0) {
+                continue;
+            }
+
+            encoder = shibbolethAttribute.getEncoderByCategory(SAML2AttributeEncoder.CATEGORY);
+            if (encoder == null) {
+                defaultAttributeEncoder = new SAML2StringAttributeEncoder();
+                samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
+                if (samlAttribute != null) {
+                    defaultAttributeEncoder.setAttributeName(samlAttribute.getName());
+                    defaultAttributeEncoder.setNameFormat(samlAttribute.getNameFormat());
+                    defaultAttributeEncoder.setFriendlyName(samlAttribute.getFriendlyName());
+                } else {
+                    defaultAttributeEncoder.setAttributeName(shibbolethAttribute.getId());
+                    defaultAttributeEncoder.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
+                }
+
+                encoder = defaultAttributeEncoder;
+            }
+
+            try {
+                encodedAttributes.add(encoder.encode(shibbolethAttribute));
+            } catch (AttributeEncodingException e) {
+                log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): " + e.getMessage());
+                throw e;
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("attribute encoder encoded the following attributes: " + encodedAttributes);
+        }
+
+        return encodedAttributes;
     }
 
-    /** {@inheritDoc} */
-    public org.opensaml.saml2.core.Attribute getSAMLAttributeByAttributeID(String id) {
+    /**
+     * Filters out all but the values, for an attribute, provided in the query, if and only if, the query specifies at
+     * least one value for the attribute. That is to say, if the attribute query does not specify any attribute values
+     * then all values for that attribute are accepted and remain. Because this comparison acts on the marshalled form
+     * the provided attributes will be encoded prior to filtering.
+     * 
+     * @param query the attribute query
+     * @param attributes the attributes to filter
+     */
+    protected void filterAttributesByValue(AttributeQuery query, Collection<Attribute> attributes) {
+        if (query == null) {
+            return;
+        }
+
         // TODO not implemented yet
+    }
+
+    /**
+     * Gets the ID of the attribute used to construct the subject NameId.
+     * 
+     * @param requestContext current request context
+     * 
+     * @return ID of the attribute used to construct the subject NameId
+     */
+    protected String getNameIDAttributeId(
+            ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> requestContext) {
+        AbstractSAMLProfileConfiguration profileConfiguration = (AbstractSAMLProfileConfiguration) requestContext
+                .getProfileConfiguration();
+        if (profileConfiguration != null) {
+            return profileConfiguration.getSubjectNameAttributeId();
+        }
+
         return null;
     }
 
@@ -171,19 +269,19 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * 
      * @return attribute IDs for those attributes requested in the attribute query
      */
-    protected Set<String> getAttributeIds(AttributeQuery query){
+    protected Set<String> getAttributeIds(AttributeQuery query) {
         Set<String> queryAttributeIds = new HashSet<String>();
-        if(query != null){
+        if (query != null) {
             List<org.opensaml.saml2.core.Attribute> queryAttributes = query.getAttributes();
-           queryAttributeIds = getAttributeIds(queryAttributes);
+            queryAttributeIds = getAttributeIds(queryAttributes);
             if (log.isDebugEnabled()) {
                 log.debug("query message contains the following attributes: " + queryAttributeIds);
             }
         }
-        
+
         return queryAttributeIds;
     }
-    
+
     /**
      * Gets the attribute IDs for those attributes requested in the entity metadata.
      * 
@@ -191,12 +289,12 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * 
      * @return attribute IDs for those attributes requested in the entity metadata
      */
-    protected Set<String> getAttribtueIds(EntityDescriptor metadata){
+    protected Set<String> getAttribtueIds(EntityDescriptor metadata) {
         Set<String> metadataAttributeIds = new HashSet<String>();
         AttributeAuthorityDescriptor aaDescriptor;
         if (metadata != null) {
             aaDescriptor = metadata.getAttributeAuthorityDescriptor(SAMLConstants.SAML20P_NS);
-            if(aaDescriptor != null){
+            if (aaDescriptor != null) {
                 List<org.opensaml.saml2.core.Attribute> metadataAttributes = aaDescriptor.getAttributes();
                 metadataAttributeIds = getAttributeIds(metadataAttributes);
                 if (log.isDebugEnabled()) {
@@ -204,10 +302,10 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
                 }
             }
         }
-        
+
         return metadataAttributeIds;
     }
-    
+
     /**
      * This parses the attribute ids from the supplied list of attributes.
      * 
@@ -218,69 +316,10 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
         final Set<String> attributeIds = new HashSet<String>();
         for (org.opensaml.saml2.core.Attribute a : attributes) {
             String attrId = getAttributeIDBySAMLAttribute(a);
-            attributeIds.add(attrId);
+            if (attrId != null) {
+                attributeIds.add(attrId);
+            }
         }
         return attributeIds;
-    }
-
-    /**
-     * This encodes the supplied attributes with that attribute's SAML2 encoder.
-     * 
-     * @param resolvedAttributes <code>Map</code>
-     * @return <code>List</code> of core attributes
-     */
-    protected List<org.opensaml.saml2.core.Attribute> encodeAttributes(Map<String, Attribute> resolvedAttributes) {
-        List<org.opensaml.saml2.core.Attribute> encodedAttributes = new ArrayList<org.opensaml.saml2.core.Attribute>();
-
-        Attribute shibbolethAttribute;
-        AttributeEncoder<org.opensaml.saml2.core.Attribute> enc;
-        org.opensaml.saml2.core.Attribute samlAttribute;
-        SAML2StringAttributeEncoder defaultAttributeEncoder;
-        for (Map.Entry<String, Attribute> entry : resolvedAttributes.entrySet()) {
-            shibbolethAttribute = entry.getValue();
-            if(shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() ==0){
-                continue;
-            }
-            
-            enc = shibbolethAttribute.getEncoderByCategory(SAML2AttributeEncoder.CATEGORY);
-            if(enc == null){
-                defaultAttributeEncoder = new SAML2StringAttributeEncoder();
-                samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
-                if(samlAttribute != null){
-                    
-                    defaultAttributeEncoder.setAttributeName(samlAttribute.getName());
-                    defaultAttributeEncoder.setNameFormat(samlAttribute.getNameFormat());
-                    defaultAttributeEncoder.setFriendlyName(samlAttribute.getFriendlyName());
-                }else{
-                    defaultAttributeEncoder.setAttributeName(shibbolethAttribute.getId());
-                    defaultAttributeEncoder.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
-                }
-                
-                enc = defaultAttributeEncoder;
-            }
-            
-            try {
-                encodedAttributes.add(enc.encode(entry.getValue()));
-            } catch (AttributeEncodingException e) {
-                log.warn("unable to encode attribute (" + entry.getKey() + "): " + e.getMessage());
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("attribute encoder encoded the following attributes: " + encodedAttributes);
-        }
-        return encodedAttributes;
-    }
-
-    /**
-     * This builds the attribute statement for this SAML request.
-     * 
-     * @param encodedAttributes <code>List</code> of attributes
-     * @return <code>AttributeStatement</code>
-     */
-    protected AttributeStatement buildAttributeStatement(List<org.opensaml.saml2.core.Attribute> encodedAttributes) {
-        AttributeStatement statement = statementBuilder.buildObject();
-        List<org.opensaml.saml2.core.Attribute> attributes = statement.getAttributes();
-        attributes.addAll(encodedAttributes);
-        return statement;
     }
 }

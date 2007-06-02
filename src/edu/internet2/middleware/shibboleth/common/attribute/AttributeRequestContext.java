@@ -18,9 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 
 import java.util.Set;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
-import edu.internet2.middleware.shibboleth.common.session.Session;
 
 /**
  * Contextual information for requesting attributes from an attribute authority.
@@ -43,14 +41,6 @@ public interface AttributeRequestContext {
     public String getPrincipalAuthenticationMethod();
 
     /**
-     * Gets the current user session. This may be null if, for example, an unsolicited SAML attribute query were made by
-     * the SP.
-     * 
-     * @return current user session
-     */
-    public Session getUserSession();
-
-    /**
      * Gets the ID of the requester of the attributes.
      * 
      * @return requester of the attributes
@@ -65,13 +55,6 @@ public interface AttributeRequestContext {
      * @return configuration for the relying party
      */
     public RelyingPartyConfiguration getRelyingPartyConfiguration();
-    
-    /**
-     * Gets the effective profile configuration for the attribute requester.
-     * 
-     * @return effective profile configuration for the attribute requester
-     */
-    public ProfileConfiguration getEffectiveProfileConfiguration();
 
     /**
      * Gets the set of attributes, identified by their ID, that should be resolved.

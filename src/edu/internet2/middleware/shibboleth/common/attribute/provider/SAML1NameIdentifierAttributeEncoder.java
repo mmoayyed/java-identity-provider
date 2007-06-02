@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute;
+package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
-import org.opensaml.saml2.core.NameID;
+import org.opensaml.saml1.core.NameIdentifier;
+
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.XMLObjectAttributeEncoder;
 
 /**
- * SAML 2.0 NameID attribute encoder.
+ * SAML 1.X NameIdentifier attribute encoder.
  */
-public interface SAML2NameIDAttributeEncoder extends XMLObjectAttributeEncoder<NameID> {
+public interface SAML1NameIdentifierAttributeEncoder 
+    extends XMLObjectAttributeEncoder<NameIdentifier> {
 
     /**
      * Gets the name domain qualifier for the NameID.
@@ -29,25 +32,11 @@ public interface SAML2NameIDAttributeEncoder extends XMLObjectAttributeEncoder<N
      * @return name domain qualifier for the NameID
      */
     public String getNameQualifier();
-    
+
     /**
      * Sets the name domain qualifier for the NameID.
      * 
      * @param qualifier name domain qualifier for the NameID
      */
     public void setNameQualifier(String qualifier);
-    
-    /**
-     * Gets the service provider ID that the NameID will be released to.
-     * 
-     * @return service provider ID that the NameID will be released to
-     */
-    public String getSPNameQualifier();
-    
-    /**
-     * Sets the service provider ID that the NameID will be released to.
-     * 
-     * @param qualifier service provider ID that the NameID will be released to
-     */
-    public void setSPNameQualifier(String qualifier);
 }

@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 
 import org.apache.log4j.Logger;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
@@ -32,7 +32,7 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
     private static Logger log = Logger.getLogger(SimpleAttributeDefinition.class);
 
     /** {@inheritDoc} */
-    protected Attribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         log.debug("Resolving attribute: (" + getId() + ")");
 
         BasicAttribute<Object> attribute = new BasicAttribute<Object>();

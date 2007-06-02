@@ -18,8 +18,8 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 
 import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.common.attribute.Attribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
@@ -28,7 +28,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
  * 
  * Attribute definitions must be stateless and thread-safe as a single instance may be used to service every request.
  */
-public interface AttributeDefinition extends ResolutionPlugIn<Attribute> {
+public interface AttributeDefinition extends ResolutionPlugIn<BaseAttribute> {
 
     /**
      * Gets the map of encoders to be added to attributes produced by this definition, keyed on encoder category.
