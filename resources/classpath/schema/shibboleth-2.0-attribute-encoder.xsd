@@ -38,6 +38,26 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="SAML2StringNameID">
+        <annotation>
+            <documentation>Defines a SAML 2 string encoder for a NameID.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 NameQualfier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
     <complexType name="BaseScopedAttributeEncoderType">
         <annotation>

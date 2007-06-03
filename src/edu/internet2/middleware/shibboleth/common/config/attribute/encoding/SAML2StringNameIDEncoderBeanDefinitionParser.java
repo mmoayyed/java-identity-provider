@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeEncoder;
+package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import javax.xml.namespace.QName;
 
@@ -22,30 +22,26 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1ScopedStringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringNameIDEncoder;
 
 /**
- * Spring Bean Definition Parser for SAML1 string attribute encoder.
+ * Spring bean definition parser for {@link SAML2StringNameIDEncoder}s.
  */
-public class SAML1ScopedStringAttributeEncoderBeanDefinitionParser extends
-        BaseScopedAttributeEncoderBeanDefinitionParser {
+public class SAML2StringNameIDEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
+    
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2StringNameID");
 
-    /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1ScopedString");
-
-    /** Local name of namespace attribute. */
-    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+    /** {@inheritDoc} */
+    protected Class getBeanClass(Element arg0) {
+        return SAML2StringNameIDEncoder.class;
+    }
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("namespace", element.getAttribute(NAMESPACE_ATTRIBUTE_NAME));
+        builder.addPropertyValue("nameFormat", element.getAttributeNS(null, "nameFormat"));
+        builder.addPropertyValue("nameQualifier", element.getAttributeNS(null, "nameQualifier"));
     }
-
-    /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return SAML1ScopedStringAttributeEncoder.class;
-    }
-
 }

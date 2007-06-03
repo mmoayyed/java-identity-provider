@@ -16,7 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.filtering;
 
-import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
+import org.opensaml.common.IdentifierGenerator;
+import org.opensaml.common.impl.RandomIdentifierGenerator;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -30,7 +31,7 @@ import org.w3c.dom.Element;
 public abstract class BaseFilterBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Generator of unique IDs. */
-    private static SecureRandomIdentifierGenerator idGen = new SecureRandomIdentifierGenerator();
+    private static IdentifierGenerator idGen = new RandomIdentifierGenerator();
 
     /** {@inheritDoc} */
     protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
@@ -55,11 +56,11 @@ public abstract class BaseFilterBeanDefinitionParser extends AbstractSingleBeanD
         qualifiedId.append(AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME.getLocalPart());
         qualifiedId.append(":");
         qualifiedId.append(policyGroupId);
-        if(!DatatypeHelper.isEmpty(componentNamespace)){
+        if (!DatatypeHelper.isEmpty(componentNamespace)) {
             qualifiedId.append("/");
             qualifiedId.append(componentNamespace);
             qualifiedId.append(":");
-    
+
             if (DatatypeHelper.isEmpty(localId)) {
                 qualifiedId.append(idGen.generateIdentifier());
             } else {

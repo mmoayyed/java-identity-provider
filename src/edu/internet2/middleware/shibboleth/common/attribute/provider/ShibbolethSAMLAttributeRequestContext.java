@@ -34,7 +34,8 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfi
  *            or <code>org.opensaml.saml2.core.AttributeQuery</code>
  */
 public class ShibbolethSAMLAttributeRequestContext<NameIdentifierType extends SAMLObject, QueryType extends SAMLObject>
-        extends ShibbolethAttributeRequestContext implements SAMLAttributeRequestContext<NameIdentifierType, QueryType> {
+        extends ShibbolethAttributeRequestContext 
+        implements SAMLAttributeRequestContext<NameIdentifierType, QueryType> {
 
     /** Class logger. */
     private final Logger log = Logger.getLogger(ShibbolethSAMLAttributeRequestContext.class);

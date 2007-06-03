@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 public class DirectPrincipalConnectorBeanDefinitionParser extends BasePrincipalConnectrBeanDefinitionParser {
     
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(DirectPrincipalConnectorNamespaceHandler.NAMESPACE_URI, "Direct");
+    public static final QName SCHEMA_TYPE = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE_URI, "Direct");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {

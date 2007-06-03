@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeEncoder;
+package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -25,14 +25,10 @@ import org.w3c.dom.Element;
  * Base class for Spring bean definition parser for Shibboleth attribute encoders.
  */
 public abstract class BaseAttributeEncoderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-
-
-    /** Local name of attribute name attribute. */
-    public static final String ATTRIBUTE_NAME_ATTRIBUTE_NAME = "name";
     
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        builder.addPropertyValue("attributeName", element.getAttribute(ATTRIBUTE_NAME_ATTRIBUTE_NAME));
+        builder.addPropertyValue("attributeName", element.getAttribute("name"));
     }
     
     /** {@inheritDoc} */

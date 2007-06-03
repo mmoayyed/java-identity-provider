@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletRequest;
 
 import org.opensaml.xml.util.DatatypeHelper;
 
@@ -35,7 +35,7 @@ import edu.internet2.middleware.shibboleth.common.session.Session;
 public class ShibbolethAttributeRequestContext implements ProfileHandlerAttributeRequestContext {
 
     /** Request to the profile that in turn is request attributes. */
-    private ProfileRequest<HttpServletRequest> profileRequest;
+    private ProfileRequest<ServletRequest> profileRequest;
 
     /** Attribute requester ID. */
     private String attributeRequester;
@@ -64,7 +64,7 @@ public class ShibbolethAttributeRequestContext implements ProfileHandlerAttribut
     }
 
     /** {@inheritDoc} */
-    public ProfileRequest<HttpServletRequest> getRequest() {
+    public ProfileRequest<ServletRequest> getRequest() {
         return profileRequest;
     }
 
@@ -73,7 +73,7 @@ public class ShibbolethAttributeRequestContext implements ProfileHandlerAttribut
      * 
      * @param request request to the profile that in turn is request attributes
      */
-    public void setRequest(ProfileRequest<HttpServletRequest> request) {
+    public void setRequest(ProfileRequest<ServletRequest> request) {
         profileRequest = request;
     }
 
@@ -162,7 +162,7 @@ public class ShibbolethAttributeRequestContext implements ProfileHandlerAttribut
      * 
      * @param session current users session
      */
-    public void setUsserSession(Session session) {
+    public void setUserSession(Session session) {
         userSession = session;
     }
 }

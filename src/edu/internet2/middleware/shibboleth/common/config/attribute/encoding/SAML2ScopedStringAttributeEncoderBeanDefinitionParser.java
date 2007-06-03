@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeEncoder;
+package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import javax.xml.namespace.QName;
 
@@ -22,15 +22,16 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2ScopedStringAttributeEncoder;
 
 /**
  * Spring Bean Definition Parser for SAML2 string attribute encoder.
  */
-public class SAML2StringAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
+public class SAML2ScopedStringAttributeEncoderBeanDefinitionParser extends
+        BaseScopedAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML2String");
+    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML2ScopedString");
 
     /** Local name of name format attribute. */
     public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
@@ -48,7 +49,7 @@ public class SAML2StringAttributeEncoderBeanDefinitionParser extends BaseAttribu
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return SAML2StringAttributeEncoder.class;
+        return SAML2ScopedStringAttributeEncoder.class;
     }
 
 }

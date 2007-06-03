@@ -16,37 +16,35 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.encoding;
 
-import org.opensaml.common.xml.SAMLConstants;
-
 /**
  * SAML 2.0 attribute encoder.
  */
 public interface SAML2AttributeEncoder extends XMLObjectAttributeEncoder<org.opensaml.saml2.core.Attribute> {
 
     /** Category for attribute encoders. */
-    public static final String CATEGORY = SAMLConstants.SAML20P_NS;
-    
+    public static final String CATEGORY = "urn:mace:shibboleth:2.0:attribute:encoder:saml2:attribute";
+
     /**
      * Gets the attribute's name format.
      * 
      * @return attribute's name format
      */
     public String getNameFormat();
-    
+
     /**
      * Sets the attribute's name format.
      * 
      * @param format attribute's name format
      */
     public void setNameFormat(String format);
-    
+
     /**
      * Gets the human friendly name of the attribute.
      * 
      * @return human friendly name of the attribute
      */
     public String getFriendlyName();
-    
+
     /**
      * Sets the human friendly name of the attribute.
      * 

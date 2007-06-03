@@ -1,6 +1,6 @@
-urn\:mace\:shibboleth\:2.0\:attribute\:encoder = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeEncoder.AttributeEncoderNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:attribute\:encoder = edu.internet2.middleware.shibboleth.common.config.attribute.encoding.AttributeEncoderNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:resolver = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AttributeResolverNamespaceHandler
-urn\:mace\:shibboleth\:2.0\:resolver\:pc\:direct = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.principalConnector.DirectPrincipalConnectorNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:resolver\:pc = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.principalConnector.PrincipalConnectorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:resolver\:dc\:static = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector.StaticDataConnectorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:resolver\:dc\:rdbms = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector.RDBMSDataConnectorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:resolver\:dc\:ldap = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector.LdapDataConnectorNamespaceHandler

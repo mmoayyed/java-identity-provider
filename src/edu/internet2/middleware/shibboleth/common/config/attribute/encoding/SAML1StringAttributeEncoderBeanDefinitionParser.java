@@ -14,42 +14,36 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeEncoder;
+package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2ScopedStringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1StringAttributeEncoder;
 
 /**
- * Spring Bean Definition Parser for SAML2 string attribute encoder.
+ * Spring Bean Definition Parser for SAML1 string attribute encoder.
  */
-public class SAML2ScopedStringAttributeEncoderBeanDefinitionParser extends
-        BaseScopedAttributeEncoderBeanDefinitionParser {
+public class SAML1StringAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML2ScopedString");
-
-    /** Local name of name format attribute. */
-    public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
-
-    /** Local name of friendly name attribute. */
-    public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
+    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1String");
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("nameFormat", element.getAttribute(NAME_FORMAT_ATTRIBUTE_NAME));
-        builder.addPropertyValue("friendlyName", element.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
+        String namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "namespace"));
+        builder.addPropertyValue("namespace", namespace);
     }
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return SAML2ScopedStringAttributeEncoder.class;
+        return SAML1StringAttributeEncoder.class;
     }
 
 }

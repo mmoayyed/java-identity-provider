@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeEncoder;
+package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
@@ -25,17 +25,23 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
 
     /** Namespace for this handler. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:attribute:encoder";
-    
+
     /** {@inheritDoc} */
     public void init() {
         registerBeanDefinitionParser(SAML2StringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML2StringAttributeEncoderBeanDefinitionParser());
+
         registerBeanDefinitionParser(SAML2ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML2ScopedStringAttributeEncoderBeanDefinitionParser());
+
         registerBeanDefinitionParser(SAML1StringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML1StringAttributeEncoderBeanDefinitionParser());
+
         registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML1ScopedStringAttributeEncoderBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2StringNameIDEncoderBeanDefinitionParser.SCHEMA_TYPE,
+                new SAML2StringNameIDEncoderBeanDefinitionParser());
     }
 
 }

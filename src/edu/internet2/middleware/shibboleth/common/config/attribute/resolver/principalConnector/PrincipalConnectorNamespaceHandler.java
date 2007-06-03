@@ -21,15 +21,18 @@ import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHand
 /**
  * Namespace handler for direct principal connector configuration elements.
  */
-public class DirectPrincipalConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
+public class PrincipalConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace URI. */
-    public static final String NAMESPACE_URI = "urn:mace:shibboleth:2.0:resolver:pc:direct";
+    public static final String NAMESPACE_URI = "urn:mace:shibboleth:2.0:resolver:pc";
 
     /** {@inheritDoc} */
     public void init() {
         registerBeanDefinitionParser(DirectPrincipalConnectorBeanDefinitionParser.SCHEMA_TYPE,
                 new DirectPrincipalConnectorBeanDefinitionParser());
+
+        registerBeanDefinitionParser(TransientPrincipalConnectorBeanDefinitionParser.SCHEMA_TYPE,
+                new TransientPrincipalConnectorBeanDefinitionParser());
     }
 
 }

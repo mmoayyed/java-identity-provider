@@ -23,31 +23,34 @@ import org.opensaml.saml2.core.NameID;
  */
 public interface SAML2NameIDAttributeEncoder extends XMLObjectAttributeEncoder<NameID> {
 
+    /** Category for the attribute encoder. */
+    public static final String CATEGORY = "urn:mace:shibboleth:2.0:attribute:encoder:saml2:nameid";
+
+    /**
+     * Gets the name format URI for the NameID.
+     * 
+     * @return name format URI for the NameID
+     */
+    public String getNameFormat();
+
+    /**
+     * Sets the name format URI for the NameID.
+     * 
+     * @param format name format URI for the NameID
+     */
+    public void setNameFormat(String format);
+
     /**
      * Gets the name domain qualifier for the NameID.
      * 
      * @return name domain qualifier for the NameID
      */
     public String getNameQualifier();
-    
+
     /**
      * Sets the name domain qualifier for the NameID.
      * 
      * @param qualifier name domain qualifier for the NameID
      */
     public void setNameQualifier(String qualifier);
-    
-    /**
-     * Gets the service provider ID that the NameID will be released to.
-     * 
-     * @return service provider ID that the NameID will be released to
-     */
-    public String getSPNameQualifier();
-    
-    /**
-     * Sets the service provider ID that the NameID will be released to.
-     * 
-     * @param qualifier service provider ID that the NameID will be released to
-     */
-    public void setSPNameQualifier(String qualifier);
 }

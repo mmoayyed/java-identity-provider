@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:pc" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:resolver"
+        schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+
+    <complexType name="Transient">
+        <annotation>
+            <documentation>
+                A princpal connector that returns the SAML name identifier valueas the principal name.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BasePrincipalConnectorType">
+                <attribute name="identifierStoreID" type="string" default="shibboleth.StorageService">
+                    <annotation>
+                        <documentation>
+                            The identifier of the storage service used to store and retrieve principal names.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Direct">
+        <annotation>
+            <documentation>
+                A princpal connector that returns the SAML name identifier valueas the principal name.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BasePrincipalConnectorType" />
+        </complexContent>
+    </complexType>
+    
+</schema>

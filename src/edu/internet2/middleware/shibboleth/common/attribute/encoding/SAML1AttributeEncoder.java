@@ -16,23 +16,21 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.encoding;
 
-import org.opensaml.common.xml.SAMLConstants;
-
 /**
  * SAML 1.X attribute encoder.
  */
 public interface SAML1AttributeEncoder extends XMLObjectAttributeEncoder<org.opensaml.saml1.core.Attribute> {
 
     /** Category for attribute encoders. */
-    public static final String CATEGORY = SAMLConstants.SAML1P_NS ;
-    
+    public static final String CATEGORY = "urn:mace:shibboleth:2.0:attribute:encoder:saml1:attribute";
+
     /**
      * Gets the attribute namespace.
      * 
      * @return attribute namespace
      */
     public String getNamespace();
-    
+
     /**
      * Sets the attribute namespace.
      * 
