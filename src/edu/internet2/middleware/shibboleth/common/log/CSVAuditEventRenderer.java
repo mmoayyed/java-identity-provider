@@ -55,7 +55,7 @@ public class CSVAuditEventRenderer implements ObjectRenderer {
         entryString.append(entry.getMessageProfile());
         entryString.append("|");
 
-        entryString.append(entry.getProviderId());
+        entryString.append(entry.getAssertingPartyId());
         entryString.append("|");
 
         entryString.append(entry.getResponseBinding());
@@ -64,8 +64,8 @@ public class CSVAuditEventRenderer implements ObjectRenderer {
         entryString.append(entry.getResponseId());
         entryString.append("|");
 
-        if (entry.getPrincipalId() != null) {
-            entryString.append(entry.getPrincipalId());
+        if (entry.getPrincipalName() != null) {
+            entryString.append(entry.getPrincipalName());
         }
         entryString.append("|");
 

@@ -38,9 +38,6 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     /** ID of the attribute to use as the subject name. */
     private String subjectNameAttributeId;
 
-    /** Format for the subject name. */
-    private String subjectNameFormat;
-
     /** Default artifact type for the relying party. */
     private int defaultArtifactType;
 
@@ -130,24 +127,6 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     }
 
     /**
-     * Gets the default name identifier format for the relying party.
-     * 
-     * @return default name identifier format for the relying party
-     */
-    public String getSubjectNameFormat() {
-        return subjectNameFormat;
-    }
-
-    /**
-     * Sets the default name identifier format for the relying party.
-     * 
-     * @param format default name identifier format for the relying party
-     */
-    public void setSubjectNameFormat(String format) {
-        subjectNameFormat = format;
-    }
-
-    /**
      * Gets whether to sign protocol requests.
      * 
      * @return whether to sign protocol requests
@@ -229,7 +208,6 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
         configuration.setAssertionLifetime(getAssertionLifetime());
         configuration.setDefaultArtifactType(getDefaultArtifactType());
         configuration.setSubjectNameAttributeId(getSubjectNameAttributeId());
-        configuration.setSubjectNameFormat(getSubjectNameFormat());
         configuration.setSignRequests(getSignRequests());
         configuration.setSignResponses(getSignResposnes());
         configuration.setSignAssertions(getSignAssertions());

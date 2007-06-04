@@ -33,7 +33,7 @@ public class AuditLogEntry {
     private DateTime auditEventTime;
 
     /** Entity ID of the provider (message issuer). */
-    private String providerId;
+    private String assertingPartyId;
 
     /** Entity ID of the relying party. */
     private String relyingPartyId;
@@ -54,7 +54,7 @@ public class AuditLogEntry {
     private String responseId;
 
     /** Principal ID of the user the request was made about. */
-    private String principalId;
+    private String principalName;
 
     /** URIs of the authentication methods currently active for the user. */
     private String principalAuthenticationMethod;
@@ -109,8 +109,8 @@ public class AuditLogEntry {
      * 
      * @return principal ID of the user
      */
-    public String getPrincipalId() {
-        return principalId;
+    public String getPrincipalName() {
+        return principalName;
     }
 
     /**
@@ -118,8 +118,8 @@ public class AuditLogEntry {
      * 
      * @param id principal ID of the user
      */
-    public void setPrincipalId(String id) {
-        principalId = id;
+    public void setPrincipalName(String id) {
+        principalName = id;
     }
 
     /**
@@ -127,8 +127,8 @@ public class AuditLogEntry {
      * 
      * @return provider (message issuer) ID
      */
-    public String getProviderId() {
-        return providerId;
+    public String getAssertingPartyId() {
+        return assertingPartyId;
     }
 
     /**
@@ -136,8 +136,8 @@ public class AuditLogEntry {
      * 
      * @param id provider (message issuer) ID
      */
-    public void setProviderId(String id) {
-        providerId = id;
+    public void setAssertingPartyId(String id) {
+        assertingPartyId = id;
     }
 
     /**

@@ -127,15 +127,6 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     }
 
     /**
-     * Sets the URI for the default NameID format.
-     * 
-     * @param format URI for the default NameID format
-     */
-    public void setSubjectNameFormat(String format) {
-        subjectNameFormat = DatatypeHelper.safeTrimOrNullString(format);
-    }
-
-    /**
      * Gets the default artifact type.
      * 
      * @return default artifact type

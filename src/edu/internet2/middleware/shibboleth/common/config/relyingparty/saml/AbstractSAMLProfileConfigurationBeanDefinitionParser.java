@@ -57,9 +57,6 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
         builder.addPropertyValue("subjectNameAttributeId", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
                 null, "subjectNameAttributeID")));
 
-        builder.addPropertyValue("subjectNameFormat", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
-                "subjectNameFormat")));
-
         builder.addPropertyValue("defaultArtifactType", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "defaultArtifactType"))));
 
