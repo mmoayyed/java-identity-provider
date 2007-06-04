@@ -189,8 +189,11 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      */
     public String resolvePrincipalName(ShibbolethSAMLAttributeRequestContext requestContext)
             throws AttributeResolutionException {
-
         String nameIdFormat = getNameIdentifierFormat(requestContext.getSubjectNameIdentifier());
+        
+        if(log.isDebugEnabled()){
+            log.debug("Resolving principal name from name identifier of format: " + nameIdFormat);
+        }
 
         PrincipalConnector effectiveConnector = null;
         for (PrincipalConnector connector : principalConnectors.values()) {
@@ -212,6 +215,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                             + " for relying party " + requestContext.getAttributeRequester());
         }
 
+        if(log.isDebugEnabled()){
+            log.debug("Using principal connector " + effectiveConnector.getId() + " to resolve principal name.");
+        }
         effectiveConnector = new ContextualPrincipalConnector(effectiveConnector);
 
         ShibbolethResolutionContext resolutionContext = new ShibbolethResolutionContext(requestContext);

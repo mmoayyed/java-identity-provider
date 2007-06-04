@@ -159,7 +159,7 @@ public class ShibbolethSAMLAttributeRequestContext<NameIdentifierType extends SA
                 subjectNameIdentifier = (NameIdentifierType) subject.getNameID();
 
                 Issuer issuer = ((org.opensaml.saml2.core.AttributeQuery) attributeQuery).getIssuer();
-                setAttributeRequest(issuer.getValue());
+                setAttributeRequester(issuer.getValue());
 
             }
         }

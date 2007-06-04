@@ -48,7 +48,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
                     </annotation>

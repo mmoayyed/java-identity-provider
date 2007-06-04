@@ -23,9 +23,6 @@ import org.opensaml.saml2.core.NameID;
  */
 public interface SAML2NameIDAttributeEncoder extends XMLObjectAttributeEncoder<NameID> {
 
-    /** Category for the attribute encoder. */
-    public static final String CATEGORY = "urn:mace:shibboleth:2.0:attribute:encoder:saml2:nameid";
-
     /**
      * Gets the name format URI for the NameID.
      * 

@@ -87,7 +87,7 @@ public class ShibbolethAttributeRequestContext implements ProfileHandlerAttribut
      * 
      * @param id attribute requester ID
      */
-    public void setAttributeRequest(String id) {
+    public void setAttributeRequester(String id) {
         attributeRequester = DatatypeHelper.safeTrimOrNullString(id);
     }
 

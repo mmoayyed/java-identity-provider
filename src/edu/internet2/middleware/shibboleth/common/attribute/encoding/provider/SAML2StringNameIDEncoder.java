@@ -50,7 +50,7 @@ public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> i
     public NameID encode(BaseAttribute attribute) throws AttributeEncodingException {
         NameID nameId = nameIdBuilder.buildObject();
 
-        if (attribute.getValues() != null || attribute.getValues().size() < 1) {
+        if (attribute.getValues() == null || attribute.getValues().isEmpty()) {
             throw new AttributeEncodingException(attribute.getId() 
                     + " attribute does not contain any values to encode");
         }
@@ -65,6 +65,11 @@ public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> i
         }
 
         return nameId;
+    }
+    
+    /** {@inheritDoc} */
+    public String getEncoderCategory() {
+        return nameFormat;
     }
 
     /** {@inheritDoc} */

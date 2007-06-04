@@ -147,21 +147,13 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
             ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> requestContext)
             throws AttributeRequestException {
         AttributeQuery query = requestContext.getAttributeQuery();
-
-        // get ID of attribute used for NameID
-        String nameIdAttributeId = getNameIDAttributeId(requestContext);
-
+        
         // get attributes from the message
         Set<String> queryAttributeIds = getAttributeIds(query);
+        requestContext.getRequestedAttributes().addAll(queryAttributeIds);
 
         // get attributes from the metadata
         Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getAttributeRequesterMetadata());
-
-        // union the attribute id sets
-        if (nameIdAttributeId != null) {
-            requestContext.getRequestedAttributes().add(nameIdAttributeId);
-        }
-        requestContext.getRequestedAttributes().addAll(queryAttributeIds);
         requestContext.getRequestedAttributes().addAll(metadataAttributeIds);
 
         // Resolve attributes

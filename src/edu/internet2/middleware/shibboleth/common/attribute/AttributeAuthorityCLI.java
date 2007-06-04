@@ -231,7 +231,7 @@ public class AttributeAuthorityCLI {
         RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration(issuer, requester);
 
         ShibbolethSAMLAttributeRequestContext attribReqCtx = new ShibbolethSAMLAttributeRequestContext();
-        attribReqCtx.setAttributeRequest(requester);
+        attribReqCtx.setAttributeRequester(requester);
         attribReqCtx.setRelyingPartyConfiguration(rpConfig);
 
         String principal = (String) parser.getOptionValue(CLIParserBuilder.PRINCIPAL_ARG);
