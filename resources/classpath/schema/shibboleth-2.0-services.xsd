@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:services"
+<schema targetNamespace="urn:mace:shibboleth:2.0:services" xmlns="http://www.w3.org/2001/XMLSchema" 
     xmlns:service="urn:mace:shibboleth:2.0:services" xmlns:res="urn:mace:shibboleth:2.0:resource"
     elementFormDefault="qualified">
 
