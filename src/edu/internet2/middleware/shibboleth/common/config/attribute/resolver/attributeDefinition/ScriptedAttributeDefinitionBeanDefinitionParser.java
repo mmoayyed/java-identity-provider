@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(ScriptedAttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(ScriptedAttributeDefinitionBeanDefinitionParser.class);
@@ -55,7 +55,7 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
         pluginBuilder.addPropertyValue("language", scriptLanguage);
 
         List<Element> scriptElem = pluginConfigChildren.get(new QName(
-                ScriptedAttributeDefinitionNamespaceHandler.NAMESPACE, "Script"));
+                AttributeDefinitionNamespaceHandler.NAMESPACE, "Script"));
         if (scriptElem != null && scriptElem.size() > 0) {
             String script = DatatypeHelper.safeTrimOrNullString(scriptElem.get(0).getTextContent());
             if (log.isDebugEnabled()) {
@@ -64,7 +64,7 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             pluginBuilder.addPropertyValue("script", script);
         } else {
             List<Element> scriptFileElem = pluginConfigChildren.get(new QName(
-                    ScriptedAttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile"));
+                    AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile"));
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 String scriptFile = DatatypeHelper.safeTrimOrNullString(scriptFileElem.get(0).getTextContent());
                 if (log.isDebugEnabled()) {

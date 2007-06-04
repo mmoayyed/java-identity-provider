@@ -37,10 +37,10 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttrib
 public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(StaticDataConnectorNamespaceHandler.NAMESPACE, "Static");
+    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
 
     /** Local name of attribute. */
-    public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(StaticDataConnectorNamespaceHandler.NAMESPACE,
+    public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
             "Attribute");
 
     /** {@inheritDoc} */
@@ -76,7 +76,7 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
             attribute = new BasicAttribute<String>(DatatypeHelper.safeTrimOrNullString(attributeElem.getAttributeNS(
                     null, "id")));
             for (Element valueElem : XMLHelper.getChildElementsByTagNameNS(attributeElem,
-                    StaticDataConnectorNamespaceHandler.NAMESPACE, "Value")) {
+                    DataConnectorNamespaceHandler.NAMESPACE, "Value")) {
                 attribute.getValues().add(valueElem.getTextContent());
             }
 

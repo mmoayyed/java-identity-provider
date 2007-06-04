@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(SimpleAttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
+    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {

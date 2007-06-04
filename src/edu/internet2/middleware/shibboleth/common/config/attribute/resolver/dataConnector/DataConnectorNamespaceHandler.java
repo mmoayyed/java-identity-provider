@@ -6,15 +6,19 @@ import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHand
 /**
  * Spring namespace handler for the Shibboleth static data connector namespace.
  */
-public class StaticDataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
+public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:dc:static";
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:dc";
     
     /** {@inheritDoc} */
     public void init() {
         registerBeanDefinitionParser(StaticDataConnectorBeanDefinitionParser.TYPE_NAME,
                 new StaticDataConnectorBeanDefinitionParser());
+        registerBeanDefinitionParser(RDBMSDataConnectorBeanDefinitionParser.TYPE_NAME,
+                new RDBMSDataConnectorBeanDefinitionParser());
+        registerBeanDefinitionParser(LdapDataConnectorBeanDefinitionParser.TYPE_NAME,
+                new LdapDataConnectorBeanDefinitionParser());
     }
 
 }

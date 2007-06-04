@@ -3,34 +3,34 @@
 <AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-	xmlns:simple="urn:mace:shibboleth:2.0:resolver:ad:simple"
-	xmlns:static="urn:mace:shibboleth:2.0:resolver:dc:static"
+	xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+	xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
 	xsi:schemaLocation="
     	urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
-    	urn:mace:shibboleth:2.0:resolver:ad:simple classpath:/schema/shibboleth-2.0-attribute-resolver-ad-simple.xsd
-    	urn:mace:shibboleth:2.0:resolver:dc:static classpath:/schema/shibboleth-2.0-attribute-resolver-dc-static.xsd">
+      urn:mace:shibboleth:2.0:resolver:dc classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd
+    	urn:mace:shibboleth:2.0:resolver:ad classpath:/schema/shibboleth-2.0-attribute-resolver-ad.xsd">
 
-	<resolver:AttributeDefinition xsi:type="simple:Simple" id="uid">
+	<resolver:AttributeDefinition xsi:type="ad:Simple" id="uid">
 		<resolver:DataConnectorDependency ref="static" />
 		<resolver:DataConnectorDependency ref="static2" />
 	</resolver:AttributeDefinition>
 	
-	<resolver:DataConnector xsi:type="static:Static" id="static">
-		<static:Attribute id="uid">
-			<static:Value>gpburdell</static:Value>
-		</static:Attribute>
-		<static:Attribute id="cn">
-			<static:Value>George P Burdell</static:Value>
-		</static:Attribute>
+	<resolver:DataConnector xsi:type="dc:Static" id="static">
+		<dc:Attribute id="uid">
+			<dc:Value>gpburdell</dc:Value>
+		</dc:Attribute>
+		<dc:Attribute id="cn">
+			<dc:Value>George P Burdell</dc:Value>
+		</dc:Attribute>
 	</resolver:DataConnector>
 
-	<resolver:DataConnector xsi:type="static:Static" id="static2">
-		<static:Attribute id="uid">
-			<static:Value>ttrojan</static:Value>
-		</static:Attribute>
-		<static:Attribute id="cn">
-			<static:Value>Tommy Trojan</static:Value>
-		</static:Attribute>
+	<resolver:DataConnector xsi:type="dc:Static" id="static2">
+		<dc:Attribute id="uid">
+			<dc:Value>ttrojan</dc:Value>
+		</dc:Attribute>
+		<dc:Attribute id="cn">
+			<dc:Value>Tommy Trojan</dc:Value>
+		</dc:Attribute>
 	</resolver:DataConnector>
 
 </AttributeResolver>

@@ -1,11 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc:rdbms" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:rdbms="urn:mace:shibboleth:2.0:resolver:dc:rdbms" elementFormDefault="qualified">
+<schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
+    elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
 
+    <complexType name="Static">
+        <annotation>
+            <documentation>
+                A data connector that gets its information from a static list of attributes and values specified within
+                this configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <sequence>
+                    <element name="Attribute" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies an attribute, and its values, to be exposed by this connector.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element name="Value" type="string" maxOccurs="unbounded">
+                                    <annotation>
+                                        <documentation>
+                                            A value of the attribute. If the value contains characters that would
+                                            otherwise need to be XML encoded you may wrap the value in a CDATA section.
+                                        </documentation>
+                                    </annotation>
+                                </element>
+                            </sequence>
+                            <attribute name="id" type="string" use="required">
+                                <annotation>
+                                    <documentation>The ID of the attribute.</documentation>
+                                </annotation>
+                            </attribute>
+                        </complexType>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="RelationalDatabase">
         <annotation>
             <documentation>
@@ -17,7 +57,7 @@
             <extension base="resolver:BaseDataConnectorType">
                 <sequence>
                     <choice>
-                        <element ref="rdbms:ContainerManagedConnection">
+                        <element ref="dc:ContainerManagedConnection">
                             <annotation>
                                 <documentation>
                                     A connection, or pool of connections, to the database managed the application
@@ -25,7 +65,7 @@
                                 </documentation>
                             </annotation>
                         </element>
-                        <element ref="rdbms:ApplicationManagedConnection">
+                        <element ref="dc:ApplicationManagedConnection">
                             <annotation>
                                 <documentation>
                                     A connection, or pool of connections, to the database managed the data connector.
@@ -41,7 +81,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element ref="rdbms:Column" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="dc:Column" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
                 <attribute name="readOnlyConnection" type="boolean" default="true">
                     <annotation>
@@ -87,7 +127,7 @@
         </complexContent>
     </complexType>
 
-    <element name="ContainerManagedConnection" type="rdbms:ContainerManagedConnectionType">
+    <element name="ContainerManagedConnection" type="dc:ContainerManagedConnectionType">
         <annotation>
             <documentation>
                 Describes a database connection source that is managed by the application container.
@@ -96,7 +136,7 @@
     </element>
     <complexType name="ContainerManagedConnectionType">
         <sequence>
-            <element name="JNDIConnectionProperty" type="rdbms:PropertyType" minOccurs="0" maxOccurs="unbounded">
+            <element name="JNDIConnectionProperty" type="dc:PropertyType" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         A property used when contrusting a JNDI initial context which in turn is used to lookup the
@@ -112,7 +152,7 @@
         </attribute>
     </complexType>
 
-    <element name="ApplicationManagedConnection" type="rdbms:ApplicationManagedConnectionType">
+    <element name="ApplicationManagedConnection" type="dc:ApplicationManagedConnectionType">
         <annotation>
             <documentation>
                 Describes a database connection source that is managed by the attribute resolver data connector.
@@ -221,7 +261,7 @@
         </attribute>
     </complexType>
 
-    <element name="Column" type="rdbms:ColumnType">
+    <element name="Column" type="dc:ColumnType">
         <annotation>
             <documentation>A description of a column in the result set from the query.</documentation>
         </annotation>
@@ -237,7 +277,7 @@
                 <documentation>The name of the attribute that data from this column should be added to.</documentation>
             </annotation>
         </attribute>
-        <attribute name="type" type="rdbms:ColumnDataType" default="String">
+        <attribute name="type" type="dc:ColumnDataType" default="String">
             <annotation>
                 <documentation>The Java data type data in the column should be extracted as.</documentation>
             </annotation>
@@ -263,4 +303,152 @@
             <enumeration value="URL" />
         </restriction>
     </simpleType>
+    
+    <complexType name="LDAPDirectory">
+        <annotation>
+            <documentation>
+                A data connector that can pull information from an LDAP, version 3, directory.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <sequence>
+                    <element name="FilterTemplate" type="string">
+                        <annotation>
+                            <documentation>
+                                A template used to construct the LDAP filter used to query the directory.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ReturnAttributes" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                A space seperated list of attributes that should be returned from the query.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="LDAPProperty" type="dc:PropertyType" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                LDAP connection properties relevant to the underlying provider being used.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="ldapUrl" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                        The URL to the LDAP server.  This URL MUST NOT include the base DN.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principal" type="string">
+                    <annotation>
+                        <documentation>The DN for the principal connecting the LDAP directory.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principalCredential" type="string">
+                    <annotation>
+                        <documentation>
+                            The credential for the principal connecting to the LDAP directory.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="baseDN" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The base DN from which to search from.  If the search scope is set to ONELEVEL only the entries 
+                            within this node will be search, if SUBTREE is specified entries within this node and descendant 
+                            nodes will be searched.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchScope" type="dc:SearchScopeType" default="SUBTREE">
+                    <annotation>
+                        <documentation>
+                            The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE. If no scope is given
+                            SUBTREE is used.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="useStartTLS" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether startTLS should be used when connecting to the LDAP.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="poolInitialSize" type="nonNegativeInteger" default="0">
+                    <annotation>
+                        <documentation>
+                            Initial number of connections established to the directory when this connector starts up.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="poolMaxIdleSize" type="nonNegativeInteger" default="3">
+                    <annotation>
+                        <documentation>
+                            The maximum number of idle connections that will remain in the pool.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchTimeLimit" type="positiveInteger" default="3000">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time, in milliseconds, to wait for search results. If this limit is
+                            reached a timeout error is raised.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxResultSize" type="positiveInteger" default="1">
+                    <annotation>
+                        <documentation>The maximum number of results that may be returned from a query.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheResults" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating that search results should be cached for the duration of a user's
+                            session.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mergeResults" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            A boolean flag inidicating that if multiple results are returned they should be merged into
+                            a single result that contains the combined attributes and values of all the results. If more
+                            than one result is returned and this is set to false and exception will be thrown.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="noResultIsError" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returing no results should be considered error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
+                    <annotation>
+                        <documentation>Name of the template engine defined within the applicaiton.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="SearchScopeType">
+        <annotation>
+            <documentation>Supported search scopes.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="SUBTREE" />
+            <enumeration value="ONELEVEL" />
+            <enumeration value="OBJECT" />
+        </restriction>
+    </simpleType>
+
 </schema>

@@ -45,22 +45,22 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(RDBMSDataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");
+    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");
 
     /** ContainerManagedApplication element name. */
     public static final QName CONTAINER_MANAGED_CONNECTION_ELEMENT_NAME = new QName(
-            RDBMSDataConnectorNamespaceHandler.NAMESPACE, "ContainerManagedConnection");
+            DataConnectorNamespaceHandler.NAMESPACE, "ContainerManagedConnection");
 
     /** ApplicationManagedApplication element name. */
     public static final QName APPLICATION_MANAGED_CONNECTION_ELEMENT_NAME = new QName(
-            RDBMSDataConnectorNamespaceHandler.NAMESPACE, "ApplicationManagedConnection");
+            DataConnectorNamespaceHandler.NAMESPACE, "ApplicationManagedConnection");
 
     /** QueryTemplate element name. */
-    public static final QName QUERY_TEMPLATE_ELEMENT_NAME = new QName(RDBMSDataConnectorNamespaceHandler.NAMESPACE,
+    public static final QName QUERY_TEMPLATE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
             "QueryTemplate");
 
     /** Column element name. */
-    public static final QName COLUMN_ELEMENT_NAME = new QName(RDBMSDataConnectorNamespaceHandler.NAMESPACE, "Column");
+    public static final QName COLUMN_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Column");
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(RDBMSDataConnectorBeanDefinitionParser.class);
@@ -154,7 +154,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         jndiResource = DatatypeHelper.safeTrim(jndiResource);
 
         Hashtable<String, String> initCtxProps = buildProperties(XMLHelper.getChildElementsByTagNameNS(cmc,
-                RDBMSDataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
+                DataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
         try {
             InitialContext initCtx = new InitialContext(initCtxProps);
             DataSource dataSource = (DataSource) initCtx.lookup(jndiResource);

@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 public class ScopedAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(SimpleAttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
+    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(ScopedAttributeDefinitionBeanDefinitionParser.class);

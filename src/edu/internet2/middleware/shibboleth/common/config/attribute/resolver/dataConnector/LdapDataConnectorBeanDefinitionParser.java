@@ -38,21 +38,21 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** LDAP data connector type name. */
-    public static final QName TYPE_NAME = new QName(LdapDataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
+    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(LdapDataConnectorBeanDefinitionParser.class);
 
     /** FilterTemplate element name. */
-    private static final QName FILTER_TEMPLATE_ELEMENT_NAME = new QName(LdapDataConnectorNamespaceHandler.NAMESPACE,
+    private static final QName FILTER_TEMPLATE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
             "FilterTemplate");
 
     /** ReturnAttributes element name. */
-    private static final QName RETURN_ATTRIBUTES_ELEMENT_NAME = new QName(LdapDataConnectorNamespaceHandler.NAMESPACE,
+    private static final QName RETURN_ATTRIBUTES_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
             "ReturnAttributes");
 
     /** LDAPProperty element name. */
-    private static final QName LDAP_PROPERTY_ELEMENT_NAME = new QName(LdapDataConnectorNamespaceHandler.NAMESPACE,
+    private static final QName LDAP_PROPERTY_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
             "LDAPProperty");
 
     /** {@inheritDoc} */

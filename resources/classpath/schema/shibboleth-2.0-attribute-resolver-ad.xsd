@@ -1,11 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:resolver:ad:script"
-    xmlns:script="urn:mace:shibboleth:2.0:resolver:ad:script" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:resolver:ad"
+    xmlns:simple="urn:mace:shibboleth:2.0:resolver:ad:simple" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+    elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
 
+    <complexType name="Simple">
+        <annotation>
+            <documentation>A basic attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="Scoped">
+        <annotation>
+            <documentation>A basic attribute definition which supports attribute scoping.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="scope" type="string" use="required">
+                    <annotation>
+                        <documentation>Value to use for scoping the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="Script">
         <annotation>
             <documentation>
@@ -43,5 +68,5 @@
             </extension>
         </complexContent>
     </complexType>
-
+    
 </schema>
