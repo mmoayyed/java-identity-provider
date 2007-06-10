@@ -20,12 +20,33 @@ package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1;
  * Shibboleth 1 SSO configuration settings.
  */
 public class ShibbolethSSOConfiguration extends AbstractSAML1ProfileConfiguration {
-    
+
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml1:sso";
-    
+
+    /** Whether responses to the authentication request should include an attribtue statement. */
+    private boolean includeAttributeStatement;
+
     /** {@inheritDoc} */
     public String getProfileId() {
         return PROFILE_ID;
+    }
+
+    /**
+     * Gets whether responses to the authentication request should include an attribtue statement.
+     * 
+     * @return whether responses to the authentication request should include an attribtue statement
+     */
+    public boolean includeAttributeStatement() {
+        return includeAttributeStatement;
+    }
+
+    /**
+     * Sets whether responses to the authentication request should include an attribtue statement.
+     * 
+     * @param include whether responses to the authentication request should include an attribtue statement
+     */
+    public void setIncludeAttributeStatement(boolean include) {
+        includeAttributeStatement = include;
     }
 }

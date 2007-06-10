@@ -22,17 +22,38 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.SS
  * Spring factory for SAML 2 SSO profile configurations.
  */
 public class SAML2SSOProfileConfigurationFactoryBean extends AbstractSAML2ProfileConfigurationFactoryBean {
+    
+    /** Whether responses to the authentication request should include an attribtue statement. */
+    private boolean includeAttributeStatement;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
         return SSOConfiguration.class;
     }
     
+    /**
+     * Gets whether responses to the authentication request should include an attribtue statement.
+     * 
+     * @return whether responses to the authentication request should include an attribtue statement
+     */
+    public boolean includeAttributeStatement() {
+        return includeAttributeStatement;
+    }
+
+    /**
+     * Sets whether responses to the authentication request should include an attribtue statement.
+     * 
+     * @param include whether responses to the authentication request should include an attribtue statement
+     */
+    public void setIncludeAttributeStatement(boolean include) {
+        includeAttributeStatement = include;
+    }
+    
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         SSOConfiguration configuration = new SSOConfiguration();
-        
         populateBean(configuration);
+        configuration.setIncludeAttributeStatement(includeAttributeStatement());
         
         return configuration;
     }

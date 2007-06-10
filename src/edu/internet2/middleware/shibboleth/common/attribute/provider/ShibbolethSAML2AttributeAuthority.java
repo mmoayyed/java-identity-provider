@@ -43,7 +43,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2Attrib
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringAttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
-import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**
  * SAML 2.0 Attribute Authority.
@@ -234,24 +233,6 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
         }
 
         // TODO not implemented yet
-    }
-
-    /**
-     * Gets the ID of the attribute used to construct the subject NameId.
-     * 
-     * @param requestContext current request context
-     * 
-     * @return ID of the attribute used to construct the subject NameId
-     */
-    protected String getNameIDAttributeId(
-            ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> requestContext) {
-        AbstractSAMLProfileConfiguration profileConfiguration = (AbstractSAMLProfileConfiguration) requestContext
-                .getProfileConfiguration();
-        if (profileConfiguration != null) {
-            return profileConfiguration.getSubjectNameAttributeId();
-        }
-
-        return null;
     }
 
     /**

@@ -22,17 +22,38 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.Sh
  * Spring factory for Shibboleth SSO profile configurations.
  */
 public class ShibbolethSSOProfileConfigurationFactoryBean extends AbstractSAML1ProfileConfigurationFactoryBean {
+    
+    /** Whether responses to the authentication request should include an attribtue statement. */
+    private boolean includeAttributeStatement;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
         return ShibbolethSSOConfiguration.class;
     }
 
+    /**
+     * Gets whether responses to the authentication request should include an attribtue statement.
+     * 
+     * @return whether responses to the authentication request should include an attribtue statement
+     */
+    public boolean includeAttributeStatement() {
+        return includeAttributeStatement;
+    }
+
+    /**
+     * Sets whether responses to the authentication request should include an attribtue statement.
+     * 
+     * @param include whether responses to the authentication request should include an attribtue statement
+     */
+    public void setIncludeAttributeStatement(boolean include) {
+        includeAttributeStatement = include;
+    }
+
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         ShibbolethSSOConfiguration configuration = new ShibbolethSSOConfiguration();
-
         populateBean(configuration);
+        configuration.setIncludeAttributeStatement(includeAttributeStatement());
 
         return configuration;
     }

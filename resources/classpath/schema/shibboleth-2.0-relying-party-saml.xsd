@@ -39,7 +39,16 @@
             <documentation>SAML 2.0 single sign-on communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType" />
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="includeAttributeStatement" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            Boolean flag indicating whether an attribute statement should be included with the
+                            authentication statement in the response sent back to the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -112,7 +121,16 @@
             <documentation>Shibboleth 1 single sign-on communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML1ProfileConfigurationType" />
+            <extension base="samlrp:SAML1ProfileConfigurationType">
+                <attribute name="includeAttributeStatement" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            Boolean flag indicating whether an attribute statement should be included with the
+                            authentication statement in the response sent back to the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -152,11 +170,6 @@
                             The amount of time, in milliseconds, before an issued assertion expires. A negative value
                             indicates the assertion never expires.
                         </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="subjectNameAttributeID" type="anyURI" default="subject">
-                    <annotation>
-                        <documentation>ID of the attribute to use as the subject for assertions.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="defaultArtifactType" type="integer" default="4">

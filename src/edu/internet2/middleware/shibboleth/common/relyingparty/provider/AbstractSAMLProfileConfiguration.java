@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
@@ -34,12 +33,6 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
 
     /** Audiences for the assertion. */
     private Collection<String> assertionAudiences;
-    
-    /** ID of the attribute to use as the subject name. */
-    private String subjectNameAttributeId;
-
-    /** Format of the subject name identifier. */
-    private String subjectNameFormat;
 
     /** Default artifact type. */
     private int defaultArtifactType;
@@ -97,33 +90,6 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      */
     public void setAssertionAudiences(Collection<String> audiences) {
         assertionAudiences = audiences;
-    }
-    
-    /**
-     * Gets the ID of the attribute used the provide the subject name.
-     * 
-     * @return ID of the attribute used the provide the subject name
-     */
-    public String getSubjectNameAttributeId(){
-        return subjectNameAttributeId;
-    }
-    
-    /**
-     * Sets the ID of the attribute used to provide the subject name.
-     * 
-     * @param id ID of the attribute used the provide the subject name
-     */
-    public void setSubjectNameAttributeId(String id){
-        subjectNameAttributeId = DatatypeHelper.safeTrimOrNullString(id);
-    }
-
-    /**
-     * Gets the URI for the default NameID format.
-     * 
-     * @return URI for the default NameID format
-     */
-    public String getSubjectNameFormat() {
-        return subjectNameFormat;
     }
 
     /**

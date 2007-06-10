@@ -42,7 +42,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML1Attrib
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1StringAttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
-import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
 
 /**
  * SAML 1 Attribute Authority.
@@ -143,20 +142,12 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
 
         AttributeQuery query = requestContext.getAttributeQuery();
 
-        // get ID of attribute used for NameID
-        String nameIdAttributeId = getNameIDAttributeId(requestContext);
-
         // get attributes from the message
         Set<String> queryAttributeIds = getAttributeIds(query);
+        requestContext.getRequestedAttributes().addAll(queryAttributeIds);
 
         // get attributes from metadata
         Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getAttributeRequesterMetadata());
-
-        // union the attribute id sets
-        if (nameIdAttributeId != null) {
-            requestContext.getRequestedAttributes().add(nameIdAttributeId);
-        }
-        requestContext.getRequestedAttributes().addAll(queryAttributeIds);
         requestContext.getRequestedAttributes().addAll(metadataAttributeIds);
 
         Map<String, BaseAttribute> attributes = attributeResolver.resolveAttributes(requestContext);
@@ -166,24 +157,6 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
         }
 
         return attributes;
-    }
-
-    /**
-     * Gets the ID of the attribute used to construct the subject {@link NameIdentifier}.
-     * 
-     * @param requestContext current request context
-     * 
-     * @return ID of the attribute used to construct the subject {@link NameIdentifier}
-     */
-    protected String getNameIDAttributeId(
-            ShibbolethSAMLAttributeRequestContext<NameIdentifier, AttributeQuery> requestContext) {
-        AbstractSAMLProfileConfiguration profileConfiguration = (AbstractSAMLProfileConfiguration) requestContext
-                .getProfileConfiguration();
-        if (profileConfiguration != null) {
-            return profileConfiguration.getSubjectNameAttributeId();
-        }
-
-        return null;
     }
 
     /**

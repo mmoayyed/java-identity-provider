@@ -18,6 +18,9 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.XMLHelper;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
@@ -28,9 +31,17 @@ public class ShibbolethSSOProfileConfigurationBeanDefinitionParser extends
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE, "ShibbolethSSOProfile");
-    
+
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
         return ShibbolethSSOProfileConfigurationFactoryBean.class;
+    }
+
+    /** {@inheritDoc} */
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+
+        builder.addPropertyValue("includeAttributeStatement", XMLHelper.getAttributeValueAsBoolean(element
+                .getAttributeNodeNS(null, "includeAttributeStatement")));
     }
 }

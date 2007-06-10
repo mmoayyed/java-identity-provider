@@ -19,7 +19,6 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 import java.util.List;
 
 import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
@@ -34,9 +33,6 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
 
     /** Amount of time before an issued assertion expires. */
     private long assertionLifetime;
-
-    /** ID of the attribute to use as the subject name. */
-    private String subjectNameAttributeId;
 
     /** Default artifact type for the relying party. */
     private int defaultArtifactType;
@@ -106,24 +102,6 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      */
     public void setDefaultArtifactType(int type) {
         defaultArtifactType = type;
-    }
-
-    /**
-     * Gets the ID of the attribute used the provide the subject name.
-     * 
-     * @return ID of the attribute used the provide the subject name
-     */
-    public String getSubjectNameAttributeId() {
-        return subjectNameAttributeId;
-    }
-
-    /**
-     * Sets the ID of the attribute used to provide the subject name.
-     * 
-     * @param id ID of the attribute used the provide the subject name
-     */
-    public void setSubjectNameAttributeId(String id) {
-        subjectNameAttributeId = DatatypeHelper.safeTrimOrNullString(id);
     }
 
     /**
@@ -207,7 +185,6 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
         configuration.setAssertionAudiences(getAudiences());
         configuration.setAssertionLifetime(getAssertionLifetime());
         configuration.setDefaultArtifactType(getDefaultArtifactType());
-        configuration.setSubjectNameAttributeId(getSubjectNameAttributeId());
         configuration.setSignRequests(getSignRequests());
         configuration.setSignResponses(getSignResposnes());
         configuration.setSignAssertions(getSignAssertions());
