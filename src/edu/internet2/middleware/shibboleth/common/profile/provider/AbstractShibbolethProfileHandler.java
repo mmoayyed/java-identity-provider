@@ -20,7 +20,6 @@ import java.util.Map;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import org.opensaml.Configuration;
 import org.opensaml.common.binding.decoding.MessageDecoder;
@@ -191,7 +190,7 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
     @SuppressWarnings("unchecked")
     protected void populateMessageDecoder(MessageDecoder<ServletRequest> decoder) {
         if (securityPolicyFactory != null) {
-            SAMLSecurityPolicy<HttpServletRequest> securityPolicy = (SAMLSecurityPolicy) securityPolicyFactory
+            SAMLSecurityPolicy securityPolicy = (SAMLSecurityPolicy) securityPolicyFactory
                     .createPolicyInstance();
             securityPolicy.setMetadataProvider(rpManager.getMetadataProvider());
             decoder.setSecurityPolicy(securityPolicy);
