@@ -177,7 +177,7 @@
                         <documentation>The default artifact type to use.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="singingCredentialRef" type="string">
+                <attribute name="signingCredentialRef" type="string">
                     <annotation>
                         <documentation>ID of the credential to use to sign SAML assertions.</documentation>
                     </annotation>
