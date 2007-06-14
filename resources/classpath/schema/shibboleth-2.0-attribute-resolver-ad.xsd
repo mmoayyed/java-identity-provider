@@ -30,7 +30,7 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="Script">
         <annotation>
             <documentation>
@@ -68,5 +68,42 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
+    <complexType name="Regex">
+        <annotation>
+            <documentation>
+                The RegexAttributeDefinition allows regular expression based replacements on attribute values.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="regex" type="string" use="required">
+                    <annotation>
+                        <documentation>Regex string to match the source attribute value with.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="replacement" type="string" use="optional">
+                    <annotation>
+                        <documentation>
+                            The replacement string to replace the matched groups in the pattern with.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="partialMatch" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            If true, the provided regex may match a substring of the attribute value. Otherwise, the
+                            pattern must match the entire value string.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="ignoreCase" type="boolean" default="false">
+                    <annotation>
+                        <documentation>Perform case-insensitive match.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
 </schema>
