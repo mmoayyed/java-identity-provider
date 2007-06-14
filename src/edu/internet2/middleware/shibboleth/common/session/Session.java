@@ -45,7 +45,7 @@ public interface Session extends Serializable {
      * 
      * @return principal ID of the user
      */
-    public String getPrincipalID();
+    public String getPrincipalName();
 
     /**
      * Gets the time of the last activity from the user.

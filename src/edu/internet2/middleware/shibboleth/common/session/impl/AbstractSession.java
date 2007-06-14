@@ -60,7 +60,7 @@ public abstract class AbstractSession implements Session {
     }
 
     /** {@inheritDoc} */
-    public String getPrincipalID() {
+    public String getPrincipalName() {
         return principalID;
     }
 

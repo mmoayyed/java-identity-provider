@@ -641,7 +641,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     public void onApplicationEvent(ApplicationEvent evt) {
         if (evt instanceof LogoutEvent) {
             LogoutEvent logoutEvent = (LogoutEvent) evt;
-            cache.remove(logoutEvent.getUserSession().getPrincipalID());
+            cache.remove(logoutEvent.getUserSession().getPrincipalName());
         }
     }
 

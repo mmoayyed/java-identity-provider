@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -50,28 +52,29 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
-    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    protected void service(HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException,
+            IOException {
         if (accessLog.isInfoEnabled()) {
-            AccessLogEntry accessEntry = new AccessLogEntry(request);
+            AccessLogEntry accessEntry = new AccessLogEntry(httpRequest);
             accessLog.log(Level.CRITICAL, accessEntry);
         }
 
-        ProfileRequest profileReq = getProfileRequest(request);
-        ProfileResponse profileResp = getProfileResponse(response);
+        ProfileRequest profileReq = getProfileRequest(httpRequest);
+        ProfileResponse profileResp = getProfileResponse(httpResponse);
 
         AbstractErrorHandler errorHandler = getHandlerManager().getErrorHandler();
-        ProfileHandler handler = getHandlerManager().getProfileHandler(request);
+        ProfileHandler handler = getHandlerManager().getProfileHandler(httpRequest);
         if (handler != null) {
             try {
                 handler.processRequest(profileReq, profileResp);
                 return;
             } catch (Throwable t) {
-                log.error("Encountered error processing request to " + request.getPathInfo()
+                log.error("Encountered error processing request to " + httpRequest.getPathInfo()
                         + ", invoking error handler", t);
                 errorHandler.setError(t);
             }
         } else {
-            log.warn("No profile handler for request to " + request.getPathInfo() + ", invoking error handler");
+            log.warn("No profile handler for request to " + httpRequest.getPathInfo() + ", invoking error handler");
             errorHandler.setError(new NoProfileHandlerException());
         }
 

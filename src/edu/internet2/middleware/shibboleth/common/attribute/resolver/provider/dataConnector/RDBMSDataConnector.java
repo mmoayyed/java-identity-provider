@@ -220,7 +220,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         if (event instanceof LogoutEvent) {
             LogoutEvent logoutEvent = (LogoutEvent) event;
             if (cacheResults) {
-                resultsCache.remove(logoutEvent.getUserSession().getPrincipalID());
+                resultsCache.remove(logoutEvent.getUserSession().getPrincipalName());
             }
         }
     }
