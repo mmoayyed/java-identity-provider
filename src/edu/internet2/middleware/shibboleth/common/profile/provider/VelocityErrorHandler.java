@@ -16,9 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.profile.provider;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletRequest;
@@ -100,7 +98,7 @@ public class VelocityErrorHandler extends AbstractErrorHandler {
     /** {@inheritDoc} */
     public void processRequest(ProfileRequest<ServletRequest> request, ProfileResponse<ServletResponse> response) {
         VelocityContext context = new VelocityContext();
-        context.put("requestError", getError());
+        context.put("requestError", request.getRawRequest().getAttribute(AbstractErrorHandler.ERROR_KEY));
 
         try {
             PrintWriter responseWriter = response.getRawResponse().getWriter();

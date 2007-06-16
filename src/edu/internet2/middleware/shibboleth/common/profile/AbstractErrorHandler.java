@@ -21,31 +21,15 @@ import javax.servlet.ServletResponse;
 
 /**
  * Error handlers are invoked when an error is encountered during request processing.
+ * 
+ * Error handlers expect the error to be reported to be bound to the servlet request attribute identified by
+ * {@link #ERROR_KEY} and be of type {@link Throwable}.
  */
 public abstract class AbstractErrorHandler implements ProfileHandler {
 
-    /** Error that occured during request processing. */
-    private Throwable error;
-
-    /**
-     * Gets the error that occured during request processing.
-     * 
-     * @return error that occured during request processing
-     */
-    public Throwable getError() {
-        return error;
-    }
-
-    /**
-     * Sets the error that occured during request processing.
-     * 
-     * @param e error that occured during request processing
-     */
-    public void setError(Throwable e) {
-        error = e;
-    }
-
+    /** Servlet request attribute to which the error is bound. */
+    public static final String ERROR_KEY = "error";
+    
     /** {@inheritDoc} */
-    public abstract void processRequest(ProfileRequest<ServletRequest> request,
-            ProfileResponse<ServletResponse> response);
+    public abstract void processRequest(ProfileRequest<ServletRequest> request, ProfileResponse<ServletResponse> response);
 }

@@ -71,11 +71,11 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
             } catch (Throwable t) {
                 log.error("Encountered error processing request to " + httpRequest.getPathInfo()
                         + ", invoking error handler", t);
-                errorHandler.setError(t);
+                httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
             }
         } else {
             log.warn("No profile handler for request to " + httpRequest.getPathInfo() + ", invoking error handler");
-            errorHandler.setError(new NoProfileHandlerException());
+            httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, new NoProfileHandlerException());
         }
 
         errorHandler.processRequest(profileReq, profileResp);

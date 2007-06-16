@@ -50,7 +50,7 @@ import edu.internet2.middleware.shibboleth.common.profile.ProfileResponse;
  * </table>
  */
 public class JSPErrorHandler extends AbstractErrorHandler {
-    
+
     /** Class logger. */
     private final Logger log = Logger.getLogger(JSPErrorHandler.class);
 
@@ -72,11 +72,9 @@ public class JSPErrorHandler extends AbstractErrorHandler {
     /** {@inheritDoc} */
     public void processRequest(ProfileRequest<ServletRequest> request, ProfileResponse<ServletResponse> response) {
         RequestDispatcher dispatcher = request.getRawRequest().getRequestDispatcher(jspPage);
-        try{
-            ServletRequest servletRequest = request.getRawRequest();
-            servletRequest.setAttribute("requestError", getError());
+        try {
             dispatcher.forward(request.getRawRequest(), response.getRawResponse());
-        }catch(Throwable t){
+        } catch (Throwable t) {
             log.error("Could not dispatch to error JSP page: " + jspPage, t);
         }
         return;
