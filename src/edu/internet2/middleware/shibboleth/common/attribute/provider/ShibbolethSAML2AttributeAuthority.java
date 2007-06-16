@@ -212,7 +212,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
             }
         }
         if (log.isDebugEnabled()) {
-            log.debug("attribute encoder encoded the following attributes: " + encodedAttributes);
+            log.debug("Attribute encoder encoded " + encodedAttributes.size() + " attributes");
         }
 
         return encodedAttributes;

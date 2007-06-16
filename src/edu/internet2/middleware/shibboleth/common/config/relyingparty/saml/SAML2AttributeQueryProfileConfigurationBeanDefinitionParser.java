@@ -28,7 +28,7 @@ public class SAML2AttributeQueryProfileConfigurationBeanDefinitionParser extends
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE,
-            "SAML2AttributesQueryProfile");
+            "SAML2AttributeQueryProfile");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {

@@ -45,8 +45,7 @@ public abstract class AbstractRequestURIMappedProfileHandlerBeanDefinitionParser
      */
     protected List<String> getRequestPaths(Element config) {
         ArrayList<String> requestPaths = new ArrayList<String>();
-        List<Element> requestPathElems = XMLHelper.getChildElementsByTagNameNS(config,
-                "urn:mace:shibboleth:2.0:profile-handler", "RequestPath");
+        List<Element> requestPathElems = XMLHelper.getChildElementsByTagName(config, "RequestPath");
         if (requestPathElems != null) {
             for (Element requestPathElem : requestPathElems) {
                 requestPaths.add(DatatypeHelper.safeTrimOrNullString(requestPathElem.getTextContent()));

@@ -16,7 +16,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="SAML2AttributesQueryProfile">
+    <complexType name="SAML2AttributeQueryProfile">
         <annotation>
             <documentation>SAML 2.0 attribute query communication profile configuration.</documentation>
         </annotation>

@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config.profile;
 
-import javax.xml.namespace.QName;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -28,9 +26,9 @@ import edu.internet2.middleware.shibboleth.common.profile.provider.VelocityError
  * Spring bean definition parser for {@link VelocityErrorHandler}s.
  */
 public class VelocityErrorHandlerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
-    /** Schema type name. */
-    public static final QName SCHEMA_TYPE = new QName(ProfileHandlerNamespaceHandler.NAMESPACE, "VelocityErrorHandler");
+
+    /** Element name. */
+    public static final String ELEMENT_NAME = "VelocityErrorHandler";
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -44,7 +42,7 @@ public class VelocityErrorHandlerBeanDefinitionParser extends AbstractSingleBean
         builder.addConstructorArg(config.getAttributeNS(null, "errorTemplatePath"));
         builder.addConstructorArgReference(config.getAttributeNS(null, "velocityEngine"));
     }
-    
+
     /** {@inheritDoc} */
     protected boolean shouldGenerateId() {
         return true;

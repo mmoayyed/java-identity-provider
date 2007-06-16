@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config.profile;
 
-import javax.xml.namespace.QName;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -29,8 +27,8 @@ import edu.internet2.middleware.shibboleth.common.profile.provider.JSPErrorHandl
  */
 public class JSPErrorHandlerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Schema type name. */
-    public static final QName SCHEMA_TYPE = new QName(ProfileHandlerNamespaceHandler.NAMESPACE, "JSPErrorHandler");
+    /** Element name. */
+    public static final String ELEMENT_NAME = "JSPErrorHandler";
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
