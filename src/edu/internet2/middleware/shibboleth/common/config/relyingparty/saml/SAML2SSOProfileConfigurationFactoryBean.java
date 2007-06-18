@@ -23,7 +23,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.SS
  */
 public class SAML2SSOProfileConfigurationFactoryBean extends AbstractSAML2ProfileConfigurationFactoryBean {
     
-    /** Whether responses to the authentication request should include an attribtue statement. */
+    /** Whether responses to the authentication request should include an attribute statement. */
     private boolean includeAttributeStatement;
 
     /** {@inheritDoc} */
@@ -32,18 +32,18 @@ public class SAML2SSOProfileConfigurationFactoryBean extends AbstractSAML2Profil
     }
     
     /**
-     * Gets whether responses to the authentication request should include an attribtue statement.
+     * Gets whether responses to the authentication request should include an attribute statement.
      * 
-     * @return whether responses to the authentication request should include an attribtue statement
+     * @return whether responses to the authentication request should include an attribute statement
      */
     public boolean includeAttributeStatement() {
         return includeAttributeStatement;
     }
 
     /**
-     * Sets whether responses to the authentication request should include an attribtue statement.
+     * Sets whether responses to the authentication request should include an attribute statement.
      * 
-     * @param include whether responses to the authentication request should include an attribtue statement
+     * @param include whether responses to the authentication request should include an attribute statement
      */
     public void setIncludeAttributeStatement(boolean include) {
         includeAttributeStatement = include;

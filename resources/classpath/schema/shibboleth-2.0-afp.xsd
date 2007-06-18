@@ -14,7 +14,7 @@
 
     <complexType name="ShibbolethAttributeFilteringEngine">
         <annotation>
-            <documentation>Service defintion for creating Shibboleth attribute filtering engines.</documentation>
+            <documentation>Service definition for creating Shibboleth attribute filtering engines.</documentation>
         </annotation>
         <complexContent>
             <extension base="service:ReloadableServiceType" />
@@ -43,7 +43,7 @@
                     <element ref="afp:PermitValueRule" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
-                                Defines an attribute value filter that may be reused across multiple attribtue rules.
+                                Defines an attribute value filter that may be reused across multiple attribute rules.
                             </documentation>
                         </annotation>
                     </element>
@@ -166,7 +166,7 @@
     <element name="PermitValueRule" type="afp:MatchFunctorType">
         <annotation>
             <documentation>
-                A filter for attribtue values. If the filter evaluates to true the value is permitted, otherwise it is
+                A filter for attribute values. If the filter evaluates to true the value is permitted, otherwise it is
                 filtered out.
             </documentation>
         </annotation>

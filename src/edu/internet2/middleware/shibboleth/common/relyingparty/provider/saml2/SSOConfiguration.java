@@ -24,7 +24,7 @@ public class SSOConfiguration extends AbstractSAML2ProfileConfiguration {
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:sso";
     
-    /** Whether responses to the authentication request should include an attribtue statement. */
+    /** Whether responses to the authentication request should include an attribute statement. */
     private boolean includeAttributeStatement;
     
     /** {@inheritDoc} */
@@ -33,18 +33,18 @@ public class SSOConfiguration extends AbstractSAML2ProfileConfiguration {
     }
     
     /**
-     * Gets whether responses to the authentication request should include an attribtue statement.
+     * Gets whether responses to the authentication request should include an attribute statement.
      * 
-     * @return whether responses to the authentication request should include an attribtue statement
+     * @return whether responses to the authentication request should include an attribute statement
      */
     public boolean includeAttributeStatement() {
         return includeAttributeStatement;
     }
 
     /**
-     * Sets whether responses to the authentication request should include an attribtue statement.
+     * Sets whether responses to the authentication request should include an attribute statement.
      * 
-     * @param include whether responses to the authentication request should include an attribtue statement
+     * @param include whether responses to the authentication request should include an attribute statement
      */
     public void setIncludeAttributeStatement(boolean include) {
         includeAttributeStatement = include;

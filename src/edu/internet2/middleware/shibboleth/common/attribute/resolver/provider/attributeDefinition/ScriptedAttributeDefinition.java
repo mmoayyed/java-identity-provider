@@ -152,7 +152,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return constructed script context
      * 
-     * @throws AttributeResolutionException thrown if dependent data connectors or attribute defintions can not be
+     * @throws AttributeResolutionException thrown if dependent data connectors or attribute definitions can not be
      *             resolved
      */
     protected ScriptContext getScriptContext(ShibbolethResolutionContext resolutionContext)

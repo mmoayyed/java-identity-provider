@@ -22,7 +22,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 
 /**
- * The service that resolves the attribtues for a particular subject.
+ * The service that resolves the attributes for a particular subject.
  * 
  * @param <RequestContextType> the type of attribute request context used by the resolver.
  */

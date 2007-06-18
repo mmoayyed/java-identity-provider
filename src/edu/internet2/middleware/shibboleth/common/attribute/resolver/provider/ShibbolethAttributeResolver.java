@@ -496,7 +496,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         AttributeDefinition aDefinition;
         beanNames = newServiceContext.getBeanNamesForType(AttributeDefinition.class);
         if (log.isDebugEnabled()) {
-            log.debug("Loading " + beanNames.length + " attribute defintions");
+            log.debug("Loading " + beanNames.length + " attribute definitions");
         }
         for (String beanName : beanNames) {
             aDefinition = (AttributeDefinition) newServiceContext.getBean(beanName);
