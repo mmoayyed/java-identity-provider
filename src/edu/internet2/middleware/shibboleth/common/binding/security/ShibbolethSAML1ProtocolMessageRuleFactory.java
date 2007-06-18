@@ -60,6 +60,9 @@ public class ShibbolethSAML1ProtocolMessageRuleFactory extends SAML1ProtocolMess
                     if (resource != null) {
                         samlContext.setIssuer(resource);
                         log.info("Extracted issuer from SAML 1.x AttributeQuery Resource: " + resource);
+                    } else {
+                        log.warn("SAML 1.x AttributeQuery Resource contained no value, " 
+                                + "unable to extract issuer per Shibboleth profile");
                     }
                 }
                 
