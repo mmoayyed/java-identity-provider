@@ -33,6 +33,9 @@ public class RelyingPartyConfiguration {
     /** Entity ID of the responder when communicating with the relying party. */
     private String providerId;
 
+    /** Authentication method to use if none is specified within a request. */
+    private String defaultAuthenticationMethod;
+
     /** Default signing credential. */
     private Credential signingCredential;
 
@@ -48,7 +51,7 @@ public class RelyingPartyConfiguration {
         setProviderId(provider);
         profiles = new HashMap<String, ProfileConfiguration>();
     }
-    
+
     /**
      * Constructor.
      * 
@@ -98,6 +101,24 @@ public class RelyingPartyConfiguration {
     }
 
     /**
+     * Gets the authentication method to use if one is not specified within a request.
+     * 
+     * @return authentication method to use if one is not specified within a request
+     */
+    public String getDefaultAuthenticationMethod() {
+        return defaultAuthenticationMethod;
+    }
+
+    /**
+     * Sets the authentication method to use if one is not specified within a request.
+     * 
+     * @param method authentication method to use if one is not specified within a request
+     */
+    public void setDefaultAuthenticationMethod(String method) {
+        defaultAuthenticationMethod = method;
+    }
+
+    /**
      * Gets the default signing credential for the relying party. This is provided as a convenience method so that this
      * credential need not be defined on every signing supporting profile configuration. If a profile configuration has
      * a defined signing credential it must be used in place of the credential retrieved here.
@@ -125,20 +146,20 @@ public class RelyingPartyConfiguration {
     public Map<String, ProfileConfiguration> getProfileConfigurations() {
         return profiles;
     }
-    
+
     /**
-     * Convenience method for retrieving a given profile configuration from the {@link Map} returned by 
+     * Convenience method for retrieving a given profile configuration from the {@link Map} returned by
      * {@link #getProfileConfigurations()}.
      * 
      * @param profileId unique Id of the profile
      * 
      * @return the profile configuration or null
      */
-    public ProfileConfiguration getProfileConfiguration(String profileId){
-        if(profiles != null){
+    public ProfileConfiguration getProfileConfiguration(String profileId) {
+        if (profiles != null) {
             return profiles.get(profileId);
         }
-        
+
         return null;
     }
 }

@@ -35,6 +35,9 @@ public class RelyingPartyFactoryBean extends AbstractFactoryBean {
 
     /** ID of the provider to use for this relying party. */
     private String providerId;
+    
+    /** Authentication method to use if none is specified within a request. */
+    private String defaultAuthenticationMethod;
 
     /** The default signing credential for this relying party. */
     private Credential defaultSigningCredential;
@@ -82,6 +85,24 @@ public class RelyingPartyFactoryBean extends AbstractFactoryBean {
     public void setProviderId(String id) {
         providerId = id;
     }
+    
+    /**
+     * Gets the authentication method to use if one is not specified within a request.
+     * 
+     * @return authentication method to use if one is not specified within a request
+     */
+    public String getDefaultAuthenticationMethod() {
+        return defaultAuthenticationMethod;
+    }
+
+    /**
+     * Sets the authentication method to use if one is not specified within a request.
+     * 
+     * @param method authentication method to use if one is not specified within a request
+     */
+    public void setDefaultAuthenticationMethod(String method) {
+        defaultAuthenticationMethod = method;
+    }
 
     /**
      * Gets the default signing credential for this relying party.
@@ -122,6 +143,7 @@ public class RelyingPartyFactoryBean extends AbstractFactoryBean {
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         RelyingPartyConfiguration configuration = new RelyingPartyConfiguration(relyingPartyId, providerId);
+        configuration.setDefaultAuthenticationMethod(defaultAuthenticationMethod);
         configuration.setDefaultSigningCredential(defaultSigningCredential);
 
         if (profileConfigurations != null) {

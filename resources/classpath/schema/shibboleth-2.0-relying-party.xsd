@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<schema targetNamespace="urn:mace:shibboleth:2.0:relying-party" xmlns="http://www.w3.org/2001/XMLSchema" 
+<schema targetNamespace="urn:mace:shibboleth:2.0:relying-party" xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:cred="urn:mace:shibboleth:2.0:credential"
     xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:service="urn:mace:shibboleth:2.0:services"
     elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:services" schemaLocation="classpath:/schema/shibboleth-2.0-services.xsd" />
 
-    <import namespace="urn:mace:shibboleth:2.0:credential" schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
+    <import namespace="urn:mace:shibboleth:2.0:credential"
+        schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
 
     <import namespace="urn:mace:shibboleth:2.0:metadata" schemaLocation="classpath:/schema/shibboleth-2.0-metadata.xsd" />
 
@@ -100,6 +101,16 @@
             <annotation>
                 <documentation>
                     The entity ID the responder should use when communicating with the relying party.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="defaultAuthenticationMethod" type="string"
+            default="urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified">
+            <annotation>
+                <documentation>
+                    The authentication method to use to authenticate the user, if one is not specificed within the
+                    request. This method must be one of the methods handled by one of the authentication handlers
+                    defined for the system.
                 </documentation>
             </annotation>
         </attribute>

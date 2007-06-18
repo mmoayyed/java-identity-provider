@@ -77,6 +77,13 @@ public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSimpl
         }
         builder.addPropertyValue("providerId", provider);
 
+        String authnMethod = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null,
+                "defaultAuthenticationMethod"));
+        if (log.isDebugEnabled()) {
+            log.debug("Relying party configuration: default authentication method " + authnMethod);
+        }
+        builder.addPropertyValue("defaultAuthenticationMethod", authnMethod);
+
         if (config.hasAttributeNS(null, "defaultSigningCredentialRef")) {
             builder.addPropertyReference("defaultSigningCredential", config.getAttributeNS(null,
                     "defaultSigningCredentialRef"));
