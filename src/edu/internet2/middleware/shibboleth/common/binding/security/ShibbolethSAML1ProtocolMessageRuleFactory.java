@@ -21,9 +21,10 @@ import javax.servlet.ServletRequest;
 import org.apache.log4j.Logger;
 import org.opensaml.common.binding.security.SAMLSecurityPolicyContext;
 import org.opensaml.saml1.binding.security.SAML1ProtocolMessageRuleFactory;
-import org.opensaml.saml1.core.AttributeQuery;
+import org.opensaml.saml1.core.Request;
 import org.opensaml.saml1.core.RequestAbstractType;
 import org.opensaml.ws.security.SecurityPolicyRule;
+import org.opensaml.xml.util.DatatypeHelper;
 
 
 /**
@@ -31,6 +32,9 @@ import org.opensaml.ws.security.SecurityPolicyRule;
  * handling Shibboleth SAML 1.x profile requirements.
  */
 public class ShibbolethSAML1ProtocolMessageRuleFactory extends SAML1ProtocolMessageRuleFactory {
+    
+    /** Logger. */
+    private static Logger log = Logger.getLogger(ShibbolethSAML1ProtocolMessageRule.class);
     
     /** {@inheritDoc} */
     public SecurityPolicyRule<ServletRequest> createRuleInstance() {
@@ -44,18 +48,23 @@ public class ShibbolethSAML1ProtocolMessageRuleFactory extends SAML1ProtocolMess
     public class ShibbolethSAML1ProtocolMessageRule extends SAML1ProtocolMessageRule {
 
         /** {@inheritDoc} */
-        protected void extractRequestInfo(SAMLSecurityPolicyContext samlContext, RequestAbstractType request) {
-            super.extractRequestInfo(samlContext, request);
+        protected void extractRequestInfo(SAMLSecurityPolicyContext samlContext, RequestAbstractType abstractRequest) {
+            super.extractRequestInfo(samlContext, abstractRequest);
             
-            Logger log = Logger.getLogger(ShibbolethSAML1ProtocolMessageRule.class);
-            
-            if (request instanceof AttributeQuery) {
-                log.info("Attempting to extract issuer from enclosed SAML 1.x AttributeQuery Resource attribute");
-                AttributeQuery query = (AttributeQuery) request;
-                if (query.getResource() != null) {
-                    samlContext.setIssuer(query.getResource());
+            if (abstractRequest instanceof Request) {
+                Request request = (Request) abstractRequest;
+                
+                if (request.getAttributeQuery() != null) {
+                    log.info("Attempting to extract issuer from enclosed SAML 1.x AttributeQuery Resource attribute");
+                    String resource = DatatypeHelper.safeTrimOrNullString(request.getAttributeQuery().getResource());
+                    if (resource != null) {
+                        samlContext.setIssuer(resource);
+                        log.info("Extracted issuer from SAML 1.x AttributeQuery Resource: " + resource);
+                    }
                 }
+                
             }
+            
         }
         
     }
