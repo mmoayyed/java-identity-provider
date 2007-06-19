@@ -247,4 +247,10 @@ public class AuditLogEntry {
     public DateTime getAuditEventTime() {
         return auditEventTime;
     }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        CSVAuditEventRenderer renderer = new CSVAuditEventRenderer();
+        return renderer.doRender(this);
+    }
 }

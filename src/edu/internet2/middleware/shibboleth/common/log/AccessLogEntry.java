@@ -117,4 +117,10 @@ public class AccessLogEntry {
     public int getServerPort() {
         return serverPort;
     }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        CSVAccessEventRenderer render = new CSVAccessEventRenderer();
+        return render.doRender(this);
+    }
 }
