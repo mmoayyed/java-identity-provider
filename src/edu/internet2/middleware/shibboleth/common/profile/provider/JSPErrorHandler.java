@@ -74,9 +74,10 @@ public class JSPErrorHandler extends AbstractErrorHandler {
         RequestDispatcher dispatcher = request.getRawRequest().getRequestDispatcher(jspPage);
         try {
             dispatcher.forward(request.getRawRequest(), response.getRawResponse());
+            return;
         } catch (Throwable t) {
             log.error("Could not dispatch to error JSP page: " + jspPage, t);
+            return;
         }
-        return;
     }
 }

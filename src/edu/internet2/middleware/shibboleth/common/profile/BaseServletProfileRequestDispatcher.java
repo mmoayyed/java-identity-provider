@@ -80,6 +80,7 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
         }
 
         errorHandler.processRequest(profileReq, profileResp);
+        return;
     }
 
     /**
