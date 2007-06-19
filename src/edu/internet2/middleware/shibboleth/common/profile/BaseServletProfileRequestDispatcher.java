@@ -74,8 +74,9 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
                 httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
             }
         } else {
-            log.warn("No profile handler for request to " + httpRequest.getPathInfo() + ", invoking error handler");
-            httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, new NoProfileHandlerException());
+            log.warn("No profile handler configured for request at path: " + httpRequest.getPathInfo());
+            httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, new NoProfileHandlerException(
+                    "No profile handler configured for request at path: " + httpRequest.getPathInfo()));
         }
 
         errorHandler.processRequest(profileReq, profileResp);
