@@ -21,6 +21,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -42,6 +44,9 @@ public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDef
     public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
             "AttributeResolver");
 
+    /** Class logger. */
+    private static Logger log = Logger.getLogger(AttributeResolverBeanDefinitionParser.class);
+    
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
         return AttributeResolverBean.class;
@@ -49,6 +54,11 @@ public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDef
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
+        String id = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
+        if (log.isInfoEnabled()) {
+            log.info("Parsing configuration for attribute resolver " + id);
+        }
+        
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
         List<Element> children;
 

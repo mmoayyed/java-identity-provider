@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.profile;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -30,6 +31,9 @@ public class VelocityErrorHandlerBeanDefinitionParser extends AbstractSingleBean
     /** Element name. */
     public static final String ELEMENT_NAME = "VelocityErrorHandler";
 
+    /** Class logger. */
+    private static Logger log = Logger.getLogger(VelocityErrorHandlerBeanDefinitionParser.class);
+    
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
         return VelocityErrorHandler.class;
@@ -37,8 +41,11 @@ public class VelocityErrorHandlerBeanDefinitionParser extends AbstractSingleBean
 
     /** {@inheritDoc} */
     protected void doParse(Element config, BeanDefinitionBuilder builder) {
-        super.doParse(config, builder);
-
+        if (log.isInfoEnabled()) {
+            log.info("Parsing configuration for velocity error handler.");
+        }
+        super.doParse(config, builder);        
+        
         builder.addConstructorArg(config.getAttributeNS(null, "errorTemplatePath"));
         builder.addConstructorArgReference(config.getAttributeNS(null, "velocityEngine"));
     }

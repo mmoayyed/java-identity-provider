@@ -109,7 +109,7 @@
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether expired metadata should continue to be used until such
-                            time as fresh metadata can be retireved from the remote server.
+                            time as fresh metadata can be retrieved from the remote server.
                         </documentation>
                     </annotation>
                 </attribute>

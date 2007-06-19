@@ -37,7 +37,7 @@ public class FilesystemCredentialBeanDefinitionParser extends AbstractSingleBean
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element element, BeanDefinitionBuilder bean) {
+    protected void doParse(Element config, BeanDefinitionBuilder builder) {
         // TODO
     }
 }

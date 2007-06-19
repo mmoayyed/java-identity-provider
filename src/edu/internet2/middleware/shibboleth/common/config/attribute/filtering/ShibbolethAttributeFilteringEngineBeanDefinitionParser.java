@@ -18,6 +18,10 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.filtering;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
+import org.opensaml.xml.util.DatatypeHelper;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
@@ -26,14 +30,28 @@ import edu.internet2.middleware.shibboleth.common.config.service.AbstractReloada
 /**
  * Spring bean definition parser for {@link ShibbolethAttributeFilteringEngineBeanDefinitionParser} services.
  */
-public class ShibbolethAttributeFilteringEngineBeanDefinitionParser extends AbstractReloadableServiceBeanDefinitionParser {
+public class ShibbolethAttributeFilteringEngineBeanDefinitionParser extends
+        AbstractReloadableServiceBeanDefinitionParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "ShibbolethAttributeFilteringEngine");
 
+    /** Class logger. */
+    private static Logger log = Logger.getLogger(ShibbolethAttributeFilteringEngineBeanDefinitionParser.class);
+
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
         return ShibbolethAttributeFilteringEngine.class;
+    }
+
+    /** {@inheritDoc} */
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(config, parserContext, builder);
+
+        if (log.isInfoEnabled()) {
+            log.info("Parsing configuration for attribute filtering engine "
+                    + DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id")));
+        }
     }
 }

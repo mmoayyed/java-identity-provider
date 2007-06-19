@@ -53,30 +53,30 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
      * 
      * {@inheritDoc}
      */
-    protected final void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        String pluginId = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
+    protected final void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        String pluginId = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
         if (log.isInfoEnabled()) {
-            log.info("Parsing configuration for " + element.getLocalName() + " plugin with ID: " + pluginId);
+            log.info("Parsing configuration for " + config.getLocalName() + " plugin with ID: " + pluginId);
         }
         builder.addPropertyValue("pluginId", pluginId);
 
-        Map<QName, List<Element>> children = XMLHelper.getChildElements(element);
+        Map<QName, List<Element>> children = XMLHelper.getChildElements(config);
 
         Set<String> adIds = parseDependencies(children.get(ATTRIBUTE_DEFINITION_DEPENDENCY_ELEMENT_NAME));
         if (log.isDebugEnabled()) {
-            log.debug("Setting the following attribute definition dependencies for " + element.getLocalName()
+            log.debug("Setting the following attribute definition dependencies for " + config.getLocalName()
                     + " plugin " + pluginId + ": " + adIds);
         }
         builder.addPropertyValue("attributeDefinitionDependencyIds", adIds);
 
         Set<String> dcIds = parseDependencies(children.get(DATA_CONNECTOR_DEPENDENCY_ELEMENT_NAME));
         if (log.isDebugEnabled()) {
-            log.debug("Setting the following data connector dependencies for " + element.getLocalName() + " plugin "
-                    + pluginId + ": " + dcIds);
+            log.debug("Setting the following data connector dependencies for " + config.getLocalName()
+                    + " plugin " + pluginId + ": " + dcIds);
         }
         builder.addPropertyValue("dataConnectorDependencyIds", dcIds);
 
-        doParse(pluginId, element, children, builder, parserContext);
+        doParse(pluginId, config, children, builder, parserContext);
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
 
         Set<String> dependencyIds = new HashSet<String>();
         for (Element dependency : elements) {
-            dependencyIds.add(DatatypeHelper.safeTrimOrNullString(dependency.getAttributeNS(null,"ref")));
+            dependencyIds.add(DatatypeHelper.safeTrimOrNullString(dependency.getAttributeNS(null, "ref")));
         }
 
         return dependencyIds;

@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
+import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -37,24 +38,36 @@ public abstract class BaseMetadataProviderDefinitionParser extends AbstractBeanD
     /** Local name of metadata filter. */
     public static final String METADATA_FILTER_ELEMENT_LOCAL_NAME = "MetadataFilter";
 
+    /** Class logger. */
+    private static Logger log = Logger.getLogger(BaseMetadataProviderDefinitionParser.class);
+
     /**
      * Parses the metadata provider config element and sets the require validate metadata and metadata filter
      * properties.
      * 
      * @param builder metadata provider definition builder
-     * @param element configuration of the provider
+     * @param config configuration of the provider
      * @param context current parsing context
      */
-    protected void parseCommonConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
-
-        String requireValidMDStr = element.getAttributeNS(null, REQUIRE_VALID_METADATA_ATTRIBUTE_NAME);
-        if (DatatypeHelper.safeEquals(requireValidMDStr, "true") || DatatypeHelper.safeEquals(requireValidMDStr, "1")) {
-            builder.addPropertyValue("requireValidMetadata", Boolean.TRUE);
-        } else {
-            builder.addPropertyValue("requireValidMetadata", Boolean.FALSE);
+    protected void parseCommonConfig(BeanDefinitionBuilder builder, Element config, ParserContext context) {
+        String id = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
+        if (log.isInfoEnabled()) {
+            log.info("Parsing configuration for " + config.getLocalName() + " metadata provider with ID: " + id);
         }
 
-        NodeList childElems = element.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE,
+        String requireValidMDStr = config.getAttributeNS(null, REQUIRE_VALID_METADATA_ATTRIBUTE_NAME);
+        Boolean requireValidMDBool;
+        if (DatatypeHelper.safeEquals(requireValidMDStr, "true") || DatatypeHelper.safeEquals(requireValidMDStr, "1")) {
+            requireValidMDBool = Boolean.TRUE;
+        } else {
+            requireValidMDBool = Boolean.FALSE;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Metadata provider " + id + " requires valid metadata: " + requireValidMDBool);
+        }
+        builder.addPropertyValue("requireValidMetadata", requireValidMDBool);
+
+        NodeList childElems = config.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE,
                 METADATA_FILTER_ELEMENT_LOCAL_NAME);
         if (childElems.getLength() > 0) {
             Element filterElem = (Element) childElems.item(0);

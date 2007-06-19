@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -44,20 +45,26 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
     public static final QName TYPE_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "AttributeFilterPolicyType");
 
+    /** Class logger. */
+    private static Logger log = Logger.getLogger(AttributeFilterPolicyBeanDefinitionParser.class);
+
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
         return AttributeFilterPolicyFactoryBean.class;
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(configElement, parserContext, builder);
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(config, parserContext, builder);
 
-        builder.addPropertyValue("policyId", DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
-                "id")));
+        String policyId = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
+        if (log.isInfoEnabled()) {
+            log.info("Parsing configuration for attribute filter policy " + policyId);
+        }
+        builder.addPropertyValue("policyId", policyId);
 
         List<Element> children;
-        Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(configElement);
+        Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(config);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
         if (children != null && children.size() > 0) {
@@ -66,7 +73,7 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
         } else {
             children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
                     "PolicyRequirementRuleReference"));
-            String reference = getAbsoluteReference(configElement, "PolicyRequirementRule", children.get(0)
+            String reference = getAbsoluteReference(config, "PolicyRequirementRule", children.get(0)
                     .getTextContent());
             builder.addPropertyReference("policyRequirement", reference);
         }
@@ -81,7 +88,7 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
         if (children != null && children.size() > 0) {
             String reference;
             for (Element child : children) {
-                reference = getAbsoluteReference(configElement, "AttributeRule", child.getTextContent());
+                reference = getAbsoluteReference(config, "AttributeRule", child.getTextContent());
                 attributeRules.add(new RuntimeBeanReference(reference));
             }
         }
