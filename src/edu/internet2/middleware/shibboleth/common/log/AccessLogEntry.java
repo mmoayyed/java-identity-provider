@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.joda.time.DateTime;
 import org.opensaml.xml.util.DatatypeHelper;
 
+import edu.internet2.middleware.shibboleth.common.util.HttpHelper;
+
 /**
  * Data object for generating server access logs.
  */
@@ -54,7 +56,7 @@ public class AccessLogEntry {
         remoteHost = request.getRemoteHost();
         serverHost = request.getServerName();
         serverPort = request.getServerPort();
-        requestPath = request.getPathInfo();
+        requestPath = HttpHelper.getRequestUriWithoutContext(request);
     }
 
     /**
