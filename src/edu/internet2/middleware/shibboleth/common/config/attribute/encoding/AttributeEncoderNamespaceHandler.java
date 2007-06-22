@@ -42,6 +42,9 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
 
         registerBeanDefinitionParser(SAML2StringNameIDEncoderBeanDefinitionParser.SCHEMA_TYPE,
                 new SAML2StringNameIDEncoderBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML1StringNameIdentifierEncoderBeanDefinitionParser.SCHEMA_TYPE,
+                new SAML1StringNameIdentifierEncoderBeanDefinitionParser());
     }
 
 }

@@ -21,6 +21,26 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="SAML1StringNameIdentifier">
+        <annotation>
+            <documentation>Defines a SAML 1 string encoder for a NameIdentifier.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:1.0:nameidformat:unspecified">
+                    <annotation>
+                        <documentation>The SAML 1 NameFormat of the NameIdentifier.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 1 NameQualfier of the NameIdentifier.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
     <complexType name="SAML2String">
         <annotation>
