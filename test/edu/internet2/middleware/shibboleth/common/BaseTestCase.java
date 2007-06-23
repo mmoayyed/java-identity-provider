@@ -18,8 +18,6 @@ package edu.internet2.middleware.shibboleth.common;
 
 import junit.framework.TestCase;
 
-import org.opensaml.DefaultBootstrap;
-
 /**
  * Base class for JUnit test cases.
  */
@@ -32,6 +30,6 @@ public class BaseTestCase extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         
-        DefaultBootstrap.bootstrap();
+        ShibTestBootstrap.bootstrap();
     }
 }
