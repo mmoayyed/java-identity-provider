@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shibmd:KeyAuthority xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" VerifyDepth="5"
+    xmlns:test="http://www.example.org/testObjects" test:UnknownAttrib="FooBar"/>
+

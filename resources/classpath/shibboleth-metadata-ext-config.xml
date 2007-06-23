@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMLTooling xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opensaml.org/xmltooling-config ../../src/schema/xmltooling-config.xsd"
+	xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"
+	xmlns="http://www.opensaml.org/xmltooling-config">
+
+	<!-- Shibboleth SAML Metadata Extensions Object providers -->
+	<ObjectProviders>
+
+		<!-- Scope provider -->
+		<ObjectProvider qualifiedName="shibmd:Scope">
+			<BuilderClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataScopeBuilder" />
+			<MarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataScopeMarshaller" />
+			<UnmarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataScopeUnmarshaller" />
+		</ObjectProvider>
+		
+		<!-- KeyAuthority provider -->
+		<ObjectProvider qualifiedName="shibmd:KeyAuthority">
+			<BuilderClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityBuilder" />
+			<MarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityMarshaller" />
+			<UnmarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityUnmarshaller" />
+		</ObjectProvider>
+		
+	</ObjectProviders>
+</XMLTooling>
