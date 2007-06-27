@@ -117,7 +117,7 @@ public class BaseTestCaseMetadata extends TestCase {
         // Build the request context from the metadata (with attached parser) and config
         //
         
-        requestContext = new ShibbolethSAMLAttributeRequestContext(provider, rpConfig);
+        requestContext = new ShibbolethSAMLAttributeRequestContext(provider, rpConfig, null);
         
         //
         // And the filter context from the request context (with no attributes)

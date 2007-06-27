@@ -66,34 +66,15 @@ public class ShibbolethSAMLAttributeRequestContext<NameIdentifierType extends SA
      * 
      * @param provider metadata provider used to look up entity information
      * @param rpConfig relying party configuration in effect for the attribute request
-     */
-    public ShibbolethSAMLAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig) {
-        super();
-
-        if (provider == null || rpConfig == null) {
-            throw new IllegalArgumentException("Metadata provider and relying party configuration may not be null");
-        }
-
-        metadataProvider = provider;
-        setRelyingPartyConfiguration(rpConfig);
-
-        initialize();
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param provider metadata provider used to look up entity information
-     * @param rpConfig relying party configuration in effect for the attribute request
-     * @param query SAML attribute query of this request
+     * @param query SAML attribute query of this request, may be null
      */
     public ShibbolethSAMLAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig,
             QueryType query) {
         super();
 
-        if (provider == null || rpConfig == null || query == null) {
+        if (provider == null || rpConfig == null) {
             throw new IllegalArgumentException(
-                    "Metadata provider, relying party configuration, and attribute query may not be null");
+                    "Metadata provider and relying party configuration may not be null");
         }
         metadataProvider = provider;
         setRelyingPartyConfiguration(rpConfig);

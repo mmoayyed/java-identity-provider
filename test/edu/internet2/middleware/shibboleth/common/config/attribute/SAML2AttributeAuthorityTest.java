@@ -49,7 +49,7 @@ public class SAML2AttributeAuthorityTest extends BaseConfigTestCase {
         RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration("mySP", "myIdP");
 
         ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> context = new ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery>(
-                mdProvider, rpConfig);
+                mdProvider, rpConfig, null);
         context.setPrincipalName("aUser");
         
         SAML2AttributeAuthority aa = (SAML2AttributeAuthority) ac.getBean("shibboleth.SAML2AttributeAuthority");
