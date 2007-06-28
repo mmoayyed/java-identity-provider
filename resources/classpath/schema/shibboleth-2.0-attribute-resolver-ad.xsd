@@ -15,6 +15,24 @@
             <extension base="resolver:BaseAttributeDefinitionType" />
         </complexContent>
     </complexType>
+    
+    <complexType name="PrincipalName">
+        <annotation>
+            <documentation>Exposes the principal's name as an attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType" />
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PrincipalAuthenticationMethod">
+        <annotation>
+            <documentation>Exposes the principal's authentication method as an attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType" />
+        </complexContent>
+    </complexType>
 
     <complexType name="Scoped">
         <annotation>
