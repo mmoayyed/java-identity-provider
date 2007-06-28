@@ -91,6 +91,10 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             log.debug(getServiceName() + " filtering " + attributes.size() + " attributes for principal "
                     + context.getPrincipalName());
         }
+        
+        if(attributes.size() == 0){
+            return new HashMap<String, BaseAttribute>();
+        }
 
         if (getFilterPolicies() == null) {
             if (log.isDebugEnabled()) {

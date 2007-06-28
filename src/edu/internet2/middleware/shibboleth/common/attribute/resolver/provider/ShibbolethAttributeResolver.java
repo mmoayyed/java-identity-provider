@@ -324,20 +324,25 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                         + " requested attribute " + attributeID + " of " + getServiceName()
                         + " but no attribute definition exists for that attribute");
                 return null;
+            }else{
+                // wrap attribute definition for use within the given resolution context
+                definition = new ContextualAttributeDefinition(definition);
             }
-
-            // wrap attribute definition for use within the given resolution context
-            definition = new ContextualAttributeDefinition(definition);
-
-            // resolve all the definitions dependencies
-            resolveDependencies(definition, resolutionContext);
-
-            // register definition as resolved for this resolution context
-            resolutionContext.getResolvedAttributeDefinitions().put(attributeID, definition);
         }
 
+        // resolve all the definitions dependencies
+        resolveDependencies(definition, resolutionContext);
+
+        // register definition as resolved for this resolution context
+        resolutionContext.getResolvedAttributeDefinitions().put(attributeID, definition);
+
         // return the actual resolution of the definition
-        return definition.resolve(resolutionContext);
+        BaseAttribute attribute = definition.resolve(resolutionContext);
+        if(log.isDebugEnabled()){
+            log.debug(getServiceName() + " resolved attribute " + attributeID + ".  Attribtute contains " 
+                    + attribute.getValues().size() + " values.");
+        }
+        return attribute;
     }
 
     /**
@@ -363,24 +368,24 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             if (dataConnector == null) {
                 log.warn(getServiceName() + " requested to resolve data connector" + connectorID
                         + " but does not have such a data connector");
+            }else{
+                // wrap connector for use within the given resolution context
+                dataConnector = new ContextualDataConnector(dataConnector);
             }
-
-            // wrap connector for use within the given resolution context
-            dataConnector = new ContextualDataConnector(dataConnector);
-
-            // resolve all the connectors dependencies
-            resolveDependencies(dataConnector, resolutionContext);
-
-            try {
-                dataConnector.resolve(resolutionContext);
-            } catch (AttributeResolutionException e) {
-                // TODO add failover connector support here
-                throw e;
-            }
-
-            // register connector as resolved for this resolution context
-            resolutionContext.getResolvedDataConnectors().put(connectorID, dataConnector);
         }
+
+        // resolve all the connectors dependencies
+        resolveDependencies(dataConnector, resolutionContext);
+
+        try {
+            dataConnector.resolve(resolutionContext);
+        } catch (AttributeResolutionException e) {
+            // TODO add failover connector support here
+            throw e;
+        }
+
+        // register connector as resolved for this resolution context
+        resolutionContext.getResolvedDataConnectors().put(connectorID, dataConnector);
     }
 
     /**
@@ -420,8 +425,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             resolvedAttribute = attributeItr.next().getValue();
             if (resolvedAttribute.getValues().size() == 0) {
                 if (log.isDebugEnabled()) {
-                    log.debug(getServiceName() + "removing attribute " + resolvedAttribute.getId()
-                            + "  from resolution result for principal "
+                    log.debug(getServiceName() + " removing attribute " + resolvedAttribute.getId()
+                            + " from resolution result for principal "
                             + resolutionContext.getAttributeRequestContext().getPrincipalName()
                             + ".  It contains no values.");
                 }
