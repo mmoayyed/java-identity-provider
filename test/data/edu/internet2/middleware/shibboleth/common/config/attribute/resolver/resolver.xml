@@ -10,26 +10,31 @@
       urn:mace:shibboleth:2.0:resolver:dc classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd
     	urn:mace:shibboleth:2.0:resolver:ad classpath:/schema/shibboleth-2.0-attribute-resolver-ad.xsd">
 
-	<resolver:AttributeDefinition xsi:type="ad:Simple" id="uid">
+    <resolver:AttributeDefinition xsi:type="ad:PrincipalName" id="principalName" />
+
+	<resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonAffilation" sourceAttributeID="affiliation">
 		<resolver:DataConnectorDependency ref="static" />
 		<resolver:DataConnectorDependency ref="static2" />
 	</resolver:AttributeDefinition>
+    
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonEntitlement" sourceAttributeID="entitlement">
+        <resolver:DataConnectorDependency ref="static" />
+        <resolver:DataConnectorDependency ref="static2" />
+    </resolver:AttributeDefinition>
 	
 	<resolver:DataConnector xsi:type="dc:Static" id="static">
-		<dc:Attribute id="uid">
-			<dc:Value>gpburdell</dc:Value>
+		<dc:Attribute id="affiliation">
+			<dc:Value>staff</dc:Value>
+            <dc:Value>student</dc:Value>
 		</dc:Attribute>
-		<dc:Attribute id="cn">
-			<dc:Value>George P Burdell</dc:Value>
+		<dc:Attribute id="entitlement">
+			<dc:Value>urn:mace:dir:entitlement:common-lib-terms</dc:Value>
 		</dc:Attribute>
 	</resolver:DataConnector>
 
 	<resolver:DataConnector xsi:type="dc:Static" id="static2">
-		<dc:Attribute id="uid">
-			<dc:Value>ttrojan</dc:Value>
-		</dc:Attribute>
-		<dc:Attribute id="cn">
-			<dc:Value>Tommy Trojan</dc:Value>
+		<dc:Attribute id="affiliation">
+			<dc:Value>member</dc:Value>
 		</dc:Attribute>
 	</resolver:DataConnector>
 

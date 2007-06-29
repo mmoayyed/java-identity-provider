@@ -327,14 +327,14 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             }else{
                 // wrap attribute definition for use within the given resolution context
                 definition = new ContextualAttributeDefinition(definition);
+                
+                // register definition as resolved for this resolution context
+                resolutionContext.getResolvedAttributeDefinitions().put(attributeID, definition);
             }
         }
 
         // resolve all the definitions dependencies
         resolveDependencies(definition, resolutionContext);
-
-        // register definition as resolved for this resolution context
-        resolutionContext.getResolvedAttributeDefinitions().put(attributeID, definition);
 
         // return the actual resolution of the definition
         BaseAttribute attribute = definition.resolve(resolutionContext);
@@ -371,6 +371,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             }else{
                 // wrap connector for use within the given resolution context
                 dataConnector = new ContextualDataConnector(dataConnector);
+
+                // register connector as resolved for this resolution context
+                resolutionContext.getResolvedDataConnectors().put(connectorID, dataConnector);
             }
         }
 
@@ -383,9 +386,6 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             // TODO add failover connector support here
             throw e;
         }
-
-        // register connector as resolved for this resolution context
-        resolutionContext.getResolvedDataConnectors().put(connectorID, dataConnector);
     }
 
     /**

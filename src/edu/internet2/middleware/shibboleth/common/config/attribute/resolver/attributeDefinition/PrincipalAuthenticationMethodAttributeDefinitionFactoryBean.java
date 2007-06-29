@@ -20,7 +20,6 @@ import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.PrincipalAuthenticationMethodDefinition;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.SimpleAttributeDefinition;
 
 /**
  * Factory bean for creating simple attribute definitions.
@@ -34,7 +33,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionFactoryBean extends
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        SimpleAttributeDefinition definition = new SimpleAttributeDefinition();
+        PrincipalAuthenticationMethodDefinition definition = new PrincipalAuthenticationMethodDefinition();
         definition.setId(getPluginId());
         
         if(getAttributeDefinitionDependencyIds() != null){

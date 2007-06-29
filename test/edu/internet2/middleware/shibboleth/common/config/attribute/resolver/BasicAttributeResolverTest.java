@@ -1,9 +1,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
-import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 
@@ -18,23 +16,25 @@ import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 public class BasicAttributeResolverTest extends BaseConfigTestCase {
 
     /** Test Handle Request. */
+    @SuppressWarnings("unchecked")
     public void testResolverInstantiation() throws Exception{
         ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/resolver/service-config.xml");
         AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver");
 
         ShibbolethSAMLAttributeRequestContext context = new ShibbolethSAMLAttributeRequestContext();
         context.setPrincipalName("ttrojan");
+        
+        Map<String, BaseAttribute> actual = resolver.resolveAttributes(context);
 
-        SortedSet<String> expected = new TreeSet<String>();
-        expected.add("gpburdell");
-        expected.add("ttrojan");
-
-        Collection<BaseAttribute> actual = resolver.resolveAttributes(context).values();
-
-        assertEquals(1, actual.size());
-
-        BaseAttribute attribute = actual.iterator().next();
-        assertEquals(2, attribute.getValues().size());
-        assertEquals(expected, attribute.getValues());
+        assertEquals(3, actual.size());
+        
+        BaseAttribute principalName = actual.get("principalName");
+        assertEquals(1, principalName.getValues().size());
+        
+        BaseAttribute affiliation = actual.get("eduPersonAffilation");
+        assertEquals(3, affiliation.getValues().size());
+        
+        BaseAttribute entitlement = actual.get("eduPersonEntitlement");
+        assertEquals(1, entitlement.getValues().size());
     }
 }
