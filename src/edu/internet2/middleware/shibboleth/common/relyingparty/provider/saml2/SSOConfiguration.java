@@ -24,12 +24,54 @@ public class SSOConfiguration extends AbstractSAML2ProfileConfiguration {
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:sso";
     
+    /** Override for authentication statement's subject locality address. */
+    private String localityAddress;
+
+    /** Override for authentication statement's subject locality DNS name. */
+    private String localityDNSName;
+    
     /** Whether responses to the authentication request should include an attribute statement. */
     private boolean includeAttributeStatement;
     
     /** {@inheritDoc} */
     public String getProfileId() {
         return PROFILE_ID;
+    }
+    
+    /**
+     * Gets the override for authentication statement's subject locality DNS name.
+     * 
+     * @return override for authentication statement's subject locality DNS name
+     */
+    public String getLocalityDNSName() {
+        return localityDNSName;
+    }
+
+    /**
+     * Sets the override for authentication statement's subject locality DNS name.
+     * 
+     * @param name override for authentication statement's subject locality DNS name
+     */
+    public void setLocalityDNSName(String name) {
+        localityDNSName = name;
+    }
+
+    /**
+     * Gets the override for authentication statement's subject locality address.
+     * 
+     * @return override for authentication statement's subject locality address
+     */
+    public String getLocalityAddress() {
+        return localityAddress;
+    }
+
+    /**
+     * Sets the override for authentication statement's subject locality address.
+     * 
+     * @param address override for authentication statement's subject locality address.
+     */
+    public void setLocalityAddress(String address) {
+        localityAddress = address;
     }
     
     /**

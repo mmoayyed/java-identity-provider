@@ -40,6 +40,22 @@
         </annotation>
         <complexContent>
             <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="localityAddress" type="string">
+                    <annotation>
+                        <documentation>
+                            Overrides the authentication statement's subject locality address.  This can be useful if
+                            the IdP is NAT'ed, as it is, for example, in some load balancing scenarios.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="localityDNSName" type="string">
+                    <annotation>
+                        <documentation>
+                            Overrides the authentication statement's subject DNS name.  This can be useful if
+                            the IdP is NAT'ed, as it is, for example, in some load balancing scenarios.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="includeAttributeStatement" type="boolean" default="true">
                     <annotation>
                         <documentation>
@@ -122,6 +138,22 @@
         </annotation>
         <complexContent>
             <extension base="samlrp:SAML1ProfileConfigurationType">
+                <attribute name="localityAddress" type="string">
+                    <annotation>
+                        <documentation>
+                            Overrides the authentication statement's subject locality address.  This can be useful if
+                            the IdP is NAT'ed, as it is, for example, in some load balancing scenarios.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="localityDNSName" type="string">
+                    <annotation>
+                        <documentation>
+                            Overrides the authentication statement's subject DNS name.  This can be useful if
+                            the IdP is NAT'ed, as it is, for example, in some load balancing scenarios.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="includeAttributeStatement" type="boolean" default="true">
                     <annotation>
                         <documentation>
