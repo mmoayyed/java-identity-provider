@@ -20,12 +20,11 @@ import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.saml.AttributeRequesterInEntityGroupMatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.saml.AttributeScopeShibMDMatchFunctor;
 import edu.internet2.middleware.shibboleth.common.config.attribute.filtering.BaseFilterBeanDefinitionParser;
 
 /**
- * Bean definition parser for {@link AttributeRequesterInEntityGroupMatchFunctor}s.
+ * Bean definition parser for {@link AttributeScopeShibMDMatchFunctor}s.
  */
 public class AttributeScopeShibMDScopeMatchFunctorBeanDefinitionParser extends BaseFilterBeanDefinitionParser {
 

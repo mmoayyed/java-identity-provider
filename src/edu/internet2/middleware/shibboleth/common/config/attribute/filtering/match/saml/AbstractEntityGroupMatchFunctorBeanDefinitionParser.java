@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import edu.internet2.middleware.shibboleth.common.config.attribute.filtering.BaseFilterBeanDefinitionParser;
 
 /**
- * Base class for string matching functors.
+ * Base class for entity group matching functors.
  */
 public abstract class AbstractEntityGroupMatchFunctorBeanDefinitionParser extends BaseFilterBeanDefinitionParser {
 
