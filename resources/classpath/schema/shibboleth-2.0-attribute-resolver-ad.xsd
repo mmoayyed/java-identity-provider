@@ -87,41 +87,29 @@
         </complexContent>
     </complexType>
 
-    <complexType name="Regex">
-        <annotation>
-            <documentation>
-                The RegexAttributeDefinition allows regular expression based replacements on attribute values.
-            </documentation>
-        </annotation>
+    <complexType name="Mapped">
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
-                <attribute name="regex" type="string" use="required">
-                    <annotation>
-                        <documentation>Regex string to match the source attribute value with.</documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="replacement" type="string" use="optional">
-                    <annotation>
-                        <documentation>
-                            The replacement string to replace the matched groups in the pattern with.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="partialMatch" type="boolean" default="false">
-                    <annotation>
-                        <documentation>
-                            If true, the provided regex may match a substring of the attribute value. Otherwise, the
-                            pattern must match the entire value string.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="ignoreCase" type="boolean" default="false">
-                    <annotation>
-                        <documentation>Perform case-insensitive match.</documentation>
-                    </annotation>
-                </attribute>
+                <sequence>
+                    <element name="ValueMap" type="ad:ValueMapType" maxOccurs="unbounded" />
+                </sequence>
             </extension>
         </complexContent>
+    </complexType>
+
+    <complexType name="ValueMapType">
+        <sequence>
+            <element name="ReturnedValue" type="string" />
+            <element name="SourceValue">
+                <complexType>
+                    <simpleContent>
+                        <extension base="string">
+                            <attribute name="ignoreCase" type="boolean" default="false" />
+                        </extension>
+                    </simpleContent>
+                </complexType>
+            </element>
+        </sequence>
     </complexType>
 
 </schema>

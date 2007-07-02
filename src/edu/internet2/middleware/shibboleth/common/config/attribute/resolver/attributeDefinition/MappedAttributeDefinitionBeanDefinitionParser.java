@@ -30,17 +30,17 @@ import org.w3c.dom.Element;
 /**
  * Spring Bean Definition Parser for static data connector.
  */
-public class RegexAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
+public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Regex");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(RegexAttributeDefinitionBeanDefinitionParser.class);
+    private static Logger log = Logger.getLogger(MappedAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return RegexAttributeDefinitionFactoryBean.class;
+        return MappedAttributeDefinitionFactoryBean.class;
     }
 
     /** {@inheritDoc} */

@@ -19,13 +19,13 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.att
 import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.RegexAttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.MappedAttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ScopedAttributeDefinition;
 
 /**
  * Spring factory bean that produces {@link ScopedAttributeDefinition}s.
  */
-public class RegexAttributeDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
+public class MappedAttributeDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
 
     /** Regex string to match the source attribute value with. */
     private String regex;
@@ -42,7 +42,7 @@ public class RegexAttributeDefinitionFactoryBean extends BaseAttributeDefinition
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        RegexAttributeDefinition definition = new RegexAttributeDefinition();
+        MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(getPluginId());
         definition.setSourceAttributeID(getSourceAttributeId());
         definition.setRegex(getRegex());
@@ -70,7 +70,7 @@ public class RegexAttributeDefinitionFactoryBean extends BaseAttributeDefinition
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return RegexAttributeDefinition.class;
+        return MappedAttributeDefinition.class;
     }
 
     

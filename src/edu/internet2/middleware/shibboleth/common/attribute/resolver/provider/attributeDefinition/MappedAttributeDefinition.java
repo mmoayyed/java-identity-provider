@@ -32,10 +32,10 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
  * The RegexAttributeDefinition allows regular expression based replacements on attribute values, using the regex syntax
  * allowed by {@link java.util.regex.Pattern}.
  */
-public class RegexAttributeDefinition extends BaseAttributeDefinition {
+public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(RegexAttributeDefinition.class);
+    private static Logger log = Logger.getLogger(MappedAttributeDefinition.class);
 
     /** Regex string to match the source attribute value with. */
     private String regex;
