@@ -15,7 +15,7 @@
             <extension base="resolver:BaseAttributeDefinitionType" />
         </complexContent>
     </complexType>
-    
+
     <complexType name="PrincipalName">
         <annotation>
             <documentation>Exposes the principal's name as an attribute definition.</documentation>
@@ -24,7 +24,7 @@
             <extension base="resolver:BaseAttributeDefinitionType" />
         </complexContent>
     </complexType>
-    
+
     <complexType name="PrincipalAuthenticationMethod">
         <annotation>
             <documentation>Exposes the principal's authentication method as an attribute definition.</documentation>
@@ -91,6 +91,15 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <sequence>
+                    <element name="DefaultValue" minOccurs="0">
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="passThru" type="boolean" default="false" />
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
                     <element name="ValueMap" type="ad:ValueMapType" maxOccurs="unbounded" />
                 </sequence>
             </extension>
@@ -100,7 +109,7 @@
     <complexType name="ValueMapType">
         <sequence>
             <element name="ReturnedValue" type="string" />
-            <element name="SourceValue">
+            <element name="SourceValue" maxOccurs="unbounded">
                 <complexType>
                     <simpleContent>
                         <extension base="string">
