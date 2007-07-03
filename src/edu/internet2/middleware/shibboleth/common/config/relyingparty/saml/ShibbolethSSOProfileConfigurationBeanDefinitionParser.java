@@ -18,7 +18,6 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -41,12 +40,6 @@ public class ShibbolethSSOProfileConfigurationBeanDefinitionParser extends
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-
-        builder.addPropertyValue("localityAddress", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
-                "localityAddress")));
-
-        builder.addPropertyValue("localityDNSName", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
-                "localityDNSName")));
 
         builder.addPropertyValue("includeAttributeStatement", XMLHelper.getAttributeValueAsBoolean(element
                 .getAttributeNodeNS(null, "includeAttributeStatement")));

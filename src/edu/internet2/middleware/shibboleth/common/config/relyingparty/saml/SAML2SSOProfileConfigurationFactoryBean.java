@@ -23,54 +23,12 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.SS
  */
 public class SAML2SSOProfileConfigurationFactoryBean extends AbstractSAML2ProfileConfigurationFactoryBean {
     
-    /** Override for authentication statement's subject locality address. */
-    private String localityAddress;
-
-    /** Override for authentication statement's subject locality DNS name. */
-    private String localityDNSName;
-    
     /** Whether responses to the authentication request should include an attribute statement. */
     private boolean includeAttributeStatement;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
         return SSOConfiguration.class;
-    }
-    
-    /**
-     * Gets the override for authentication statement's subject locality DNS name.
-     * 
-     * @return override for authentication statement's subject locality DNS name
-     */
-    public String getLocalityDNSName() {
-        return localityDNSName;
-    }
-
-    /**
-     * Sets the override for authentication statement's subject locality DNS name.
-     * 
-     * @param name override for authentication statement's subject locality DNS name
-     */
-    public void setLocalityDNSName(String name) {
-        localityDNSName = name;
-    }
-
-    /**
-     * Gets the override for authentication statement's subject locality address.
-     * 
-     * @return override for authentication statement's subject locality address
-     */
-    public String getLocalityAddress() {
-        return localityAddress;
-    }
-
-    /**
-     * Sets the override for authentication statement's subject locality address.
-     * 
-     * @param address override for authentication statement's subject locality address.
-     */
-    public void setLocalityAddress(String address) {
-        localityAddress = address;
     }
     
     /**
@@ -95,8 +53,6 @@ public class SAML2SSOProfileConfigurationFactoryBean extends AbstractSAML2Profil
     protected Object createInstance() throws Exception {
         SSOConfiguration configuration = new SSOConfiguration();
         populateBean(configuration);
-        configuration.setLocalityAddress(localityAddress);
-        configuration.setLocalityDNSName(localityDNSName);
         configuration.setIncludeAttributeStatement(includeAttributeStatement());
         
         return configuration;
