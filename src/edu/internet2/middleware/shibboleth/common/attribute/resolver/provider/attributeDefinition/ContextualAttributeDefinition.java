@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
@@ -61,7 +61,7 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public Map<String, AttributeEncoder> getAttributeEncoders() {
+    public List<AttributeEncoder> getAttributeEncoders() {
         return definition.getAttributeEncoders();
     }
 

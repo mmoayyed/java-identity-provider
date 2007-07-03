@@ -28,8 +28,6 @@ public abstract class AbstractAttributeEncoder<EncodedType> implements Attribute
     /** Name of the attribute. */
     private String attributeName;
 
-    /** Encoder category. */
-    private String category;
     
     /** {@inheritDoc} */
     public String getAttributeName() {
@@ -39,15 +37,5 @@ public abstract class AbstractAttributeEncoder<EncodedType> implements Attribute
     /** {@inheritDoc} */
     public void setAttributeName(String newAttributeName) {
         attributeName = newAttributeName;
-    }
-
-    /** {@inheritDoc} */
-    public String getEncoderCategory() {
-        return category;
-    }
-
-    /** {@inheritDoc} */
-    public void setEncoderCategory(String newCategory) {
-        category = newCategory;
     }
 }

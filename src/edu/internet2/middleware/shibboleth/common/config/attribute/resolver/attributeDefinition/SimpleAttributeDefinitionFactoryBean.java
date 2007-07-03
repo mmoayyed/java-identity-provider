@@ -48,9 +48,7 @@ public class SimpleAttributeDefinitionFactoryBean extends BaseAttributeDefinitio
 
         List<AttributeEncoder> encoders = getAttributeEncoders();
         if (encoders != null && encoders.size() > 0) {
-            for (AttributeEncoder encoder : encoders) {
-                definition.getAttributeEncoders().put(encoder.getEncoderCategory(), encoder);
-            }
+            definition.getAttributeEncoders().addAll(getAttributeEncoders());
         }
 
         return definition;

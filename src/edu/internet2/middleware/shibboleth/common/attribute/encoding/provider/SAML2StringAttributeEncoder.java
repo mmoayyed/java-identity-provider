@@ -46,7 +46,7 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.op
     public SAML2StringAttributeEncoder() {
         attributeBuilder = new AttributeBuilder();
         stringBuilder = new XSStringBuilder();
-        setEncoderCategory(SAML2AttributeEncoder.CATEGORY);
+
     }
 
     /** {@inheritDoc} */

@@ -42,7 +42,7 @@ public class SAML1AttributeAuthorityTest extends BaseConfigTestCase {
         ParserPool parserPool = new BasicParserPool();
 
         URLMetadataProvider mdProvider = new URLMetadataProvider(
-                "http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml", 500);
+                "http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml", 5000);
         mdProvider.setParserPool(parserPool);
         mdProvider.initialize();
 
@@ -55,6 +55,8 @@ public class SAML1AttributeAuthorityTest extends BaseConfigTestCase {
         SAML1AttributeAuthority aa = (SAML1AttributeAuthority) ac.getBean("shibboleth.SAML1AttributeAuthority");
         Map<String, BaseAttribute> attributes = aa.getAttributes(context);
 
-        assertEquals(1, attributes.size());
+        assertEquals(3, attributes.size());
+        
+        assertNotNull(aa.buildAttributeStatement(null, attributes.values()));
     }
 }

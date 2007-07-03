@@ -218,37 +218,53 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
     protected Collection<Attribute> encodeAttributes(Collection<BaseAttribute> attributes) {
         Collection<Attribute> encodedAttributes = new ArrayList<Attribute>();
 
-        AttributeEncoder<Attribute> encoder;
+        boolean attributeEncoded = false;
         AttributeDesignator samlAttribute;
-        SAML1StringAttributeEncoder defaultAttributeEncoder;
+        SAML1StringAttributeEncoder defaultEncoder;
 
         for (BaseAttribute<?> shibbolethAttribute : attributes) {
             if (shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() == 0) {
                 continue;
             }
 
-            encoder = shibbolethAttribute.getEncoderByCategory(SAML1AttributeEncoder.CATEGORY);
-            if (encoder == null) {
-                defaultAttributeEncoder = new SAML1StringAttributeEncoder();
+            // first try to encode with an SAML 1 attribute encoders
+            for (AttributeEncoder encoder : shibbolethAttribute.getEncoders()) {
+                if (encoder instanceof SAML1AttributeEncoder) {
+                    try {
+                        encodedAttributes.add((Attribute) encoder.encode(shibbolethAttribute));
+                        attributeEncoded = true;
+                        if (log.isDebugEnabled()) {
+                            log.debug("Encoded attribute " + shibbolethAttribute.getId() + " with encoder of type "
+                                    + encoder.getClass().getName());
+                        }
+                    } catch (AttributeEncodingException e) {
+                        log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): "
+                                + e.getMessage());
+                    }
+                }
+            }
+
+
+            // if it couldn't be encoded try using the default encoder
+            if (!attributeEncoded) {
+                defaultEncoder = new SAML1StringAttributeEncoder();
                 samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
                 if (samlAttribute != null) {
-                    defaultAttributeEncoder.setAttributeName(samlAttribute.getAttributeName());
-                    defaultAttributeEncoder.setNamespace(samlAttribute.getAttributeNamespace());
+                    defaultEncoder.setAttributeName(samlAttribute.getAttributeName());
+                    defaultEncoder.setNamespace(samlAttribute.getAttributeNamespace());
                 } else {
-                    defaultAttributeEncoder.setAttributeName(shibbolethAttribute.getId());
-                    defaultAttributeEncoder.setNamespace("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
+                    defaultEncoder.setAttributeName(shibbolethAttribute.getId());
+                    defaultEncoder.setNamespace("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
                 }
-                encoder = defaultAttributeEncoder;
-            }
-            try {
-                encodedAttributes.add(encoder.encode(shibbolethAttribute));
-            } catch (AttributeEncodingException e) {
-                log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): " + e.getMessage());
+
+                encodedAttributes.add(defaultEncoder.encode(shibbolethAttribute));
+                if (log.isDebugEnabled()) {
+                    log.debug("Encoded attribute " + shibbolethAttribute.getId() + " with encoder of type "
+                            + defaultEncoder.getClass().getName());
+                }
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug("attribute encoder encoded the following attributes: " + encodedAttributes);
-        }
+
         return encodedAttributes;
     }
 }

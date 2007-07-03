@@ -146,7 +146,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
             ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> requestContext)
             throws AttributeRequestException {
         AttributeQuery query = requestContext.getAttributeQuery();
-        
+
         // get attributes from the message
         Set<String> queryAttributeIds = getAttributeIds(query);
         requestContext.getRequestedAttributes().addAll(queryAttributeIds);
@@ -180,39 +180,51 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
             throws AttributeEncodingException {
         Collection<Attribute> encodedAttributes = new ArrayList<Attribute>();
 
-        AttributeEncoder<Attribute> encoder;
+        boolean attributeEncoded = false;
         Attribute samlAttribute;
-        SAML2StringAttributeEncoder defaultAttributeEncoder;
+        SAML2StringAttributeEncoder defaultEncoder;
+
         for (BaseAttribute<?> shibbolethAttribute : attributes) {
             if (shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() == 0) {
                 continue;
             }
 
-            encoder = shibbolethAttribute.getEncoderByCategory(SAML2AttributeEncoder.CATEGORY);
-            if (encoder == null) {
-                defaultAttributeEncoder = new SAML2StringAttributeEncoder();
+            // first try to encode with an SAML 2 attribute encoders
+            for (AttributeEncoder encoder : shibbolethAttribute.getEncoders()) {
+                if (encoder instanceof SAML2AttributeEncoder) {
+                    try {
+                        encodedAttributes.add((Attribute) encoder.encode(shibbolethAttribute));
+                        attributeEncoded = true;
+                        if (log.isDebugEnabled()) {
+                            log.debug("Encoded attribute " + shibbolethAttribute.getId() + " with encoder of type "
+                                    + encoder.getClass().getName());
+                        }
+                    } catch (AttributeEncodingException e) {
+                        log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): "
+                                + e.getMessage());
+                    }
+                }
+            }
+
+            // if it couldn't be encoded try using the default encoder
+            if (!attributeEncoded) {
+                defaultEncoder = new SAML2StringAttributeEncoder();
                 samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
                 if (samlAttribute != null) {
-                    defaultAttributeEncoder.setAttributeName(samlAttribute.getName());
-                    defaultAttributeEncoder.setNameFormat(samlAttribute.getNameFormat());
-                    defaultAttributeEncoder.setFriendlyName(samlAttribute.getFriendlyName());
+                    defaultEncoder.setAttributeName(samlAttribute.getName());
+                    defaultEncoder.setNameFormat(samlAttribute.getNameFormat());
+                    defaultEncoder.setFriendlyName(samlAttribute.getFriendlyName());
                 } else {
-                    defaultAttributeEncoder.setAttributeName(shibbolethAttribute.getId());
-                    defaultAttributeEncoder.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
+                    defaultEncoder.setAttributeName(shibbolethAttribute.getId());
+                    defaultEncoder.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
                 }
 
-                encoder = defaultAttributeEncoder;
+                encodedAttributes.add(defaultEncoder.encode(shibbolethAttribute));
+                if (log.isDebugEnabled()) {
+                    log.debug("Encoded attribute " + shibbolethAttribute.getId() + " with encoder of type "
+                            + defaultEncoder.getClass().getName());
+                }
             }
-
-            try {
-                encodedAttributes.add(encoder.encode(shibbolethAttribute));
-            } catch (AttributeEncodingException e) {
-                log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): " + e.getMessage());
-                throw e;
-            }
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("Attribute encoder encoded " + encodedAttributes.size() + " attributes");
         }
 
         return encodedAttributes;

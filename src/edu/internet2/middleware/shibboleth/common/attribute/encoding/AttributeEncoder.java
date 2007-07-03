@@ -31,20 +31,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
  * @param <EncodedType> the type of object created by encoding the attribute
  */
 public interface AttributeEncoder<EncodedType> {
-
-    /**
-     * Gets the category for this encoder.
-     * 
-     * @return category for this encoder
-     */
-    public String getEncoderCategory();
-    
-    /**
-     * Sets the category for this encoder.
-     * 
-     * @param category category for this encoder
-     */
-    public void setEncoderCategory(String category);
     
     /**
      * Get the name of the attribute.

@@ -16,9 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -38,7 +37,7 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
     private String id;
 
     /** Map of attribute encoders for this attribute, keyed off of category. */
-    private Map<String, AttributeEncoder> encoders;
+    private ArrayList<AttributeEncoder> encoders;
 
     /** Set of values for this attribute. */
     private SortedSet<ValueType> values;
@@ -48,23 +47,23 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
 
     /** Constructor. */
     public BasicAttribute() {
-        encoders = new HashMap<String, AttributeEncoder>();
+        encoders = new ArrayList<AttributeEncoder>();
         values = new TreeSet<ValueType>();
     }
-    
+
     /**
      * Constructor.
-     *
+     * 
      * @param attributeId the ID of this attribute
      */
-    public BasicAttribute(String attributeId){
+    public BasicAttribute(String attributeId) {
         id = DatatypeHelper.safeTrimOrNullString(attributeId);
-        encoders = new HashMap<String, AttributeEncoder>();
+        encoders = new ArrayList<AttributeEncoder>();
         values = new TreeSet<ValueType>();
     }
 
     /** {@inheritDoc} */
-    public Map<String, AttributeEncoder> getEncoders() {
+    public ArrayList<AttributeEncoder> getEncoders() {
         return encoders;
     }
 
@@ -114,24 +113,14 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
     public BasicAttribute<ValueType> clone() {
         BasicAttribute<ValueType> newAttribute = new BasicAttribute<ValueType>();
 
-        newAttribute.setId(this.getId());
+        newAttribute.setId(getId());
 
         newAttribute.setValueComparator(this.getValueComparator());
 
-        for (ValueType value : this.getValues()) {
-            newAttribute.getValues().add(value);
-        }
+        newAttribute.getValues().addAll(getValues());
 
-        for (String category : getEncoders().keySet()) {
-            newAttribute.getEncoders().put(category, getEncoders().get(category));
-        }
+        newAttribute.getEncoders().addAll(getEncoders());
 
         return newAttribute;
     }
-
-    /** {@inheritDoc} */
-    public AttributeEncoder getEncoderByCategory(String category) {
-        return encoders.get(category);
-    }
-
 }

@@ -42,7 +42,6 @@ public class SAML2ScopedStringAttributeEncoder extends
     public SAML2ScopedStringAttributeEncoder() {
         super();
         attributeBuilder = new AttributeBuilder();
-        setEncoderCategory(SAML2AttributeEncoder.CATEGORY);
     }
 
     /** {@inheritDoc} */

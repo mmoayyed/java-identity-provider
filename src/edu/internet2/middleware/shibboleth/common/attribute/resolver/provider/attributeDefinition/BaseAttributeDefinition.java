@@ -16,9 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +40,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     private boolean dependencyOnly;
 
     /** Attribute encoders associated with this definition. */
-    private Map<String, AttributeEncoder> encoders;
+    private ArrayList<AttributeEncoder> encoders;
 
     /** Name of the attribute from data connectors to use to populate this definition. */
     private String sourceAttributeID;
@@ -49,7 +50,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      */
     public BaseAttributeDefinition() {
         dependencyOnly = false;
-        encoders = new HashMap<String, AttributeEncoder>();
+        encoders = new ArrayList<AttributeEncoder>();
     }
 
     /** {@inheritDoc} */
@@ -68,7 +69,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     }
 
     /** {@inheritDoc} */
-    public Map<String, AttributeEncoder> getAttributeEncoders() {
+    public List<AttributeEncoder> getAttributeEncoders() {
         return encoders;
     }
 
@@ -77,7 +78,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
         BaseAttribute resolvedAttribute = doResolve(resolutionContext);
 
         if (getAttributeEncoders() != null) {
-            resolvedAttribute.getEncoders().putAll(getAttributeEncoders());
+            resolvedAttribute.getEncoders().addAll(getAttributeEncoders());
         }
 
         return resolvedAttribute;

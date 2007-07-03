@@ -17,7 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute;
 
 import java.util.Comparator;
-import java.util.Map;
+import java.util.List;
 import java.util.SortedSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
@@ -47,25 +47,16 @@ public abstract class BaseAttribute<ValueType> {
     /**
      * Gets the values of the attribute.
      * 
-     * @return values of the attribute
+     * @return values of the attribute, must never be null
      */
     public abstract SortedSet<ValueType> getValues();
 
     /**
-     * Gets the encoder registered under a specific category.
-     * 
-     * @param category the category of the encoder
-     * 
-     * @return encoder registered under a specific category
-     */
-    public abstract AttributeEncoder getEncoderByCategory(String category);
-
-    /**
      * Gets the list of attribute encoders usable with this attribute.
      * 
-     * @return attribute encoders usable with this attribute, keyed off of the encoder category
+     * @return attribute encoders usable with this attribute, must never be null
      */
-    public abstract Map<String, AttributeEncoder> getEncoders();
+    public abstract List<AttributeEncoder> getEncoders();
 
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
@@ -79,5 +70,10 @@ public abstract class BaseAttribute<ValueType> {
     /** {@inheritDoc} */
     public int hashCode() {
         return getId().hashCode();
+    }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return getId();
     }
 }

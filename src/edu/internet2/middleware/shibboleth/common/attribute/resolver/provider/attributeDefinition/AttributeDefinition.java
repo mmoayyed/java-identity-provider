@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
-import java.util.Map;
+import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
@@ -35,7 +35,7 @@ public interface AttributeDefinition extends ResolutionPlugIn<BaseAttribute> {
      * 
      * @return encoders to be added to attributes produced by this definition
      */
-    public Map<String, AttributeEncoder> getAttributeEncoders();
+    public List<AttributeEncoder> getAttributeEncoders();
     
     /**
      * Gets whether this attribute definition is only a dependency and thus its values should never be released outside

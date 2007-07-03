@@ -21,9 +21,6 @@ package edu.internet2.middleware.shibboleth.common.attribute.encoding;
  */
 public interface SAML1AttributeEncoder extends XMLObjectAttributeEncoder<org.opensaml.saml1.core.Attribute> {
 
-    /** Category for attribute encoders. */
-    public static final String CATEGORY = "urn:mace:shibboleth:2.0:attribute:encoder:saml1:attribute";
-
     /**
      * Gets the attribute namespace.
      * 
