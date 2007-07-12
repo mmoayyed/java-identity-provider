@@ -188,7 +188,7 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
      * @param decoder the message decoder to populate
      */
     @SuppressWarnings("unchecked")
-    protected void populateMessageDecoder(MessageDecoder<ServletRequest> decoder) {
+    protected void populateMessageDecoder(MessageDecoder decoder) {
         if (securityPolicyFactory != null) {
             SAMLSecurityPolicy securityPolicy = (SAMLSecurityPolicy) securityPolicyFactory
                     .createPolicyInstance();
@@ -202,7 +202,7 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
      * 
      * @param encoder the message encoder to populate
      */
-    protected void populateMessageEncoder(MessageEncoder<ServletResponse> encoder) {
+    protected void populateMessageEncoder(MessageEncoder encoder) {
         encoder.setMetadataProvider(rpManager.getMetadataProvider());
     }
 
@@ -216,12 +216,6 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
 
         /** Current profile response. */
         private ProfileResponse<ServletResponse> profileResponse;
-
-        /** Decoder used to decode the incoming request. */
-        private MessageDecoder<ServletRequest> messageDecoder;
-
-        /** Encoder used to encode the outgoing response. */
-        private MessageEncoder<ServletResponse> messageEncoder;
         
         /** Unique ID of the party making the request. */
         private String relyingPartyId;
@@ -272,47 +266,11 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
         }
 
         /**
-         * Gets the decoder used to decode the request.
-         * 
-         * @return decoder used to decode the request
-         */
-        public MessageDecoder<ServletRequest> getMessageDecoder() {
-            return messageDecoder;
-        }
-
-        /**
-         * Sets the decoder used to decode the request.
-         * 
-         * @param decoder decoder used to decode the request
-         */
-        public void setMessageDecoder(MessageDecoder<ServletRequest> decoder) {
-            messageDecoder = decoder;
-        }
-
-        /**
-         * Gets the encoder used to encoder the response.
-         * 
-         * @return encoder used to encoder the response
-         */
-        public MessageEncoder<ServletResponse> getMessageEncoder() {
-            return messageEncoder;
-        }
-
-        /**
-         * Sets the encoder used to encoder the response.
-         * 
-         * @param encoder encoder used to encoder the response
-         */
-        public void setMessageEncoder(MessageEncoder<ServletResponse> encoder) {
-            messageEncoder = encoder;
-        }
-
-        /**
          * Gets the current profile request.
          * 
          * @return current profile request
          */
-        public ProfileRequest<ServletRequest> getProfileRequest() {
+        public ProfileRequest getProfileRequest() {
             return profileRequest;
         }
 

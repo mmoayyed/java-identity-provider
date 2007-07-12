@@ -43,10 +43,14 @@ public class CSVAuditEventRenderer implements ObjectRenderer {
         entryString.append(entry.getAuditEventTime().toString(dateFormatter.withZone(DateTimeZone.UTC)));
         entryString.append("|");
 
-        entryString.append(entry.getRequestBinding());
+        if (entry.getRequestBinding() != null) {
+            entryString.append(entry.getRequestBinding());
+        }
         entryString.append("|");
 
-        entryString.append(entry.getRequestId());
+        if (entry.getRequestId() != null) {
+            entryString.append(entry.getRequestId());
+        }
         entryString.append("|");
 
         entryString.append(entry.getRelyingPartyId());
