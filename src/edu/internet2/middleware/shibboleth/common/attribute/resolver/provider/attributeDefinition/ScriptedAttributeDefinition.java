@@ -159,6 +159,9 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             throws AttributeResolutionException {
         SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
+        
+        scriptContext.setAttribute("requestContext", resolutionContext.getAttributeRequestContext(),
+                ScriptContext.ENGINE_SCOPE);
 
         DataConnector dc;
         Map<String, BaseAttribute> attributes;
