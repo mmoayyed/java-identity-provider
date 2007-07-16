@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.saml2.metadata.provider.FileBackedURLMetadataProvider;
+import org.opensaml.saml2.metadata.provider.FileBackedHTTPMetadataProvider;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -38,12 +38,12 @@ public class FileBackedURLMetadataProviderBeanDefinitionParser extends URLMetada
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return FileBackedURLMetadataProvider.class;
+        return FileBackedHTTPMetadataProvider.class;
     }
     
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FileBackedURLMetadataProvider.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FileBackedHTTPMetadataProvider.class);
         parseCommonConfig(builder, element, parserContext);
         parseConfig(builder, element, parserContext);
         return builder.getBeanDefinition();

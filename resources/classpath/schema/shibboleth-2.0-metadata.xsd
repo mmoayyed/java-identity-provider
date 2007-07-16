@@ -73,7 +73,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="FileBackedURLMetadataProvider">
+    <complexType name="FileBackedHTTPMetadataProvider">
         <annotation>
             <documentation>
                 A metadata provider that periodically pulls metadata from a given URL. If the metadata is valid it is
@@ -82,7 +82,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="shibmd:URLMetadataProvider">
+            <extension base="shibmd:HTTPMetadataProvider">
                 <attribute name="backingFile" type="string" use="required">
                     <annotation>
                         <documentation>
@@ -94,7 +94,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="URLMetadataProvider">
+    <complexType name="HTTPMetadataProvider">
         <annotation>
             <documentation>A metadata provider that periodically pulls metadata from a given URL.</documentation>
         </annotation>

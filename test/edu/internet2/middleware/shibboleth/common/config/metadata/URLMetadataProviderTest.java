@@ -17,7 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
-import org.opensaml.saml2.metadata.provider.URLMetadataProvider;
+import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
@@ -37,7 +37,7 @@ public class URLMetadataProviderTest extends BaseConfigTestCase {
                              DATA_PATH + "/config/metadata/URLMetadataProvider1.xml", };
         ApplicationContext appContext = createSpringContext(configs);
 
-        URLMetadataProvider provider = (URLMetadataProvider) appContext.getBean("URLMetadata");
+        HTTPMetadataProvider provider = (HTTPMetadataProvider) appContext.getBean("URLMetadata");
         assertNotNull(provider);
         assertTrue(provider.maintainExpiredMetadata());
         assertEquals(1705L, provider.getMaxCacheDuration());

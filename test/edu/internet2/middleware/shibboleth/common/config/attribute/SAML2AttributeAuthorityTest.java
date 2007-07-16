@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.NameID;
-import org.opensaml.saml2.metadata.provider.URLMetadataProvider;
+import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.opensaml.xml.parse.BasicParserPool;
 import org.opensaml.xml.parse.ParserPool;
 import org.springframework.context.ApplicationContext;
@@ -41,7 +41,7 @@ public class SAML2AttributeAuthorityTest extends BaseConfigTestCase {
         
         ParserPool parserPool = new BasicParserPool();
 
-        URLMetadataProvider mdProvider = new URLMetadataProvider(
+        HTTPMetadataProvider mdProvider = new HTTPMetadataProvider(
                 "http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml", 5000);
         mdProvider.setParserPool(parserPool);
         mdProvider.initialize();

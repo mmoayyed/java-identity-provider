@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.saml2.metadata.provider.URLMetadataProvider;
+import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -52,12 +52,12 @@ public class URLMetadataProviderBeanDefinitionParser extends BaseMetadataProvide
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return URLMetadataProvider.class;
+        return HTTPMetadataProvider.class;
     }
 
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(URLMetadataProvider.class);
+        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(HTTPMetadataProvider.class);
         parseCommonConfig(builder, element, parserContext);
         parseConfig(builder, element, parserContext);
         return builder.getBeanDefinition();
