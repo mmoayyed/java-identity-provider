@@ -154,7 +154,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="includeAttributeStatement" type="boolean" default="true">
+                <attribute name="includeAttributeStatement" type="boolean" default="false">
                     <annotation>
                         <documentation>
                             Boolean flag indicating whether an attribute statement should be included with the
