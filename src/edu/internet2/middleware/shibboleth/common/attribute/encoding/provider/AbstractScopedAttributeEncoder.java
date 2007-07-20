@@ -115,7 +115,10 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
 
         ShibbolethScopedValue scopedValue;
         for (ScopedAttributeValue attributeValue : attribute.getValues()) {
-
+            if(attributeValue == null){
+                continue;
+            }
+            
             scopedValue = valueBuilder.buildObject(valueElementQName, ShibbolethScopedValue.TYPE_NAME);
 
             // handle "attribute" scopeType

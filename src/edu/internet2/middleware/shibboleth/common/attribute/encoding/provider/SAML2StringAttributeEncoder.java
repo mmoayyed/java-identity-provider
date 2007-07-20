@@ -20,6 +20,7 @@ import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
+import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
@@ -78,10 +79,19 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.op
         samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.setFriendlyName(getFriendlyName());
 
+        String attributeValue;
+        XSString samlAttributeValue;
         for (Object o : attribute.getValues()) {
-            XSString xsstring = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-            xsstring.setValue(o.toString());
-            samlAttribute.getAttributeValues().add(xsstring);
+            if (o == null) {
+                continue;
+            }
+            
+            attributeValue = o.toString();
+            if (!(DatatypeHelper.isEmpty(attributeValue))) {
+                samlAttributeValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+                samlAttributeValue.setValue(attributeValue);
+                samlAttribute.getAttributeValues().add(samlAttributeValue);
+            }
         }
 
         return samlAttribute;
