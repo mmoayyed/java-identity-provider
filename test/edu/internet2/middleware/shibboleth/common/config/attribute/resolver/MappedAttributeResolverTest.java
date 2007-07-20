@@ -25,13 +25,22 @@ public class MappedAttributeResolverTest extends BaseConfigTestCase {
         context.setPrincipalName("ttrojan");
         
         Map<String, BaseAttribute> actual = resolver.resolveAttributes(context);
-        
+        String[] expectedValues;
         
         BaseAttribute affiliation = actual.get("eduPersonAffilation");
         assertEquals(3, affiliation.getValues().size());
         
-        String[] expectedValues = new String[] { "member", "parent", "staff" };
+        expectedValues = new String[] { "member", "parent", "staff" };
         assertEquals(expectedValues, affiliation.getValues().toArray(expectedValues));
         
+        
+        BaseAttribute firstColor = actual.get("firstColor");
+        assertEquals(1, firstColor.getValues().size());
+        
+        expectedValues = new String[] { "red" };
+        assertEquals(expectedValues, firstColor.getValues().toArray(expectedValues));
+        
+        // test bug SIDP-22
+        assertFalse(actual.containsKey("fooBar"));
     }
 }

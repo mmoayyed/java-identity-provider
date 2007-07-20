@@ -1,41 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-	xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
-	xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
-	xsi:schemaLocation="
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+    xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
+    xsi:schemaLocation="
     	urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
       urn:mace:shibboleth:2.0:resolver:dc classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd
     	urn:mace:shibboleth:2.0:resolver:ad classpath:/schema/shibboleth-2.0-attribute-resolver-ad.xsd">
 
-	<resolver:AttributeDefinition xsi:type="ad:Mapped" id="eduPersonAffilation" sourceAttributeID="affiliation">
-		<resolver:DataConnectorDependency ref="static" />        
-        
-        <ad:DefaultValue passThru="true" />
-        
-        <ad:ValueMap xmlns="urn:mace:shibboleth:2.0:resolver:ad">
+    <resolver:AttributeDefinition xsi:type="ad:Mapped" id="eduPersonAffilation" sourceAttributeID="affiliation"
+        xmlns="urn:mace:shibboleth:2.0:resolver:ad">
+        <resolver:DataConnectorDependency ref="static" />
+
+        <DefaultValue passThru="true" />
+
+        <ValueMap>
             <ReturnValue>member</ReturnValue>
-            
+
             <SourceValue>student</SourceValue>
             <SourceValue>staff</SourceValue>
             <SourceValue>faculty</SourceValue>
-        </ad:ValueMap>
-        
-        <ad:ValueMap xmlns="urn:mace:shibboleth:2.0:resolver:ad">
+        </ValueMap>
+
+        <ValueMap>
             <ReturnValue>staff</ReturnValue>
-            
+
             <SourceValue>student-worker-.*</SourceValue>
-        </ad:ValueMap>
-	</resolver:AttributeDefinition>
-	
-	<resolver:DataConnector xsi:type="dc:Static" id="static">
-		<dc:Attribute id="affiliation">
-            <dc:Value>student</dc:Value>
-            <dc:Value>student-worker-parttime</dc:Value>
-            <dc:Value>parent</dc:Value>
-		</dc:Attribute>
-	</resolver:DataConnector>
+        </ValueMap>
+    </resolver:AttributeDefinition>
+
+    <resolver:AttributeDefinition xsi:type="ad:Mapped" id="firstColor" sourceAttributeID="colors"
+        xmlns="urn:mace:shibboleth:2.0:resolver:ad">
+        <resolver:DataConnectorDependency ref="static" />
+
+        <ValueMap>
+            <ReturnValue>$1</ReturnValue>
+            <SourceValue>^([^,]*).*</SourceValue>
+        </ValueMap>
+
+    </resolver:AttributeDefinition>
+
+    <!--  test bug SIDP-22 -->
+    <resolver:AttributeDefinition xsi:type="ad:Mapped" id="fooBar" sourceAttributeID="foo"
+        xmlns="urn:mace:shibboleth:2.0:resolver:ad">
+        <resolver:DataConnectorDependency ref="static" />
+
+        <ValueMap>
+            <ReturnValue>$1</ReturnValue>
+            <SourceValue>^([^,]*).*</SourceValue>
+        </ValueMap>
+    </resolver:AttributeDefinition>
+    
+    <resolver:DataConnector xsi:type="dc:Static" id="static" xmlns="urn:mace:shibboleth:2.0:resolver:dc">
+        <Attribute id="affiliation">
+            <Value>student</Value>
+            <Value>student-worker-parttime</Value>
+            <Value>parent</Value>
+        </Attribute>
+        <Attribute id="colors">
+            <Value>red,blue,green</Value>
+        </Attribute>
+    </resolver:DataConnector>
 
 </AttributeResolver>
