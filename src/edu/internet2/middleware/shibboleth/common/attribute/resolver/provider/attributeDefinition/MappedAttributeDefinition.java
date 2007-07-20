@@ -16,9 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
@@ -37,39 +37,48 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     /** Class logger. */
     private static Logger log = Logger.getLogger(MappedAttributeDefinition.class);
 
-    /** Regex string to match the source attribute value with. */
-    private String regex;
+    /** Default return value. */
+    private String defaultValue;
 
-    /** Regex pattern to match the source attribute value with. */
-    private Pattern pattern;
+    /** Whether the definition passes thru unmatched values. */
+    private boolean passThru;
 
-    /** Allow regex to match a substring within the attribute value. */
-    private boolean partialMatch;
+    /** Value maps. */
+    private Collection<ValueMap> valueMaps;
 
-    /** The replacement string to replace the matched groups in the pattern with. */
-    private String replacement;
-
-    /** Perform case-insensitve match. */
-    private boolean ignoreCase;
-
+    
+    /** Constructor. */
+    public MappedAttributeDefinition() {
+       valueMaps = new ArrayList<ValueMap>(); 
+    }
+    
     /** {@inheritDoc} */
     protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         log.debug("Resolving attribute: (" + getId() + ")");
 
-        Matcher m;
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getId());
+        boolean valueMapMatch;
 
         for (Object o : getValuesFromAllDependencies(resolutionContext)) {
-            try {
-                m = pattern.matcher(o.toString());
-                if (partialMatch || m.matches()) {
-                    attribute.getValues().add(m.replaceAll(replacement));
+            valueMapMatch = false;
+            Set<String> mappedValues;
+
+            for (ValueMap valueMap : valueMaps) {
+                mappedValues = valueMap.evaluate(o.toString());
+                if (!mappedValues.isEmpty()) {
+                    valueMapMatch = true;
+                    attribute.getValues().addAll(mappedValues);
                 }
-            } catch (PatternSyntaxException e) {
-                log.debug("RegexAttributeDefinition (" + getId() + ") caught an exception when trying to match value ("
-                        + o.toString() + ").  Skipping this value.");
+            }
+
+            if (!valueMapMatch) {
+                if (passThru) {
+                    attribute.getValues().add(o.toString());
+                } else if (!DatatypeHelper.isEmpty(defaultValue)) {
+                    attribute.getValues().add(getDefaultValue());
+                }
             }
         }
 
@@ -78,69 +87,52 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-        if (!partialMatch && DatatypeHelper.isEmpty(replacement)) {
-            log.error("RegexAttributeDefinition (" + getId()
-                    + ") requires either a 'replacement' value or 'partialMatch' set to true.");
-            throw new AttributeResolutionException("RegexAttributeDefinition (" + getId()
-                    + ") requires either a 'replacement' value or 'partialMatch' set to true.");
+        if (passThru && !DatatypeHelper.isEmpty(defaultValue)) {
+            log.error("MappedAttributeDefinition (" + getId()
+                    + ") may not have a DefaultValue string with passThru enabled.");
+            throw new AttributeResolutionException("MappedAttributeDefinition (" + getId()
+                    + ") may not have a DefaultValue string with passThru enabled.");
         }
     }
 
     /**
-     * Initializes this attribute definition.
-     * 
-     * @throws AttributeResolutionException if unable to parse regex string
+     * Gets the default return value.
+     * @return the default return value.
      */
-    public void initialize() throws AttributeResolutionException {
-        int flags = 0;
-        if (ignoreCase) {
-            flags = Pattern.CASE_INSENSITIVE;
-        }
-
-        try {
-            pattern = Pattern.compile(regex, flags);
-        } catch (PatternSyntaxException e) {
-            log.error("RegexAttributeDefinition (" + getId() + ") contains an invalid regex pattern -- "
-                    + e.getMessage());
-            throw new AttributeResolutionException("RegexAttributeDefinition (" + getId()
-                    + ") contains an invalid regex pattern.", e);
-        }
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     /**
-     * Set whether matching should be case-sensitive.
-     * 
-     * @param newIgnoreCase whether matching should be case-sensitive
+     * Sets the default return value.
+     * @param newDefaultValue the default return value
      */
-    public void setIgnoreCase(boolean newIgnoreCase) {
-        ignoreCase = newIgnoreCase;
+    public void setDefaultValue(String newDefaultValue) {
+        defaultValue = newDefaultValue;
     }
 
     /**
-     * Set whether to allow regex to match a substring within the attribute value.
-     * 
-     * @param newPartialMatch whether to allow regex to match a substring within the attribute value
+     * Gets whether the definition passes thru unmatched values.
+     * @return whether the definition passes thru unmatched values.
      */
-    public void setPartialMatch(boolean newPartialMatch) {
-        partialMatch = newPartialMatch;
+    public boolean isPassThru() {
+        return passThru;
     }
 
     /**
-     * Set the regular expression pattern string used for matching attribute values.
-     * 
-     * @param newRegex new regex string
+     * Sets whether the definition passes thru unmatched values.
+     * @param newPassThru whether the definition passes thru unmatched values.
      */
-    public void setRegex(String newRegex) {
-        regex = newRegex;
+    public void setPassThru(boolean newPassThru) {
+        passThru = newPassThru;
     }
 
     /**
-     * Set the replacement string used to replace matched attribute values.
-     * 
-     * @param newReplacement new replacement string
+     * Get the value maps.
+     * @return the value maps.
      */
-    public void setReplacement(String newReplacement) {
-        replacement = newReplacement;
+    public Collection<ValueMap> getValueMaps() {
+        return valueMaps;
     }
 
 }

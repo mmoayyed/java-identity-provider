@@ -131,12 +131,12 @@
         <annotation>
             <documentation>
                 Performs many to one mapping of source values to a return value. SourceValue strings may include regular
-                expressions and the ReturnedValue may include back references to capturing groups as supported by
+                expressions and the ReturnValue may include back references to capturing groups as supported by
                 java.util.regex.Pattern.
             </documentation>
         </annotation>
         <sequence>
-            <element name="ReturnedValue" type="string">
+            <element name="ReturnValue" type="string">
                 <annotation>
                     <documentation>The value to be returned from this value map.</documentation>
                 </annotation>
@@ -151,6 +151,14 @@
                             <attribute name="ignoreCase" type="boolean" default="false">
                                 <annotation>
                                     <documentation>If true, value matching will be case-insensitive.</documentation>
+                                </annotation>
+                            </attribute>
+                            <attribute name="partialMatch" type="boolean" default="false">
+                                <annotation>
+                                    <documentation>
+                                        If true, the SourceValue may match only a substring of the incoming value. By
+                                        default, it must match the entire value.
+                                    </documentation>
                                 </annotation>
                             </attribute>
                         </extension>

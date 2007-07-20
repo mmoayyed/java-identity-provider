@@ -20,127 +20,107 @@ import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.MappedAttributeDefinition;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ScopedAttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ValueMap;
 
 /**
- * Spring factory bean that produces {@link ScopedAttributeDefinition}s.
+ * Spring factory bean that produces {@link MappedAttributeDefinition}s.
  */
 public class MappedAttributeDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
 
-    /** Regex string to match the source attribute value with. */
-    private String regex;
+    /** The default return value. */
+    private String defaultValue;
 
-    /** The replacement string to replace the matched groups in the pattern with. */
-    private String replacement;
+    /** Whether the definition passes thru unmatched values. */
+    private boolean passThru;
 
-    /** Allow regex to match a substring within the attribute value. */
-    private boolean partialMatch;
-    
-    /** Perform case-insensitve match. */
-    private boolean ignoreCase;
-    
-
-    /** {@inheritDoc} */
-    protected Object createInstance() throws Exception {
-        MappedAttributeDefinition definition = new MappedAttributeDefinition();
-        definition.setId(getPluginId());
-        definition.setSourceAttributeID(getSourceAttributeId());
-        definition.setRegex(getRegex());
-        definition.setReplacement(getReplacement());
-        definition.setPartialMatch(isPartialMatch());
-        definition.setIgnoreCase(isIgnoreCase());
-        
-        if(getAttributeDefinitionDependencyIds() != null) {
-            definition.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-        
-        if(getDataConnectorDependencyIds() != null) {
-            definition.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
-        }
-        
-        List<AttributeEncoder> encoders = getAttributeEncoders();
-        if (encoders != null && encoders.size() > 0) {
-            definition.getAttributeEncoders().addAll(getAttributeEncoders());
-        }
-        
-        return definition;
-    }
+    /** Value maps. */
+    private List<ValueMap> valueMaps;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
         return MappedAttributeDefinition.class;
     }
 
-    
     /**
-     * Get regex string.
+     * Gets the default return value.
      * 
-     * @return teh regex string
+     * @return the default return value
      */
-    public String getRegex() {
-        return regex;
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     /**
-     * Get replacement string.
+     * Get whether the definition passes thru unmatched values.
      * 
-     * @return the replacement string
+     * @return whether the definition passes thru unmatched values
      */
-    public String getReplacement() {
-        return replacement;
+    public boolean isPassThru() {
+        return passThru;
     }
 
     /**
-     * Get if search is case insensitive.
+     * Gets the value maps.
      * 
-     * @return true if search is case insensitive
+     * @return the value maps.
      */
-    public boolean isIgnoreCase() {
-        return ignoreCase;
+    public List<ValueMap> getValueMaps() {
+        return valueMaps;
     }
 
     /**
-     * Get if search should allow partial matches.
-     * @return true if search should allow partial matches.
+     * Sets the default return value.
+     * 
+     * @param newDefaultValue the default return value
      */
-    public boolean isPartialMatch() {
-        return partialMatch;
+    public void setDefaultValue(String newDefaultValue) {
+        defaultValue = newDefaultValue;
     }
 
     /**
-     * Set if search should be case insensitive.
+     * Sets whether the definition passes thru unmatched values.
      * 
-     * @param newIgnoreCase should search be case insensitive
+     * @param newPassThru whether the definition passes thru unmatched values
      */
-    public void setIgnoreCase(boolean newIgnoreCase) {
-        ignoreCase = newIgnoreCase;
+    public void setPassThru(boolean newPassThru) {
+        passThru = newPassThru;
     }
 
     /**
-     * Set if search should allow partial matches.
+     * Sets the value maps.
      * 
-     * @param newPartialMatch should search allow partial matches
+     * @param newValueMaps the value maps
      */
-    public void setPartialMatch(boolean newPartialMatch) {
-        partialMatch = newPartialMatch;
+    public void setValueMaps(List<ValueMap> newValueMaps) {
+        valueMaps = newValueMaps;
     }
 
-    /**
-     * Set regex string.
-     * 
-     * @param newRegex new regex string
-     */
-    public void setRegex(String newRegex) {
-        regex = newRegex;
+    /** {@inheritDoc} */
+    protected Object createInstance() throws Exception {
+        MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        definition.setId(getPluginId());
+        definition.setSourceAttributeID(getSourceAttributeId());
+
+        if (getAttributeDefinitionDependencyIds() != null) {
+            definition.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
+        }
+
+        if (getDataConnectorDependencyIds() != null) {
+            definition.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        }
+
+        List<AttributeEncoder> encoders = getAttributeEncoders();
+        if (encoders != null && encoders.size() > 0) {
+            definition.getAttributeEncoders().addAll(getAttributeEncoders());
+        }
+
+        definition.setDefaultValue(defaultValue);
+
+        definition.setPassThru(passThru);
+
+        definition.getValueMaps().addAll(valueMaps);
+
+        return definition;
     }
 
-    /**
-     * Set replacement string.
-     * 
-     * @param newReplacement new replacement string
-     */
-    public void setReplacement(String newReplacement) {
-        replacement = newReplacement;
-    }
-    
 }

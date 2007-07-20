@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,17 +24,36 @@ import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ValueMap;
+
 /**
- * Spring Bean Definition Parser for static data connector.
+ * Spring bean definition parser for mapped attribute definition.
  */
 public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Regex");
+    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Mapped");
+
+    /** ValueMap element name. */
+    public static final QName VALUEMAP_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "ValueMap");
+
+    /** SourceValue element name. */
+    public static final QName SOURCE_VALUE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "SourceValue");
+
+    /** ReturnValue element name. */
+    public static final QName RETURN_VALUE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "ReturnValue");
+
+    /** DefaultValue element name. */
+    public static final QName DEFAULT_VALUE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "DefaultValue");
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(MappedAttributeDefinitionBeanDefinitionParser.class);
@@ -48,31 +68,73 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        String regex = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "scope"));
-        if (log.isDebugEnabled()) {
-            log.debug("Setting regex of attribute definition " + pluginId + " to: " + regex);
+        List<ValueMap> valueMaps = processValueMaps(pluginId, pluginConfigChildren, pluginBuilder);
+        pluginBuilder.addPropertyValue("valueMaps", valueMaps);
+
+        if (pluginConfigChildren.containsKey(DEFAULT_VALUE_ELEMENT_NAME)) {
+            List<Element> defaultValueElems = pluginConfigChildren.get(DEFAULT_VALUE_ELEMENT_NAME);
+            String defaultValue = DatatypeHelper.safeTrimOrNullString(defaultValueElems.get(0).getTextContent());
+            pluginBuilder.addPropertyValue("defaultValue", defaultValue);
+            if (log.isDebugEnabled()) {
+                log.debug("Attribute definition " + pluginId + " default value: " + defaultValue);
+            }
+
+            boolean passThru = XMLHelper.getAttributeValueAsBoolean(defaultValueElems.get(0).getAttributeNodeNS(null,
+                    "passThru"));
+            pluginBuilder.addPropertyValue("passThru", passThru);
+            if (log.isDebugEnabled()) {
+                log.debug("Attribute definition " + pluginId + " uses default value pass thru: " + passThru);
+            }
         }
-        pluginBuilder.addPropertyValue("regex", regex);
         
-        
-        String replacement = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "replacement"));
-        if (log.isDebugEnabled()) {
-            log.debug("Setting replacement of attribute definition " + pluginId + " to: " + replacement);
-        }
-        pluginBuilder.addPropertyValue("replacement", replacement);
-        
-        
-        boolean partialMatch = Boolean.parseBoolean(pluginConfig.getAttributeNS(null, "partialMatch"));
-        if (log.isDebugEnabled()) {
-            log.debug("Setting partialMatch of attribute definition " + pluginId + " to: " + partialMatch);
-        }
-        pluginBuilder.addPropertyValue("partialMatch", partialMatch);
-        
-        
-        boolean ignoreCase = Boolean.parseBoolean(pluginConfig.getAttributeNS(null, "ignoreCase"));
-        if (log.isDebugEnabled()) {
-            log.debug("Setting ignoreCase of attribute definition " + pluginId + " to: " + ignoreCase);
-        }
-        pluginBuilder.addPropertyValue("ignoreCase", ignoreCase);
     }
+
+    /**
+     * Process the value map elements.
+     * 
+     * @param pluginId ID of this data connector
+     * @param pluginConfigChildren configuration elements
+     * @param pluginBuilder the bean definition parser
+     * 
+     * @return the list of value maps
+     */
+    protected List<ValueMap> processValueMaps(String pluginId, Map<QName, List<Element>> pluginConfigChildren,
+            BeanDefinitionBuilder pluginBuilder) {
+        List<ValueMap> maps = new ArrayList<ValueMap>();
+
+        ValueMap valueMap;
+        String returnValue;
+        String sourceValue;
+        boolean ignoreCase;
+        boolean partialMatch;
+        if (pluginConfigChildren.containsKey(VALUEMAP_ELEMENT_NAME)) {
+            for (Element valueMapElem : pluginConfigChildren.get(VALUEMAP_ELEMENT_NAME)) {
+                valueMap = new ValueMap();
+
+                Map<QName, List<Element>> children = XMLHelper.getChildElements(valueMapElem);
+
+                if (children.containsKey(RETURN_VALUE_ELEMENT_NAME)) {
+                    List<Element> returnValueElems = children.get(RETURN_VALUE_ELEMENT_NAME);
+                    returnValue = DatatypeHelper.safeTrimOrNullString(returnValueElems.get(0).getTextContent());
+                    valueMap.setReturnValue(returnValue);
+                }
+
+                if (children.containsKey(SOURCE_VALUE_ELEMENT_NAME)) {
+                    for (Element sourceValueElem : children.get(SOURCE_VALUE_ELEMENT_NAME)) {
+                        sourceValue = DatatypeHelper.safeTrim(sourceValueElem.getTextContent());
+                        ignoreCase = XMLHelper.getAttributeValueAsBoolean(sourceValueElem.getAttributeNodeNS(null,
+                                "ignoreCase"));
+                        partialMatch = XMLHelper.getAttributeValueAsBoolean(sourceValueElem.getAttributeNodeNS(null,
+                                "partialMatch"));
+                        valueMap.getSourceValues().add(valueMap.new SourceValue(sourceValue, ignoreCase, partialMatch));
+                    }
+                }
+
+                maps.add(valueMap);
+            }
+        }
+
+        return maps;
+    }
+
 }

@@ -24,4 +24,19 @@
         </constructor-arg>
     </bean>
 
+    <bean id="mappedConfig" class="org.opensaml.util.resource.ClasspathResource">
+        <constructor-arg
+            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-mapped.xml" />
+    </bean>
+
+    <bean id="resolver-mapped"
+        class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
+        init-method="initialize">
+        <constructor-arg>
+            <list>
+                <ref bean="mappedConfig" />
+            </list>
+        </constructor-arg>
+    </bean>
+
 </beans>

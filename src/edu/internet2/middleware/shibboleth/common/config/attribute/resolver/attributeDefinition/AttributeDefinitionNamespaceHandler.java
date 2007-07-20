@@ -27,5 +27,8 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
 
         registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser());
+        
+        registerBeanDefinitionParser(MappedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new MappedAttributeDefinitionBeanDefinitionParser());
     }
 }
