@@ -85,7 +85,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     }
 
     /**
-     * Creates and populates the values for the resolved attribute. Implimentations should *not* set, or otherwise
+     * Creates and populates the values for the resolved attribute. Implementations should *not* set, or otherwise
      * manage, the attribute encoders for the resolved attribute.
      * 
      * @param resolutionContext current attribute resolution context
@@ -104,6 +104,18 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      * @return collection of values
      */
     protected Collection<Object> getValuesFromAllDependencies(ShibbolethResolutionContext context) {
+        return getValuesFromAllDependencies(context, getSourceAttributeID());
+    }
+
+    /**
+     * Get values from dependencies.
+     * 
+     * @param context resolution context
+     * @param sourceAttribute ID of attribute to retrieve from dependencies
+     * @return collection of values
+     */
+    protected Collection<Object> getValuesFromAllDependencies(ShibbolethResolutionContext context,
+            String sourceAttribute) {
         Set<Object> values = new HashSet<Object>();
 
         if (!getAttributeDefinitionDependencyIds().isEmpty()) {
@@ -111,7 +123,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
         }
 
         if (!getDataConnectorDependencyIds().isEmpty()) {
-            values.addAll(getValuesFromConnectorDependencies(context));
+            values.addAll(getValuesFromConnectorDependencies(context, sourceAttribute));
         }
 
         return values;
@@ -147,9 +159,11 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      * Get values from data connectors.
      * 
      * @param context resolution context
+     * @param sourceAttribute ID of attribute to retrieve from connector dependencies
      * @return collection of values
      */
-    protected Collection<Object> getValuesFromConnectorDependencies(ShibbolethResolutionContext context) {
+    protected Collection<Object> getValuesFromConnectorDependencies(ShibbolethResolutionContext context,
+            String sourceAttribute) {
         Set<Object> values = new HashSet<Object>();
 
         for (String connectorId : getDataConnectorDependencyIds()) {
@@ -158,9 +172,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
                 try {
                     Map<String, BaseAttribute> attributes = connector.resolve(context);
                     for (String attributeId : attributes.keySet()) {
-                        if (attributeId != null
-                                && (getSourceAttributeID() != null && attributeId.equals(getSourceAttributeID()))
-                                || attributeId.equals(getId())) {
+                        if (attributeId != null && attributeId.equals(sourceAttribute)) {
                             for (Object o : attributes.get(attributeId).getValues()) {
                                 values.add(o);
                             }
