@@ -23,12 +23,13 @@ import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHand
  */
 public class CredentialNamespaceHandler extends BaseSpringNamespaceHandler {
 
+    /** Credential namespace. */
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:credential";
+
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(KeyStoreCredentialBeanDefinitionParser.TYPE_NAME,
-                new KeyStoreCredentialBeanDefinitionParser());
-        
-        registerBeanDefinitionParser(FilesystemCredentialBeanDefinitionParser.TYPE_NAME,
-                new FilesystemCredentialBeanDefinitionParser());
+
+        registerBeanDefinitionParser(InlineX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
+                new InlineX509CredentialBeanDefinitionParser());
     }
 }

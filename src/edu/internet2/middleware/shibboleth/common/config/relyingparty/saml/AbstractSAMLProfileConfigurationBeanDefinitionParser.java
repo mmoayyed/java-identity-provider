@@ -40,8 +40,6 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
 
         Map<QName, List<Element>> children = XMLHelper.getChildElements(element);
 
-        // TODO signing credential
-
         List<Element> audienceElems = children.get(new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE, "Audience"));
         if (audienceElems != null && audienceElems.size() > 0) {
             ArrayList<String> audiences = new ArrayList<String>();
@@ -50,6 +48,9 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             }
             builder.addPropertyValue("audiences", audiences);
         }
+
+        builder.addPropertyReference("signingCredential", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
+                null, "signingCredentialRef")));
 
         builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "assertionLifetime"))));

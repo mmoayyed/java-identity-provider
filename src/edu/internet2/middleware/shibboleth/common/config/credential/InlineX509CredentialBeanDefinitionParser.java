@@ -18,26 +18,31 @@ package edu.internet2.middleware.shibboleth.common.config.credential;
 
 import javax.xml.namespace.QName;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.w3c.dom.Element;
-
 /**
- * Spring bean definition parser for a filesystem based credential.
+ * Spring bean definition parser for inline credential configuration elements.
  */
-public class FilesystemCredentialBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class InlineX509CredentialBeanDefinitionParser extends AbstractX509CredentialBeanDefinitionParser {
 
-    /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:credential", "FilesystemCredential");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(CredentialNamespaceHandler.NAMESPACE, "X509Inline");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    protected byte[] getEncodedCRL(String certCRLContent) {
+        return certCRLContent.getBytes();
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, BeanDefinitionBuilder builder) {
-        // TODO
+    protected byte[] getEncodedCertificate(String certConfigContent) {
+        return certConfigContent.getBytes();
+    }
+
+    /** {@inheritDoc} */
+    protected byte[] getEncodedPrivateKey(String keyConfigContent) {
+        return keyConfigContent.getBytes();
+    }
+
+    /** {@inheritDoc} */
+    protected byte[] getEncodedSecretKey(String keyConfigContent) {
+        return keyConfigContent.getBytes();
     }
 }
