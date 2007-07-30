@@ -28,7 +28,6 @@ import java.util.concurrent.locks.Lock;
 
 import org.apache.log4j.Logger;
 import org.opensaml.util.resource.Resource;
-import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
@@ -36,6 +35,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeF
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
+import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
  * Implementation of {@link AttributeFilteringEngine}.
@@ -88,7 +88,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             ShibbolethSAMLAttributeRequestContext context) throws AttributeFilteringException {
 
         if (log.isDebugEnabled()) {
-            log.debug(getServiceName() + " filtering " + attributes.size() + " attributes for principal "
+            log.debug(getId() + " filtering " + attributes.size() + " attributes for principal "
                     + context.getPrincipalName());
         }
         
@@ -98,7 +98,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
 
         if (getFilterPolicies() == null) {
             if (log.isDebugEnabled()) {
-                log.debug("No filter policies were loaded in " + getServiceName()
+                log.debug("No filter policies were loaded in " + getId()
                         + ", filtering out all attributes for " + context.getPrincipalName());
             }
             return new HashMap<String, BaseAttribute>();
@@ -130,7 +130,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(getServiceName() + " filtered attributes for principal " + context.getPrincipalName() + ".  "
+            log.debug(getId() + " filtered attributes for principal " + context.getPrincipalName() + ".  "
                     + attributes.size() + " attributes remain.");
         }
         return attributes;
@@ -148,7 +148,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     protected void filterAttributes(ShibbolethFilteringContext filterContext, AttributeFilterPolicy filterPolicy)
             throws FilterProcessingException {
         if (log.isDebugEnabled()) {
-            log.debug(getServiceName() + " evaluating if filter policy " + filterPolicy.getPolicyId()
+            log.debug(getId() + " evaluating if filter policy " + filterPolicy.getPolicyId()
                     + " is active for principal " + filterContext.getAttributeRequestContext().getPrincipalName());
         }
         MatchFunctor policyRequirement = filterPolicy.getPolicyRequirementRule();
@@ -179,7 +179,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         MatchFunctor permitValue = attributeRule.getPermitValueRule();
 
         if (log.isDebugEnabled()) {
-            log.debug(getServiceName() + " filtering values of attribute " + attributeRule.getAttributeId()
+            log.debug(getId() + " filtering values of attribute " + attributeRule.getAttributeId()
                     + " for principal " + filterContext.getAttributeRequestContext().getPrincipalName());
         }
 
@@ -194,7 +194,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     }
 
     /** {@inheritDoc} */
-    protected void newContextCreated(ApplicationContext newServiceContext) throws ResourceException {
+    protected void newContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         filterPolicies.clear();
         String[] beanNames = newServiceContext.getBeanNamesForType(AttributeFilterPolicy.class);
         for (String beanName : beanNames) {

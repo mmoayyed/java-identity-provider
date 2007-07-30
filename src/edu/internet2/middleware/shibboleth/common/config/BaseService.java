@@ -19,6 +19,9 @@ package edu.internet2.middleware.shibboleth.common.config;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.log4j.Logger;
 import org.opensaml.util.resource.Resource;
@@ -28,17 +31,25 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
 
+import edu.internet2.middleware.shibboleth.common.service.Service;
+import edu.internet2.middleware.shibboleth.common.service.ServiceException;
+
 /**
- * A service is a component whose Spring beans are loaded into a service specific {@link ApplicationContext} that is a
- * child of the context provided in {@link #setApplicationContext(ApplicationContext)}.
+ * A service whose Spring beans are loaded into a service specific {@link ApplicationContext} that is a child of the
+ * context provided in {@link #setApplicationContext(ApplicationContext)}.
+ * 
+ * Services derived from this base class may not be reinitilized after they have been destroyed.
  */
-public abstract class BaseService implements ApplicationContextAware, BeanNameAware {
+public abstract class BaseService implements Service, ApplicationContextAware, BeanNameAware {
 
     /** Class logger. */
     private final Logger log = Logger.getLogger(BaseService.class);
 
     /** Unqiue name of this service. */
     private String serviceName;
+
+    /** Read/Write lock for the AFP context. */
+    private ReentrantReadWriteLock serviceContextRWLock;
 
     /** Application context owning this engine. */
     private ApplicationContext owningContext;
@@ -52,23 +63,37 @@ public abstract class BaseService implements ApplicationContextAware, BeanNameAw
     /** Indicates if the service has been initialized already. */
     private boolean isInitialized;
 
+    /** Indicates if the service has been destroyed. */
+    private boolean isDestroyed;
+
     /**
      * Constructor.
      * 
      * @param configurations configuration resources for this service
      */
     public BaseService(List<Resource> configurations) {
+        serviceContextRWLock = new ReentrantReadWriteLock(true);
         serviceConfigurations = new ArrayList<Resource>(configurations);
         isInitialized = false;
     }
 
-    /**
-     * Gets the unique name of this service.
-     * 
-     * @return unique name of this service
-     */
-    public String getServiceName() {
+    /** {@inheritDoc} */
+    public String getId() {
         return serviceName;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInitialized() {
+        return isInitialized();
+    }
+
+    /**
+     * Sets wether this service has been initialized.
+     * 
+     * @param initialized wether this service has been initialized
+     */
+    protected void setInitialized(boolean initialized) {
+        isInitialized = initialized;
     }
 
     /** {@inheritDoc} */
@@ -121,26 +146,77 @@ public abstract class BaseService implements ApplicationContextAware, BeanNameAw
         serviceContext = context;
     }
 
-    /**
-     * Initializes this service's context by loading all the configurations provided.
-     * 
-     * @throws ResourceException thrown if the given resource can not be read or parsed
-     */
-    public void initialize() throws ResourceException {
+    /** {@inheritDoc} */
+    public void initialize() throws ServiceException {
+        if (isDestroyed) {
+            throw new SecurityException(getId() + " service has been destroyed, it may not be initialized.");
+        }
+
         if (isInitialized) {
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing " + getServiceName() + " service with configurations: "
-                    + getServiceConfigurations());
-        }
-        GenericApplicationContext newServiceContext = new GenericApplicationContext();
-        SpringConfigurationUtils.populateRegistry(newServiceContext, serviceConfigurations);
-        setServiceContext(newServiceContext);
+        loadContext();
+    }
 
-        if (log.isInfoEnabled()) {
-            log.info(getServiceName() + " service configuration loaded");
+    /** {@inheritDoc} */
+    public void destroy() throws ServiceException {
+        Lock writeLock = getReadWriteLock().writeLock();
+        writeLock.lock();
+        isDestroyed = true;
+        serviceContext = null;
+        serviceConfigurations.clear();
+        setInitialized(false);
+        writeLock.unlock();
+        serviceContextRWLock = null;
+    }
+
+    /**
+     * Loads the service context.
+     * 
+     * @throws ServiceException thrown if the configuration for this service could not be loaded
+     */
+    protected void loadContext() throws ServiceException {
+        if (log.isDebugEnabled()) {
+            log.debug("Loading configuration for service: " + getId());
+        }
+        GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
+        try {
+            SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
+
+            Lock writeLock = getReadWriteLock().writeLock();
+            writeLock.lock();
+            newContextCreated(newServiceContext);
+            setServiceContext(newServiceContext);
+            writeLock.unlock();
+            setInitialized(true);
+            if (log.isInfoEnabled()) {
+                log.info(getId() + " service configuration loaded");
+            }
+        } catch (ResourceException e) {
+            setInitialized(false);
+            log.error("Configuration was not loaded for " + getId() + " service, unable to load resource", e);
+            throw new ServiceException("Configuration was not loaded for " + getId()
+                    + " service, unable to load resource", e);
         }
     }
+
+    /**
+     * Gets the read-write lock guarding the service context.
+     * 
+     * @return read-write lock guarding the service context
+     */
+    protected ReadWriteLock getReadWriteLock() {
+        return serviceContextRWLock;
+    }
+
+    /**
+     * Called after a new context has been created but before it set as the service's context. If an exception is thrown
+     * the new context will not be set as the service's context and the current service context will be retained.
+     * 
+     * @param newServiceContext the newly created context for the service
+     * 
+     * @throws ServiceException thrown if there is a problem with the given service context
+     */
+    protected abstract void newContextCreated(ApplicationContext newServiceContext) throws ServiceException;
 }

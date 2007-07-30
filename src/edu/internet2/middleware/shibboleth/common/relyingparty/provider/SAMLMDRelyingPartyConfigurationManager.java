@@ -28,12 +28,12 @@ import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.util.resource.Resource;
-import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
+import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
  * A relying party manager that uses SAML metadata to lookup information about requested entities. Relying party
@@ -170,7 +170,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     }
 
     /** {@inheritDoc} */
-    protected void newContextCreated(ApplicationContext newServiceContext) throws ResourceException {
+    protected void newContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         String[] metadataProviderNames = newServiceContext.getBeanNamesForType(MetadataProvider.class);
         String[] configNames = newServiceContext.getBeanNamesForType(RelyingPartyConfiguration.class);
         

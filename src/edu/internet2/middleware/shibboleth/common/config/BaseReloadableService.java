@@ -18,17 +18,15 @@ package edu.internet2.middleware.shibboleth.common.config;
 
 import java.util.List;
 import java.util.Timer;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.log4j.Logger;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceChangeListener;
 import org.opensaml.util.resource.ResourceChangeWatcher;
 import org.opensaml.util.resource.ResourceException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
+
+import edu.internet2.middleware.shibboleth.common.service.ReloadableService;
+import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
  * An extension to {@link BaseService} that allows the service's context to be reloaded if the underlying configuration
@@ -44,7 +42,7 @@ import org.springframework.context.support.GenericApplicationContext;
  * whenever reading or operating on information controlled by the service context. This will ensure that if a
  * configuration change occurs the service context will not be replaced until after all current reads have completed.
  */
-public abstract class BaseReloadableService extends BaseService {
+public abstract class BaseReloadableService extends BaseService implements ReloadableService {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(BaseReloadableService.class);
@@ -54,9 +52,6 @@ public abstract class BaseReloadableService extends BaseService {
 
     /** Number of policy resource polling retry attempts. */
     private int resourcePollingRetryAttempts;
-
-    /** Read/Write lock for the AFP context. */
-    private ReentrantReadWriteLock serviceContextRWLock;
 
     /** Timer used to schedule resource polling tasks. */
     private Timer pollingTimer;
@@ -68,7 +63,6 @@ public abstract class BaseReloadableService extends BaseService {
      */
     public BaseReloadableService(List<Resource> configurations) {
         super(configurations);
-        serviceContextRWLock = new ReentrantReadWriteLock(true);
         resourcePollingFrequency = 0;
         resourcePollingRetryAttempts = 0;
     }
@@ -93,8 +87,6 @@ public abstract class BaseReloadableService extends BaseService {
         }
         resourcePollingFrequency = pollingFrequency;
         resourcePollingRetryAttempts = 5;
-
-        serviceContextRWLock = new ReentrantReadWriteLock(true);
     }
 
     /**
@@ -125,84 +117,72 @@ public abstract class BaseReloadableService extends BaseService {
     }
 
     /** {@inheritDoc} */
-    public void initialize() throws ResourceException {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing " + getServiceName() + " service with resources: " + getServiceConfigurations());
-        }
-        if (resourcePollingFrequency > 0) {
-            ResourceChangeWatcher changeWatcher;
-            ResourceChangeListener changeListener = new ConfigurationResourceListener();
-            for (Resource configurationResournce : getServiceConfigurations()) {
-                changeWatcher = new ResourceChangeWatcher(configurationResournce, resourcePollingFrequency,
-                        resourcePollingRetryAttempts);
-                changeWatcher.getResourceListeners().add(changeListener);
-                pollingTimer.schedule(changeWatcher, resourcePollingFrequency, resourcePollingFrequency);
-            }
-        }
-
-        loadContext();
-    }
-
-    /**
-     * Gets the read-write lock guarding the service context.
-     * 
-     * @return read-write lock guarding the service context
-     */
-    protected ReadWriteLock getReadWriteLock() {
-        return serviceContextRWLock;
-    }
-
-    /**
-     * Reloads the service context.
-     */
-    protected void loadContext() {
-        if (log.isDebugEnabled()) {
-            log.debug("Loading configuration for service: " + getServiceName());
-        }
-        GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
+    public void initialize() throws ServiceException {
         try {
-            SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
-
-            Lock writeLock = getReadWriteLock().writeLock();
-            writeLock.lock();
-            newContextCreated(newServiceContext);
-            setServiceContext(newServiceContext);
-            writeLock.unlock();
-            if (log.isInfoEnabled()) {
-                log.info(getServiceName() + " service configuration loaded");
+            if (log.isDebugEnabled()) {
+                log.debug("Initializing " + getId() + " service with resources: " + getServiceConfigurations());
             }
+            if (resourcePollingFrequency > 0) {
+                ResourceChangeWatcher changeWatcher;
+                ResourceChangeListener changeListener = new ConfigurationResourceListener();
+                for (Resource configurationResournce : getServiceConfigurations()) {
+                    changeWatcher = new ResourceChangeWatcher(configurationResournce, resourcePollingFrequency,
+                            resourcePollingRetryAttempts);
+                    changeWatcher.getResourceListeners().add(changeListener);
+                    pollingTimer.schedule(changeWatcher, resourcePollingFrequency, resourcePollingFrequency);
+                }
+            }
+
+            loadContext();
+            setInitialized(true);
         } catch (ResourceException e) {
-            log.error("New configuration was not loaded for " + getServiceName() + " service, unable to load resource",
-                    e);
+            throw new ServiceException("Unable to initialize service: " + getId(), e);
         }
     }
 
-    /**
-     * Called after a new context has been created but before it set as the service's context. If an exception is thrown
-     * the new context will not be set as the service's context and the current service context will be retained.
-     * 
-     * @param newServiceContext the newly created context for the service
-     * 
-     * @throws ResourceException thrown if there is a problem with the given service context
-     */
-    protected abstract void newContextCreated(ApplicationContext newServiceContext) throws ResourceException;
+    /** {@inheritDoc} */
+    public void reload() throws ServiceException {
+        loadContext();
+        setInitialized(true);
+    }
+
+    /** {@inheritDoc} */
+    public void destroy() throws ServiceException {
+        pollingTimer.cancel();
+        super.destroy();
+    }
 
     /** A listener for policy resource changes that triggers a reloading of the AFP context. */
     protected class ConfigurationResourceListener implements ResourceChangeListener {
 
         /** {@inheritDoc} */
         public void onResourceCreate(Resource resource) {
-            loadContext();
+            try {
+                loadContext();
+            } catch (ServiceException e) {
+                log.error("Error reloading configuration, upon configuration resource creation, for service " 
+                        + getId(), e);
+            }
         }
 
         /** {@inheritDoc} */
         public void onResourceDelete(Resource resource) {
-            loadContext();
+            try {
+                loadContext();
+            } catch (ServiceException e) {
+                log.error("Error reloading configuration, upon configuration resource deletion, for service "
+                        + getId(), e);
+            }
         }
 
         /** {@inheritDoc} */
         public void onResourceUpdate(Resource resource) {
-            loadContext();
+            try {
+                loadContext();
+            } catch (ServiceException e) {
+                log.error("Error reloading configuration, upon configuration resource update, for service " + getId(),
+                        e);
+            }
         }
     }
 }
