@@ -49,8 +49,10 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             builder.addPropertyValue("audiences", audiences);
         }
 
-        builder.addPropertyReference("signingCredential", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
-                null, "signingCredentialRef")));
+        if (element.hasAttributeNS(null, "signingCredentialRef")) {
+            builder.addPropertyReference("signingCredential", DatatypeHelper.safeTrimOrNullString(element
+                    .getAttributeNS(null, "signingCredentialRef")));
+        }
 
         builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "assertionLifetime"))));
