@@ -18,7 +18,6 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic.AbstractEntityGroupMatchFunctor;
 
 /**
  * A match function that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the provided
@@ -27,12 +26,13 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.m
 public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
 
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+    public boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
         return isEntityInGroup(filterContext.getAttributeRequestContext().getAttributeRequesterMetadata());
     }
 
     /** {@inheritDoc} */
-    public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    public boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         return isEntityInGroup(filterContext.getAttributeRequestContext().getAttributeRequesterMetadata());
     }

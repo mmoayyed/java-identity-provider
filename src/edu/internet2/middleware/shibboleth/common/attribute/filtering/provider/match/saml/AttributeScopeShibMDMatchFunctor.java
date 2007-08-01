@@ -16,27 +16,55 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.saml;
 
+import java.util.List;
+import java.util.regex.Matcher;
+
+import org.opensaml.saml2.metadata.EntityDescriptor;
+import org.opensaml.xml.XMLObject;
+
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic.AbstractMatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
+import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataScope;
 
 /**
- * A match function that ensures that an attributes value's scope matches a scope given in metadata for the entity or
+ * A match function that ensures that an attribute's value's scope matches a scope given in metadata for the entity or
  * role.
  */
-public class AttributeScopeShibMDMatchFunctor implements MatchFunctor {
+public class AttributeScopeShibMDMatchFunctor extends AbstractMatchFunctor {
 
     /** {@inheritDoc} */
-    public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    public boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        // TODO Auto-generated method stub
+        if (!(attributeValue instanceof ScopedAttributeValue)) {
+            return false;
+        }
+
+        ScopedAttributeValue scopedValue = (ScopedAttributeValue) attributeValue;
+
+        EntityDescriptor issuerDescriptor = filterContext.getAttributeRequestContext().getAttributeIssuerMetadata();
+        List<XMLObject> extensions = issuerDescriptor.getExtensions().getOrderedChildren();
+        if (extensions != null) {
+            ShibbolethMetadataScope metadataScope;
+            Matcher scopeMatcher;
+            for (XMLObject extension : extensions) {
+                if (extension instanceof ShibbolethMetadataScope) {
+                    metadataScope = (ShibbolethMetadataScope) extension;
+                    scopeMatcher = metadataScope.getMatchPattern().matcher(scopedValue.getScope());
+                    if (scopeMatcher.matches()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         return false;
     }
 
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
+        throw new FilterProcessingException("This match functor is not supported in policy requirements");
     }
-
 }

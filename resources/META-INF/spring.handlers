@@ -5,6 +5,7 @@ urn\:mace\:shibboleth\:2.0\:resolver\:dc = edu.internet2.middleware.shibboleth.c
 urn\:mace\:shibboleth\:2.0\:resolver\:ad = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition.AttributeDefinitionNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:afp = edu.internet2.middleware.shibboleth.common.config.attribute.filtering.AttributeFilterNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:afp\:mf\:basic = edu.internet2.middleware.shibboleth.common.config.attribute.filtering.match.basic.BasicMatchFunctorNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:afp\:mf\:saml = edu.internet2.middleware.shibboleth.common.config.attribute.filtering.match.saml.SAMLMatchFunctorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:metadata = edu.internet2.middleware.shibboleth.common.config.metadata.MetadataNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:credential = edu.internet2.middleware.shibboleth.common.config.credential.CredentialNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:relying-party = edu.internet2.middleware.shibboleth.common.config.relyingparty.RelyingPartyNamespaceHandler

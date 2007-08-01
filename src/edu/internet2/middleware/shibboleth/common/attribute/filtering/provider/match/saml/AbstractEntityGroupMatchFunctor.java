@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
+package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.saml;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.util.DatatypeHelper;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
+import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic.AbstractMatchFunctor;
 
 
 /**
- * Base class for {@link MatchFunctor} that check if a given entity is in an entity group.
+ * Base class for match functors that check if a given entity is in an entity group.
  */
-public abstract class AbstractEntityGroupMatchFunctor implements MatchFunctor {
+public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunctor{
 
     /** The entity group to match against. */
     private String entityGroup;

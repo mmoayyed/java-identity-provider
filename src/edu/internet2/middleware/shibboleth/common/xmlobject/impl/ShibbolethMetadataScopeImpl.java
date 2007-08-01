@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.xmlobject.impl;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSBooleanValue;
@@ -28,16 +29,19 @@ import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataSc
  * Implementation of {@link ShibbolethMetadataScope}.
  */
 public class ShibbolethMetadataScopeImpl extends AbstractValidatingXMLObject implements ShibbolethMetadataScope {
-    
+
     /** The regexp attribute value. */
     private XSBooleanValue regexp;
-    
+
     /** The string content value. */
     private String scopeValue;
 
+    /** Pattern used to match scopes against criteria. */
+    private Pattern matchPattern;
+
     /**
      * Constructor.
-     *
+     * 
      * @param namespaceURI the namespace the element is in
      * @param elementLocalName the local name of the XML element this Object represents
      * @param namespacePrefix the prefix for the given namespace
@@ -49,7 +53,7 @@ public class ShibbolethMetadataScopeImpl extends AbstractValidatingXMLObject imp
 
     /** {@inheritDoc} */
     public Boolean getRegexp() {
-        if (regexp == null){
+        if (regexp == null) {
             return Boolean.FALSE;
         }
         return regexp.getValue();
@@ -57,7 +61,7 @@ public class ShibbolethMetadataScopeImpl extends AbstractValidatingXMLObject imp
 
     /** {@inheritDoc} */
     public void setRegexp(Boolean newRegexp) {
-        if (newRegexp != null){
+        if (newRegexp != null) {
             regexp = prepareForAssignment(regexp, new XSBooleanValue(newRegexp, false));
         } else {
             regexp = prepareForAssignment(regexp, null);
@@ -73,7 +77,7 @@ public class ShibbolethMetadataScopeImpl extends AbstractValidatingXMLObject imp
     public void setRegexp(XSBooleanValue newRegexp) {
         regexp = prepareForAssignment(regexp, newRegexp);
     }
-    
+
     /** {@inheritDoc} */
     public String getValue() {
         return scopeValue;
@@ -82,13 +86,16 @@ public class ShibbolethMetadataScopeImpl extends AbstractValidatingXMLObject imp
     /** {@inheritDoc} */
     public void setValue(String newScopeValue) {
         scopeValue = prepareForAssignment(scopeValue, newScopeValue);
+        matchPattern = Pattern.compile(scopeValue);
     }
-    
+
+    /** {@inheritDoc} */
+    public Pattern getMatchPattern() {
+        return matchPattern;
+    }
+
     /** {@inheritDoc} */
     public List<XMLObject> getOrderedChildren() {
         return null;
     }
-
-
-
 }
