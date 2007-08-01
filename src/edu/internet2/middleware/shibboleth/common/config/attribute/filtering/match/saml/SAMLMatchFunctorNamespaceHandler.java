@@ -30,11 +30,8 @@ public class SAMLMatchFunctorNamespaceHandler extends BaseSpringNamespaceHandler
     public void init() {
         registerBeanDefinitionParser(AttributeRequesterInEntityGroupMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
                 new AttributeRequesterInEntityGroupMatchFunctorBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(AttributeIssuerInEntityGroupMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
                 new AttributeIssuerInEntityGroupMatchFunctorBeanDefinitionParser());
-        
-        registerBeanDefinitionParser(AttributeScopeShibMDScopeMatchFunctorBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeScopeShibMDScopeMatchFunctorBeanDefinitionParser());
     }
 }

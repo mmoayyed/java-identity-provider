@@ -19,10 +19,6 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.p
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.opensaml.saml2.core.NameID;
-
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AbstractResolutionPlugIn;
 
 /**
@@ -30,9 +26,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Ab
  */
 public abstract class AbstractPrincipalConnector extends AbstractResolutionPlugIn<String> implements
         PrincipalConnector {
-
-    /** Log4j logger. */
-    private static Logger log = Logger.getLogger(AbstractPrincipalConnector.class);
 
     /** NameID Format. */
     private String format;
@@ -63,28 +56,4 @@ public abstract class AbstractPrincipalConnector extends AbstractResolutionPlugI
     public Set<String> getRelyingParties() {
         return relyingParties;
     }
-
-    /**
-     * Verify that the provided NameID is valid for this Identity Provider.
-     * 
-     * @param subject NameID to verify
-     * @param provider the local provider ID
-     * @throws AttributeResolutionException if subject is not valid for this provider
-     */
-    protected void verifyQualifier(NameID subject, String provider) throws AttributeResolutionException {
-
-        // TODO: how do we know if we should compare against the nameQualifier or spNameQualifier? The resolver will
-        // be used in both the IdP and SP
-
-        String nameQualifier = subject.getNameQualifier();
-        // String nameQualifier = subject.getSPNameQualifier();
-
-        if (provider == null || !provider.equals(nameQualifier)) {
-            log.error("The name qualifier (" + nameQualifier
-                    + ") for the referenced subject is not valid for this provider.");
-            throw new AttributeResolutionException("The name qualifier (" + nameQualifier
-                    + ") for the referenced subject is not valid for this provider.");
-        }
-    }
-
 }

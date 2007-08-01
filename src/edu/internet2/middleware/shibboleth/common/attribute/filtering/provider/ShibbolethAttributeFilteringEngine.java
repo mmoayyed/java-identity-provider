@@ -39,8 +39,6 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
  * Implementation of {@link AttributeFilteringEngine}.
- * 
- * TODO consider using Log4J NDC for filter engine name
  */
 public class ShibbolethAttributeFilteringEngine extends BaseReloadableService implements
         AttributeFilteringEngine<ShibbolethSAMLAttributeRequestContext> {
