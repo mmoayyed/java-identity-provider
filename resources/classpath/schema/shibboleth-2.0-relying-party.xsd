@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:relying-party" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:cred="urn:mace:shibboleth:2.0:credential"
+    xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:credential="urn:mace:shibboleth:2.0:credential"
     xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:service="urn:mace:shibboleth:2.0:services"
     elementFormDefault="qualified">
 
