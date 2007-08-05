@@ -31,5 +31,8 @@ public class CredentialNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(InlineX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
                 new InlineX509CredentialBeanDefinitionParser());
+        
+        registerBeanDefinitionParser(FilesystemX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
+                new FilesystemX509CredentialBeanDefinitionParser());
     }
 }
