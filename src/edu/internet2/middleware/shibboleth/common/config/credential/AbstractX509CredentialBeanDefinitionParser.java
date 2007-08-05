@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.security.SecurityHelper;
 import org.opensaml.xml.security.x509.X509Util;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
@@ -107,7 +108,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
         byte[] encodedKey = getEncodedSecretKey(DatatypeHelper.safeTrimOrNullString(secretKeyElem.getTextContent()));
         String keyPassword = DatatypeHelper.safeTrimOrNullString(secretKeyElem.getAttributeNS(null, "password"));
         try {
-            SecretKey key = X509Util.decodeSecretKey(encodedKey, keyPassword.toCharArray());
+            SecretKey key = SecurityHelper.decodeSecretKey(encodedKey, keyPassword.toCharArray());
             builder.addPropertyValue("secretKey", key);
         } catch (KeyException e) {
             throw new FatalBeanException("Unable to create X509 credential, unable to parse secret key", e);
@@ -139,8 +140,8 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
         byte[] encodedKey = getEncodedPrivateKey(DatatypeHelper.safeTrimOrNullString(privKeyElem.getTextContent()));
         String keyPassword = DatatypeHelper.safeTrimOrNullString(privKeyElem.getAttributeNS(null, "password"));
         try {
-            PrivateKey privKey = X509Util.decodePrivateKey(encodedKey, keyPassword.toCharArray());
-            PublicKey pubKey = X509Util.derivePublicKey(privKey);
+            PrivateKey privKey = SecurityHelper.decodePrivateKey(encodedKey, keyPassword.toCharArray());
+            PublicKey pubKey = SecurityHelper.derivePublicKey(privKey);
             builder.addPropertyValue("privateKey", privKey);
             builder.addPropertyValue("publicKey", pubKey);
         } catch (KeyException e) {
@@ -220,7 +221,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
             }
 
             try {
-                decodedCRLs = X509Util.deocdeCRLs(encodedCRL);
+                decodedCRLs = X509Util.decodeCRLs(encodedCRL);
                 crls.addAll(decodedCRLs);
             } catch (CRLException e) {
                 throw new FatalBeanException("Unable to create X509 credential, unable to parse CRLs", e);
