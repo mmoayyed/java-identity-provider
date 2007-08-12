@@ -229,7 +229,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         String query = queryCreator.createStatement(queryTemplateName, resolutionContext,
-                getDataConnectorDependencyIds(), getDataConnectorDependencyIds());
+                getDependencyIds());
 
         if (log.isDebugEnabled()) {
             log.debug("Data connector " + getId() + " resolving attributes with query: " + query);

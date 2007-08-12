@@ -57,12 +57,8 @@ public class StaticDataConnectorFactoryBean extends BaseDataConnectorBeanFactory
         StaticDataConnector connector = new StaticDataConnector(staticAttributes);
         connector.setId(getPluginId());
 
-        if(getAttributeDefinitionDependencyIds() != null){
-            connector.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-        
-        if(getDataConnectorDependencyIds() != null){
-            connector.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        if(getDependencyIds() != null){
+            connector.getDependencyIds().addAll(getDependencyIds());
         }
         
         if(getFailoverDataConnectorIds()!= null){

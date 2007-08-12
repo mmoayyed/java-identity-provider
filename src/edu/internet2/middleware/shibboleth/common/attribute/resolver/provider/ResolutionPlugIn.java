@@ -35,18 +35,11 @@ public interface ResolutionPlugIn<ResolvedType> {
     public String getId();
 
     /**
-     * Gets the IDs of the attribute definitions this plugin is dependent on.
-     * 
-     * @return IDs of the attribute definitions this plugin is dependent on
-     */
-    public Set<String> getAttributeDefinitionDependencyIds();
-
-    /**
-     * Gets the IDs of the data connectors this plugin is dependent on.
+     * Gets the IDs of the resolution plugins this plugin is dependent on.
      * 
      * @return IDs of the data connectors this plugin is dependent on
      */
-    public Set<String> getDataConnectorDependencyIds();
+    public Set<String> getDependencyIds();
 
     /**
      * Performs the attribute resolution for this plugin.

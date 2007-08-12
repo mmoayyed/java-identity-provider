@@ -36,12 +36,8 @@ public class PrincipalNameAttributeDefinitionFactoryBean extends BaseAttributeDe
         PrincipalNameDefinition definition = new PrincipalNameDefinition();
         definition.setId(getPluginId());
         
-        if(getAttributeDefinitionDependencyIds() != null){
-            definition.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-        
-        if(getDataConnectorDependencyIds() != null){
-            definition.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        if(getDependencyIds() != null){
+            definition.getDependencyIds().addAll(getDependencyIds());
         }
         
         definition.setSourceAttributeID(getSourceAttributeId());

@@ -33,26 +33,17 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
     /** The identifier for this plug-in. */
     private String id;
 
-    /** IDs of the {@link AttributeDefinition}s this plug-in depends on. */
-    private Set<String> attributeDefinitionDependencyIds;
-
-    /** IDs of the {@link DataConnector}s this plug-in depends on. */
-    private Set<String> dataConnectorDependencyIds;
+    /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
+    private Set<String> dependencyIds;
 
     /** Constructor. */
     public AbstractResolutionPlugIn() {
-        attributeDefinitionDependencyIds = new HashSet<String>();
-        dataConnectorDependencyIds = new HashSet<String>();
+        dependencyIds = new HashSet<String>();
     }
 
     /** {@inheritDoc} */
-    public Set<String> getAttributeDefinitionDependencyIds() {
-        return attributeDefinitionDependencyIds;
-    }
-
-    /** {@inheritDoc} */
-    public Set<String> getDataConnectorDependencyIds() {
-        return dataConnectorDependencyIds;
+    public Set<String> getDependencyIds() {
+        return dependencyIds;
     }
 
     /** {@inheritDoc} */

@@ -58,12 +58,8 @@ public class TransientPrincipalConnectorFactoryBean extends BasePrincipalConnect
         connector.setFormat(getNameIdFormat());
         connector.setId(getPluginId());
 
-        if (getAttributeDefinitionDependencyIds() != null) {
-            connector.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-
-        if (getDataConnectorDependencyIds() != null) {
-            connector.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        if (getDependencyIds() != null) {
+            connector.getDependencyIds().addAll(getDependencyIds());
         }
 
         return connector;

@@ -31,6 +31,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
 
@@ -110,7 +111,8 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+    protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
+            throws AttributeResolutionException {
         ScriptContext context = getScriptContext(resolutionContext);
 
         try {
@@ -159,32 +161,29 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             throws AttributeResolutionException {
         SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
-        
+
         scriptContext.setAttribute("requestContext", resolutionContext.getAttributeRequestContext(),
                 ScriptContext.ENGINE_SCOPE);
 
-        DataConnector dc;
+        ResolutionPlugIn plugin;
         Map<String, BaseAttribute> attributes;
-        if (!getDataConnectorDependencyIds().isEmpty()) {
-            for (String dependency : getDataConnectorDependencyIds()) {
-                dc = resolutionContext.getResolvedDataConnectors().get(dependency);
-                attributes = dc.resolve(resolutionContext);
-                if (attributes != null) {
-                    for (BaseAttribute attribute : attributes.values()) {
+        BaseAttribute attribute;
+
+        if (!getDependencyIds().isEmpty()) {
+            for (String dependency : getDependencyIds()) {
+                plugin = resolutionContext.getResolvedPlugins().get(dependency);
+                if (plugin instanceof DataConnector) {
+                    attributes = ((DataConnector)plugin).resolve(resolutionContext);
+                    if (attributes != null) {
+                        for (BaseAttribute attr : attributes.values()) {
+                            scriptContext.setAttribute(attr.getId(), attr, ScriptContext.ENGINE_SCOPE);
+                        }
+                    }
+                } else if (plugin instanceof AttributeDefinition) {
+                    attribute = ((AttributeDefinition)plugin).resolve(resolutionContext);
+                    if (attribute != null) {
                         scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
                     }
-                }
-            }
-        }
-
-        AttributeDefinition ad;
-        BaseAttribute attribute;
-        if (!getAttributeDefinitionDependencyIds().isEmpty()) {
-            for (String dependency : getAttributeDefinitionDependencyIds()) {
-                ad = resolutionContext.getResolvedAttributeDefinitions().get(dependency);
-                attribute = ad.resolve(resolutionContext);
-                if (attribute != null) {
-                    scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
                 }
             }
         }

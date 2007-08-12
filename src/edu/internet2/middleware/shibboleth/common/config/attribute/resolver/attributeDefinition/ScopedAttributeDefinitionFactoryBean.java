@@ -58,12 +58,8 @@ public class ScopedAttributeDefinitionFactoryBean extends BaseAttributeDefinitio
         definition.setId(getPluginId());
         definition.setSourceAttributeID(getSourceAttributeId());
         
-        if(getAttributeDefinitionDependencyIds() != null){
-            definition.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-        
-        if(getDataConnectorDependencyIds() != null){
-            definition.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        if(getDependencyIds() != null){
+            definition.getDependencyIds().addAll(getDependencyIds());
         }
         
         List<AttributeEncoder> encoders = getAttributeEncoders();

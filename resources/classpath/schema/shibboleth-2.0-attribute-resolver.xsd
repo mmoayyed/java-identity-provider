@@ -189,9 +189,8 @@
                 A base type for all attribute resolver plugins: data and principal connectors and attribute definitions
             </documentation>
         </annotation>
-        <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="resolver:AttributeDefinitionDependency" minOccurs="0" maxOccurs="unbounded" />
-            <element ref="resolver:DataConnectorDependency" minOccurs="0" maxOccurs="unbounded" />
+        <sequence>
+            <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
         </sequence>
         <attribute name="id" type="string" use="required">
             <annotation>
@@ -200,14 +199,9 @@
         </attribute>
     </complexType>
 
-    <element name="AttributeDefinitionDependency" type="resolver:PluginDependencyType">
+    <element name="Dependency" type="resolver:PluginDependencyType">
         <annotation>
-            <documentation>Defines a dependency on a specific attribute definition.</documentation>
-        </annotation>
-    </element>
-    <element name="DataConnectorDependency" type="resolver:PluginDependencyType">
-        <annotation>
-            <documentation>Defines a dependency on a specific data connector.</documentation>
+            <documentation>Defines a dependency on a specific resolution plug-in.</documentation>
         </annotation>
     </element>
     <element name="FailoverDataConnector" type="resolver:PluginDependencyType">

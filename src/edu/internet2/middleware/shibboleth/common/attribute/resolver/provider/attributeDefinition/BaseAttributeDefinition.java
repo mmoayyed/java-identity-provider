@@ -118,12 +118,12 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
             String sourceAttribute) {
         Set<Object> values = new HashSet<Object>();
 
-        if (!getAttributeDefinitionDependencyIds().isEmpty()) {
-            values.addAll(getValuesFromAttributeDependencies(context));
-        }
-
-        if (!getDataConnectorDependencyIds().isEmpty()) {
-            values.addAll(getValuesFromConnectorDependencies(context, sourceAttribute));
+        for(String id : getDependencyIds()) {
+            if (context.getResolvedAttributeDefinitions().containsKey(id)) {
+                values.addAll(getValuesFromAttributeDependency(context, id));
+            } else if (context.getResolvedDataConnectors().containsKey(id)) {
+                values.addAll(getValuesFromConnectorDependency(context, id, sourceAttribute));
+            }
         }
 
         return values;
@@ -135,20 +135,18 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      * @param context resolution context
      * @return collection of values
      */
-    protected Collection<Object> getValuesFromAttributeDependencies(ShibbolethResolutionContext context) {
+    protected Collection<Object> getValuesFromAttributeDependency(ShibbolethResolutionContext context, String id) {
         Set<Object> values = new HashSet<Object>();
 
-        for (String id : getAttributeDefinitionDependencyIds()) {
-            AttributeDefinition definition = context.getResolvedAttributeDefinitions().get(id);
-            if (definition != null) {
-                try {
-                    BaseAttribute attribute = definition.resolve(context);
-                    for (Object o : attribute.getValues()) {
-                        values.add(o);
-                    }
-                } catch (AttributeResolutionException e) {
-                    // TODO Auto-generated catch block
+        AttributeDefinition definition = context.getResolvedAttributeDefinitions().get(id);
+        if (definition != null) {
+            try {
+                BaseAttribute attribute = definition.resolve(context);
+                for (Object o : attribute.getValues()) {
+                    values.add(o);
                 }
+            } catch (AttributeResolutionException e) {
+                // TODO Auto-generated catch block
             }
         }
 
@@ -162,26 +160,25 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      * @param sourceAttribute ID of attribute to retrieve from connector dependencies
      * @return collection of values
      */
-    protected Collection<Object> getValuesFromConnectorDependencies(ShibbolethResolutionContext context,
+    protected Collection<Object> getValuesFromConnectorDependency(ShibbolethResolutionContext context, String id,
             String sourceAttribute) {
         Set<Object> values = new HashSet<Object>();
 
-        for (String connectorId : getDataConnectorDependencyIds()) {
-            DataConnector connector = context.getResolvedDataConnectors().get(connectorId);
-            if (connector != null) {
-                try {
-                    Map<String, BaseAttribute> attributes = connector.resolve(context);
-                    for (String attributeId : attributes.keySet()) {
-                        if (attributeId != null && attributeId.equals(sourceAttribute)) {
-                            for (Object o : attributes.get(attributeId).getValues()) {
-                                values.add(o);
-                            }
+        DataConnector connector = context.getResolvedDataConnectors().get(id);
+        if (connector != null) {
+            try {
+                Map<String, BaseAttribute> attributes = connector.resolve(context);
+                for (String attributeId : attributes.keySet()) {
+                    if (attributeId != null && attributeId.equals(sourceAttribute)) {
+                        for (Object o : attributes.get(attributeId).getValues()) {
+                            values.add(o);
                         }
                     }
-                } catch (AttributeResolutionException e) {
-                    // TODO Auto-generated catch block
                 }
+            } catch (AttributeResolutionException e) {
+                // TODO Auto-generated catch block
             }
+
         }
 
         return values;

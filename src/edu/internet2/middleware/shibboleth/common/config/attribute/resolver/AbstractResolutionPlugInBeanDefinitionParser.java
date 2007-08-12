@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,13 +37,9 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractResolutionPlugInBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Name of attribute definition dependency. */
-    public static final QName ATTRIBUTE_DEFINITION_DEPENDENCY_ELEMENT_NAME = new QName(
-            AttributeResolverNamespaceHandler.NAMESPACE, "AttributeDefinitionDependency");
-
-    /** Name of data connector dependency. */
-    public static final QName DATA_CONNECTOR_DEPENDENCY_ELEMENT_NAME = new QName(
-            AttributeResolverNamespaceHandler.NAMESPACE, "DataConnectorDependency");
+    /** Name of resolution plug-in dependency. */
+    public static final QName DEPENDENCY_ELEMENT_NAME = new QName(
+            AttributeResolverNamespaceHandler.NAMESPACE, "Dependency");
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(AbstractResolutionPlugInBeanDefinitionParser.class);
@@ -62,19 +58,12 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
 
         Map<QName, List<Element>> children = XMLHelper.getChildElements(config);
 
-        Set<String> adIds = parseDependencies(children.get(ATTRIBUTE_DEFINITION_DEPENDENCY_ELEMENT_NAME));
+        List<String> dependencyIds = parseDependencies(children.get(DEPENDENCY_ELEMENT_NAME));
         if (log.isDebugEnabled()) {
             log.debug("Setting the following attribute definition dependencies for " + config.getLocalName()
-                    + " plugin " + pluginId + ": " + adIds);
+                    + " plugin " + pluginId + ": " + dependencyIds);
         }
-        builder.addPropertyValue("attributeDefinitionDependencyIds", adIds);
-
-        Set<String> dcIds = parseDependencies(children.get(DATA_CONNECTOR_DEPENDENCY_ELEMENT_NAME));
-        if (log.isDebugEnabled()) {
-            log.debug("Setting the following data connector dependencies for " + config.getLocalName()
-                    + " plugin " + pluginId + ": " + dcIds);
-        }
-        builder.addPropertyValue("dataConnectorDependencyIds", dcIds);
+        builder.addPropertyValue("dependencyIds", dependencyIds);
 
         doParse(pluginId, config, children, builder, parserContext);
     }
@@ -105,12 +94,12 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
      * 
      * @return the dependency IDs
      */
-    protected Set<String> parseDependencies(List<Element> elements) {
+    protected List<String> parseDependencies(List<Element> elements) {
         if (elements == null || elements.size() == 0) {
             return null;
         }
 
-        Set<String> dependencyIds = new HashSet<String>();
+        List<String> dependencyIds = new ArrayList<String>();
         for (Element dependency : elements) {
             dependencyIds.add(DatatypeHelper.safeTrimOrNullString(dependency.getAttributeNS(null, "ref")));
         }

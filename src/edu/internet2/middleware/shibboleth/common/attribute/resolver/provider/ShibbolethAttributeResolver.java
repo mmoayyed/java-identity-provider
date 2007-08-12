@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,6 +61,12 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
  */
 public class ShibbolethAttributeResolver extends BaseReloadableService implements
         AttributeResolver<ShibbolethSAMLAttributeRequestContext> {
+
+    /**
+     * Resolution plug-in types.
+     */
+    public static final Collection<Class> PLUGIN_TYPES = Arrays.asList(new Class[] { DataConnector.class,
+            AttributeDefinition.class, PrincipalConnector.class, });
 
     /** Log4j logger. */
     private static Logger log = Logger.getLogger(ShibbolethAttributeResolver.class.getName());
@@ -132,8 +140,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         ShibbolethResolutionContext resolutionContext = new ShibbolethResolutionContext(attributeRequestContext);
 
         if (log.isDebugEnabled()) {
-            log.debug(getId() + " resolving attributes for principal "
-                    + attributeRequestContext.getPrincipalName());
+            log.debug(getId() + " resolving attributes for principal " + attributeRequestContext.getPrincipalName());
         }
         if (getAttributeDefinitions().size() == 0) {
             if (log.isDebugEnabled()) {
@@ -190,8 +197,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     public String resolvePrincipalName(ShibbolethSAMLAttributeRequestContext requestContext)
             throws AttributeResolutionException {
         String nameIdFormat = getNameIdentifierFormat(requestContext.getSubjectNameIdentifier());
-        
-        if(log.isDebugEnabled()){
+
+        if (log.isDebugEnabled()) {
             log.debug("Resolving principal name from name identifier of format: " + nameIdFormat);
         }
 
@@ -215,7 +222,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                             + " for relying party " + requestContext.getAttributeRequester());
         }
 
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("Using principal connector " + effectiveConnector.getId() + " to resolve principal name.");
         }
         effectiveConnector = new ContextualPrincipalConnector(effectiveConnector);
@@ -324,12 +331,12 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                         + " requested attribute " + attributeID + " of " + getId()
                         + " but no attribute definition exists for that attribute");
                 return null;
-            }else{
+            } else {
                 // wrap attribute definition for use within the given resolution context
                 definition = new ContextualAttributeDefinition(definition);
-                
+
                 // register definition as resolved for this resolution context
-                resolutionContext.getResolvedAttributeDefinitions().put(attributeID, definition);
+                resolutionContext.getResolvedPlugins().put(attributeID, definition);
             }
         }
 
@@ -338,8 +345,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
         // return the actual resolution of the definition
         BaseAttribute attribute = definition.resolve(resolutionContext);
-        if(log.isDebugEnabled()){
-            log.debug(getId() + " resolved attribute " + attributeID + ".  Attribtute contains " 
+        if (log.isDebugEnabled()) {
+            log.debug(getId() + " resolved attribute " + attributeID + ".  Attribtute contains "
                     + attribute.getValues().size() + " values.");
         }
         return attribute;
@@ -368,12 +375,12 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             if (dataConnector == null) {
                 log.warn(getId() + " requested to resolve data connector" + connectorID
                         + " but does not have such a data connector");
-            }else{
+            } else {
                 // wrap connector for use within the given resolution context
                 dataConnector = new ContextualDataConnector(dataConnector);
 
                 // register connector as resolved for this resolution context
-                resolutionContext.getResolvedDataConnectors().put(connectorID, dataConnector);
+                resolutionContext.getResolvedPlugins().put(connectorID, dataConnector);
             }
         }
 
@@ -398,14 +405,13 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      */
     protected void resolveDependencies(ResolutionPlugIn<?> plugin, ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        // resolve DataConnector dependencies
-        for (String dependency : plugin.getDataConnectorDependencyIds()) {
-            resolveDataConnector(dependency, resolutionContext);
-        }
 
-        // resolve AttributeDefinition dependencies
-        for (String dependency : plugin.getAttributeDefinitionDependencyIds()) {
-            resolveAttribute(dependency, resolutionContext);
+        for (String dependency : plugin.getDependencyIds()) {
+            if (dataConnectors.containsKey(dependency)) {
+                resolveDataConnector(dependency, resolutionContext);
+            } else if (definitions.containsKey(dependency)) {
+                resolveAttribute(dependency, resolutionContext);
+            }
         }
     }
 
@@ -455,19 +461,20 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      */
     protected void addVertex(DirectedGraph<ResolutionPlugIn, DefaultEdge> graph, ResolutionPlugIn<?> plugin) {
         graph.addVertex(plugin);
+        ResolutionPlugIn dependency = null;
 
-        // add edges for attribute definition dependencies
-        for (String id : plugin.getAttributeDefinitionDependencyIds()) {
-            AttributeDefinition dependency = getAttributeDefinitions().get(id);
-            graph.addVertex(dependency);
-            graph.addEdge(plugin, dependency);
-        }
+        // add edges for dependencies
+        for (String id : plugin.getDependencyIds()) {
+            if (dataConnectors.containsKey(id)) {
+                dependency = dataConnectors.get(id);
+            } else if (definitions.containsKey(id)) {
+                dependency = definitions.get(id);
+            }
 
-        // add edges for data connector dependencies
-        for (String id : plugin.getDataConnectorDependencyIds()) {
-            DataConnector dependency = getDataConnectors().get(id);
-            graph.addVertex(dependency);
-            graph.addEdge(plugin, dependency);
+            if (dependency != null) {
+                graph.addVertex(dependency);
+                graph.addEdge(plugin, dependency);
+            }
         }
     }
 

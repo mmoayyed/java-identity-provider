@@ -16,8 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import org.opensaml.xml.util.ValueTypeIndexedMap;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
@@ -31,39 +32,54 @@ public class ShibbolethResolutionContext {
     /** Attribute request context. */
     private ShibbolethSAMLAttributeRequestContext requestContext;
 
-    /** Attribute Definitions that have been resolved for this request. */
-    private Map<String, AttributeDefinition> resolvedDefinitions;
+    /** Resolution plug-ins that have been resolved for this request. */
+    private ValueTypeIndexedMap<String, ResolutionPlugIn> resolvedPlugins;
 
-    /** Data Connectors that have been resolved for this request. */
-    private Map<String, DataConnector> resolvedConnectors;
-    
     /**
      * Constructor.
-     *
+     * 
      * @param context the attribute request this resolution is being performed for
      */
     public ShibbolethResolutionContext(ShibbolethSAMLAttributeRequestContext context) {
         requestContext = context;
-        resolvedDefinitions = new HashMap<String, AttributeDefinition>();
-        resolvedConnectors = new HashMap<String, DataConnector>();
+        resolvedPlugins = new ValueTypeIndexedMap<String, ResolutionPlugIn>(ShibbolethAttributeResolver.PLUGIN_TYPES);
     }
-    
+
     /**
      * Gets the attribute request that started this resolution.
      * 
      * @return attribute request that started this resolution
      */
-    public ShibbolethSAMLAttributeRequestContext getAttributeRequestContext(){
+    public ShibbolethSAMLAttributeRequestContext getAttributeRequestContext() {
         return requestContext;
     }
 
-    /** {@inheritDoc} */
-    public Map<String, AttributeDefinition> getResolvedAttributeDefinitions() {
-        return resolvedDefinitions;
+    /**
+     * Get the resolution plug-ins that have been resolved for this request.
+     * 
+     * @return the plug-ins that have been resolved for this request.
+     */
+    public Map<String, ResolutionPlugIn> getResolvedPlugins() {
+        return resolvedPlugins;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get an unmodifiable map of the attribute definitions that have been resolved for this request. To add new
+     * definitions, use {@link #getResolvedPlugins} to retrieve a modifiable collection.
+     * 
+     * @return definitions that have been resolved for this request
+     */
+    public Map<String, AttributeDefinition> getResolvedAttributeDefinitions() {
+        return resolvedPlugins.subMap(AttributeDefinition.class);
+    }
+
+    /**
+     * Get an unmodifiable map of the data connectors that have been resolved for this request. To add new connectors,
+     * use {@link #getResolvedPlugins} to retrieve a modifiable collection.
+     * 
+     * @return connectors that have been resolved for this request
+     */
     public Map<String, DataConnector> getResolvedDataConnectors() {
-        return resolvedConnectors;
+        return resolvedPlugins.subMap(DataConnector.class);
     }
 }

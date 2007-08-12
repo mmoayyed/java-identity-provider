@@ -10,7 +10,7 @@
 
     <resolver:AttributeDefinition xsi:type="ad:Mapped" id="eduPersonAffilation" sourceAttributeID="affiliation"
         xmlns="urn:mace:shibboleth:2.0:resolver:ad">
-        <resolver:DataConnectorDependency ref="static" />
+        <resolver:Dependency ref="static" />
 
         <DefaultValue passThru="true" />
 
@@ -31,7 +31,7 @@
 
     <resolver:AttributeDefinition xsi:type="ad:Mapped" id="firstColor" sourceAttributeID="colors"
         xmlns="urn:mace:shibboleth:2.0:resolver:ad">
-        <resolver:DataConnectorDependency ref="static" />
+        <resolver:Dependency ref="static" />
 
         <ValueMap>
             <ReturnValue>$1</ReturnValue>
@@ -43,7 +43,7 @@
     <!--  test bug SIDP-22 -->
     <resolver:AttributeDefinition xsi:type="ad:Mapped" id="fooBar" sourceAttributeID="foo"
         xmlns="urn:mace:shibboleth:2.0:resolver:ad">
-        <resolver:DataConnectorDependency ref="static" />
+        <resolver:Dependency ref="static" />
 
         <ValueMap>
             <ReturnValue>$1</ReturnValue>

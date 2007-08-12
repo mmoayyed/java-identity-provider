@@ -652,8 +652,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             log.debug("Begin resolve for " + resolutionContext.getAttributeRequestContext().getPrincipalName());
         }
 
-        String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext,
-                getDataConnectorDependencyIds(), getDataConnectorDependencyIds());
+        String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDependencyIds());
         if (log.isDebugEnabled()) {
             log.debug("search filter = " + searchFilter);
         }

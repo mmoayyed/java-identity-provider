@@ -25,49 +25,29 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
  */
 public abstract class AbstractResolutionPluginFactoryBean extends AbstractFactoryBean {
 
-    /** ID of attribute definitions this plugin depends on. */
-    private Set<String> attributeDefinitionDependencyIds;
+    /** ID of resolution plug-ins this plugin depends on. */
+    private Set<String> dependencyIds;
     
-    /** ID of data connectors this plugin depends on. */
-    private Set<String> dataConnectorDependencyIds;
     
-    /** Unqieu ID of the plugin. */
+    /** Unique ID of the plugin. */
     private String pluginId;
 
     /**
-     * Gets the ID of attribute definitions this plugin depends on.
-     * 
-     * @return ID of attribute definitions this plugin depends on
-     */
-    public Set<String> getAttributeDefinitionDependencyIds() {
-        return attributeDefinitionDependencyIds;
-    }
-
-    /**
-     * Sets the ID of attribute definitions this plugin depends on.
+     * Sets the ID of resolution plug-ins this plugin depends on.
      * 
      * @param ids ID of attribute definitions this plugin depends on
      */
-    public void setAttributeDefinitionDependencyIds(Set<String> ids) {
-        attributeDefinitionDependencyIds = ids;
+    public void setDependencyIds(Set<String> ids) {
+        dependencyIds = ids;
     }
 
     /**
-     * Gets the ID of data connectors this plugin depends on.
+     * Gets the ID of resolution plug-ins this plugin depends on.
      * 
      * @return ID of data connectors this plugin depends on
      */
-    public Set<String> getDataConnectorDependencyIds() {
-        return dataConnectorDependencyIds;
-    }
-
-    /**
-     * Sets the ID of data connectors this plugin depends on.
-     * 
-     * @param ids ID of data connectors this plugin depends on
-     */
-    public void setDataConnectorDependencyIds(Set<String> ids) {
-        dataConnectorDependencyIds = ids;
+    public Set<String> getDependencyIds() {
+        return dependencyIds;
     }
 
     /**

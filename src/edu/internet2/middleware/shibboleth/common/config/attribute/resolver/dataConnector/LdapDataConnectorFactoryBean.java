@@ -405,12 +405,8 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
         connector.setSearchTimeLimit(searchTimeLimit);
         connector.setTemplateEngine(templateEngine);
         
-        if(getAttributeDefinitionDependencyIds() != null){
-            connector.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-        
-        if(getDataConnectorDependencyIds() != null){
-            connector.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        if(getDependencyIds() != null){
+            connector.getDependencyIds().addAll(getDependencyIds());
         }
         
         if(getFailoverDataConnectorIds()!= null){

@@ -56,18 +56,13 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public Set<String> getAttributeDefinitionDependencyIds() {
-        return definition.getAttributeDefinitionDependencyIds();
+    public Set<String> getDependencyIds() {
+        return definition.getDependencyIds();
     }
 
     /** {@inheritDoc} */
     public List<AttributeEncoder> getAttributeEncoders() {
         return definition.getAttributeEncoders();
-    }
-
-    /** {@inheritDoc} */
-    public Set<String> getDataConnectorDependencyIds() {
-        return definition.getDataConnectorDependencyIds();
     }
 
     /** {@inheritDoc} */

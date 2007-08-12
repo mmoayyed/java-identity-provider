@@ -29,6 +29,7 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
 
@@ -68,8 +69,7 @@ public class TemplateEngine {
      * 
      * @param templateName name of the template
      * @param resolutionContext the current resolution context
-     * @param dataConnectors the list of data connectors that will provider attributes
-     * @param attributeDefinitions the list of attribute definitions that will provider attributes
+     * @param dependencies the list of resolution plug-in dependencies that will provider attributes
      * 
      * @return constructed statement
      * 
@@ -77,8 +77,8 @@ public class TemplateEngine {
      *             the given data connectors or attribute definitions error out during resolution
      */
     public String createStatement(String templateName, ShibbolethResolutionContext resolutionContext,
-            Set<String> dataConnectors, Set<String> attributeDefinitions) throws AttributeResolutionException {
-        VelocityContext vContext = createVelocityContext(resolutionContext, dataConnectors, attributeDefinitions);
+            Set<String> dependencies) throws AttributeResolutionException {
+        VelocityContext vContext = createVelocityContext(resolutionContext, dependencies);
 
         try {
             if (log.isDebugEnabled()) {
@@ -99,43 +99,42 @@ public class TemplateEngine {
      * Creates the velocity context from the given resolution context.
      * 
      * @param resolutionContext the resolution context containing the currently resolved attribute information
-     * @param dataConnectors data connectors that will provide attributes to the velocity context
-     * @param attributeDefinitions attribute definitions that will provide attributes to the velocity context
+     * @param dependencies resolution plug-in dependencies that will provide attributes to the velocity context
      * 
      * @return the velocity context to use when evaluating the template
      * 
      * @throws AttributeResolutionException thrown if a resolution plugin errors out while resolving its attributes
      */
     protected VelocityContext createVelocityContext(ShibbolethResolutionContext resolutionContext,
-            Set<String> dataConnectors, Set<String> attributeDefinitions) throws AttributeResolutionException {
+            Set<String> dependencies) throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
             log.debug("Populating velocity context");
         }
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("principal", resolutionContext.getAttributeRequestContext().getPrincipalName());
 
+        ResolutionPlugIn plugin;
         Map<String, BaseAttribute> attributes;
-        DataConnector dataConnector;
-        for (String connectorId : dataConnectors) {
-            dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorId);
-            if (log.isDebugEnabled()) {
-                log.debug("Resolving attributes from data connector " + connectorId);
-            }
-            attributes = dataConnector.resolve(resolutionContext);
-            for (String attributeId : attributes.keySet()) {
-                vCtx.put(attributeId, attributes.get(attributeId));
-            }
-        }
-
         BaseAttribute attribute;
-        AttributeDefinition attributeDefinition;
-        for (String definitionId : attributeDefinitions) {
-            attributeDefinition = resolutionContext.getResolvedAttributeDefinitions().get(definitionId);
-            if (log.isDebugEnabled()) {
-                log.debug("Resolving attributes from attribute definition " + definitionId);
+
+        for (String dependencyId : dependencies) {
+            plugin = resolutionContext.getResolvedPlugins().get(dependencyId);
+            if (plugin instanceof DataConnector) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Resolving attributes from data connector " + dependencyId);
+                }
+                attributes = ((DataConnector) plugin).resolve(resolutionContext);
+                for (String attributeId : attributes.keySet()) {
+                    vCtx.put(attributeId, attributes.get(attributeId));
+                }
+            } else if (plugin instanceof AttributeDefinition) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Resolving attributes from attribute definition " + dependencyId);
+                }
+                attribute = ((AttributeDefinition) plugin).resolve(resolutionContext);
+                vCtx.put(attribute.getId(), attribute.getValues());
+
             }
-            attribute = attributeDefinition.resolve(resolutionContext);
-            vCtx.put(attribute.getId(), attribute.getValues());
         }
 
         return vCtx;

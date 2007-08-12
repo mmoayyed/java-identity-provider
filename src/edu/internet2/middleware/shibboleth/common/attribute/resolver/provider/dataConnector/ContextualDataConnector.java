@@ -56,13 +56,8 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public Set<String> getAttributeDefinitionDependencyIds() {
-        return connector.getAttributeDefinitionDependencyIds();
-    }
-
-    /** {@inheritDoc} */
-    public Set<String> getDataConnectorDependencyIds() {
-        return connector.getDataConnectorDependencyIds();
+    public Set<String> getDependencyIds() {
+        return connector.getDependencyIds();
     }
 
     /** {@inheritDoc} */

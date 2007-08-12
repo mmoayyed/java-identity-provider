@@ -220,12 +220,8 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory 
             }
         }
         
-        if(getAttributeDefinitionDependencyIds() != null){
-            connector.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-        
-        if(getDataConnectorDependencyIds() != null){
-            connector.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        if(getDependencyIds() != null){
+            connector.getDependencyIds().addAll(getDependencyIds());
         }
         
         if(getFailoverDataConnectorIds()!= null){

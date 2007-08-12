@@ -103,12 +103,8 @@ public class ScriptedAttribtueDefinitionFactoryBean extends BaseAttributeDefinit
         ScriptedAttributeDefinition definition = new ScriptedAttributeDefinition(scriptLanguage);
         definition.setId(getPluginId());
 
-        if (getAttributeDefinitionDependencyIds() != null) {
-            definition.getAttributeDefinitionDependencyIds().addAll(getAttributeDefinitionDependencyIds());
-        }
-
-        if (getDataConnectorDependencyIds() != null) {
-            definition.getDataConnectorDependencyIds().addAll(getDataConnectorDependencyIds());
+        if (getDependencyIds() != null) {
+            definition.getDependencyIds().addAll(getDependencyIds());
         }
 
         definition.setSourceAttributeID(getSourceAttributeId());
