@@ -24,7 +24,6 @@ import org.opensaml.common.SAMLObject;
 import org.opensaml.common.binding.BasicSAMLMessageContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileMessageContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.session.Session;
@@ -34,14 +33,16 @@ import edu.internet2.middleware.shibboleth.common.session.Session;
  * 
  * @param <InboundMessage> type of inbound SAML message
  * @param <OutboundMessage> type of outbound SAML message
+ * @param <NameIdentifierType> type of name identifier used for subjects
  * @param <ProfileConfigurationType> profile configuration type for current request
  */
-public abstract class BaseShibbolethProfileRequestContext<InboundMessage extends SAMLObject, OutboundMessage extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
-        extends BasicSAMLMessageContext<InboundMessage, OutboundMessage> implements ProfileMessageContext<ProfileConfigurationType> {
+public abstract class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, OutboundMessage extends SAMLObject, NameIdentifierType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
+        extends BasicSAMLMessageContext<InboundMessage, OutboundMessage, NameIdentifierType> implements
+        SAMLProfileMessageContext<InboundMessage, OutboundMessage, NameIdentifierType, ProfileConfigurationType> {
 
     /** Attributes retrieved for the principal. */
     private Map<String, BaseAttribute> principalAttributes;
-    
+
     /** Authentication method used to authenticate the principal. */
     private String principalAuthenticationMethod;
 
@@ -78,12 +79,12 @@ public abstract class BaseShibbolethProfileRequestContext<InboundMessage extends
         return principalName;
     }
 
-    /** 
+    /**
      * Gets the configuration for the profile for the relying party.
      * 
      * @return configuration for the profile for the relying party
      */
-    public ProfileConfigurationType getProfileConfiguration(){
+    public ProfileConfigurationType getProfileConfiguration() {
         return profileConfiguration;
     }
 
@@ -139,7 +140,7 @@ public abstract class BaseShibbolethProfileRequestContext<InboundMessage extends
     public void setRelyingPartyConfiguration(RelyingPartyConfiguration configuration) {
         relyingPartyConfiguration = configuration;
     }
-    
+
     /** {@inheritDoc} */
     public void setRequestedAttributes(Collection<String> ids) {
         requestedAttributeIds.clear();
@@ -147,7 +148,7 @@ public abstract class BaseShibbolethProfileRequestContext<InboundMessage extends
             requestedAttributeIds.addAll(ids);
         }
     }
-    
+
     /** {@inheritDoc} */
     public void setUserSession(Session session) {
         userSession = session;

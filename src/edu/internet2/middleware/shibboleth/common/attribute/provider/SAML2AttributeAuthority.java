@@ -18,24 +18,26 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.Collection;
 
-import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.AttributeStatement;
 import org.opensaml.saml2.core.NameID;
+import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.StatusResponseType;
 
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
-import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileMessageContext;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AbstractSAML2ProfileConfiguration;
 
 /**
  * An attribute authority that can take an attribute query and produce a resultant attribute statement.
  */
 public interface SAML2AttributeAuthority
         extends
-        AttributeAuthority<ShibbolethSAMLAttributeRequestContext<NameID, SAMLObject, SAMLObject, ProfileConfiguration>> {
+        AttributeAuthority<SAMLProfileMessageContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration>> {
 
     /**
      * Resolves a {@link NameID} into the internal principal name used Shibboleth.
@@ -48,7 +50,7 @@ public interface SAML2AttributeAuthority
      * @throws AttributeRequestException thrown if the principal get not be resolved
      */
     public String getPrincipal(
-            ShibbolethSAMLAttributeRequestContext<NameID, SAMLObject, SAMLObject, ProfileConfiguration> requestContext)
+            SAMLProfileMessageContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration> requestContext)
             throws AttributeRequestException;
 
     /**

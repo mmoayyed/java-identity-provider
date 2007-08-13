@@ -14,40 +14,24 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.attribute.provider;
+package edu.internet2.middleware.shibboleth.common.profile.provider;
 
 import org.opensaml.common.SAMLObject;
 import org.opensaml.common.binding.SAMLMessageContext;
-import org.opensaml.saml1.core.NameIdentifier;
-import org.opensaml.saml2.core.NameID;
 
 import edu.internet2.middleware.shibboleth.common.profile.ProfileMessageContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
 /**
- * Shibboleth SAML attribute request context.
+ * Marker interface that combines SAML and profile message contexts. *
  * 
- * @param <NameIdentifierType> identifier of the subject of the query; must be either {@link NameIdentifier} or
- *            {@link NameID}
  * @param <InboundMessageType> type of inbound SAML message
  * @param <OutboundMessageType> type of outbound SAML message
+ * @param <NameIdentifierType> type of name identifier used for subjects
  * @param <ProfileConfigurationType> profile configuration type for current request
  */
-public interface ShibbolethSAMLAttributeRequestContext<NameIdentifierType extends SAMLObject, InboundMessageType extends SAMLObject, OutboundMessageType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
-        extends SAMLMessageContext<InboundMessageType, OutboundMessageType>,
+public interface SAMLProfileMessageContext<InboundMessageType extends SAMLObject, OutboundMessageType extends SAMLObject, NameIdentifierType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
+        extends SAMLMessageContext<InboundMessageType, OutboundMessageType, NameIdentifierType>,
         ProfileMessageContext<ProfileConfigurationType> {
 
-    /**
-     * Gets the subject's SAML name identifier.
-     * 
-     * @return subject's SAML name identifier
-     */
-    public NameIdentifierType getSubjectNameIdentifier();
-
-    /**
-     * Sets the subject's SAML name identifier.
-     * 
-     * @param identifier subject's SAML name identifier
-     */
-    public void setSubjectNameIdentifier(NameIdentifierType identifier);
 }
