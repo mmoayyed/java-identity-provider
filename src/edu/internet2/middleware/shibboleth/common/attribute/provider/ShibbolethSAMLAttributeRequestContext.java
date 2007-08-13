@@ -16,133 +16,38 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
-import org.apache.log4j.Logger;
 import org.opensaml.common.SAMLObject;
-import org.opensaml.saml2.core.Issuer;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
+import org.opensaml.common.binding.SAMLMessageContext;
+import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml2.core.NameID;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileMessageContext;
+import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
 /**
  * Shibboleth SAML attribute request context.
  * 
- * @param <NameIdentifierType> identifier of the subject of the query; must be either
- *            <code>org.opensaml.saml1.core.NameIdentifier</code> or <code>org.opensaml.saml2.core.NameID</code>
- * @param <QueryType> type of SAML attribute query; must be either <code>org.opensaml.saml1.core.AttributeQuery</code>
- *            or <code>org.opensaml.saml2.core.AttributeQuery</code>
+ * @param <NameIdentifierType> identifier of the subject of the query; must be either {@link NameIdentifier} or
+ *            {@link NameID}
+ * @param <InboundMessageType> type of inbound SAML message
+ * @param <OutboundMessageType> type of outbound SAML message
+ * @param <ProfileConfigurationType> profile configuration type for current request
  */
-public class ShibbolethSAMLAttributeRequestContext<NameIdentifierType extends SAMLObject, QueryType extends SAMLObject>
-        extends ShibbolethAttributeRequestContext 
-        implements SAMLAttributeRequestContext<NameIdentifierType, QueryType> {
-
-    /** Class logger. */
-    private final Logger log = Logger.getLogger(ShibbolethSAMLAttributeRequestContext.class);
-
-    /** Metadata provider used to look up entity information. */
-    private MetadataProvider metadataProvider;
-
-    /** SAML 1 or 2 subject name identifier. */
-    private NameIdentifierType subjectNameIdentifier;
-
-    /** SAML 1 or 2 attribute query. */
-    private QueryType attributeQuery;
-
-    /** Metadata for the attribute issuer. */
-    private EntityDescriptor attributeIssuerMetadata;
-
-    /** Metadata for the attribute requester. */
-    private EntityDescriptor attributeRequesterMetadata;
-
-    /** Constructor. */
-    public ShibbolethSAMLAttributeRequestContext() {
-        super();
-        initialize();
-    }
+public interface ShibbolethSAMLAttributeRequestContext<NameIdentifierType extends SAMLObject, InboundMessageType extends SAMLObject, OutboundMessageType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
+        extends SAMLMessageContext<InboundMessageType, OutboundMessageType>,
+        ProfileMessageContext<ProfileConfigurationType> {
 
     /**
-     * Constructor.
+     * Gets the subject's SAML name identifier.
      * 
-     * @param provider metadata provider used to look up entity information
-     * @param rpConfig relying party configuration in effect for the attribute request
-     * @param query SAML attribute query of this request, may be null
+     * @return subject's SAML name identifier
      */
-    public ShibbolethSAMLAttributeRequestContext(MetadataProvider provider, RelyingPartyConfiguration rpConfig,
-            QueryType query) {
-        super();
-
-        if (provider == null || rpConfig == null) {
-            throw new IllegalArgumentException(
-                    "Metadata provider and relying party configuration may not be null");
-        }
-        metadataProvider = provider;
-        setRelyingPartyConfiguration(rpConfig);
-        attributeQuery = query;
-
-        initialize();
-    }
-
-    /** {@inheritDoc} */
-    public EntityDescriptor getAttributeIssuerMetadata() {
-        if(attributeIssuerMetadata == null && metadataProvider != null && getRelyingPartyConfiguration() != null){
-            try {
-                attributeIssuerMetadata = metadataProvider.getEntityDescriptor(getRelyingPartyConfiguration()
-                        .getProviderId());
-            } catch (MetadataProviderException e) {
-                log.warn("Unable to look up metadata for attribute issuer: "
-                        + getRelyingPartyConfiguration().getProviderId(), e);
-            }
-        }
-        return attributeIssuerMetadata;
-    }
-
-    /** {@inheritDoc} */
-    public QueryType getAttributeQuery() {
-        return attributeQuery;
-    }
-
-    /** {@inheritDoc} */
-    public EntityDescriptor getAttributeRequesterMetadata() {
-        if(attributeRequesterMetadata == null && metadataProvider != null && getAttributeRequester() != null){
-            try {
-                attributeRequesterMetadata = metadataProvider.getEntityDescriptor(getAttributeRequester());
-            } catch (MetadataProviderException e) {
-                log.warn("Unable to look up metadata for attribute requester: " + getAttributeRequester(), e);
-            }
-        }
-        return attributeRequesterMetadata;
-    }
-
-    /** {@inheritDoc} */
-    public MetadataProvider getMetadataProvider() {
-        return metadataProvider;
-    }
-
-    /** {@inheritDoc} */
-    public NameIdentifierType getSubjectNameIdentifier() {
-        return subjectNameIdentifier;
-    }
+    public NameIdentifierType getSubjectNameIdentifier();
 
     /**
-     * Initializes various internal variables given information provided during object construction.
+     * Sets the subject's SAML name identifier.
+     * 
+     * @param identifier subject's SAML name identifier
      */
-    @SuppressWarnings("unchecked")
-    protected void initialize() {
-        if (attributeQuery != null) {
-            if (attributeQuery instanceof org.opensaml.saml1.core.AttributeQuery) {
-                org.opensaml.saml1.core.Subject subject = ((org.opensaml.saml1.core.AttributeQuery) attributeQuery)
-                        .getSubject();
-                subjectNameIdentifier = (NameIdentifierType) subject.getNameIdentifier();
-            } else {
-                org.opensaml.saml2.core.Subject subject = ((org.opensaml.saml2.core.AttributeQuery) attributeQuery)
-                        .getSubject();
-                subjectNameIdentifier = (NameIdentifierType) subject.getNameID();
-
-                Issuer issuer = ((org.opensaml.saml2.core.AttributeQuery) attributeQuery).getIssuer();
-                setAttributeRequester(issuer.getValue());
-
-            }
-        }
-    }
+    public void setSubjectNameIdentifier(NameIdentifierType identifier);
 }

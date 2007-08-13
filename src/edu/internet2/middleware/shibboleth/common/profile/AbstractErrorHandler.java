@@ -16,8 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import org.opensaml.ws.transport.InTransport;
+import org.opensaml.ws.transport.OutTransport;
 
 /**
  * Error handlers are invoked when an error is encountered during request processing.
@@ -31,5 +31,5 @@ public abstract class AbstractErrorHandler implements ProfileHandler {
     public static final String ERROR_KEY = "error";
     
     /** {@inheritDoc} */
-    public abstract void processRequest(ProfileRequest<ServletRequest> request, ProfileResponse<ServletResponse> response);
+    public abstract void processRequest(InTransport in, OutTransport out);
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="urn:mace:shibboleth:2.0:security-policy" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:sp="urn:mace:shibboleth:2.0:security-policy" elementFormDefault="qualified">
+
+    <element name="SecurityPolicy" type="sp:SecurityPolicyType" abstract="true" />
+    <complexType name="SecurityPolicyType" abstract="true">
+        <annotation>
+            <documentation>
+                Security policies define a set of rules that are evaluated against incomming messages to
+                determine whether the messages should be processed.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element ref="sp:Rule" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="id" type="string" use="required">
+            <annotation>
+                <documentation>
+                    A unique ID for the policy.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <element name="Rule" type="sp:SecurityPolicyRuleType" abstract="true" />
+    <complexType name="SecurityPolicyRuleType" abstract="true">
+        <annotation>
+            <documentation>
+                Base type of security policy rules.
+            </documentation>
+        </annotation>
+    </complexType>
+
+</schema>

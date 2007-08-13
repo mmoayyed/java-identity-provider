@@ -19,24 +19,29 @@ package edu.internet2.middleware.shibboleth.common.profile;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.opensaml.log.Level;
+import org.opensaml.ws.transport.http.HTTPInTransport;
+import org.opensaml.ws.transport.http.HTTPOutTransport;
+import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
+import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 
 import edu.internet2.middleware.shibboleth.common.log.AccessLogEntry;
 
 /**
  * Servlet responsible for dispatching incoming requests to the appropriate {@link AbstractProfileHandler}.
  */
-public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
+public class ProfileRequestDispatcherServlet extends HttpServlet {
+
+    /** Serial version UID. */
+    private static final long serialVersionUID = 3750548606378986211L;
 
     /** Class logger. */
-    private final Logger log = Logger.getLogger(BaseServletProfileRequestDispatcher.class);
+    private final Logger log = Logger.getLogger(ProfileRequestDispatcherServlet.class);
 
     /** Access logger. */
     private final Logger accessLog = Logger.getLogger(AccessLogEntry.ACCESS_LOGGER_NAME);
@@ -59,8 +64,8 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
             accessLog.log(Level.CRITICAL, accessEntry);
         }
 
-        ProfileRequest profileReq = getProfileRequest(httpRequest);
-        ProfileResponse profileResp = getProfileResponse(httpResponse);
+        HTTPInTransport profileReq = new HttpServletRequestAdapter(httpRequest);
+        HTTPOutTransport profileResp = new HttpServletResponseAdapter(httpResponse);
 
         AbstractErrorHandler errorHandler = getHandlerManager().getErrorHandler();
         ProfileHandler handler = getHandlerManager().getProfileHandler(httpRequest);
@@ -82,22 +87,4 @@ public abstract class BaseServletProfileRequestDispatcher extends HttpServlet {
         errorHandler.processRequest(profileReq, profileResp);
         return;
     }
-
-    /**
-     * Creates a profile request from a servlet request.
-     * 
-     * @param request the servlet request
-     * 
-     * @return the created profile request
-     */
-    protected abstract ProfileRequest getProfileRequest(ServletRequest request);
-
-    /**
-     * Creates a profile response from a servlet response.
-     * 
-     * @param response the servlet response
-     * 
-     * @return the created profile response
-     */
-    protected abstract ProfileResponse getProfileResponse(ServletResponse response);
 }

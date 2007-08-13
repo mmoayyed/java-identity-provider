@@ -19,14 +19,14 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver;
 import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileMessageContext;
 
 /**
  * The service that resolves the attributes for a particular subject.
  * 
  * @param <RequestContextType> the type of attribute request context used by the resolver.
  */
-public interface AttributeResolver<RequestContextType extends AttributeRequestContext> {
+public interface AttributeResolver<RequestContextType extends ProfileMessageContext> {
 
     /**
      * Gets all the attributes for a given subject. While an initial attribute producer is given this does not mean

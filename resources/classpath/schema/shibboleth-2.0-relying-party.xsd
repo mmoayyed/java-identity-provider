@@ -3,14 +3,17 @@
 <schema targetNamespace="urn:mace:shibboleth:2.0:relying-party" xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:rp="urn:mace:shibboleth:2.0:relying-party" xmlns:credential="urn:mace:shibboleth:2.0:credential"
     xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:service="urn:mace:shibboleth:2.0:services"
-    elementFormDefault="qualified">
+    xmlns:policy="urn:mace:shibboleth:2.0:security-policy" elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:services" schemaLocation="classpath:/schema/shibboleth-2.0-services.xsd" />
+
+    <import namespace="urn:mace:shibboleth:2.0:metadata" schemaLocation="classpath:/schema/shibboleth-2.0-metadata.xsd" />
 
     <import namespace="urn:mace:shibboleth:2.0:credential"
         schemaLocation="classpath:/schema/shibboleth-2.0-credential.xsd" />
 
-    <import namespace="urn:mace:shibboleth:2.0:metadata" schemaLocation="classpath:/schema/shibboleth-2.0-metadata.xsd" />
+    <import namespace="urn:mace:shibboleth:2.0:security-policy"
+        schemaLocation="classpath:/schema/shibboleth-2.0-security-policy.xsd" />
 
     <annotation>
         <documentation>Schema describing relying party configurations.</documentation>
@@ -38,6 +41,7 @@
                 <element ref="rp:RelyingParty" minOccurs="0" maxOccurs="unbounded" />
                 <element ref="shibmd:MetadataProvider" minOccurs="0" />
                 <element ref="credential:Credential" minOccurs="0" maxOccurs="unbounded" />
+                <element ref="policy:SecurityPolicy" minOccurs="0" maxOccurs="unbounded" />
             </sequence>
         </complexType>
     </element>

@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 
 import java.util.Map;
 
+import edu.internet2.middleware.shibboleth.common.profile.ProfileMessageContext;
+
 /**
  * Interface for an attribute authority. An attribute authority will pull attribute information for the principal
  * specified in the request context. If no principal is specified it is assumed that the authority implementation will
@@ -25,7 +27,7 @@ import java.util.Map;
  * 
  * @param <ContextType> contextual information expected by the attribute authority
  */
-public interface AttributeAuthority<ContextType extends AttributeRequestContext> {
+public interface AttributeAuthority<ContextType extends ProfileMessageContext> {
 
     /**
      * Gets the attributes for the principal identified in the request.

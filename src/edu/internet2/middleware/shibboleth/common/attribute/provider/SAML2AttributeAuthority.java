@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.Collection;
 
+import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.AttributeStatement;
@@ -27,12 +28,14 @@ import edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
+import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
 /**
  * An attribute authority that can take an attribute query and produce a resultant attribute statement.
  */
-public interface SAML2AttributeAuthority extends
-        AttributeAuthority<ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery>> {
+public interface SAML2AttributeAuthority
+        extends
+        AttributeAuthority<ShibbolethSAMLAttributeRequestContext<NameID, SAMLObject, SAMLObject, ProfileConfiguration>> {
 
     /**
      * Resolves a {@link NameID} into the internal principal name used Shibboleth.
@@ -44,7 +47,8 @@ public interface SAML2AttributeAuthority extends
      * 
      * @throws AttributeRequestException thrown if the principal get not be resolved
      */
-    public String getPrincipal(ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> requestContext)
+    public String getPrincipal(
+            ShibbolethSAMLAttributeRequestContext<NameID, SAMLObject, SAMLObject, ProfileConfiguration> requestContext)
             throws AttributeRequestException;
 
     /**

@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.relyingparty.provider;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.opensaml.ws.security.SecurityPolicy;
 import org.opensaml.xml.security.credential.Credential;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
@@ -28,30 +29,42 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfigurat
  */
 public abstract class AbstractSAMLProfileConfiguration implements ProfileConfiguration {
 
-    /** Life of the assertion in milliseconds. */
-    private long assertionLifetime;
-
     /** Audiences for the assertion. */
     private Collection<String> assertionAudiences;
+
+    /** Life of the assertion in milliseconds. */
+    private long assertionLifetime;
 
     /** Default artifact type. */
     private int defaultArtifactType;
 
-    /** Assertion signing credential. */
-    private Credential signingCredential;
+    /** Security policy for this profile. */
+    private SecurityPolicy profileSecurityPolicy;
 
     /** Whether to sign assertions. */
     private boolean signAssertions;
-    
+
+    /** Assertion signing credential. */
+    private Credential signingCredential;
+
     /** Whether to sign protocol requests. */
     private boolean signRequests;
-    
+
     /** Whether to sign protocol responses. */
     private boolean signResponses;
 
     /** Constructor. */
     protected AbstractSAMLProfileConfiguration() {
         assertionAudiences = new HashSet<String>();
+    }
+
+    /**
+     * Gets the list of audiences an assertion is intended for.
+     * 
+     * @return list of audiences an assertion is intended for
+     */
+    public Collection<String> getAssertionAudiences() {
+        return assertionAudiences;
     }
 
     /**
@@ -66,21 +79,53 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     }
 
     /**
-     * Sets the lifetime, in millisecond, for an issued assertion.
+     * Gets the default artifact type.
      * 
-     * @param lifetime lifetime, in millisecond, for an issued assertion
+     * @return default artifact type
      */
-    public void setAssertionLifetime(long lifetime) {
-        assertionLifetime = lifetime;
+    public int getDefaultArtifactType() {
+        return defaultArtifactType;
+    }
+
+    /** {@inheritDoc} */
+    public SecurityPolicy getSecurityPolicy() {
+        return profileSecurityPolicy;
     }
 
     /**
-     * Gets the list of audiences an assertion is intended for.
+     * Gets whether assertions should be signed.
      * 
-     * @return list of audiences an assertion is intended for
+     * @return whether assertions should be signed
      */
-    public Collection<String> getAssertionAudiences() {
-        return assertionAudiences;
+    public boolean getSignAssertions() {
+        return signAssertions;
+    }
+
+    /**
+     * Gets the credential that should be used to sign a message.
+     * 
+     * @return credential that should be used to sign a message
+     */
+    public Credential getSigningCredential() {
+        return signingCredential;
+    }
+
+    /**
+     * Gets whether to sign protocol requests.
+     * 
+     * @return whether to sign protocol requests
+     */
+    public boolean getSignRequests() {
+        return signRequests;
+    }
+
+    /**
+     * Gets whether to sign protocol responses.
+     * 
+     * @return whether to sign protocol responses
+     */
+    public boolean getSignResponses() {
+        return signResponses;
     }
 
     /**
@@ -93,12 +138,12 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     }
 
     /**
-     * Gets the default artifact type.
+     * Sets the lifetime, in millisecond, for an issued assertion.
      * 
-     * @return default artifact type
+     * @param lifetime lifetime, in millisecond, for an issued assertion
      */
-    public int getDefaultArtifactType() {
-        return defaultArtifactType;
+    public void setAssertionLifetime(long lifetime) {
+        assertionLifetime = lifetime;
     }
 
     /**
@@ -111,12 +156,21 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     }
 
     /**
-     * Gets the credential that should be used to sign a message.
+     * Sets the security policy for this profile.
      * 
-     * @return credential that should be used to sign a message
+     * @param policy security policy for this profile
      */
-    public Credential getSigningCredential() {
-        return signingCredential;
+    public void setSecurityPolicy(SecurityPolicy policy) {
+        profileSecurityPolicy = policy;
+    }
+
+    /**
+     * Sets whether assertions should be signed.
+     * 
+     * @param sign whether assertions should be signed
+     */
+    public void setSignAssertions(boolean sign) {
+        signAssertions = sign;
     }
 
     /**
@@ -131,58 +185,22 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
         }
         signingCredential = credential;
     }
-    
-    /**
-     * Gets whether to sign protocol requests.
-     * 
-     * @return whether to sign protocol requests
-     */
-    public boolean getSignRequests(){
-        return signRequests;
-    }
-    
+
     /**
      * Sets whether to sign protocol requests.
      * 
      * @param sign whether to sign protocol requests
      */
-    public void setSignRequests(boolean sign){
+    public void setSignRequests(boolean sign) {
         signRequests = sign;
     }
-    
-    /**
-     * Gets whether to sign protocol responses.
-     * 
-     * @return whether to sign protocol responses
-     */
-    public boolean getSignResponses(){
-        return signResponses;
-    }
-    
+
     /**
      * Sets whether to sign protocol responses.
      * 
      * @param sign whether to sign protocol responses
      */
-    public void setSignResponses(boolean sign){
+    public void setSignResponses(boolean sign) {
         signResponses = sign;
-    }
-
-    /**
-     * Gets whether assertions should be signed.
-     * 
-     * @return whether assertions should be signed
-     */
-    public boolean getSignAssertions() {
-        return signAssertions;
-    }
-
-    /**
-     * Sets whether assertions should be signed.
-     * 
-     * @param sign whether assertions should be signed
-     */
-    public void setSignAssertions(boolean sign) {
-        signAssertions = sign;
     }
 }

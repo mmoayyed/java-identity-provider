@@ -19,12 +19,19 @@ package edu.internet2.middleware.shibboleth.common.profile.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opensaml.ws.transport.InTransport;
+import org.opensaml.ws.transport.OutTransport;
+
 import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
 
 /**
  * A request handler that is associated with a list of request URI, as defined by the HTTP servlet request.
+ * 
+ * @param <InTransportType> inbound transport type
+ * @param <OutTransportType> outbount transport type
  */
-public abstract class AbstractRequestURIMappedProfileHandler implements ProfileHandler {
+public abstract class AbstractRequestURIMappedProfileHandler<InTransportType extends InTransport, OutTransportType extends OutTransport>
+        implements ProfileHandler<InTransportType, OutTransportType> {
 
     /** Request paths that to which this profile handler will respond. */
     private List<String> requestPaths;

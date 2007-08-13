@@ -25,9 +25,9 @@ import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
 import org.opensaml.util.storage.ExpiringObject;
 import org.opensaml.util.storage.StorageService;
 
-import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
@@ -81,10 +81,10 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
     protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
-        AttributeRequestContext requestContext = resolutionContext.getAttributeRequestContext();
+        ShibbolethSAMLAttributeRequestContext<?,?,?,?> requestContext = resolutionContext.getAttributeRequestContext();
         String token = tokenGenerator.generateIdentifier(tokenSize);
 
-        TokenEntry tokenEntry = new TokenEntry(tokenLifetime, requestContext.getAttributeRequester(), requestContext
+        TokenEntry tokenEntry = new TokenEntry(tokenLifetime, requestContext.getRelyingPartyEntityId(), requestContext
                 .getPrincipalName(), token);
         tokenStore.put(token, tokenEntry);
 

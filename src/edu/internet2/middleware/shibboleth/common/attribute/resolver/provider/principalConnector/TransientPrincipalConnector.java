@@ -64,9 +64,9 @@ public class TransientPrincipalConnector extends AbstractPrincipalConnector {
                     + transientId);
         }
 
-        if (!idToken.getRelyingPartyId().equals(requestContext.getAttributeRequester())) {
+        if (!idToken.getRelyingPartyId().equals(requestContext.getRelyingPartyEntityId())) {
             throw new AttributeResolutionException("Transient identifier was issued to " + idToken.getRelyingPartyId()
-                    + " but is being used by " + requestContext.getAttributeRequester());
+                    + " but is being used by " + requestContext.getRelyingPartyEntityId());
         }
 
         return idToken.getPrincipalName();

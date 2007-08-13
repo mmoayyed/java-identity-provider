@@ -17,10 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.profile.provider;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import java.io.OutputStreamWriter;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
@@ -28,11 +25,11 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
+import org.opensaml.ws.transport.InTransport;
+import org.opensaml.ws.transport.OutTransport;
 import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileRequest;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileResponse;
 
 /**
  * An error handler that render an error page by means of evaluating a Velocity template..
@@ -96,14 +93,15 @@ public class VelocityErrorHandler extends AbstractErrorHandler {
     }
 
     /** {@inheritDoc} */
-    public void processRequest(ProfileRequest<ServletRequest> request, ProfileResponse<ServletResponse> response) {
+    public void processRequest(InTransport in, OutTransport out) {
         VelocityContext context = new VelocityContext();
-        context.put("requestError", request.getRawRequest().getAttribute(AbstractErrorHandler.ERROR_KEY));
+        context.put("requestError", in.getAttribute(AbstractErrorHandler.ERROR_KEY));
 
         try {
-            PrintWriter responseWriter = response.getRawResponse().getWriter();
+            OutputStreamWriter responseWriter = new OutputStreamWriter(out.getOutgoingStream());
             Template template = velocityEngine.getTemplate(templatePath);
             template.merge(context, responseWriter);
+            responseWriter.flush();
         } catch (Throwable t) {
             log.fatal("Unable to evaluate velocity error template", t);
         }

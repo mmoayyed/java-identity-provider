@@ -17,15 +17,17 @@
 package edu.internet2.middleware.shibboleth.common.profile.provider;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.opensaml.ws.transport.InTransport;
+import org.opensaml.ws.transport.OutTransport;
+import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
+import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileRequest;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileResponse;
 
 /**
  * An error handler that forwards information to a JSP page for display to the end user.
@@ -70,10 +72,13 @@ public class JSPErrorHandler extends AbstractErrorHandler {
     }
 
     /** {@inheritDoc} */
-    public void processRequest(ProfileRequest<ServletRequest> request, ProfileResponse<ServletResponse> response) {
-        RequestDispatcher dispatcher = request.getRawRequest().getRequestDispatcher(jspPage);
+    public void processRequest(InTransport in, OutTransport out) {
+        HttpServletRequest httpRequest = ((HttpServletRequestAdapter)in).getWrappedRequest();
+        HttpServletResponse httpResponse = ((HttpServletResponseAdapter)out).getWrappedResponse();
+        
+        RequestDispatcher dispatcher = httpRequest.getRequestDispatcher(jspPage);
         try {
-            dispatcher.forward(request.getRawRequest(), response.getRawResponse());
+            dispatcher.forward(httpRequest, httpResponse);
             return;
         } catch (Throwable t) {
             log.error("Could not dispatch to error JSP page: " + jspPage, t);

@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.relyingparty;
 
+import org.opensaml.ws.security.SecurityPolicy;
+
 /**
  * Configuration options for a specific communication profile.
  */
@@ -27,4 +29,11 @@ public interface ProfileConfiguration {
      * @return unique identifier of the profile
      */
     public String getProfileId();
+    
+    /**
+     * Gets the security policy for this profile.
+     * 
+     * @return security policy for this profile
+     */
+    public SecurityPolicy getSecurityPolicy();
 }

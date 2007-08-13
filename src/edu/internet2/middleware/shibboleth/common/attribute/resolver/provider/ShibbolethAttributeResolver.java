@@ -205,7 +205,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         PrincipalConnector effectiveConnector = null;
         for (PrincipalConnector connector : principalConnectors.values()) {
             if (connector.getFormat().equals(nameIdFormat)) {
-                if (connector.getRelyingParties().contains(requestContext.getAttributeRequester())) {
+                if (connector.getRelyingParties().contains(requestContext.getRelyingPartyEntityId())) {
                     effectiveConnector = connector;
                     break;
                 }
@@ -219,7 +219,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         if (effectiveConnector == null) {
             throw new AttributeResolutionException(
                     "No principal connector available to resolve a subject name with format " + nameIdFormat
-                            + " for relying party " + requestContext.getAttributeRequester());
+                            + " for relying party " + requestContext.getRelyingPartyEntityId());
         }
 
         if (log.isDebugEnabled()) {
@@ -272,7 +272,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      */
     protected Map<String, BaseAttribute> resolveAttributes(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Set<String> attributeIDs = resolutionContext.getAttributeRequestContext().getRequestedAttributes();
+        Collection<String> attributeIDs = resolutionContext.getAttributeRequestContext().getRequestedAttributesIds();
         Map<String, BaseAttribute> resolvedAttributes = new HashMap<String, BaseAttribute>();
 
         // if no attributes requested, then resolve everything
@@ -327,7 +327,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
             definition = getAttributeDefinitions().get(attributeID);
             if (definition == null) {
-                log.warn(resolutionContext.getAttributeRequestContext().getAttributeRequester()
+                log.warn(resolutionContext.getAttributeRequestContext().getRelyingPartyEntityId()
                         + " requested attribute " + attributeID + " of " + getId()
                         + " but no attribute definition exists for that attribute");
                 return null;

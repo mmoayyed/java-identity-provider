@@ -16,23 +16,11 @@
 
 package edu.internet2.middleware.shibboleth.common.profile.provider;
 
-import java.util.Map;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.opensaml.Configuration;
-import org.opensaml.common.binding.decoding.MessageDecoder;
-import org.opensaml.common.binding.encoding.MessageEncoder;
-import org.opensaml.common.binding.security.SAMLSecurityPolicy;
-import org.opensaml.ws.security.SecurityPolicyFactory;
+import org.opensaml.ws.transport.http.HTTPInTransport;
+import org.opensaml.ws.transport.http.HTTPOutTransport;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 
-import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileException;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileHandler;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileRequest;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileResponse;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
@@ -50,16 +38,13 @@ import edu.internet2.middleware.shibboleth.common.session.SessionManager;
  * @param <SessionType> type of sessions managed by the session manager used by this profile handler
  */
 public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAMLMDRelyingPartyConfigurationManager, SessionType extends Session>
-        extends AbstractRequestURIMappedProfileHandler implements ProfileHandler {
+        extends AbstractRequestURIMappedProfileHandler<HTTPInTransport, HTTPOutTransport> {
 
     /** Relying party configuration manager for the profile handler. */
     private RPManagerType rpManager;
 
     /** Session manager for the profile handler. */
     private SessionManager<SessionType> sessionManager;
-
-    /** Factory used to get security policies to evaluate against a request. */
-    private SecurityPolicyFactory<ServletRequest> securityPolicyFactory;
 
     /** For building XML. */
     private XMLObjectBuilderFactory builderFactory;
@@ -152,225 +137,11 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
     }
 
     /**
-     * Gets the factory used to produce security policies to evaluate requests against.
-     * 
-     * @return factory used to produce security policies to evaluate requests against
-     */
-    public SecurityPolicyFactory<ServletRequest> getSecurityPolicyFactory() {
-        return securityPolicyFactory;
-    }
-
-    /**
-     * Sets the factory used to produce security policies to evaluate requests against.
-     * 
-     * @param factory factory used to produce security policies to evaluate requests against
-     */
-    public void setSecurityPolicyFactory(SecurityPolicyFactory<ServletRequest> factory) {
-        securityPolicyFactory = factory;
-    }
-
-    /**
      * Convenience method for getting the XML object builder factory.
      * 
      * @return XML object builder factory
      */
     public XMLObjectBuilderFactory getBuilderFactory() {
         return builderFactory;
-    }
-
-    /** {@inheritDoc} */
-    public abstract void processRequest(ProfileRequest<ServletRequest> request,
-            ProfileResponse<ServletResponse> response) throws ProfileException;
-    
-    /**
-     * Populates the given message decoder with a security policy instance and the profile handler's trust engine.
-     * 
-     * @param decoder the message decoder to populate
-     */
-    @SuppressWarnings("unchecked")
-    protected void populateMessageDecoder(MessageDecoder decoder) {
-        if (securityPolicyFactory != null) {
-            SAMLSecurityPolicy securityPolicy = (SAMLSecurityPolicy) securityPolicyFactory
-                    .createPolicyInstance();
-            securityPolicy.setMetadataProvider(rpManager.getMetadataProvider());
-            decoder.setSecurityPolicy(securityPolicy);
-        }
-    }
-
-    /**
-     * Currently this method does not effect the message encoder but it serves as a future extension point.
-     * 
-     * @param encoder the message encoder to populate
-     */
-    protected void populateMessageEncoder(MessageEncoder encoder) {
-        encoder.setMetadataProvider(rpManager.getMetadataProvider());
-    }
-
-    /**
-     * Contextual object used to accumlate information as profile requests are being processed.
-     */
-    protected class ShibbolethProfileRequestContext {
-
-        /** Curent profile request. */
-        private ProfileRequest<ServletRequest> profileRequest;
-
-        /** Current profile response. */
-        private ProfileResponse<ServletResponse> profileResponse;
-        
-        /** Unique ID of the party making the request. */
-        private String relyingPartyId;
-        
-        /** Unique ID of the party responding to the request. */
-        private String assertingPartyId;
-        
-        /** Configuration for the relying party. */
-        private RelyingPartyConfiguration relyingPartyConfiguration;
-        
-        /** Principal name of the subject of the request. */
-        private String principalName;
-        
-        /** Authentication method used to authenticate the principal. */
-        private String principalAuthenticationMethod;
-
-        /** Attributes retrieved for the principal. */
-        private Map<String, BaseAttribute> principalAttributes;
-
-        /**
-         * Constructor.
-         * 
-         * @param request current profile request
-         * @param response current profile response
-         */
-        public ShibbolethProfileRequestContext(ProfileRequest<ServletRequest> request,
-                ProfileResponse<ServletResponse> response) {
-            profileRequest = request;
-            profileResponse = response;
-        }
-        
-        /**
-         * Gets the unique ID of the party responding to the request.
-         * 
-         * @return unique ID of the party responding to the request
-         */
-        public String getAssertingPartyId(){
-            return assertingPartyId;
-        }
-        
-        /**
-         * Sets the unique ID of the party responding to the request.
-         * 
-         * @param id unique ID of the party responding to the request
-         */
-        public void setAssertingPartyId(String id){
-            assertingPartyId = id;
-        }
-
-        /**
-         * Gets the current profile request.
-         * 
-         * @return current profile request
-         */
-        public ProfileRequest getProfileRequest() {
-            return profileRequest;
-        }
-
-        /**
-         * Gets the current profile response.
-         * 
-         * @return current profile response
-         */
-        public ProfileResponse<ServletResponse> getProfileResponse() {
-            return profileResponse;
-        }
-
-        /**
-         * Gets the attributes retrieved for the principal.
-         * 
-         * @return attributes retrieved for the principal
-         */
-        public Map<String, BaseAttribute> getPrincipalAttributes() {
-            return principalAttributes;
-        }
-
-        /**
-         * Sets the attributes retrieved for the principal.
-         * 
-         * @param attributes attributes retrieved for the principal
-         */
-        public void setPrincipalAttributes(Map<String, BaseAttribute> attributes) {
-            principalAttributes = attributes;
-        }
-
-        /**
-         * Gets the method used to authenticate the principal.
-         * 
-         * @return method used to authenticate the principal
-         */
-        public String getPrincipalAuthenticationMethod() {
-            return principalAuthenticationMethod;
-        }
-
-        /**
-         * Sets the method used to authenticate the principal.
-         * 
-         * @param method method used to authenticate the principal
-         */
-        public void setPrincipalAuthenticationMethod(String method) {
-            principalAuthenticationMethod = method;
-        }
-
-        /**
-         * Gets the principal name of the subject of the request.
-         * 
-         * @return principal name of the subject of the request
-         */
-        public String getPrincipalName() {
-            return principalName;
-        }
-
-        /**
-         * Sets the principal name of the subject of the request.
-         * 
-         * @param name principal name of the subject of the request
-         */
-        public void setPrincipalName(String name) {
-            principalName = name;
-        }
-        
-        /**
-         * Gets the configuration for the relying party for this request.
-         * 
-         * @return configuration for the relying party for this request
-         */
-        public RelyingPartyConfiguration getRelyingPartyConfiguration(){
-            return relyingPartyConfiguration;
-        }
-        
-        /**
-         * Sets the configuration for the relying party for this request.
-         * 
-         * @param configuration configuration for the relying party for this request
-         */
-        public void setRelyingPartyConfiguration(RelyingPartyConfiguration configuration){
-            relyingPartyConfiguration = configuration;
-        }
-        
-        /**
-         * Gets the unique ID of the party making the request.
-         * 
-         * @return unique ID of the party making the request
-         */
-        public String getRelyingPartyId(){
-            return relyingPartyId;
-        }
-        
-        /**
-         * Sets the unique ID of the party making the request.
-         * 
-         * @param id unique ID of the party making the request
-         */
-        public void setRelyingPartyId(String id){
-            relyingPartyId = id;
-        }
     }
 }

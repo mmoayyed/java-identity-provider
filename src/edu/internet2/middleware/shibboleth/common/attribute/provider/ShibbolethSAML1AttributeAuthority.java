@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.opensaml.Configuration;
+import org.opensaml.common.SAMLObject;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.saml1.core.Attribute;
 import org.opensaml.saml1.core.AttributeDesignator;
@@ -42,6 +43,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML1Attrib
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1StringAttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
+import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
 /**
  * SAML 1 Attribute Authority.
@@ -119,9 +121,9 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
     }
 
     /** {@inheritDoc} */
-    public String getPrincipal(ShibbolethSAMLAttributeRequestContext<NameIdentifier, AttributeQuery> requestContext)
+    public String getPrincipal(ShibbolethSAMLAttributeRequestContext<NameIdentifier, SAMLObject, SAMLObject, ProfileConfiguration> requestContext)
             throws AttributeRequestException {
-        if (requestContext.getAttributeRequester() == null || requestContext.getSubjectNameIdentifier() == null) {
+        if (requestContext.getRelyingPartyEntityId() == null || requestContext.getSubjectNameIdentifier() == null) {
             throw new AttributeRequestException(
                     "Unable to resolve principal, attribute request ID and subject name identifier may not be null");
         }
@@ -137,18 +139,22 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
 
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> getAttributes(
-            ShibbolethSAMLAttributeRequestContext<NameIdentifier, AttributeQuery> requestContext)
+            ShibbolethSAMLAttributeRequestContext<NameIdentifier, SAMLObject, SAMLObject, ProfileConfiguration> requestContext)
             throws AttributeRequestException {
 
-        AttributeQuery query = requestContext.getAttributeQuery();
+        AttributeQuery query = requestContext.getInboundSAMLMessage();
+
+        HashSet<String> requestedAttributes = new HashSet<String>();
 
         // get attributes from the message
         Set<String> queryAttributeIds = getAttributeIds(query);
-        requestContext.getRequestedAttributes().addAll(queryAttributeIds);
+        requestedAttributes.addAll(queryAttributeIds);
 
         // get attributes from metadata
-        Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getAttributeRequesterMetadata());
-        requestContext.getRequestedAttributes().addAll(metadataAttributeIds);
+        Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getRelyingPartyMetadata());
+        requestedAttributes.addAll(metadataAttributeIds);
+
+        requestContext.setRequestedAttributes(requestedAttributes);
 
         Map<String, BaseAttribute> attributes = attributeResolver.resolveAttributes(requestContext);
 

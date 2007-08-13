@@ -16,23 +16,25 @@
 
 package edu.internet2.middleware.shibboleth.common.profile;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import org.opensaml.ws.transport.InTransport;
+import org.opensaml.ws.transport.OutTransport;
 
 /**
  * Basic interfaces for classes that handler incoming requests.
+ * 
+ * @param <InTransportType> inbound transport type
+ * @param <OutTransportType> outbount transport type
  */
-public interface ProfileHandler {
+public interface ProfileHandler<InTransportType extends InTransport, OutTransportType extends OutTransport> {
 
     /**
      * Processes an incoming request.
      * 
-     * @param request the incoming request
-     * @param response the outgoing response
+     * @param inTransport the incoming request transport
+     * @param outTransport the outgoing response transport
      * 
      * @throws ProfileException throw if there was a problem while processing the request
      */
-    public void processRequest(ProfileRequest<ServletRequest> request, ProfileResponse<ServletResponse> response)
-            throws ProfileException;
+    public void processRequest(InTransportType inTransport, OutTransportType outTransport) throws ProfileException;
 
 }

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="urn:mace:shibboleth:2.0:security-policy:saml" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:saml="urn:mace:shibboleth:2.0:security-policy" xmlns:sp="urn:mace:shibboleth:2.0:security-policy"
+    elementFormDefault="qualified">
+    
+    <import namespace="urn:mace:shibboleth:2.0:security-policy" schemaLocation="classpath:/schema/shibboleth-2.0-security-policy.xsd" />
+
+    <complexType name="SAML1Protocol">
+        <complexContent>
+            <extension base="sp:SecurityPolicyRuleType">
+                <attribute name="schemaValidate" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            Whether the SAML message should be schema validated.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SAML2Protocol">
+        <complexContent>
+            <extension base="sp:SecurityPolicyRuleType">
+                <attribute name="schemaValidate" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            Whether the SAML message should be schema validated.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="IssueInstant">
+        <complexContent>
+            <extension base="sp:SecurityPolicyRuleType">
+                <attribute name="expirationThreshold" type="positiveInteger" default="300">
+                    <annotation>
+                        <documentation>
+                            Time, in seconds, after a message is issued before it is considered expired.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="clockSkew" type="positiveInteger" default="10">
+                    <annotation>
+                        <documentation>
+                            Clock skew time in seconds.
+                            
+                            Defines the valid life time of a message issue instant as:
+                            (instant - skew) &lt; now &gt; (instant + expirationThreshold + skew)
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Replay">
+        <annotation>
+            <documentation>
+                A security policy rule that ensure the a recieved SAML message's issue instant is not before 
+                the current time (as defined by the system) or older than a given expiration threshold.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sp:SecurityPolicyRuleType">
+                <attribute name="expirationThreshold" type="positiveInteger" default="300">
+                    <annotation>
+                        <documentation>
+                            Time, in seconds, after a message is issued before it is considered expired.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="clockSkew" type="positiveInteger" default="10">
+                    <annotation>
+                        <documentation>
+                            Clock skew time in seconds.
+                            
+                            Defines the valid life time of a message issue instant as:
+                            (instant - skew) &lt; now &gt; (instant + expirationThreshold + skew)
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="storageRef" type="string" default="shibboleth.Storage" >
+                    <annotation>
+                        <documentation>
+                            Name of the storage instance used for the replay cache.  This should not be changed.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>
