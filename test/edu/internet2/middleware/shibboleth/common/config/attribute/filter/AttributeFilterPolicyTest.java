@@ -26,8 +26,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 
 /**
  * Tests parsing an attribute filter policy configuration.
@@ -36,8 +36,8 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
 
     private Map<String, BaseAttribute> attributes;
 
-    private ShibbolethSAMLAttributeRequestContext requestContext;
-    
+    private BaseSAMLProfileRequestContext requestContext;
+
     private ApplicationContext appContext;
 
     /** {@inheritDoc} */
@@ -65,14 +65,14 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
         affiliation.getValues().add("illegalValue");
         attributes.put(affiliation.getId(), affiliation);
 
-        requestContext = new ShibbolethSAMLAttributeRequestContext();
+        requestContext = new BaseSAMLProfileRequestContext();
         requestContext.setPrincipalName("jsmith");
-        requestContext.getRequestedAttributes().addAll(attributes.keySet());
-        
-        String[] configs = { DATA_PATH + "/config/attribute/filter/service-config.xml" , };
+        requestContext.setReleaseAttributes(attributes.keySet());
+
+        String[] configs = { DATA_PATH + "/config/attribute/filter/service-config.xml", };
         appContext = createSpringContext(configs);
     }
-    
+
     public void testEngineA() throws ResourceException, AttributeFilteringException {
         ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext
                 .getBean("engineA");
@@ -83,17 +83,17 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
         BaseAttribute attribute;
         attribute = filteredAttributes.get("firstName");
         assertNull(attribute);
-        
+
         attribute = filteredAttributes.get("lastName");
         assertNull(attribute);
-        
+
         attribute = filteredAttributes.get("email");
         assertEquals(2, attribute.getValues().size());
-        
+
         attribute = filteredAttributes.get("affiliation");
         assertNull(attribute);
     }
-    
+
     public void testEngineB() throws ResourceException, AttributeFilteringException {
         ShibbolethAttributeFilteringEngine filterEngine = (ShibbolethAttributeFilteringEngine) appContext
                 .getBean("engineB");
@@ -104,13 +104,13 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
         BaseAttribute attribute;
         attribute = filteredAttributes.get("firstName");
         assertNull(attribute);
-        
+
         attribute = filteredAttributes.get("lastName");
         assertNull(attribute);
-        
+
         attribute = filteredAttributes.get("email");
         assertNull(attribute);
-        
+
         attribute = filteredAttributes.get("affiliation");
         assertEquals(2, attribute.getValues().size());
     }

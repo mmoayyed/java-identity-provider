@@ -19,11 +19,10 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
  * Contextual information for performing attribute filtering.
@@ -31,7 +30,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethS
 public class ShibbolethFilteringContext {
 
     /** The attribute request. */
-    private ShibbolethSAMLAttributeRequestContext attributeRequestContext;
+    private SAMLProfileRequestContext attributeRequestContext;
 
     /** Attributes being filtered. */
     private Map<String, BaseAttribute> unfilteredAttributes;
@@ -45,7 +44,7 @@ public class ShibbolethFilteringContext {
      * @param attributes unfiltered attribute set
      * @param context attribute request context
      */
-    public ShibbolethFilteringContext(Map<String, BaseAttribute> attributes, ShibbolethSAMLAttributeRequestContext context) {
+    public ShibbolethFilteringContext(Map<String, BaseAttribute> attributes, SAMLProfileRequestContext context) {
         attributeRequestContext = context;
         unfilteredAttributes = attributes;
         retainedValues = new HashMap<String, Collection>();
@@ -56,7 +55,7 @@ public class ShibbolethFilteringContext {
      * 
      * @return context for the attribute request
      */
-    public ShibbolethSAMLAttributeRequestContext getAttributeRequestContext() {
+    public SAMLProfileRequestContext getAttributeRequestContext() {
         return attributeRequestContext;
     }
 
@@ -86,14 +85,14 @@ public class ShibbolethFilteringContext {
                 if (attribute != null) {
                     attributeValues = attribute.getValues();
                 }
-                
+
                 retainedValues.put(attributeId, attributeValues);
             }
         } else {
             attributeValues = retainedValues.get(attributeId);
         }
 
-        if(attributeValues == null){
+        if (attributeValues == null) {
             attributeValues = new TreeSet<Object>();
         }
         return attributeValues;

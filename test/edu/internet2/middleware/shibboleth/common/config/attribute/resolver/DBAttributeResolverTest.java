@@ -16,18 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
-import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 
 /**
  * Unit test for database data connector.
@@ -49,7 +47,7 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
     public void testResolverInstantiation() {
         AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
 
-        ShibbolethSAMLAttributeRequestContext context = new ShibbolethSAMLAttributeRequestContext();
+        BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();
         context.setPrincipalName("astone");
 
         try {

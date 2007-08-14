@@ -41,7 +41,6 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
@@ -51,6 +50,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector.ContextualPrincipalConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector.PrincipalConnector;
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
@@ -61,7 +61,7 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
  * implementations must use a directed dependency graph when performing the resolution.
  */
 public class ShibbolethAttributeResolver extends BaseReloadableService implements
-        AttributeResolver<ShibbolethSAMLAttributeRequestContext> {
+        AttributeResolver<SAMLProfileRequestContext> {
 
     /**
      * Resolution plug-in types.
@@ -136,7 +136,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     }
 
     /** {@inheritDoc} */
-    public Map<String, BaseAttribute> resolveAttributes(ShibbolethSAMLAttributeRequestContext attributeRequestContext)
+    public Map<String, BaseAttribute> resolveAttributes(SAMLProfileRequestContext attributeRequestContext)
             throws AttributeResolutionException {
         ShibbolethResolutionContext resolutionContext = new ShibbolethResolutionContext(attributeRequestContext);
 
@@ -195,8 +195,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      * @throws AttributeResolutionException thrown if the subject identifier information can not be resolved into a
      *             principal name
      */
-    public String resolvePrincipalName(ShibbolethSAMLAttributeRequestContext requestContext)
-            throws AttributeResolutionException {
+    public String resolvePrincipalName(SAMLProfileRequestContext requestContext) throws AttributeResolutionException {
         String nameIdFormat = getNameIdentifierFormat(requestContext.getSubjectNameIdentifier());
 
         if (log.isDebugEnabled()) {
@@ -206,7 +205,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         PrincipalConnector effectiveConnector = null;
         for (PrincipalConnector connector : principalConnectors.values()) {
             if (connector.getFormat().equals(nameIdFormat)) {
-                if (connector.getRelyingParties().contains(requestContext.getRelyingPartyEntityId())) {
+                if (connector.getRelyingParties().contains(requestContext.getInboundMessageIssuer())) {
                     effectiveConnector = connector;
                     break;
                 }
@@ -220,7 +219,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         if (effectiveConnector == null) {
             throw new AttributeResolutionException(
                     "No principal connector available to resolve a subject name with format " + nameIdFormat
-                            + " for relying party " + requestContext.getRelyingPartyEntityId());
+                            + " for relying party " + requestContext.getInboundMessageIssuer());
         }
 
         if (log.isDebugEnabled()) {
@@ -328,7 +327,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
             definition = getAttributeDefinitions().get(attributeID);
             if (definition == null) {
-                log.warn(resolutionContext.getAttributeRequestContext().getRelyingPartyEntityId()
+                log.warn(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer()
                         + " requested attribute " + attributeID + " of " + getId()
                         + " but no attribute definition exists for that attribute");
                 return null;
@@ -452,7 +451,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                 }
                 attributeItr.remove();
             }
-            
+
             Iterator valueItr = resolvedAttribute.getValues().iterator();
             values = new HashSet<Object>();
             while (valueItr.hasNext()) {

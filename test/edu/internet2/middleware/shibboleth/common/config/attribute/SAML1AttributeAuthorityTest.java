@@ -18,8 +18,6 @@ package edu.internet2.middleware.shibboleth.common.config.attribute;
 
 import java.util.Map;
 
-import org.opensaml.saml1.core.AttributeQuery;
-import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.opensaml.xml.parse.BasicParserPool;
 import org.opensaml.xml.parse.ParserPool;
@@ -27,8 +25,8 @@ import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
@@ -48,8 +46,9 @@ public class SAML1AttributeAuthorityTest extends BaseConfigTestCase {
 
         RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration("mySP", "myIdP");
 
-        ShibbolethSAMLAttributeRequestContext<NameIdentifier, AttributeQuery> context = new ShibbolethSAMLAttributeRequestContext<NameIdentifier, AttributeQuery>(
-                mdProvider, rpConfig, null);
+        BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();
+        context.setMetadataProvider(mdProvider);
+        context.setRelyingPartyConfiguration(rpConfig);
         context.setPrincipalName("aUser");
 
         SAML1AttributeAuthority aa = (SAML1AttributeAuthority) ac.getBean("shibboleth.SAML1AttributeAuthority");

@@ -28,12 +28,12 @@ public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityG
     /** {@inheritDoc} */
     public boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
             throws FilterProcessingException {
-        return isEntityInGroup(filterContext.getAttributeRequestContext().getAssertingPartyMetadata());
+        return isEntityInGroup(filterContext.getAttributeRequestContext().getLocalEntityMetadata());
     }
 
     /** {@inheritDoc} */
     public boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        return isEntityInGroup(filterContext.getAttributeRequestContext().getAssertingPartyMetadata());
+        return isEntityInGroup(filterContext.getAttributeRequestContext().getLocalEntityMetadata());
     }
 }

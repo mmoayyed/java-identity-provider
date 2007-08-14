@@ -27,7 +27,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.M
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 
 /**
  * Base class for JUnit test cases.
@@ -61,7 +61,7 @@ public class BaseTestCase extends TestCase {
     /**
      * Request Context included in filter context.
      */
-    protected ShibbolethSAMLAttributeRequestContext requestContext; 
+    protected BaseSAMLProfileRequestContext requestContext; 
 
     /**
      * The Functor under test. 
@@ -101,7 +101,7 @@ public class BaseTestCase extends TestCase {
         map.put(iAttribute.getId(), iAttribute);
         map.put(scope.getId(), scope);
         
-        requestContext = new ShibbolethSAMLAttributeRequestContext();
+        requestContext = new BaseSAMLProfileRequestContext();
         
         filterContext = new ShibbolethFilteringContext(map, requestContext);   
 }

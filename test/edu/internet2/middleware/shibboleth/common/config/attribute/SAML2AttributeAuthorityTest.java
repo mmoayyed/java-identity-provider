@@ -18,8 +18,6 @@ package edu.internet2.middleware.shibboleth.common.config.attribute;
 
 import java.util.Map;
 
-import org.opensaml.saml2.core.AttributeQuery;
-import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.opensaml.xml.parse.BasicParserPool;
 import org.opensaml.xml.parse.ParserPool;
@@ -27,8 +25,8 @@ import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
@@ -38,25 +36,26 @@ public class SAML2AttributeAuthorityTest extends BaseConfigTestCase {
 
     public void testResolution() throws Exception {
         ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/service-config.xml");
-        
+
         ParserPool parserPool = new BasicParserPool();
 
         HTTPMetadataProvider mdProvider = new HTTPMetadataProvider(
                 "http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml", 5000);
         mdProvider.setParserPool(parserPool);
         mdProvider.initialize();
-        
+
         RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration("mySP", "myIdP");
 
-        ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery> context = new ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery>(
-                mdProvider, rpConfig, null);
+        BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();
+        context.setMetadataProvider(mdProvider);
+        context.setRelyingPartyConfiguration(rpConfig);
         context.setPrincipalName("aUser");
-        
+
         SAML2AttributeAuthority aa = (SAML2AttributeAuthority) ac.getBean("shibboleth.SAML2AttributeAuthority");
         Map<String, BaseAttribute> attributes = aa.getAttributes(context);
-        
+
         assertEquals(3, attributes.size());
-        
+
         assertNotNull(aa.buildAttributeStatement(null, attributes.values()));
     }
 }

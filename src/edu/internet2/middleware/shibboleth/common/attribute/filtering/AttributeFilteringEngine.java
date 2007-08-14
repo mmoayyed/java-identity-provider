@@ -18,15 +18,15 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering;
 
 import java.util.Map;
 
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.profile.ProfileMessageContext;
 
 /**
  * The engine that applies attribute acceptance policies to a collection of attributes.
  * 
  * @param <ContextType> type of request context expected by this filtering engine
  */
-public interface AttributeFilteringEngine<ContextType extends ProfileMessageContext> {
+public interface AttributeFilteringEngine<ContextType extends AttributeRequestContext> {
 
     /**
      * Filters values for the given attribute, removing or allowing attributes per some implementation specific policy.

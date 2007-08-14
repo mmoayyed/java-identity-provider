@@ -80,7 +80,7 @@ public class SAML1StringNameIdentifierEncoder extends AbstractAttributeEncoder<N
             throw new AttributeEncodingException(attribute.getId() 
                     + " attribute does not contain any values to encode");
         }
-        nameId.setNameIdentifier(attribute.getValues().first().toString());
+        nameId.setNameIdentifier(attribute.getValues().iterator().next().toString());
 
         if (nameFormat != null) {
             nameId.setFormat(nameFormat);

@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
-import java.util.SortedSet;
+import java.util.Collection;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
@@ -51,22 +51,22 @@ public class AttributeScopeRegexMatchFunctor extends AbstractAttributeTargetedRe
 
         if (attribute != null) {
             ScopedAttributeValue value;
-            SortedSet values = attribute.getValues();
-            
+            Collection values = attribute.getValues();
+
             //
-            // Let's make some sense of this.  If there are values, then we look at every member.
+            // Let's make some sense of this. If there are values, then we look at every member.
             // If the member is a scopedAttribute we will look at the scope and see if it fits.
-            // Otherwise keep on going - we may find something which fits.  If we get to the end
+            // Otherwise keep on going - we may find something which fits. If we get to the end
             // and nothing has fit, say false.
             //
-            
+
             if (values != null) {
-                for (Object object: values) {
+                for (Object object : values) {
                     if (object instanceof ScopedAttributeValue) {
-                        value  = (ScopedAttributeValue) object;
+                        value = (ScopedAttributeValue) object;
                         if (isMatch(value.getScope())) {
                             return true;
-                            
+
                         }
                     }
                 }

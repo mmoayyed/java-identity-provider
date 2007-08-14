@@ -30,7 +30,7 @@ import org.opensaml.xml.parse.BasicParserPool;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
@@ -59,7 +59,7 @@ public class BaseTestCaseMetadata extends TestCase {
     /**
      * Request Context included in filter context.
      */
-    protected ShibbolethSAMLAttributeRequestContext requestContext; 
+    protected BaseSAMLProfileRequestContext requestContext; 
 
     /**
      * The Functor under test. 
@@ -117,7 +117,9 @@ public class BaseTestCaseMetadata extends TestCase {
         // Build the request context from the metadata (with attached parser) and config
         //
         
-        requestContext = new ShibbolethSAMLAttributeRequestContext(provider, rpConfig, null);
+        requestContext = new BaseSAMLProfileRequestContext();
+        requestContext.setMetadataProvider(provider);
+        requestContext.setRelyingPartyConfiguration(rpConfig);
         
         //
         // And the filter context from the request context (with no attributes)

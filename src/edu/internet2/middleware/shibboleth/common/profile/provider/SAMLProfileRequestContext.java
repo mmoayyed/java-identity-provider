@@ -19,19 +19,20 @@ package edu.internet2.middleware.shibboleth.common.profile.provider;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.common.binding.SAMLMessageContext;
 
-import edu.internet2.middleware.shibboleth.common.profile.ProfileMessageContext;
+import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestContext;
+import edu.internet2.middleware.shibboleth.common.profile.ProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
 /**
- * Marker interface that combines SAML and profile message contexts. *
+ * Marker interface that combines profile and attribute request and SAML message contexts. *
  * 
  * @param <InboundMessageType> type of inbound SAML message
  * @param <OutboundMessageType> type of outbound SAML message
  * @param <NameIdentifierType> type of name identifier used for subjects
  * @param <ProfileConfigurationType> profile configuration type for current request
  */
-public interface SAMLProfileMessageContext<InboundMessageType extends SAMLObject, OutboundMessageType extends SAMLObject, NameIdentifierType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
+public interface SAMLProfileRequestContext<InboundMessageType extends SAMLObject, OutboundMessageType extends SAMLObject, NameIdentifierType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
         extends SAMLMessageContext<InboundMessageType, OutboundMessageType, NameIdentifierType>,
-        ProfileMessageContext<ProfileConfigurationType> {
+        ProfileRequestContext<ProfileConfigurationType>, AttributeRequestContext {
 
 }

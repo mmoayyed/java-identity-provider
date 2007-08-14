@@ -18,18 +18,18 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.Collection;
 
+import org.opensaml.common.SAMLObject;
 import org.opensaml.saml1.core.AttributeDesignator;
 import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.saml1.core.NameIdentifier;
-import org.opensaml.saml1.core.RequestAbstractType;
 import org.opensaml.saml1.core.ResponseAbstractType;
 
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
-import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.AbstractSAML1ProfileConfiguration;
 
 /**
@@ -37,7 +37,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.Ab
  */
 public interface SAML1AttributeAuthority
         extends
-        AttributeAuthority<BaseSAMLProfileRequestContext<? extends RequestAbstractType, ? extends ResponseAbstractType, NameIdentifier, ? extends AbstractSAML1ProfileConfiguration>> {
+        AttributeAuthority<SAMLProfileRequestContext<? extends SAMLObject, ? extends ResponseAbstractType, NameIdentifier, ? extends AbstractSAML1ProfileConfiguration>> {
 
     /**
      * Resolves a {@link NameIdentifier} into the internal principal name used Shibboleth.
@@ -50,7 +50,7 @@ public interface SAML1AttributeAuthority
      * @throws AttributeRequestException thrown if the principal get not be resolved
      */
     public String getPrincipal(
-            BaseSAMLProfileRequestContext<? extends RequestAbstractType, ? extends ResponseAbstractType, NameIdentifier, ? extends AbstractSAML1ProfileConfiguration> requestContext)
+            SAMLProfileRequestContext<? extends SAMLObject, ? extends ResponseAbstractType, NameIdentifier, ? extends AbstractSAML1ProfileConfiguration> requestContext)
             throws AttributeRequestException;
 
     /**

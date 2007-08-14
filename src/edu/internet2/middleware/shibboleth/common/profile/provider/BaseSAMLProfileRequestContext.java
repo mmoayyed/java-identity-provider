@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.profile.provider;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -36,9 +35,9 @@ import edu.internet2.middleware.shibboleth.common.session.Session;
  * @param <NameIdentifierType> type of name identifier used for subjects
  * @param <ProfileConfigurationType> profile configuration type for current request
  */
-public abstract class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, OutboundMessage extends SAMLObject, NameIdentifierType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
+public class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, OutboundMessage extends SAMLObject, NameIdentifierType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
         extends BasicSAMLMessageContext<InboundMessage, OutboundMessage, NameIdentifierType> implements
-        SAMLProfileMessageContext<InboundMessage, OutboundMessage, NameIdentifierType, ProfileConfigurationType> {
+        SAMLProfileRequestContext<InboundMessage, OutboundMessage, NameIdentifierType, ProfileConfigurationType> {
 
     /** Attributes retrieved for the principal. */
     private Map<String, BaseAttribute> principalAttributes;
@@ -53,16 +52,21 @@ public abstract class BaseSAMLProfileRequestContext<InboundMessage extends SAMLO
     private ProfileConfigurationType profileConfiguration;
 
     /** IDs of attribute released to relying party. */
-    private ArrayList<String> releasedAttributeIds;
+    private Collection<String> releasedAttributeIds;
 
     /** Configuration for the relying party. */
     private RelyingPartyConfiguration relyingPartyConfiguration;
 
     /** IDs of attribute requested by relaying party. */
-    private ArrayList<String> requestedAttributeIds;
+    private Collection<String> requestedAttributeIds;
 
     /** Current user's session. */
     private Session userSession;
+
+    /** {@inheritDoc} */
+    public Map<String, BaseAttribute> getAttributes() {
+        return principalAttributes;
+    }
 
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> getPrincipalAttributes() {
@@ -89,7 +93,7 @@ public abstract class BaseSAMLProfileRequestContext<InboundMessage extends SAMLO
     }
 
     /** {@inheritDoc} */
-    public Collection<String> getReleasedPrincipalAttributeIds() {
+    public Collection<String> getReleasedAttributes() {
         return releasedAttributeIds;
     }
 
@@ -109,7 +113,7 @@ public abstract class BaseSAMLProfileRequestContext<InboundMessage extends SAMLO
     }
 
     /** {@inheritDoc} */
-    public void setPrincipalAttributes(Map<String, BaseAttribute> attributes) {
+    public void setAttributes(Map<String, BaseAttribute> attributes) {
         principalAttributes = attributes;
     }
 
@@ -129,11 +133,8 @@ public abstract class BaseSAMLProfileRequestContext<InboundMessage extends SAMLO
     }
 
     /** {@inheritDoc} */
-    public void setReleasedPrincipalAttributeIds(Collection<String> ids) {
-        releasedAttributeIds.clear();
-        if (ids != null) {
-            releasedAttributeIds.addAll(ids);
-        }
+    public void setReleaseAttributes(Collection<String> attributeIds) {
+        releasedAttributeIds = attributeIds;
     }
 
     /** {@inheritDoc} */
@@ -143,10 +144,7 @@ public abstract class BaseSAMLProfileRequestContext<InboundMessage extends SAMLO
 
     /** {@inheritDoc} */
     public void setRequestedAttributes(Collection<String> ids) {
-        requestedAttributeIds.clear();
-        if (ids != null) {
-            requestedAttributeIds.addAll(ids);
-        }
+        requestedAttributeIds = ids;
     }
 
     /** {@inheritDoc} */

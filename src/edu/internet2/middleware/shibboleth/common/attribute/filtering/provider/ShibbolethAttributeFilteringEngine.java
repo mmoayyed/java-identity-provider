@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,15 +34,15 @@ import org.springframework.context.ApplicationContext;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.AttributeFilteringException;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
  * Implementation of {@link AttributeFilteringEngine}.
  */
 public class ShibbolethAttributeFilteringEngine extends BaseReloadableService implements
-        AttributeFilteringEngine<ShibbolethSAMLAttributeRequestContext> {
+        AttributeFilteringEngine<SAMLProfileRequestContext> {
 
     /** Class logger. */
     private static Logger log = Logger.getLogger(ShibbolethAttributeFilteringEngine.class);
@@ -83,21 +84,21 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
 
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> filterAttributes(Map<String, BaseAttribute> attributes,
-            ShibbolethSAMLAttributeRequestContext context) throws AttributeFilteringException {
+            SAMLProfileRequestContext context) throws AttributeFilteringException {
 
         if (log.isDebugEnabled()) {
             log.debug(getId() + " filtering " + attributes.size() + " attributes for principal "
                     + context.getPrincipalName());
         }
-        
-        if(attributes.size() == 0){
+
+        if (attributes.size() == 0) {
             return new HashMap<String, BaseAttribute>();
         }
 
         if (getFilterPolicies() == null) {
             if (log.isDebugEnabled()) {
-                log.debug("No filter policies were loaded in " + getId()
-                        + ", filtering out all attributes for " + context.getPrincipalName());
+                log.debug("No filter policies were loaded in " + getId() + ", filtering out all attributes for "
+                        + context.getPrincipalName());
             }
             return new HashMap<String, BaseAttribute>();
         }
@@ -113,14 +114,14 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         Iterator<Entry<String, BaseAttribute>> attributeEntryItr = attributes.entrySet().iterator();
         Entry<String, BaseAttribute> attributeEntry;
         BaseAttribute attribute;
-        SortedSet retainedValues;
-        while(attributeEntryItr.hasNext()){
+        Collection retainedValues;
+        while (attributeEntryItr.hasNext()) {
             attributeEntry = attributeEntryItr.next();
             attribute = attributeEntry.getValue();
             retainedValues = filterContext.getRetainedValues(attribute.getId(), false);
             attribute.getValues().retainAll(retainedValues);
-            if(attribute.getValues().size() == 0){
-                if(log.isDebugEnabled()){
+            if (attribute.getValues().size() == 0) {
+                if (log.isDebugEnabled()) {
                     log.debug("Removing attribute from return set, no more values: " + attribute.getId());
                 }
                 attributeEntryItr.remove();
@@ -173,17 +174,17 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
      */
     protected void filterAttributes(ShibbolethFilteringContext filterContext, AttributeRule attributeRule)
             throws FilterProcessingException {
-        SortedSet attributeValues = filterContext.getRetainedValues(attributeRule.getAttributeId(), true);
+        Collection attributeValues = filterContext.getRetainedValues(attributeRule.getAttributeId(), true);
         MatchFunctor permitValue = attributeRule.getPermitValueRule();
 
         if (log.isDebugEnabled()) {
-            log.debug(getId() + " filtering values of attribute " + attributeRule.getAttributeId()
-                    + " for principal " + filterContext.getAttributeRequestContext().getPrincipalName());
+            log.debug(getId() + " filtering values of attribute " + attributeRule.getAttributeId() + " for principal "
+                    + filterContext.getAttributeRequestContext().getPrincipalName());
         }
 
         Iterator<Object> attributeValueItr = attributeValues.iterator();
         Object attributeValue;
-        while(attributeValueItr.hasNext()){
+        while (attributeValueItr.hasNext()) {
             attributeValue = attributeValueItr.next();
             if (!permitValue.evaluatePermitValue(filterContext, attributeRule.getAttributeId(), attributeValue)) {
                 attributeValueItr.remove();

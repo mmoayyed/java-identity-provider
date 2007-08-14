@@ -45,8 +45,8 @@ import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.config.SpringDocumentLoader;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
 /**
@@ -182,7 +182,7 @@ public class AttributeAuthorityCLI {
      * @return SAML 1 attribute statement
      */
     private static SAMLObject performSAML1AttributeResolution(CmdLineParser parser, ApplicationContext appCtx) {
-        ShibbolethSAMLAttributeRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
+        BaseSAMLProfileRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
 
         try {
             Map<String, BaseAttribute> attributes = saml1AA.getAttributes(requestCtx);
@@ -203,7 +203,7 @@ public class AttributeAuthorityCLI {
      * @return SAML 2 attribute statement
      */
     private static SAMLObject performSAML2AttributeResolution(CmdLineParser parser, ApplicationContext appCtx) {
-        ShibbolethSAMLAttributeRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
+        BaseSAMLProfileRequestContext requestCtx = buildAttributeRequestContext(parser, appCtx);
 
         try {
             Map<String, BaseAttribute> attributes = saml2AA.getAttributes(requestCtx);
@@ -223,15 +223,16 @@ public class AttributeAuthorityCLI {
      * 
      * @return attribute request context
      */
-    private static ShibbolethSAMLAttributeRequestContext buildAttributeRequestContext(CmdLineParser parser,
+    private static BaseSAMLProfileRequestContext buildAttributeRequestContext(CmdLineParser parser,
             ApplicationContext appCtx) {
         String issuer = (String) parser.getOptionValue(CLIParserBuilder.ISSUER_ARG);
         String requester = (String) parser.getOptionValue(CLIParserBuilder.REQUESTER_ARG);
 
         RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration(issuer, requester);
 
-        ShibbolethSAMLAttributeRequestContext attribReqCtx = new ShibbolethSAMLAttributeRequestContext();
-        attribReqCtx.setAttributeRequester(requester);
+        BaseSAMLProfileRequestContext attribReqCtx = new BaseSAMLProfileRequestContext();
+        attribReqCtx.setInboundMessageIssuer(requester);
+        attribReqCtx.setOutboundMessageIssuer(issuer);
         attribReqCtx.setRelyingPartyConfiguration(rpConfig);
 
         String principal = (String) parser.getOptionValue(CLIParserBuilder.PRINCIPAL_ARG);

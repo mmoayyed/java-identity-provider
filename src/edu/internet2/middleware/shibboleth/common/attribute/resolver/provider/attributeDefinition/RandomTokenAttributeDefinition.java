@@ -27,9 +27,9 @@ import org.opensaml.util.storage.StorageService;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
  * An attribute definition that generates random information to use as its value. Useful for transient subject
@@ -81,10 +81,10 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
     protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
-        ShibbolethSAMLAttributeRequestContext<?,?,?,?> requestContext = resolutionContext.getAttributeRequestContext();
+        SAMLProfileRequestContext requestContext = resolutionContext.getAttributeRequestContext();
         String token = tokenGenerator.generateIdentifier(tokenSize);
 
-        TokenEntry tokenEntry = new TokenEntry(tokenLifetime, requestContext.getRelyingPartyEntityId(), requestContext
+        TokenEntry tokenEntry = new TokenEntry(tokenLifetime, requestContext.getInboundMessageIssuer(), requestContext
                 .getPrincipalName(), token);
         tokenStore.put(token, tokenEntry);
 

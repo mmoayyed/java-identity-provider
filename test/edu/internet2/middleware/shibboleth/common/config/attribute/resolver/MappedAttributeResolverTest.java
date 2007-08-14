@@ -6,9 +6,9 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolver;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
+import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 
 /**
  * Test configuration code for attribute resolver.
@@ -21,7 +21,7 @@ public class MappedAttributeResolverTest extends BaseConfigTestCase {
         ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/resolver/service-config.xml");
         AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver-mapped");
 
-        ShibbolethSAMLAttributeRequestContext context = new ShibbolethSAMLAttributeRequestContext();
+        BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();
         context.setPrincipalName("ttrojan");
         
         Map<String, BaseAttribute> actual = resolver.resolveAttributes(context);

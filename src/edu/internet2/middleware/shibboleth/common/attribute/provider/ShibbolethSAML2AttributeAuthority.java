@@ -32,6 +32,8 @@ import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.AttributeStatement;
 import org.opensaml.saml2.core.NameID;
+import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.StatusResponseType;
 import org.opensaml.saml2.metadata.AttributeAuthorityDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObjectBuilderFactory;
@@ -44,7 +46,9 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2Attrib
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringAttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AbstractSAML2ProfileConfiguration;
 
 /**
  * SAML 2.0 Attribute Authority.
@@ -134,9 +138,9 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
 
     /** {@inheritDoc} */
     public String getPrincipal(
-            ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery, SAMLObject, ProfileConfiguration> requestContext)
+            SAMLProfileRequestContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration> requestContext)
             throws AttributeRequestException {
-        if (requestContext.getRelyingPartyEntityId() == null || requestContext.getSubjectNameIdentifier() == null) {
+        if (requestContext.getInboundMessageIssuer() == null || requestContext.getSubjectNameIdentifier() == null) {
             throw new AttributeRequestException(
                     "Unable to resolve principal, attribute request ID and subject name identifier may not be null");
         }
@@ -146,18 +150,16 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
 
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> getAttributes(
-            ShibbolethSAMLAttributeRequestContext<NameID, AttributeQuery, SAMLObject, ProfileConfiguration> requestContext)
+            SAMLProfileRequestContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration> requestContext)
             throws AttributeRequestException {
-        AttributeQuery query = requestContext.getInboundSAMLMessage();
-
         HashSet<String> requestedAttributes = new HashSet<String>();
 
         // get attributes from the message
-        Set<String> queryAttributeIds = getAttributeIds(query);
+        Set<String> queryAttributeIds = getAttributeIds(requestContext.getInboundSAMLMessage());
         requestedAttributes.addAll(queryAttributeIds);
 
         // get attributes from metadata
-        Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getRelyingPartyMetadata());
+        Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getPeerEntityMetadata());
         requestedAttributes.addAll(metadataAttributeIds);
 
         requestContext.setRequestedAttributes(requestedAttributes);
@@ -260,8 +262,13 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
      * 
      * @return attribute IDs for those attributes requested in the attribute query
      */
-    protected Set<String> getAttributeIds(AttributeQuery query) {
+    protected Set<String> getAttributeIds(RequestAbstractType samlRequest) {
         Set<String> queryAttributeIds = new HashSet<String>();
+        if (!(samlRequest instanceof AttributeQuery)) {
+            return queryAttributeIds;
+        }
+
+        AttributeQuery query = (AttributeQuery) samlRequest;
         if (query != null) {
             List<org.opensaml.saml2.core.Attribute> queryAttributes = query.getAttributes();
             queryAttributeIds = getAttributeIds(queryAttributes);

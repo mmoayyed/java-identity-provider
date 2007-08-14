@@ -30,7 +30,7 @@ public class ShibbolethSAML1ProtocolMessageRule extends SAML1ProtocolMessageRule
                 String resource = DatatypeHelper.safeTrimOrNullString(request.getAttributeQuery().getResource());
 
                 if (resource != null) {
-                    messageContext.setRelyingPartyEntityId(resource);
+                    messageContext.setInboundMessageIssuer(resource);
                     if (log.isDebugEnabled()) {
                         log.debug("Extracted issuer from SAML 1.x AttributeQuery Resource: " + resource);
                     }

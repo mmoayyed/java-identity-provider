@@ -20,10 +20,10 @@ import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.util.storage.StorageService;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.RandomTokenAttributeDefinition.TokenEntry;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
  * A principal connector that attempts to look up a name identifier within a store.
@@ -47,7 +47,7 @@ public class TransientPrincipalConnector extends AbstractPrincipalConnector {
 
     /** {@inheritDoc} */
     public String resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
-        ShibbolethSAMLAttributeRequestContext requestContext = resolutionContext.getAttributeRequestContext();
+        SAMLProfileRequestContext requestContext = resolutionContext.getAttributeRequestContext();
 
         String transientId;
         if (requestContext.getSubjectNameIdentifier() instanceof NameIdentifier) {
@@ -64,9 +64,9 @@ public class TransientPrincipalConnector extends AbstractPrincipalConnector {
                     + transientId);
         }
 
-        if (!idToken.getRelyingPartyId().equals(requestContext.getRelyingPartyEntityId())) {
+        if (!idToken.getRelyingPartyId().equals(requestContext.getInboundMessageIssuer())) {
             throw new AttributeResolutionException("Transient identifier was issued to " + idToken.getRelyingPartyId()
-                    + " but is being used by " + requestContext.getRelyingPartyEntityId());
+                    + " but is being used by " + requestContext.getInboundMessageIssuer());
         }
 
         return idToken.getPrincipalName();

@@ -32,6 +32,7 @@ import org.opensaml.saml1.core.AttributeDesignator;
 import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml1.core.ResponseAbstractType;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 
@@ -43,7 +44,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML1Attrib
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1StringAttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
-import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.AbstractSAML1ProfileConfiguration;
 
 /**
  * SAML 1 Attribute Authority.
@@ -121,13 +123,13 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
     }
 
     /** {@inheritDoc} */
-    public String getPrincipal(ShibbolethSAMLAttributeRequestContext<NameIdentifier, SAMLObject, SAMLObject, ProfileConfiguration> requestContext)
+    public String getPrincipal(
+            SAMLProfileRequestContext<? extends SAMLObject, ? extends ResponseAbstractType, NameIdentifier, ? extends AbstractSAML1ProfileConfiguration> requestContext)
             throws AttributeRequestException {
-        if (requestContext.getRelyingPartyEntityId() == null || requestContext.getSubjectNameIdentifier() == null) {
+        if (requestContext.getInboundMessageIssuer() == null || requestContext.getSubjectNameIdentifier() == null) {
             throw new AttributeRequestException(
                     "Unable to resolve principal, attribute request ID and subject name identifier may not be null");
         }
-
         return attributeResolver.resolvePrincipalName(requestContext);
     }
 
@@ -139,19 +141,16 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
 
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> getAttributes(
-            ShibbolethSAMLAttributeRequestContext<NameIdentifier, SAMLObject, SAMLObject, ProfileConfiguration> requestContext)
+            SAMLProfileRequestContext<? extends SAMLObject, ? extends ResponseAbstractType, NameIdentifier, ? extends AbstractSAML1ProfileConfiguration> requestContext)
             throws AttributeRequestException {
-
-        AttributeQuery query = requestContext.getInboundSAMLMessage();
-
         HashSet<String> requestedAttributes = new HashSet<String>();
 
         // get attributes from the message
-        Set<String> queryAttributeIds = getAttributeIds(query);
+        Set<String> queryAttributeIds = getAttributeIds((SAMLObject) requestContext.getInboundMessage());
         requestedAttributes.addAll(queryAttributeIds);
 
         // get attributes from metadata
-        Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getRelyingPartyMetadata());
+        Set<String> metadataAttributeIds = getAttribtueIds(requestContext.getPeerEntityMetadata());
         requestedAttributes.addAll(metadataAttributeIds);
 
         requestContext.setRequestedAttributes(requestedAttributes);
@@ -168,12 +167,17 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
     /**
      * Gets the attribute IDs for those attributes requested in the attribute query.
      * 
-     * @param query the attribute query
+     * @param samlRequest the attribute query
      * 
      * @return attribute IDs for those attributes requested in the attribute query
      */
-    protected Set<String> getAttributeIds(AttributeQuery query) {
+    protected Set<String> getAttributeIds(SAMLObject samlRequest) {
         Set<String> queryAttributeIds = new HashSet<String>();
+        if (!(samlRequest instanceof AttributeQuery)) {
+            return queryAttributeIds;
+        }
+
+        AttributeQuery query = (AttributeQuery) samlRequest;
         if (query != null) {
             List<AttributeDesignator> queryAttributes = query.getAttributeDesignators();
             queryAttributeIds = getAttributeIds(queryAttributes);
@@ -244,12 +248,10 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
                                     + encoder.getClass().getName());
                         }
                     } catch (AttributeEncodingException e) {
-                        log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): "
-                                + e.getMessage());
+                        log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): " + e.getMessage());
                     }
                 }
             }
-
 
             // if it couldn't be encoded try using the default encoder
             if (!attributeEncoded) {

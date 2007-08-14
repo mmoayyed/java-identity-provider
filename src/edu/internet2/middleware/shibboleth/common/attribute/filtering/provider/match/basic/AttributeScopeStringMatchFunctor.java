@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
-import java.util.SortedSet;
+import java.util.Collection;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
@@ -52,7 +52,7 @@ public class AttributeScopeStringMatchFunctor extends AbstractAttributeTargetedS
             return false;
         }
         
-        SortedSet values = attribute.getValues();
+        Collection values = attribute.getValues();
         ScopedAttributeValue scoped;
   
         //

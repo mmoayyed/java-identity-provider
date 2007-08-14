@@ -26,8 +26,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEn
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2NameIDAttributeEncoder;
 
 /**
- * An attribute encoder that takes the first value of an attribute and creates a {@link NameID} of it.  Attribute
- * values are turned into the values for the NameID by invoking the values {@link Object#toString()} method.
+ * An attribute encoder that takes the first value of an attribute and creates a {@link NameID} of it. Attribute values
+ * are turned into the values for the NameID by invoking the values {@link Object#toString()} method.
  */
 public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> implements SAML2NameIDAttributeEncoder {
 
@@ -51,10 +51,9 @@ public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> i
         NameID nameId = nameIdBuilder.buildObject();
 
         if (attribute.getValues() == null || attribute.getValues().isEmpty()) {
-            throw new AttributeEncodingException(attribute.getId() 
-                    + " attribute does not contain any values to encode");
+            throw new AttributeEncodingException(attribute.getId() + " attribute does not contain any values to encode");
         }
-        nameId.setValue(attribute.getValues().first().toString());
+        nameId.setValue(attribute.getValues().iterator().next().toString());
 
         if (nameFormat != null) {
             nameId.setFormat(nameFormat);
@@ -66,7 +65,7 @@ public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> i
 
         return nameId;
     }
-    
+
     /** {@inheritDoc} */
     public String getEncoderCategory() {
         return nameFormat;

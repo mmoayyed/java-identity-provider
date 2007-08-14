@@ -29,7 +29,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
-import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileMessageContext;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AbstractSAML2ProfileConfiguration;
 
 /**
@@ -37,7 +37,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.Ab
  */
 public interface SAML2AttributeAuthority
         extends
-        AttributeAuthority<SAMLProfileMessageContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration>> {
+        AttributeAuthority<SAMLProfileRequestContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration>> {
 
     /**
      * Resolves a {@link NameID} into the internal principal name used Shibboleth.
@@ -50,7 +50,7 @@ public interface SAML2AttributeAuthority
      * @throws AttributeRequestException thrown if the principal get not be resolved
      */
     public String getPrincipal(
-            SAMLProfileMessageContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration> requestContext)
+            SAMLProfileRequestContext<? extends RequestAbstractType, ? extends StatusResponseType, NameID, ? extends AbstractSAML2ProfileConfiguration> requestContext)
             throws AttributeRequestException;
 
     /**

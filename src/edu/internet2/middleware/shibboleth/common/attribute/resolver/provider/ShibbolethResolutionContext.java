@@ -20,9 +20,9 @@ import java.util.Map;
 
 import org.opensaml.xml.util.ValueTypeIndexedMap;
 
-import edu.internet2.middleware.shibboleth.common.attribute.provider.ShibbolethSAMLAttributeRequestContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.DataConnector;
+import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
  * Contextual information for performing an attribute resolution.
@@ -30,7 +30,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 public class ShibbolethResolutionContext {
 
     /** Attribute request context. */
-    private ShibbolethSAMLAttributeRequestContext requestContext;
+    private SAMLProfileRequestContext requestContext;
 
     /** Resolution plug-ins that have been resolved for this request. */
     private ValueTypeIndexedMap<String, ResolutionPlugIn> resolvedPlugins;
@@ -40,7 +40,7 @@ public class ShibbolethResolutionContext {
      * 
      * @param context the attribute request this resolution is being performed for
      */
-    public ShibbolethResolutionContext(ShibbolethSAMLAttributeRequestContext context) {
+    public ShibbolethResolutionContext(SAMLProfileRequestContext context) {
         requestContext = context;
         resolvedPlugins = new ValueTypeIndexedMap<String, ResolutionPlugIn>(ShibbolethAttributeResolver.PLUGIN_TYPES);
     }
@@ -50,7 +50,7 @@ public class ShibbolethResolutionContext {
      * 
      * @return attribute request that started this resolution
      */
-    public ShibbolethSAMLAttributeRequestContext getAttributeRequestContext() {
+    public SAMLProfileRequestContext getAttributeRequestContext() {
         return requestContext;
     }
 
