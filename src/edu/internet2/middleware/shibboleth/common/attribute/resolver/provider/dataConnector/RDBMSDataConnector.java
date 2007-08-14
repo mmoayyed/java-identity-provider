@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -406,7 +407,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             String columnName;
             RDBMSColumnDescriptor columnDescriptor;
             BaseAttribute attribute;
-            Set attributeValueSet;
+            Collection attributeValues;
             do {
                 for (int i = 1; i <= numOfCols; i++) {
                     columnName = resultMD.getColumnName(i);
@@ -425,11 +426,11 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                     }
 
                     attributes.put(attribute.getId(), attribute);
-                    attributeValueSet = attribute.getValues();
+                    attributeValues = attribute.getValues();
                     if (columnDescriptor == null || columnDescriptor.getDataType() == null) {
-                        attributeValueSet.add(resultSet.getObject(i));
+                        attributeValues.add(resultSet.getObject(i));
                     } else {
-                        addValueByType(attributeValueSet, columnDescriptor.getDataType(), resultSet, i);
+                        addValueByType(attributeValues, columnDescriptor.getDataType(), resultSet, i);
                     }
                 }
             } while (resultSet.next());
@@ -443,60 +444,60 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /**
      * Adds a value extracted from the result set as a specific type into the value set.
      * 
-     * @param valueSet set to add values into
+     * @param values set to add values into
      * @param type type the value should be extracted as
      * @param resultSet result set, on the current row, to extract the value from
      * @param columnIndex index of the column from which to extract the attribute
      * 
      * @throws SQLException thrown if value can not retrieved from the result set
      */
-    protected void addValueByType(Set valueSet, DATA_TYPES type, ResultSet resultSet, int columnIndex)
+    protected void addValueByType(Collection values, DATA_TYPES type, ResultSet resultSet, int columnIndex)
             throws SQLException {
         switch (type) {
             case BigDecimal:
-                valueSet.add(resultSet.getBigDecimal(columnIndex));
+                values.add(resultSet.getBigDecimal(columnIndex));
                 break;
             case Boolean:
-                valueSet.add(resultSet.getBoolean(columnIndex));
+                values.add(resultSet.getBoolean(columnIndex));
                 break;
             case Byte:
-                valueSet.add(resultSet.getByte(columnIndex));
+                values.add(resultSet.getByte(columnIndex));
                 break;
             case ByteArray:
-                valueSet.add(resultSet.getBytes(columnIndex));
+                values.add(resultSet.getBytes(columnIndex));
                 break;
             case Date:
-                valueSet.add(resultSet.getDate(columnIndex));
+                values.add(resultSet.getDate(columnIndex));
                 break;
             case Double:
-                valueSet.add(resultSet.getDouble(columnIndex));
+                values.add(resultSet.getDouble(columnIndex));
                 break;
             case Float:
-                valueSet.add(resultSet.getFloat(columnIndex));
+                values.add(resultSet.getFloat(columnIndex));
                 break;
             case Integer:
-                valueSet.add(resultSet.getInt(columnIndex));
+                values.add(resultSet.getInt(columnIndex));
                 break;
             case Long:
-                valueSet.add(resultSet.getLong(columnIndex));
+                values.add(resultSet.getLong(columnIndex));
                 break;
             case Object:
-                valueSet.add(resultSet.getObject(columnIndex));
+                values.add(resultSet.getObject(columnIndex));
                 break;
             case Short:
-                valueSet.add(resultSet.getShort(columnIndex));
+                values.add(resultSet.getShort(columnIndex));
                 break;
             case Time:
-                valueSet.add(resultSet.getTime(columnIndex));
+                values.add(resultSet.getTime(columnIndex));
                 break;
             case Timestamp:
-                valueSet.add(resultSet.getTimestamp(columnIndex));
+                values.add(resultSet.getTimestamp(columnIndex));
                 break;
             case URL:
-                valueSet.add(resultSet.getURL(columnIndex));
+                values.add(resultSet.getURL(columnIndex));
                 break;
             default:
-                valueSet.add(resultSet.getString(columnIndex));
+                values.add(resultSet.getString(columnIndex));
         }
     }
 }

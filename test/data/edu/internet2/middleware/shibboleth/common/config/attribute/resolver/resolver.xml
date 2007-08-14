@@ -35,6 +35,7 @@
 	<resolver:DataConnector xsi:type="dc:Static" id="static2">
 		<dc:Attribute id="affiliation">
 			<dc:Value>member</dc:Value>
+            <dc:Value>member</dc:Value>
 		</dc:Attribute>
 	</resolver:DataConnector>
 

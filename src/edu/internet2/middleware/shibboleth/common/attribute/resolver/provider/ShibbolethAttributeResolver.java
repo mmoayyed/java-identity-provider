@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -427,6 +428,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
         Iterator<Entry<String, BaseAttribute>> attributeItr = resolvedAttributes.entrySet().iterator();
         BaseAttribute<?> resolvedAttribute;
+        Set<Object> values;
         while (attributeItr.hasNext()) {
             resolvedAttribute = attributeItr.next().getValue();
             if (resolvedAttribute.getValues().size() == 0) {
@@ -449,6 +451,21 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                             + ".  It is a dependency-only attribute.");
                 }
                 attributeItr.remove();
+            }
+            
+            Iterator valueItr = resolvedAttribute.getValues().iterator();
+            values = new HashSet<Object>();
+            while (valueItr.hasNext()) {
+                Object value = valueItr.next();
+                if (!values.add(value)) {
+                    if (log.isDebugEnabled()) {
+                        log.debug(getId() + " removing value " + value + " of attribute " + resolvedAttribute.getId()
+                                + " from resolution result for principal "
+                                + resolutionContext.getAttributeRequestContext().getPrincipalName()
+                                + ".  It is a duplicate value.");
+                    }
+                    valueItr.remove();
+                }
             }
         }
     }

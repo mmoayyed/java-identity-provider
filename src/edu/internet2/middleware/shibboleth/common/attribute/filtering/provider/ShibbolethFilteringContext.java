@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -36,7 +37,7 @@ public class ShibbolethFilteringContext {
     private Map<String, BaseAttribute> unfilteredAttributes;
 
     /** Retained values for a given attribute. */
-    private Map<String, SortedSet> retainedValues;
+    private Map<String, Collection> retainedValues;
 
     /**
      * Constructor.
@@ -47,7 +48,7 @@ public class ShibbolethFilteringContext {
     public ShibbolethFilteringContext(Map<String, BaseAttribute> attributes, ShibbolethSAMLAttributeRequestContext context) {
         attributeRequestContext = context;
         unfilteredAttributes = attributes;
-        retainedValues = new HashMap<String, SortedSet>();
+        retainedValues = new HashMap<String, Collection>();
     }
 
     /**
@@ -71,14 +72,14 @@ public class ShibbolethFilteringContext {
     /**
      * Gets the values, for the given attribute, that have no yet been filtered out.
      * 
-     * @param attributeId attribute to retreive the values for
+     * @param attributeId attribute to retrieve the values for
      * @param prepopulate whether to pre-populate the retained value list from the unfiltered value list if there is
      *            currently no set of values retained for the given attribute
      * 
      * @return attribute values not yet filtered out, never null
      */
-    public SortedSet getRetainedValues(String attributeId, boolean prepopulate) {
-        SortedSet attributeValues = null;
+    public Collection getRetainedValues(String attributeId, boolean prepopulate) {
+        Collection attributeValues = null;
         if (!retainedValues.containsKey(attributeId) && prepopulate) {
             if (prepopulate) {
                 BaseAttribute attribute = unfilteredAttributes.get(attributeId);

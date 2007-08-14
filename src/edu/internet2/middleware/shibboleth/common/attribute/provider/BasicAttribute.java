@@ -17,9 +17,8 @@
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.opensaml.xml.util.DatatypeHelper;
 
@@ -40,7 +39,7 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
     private ArrayList<AttributeEncoder> encoders;
 
     /** Set of values for this attribute. */
-    private SortedSet<ValueType> values;
+    private Collection<ValueType> values;
 
     /** Comparator for this attribute. */
     private Comparator<ValueType> comparator;
@@ -48,7 +47,7 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
     /** Constructor. */
     public BasicAttribute() {
         encoders = new ArrayList<AttributeEncoder>();
-        values = new TreeSet<ValueType>();
+        values = new ArrayList<ValueType>();
     }
 
     /**
@@ -59,7 +58,7 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
     public BasicAttribute(String attributeId) {
         id = DatatypeHelper.safeTrimOrNullString(attributeId);
         encoders = new ArrayList<AttributeEncoder>();
-        values = new TreeSet<ValueType>();
+        values = new ArrayList<ValueType>();
     }
 
     /** {@inheritDoc} */
@@ -96,7 +95,7 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
     }
 
     /** {@inheritDoc} */
-    public SortedSet<ValueType> getValues() {
+    public Collection<ValueType> getValues() {
         return values;
     }
 
@@ -105,7 +104,7 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
      * 
      * @param newValues new values to replace existing ones
      */
-    public void setValues(SortedSet<ValueType> newValues) {
+    public void setValues(Collection<ValueType> newValues) {
         values = newValues;
     }
 

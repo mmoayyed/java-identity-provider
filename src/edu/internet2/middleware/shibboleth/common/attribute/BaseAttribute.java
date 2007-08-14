@@ -16,9 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.SortedSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 
@@ -49,7 +49,7 @@ public abstract class BaseAttribute<ValueType> {
      * 
      * @return values of the attribute, must never be null
      */
-    public abstract SortedSet<ValueType> getValues();
+    public abstract Collection<ValueType> getValues();
 
     /**
      * Gets the list of attribute encoders usable with this attribute.

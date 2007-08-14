@@ -29,7 +29,7 @@ public class TestAttributeValueStringMatchFunctor extends BaseTestCase {
         AttributeValueStringMatchFunctor functor = new AttributeValueStringMatchFunctor();
         matchFunctor = functor;
         functor.setAttributeId(sAttribute.getId());
-        functor.setMatchString(sAttribute.getValues().first());
+        functor.setMatchString(sAttribute.getValues().toArray(new String[]{})[0]);
     }
     
     public void testPermitValue() {
