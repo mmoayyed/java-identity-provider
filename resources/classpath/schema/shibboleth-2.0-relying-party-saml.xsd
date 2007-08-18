@@ -81,13 +81,6 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="decryptionCredentialRef" type="string">
-                    <annotation>
-                        <documentation>
-                            ID of the Credential used to decrypt information from the relying party.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="encryptNameIds" type="boolean" default="false">
                     <annotation>
                         <documentation>A boolean flag indicating whether NameIDs should be encrypted.</documentation>

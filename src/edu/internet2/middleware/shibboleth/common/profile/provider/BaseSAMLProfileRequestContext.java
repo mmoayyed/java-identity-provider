@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.opensaml.common.SAMLObject;
 import org.opensaml.common.binding.BasicSAMLMessageContext;
+import org.opensaml.common.binding.decoding.SAMLMessageDecoder;
+import org.opensaml.common.binding.encoding.SAMLMessageEncoder;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
@@ -38,7 +40,13 @@ import edu.internet2.middleware.shibboleth.common.session.Session;
 public class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, OutboundMessage extends SAMLObject, NameIdentifierType extends SAMLObject, ProfileConfigurationType extends ProfileConfiguration>
         extends BasicSAMLMessageContext<InboundMessage, OutboundMessage, NameIdentifierType> implements
         SAMLProfileRequestContext<InboundMessage, OutboundMessage, NameIdentifierType, ProfileConfigurationType> {
-
+    
+    /** Decoder used to decode inbound message. */
+    private SAMLMessageDecoder messageDecoder;
+    
+    /** Encoder used to encode outbound message. */
+    private SAMLMessageEncoder messageEncoder;
+    
     /** Attributes retrieved for the principal. */
     private Map<String, BaseAttribute> principalAttributes;
 
@@ -66,6 +74,24 @@ public class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, Ou
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> getAttributes() {
         return principalAttributes;
+    }
+
+    /**
+     * Gets the message decoder used to decode the message from the inbound transport.
+     * 
+     * @return message decoder used to decode the message from the inbound transport
+     */
+    public SAMLMessageDecoder getMessageDecoder() {
+        return messageDecoder;
+    }
+
+    /**
+     * Gets the message encoder used to encoder the message onto the outbound transport.
+     * 
+     * @return message encoder used to encoder the message onto the outbound transport
+     */
+    public SAMLMessageEncoder getMessageEncoder() {
+        return messageEncoder;
     }
 
     /** {@inheritDoc} */
@@ -117,6 +143,24 @@ public class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, Ou
         principalAttributes = attributes;
     }
 
+    /**
+     * Sets the message decoder used to decode the message from the inbound transport.
+     * 
+     * @param decoder message decoder used to decode the message from the inbound transport
+     */
+    public void setMessageDecoder(SAMLMessageDecoder decoder) {
+        messageDecoder = decoder;
+    }
+
+    /**
+     * Sets the message encoder used to encoder the message onto the outbound transport.
+     * 
+     * @param encoder message encoder used to encoder the message onto the outbound transport
+     */
+    public void setMessageEncoder(SAMLMessageEncoder encoder) {
+        messageEncoder = encoder;
+    }
+
     /** {@inheritDoc} */
     public void setPrincipalAuthenticationMethod(String method) {
         principalAuthenticationMethod = method;
@@ -133,7 +177,7 @@ public class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, Ou
     }
 
     /** {@inheritDoc} */
-    public void setReleaseAttributes(Collection<String> attributeIds) {
+    public void setReleasedAttributes(Collection<String> attributeIds) {
         releasedAttributeIds = attributeIds;
     }
 

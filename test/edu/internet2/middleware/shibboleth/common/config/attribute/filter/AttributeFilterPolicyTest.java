@@ -67,7 +67,7 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
 
         requestContext = new BaseSAMLProfileRequestContext();
         requestContext.setPrincipalName("jsmith");
-        requestContext.setReleaseAttributes(attributes.keySet());
+        requestContext.setReleasedAttributes(attributes.keySet());
 
         String[] configs = { DATA_PATH + "/config/attribute/filter/service-config.xml", };
         appContext = createSpringContext(configs);

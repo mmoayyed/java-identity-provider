@@ -85,5 +85,5 @@ public interface ProfileRequestContext<ProfileConfigurationType extends ProfileC
      * 
      * @param attributeIds ids of the attributes released to the peer
      */
-    public void setReleaseAttributes(Collection<String> attributeIds);
+    public void setReleasedAttributes(Collection<String> attributeIds);
 }
