@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.ArtifactQueryConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.ArtifactResolutionConfiguration;
 
 /**
  * Spring factory for SAML 1 artifact query profile configurations.
@@ -25,12 +25,12 @@ public class SAML1ArtifactQueryProfileConfigurationFactoryBean extends AbstractS
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return ArtifactQueryConfiguration.class;
+        return ArtifactResolutionConfiguration.class;
     }
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        ArtifactQueryConfiguration configuration = new ArtifactQueryConfiguration();
+        ArtifactResolutionConfiguration configuration = new ArtifactResolutionConfiguration();
         
         populateBean(configuration);
 

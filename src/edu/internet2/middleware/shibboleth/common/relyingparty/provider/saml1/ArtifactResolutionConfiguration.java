@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1;
 /**
  * SAML 1 Artifact Query configuration settings.
  */
-public class ArtifactQueryConfiguration extends AbstractSAML1ProfileConfiguration {
+public class ArtifactResolutionConfiguration extends AbstractSAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml1:query:artifact";
