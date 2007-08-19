@@ -48,6 +48,9 @@
                 <bean id="saml2MetadataQuery" class="org.opensaml.util.resource.ClasspathResource">
                     <constructor-arg value="/saml2-metadata-query-config.xml" />
                 </bean>               
+                <bean id="shibMetadataExtensions" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/shibboleth-metadata-ext-config.xml" />
+                </bean>   
             </list>
         </constructor-arg>
     </bean>
