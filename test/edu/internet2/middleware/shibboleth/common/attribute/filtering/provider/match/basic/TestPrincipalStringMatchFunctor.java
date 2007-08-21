@@ -36,7 +36,7 @@ public class TestPrincipalStringMatchFunctor extends BaseTestCase {
         try {
             assertTrue("evaluatePermitValue", 
                         matchFunctor.evaluatePermitValue(filterContext, null, null));
-            requestContext.setPrincipalName(" John ");
+            requestContext.setPrincipalName("John");
             assertFalse("evaluatePermitValue", 
                         matchFunctor.evaluatePermitValue(filterContext, null, null));
         } catch (FilterProcessingException e) {
@@ -47,7 +47,7 @@ public class TestPrincipalStringMatchFunctor extends BaseTestCase {
     public void testPolicyRequirement() {
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            requestContext.setPrincipalName(" John ");
+            requestContext.setPrincipalName("John");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
             PrincipalStringMatchFunctor functor = (PrincipalStringMatchFunctor) matchFunctor;
             functor.setMatchString("John");

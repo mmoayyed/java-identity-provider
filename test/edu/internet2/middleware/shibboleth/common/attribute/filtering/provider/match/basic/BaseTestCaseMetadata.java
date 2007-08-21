@@ -120,12 +120,15 @@ public class BaseTestCaseMetadata extends TestCase {
         requestContext = new BaseSAMLProfileRequestContext();
         requestContext.setMetadataProvider(provider);
         requestContext.setRelyingPartyConfiguration(rpConfig);
+        requestContext.setInboundMessageIssuer("InBoundIssuer");
+        requestContext.setOutboundMessageIssuer("OutBoundIssuer");
         
         //
         // And the filter context from the request context (with no attributes)
         //
         
-        filterContext = new ShibbolethFilteringContext(new TreeMap<String, BaseAttribute>(), requestContext);   
+        filterContext = new ShibbolethFilteringContext(new TreeMap<String, BaseAttribute>(), requestContext);
+
     }
     
 

@@ -29,7 +29,7 @@ public class TestAttributeRequesterStringMatchFunctor extends BaseTestCaseMetada
         super.setUp();
         
         AttributeRequesterStringMatchFunctor functor = new AttributeRequesterStringMatchFunctor();
-        functor.setMatchString("rely");
+        functor.setMatchString("inboundissuer");
         functor.setCaseSensitive(true);
         matchFunctor = functor;
       
@@ -43,7 +43,7 @@ public class TestAttributeRequesterStringMatchFunctor extends BaseTestCaseMetada
         try {
             assertFalse(matchFunctor.evaluatePermitValue(filterContext, null, null));
             assertFalse(matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setMatchString("Rely");
+            functor.setMatchString("InBoundIssuer");
             assertTrue(matchFunctor.evaluatePolicyRequirement(filterContext));
             } catch (FilterProcessingException e) {
             fail(e.getLocalizedMessage());

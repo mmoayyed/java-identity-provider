@@ -36,7 +36,7 @@ public class TestAuthenticationMethodRegexMatchFunctor extends BaseTestCase {
         try {
             assertTrue("evaluatePermitValue", 
                         matchFunctor.evaluatePermitValue(filterContext, null, null));
-            requestContext.setPrincipalAuthenticationMethod(" Retinal Scan ");
+            requestContext.setPrincipalAuthenticationMethod("Retinal Scan");
             assertFalse("evaluatePermitValue", 
                         matchFunctor.evaluatePermitValue(filterContext, null, null));
         } catch (FilterProcessingException e) {
@@ -47,7 +47,7 @@ public class TestAuthenticationMethodRegexMatchFunctor extends BaseTestCase {
     public void testPolicyRequirement() {
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            requestContext.setPrincipalAuthenticationMethod(" Retinal Scan ");
+            requestContext.setPrincipalAuthenticationMethod("Retinal Scan");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
             AuthenticationMethodRegexMatchFunctor functor = (AuthenticationMethodRegexMatchFunctor) matchFunctor;
             functor.setRegularExpression("[rR]etinal [sS]can");

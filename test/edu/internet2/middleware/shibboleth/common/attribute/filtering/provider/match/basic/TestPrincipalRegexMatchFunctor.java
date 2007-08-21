@@ -36,7 +36,7 @@ public class TestPrincipalRegexMatchFunctor extends BaseTestCase {
         try {
             assertTrue("evaluatePermitValue", 
                         matchFunctor.evaluatePermitValue(filterContext, null, null));
-            requestContext.setPrincipalName(" John ");
+            requestContext.setPrincipalName("John");
             assertTrue("evaluatePermitValue", 
                     matchFunctor.evaluatePermitValue(filterContext, null, null));
             requestContext.setPrincipalName(" Fred ");
@@ -50,9 +50,9 @@ public class TestPrincipalRegexMatchFunctor extends BaseTestCase {
     public void testPolicyRequirement() {
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            requestContext.setPrincipalName(" John ");
+            requestContext.setPrincipalName("John");
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            requestContext.setPrincipalName(" Fred ");
+            requestContext.setPrincipalName("Fred");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
             PrincipalRegexMatchFunctor functor = (PrincipalRegexMatchFunctor) matchFunctor;
             functor.setRegularExpression("F.*d");

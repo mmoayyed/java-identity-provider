@@ -30,9 +30,9 @@ public class TestAttributeRequesterRegexMatchFunctor extends BaseTestCaseMetadat
         
         AttributeRequesterRegexMatchFunctor functor = new AttributeRequesterRegexMatchFunctor();
         //
-        // requester is setup as being called "Rely"
+        // requester is setup as being called "InBoundIssuer"
         //
-        functor.setRegularExpression("[rR].*[lL].");
+        functor.setRegularExpression("[iI].*s[uU]e.");
         matchFunctor = functor;
       
     }
@@ -45,7 +45,7 @@ public class TestAttributeRequesterRegexMatchFunctor extends BaseTestCaseMetadat
         try {
             assertTrue(matchFunctor.evaluatePermitValue(filterContext, null, null));
             assertTrue(matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setRegularExpression(".*r");
+            functor.setRegularExpression("[oO].*r");
             assertFalse(matchFunctor.evaluatePolicyRequirement(filterContext));
             } catch (FilterProcessingException e) {
             fail(e.getLocalizedMessage());
