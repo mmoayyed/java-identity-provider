@@ -22,16 +22,16 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttri
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAttributeScopeStringMatchFunctor extends BaseTestCase {
+public class AttributeScopeRegexMatchFunctorTest extends BaseTestCase {
 
     
     /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        AttributeScopeStringMatchFunctor functor = new AttributeScopeStringMatchFunctor();
+        AttributeScopeRegexMatchFunctor functor = new AttributeScopeRegexMatchFunctor();
         matchFunctor = functor;
         functor.setAttributeId("Scope");
-        functor.setMatchString("ScopedScope");
+        functor.setRegularExpression("Sc.*p[Ee]");
        
     }
     
@@ -52,13 +52,13 @@ public class TestAttributeScopeStringMatchFunctor extends BaseTestCase {
     }
 
     public void testPolicyRequirement() {
-        AttributeScopeStringMatchFunctor functor = (AttributeScopeStringMatchFunctor) matchFunctor;
+        AttributeScopeRegexMatchFunctor functor = (AttributeScopeRegexMatchFunctor) matchFunctor;
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setMatchString("ScopedValue");
+            functor.setRegularExpression("S.*Value");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
             functor.setAttributeId(sAttribute.getId());
-            functor.setMatchString("ScopedScope");
+            functor.setRegularExpression("Sc.*p[Ee]");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
             functor.setAttributeId("Scope");
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));

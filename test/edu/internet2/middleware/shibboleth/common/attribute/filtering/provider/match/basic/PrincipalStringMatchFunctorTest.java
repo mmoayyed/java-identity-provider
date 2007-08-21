@@ -21,22 +21,22 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAuthenticationMethodRegexMatchFunctor extends BaseTestCase {
+public class PrincipalStringMatchFunctorTest extends BaseTestCase {
 
     /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        AuthenticationMethodRegexMatchFunctor functor = new AuthenticationMethodRegexMatchFunctor();
+        PrincipalStringMatchFunctor functor = new PrincipalStringMatchFunctor();
         matchFunctor = functor;
-        functor.setRegularExpression("B.*h");
-        requestContext.setPrincipalAuthenticationMethod("Blind Faith");
+        functor.setMatchString("Jim");
+        requestContext.setPrincipalName("Jim");
     }
     
     public void testPermitValue() {
         try {
             assertTrue("evaluatePermitValue", 
                         matchFunctor.evaluatePermitValue(filterContext, null, null));
-            requestContext.setPrincipalAuthenticationMethod("Retinal Scan");
+            requestContext.setPrincipalName("John");
             assertFalse("evaluatePermitValue", 
                         matchFunctor.evaluatePermitValue(filterContext, null, null));
         } catch (FilterProcessingException e) {
@@ -47,10 +47,10 @@ public class TestAuthenticationMethodRegexMatchFunctor extends BaseTestCase {
     public void testPolicyRequirement() {
         try {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            requestContext.setPrincipalAuthenticationMethod("Retinal Scan");
+            requestContext.setPrincipalName("John");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            AuthenticationMethodRegexMatchFunctor functor = (AuthenticationMethodRegexMatchFunctor) matchFunctor;
-            functor.setRegularExpression("[rR]etinal [sS]can");
+            PrincipalStringMatchFunctor functor = (PrincipalStringMatchFunctor) matchFunctor;
+            functor.setMatchString("John");
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
             
         } catch (FilterProcessingException e) {

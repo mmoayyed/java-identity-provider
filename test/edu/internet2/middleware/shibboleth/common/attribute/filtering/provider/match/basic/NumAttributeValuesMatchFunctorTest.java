@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 /**
  * test the @link(AnyMatchFunctor}
  */
-public class TestNumAttributeValuesMatchFunctor extends BaseTestCase {
+public class NumAttributeValuesMatchFunctorTest extends BaseTestCase {
 
     public void setUp() throws Exception {
         super.setUp();

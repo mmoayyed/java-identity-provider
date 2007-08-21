@@ -21,47 +21,37 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAttributeValueRegexMatchFunctor extends BaseTestCase {
+public class AuthenticationMethodRegexMatchFunctorTest extends BaseTestCase {
 
     /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        AttributeValueRegexMatchFunctor functor = new AttributeValueRegexMatchFunctor();
+        AuthenticationMethodRegexMatchFunctor functor = new AuthenticationMethodRegexMatchFunctor();
         matchFunctor = functor;
-        functor.setAttributeId(sAttribute.getId());
-        functor.setRegularExpression("o.e");
+        functor.setRegularExpression("B.*h");
+        requestContext.setPrincipalAuthenticationMethod("Blind Faith");
     }
     
-    /**
-     * Test that values to permit value test. 
-     */
     public void testPermitValue() {
         try {
-            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "one"));
-            assertFalse("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "two"));
+            assertTrue("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
+            requestContext.setPrincipalAuthenticationMethod("Retinal Scan");
+            assertFalse("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, null, null));
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }
     }
 
-    /**
-     * Test the policy.
-     */
     public void testPolicyRequirement() {
         try {
-            AttributeValueRegexMatchFunctor functor = (AttributeValueRegexMatchFunctor) matchFunctor;
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setRegularExpression("[tT].*e");
+            requestContext.setPrincipalAuthenticationMethod("Retinal Scan");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            sAttribute.getValues().add("two");
-            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            sAttribute.getValues().add("three");
+            AuthenticationMethodRegexMatchFunctor functor = (AuthenticationMethodRegexMatchFunctor) matchFunctor;
+            functor.setRegularExpression("[rR]etinal [sS]can");
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setAttributeId("ScopedValue");
-            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setAttributeId("Scope");
-            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            
             
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());

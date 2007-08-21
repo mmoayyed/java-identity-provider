@@ -21,7 +21,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestScriptMatchFunctor extends BaseTestCase {
+public class ScriptMatchFunctorTest extends BaseTestCase {
     
     /**
      * Simple test to check whether parameters are passed OK.

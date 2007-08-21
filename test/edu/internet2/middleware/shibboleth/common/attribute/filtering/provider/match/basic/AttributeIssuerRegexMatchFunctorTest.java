@@ -21,7 +21,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAttributeIssuerRegexMatchFunctor extends BaseTestCaseMetadata {
+public class AttributeIssuerRegexMatchFunctorTest extends BaseTestCaseMetadata {
 
     /** {@inheritDoc} */
 

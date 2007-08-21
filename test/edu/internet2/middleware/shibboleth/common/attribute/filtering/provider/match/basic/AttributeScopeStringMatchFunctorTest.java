@@ -17,44 +17,51 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
+import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
 
 /**
  * test the @link(AnyMatchFunctor}.
  */
-public class TestAttributeValueStringMatchFunctor extends BaseTestCase {
+public class AttributeScopeStringMatchFunctorTest extends BaseTestCase {
 
+    
     /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        AttributeValueStringMatchFunctor functor = new AttributeValueStringMatchFunctor();
+        AttributeScopeStringMatchFunctor functor = new AttributeScopeStringMatchFunctor();
         matchFunctor = functor;
-        functor.setAttributeId(sAttribute.getId());
-        functor.setMatchString(sAttribute.getValues().toArray(new String[]{})[0]);
+        functor.setAttributeId("Scope");
+        functor.setMatchString("ScopedScope");
+       
     }
     
     public void testPermitValue() {
         try {
-            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "one"));
-            assertFalse("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "two"));
+            assertTrue("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, 
+                                                         null, 
+                                                         new ScopedAttributeValue("ScopedValue", "ScopedScope")));
+            assertFalse("evaluatePermitValue", 
+                        matchFunctor.evaluatePermitValue(filterContext, 
+                                                         null,
+                                                         new ScopedAttributeValue("ScopedValue", "otherScope")));
+
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }
     }
 
     public void testPolicyRequirement() {
+        AttributeScopeStringMatchFunctor functor = (AttributeScopeStringMatchFunctor) matchFunctor;
         try {
-            AttributeValueStringMatchFunctor functor = (AttributeValueStringMatchFunctor) matchFunctor;
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setMatchString("three");
+            functor.setMatchString("ScopedValue");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            sAttribute.getValues().add("two");
+            functor.setAttributeId(sAttribute.getId());
+            functor.setMatchString("ScopedScope");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            sAttribute.getValues().add("three");
+            functor.setAttributeId("Scope");
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            functor.setAttributeId("wibble");
-            assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            
-            
         } catch (FilterProcessingException e) {
            fail(e.getLocalizedMessage());
         }

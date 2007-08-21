@@ -18,60 +18,67 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 
 import java.util.ArrayList;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
-import junit.framework.TestCase;
 
 /**
- * test the @link(AnyMatchFunctor}
+ * test the @link(AnyMatchFunctor}.
  */
-public class TestOrMatchFunctor extends BaseTestCase {
+public class AndMatchFunctorTest extends BaseTestCase {
 
+    /**
+     *  Conatins the list of functors we continaully test.
+     */
     private ArrayList<MatchFunctor> functors = new ArrayList<MatchFunctor>(3);
 
+    /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        matchFunctor = new OrMatchFunctor(functors);
+        matchFunctor = new AndMatchFunctor(functors);
     }
     
-    public void testOrFunction() {
+    /**
+     * Test several possible configurations of and.
+     */
+    public void testAndFunction() {
+        
+        testBoth("null", new AndMatchFunctor(null), false);
+        
         functors.clear();
+        testBoth("Empty", false);
         
         //
-        // Or (TRUE)
+        // And (TRUE)
         //
         functors.add(new AnyMatchFunctor());           
         testBoth("(TRUE)", true);
         
         //
-        // Or(TRUE, TRUE);
+        // And (TRUE, TRUE);
         //
         functors.add(new AnyMatchFunctor());           
         testBoth("(TRUE, TRUE)", true);
         
         //
-        // Or (TRUE, TRUE, TRUE);
+        // And (TRUE, TRUE, TRUE);
         //
         functors.add(new AnyMatchFunctor());           
         testBoth("(TRUE, TRUE, TRUE)", true);
 
         //
-        // And (TRUE, TRUE, FALSE);
+        // And (TRUE, FALSE, TRUE);
         //
-        functors.set(2, new NotMatchFunctor(new AnyMatchFunctor()));           
-        testBoth("(TRUE, TRUE, FALSE)", true);
+        functors.set(1, new NotMatchFunctor(new AnyMatchFunctor()));           
+        testBoth("(TRUE, FALSE, TRUE)", false);
 
         //
-        // Or (FALSE, FALSE, FALSE);
+        // And (TRUE, FALSE);
         //
-        functors.set(0, new NotMatchFunctor(new AnyMatchFunctor()));           
-        functors.set(1, new NotMatchFunctor(new AnyMatchFunctor()));           
-        testBoth("(FALSE, FALSE, FALSE)", false);
+        functors.remove(2);           
+        testBoth("(TRUE, FALSE)", false);
         
         //
-        // Or (FALSE)
+        // And (FALSE)
         //
-        functors.remove(0);           
         functors.remove(0);           
         testBoth("(FALSE)", false);
             

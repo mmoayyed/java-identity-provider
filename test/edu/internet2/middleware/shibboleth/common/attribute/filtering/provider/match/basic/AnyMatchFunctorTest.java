@@ -17,21 +17,31 @@
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
-import junit.framework.TestCase;
 
 /**
- *
+ * test the @link(AnyMatchFunctor}.
  */
-public class TestNotMatchFunctor extends BaseTestCase {
+public class AnyMatchFunctorTest extends BaseTestCase {
 
+    /** {@inheritDoc} */
     public void setUp() throws Exception {
         super.setUp();
-        matchFunctor = new NotMatchFunctor(new AnyMatchFunctor());
+        matchFunctor = new AnyMatchFunctor();
     }
     
-    public void testNot() {
-        testBoth("Not for false", false);
-        testBoth("Not for true", new NotMatchFunctor(matchFunctor), true);
+    public void testPermitValue() {
+        try {
+            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, iAttribute.getId(), null));
+        } catch (FilterProcessingException e) {
+           fail(e.getLocalizedMessage());
+        }
+    }
+
+    public void testPolicyRequirement() {
+        try {
+            assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
+        } catch (FilterProcessingException e) {
+           fail(e.getLocalizedMessage());
+        }
     }
 }
