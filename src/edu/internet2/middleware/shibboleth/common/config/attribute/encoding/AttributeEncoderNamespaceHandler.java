@@ -28,23 +28,30 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
 
     /** {@inheritDoc} */
     public void init() {
+        registerBeanDefinitionParser(SAML1StringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML1StringAttributeEncoderBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML1Base64AttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML1Base64AttributeEncoderBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML1ScopedStringAttributeEncoderBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML1StringNameIdentifierEncoderBeanDefinitionParser.SCHEMA_TYPE,
+                new SAML1StringNameIdentifierEncoderBeanDefinitionParser());
+
         registerBeanDefinitionParser(SAML2StringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML2StringAttributeEncoderBeanDefinitionParser());
 
         registerBeanDefinitionParser(SAML2ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML2ScopedStringAttributeEncoderBeanDefinitionParser());
 
-        registerBeanDefinitionParser(SAML1StringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
-                new SAML1StringAttributeEncoderBeanDefinitionParser());
-
-        registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
-                new SAML1ScopedStringAttributeEncoderBeanDefinitionParser());
+        registerBeanDefinitionParser(SAML2Base64AttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML2Base64AttributeEncoderBeanDefinitionParser());
 
         registerBeanDefinitionParser(SAML2StringNameIDEncoderBeanDefinitionParser.SCHEMA_TYPE,
                 new SAML2StringNameIDEncoderBeanDefinitionParser());
 
-        registerBeanDefinitionParser(SAML1StringNameIdentifierEncoderBeanDefinitionParser.SCHEMA_TYPE,
-                new SAML1StringNameIdentifierEncoderBeanDefinitionParser());
     }
 
 }
