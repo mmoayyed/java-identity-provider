@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.opensaml.DefaultBootstrap;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.xml.XMLConfigurator;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,19 +46,19 @@ public class OpensamlConfigBean implements InitializingBean {
 
     /** {@inheritDoc} */
     public void afterPropertiesSet() throws Exception {
-        if(configResources == null){
-            return;
-        }
+        DefaultBootstrap.bootstrap();
         
-        XMLConfigurator configurator = new XMLConfigurator();
-        for(Resource config : configResources){
-            try{
-                if(log.isDebugEnabled()){
-                    log.debug("Loading OpenSAML configuration file: " + config.getLocation());
+        if(configResources != null && !configResources.isEmpty()){
+            XMLConfigurator configurator = new XMLConfigurator();
+            for(Resource config : configResources){
+                try{
+                    if(log.isDebugEnabled()){
+                        log.debug("Loading OpenSAML configuration file: " + config.getLocation());
+                    }
+                    configurator.load(config.getInputStream());
+                }catch(Exception e){
+                    log.error("Unable to load OpenSAML configuration file: " + config.getLocation());
                 }
-                configurator.load(config.getInputStream());
-            }catch(Exception e){
-                log.error("Unable to load OpenSAML configuration file: " + config.getLocation());
             }
         }
     }
