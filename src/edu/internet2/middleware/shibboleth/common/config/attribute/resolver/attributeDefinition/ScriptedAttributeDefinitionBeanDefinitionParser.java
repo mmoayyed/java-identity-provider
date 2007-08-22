@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -48,16 +47,16 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        String scriptLanguage = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "language"));
+        String scriptLanguage = pluginConfig.getAttributeNS(null, "language");
         if (log.isDebugEnabled()) {
             log.debug("Attribute definition " + pluginId + " scripting language: " + scriptLanguage);
         }
         pluginBuilder.addPropertyValue("language", scriptLanguage);
 
-        List<Element> scriptElem = pluginConfigChildren.get(new QName(
-                AttributeDefinitionNamespaceHandler.NAMESPACE, "Script"));
+        List<Element> scriptElem = pluginConfigChildren.get(new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+                "Script"));
         if (scriptElem != null && scriptElem.size() > 0) {
-            String script = DatatypeHelper.safeTrimOrNullString(scriptElem.get(0).getTextContent());
+            String script = scriptElem.get(0).getTextContent();
             if (log.isDebugEnabled()) {
                 log.debug("Attribute definition " + pluginId + " script: " + script);
             }
@@ -66,7 +65,7 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             List<Element> scriptFileElem = pluginConfigChildren.get(new QName(
                     AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile"));
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                String scriptFile = DatatypeHelper.safeTrimOrNullString(scriptFileElem.get(0).getTextContent());
+                String scriptFile = scriptFileElem.get(0).getTextContent();
                 if (log.isDebugEnabled()) {
                     log.debug("Attribute definition " + pluginId + " script file: " + scriptFile);
                 }

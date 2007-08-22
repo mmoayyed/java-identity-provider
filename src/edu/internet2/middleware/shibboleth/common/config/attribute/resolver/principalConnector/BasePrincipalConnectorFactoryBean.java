@@ -16,6 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.principalConnector;
 
+import org.opensaml.xml.util.DatatypeHelper;
+
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector.BasePrincipalConnector;
 import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AbstractResolutionPluginFactoryBean;
 
 /**
@@ -41,6 +44,20 @@ public abstract class BasePrincipalConnectorFactoryBean extends AbstractResoluti
      * @param format format of the NameID the connector operates on
      */
     public void setNameIdFormat(String format) {
-        nameIdFormat = format;
+        nameIdFormat = DatatypeHelper.safeTrimOrNullString(format);
+    }
+
+    /**
+     * Populates the given connector with information from this factory.
+     * 
+     * @param connector connector populates
+     */
+    protected void populatePrincipalConnector(BasePrincipalConnector connector) {
+        connector.setId(getPluginId());
+        connector.setFormat(getNameIdFormat());
+        
+        if(getDependencyIds() != null){
+            connector.getDependencyIds().addAll(getDependencyIds());
+        }
     }
 }

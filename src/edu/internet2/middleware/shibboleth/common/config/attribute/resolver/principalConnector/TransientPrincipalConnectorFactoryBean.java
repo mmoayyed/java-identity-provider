@@ -55,12 +55,7 @@ public class TransientPrincipalConnectorFactoryBean extends BasePrincipalConnect
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         TransientPrincipalConnector connector = new TransientPrincipalConnector(getIdentifierStore());
-        connector.setFormat(getNameIdFormat());
-        connector.setId(getPluginId());
-
-        if (getDependencyIds() != null) {
-            connector.getDependencyIds().addAll(getDependencyIds());
-        }
+        populatePrincipalConnector(connector);
 
         return connector;
     }

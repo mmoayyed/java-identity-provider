@@ -16,9 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
-import java.util.List;
-
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.PrincipalAuthenticationMethodDefinition;
 
 /**
@@ -34,18 +31,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionFactoryBean extends
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         PrincipalAuthenticationMethodDefinition definition = new PrincipalAuthenticationMethodDefinition();
-        definition.setId(getPluginId());
-        
-        if(getDependencyIds() != null){
-            definition.getDependencyIds().addAll(getDependencyIds());
-        }
-        
-        definition.setSourceAttributeID(getSourceAttributeId());
-
-        List<AttributeEncoder> encoders = getAttributeEncoders();
-        if (encoders != null && encoders.size() > 0) {
-            definition.getAttributeEncoders().addAll(getAttributeEncoders());
-        }
+        populateAttributeDefinition(definition);
 
         return definition;
     }

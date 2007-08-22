@@ -16,9 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
-import java.util.List;
+import org.opensaml.xml.util.DatatypeHelper;
 
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ScopedAttributeDefinition;
 
 /**
@@ -49,24 +48,14 @@ public class ScopedAttributeDefinitionFactoryBean extends BaseAttributeDefinitio
      * @param newScope scope of the attribute
      */
     public void setScope(String newScope) {
-        this.scope = newScope;
+        scope = DatatypeHelper.safeTrimOrNullString(newScope);
     }
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         ScopedAttributeDefinition definition = new ScopedAttributeDefinition(getScope());
-        definition.setId(getPluginId());
-        definition.setSourceAttributeID(getSourceAttributeId());
-        
-        if(getDependencyIds() != null){
-            definition.getDependencyIds().addAll(getDependencyIds());
-        }
-        
-        List<AttributeEncoder> encoders = getAttributeEncoders();
-        if (encoders != null && encoders.size() > 0) {
-            definition.getAttributeEncoders().addAll(getAttributeEncoders());
-        }
-        
+        populateAttributeDefinition(definition);
+
         return definition;
     }
 }

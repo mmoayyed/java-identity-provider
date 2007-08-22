@@ -65,30 +65,28 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        String ldapURL = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "ldapUrl"));
+        String ldapURL = pluginConfig.getAttributeNS(null, "ldapUrl");
         if (log.isDebugEnabled()) {
             log.debug("Data connector " + pluginId + " LDAP URL: " + ldapURL);
         }
         pluginBuilder.addPropertyValue("ldapUrl", ldapURL);
 
-        String baseDN = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "baseDN"));
+        String baseDN = pluginConfig.getAttributeNS(null, "baseDN");
         if (log.isDebugEnabled()) {
             log.debug("Data connector " + pluginId + " base DN: " + baseDN);
         }
         pluginBuilder.addPropertyValue("baseDN", baseDN);
 
-        String principal = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "principal"));
+        String principal = pluginConfig.getAttributeNS(null, "principal");
         if (log.isDebugEnabled()) {
             log.debug("Data connector " + pluginId + " principal: " + principal);
         }
         pluginBuilder.addPropertyValue("principal", principal);
 
-        String credential = DatatypeHelper.safeTrimOrNullString(pluginConfig
-                .getAttributeNS(null, "principalCredential"));
+        String credential = pluginConfig.getAttributeNS(null, "principalCredential");
         pluginBuilder.addPropertyValue("principalCredential", credential);
 
-        String filterTemplate = DatatypeHelper.safeTrimOrNullString(pluginConfigChildren.get(
-                FILTER_TEMPLATE_ELEMENT_NAME).get(0).getTextContent());
+        String filterTemplate = pluginConfigChildren.get(FILTER_TEMPLATE_ELEMENT_NAME).get(0).getTextContent();
         if (log.isDebugEnabled()) {
             log.debug("Data connector " + pluginId + " LDAP filter template: " + filterTemplate);
         }
@@ -164,8 +162,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         }
         pluginBuilder.addPropertyValue("noResultsIsError", noResultsIsError);
 
-        String templateEngineRef = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null,
-                "templateEngine"));
+        String templateEngineRef = pluginConfig.getAttributeNS(null, "templateEngine");
         pluginBuilder.addPropertyReference("templateEngine", templateEngineRef);
     }
 

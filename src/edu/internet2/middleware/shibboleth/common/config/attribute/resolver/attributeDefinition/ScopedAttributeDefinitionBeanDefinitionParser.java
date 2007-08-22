@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -48,7 +47,7 @@ public class ScopedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        String scope = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "scope"));
+        String scope = pluginConfig.getAttributeNS(null, "scope");
         if (log.isDebugEnabled()) {
             log.debug("Setting scope of attribute definition " + pluginId + " to: " + scope);
         }

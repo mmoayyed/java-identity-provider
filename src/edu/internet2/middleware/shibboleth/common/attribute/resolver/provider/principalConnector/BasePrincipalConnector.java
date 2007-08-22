@@ -16,6 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.AbstractResolutionPlugIn;
 
 
@@ -25,25 +28,33 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Ab
 public abstract class BasePrincipalConnector extends AbstractResolutionPlugIn<String> implements
         PrincipalConnector {
     
-    /** NameID Format. **/
-    private String nameIDFormat;
+    /** NameID Format. */
+    private String format;
 
-    /**
-     * Get the NameID format.
-     * 
-     * @return the nameIDFormat.
-     */
-    public String getNameIDFormat() {
-        return nameIDFormat;
+    /** Relying parties this connector is valid for. */
+    private Set<String> relyingParties;
+
+    /** Constructor. */
+    public BasePrincipalConnector() {
+        relyingParties = new HashSet<String>();
     }
 
     /**
-     * Set the NameID format.
+     * Set NameID format.
      * 
-     * @param newFormat the new nameIDFormat to set.
+     * @param newFormat new NameID format
      */
-    public void setNameIDFormat(String newFormat) {
-        nameIDFormat = newFormat;
+    public void setFormat(String newFormat) {
+        format = newFormat;
     }
-       
+
+    /** {@inheritDoc} */
+    public String getFormat() {
+        return format;
+    }
+
+    /** {@inheritDoc} */
+    public Set<String> getRelyingParties() {
+        return relyingParties;
+    }  
 }

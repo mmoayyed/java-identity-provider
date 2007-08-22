@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
 import java.util.Set;
 
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
@@ -27,8 +28,7 @@ public abstract class AbstractResolutionPluginFactoryBean extends AbstractFactor
 
     /** ID of resolution plug-ins this plugin depends on. */
     private Set<String> dependencyIds;
-    
-    
+
     /** Unique ID of the plugin. */
     private String pluginId;
 
@@ -65,6 +65,6 @@ public abstract class AbstractResolutionPluginFactoryBean extends AbstractFactor
      * @param id unique ID of this plugin
      */
     public void setPluginId(String id) {
-        pluginId = id;
-    }    
+        pluginId = DatatypeHelper.safeTrimOrNullString(id);
+    }
 }

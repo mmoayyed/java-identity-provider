@@ -45,6 +45,12 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     /** Name of the attribute from data connectors to use to populate this definition. */
     private String sourceAttributeID;
 
+    /** Human intelligible attribute name. */
+    private String displayName;
+
+    /** Human readbale description of attribute. */
+    private String displayDescription;
+
     /**
      * Constructor.
      */
@@ -118,7 +124,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
             String sourceAttribute) {
         Set<Object> values = new HashSet<Object>();
 
-        for(String id : getDependencyIds()) {
+        for (String id : getDependencyIds()) {
             if (context.getResolvedAttributeDefinitions().containsKey(id)) {
                 values.addAll(getValuesFromAttributeDependency(context, id));
             } else if (context.getResolvedDataConnectors().containsKey(id)) {
@@ -133,6 +139,8 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      * Get values from attribute dependencies.
      * 
      * @param context resolution context
+     * @param id ID of attribute to retrieve dependencies for
+     * 
      * @return collection of values
      */
     protected Collection<Object> getValuesFromAttributeDependency(ShibbolethResolutionContext context, String id) {
@@ -157,7 +165,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      * Get values from data connectors.
      * 
      * @param context resolution context
+     * @param id ID of attribute to retrieve dependencies for
      * @param sourceAttribute ID of attribute to retrieve from connector dependencies
+     * 
      * @return collection of values
      */
     protected Collection<Object> getValuesFromConnectorDependency(ShibbolethResolutionContext context, String id,
@@ -206,4 +216,39 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
         sourceAttributeID = newSourceAttributeID;
     }
 
+    /**
+     * Gets the human readbale description of attribute.
+     * 
+     * @return human readbale description of attribute
+     */
+    public String getDisplayDescription() {
+        return displayDescription;
+    }
+
+    /**
+     * Gets the human readable name of the attribute.
+     * 
+     * @return human readable name of the attribute
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Sets the human readbale description of attribute.
+     * 
+     * @param description human readbale description of attribute
+     */
+    public void setDisplayDescription(String description) {
+        displayDescription = description;
+    }
+
+    /**
+     * Sets the human readable name of the attribute.
+     * 
+     * @param name human readable name of the attribute
+     */
+    public void setDisplayName(String name) {
+        displayName = name;
+    }
 }

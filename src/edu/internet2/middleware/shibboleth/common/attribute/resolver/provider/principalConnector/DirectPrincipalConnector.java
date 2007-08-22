@@ -26,7 +26,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 /**
  * Principal connector that uses the SAML name identifier value as the principal name.
  */
-public class DirectPrincipalConnector extends AbstractPrincipalConnector {
+public class DirectPrincipalConnector extends BasePrincipalConnector {
 
     /** {@inheritDoc} */
     public String resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {

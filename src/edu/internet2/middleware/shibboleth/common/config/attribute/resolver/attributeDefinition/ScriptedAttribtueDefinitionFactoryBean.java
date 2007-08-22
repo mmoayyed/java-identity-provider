@@ -54,7 +54,7 @@ public class ScriptedAttribtueDefinitionFactoryBean extends BaseAttributeDefinit
      * @param language scripting language being used
      */
     public void setLanguage(String language) {
-        scriptLanguage = language;
+        scriptLanguage = DatatypeHelper.safeTrimOrNullString(language);
     }
 
     /**
@@ -72,7 +72,7 @@ public class ScriptedAttribtueDefinitionFactoryBean extends BaseAttributeDefinit
      * @param newScript the script
      */
     public void setScript(String newScript) {
-        script = newScript;
+        script = DatatypeHelper.safeTrimOrNullString(newScript);
     }
 
     /**
@@ -90,7 +90,7 @@ public class ScriptedAttribtueDefinitionFactoryBean extends BaseAttributeDefinit
      * @param file file to read the script from
      */
     public void setScriptFile(String file) {
-        scriptFile = file;
+        scriptFile = DatatypeHelper.safeTrimOrNullString(file);
     }
 
     /** {@inheritDoc} */
@@ -101,35 +101,22 @@ public class ScriptedAttribtueDefinitionFactoryBean extends BaseAttributeDefinit
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         ScriptedAttributeDefinition definition = new ScriptedAttributeDefinition(scriptLanguage);
-        definition.setId(getPluginId());
+        populateAttributeDefinition(definition);
 
-        if (getDependencyIds() != null) {
-            definition.getDependencyIds().addAll(getDependencyIds());
-        }
-
-        definition.setSourceAttributeID(getSourceAttributeId());
-
-        List<AttributeEncoder> encoders = getAttributeEncoders();
-        if (encoders != null && encoders.size() > 0) {
-            definition.getAttributeEncoders().addAll(getAttributeEncoders());
-        }
-
-        try{
-        if (DatatypeHelper.isEmpty(script)) {
-            FileInputStream ins = new FileInputStream(scriptFile);
-            byte[] scriptBytes = new byte[ins.available()];
-            ins.read(scriptBytes);
-            script = new String(script);
-        }
-        }catch(IOException e){
-            
+        try {
+            if (getScript() == null) {
+                FileInputStream ins = new FileInputStream(scriptFile);
+                byte[] scriptBytes = new byte[ins.available()];
+                ins.read(scriptBytes);
+                script = new String(script);
+            }
+        } catch (IOException e) {
             throw e;
         }
-
         definition.setScript(script);
 
         definition.initialize();
-        
+
         return definition;
     }
 }

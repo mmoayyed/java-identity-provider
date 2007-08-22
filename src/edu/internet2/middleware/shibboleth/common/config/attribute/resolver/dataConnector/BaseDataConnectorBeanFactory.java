@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dat
 
 import java.util.List;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.BaseDataConnector;
 import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AbstractResolutionPluginFactoryBean;
 
 /**
@@ -44,5 +45,22 @@ public abstract class BaseDataConnectorBeanFactory extends AbstractResolutionPlu
      */
     public void setFailoverDataConnectorIds(List<String> ids) {
         failoverDataConnectorIds = ids;
+    }
+
+    /**
+     * Populates data connector with information from this factory.
+     * 
+     * @param connector data connector with information from this factory
+     */
+    protected void populateDataConnector(BaseDataConnector connector) {
+        connector.setId(getPluginId());
+
+        if (getDependencyIds() != null) {
+            connector.getDependencyIds().addAll(getDependencyIds());
+        }
+
+        if (getFailoverDataConnectorIds() != null) {
+            connector.setFailoverDependencyIds(getFailoverDataConnectorIds());
+        }
     }
 }

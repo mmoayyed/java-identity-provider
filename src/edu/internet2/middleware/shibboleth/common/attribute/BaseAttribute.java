@@ -28,6 +28,46 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEn
  * @param <ValueType> the object type of the values for this attribute
  */
 public abstract class BaseAttribute<ValueType> {
+    
+    /** Human intelligible attribute name. */
+    private String displayName;
+    
+    /** Human readbale description of attribute. */
+    private String displayDescription;
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if(obj instanceof BaseAttribute){
+            return obj.hashCode() == hashCode();
+        }
+        
+        return false;
+    }
+
+    /**
+     * Gets the human readbale description of attribute.
+     * 
+     * @return human readbale description of attribute
+     */
+    public String getDisplayDescription() {
+        return displayDescription;
+    }
+
+    /**
+     * Gets the human readable name of the attribute.
+     * 
+     * @return human readable name of the attribute
+     */
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    /**
+     * Gets the list of attribute encoders usable with this attribute.
+     * 
+     * @return attribute encoders usable with this attribute, must never be null
+     */
+    public abstract List<AttributeEncoder> getEncoders();
 
     /**
      * Gets the unique ID of the attribute.
@@ -51,25 +91,27 @@ public abstract class BaseAttribute<ValueType> {
      */
     public abstract Collection<ValueType> getValues();
 
-    /**
-     * Gets the list of attribute encoders usable with this attribute.
-     * 
-     * @return attribute encoders usable with this attribute, must never be null
-     */
-    public abstract List<AttributeEncoder> getEncoders();
-
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if(obj instanceof BaseAttribute){
-            return obj.hashCode() == hashCode();
-        }
-        
-        return false;
-    }
-    
     /** {@inheritDoc} */
     public int hashCode() {
         return getId().hashCode();
+    }
+
+    /**
+     * Sets the human readbale description of attribute.
+     * 
+     * @param description human readbale description of attribute
+     */
+    public void setDisplayDescription(String description) {
+        displayDescription = description;
+    }
+    
+    /**
+     * Sets the human readable name of the attribute.
+     * 
+     * @param name human readable name of the attribute
+     */
+    public void setDisplayName(String name) {
+        displayName = name;
     }
     
     /** {@inheritDoc} */

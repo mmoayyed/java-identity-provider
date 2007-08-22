@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -34,9 +33,9 @@ import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.Abst
 import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AttributeResolverNamespaceHandler;
 
 /**
- * Base spring bean definition parser for attribute definitions. AttributeDefinition implementations should
- * provide a custom BeanDefinitionParser by extending this class and overriding the doParse() method to parse any
- * additional attributes or elements it requires. Standard attributes and elements defined by the ResolutionPlugIn and
+ * Base spring bean definition parser for attribute definitions. AttributeDefinition implementations should provide a
+ * custom BeanDefinitionParser by extending this class and overriding the doParse() method to parse any additional
+ * attributes or elements it requires. Standard attributes and elements defined by the ResolutionPlugIn and
  * AttributeDefinition schemas will automatically attempt to be parsed.
  */
 public abstract class BaseAttributeDefinitionBeanDefinitionParser extends AbstractResolutionPlugInBeanDefinitionParser {
@@ -52,12 +51,25 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
     protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
 
-        String sourceAttributeId = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null,
-                "sourceAttributeID"));
+        String sourceAttributeId = pluginConfig.getAttributeNS(null, "sourceAttributeID");
         if (log.isDebugEnabled()) {
             log.debug("Setting source attribute ID for attribute definition " + pluginId + " to: " + sourceAttributeId);
         }
         pluginBuilder.addPropertyValue("sourceAttributeId", sourceAttributeId);
+
+        String displayName = pluginConfig.getAttributeNS(null, "displayName");
+        if (log.isDebugEnabled()) {
+            log.debug("Setting display name for attribute definition " + pluginId + " to: " + displayName);
+        }
+        pluginBuilder.addPropertyValue("displayName", displayName);
+
+        String displayDescription = pluginConfig.getAttributeNS(null, "displayDescription");
+        if (log.isDebugEnabled()) {
+            log
+                    .debug("Setting display description for attribute definition " + pluginId + " to: "
+                            + displayDescription);
+        }
+        pluginBuilder.addPropertyValue("displayDescription", displayDescription);
 
         boolean dependencyOnly = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "dependencyOnly"));

@@ -31,12 +31,7 @@ public class DirectPrincipalConnectorFactoryBean extends BasePrincipalConnectorF
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         DirectPrincipalConnector connector = new DirectPrincipalConnector();
-        connector.setFormat(getNameIdFormat());
-        connector.setId(getPluginId());
-        
-        if(getDependencyIds() != null){
-            connector.getDependencyIds().addAll(getDependencyIds());
-        }
+        populatePrincipalConnector(connector);
         
         return connector;
     }

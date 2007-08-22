@@ -88,8 +88,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                 pluginBuilder);
         pluginBuilder.addPropertyValue("columnDescriptors", descriptors);
 
-        String validationQuery = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null,
-                "validationQuery"));
+        String validationQuery = pluginConfig.getAttributeNS(null, "validationQuery");
         if (log.isDebugEnabled()) {
             log.debug("Data connector " + pluginId + " database connection validation query: " + validationQuery);
         }
@@ -116,8 +115,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         }
         pluginBuilder.addPropertyValue("readOnlyConnections", readOnlyCtx);
 
-        String templateEngineRef = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null,
-                "templateEngine"));
+        String templateEngineRef = pluginConfig.getAttributeNS(null, "templateEngine");
         pluginBuilder.addPropertyReference("templateEngine", templateEngineRef);
     }
 
@@ -231,7 +229,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
     protected String processesQueryTemplate(String pluginId, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder) {
         List<Element> queryTemplateElems = pluginConfigChildren.get(QUERY_TEMPLATE_ELEMENT_NAME);
-        String queryTemplate = DatatypeHelper.safeTrimOrNullString(queryTemplateElems.get(0).getTextContent());
+        String queryTemplate = queryTemplateElems.get(0).getTextContent();
         if (log.isDebugEnabled()) {
             log.debug("Data connector " + pluginId + " query template: " + queryTemplate);
         }

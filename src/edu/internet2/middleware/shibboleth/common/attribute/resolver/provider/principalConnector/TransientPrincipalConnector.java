@@ -28,7 +28,7 @@ import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRe
 /**
  * A principal connector that attempts to look up a name identifier within a store.
  */
-public class TransientPrincipalConnector extends AbstractPrincipalConnector {
+public class TransientPrincipalConnector extends BasePrincipalConnector {
 
     /** Store used to map transient identifier tokens to principal names. */
     private StorageService<String, TokenEntry> identifierStore;

@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.principalConnector;
 
-import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -24,8 +23,8 @@ import org.w3c.dom.Element;
 import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AbstractResolutionPlugInBeanDefinitionParser;
 
 /**
- * Base spring bean definition parser for principal connectors. PrincipalConnector implementations should provide
- * a custom BeanDefinitionParser by extending this class and overriding the doParse() method to parse any additional
+ * Base spring bean definition parser for principal connectors. PrincipalConnector implementations should provide a
+ * custom BeanDefinitionParser by extending this class and overriding the doParse() method to parse any additional
  * attributes or elements it requires. Standard attributes and elements defined by the ResolutionPlugIn and
  * PrincipalConnector schemas will automatically attempt to be parsed.
  */
@@ -38,8 +37,7 @@ public abstract class BasePrincipalConnectrBeanDefinitionParser extends Abstract
     protected void doParse(String pluginId, Element pluginConfig,
             java.util.Map<javax.xml.namespace.QName, java.util.List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
-        
-        pluginBuilder.addPropertyValue("nameIdFormat", DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(
-                null, NAMEID_FORMAT_ATTRIBUTE_NAME)));
+
+        pluginBuilder.addPropertyValue("nameIdFormat", pluginConfig.getAttributeNS(null, NAMEID_FORMAT_ATTRIBUTE_NAME));
     }
 }

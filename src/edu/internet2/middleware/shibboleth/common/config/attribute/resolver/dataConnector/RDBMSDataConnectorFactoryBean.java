@@ -21,6 +21,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.opensaml.xml.util.DatatypeHelper;
+
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.RDBMSColumnDescriptor;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.RDBMSDataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.TemplateEngine;
@@ -128,7 +130,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory 
      * @param query SQL query used to validate a connection's liveness
      */
     public void setConnectionValidationQuery(String query) {
-        connectionValidationQuery = query;
+        connectionValidationQuery = DatatypeHelper.safeTrimOrNullString(query);
     }
 
     /**
@@ -146,7 +148,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory 
      * @param template SQL query template
      */
     public void setQueryTemplate(String template) {
-        queryTemplate = template;
+        queryTemplate = DatatypeHelper.safeTrimOrNullString(template);
     }
 
     /**
@@ -207,7 +209,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory 
     protected Object createInstance() throws Exception {
         RDBMSDataConnector connector = new RDBMSDataConnector(getConnectionDataSource(),
                 getConnectionValidationQuery(), getCacheResults());
-        connector.setId(getPluginId());
+        populateDataConnector(connector);
         connector.setTemplateEngine(getTemplateEngine());
         connector.setQueryTemplate(getQueryTemplate());
         connector.setUsesStoredProcedure(getQueryUsesStoredProcedures());
@@ -219,17 +221,9 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory 
                 columnDecriptors.put(descriptor.getColumnName(), descriptor);
             }
         }
-        
-        if(getDependencyIds() != null){
-            connector.getDependencyIds().addAll(getDependencyIds());
-        }
-        
-        if(getFailoverDataConnectorIds()!= null){
-            connector.getFailoverDependencyIds().addAll(getFailoverDataConnectorIds());
-        }
 
         connector.initialize();
-        
+
         return connector;
     }
 }

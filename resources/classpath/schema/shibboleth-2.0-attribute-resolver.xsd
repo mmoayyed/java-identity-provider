@@ -97,7 +97,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="sourceAttributeID" type="string" use="optional">
+                <attribute name="sourceAttributeID" type="string">
                     <annotation>
                         <documentation>
                             The name of the attribute from the data connector which should be used to populate this
@@ -105,6 +105,22 @@
                             have a source attribute of "uid" along with an appropriate scope value. This is an optional
                             attribute, and if left empty the ID of the attribute definition will be used for the source
                             attribute.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="displayName" type="string">
+                    <annotation>
+                        <documentation>
+                            A human readable name of for this attribute. This name may, for example, be displayed to the
+                            user with an attribute release approval request.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="displayDescription" type="string">
+                    <annotation>
+                        <documentation>
+                            A human readable description of for this attribute. This name may, for example, be displayed
+                            to the user with an attribute release approval request.
                         </documentation>
                     </annotation>
                 </attribute>

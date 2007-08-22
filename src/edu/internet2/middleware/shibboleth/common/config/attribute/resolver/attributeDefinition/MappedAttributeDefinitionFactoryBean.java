@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.att
 
 import java.util.List;
 
+import org.opensaml.xml.util.DatatypeHelper;
+
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.MappedAttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.ValueMap;
@@ -74,7 +76,7 @@ public class MappedAttributeDefinitionFactoryBean extends BaseAttributeDefinitio
      * @param newDefaultValue the default return value
      */
     public void setDefaultValue(String newDefaultValue) {
-        defaultValue = newDefaultValue;
+        defaultValue = DatatypeHelper.safeTrimOrNullString(newDefaultValue);
     }
 
     /**
@@ -98,17 +100,7 @@ public class MappedAttributeDefinitionFactoryBean extends BaseAttributeDefinitio
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
-        definition.setId(getPluginId());
-        definition.setSourceAttributeID(getSourceAttributeId());
-
-        if (getDependencyIds() != null) {
-            definition.getDependencyIds().addAll(getDependencyIds());
-        }
-
-        List<AttributeEncoder> encoders = getAttributeEncoders();
-        if (encoders != null && encoders.size() > 0) {
-            definition.getAttributeEncoders().addAll(getAttributeEncoders());
-        }
+        populateAttributeDefinition(definition);
 
         definition.setDefaultValue(defaultValue);
 
