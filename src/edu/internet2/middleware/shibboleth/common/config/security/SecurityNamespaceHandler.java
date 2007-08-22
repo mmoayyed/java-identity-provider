@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.credential;
+package edu.internet2.middleware.shibboleth.common.config.security;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
 /**
- * Spring namespace handler for the Shibboleth credential namespace.
+ * Spring namespace handler for Shibboleth security objects.
  */
-public class CredentialNamespaceHandler extends BaseSpringNamespaceHandler {
+public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
-    /** Credential namespace. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:credential";
+    /** Security configuration namespace. */
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:security";
 
     /** {@inheritDoc} */
     public void init() {
+        registerBeanDefinitionParser(FilesystemX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
+                new FilesystemX509CredentialBeanDefinitionParser());
 
         registerBeanDefinitionParser(InlineX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
                 new InlineX509CredentialBeanDefinitionParser());
-        
-        registerBeanDefinitionParser(FilesystemX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
-                new FilesystemX509CredentialBeanDefinitionParser());
     }
+
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.credential;
+package edu.internet2.middleware.shibboleth.common.config.security;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.springframework.beans.FatalBeanException;
 public class FilesystemX509CredentialBeanDefinitionParser extends AbstractX509CredentialBeanDefinitionParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(CredentialNamespaceHandler.NAMESPACE, "X509Filesystem");
+    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Filesystem");
 
     /** {@inheritDoc} */
     protected byte[] getEncodedCRL(String certCRLContent) {

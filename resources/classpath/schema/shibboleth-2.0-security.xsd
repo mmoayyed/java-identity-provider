@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<schema targetNamespace="urn:mace:shibboleth:2.0:credential" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:credential="urn:mace:shibboleth:2.0:credential" elementFormDefault="qualified">
-
-    <annotation>
-        <documentation>Defines basic credential types and sources for those credentials.</documentation>
-    </annotation>
-    
-    <element name="Credential" type="credential:CredentialType" />
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        targetNamespace="urn:mace:shibboleth:2.0:security" 
+        xmlns:sec="urn:mace:shibboleth:2.0:security"
+        elementFormDefault="qualified">
+        
+    <!-- CREDENTIAL RELATED OBJECTS -->
+    <element name="Credential" type="sec:CredentialType" />
 
     <complexType name="X509Inline">
         <annotation>
@@ -17,7 +15,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="credential:X509Credential" />
+            <extension base="sec:X509Credential" />
         </complexContent>
     </complexType>
 
@@ -29,7 +27,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="credential:X509Credential" />
+            <extension base="sec:X509Credential" />
         </complexContent>
     </complexType>
 
@@ -40,7 +38,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="credential:CredentialType">
+            <extension base="sec:CredentialType">
                 <sequence>
                     <element name="KeyName" type="string" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
@@ -48,13 +46,13 @@
                         </annotation>
                     </element>
                     <choice>
-                        <element name="SecretKey" type="credential:PasswordBearingString" minOccurs="0">
+                        <element name="SecretKey" type="sec:PasswordBearingString" minOccurs="0">
                             <annotation>
                                 <documentation>Credential's symmetric key.</documentation>
                             </annotation>
                         </element>
                         <sequence>
-                            <element name="PrivateKey" type="credential:PasswordBearingString" minOccurs="0">
+                            <element name="PrivateKey" type="sec:PasswordBearingString" minOccurs="0">
                                 <annotation>
                                     <documentation>Credential's RSA/DSA private key.</documentation>
                                 </annotation>
@@ -69,7 +67,7 @@
                                 </annotation>
                                 <complexType>
                                     <simpleContent>
-                                        <extension base="credential:PasswordBearingString">
+                                        <extension base="sec:PasswordBearingString">
                                             <attribute name="entityCertificate" type="boolean"
                                                 default="false">
                                                 <annotation>
@@ -83,7 +81,7 @@
                                     </simpleContent>
                                 </complexType>
                             </element>
-                            <element name="CRL" type="credential:PasswordBearingString" minOccurs="0"
+                            <element name="CRL" type="sec:PasswordBearingString" minOccurs="0"
                                 maxOccurs="unbounded">
                                 <annotation>
                                     <documentation>
@@ -109,7 +107,7 @@
                 <documentation>Unique id for this credential.</documentation>
             </annotation>
         </attribute>
-        <attribute name="usage" type="credential:CredentialUsageType">
+        <attribute name="usage" type="sec:CredentialUsageType">
             <annotation>
                 <documentation>
                     Usage type for this credential. Acceptable values are "Encryption" or "Signing". If no usage type is
@@ -139,5 +137,85 @@
             </extension>
         </simpleContent>
     </complexType>
+    
+    <!-- TRUST ENGINE RELATED OBJECTS -->
+    <element name="TrustEngine" type="sec:TrustEngineType" />
+    
+    <complexType name="ExplicitX509Credential">
+        <annotation>
+            <documentation>
+                Trust engine used to validate an X509 credential against metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ExplicitKeySignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate signatures with keys validated against metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="TrustEngineType" abstract="true">
+        <attribute name="id" type="string" use="required">
+            <annotation>
+                <documentation>
+                    Unique ID of the trust engine.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
+    <!-- SECURITY POLICY RELATED OBJECTS -->
+    <element name="SecurityPolicy" type="sec:SecurityPolicyType" abstract="true" />
+    <complexType name="SecurityPolicyType" abstract="true">
+        <annotation>
+            <documentation>
+                Security policies define a set of rules that are evaluated against incomming messages to
+                determine whether the messages should be processed.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element ref="sec:Rule" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="id" type="string" use="required">
+            <annotation>
+                <documentation>
+                    A unique ID for the policy.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
 
+    <element name="Rule" type="sec:SecurityPolicyRuleType" abstract="true" />
+    <complexType name="SecurityPolicyRuleType" abstract="true">
+        <annotation>
+            <documentation>
+                Base type of security policy rules.
+            </documentation>
+        </annotation>
+    </complexType>
 </schema>

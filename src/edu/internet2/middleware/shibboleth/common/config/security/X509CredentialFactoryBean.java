@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.credential;
+package edu.internet2.middleware.shibboleth.common.config.security;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;

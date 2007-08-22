@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.credential;
+package edu.internet2.middleware.shibboleth.common.config.security;
 
 import javax.xml.namespace.QName;
 
@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 public class InlineX509CredentialBeanDefinitionParser extends AbstractX509CredentialBeanDefinitionParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(CredentialNamespaceHandler.NAMESPACE, "X509Inline");
+    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Inline");
 
     /** {@inheritDoc} */
     protected byte[] getEncodedCRL(String certCRLContent) {

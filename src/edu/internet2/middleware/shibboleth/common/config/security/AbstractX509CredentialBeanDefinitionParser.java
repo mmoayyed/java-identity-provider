@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.credential;
+package edu.internet2.middleware.shibboleth.common.config.security;
 
 import java.security.KeyException;
 import java.security.PrivateKey;
@@ -41,6 +41,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
 
 /**
  * Base class for X509 credential beans.
@@ -75,7 +76,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
      * @param builder credential build
      */
     protected void parseKeyNames(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
-        List<Element> keyNameElems = configChildren.get(new QName(CredentialNamespaceHandler.NAMESPACE, "KeyName"));
+        List<Element> keyNameElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "KeyName"));
         if (keyNameElems == null || keyNameElems.isEmpty()) {
             return;
         }
@@ -99,7 +100,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
      * @param builder credential build
      */
     protected void parseSecretKey(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
-        List<Element> keyElems = configChildren.get(new QName(CredentialNamespaceHandler.NAMESPACE, "SecretKey"));
+        List<Element> keyElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecretKey"));
         if (keyElems == null || keyElems.isEmpty()) {
             return;
         }
@@ -131,7 +132,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
      * @param builder credential build
      */
     protected void parsePrivateKey(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
-        List<Element> keyElems = configChildren.get(new QName(CredentialNamespaceHandler.NAMESPACE, "PrivateKey"));
+        List<Element> keyElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "PrivateKey"));
         if (keyElems == null || keyElems.isEmpty()) {
             return;
         }
@@ -165,7 +166,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
      * @param builder credential build
      */
     protected void parseCertificates(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
-        List<Element> certElems = configChildren.get(new QName(CredentialNamespaceHandler.NAMESPACE, "Certificate"));
+        List<Element> certElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Certificate"));
         if (certElems == null || certElems.isEmpty()) {
             return;
         }
@@ -206,7 +207,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
      * @param builder credential build
      */
     protected void parseCRLs(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
-        List<Element> crlElems = configChildren.get(new QName(CredentialNamespaceHandler.NAMESPACE, "CRL"));
+        List<Element> crlElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "CRL"));
         if (crlElems == null || crlElems.isEmpty()) {
             return;
         }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="urn:mace:shibboleth:2.0:security-policy:saml" xmlns="http://www.w3.org/2001/XMLSchema"
-    xmlns:saml="urn:mace:shibboleth:2.0:security-policy" xmlns:sp="urn:mace:shibboleth:2.0:security-policy"
+<schema targetNamespace="urn:mace:shibboleth:2.0:security:saml" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:samlsec="urn:mace:shibboleth:2.0:security:saml" xmlns:sec="urn:mace:shibboleth:2.0:security"
     elementFormDefault="qualified">
     
-    <import namespace="urn:mace:shibboleth:2.0:security-policy" schemaLocation="classpath:/schema/shibboleth-2.0-security-policy.xsd" />
+    <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="classpath:/schema/shibboleth-2.0-security.xsd" />
 
     <complexType name="SAML1Protocol">
         <complexContent>
-            <extension base="sp:SecurityPolicyRuleType">
+            <extension base="sec:SecurityPolicyRuleType">
                 <attribute name="schemaValidate" type="boolean" default="false">
                     <annotation>
                         <documentation>
@@ -21,7 +21,7 @@
     
     <complexType name="SAML2Protocol">
         <complexContent>
-            <extension base="sp:SecurityPolicyRuleType">
+            <extension base="sec:SecurityPolicyRuleType">
                 <attribute name="schemaValidate" type="boolean" default="false">
                     <annotation>
                         <documentation>
@@ -35,7 +35,7 @@
 
     <complexType name="IssueInstant">
         <complexContent>
-            <extension base="sp:SecurityPolicyRuleType">
+            <extension base="sec:SecurityPolicyRuleType">
                 <attribute name="expirationThreshold" type="positiveInteger" default="300">
                     <annotation>
                         <documentation>
@@ -65,7 +65,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="sp:SecurityPolicyRuleType">
+            <extension base="sec:SecurityPolicyRuleType">
                 <attribute name="expirationThreshold" type="positiveInteger" default="300">
                     <annotation>
                         <documentation>
