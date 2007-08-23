@@ -12,7 +12,7 @@
 
     <resolver:AttributeDefinition xsi:type="ad:PrincipalName" id="principalName" />
 
-	<resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonAffilation" sourceAttributeID="affiliation">
+	<resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonAffiliation" sourceAttributeID="affiliation">
 		<resolver:Dependency ref="static" />
 		<resolver:Dependency ref="static2" />
 	</resolver:AttributeDefinition>

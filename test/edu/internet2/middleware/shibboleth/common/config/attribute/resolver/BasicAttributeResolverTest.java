@@ -31,7 +31,7 @@ public class BasicAttributeResolverTest extends BaseConfigTestCase {
         BaseAttribute principalName = actual.get("principalName");
         assertEquals(1, principalName.getValues().size());
 
-        BaseAttribute affiliation = actual.get("eduPersonAffilation");
+        BaseAttribute affiliation = actual.get("eduPersonAffiliation");
         assertEquals(3, affiliation.getValues().size());
 
         BaseAttribute entitlement = actual.get("eduPersonEntitlement");
