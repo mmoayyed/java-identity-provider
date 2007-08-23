@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+          >
+
+    <!-- Spring configuration file that boostraps OpenSAML -->
+    <bean id="shibboleth.OpensamlConfig" class="edu.internet2.middleware.shibboleth.common.config.OpensamlConfigBean" lazy-init="false">
+        <constructor-arg>
+            <list>
+                <bean id="default" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/default-config.xml" />
+                </bean>
+                <bean id="schema" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/schema-config.xml" />
+                </bean>
+                <bean id="signature" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/signature-config.xml" />
+                </bean>
+                <bean id="encryption" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/encryption-config.xml" />
+                </bean>
+                <bean id="soap11" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/soap11-config.xml" />
+                </bean>
+                <bean id="saml1Assertion" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml1-assertion-config.xml" />
+                </bean>
+                <bean id="saml1Protocol" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml1-protocol-config.xml" />
+                </bean>
+                <bean id="saml1Metadata" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml1-metadata-config.xml" />
+                </bean>
+                <bean id="saml2Assertion" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml2-assertion-config.xml" />
+                </bean>
+                <bean id="saml2Protocol" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml2-protocol-config.xml" />
+                </bean>
+                <bean id="saml2ThirdParty" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml2-protocol-thirdparty-config.xml" />
+                </bean>
+                <bean id="saml2Metadata" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml2-metadata-config.xml" />
+                </bean>
+                <bean id="saml2MetadataQuery" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/saml2-metadata-query-config.xml" />
+                </bean>               
+                <bean id="shibMetadataExtensions" class="org.opensaml.util.resource.ClasspathResource">
+                    <constructor-arg value="/shibboleth-metadata-ext-config.xml" />
+                </bean>   
+            </list>
+        </constructor-arg>
+    </bean>
+    
+</beans>
