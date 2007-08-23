@@ -34,6 +34,21 @@
         </complexContent>
     </complexType>
 
+    <complexType name="TransientId">
+        <annotation>
+            <documentation>A attribute definition used to construct transient subejct identifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="storageServiceRef" type="string" default="shibboleth.StorageService">
+                    <annotation>
+                        <documentation>Storage service used to store created identifiers</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="Scoped">
         <annotation>
             <documentation>A basic attribute definition which supports attribute scoping.</documentation>

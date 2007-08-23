@@ -22,7 +22,7 @@ import org.opensaml.util.storage.StorageService;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.RandomTokenAttributeDefinition.TokenEntry;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdAttributeDefinition.IdEntry;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
@@ -31,18 +31,22 @@ import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRe
 public class TransientPrincipalConnector extends BasePrincipalConnector {
 
     /** Store used to map transient identifier tokens to principal names. */
-    private StorageService<String, TokenEntry> identifierStore;
+    private StorageService<String, IdEntry> identifierStore;
+    
+    /** Storage parition in which IDs are stored. */
+    private String partition;
 
     /**
      * Constructor.
      * 
      * @param store the backing store used to map transient identifier tokens to principal names
      */
-    public TransientPrincipalConnector(StorageService<String, TokenEntry> store) {
+    public TransientPrincipalConnector(StorageService<String, IdEntry> store) {
         if (store == null) {
             throw new IllegalArgumentException("Identifier store may not be null");
         }
         identifierStore = store;
+        partition = "transientId";
     }
 
     /** {@inheritDoc} */
@@ -58,7 +62,7 @@ public class TransientPrincipalConnector extends BasePrincipalConnector {
             throw new AttributeResolutionException("Subject name identifier is not of a supported type");
         }
 
-        TokenEntry idToken = identifierStore.get(transientId);
+        IdEntry idToken = identifierStore.get(partition, transientId);
         if (idToken == null && idToken.isExpired()) {
             throw new AttributeResolutionException("No information associated with transient identifier: "
                     + transientId);

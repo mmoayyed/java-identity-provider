@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.principalConnector;
+package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
 import org.opensaml.util.storage.StorageService;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdAttributeDefinition;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdAttributeDefinition.IdEntry;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector.TransientPrincipalConnector;
 
 /**
- * Spring factory bean for {@link TransientPrincipalConnector}s.
+ * Spring factory bean producing {@link TransientIdAttributeDefinition}s.
  */
-public class TransientPrincipalConnectorFactoryBean extends BasePrincipalConnectorFactoryBean {
+public class TransientIdAttribtueDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
 
     /** Store used to map transient identifier tokens to principal names. */
     private StorageService<String, IdEntry> identifierStore;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return TransientPrincipalConnector.class;
+        return TransientIdAttributeDefinition.class;
     }
 
     /**
@@ -54,9 +54,9 @@ public class TransientPrincipalConnectorFactoryBean extends BasePrincipalConnect
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        TransientPrincipalConnector connector = new TransientPrincipalConnector(getIdentifierStore());
-        populatePrincipalConnector(connector);
+        TransientIdAttributeDefinition definition = new TransientIdAttributeDefinition(getIdentifierStore());
+        populateAttributeDefinition(definition);
 
-        return connector;
+        return definition;
     }
 }

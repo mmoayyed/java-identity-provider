@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
-import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 
 import org.joda.time.DateTime;
@@ -32,22 +31,24 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
- * An attribute definition that generates random information to use as its value. Useful for transient subject
- * identifiers.
+ * An attribute definition that generates random identifiers useful for transient subject ids.
  */
-public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
+public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
     /** Store used to map tokens to principals. */
-    private StorageService<String, TokenEntry> tokenStore;
+    private StorageService<String, IdEntry> idStore;
+
+    /** Storage parition in which IDs are stored. */
+    private String partition;
 
     /** Generater of randome, hex-encdoded, tokens. */
-    private IdentifierGenerator tokenGenerator;
+    private IdentifierGenerator idGenerator;
 
     /** Size, in bytes, of the token. */
-    private int tokenSize;
+    private int idSize;
 
     /** Length, in milliseconds, tokens are valid. */
-    private long tokenLifetime;
+    private long idLifetime;
 
     /**
      * Constructor.
@@ -57,24 +58,12 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
      * @throws NoSuchAlgorithmException thrown if the SHA1PRNG, used as the default random number generation algo, is
      *             not supported
      */
-    public RandomTokenAttributeDefinition(StorageService<String, TokenEntry> store) throws NoSuchAlgorithmException {
-        tokenGenerator = new SecureRandomIdentifierGenerator();
-        tokenStore = store;
-        tokenSize = 16;
-        tokenLifetime = 1000 * 60 * 60 * 4;
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param generator generator used to create tokens
-     * @param store store used to map tokens to principals
-     */
-    public RandomTokenAttributeDefinition(IdentifierGenerator generator, StorageService<String, TokenEntry> store) {
-        tokenGenerator = generator;
-        tokenStore = store;
-        tokenSize = 16;
-        tokenLifetime = 1000 * 60 * 60 * 4;
+    public TransientIdAttributeDefinition(StorageService<String, IdEntry> store) throws NoSuchAlgorithmException {
+        idGenerator = new SecureRandomIdentifierGenerator();
+        idStore = store;
+        partition = "transientId";
+        idSize = 16;
+        idLifetime = 1000 * 60 * 60 * 4;
     }
 
     /** {@inheritDoc} */
@@ -82,11 +71,11 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
             throws AttributeResolutionException {
 
         SAMLProfileRequestContext requestContext = resolutionContext.getAttributeRequestContext();
-        String token = tokenGenerator.generateIdentifier(tokenSize);
+        String token = idGenerator.generateIdentifier(idSize);
 
-        TokenEntry tokenEntry = new TokenEntry(tokenLifetime, requestContext.getInboundMessageIssuer(), requestContext
+        IdEntry tokenEntry = new IdEntry(idLifetime, requestContext.getInboundMessageIssuer(), requestContext
                 .getPrincipalName(), token);
-        tokenStore.put(token, tokenEntry);
+        idStore.put(partition, token, tokenEntry);
 
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getId());
@@ -96,39 +85,39 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
-     * Gets the size, in bytes, of the token.
+     * Gets the size, in bytes, of the id.
      * 
-     * @return size, in bytes, of the token
+     * @return size, in bytes, of the id
      */
-    public int getTokenSize() {
-        return tokenSize;
+    public int getIdSize() {
+        return idSize;
     }
 
     /**
-     * Sets the size, in bytes, of the token.
+     * Sets the size, in bytes, of the id.
      * 
-     * @param size size, in bytes, of the token
+     * @param size size, in bytes, of the id
      */
-    public void setTokenSize(int size) {
-        tokenSize = size;
+    public void setIdSize(int size) {
+        idSize = size;
     }
 
     /**
-     * Gets the time, in milliseconds, tokens are valid.
+     * Gets the time, in milliseconds, ids are valid.
      * 
-     * @return time, in milliseconds, tokens are valid
+     * @return time, in milliseconds, ids are valid
      */
-    public long getTokenLifetime() {
-        return tokenLifetime;
+    public long getIdLifetime() {
+        return idLifetime;
     }
 
     /**
-     * Sets the time, in milliseconds, tokens are valid.
+     * Sets the time, in milliseconds, ids are valid.
      * 
-     * @param lifetime time, in milliseconds, tokens are valid
+     * @param lifetime time, in milliseconds, ids are valid
      */
     public void setTokenLiftetime(long lifetime) {
-        tokenLifetime = lifetime;
+        idLifetime = lifetime;
     }
 
     /** {@inheritDoc} */
@@ -137,12 +126,9 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
-     * Storage service entry used to store information associated with a token.
+     * Storage service entry used to store information associated with a id.
      */
-    public class TokenEntry implements ExpiringObject, Serializable {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = 4267659016907251921L;
+    public class IdEntry implements ExpiringObject {
 
         /** Time this entry expires. */
         private DateTime expirationTime;
@@ -154,7 +140,7 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
         private String principalName;
 
         /** Random token. */
-        private String token;
+        private String id;
 
         /**
          * Constructor.
@@ -162,13 +148,13 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
          * @param lifetime lifetime of the token in milliseconds
          * @param relyingParty relying party the token was issued to
          * @param principal principal the token was issued for
-         * @param randomToken the token
+         * @param randomId the random ID token
          */
-        public TokenEntry(long lifetime, String relyingParty, String principal, String randomToken) {
+        public IdEntry(long lifetime, String relyingParty, String principal, String randomId) {
             expirationTime = new DateTime().plus(lifetime);
             relyingPartyId = relyingParty;
             principalName = principal;
-            token = randomToken;
+            id = randomId;
         }
 
         /**
@@ -190,12 +176,12 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
         }
 
         /**
-         * Gets the random token.
+         * Gets the ID.
          * 
-         * @return random token
+         * @return ID
          */
-        public String getToken() {
-            return token;
+        public String getId() {
+            return id;
         }
 
         /** {@inheritDoc} */
@@ -206,6 +192,11 @@ public class RandomTokenAttributeDefinition extends BaseAttributeDefinition {
         /** {@inheritDoc} */
         public boolean isExpired() {
             return expirationTime.isBeforeNow();
+        }
+
+        /** {@inheritDoc} */
+        public void onExpire() {
+
         }
     }
 }
