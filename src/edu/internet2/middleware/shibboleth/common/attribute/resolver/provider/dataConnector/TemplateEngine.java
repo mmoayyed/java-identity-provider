@@ -17,8 +17,9 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
@@ -77,7 +78,7 @@ public class TemplateEngine {
      *             the given data connectors or attribute definitions error out during resolution
      */
     public String createStatement(String templateName, ShibbolethResolutionContext resolutionContext,
-            Set<String> dependencies) throws AttributeResolutionException {
+            List<String> dependencies) throws AttributeResolutionException {
         VelocityContext vContext = createVelocityContext(resolutionContext, dependencies);
 
         try {
@@ -105,13 +106,14 @@ public class TemplateEngine {
      * 
      * @throws AttributeResolutionException thrown if a resolution plugin errors out while resolving its attributes
      */
+    @SuppressWarnings("unchecked")
     protected VelocityContext createVelocityContext(ShibbolethResolutionContext resolutionContext,
-            Set<String> dependencies) throws AttributeResolutionException {
+            List<String> dependencies) throws AttributeResolutionException {
         if (log.isDebugEnabled()) {
             log.debug("Populating velocity context");
         }
         VelocityContext vCtx = new VelocityContext();
-        vCtx.put("principal", resolutionContext.getAttributeRequestContext().getPrincipalName());
+        vCtx.put("requestContext", resolutionContext.getAttributeRequestContext());
 
         ResolutionPlugIn plugin;
         Map<String, BaseAttribute> attributes;
@@ -124,16 +126,24 @@ public class TemplateEngine {
                     log.debug("Resolving attributes from data connector " + dependencyId);
                 }
                 attributes = ((DataConnector) plugin).resolve(resolutionContext);
+
                 for (String attributeId : attributes.keySet()) {
-                    vCtx.put(attributeId, attributes.get(attributeId));
+                    if (!vCtx.containsKey(attributeId)) {
+                        vCtx.put(attributeId, new ArrayList<String>());
+                    }
+                    ((List<String>)vCtx.get(attributeId)).addAll(attributes.get(attributeId).getValues());
                 }
             } else if (plugin instanceof AttributeDefinition) {
                 if (log.isDebugEnabled()) {
                     log.debug("Resolving attributes from attribute definition " + dependencyId);
                 }
                 attribute = ((AttributeDefinition) plugin).resolve(resolutionContext);
-                vCtx.put(attribute.getId(), attribute.getValues());
-
+                if (!vCtx.containsKey(attribute.getId())) {
+                    vCtx.put(attribute.getId(), new ArrayList<String>());
+                }
+                ((List<String>)vCtx.get(attribute.getId())).addAll(attribute.getValues());
+            } else {
+                log.debug("Unable to locate resolution plugin " + dependencyId);
             }
         }
 
