@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
-import java.util.Set;
+import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 
@@ -39,7 +39,7 @@ public interface ResolutionPlugIn<ResolvedType> {
      * 
      * @return IDs of the data connectors this plugin is dependent on
      */
-    public Set<String> getDependencyIds();
+    public List<String> getDependencyIds();
 
     /**
      * Performs the attribute resolution for this plugin.

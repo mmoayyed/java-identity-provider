@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector;
 
+import java.util.List;
 import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -43,7 +44,7 @@ public class ContextualPrincipalConnector implements PrincipalConnector {
     }
 
     /** {@inheritDoc} */
-    public Set<String> getDependencyIds() {
+    public List<String> getDependencyIds() {
         return connector.getDependencyIds();
     }
 

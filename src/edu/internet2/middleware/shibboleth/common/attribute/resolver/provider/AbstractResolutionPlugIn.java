@@ -16,7 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
@@ -34,15 +36,15 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
     private String id;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
-    private Set<String> dependencyIds;
+    private List<String> dependencyIds;
 
     /** Constructor. */
     public AbstractResolutionPlugIn() {
-        dependencyIds = new HashSet<String>();
+        dependencyIds = new ArrayList<String>();
     }
 
     /** {@inheritDoc} */
-    public Set<String> getDependencyIds() {
+    public List<String> getDependencyIds() {
         return dependencyIds;
     }
 
