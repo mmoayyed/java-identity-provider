@@ -4,6 +4,20 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
     default-autowire="byType">
 
+    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+            <props>
+                <prop key="resource.loader">classpath, string</prop>
+                <prop key="classpath.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                </prop>
+                <prop key="string.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                </prop>
+            </props>
+        </property>
+    </bean>
+
     <bean id="staticConfig" class="org.opensaml.util.resource.ClasspathResource">
         <constructor-arg
             value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver.xml" />
@@ -35,6 +49,21 @@
         <constructor-arg>
             <list>
                 <ref bean="mappedConfig" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="templateConfig" class="org.opensaml.util.resource.ClasspathResource">
+        <constructor-arg
+            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-template.xml" />
+    </bean>
+
+    <bean id="resolver-template"
+        class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
+        init-method="initialize">
+        <constructor-arg>
+            <list>
+                <ref bean="templateConfig" />
             </list>
         </constructor-arg>
     </bean>

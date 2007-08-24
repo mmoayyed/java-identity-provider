@@ -18,10 +18,8 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
@@ -48,7 +46,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     /** Human intelligible attribute name. */
     private String displayName;
 
-    /** Human readbale description of attribute. */
+    /** Human readable description of attribute. */
     private String displayDescription;
 
     /**
@@ -122,7 +120,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      */
     protected Collection<Object> getValuesFromAllDependencies(ShibbolethResolutionContext context,
             String sourceAttribute) {
-        Set<Object> values = new HashSet<Object>();
+        List<Object> values = new ArrayList<Object>();
 
         for (String id : getDependencyIds()) {
             if (context.getResolvedAttributeDefinitions().containsKey(id)) {
@@ -144,7 +142,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      * @return collection of values
      */
     protected Collection<Object> getValuesFromAttributeDependency(ShibbolethResolutionContext context, String id) {
-        Set<Object> values = new HashSet<Object>();
+        List<Object> values = new ArrayList<Object>();
 
         AttributeDefinition definition = context.getResolvedAttributeDefinitions().get(id);
         if (definition != null) {
@@ -172,7 +170,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      */
     protected Collection<Object> getValuesFromConnectorDependency(ShibbolethResolutionContext context, String id,
             String sourceAttribute) {
-        Set<Object> values = new HashSet<Object>();
+        List<Object> values = new ArrayList<Object>();
 
         DataConnector connector = context.getResolvedDataConnectors().get(id);
         if (connector != null) {
@@ -217,9 +215,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     }
 
     /**
-     * Gets the human readbale description of attribute.
+     * Gets the human readable description of attribute.
      * 
-     * @return human readbale description of attribute
+     * @return human readable description of attribute
      */
     public String getDisplayDescription() {
         return displayDescription;
@@ -235,9 +233,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     }
 
     /**
-     * Sets the human readbale description of attribute.
+     * Sets the human readable description of attribute.
      * 
-     * @param description human readbale description of attribute
+     * @param description human readable description of attribute
      */
     public void setDisplayDescription(String description) {
         displayDescription = description;

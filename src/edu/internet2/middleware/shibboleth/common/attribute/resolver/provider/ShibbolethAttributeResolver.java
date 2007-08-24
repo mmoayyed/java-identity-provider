@@ -429,6 +429,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         BaseAttribute<?> resolvedAttribute;
         Set<Object> values;
         while (attributeItr.hasNext()) {
+            // remove value-less attributes
             resolvedAttribute = attributeItr.next().getValue();
             if (resolvedAttribute.getValues().size() == 0) {
                 if (log.isDebugEnabled()) {
@@ -441,6 +442,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                 continue;
             }
 
+            // remove dependency-only attributes
             attributeDefinition = getAttributeDefinitions().get(resolvedAttribute.getId());
             if (attributeDefinition.isDependencyOnly()) {
                 if (log.isDebugEnabled()) {
@@ -450,9 +452,11 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                             + ".  It is a dependency-only attribute.");
                 }
                 attributeItr.remove();
+                continue;
             }
 
-            Iterator valueItr = resolvedAttribute.getValues().iterator();
+            // remove duplicate attribute values
+            Iterator<?> valueItr = resolvedAttribute.getValues().iterator();
             values = new HashSet<Object>();
             while (valueItr.hasNext()) {
                 Object value = valueItr.next();
@@ -477,7 +481,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
      */
     protected void addVertex(DirectedGraph<ResolutionPlugIn, DefaultEdge> graph, ResolutionPlugIn<?> plugin) {
         graph.addVertex(plugin);
-        ResolutionPlugIn dependency = null;
+        ResolutionPlugIn<?> dependency = null;
 
         // add edges for dependencies
         for (String id : plugin.getDependencyIds()) {

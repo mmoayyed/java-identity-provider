@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+    xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
+    xsi:schemaLocation="
+        urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
+        urn:mace:shibboleth:2.0:resolver:dc classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd
+        urn:mace:shibboleth:2.0:resolver:ad classpath:/schema/shibboleth-2.0-attribute-resolver-ad.xsd">
+
+    <resolver:AttributeDefinition xsi:type="ad:PrincipalName" id="principalName" />
+
+    <resolver:AttributeDefinition xsi:type="ad:Template" id="courseEnrollment"
+        xmlns="urn:mace:shibboleth:2.0:resolver:ad">
+        <resolver:Dependency ref="static" />
+
+        <Template>
+            <![CDATA[
+                urn:mace:example.edu:enrollment:$academic_term:$course_id:$course_section
+            ]]>
+        </Template>
+        <SourceAttribute>academic_term</SourceAttribute>
+        <SourceAttribute>course_id</SourceAttribute>
+        <SourceAttribute>course_section</SourceAttribute>
+    </resolver:AttributeDefinition>
+
+    <resolver:DataConnector xsi:type="dc:Static" id="static" xmlns="urn:mace:shibboleth:2.0:resolver:dc">
+        <Attribute id="academic_term">
+            <Value>20073</Value>
+            <Value>20073</Value>
+        </Attribute>
+        <Attribute id="course_id">
+            <Value>eng101</Value>
+            <Value>math203</Value>
+        </Attribute>
+        <Attribute id="course_section">
+            <Value>a3</Value>
+            <Value>2</Value>
+        </Attribute>
+    </resolver:DataConnector>
+
+</AttributeResolver>
