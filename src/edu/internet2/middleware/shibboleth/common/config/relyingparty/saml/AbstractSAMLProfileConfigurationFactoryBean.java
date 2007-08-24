@@ -35,7 +35,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     private long assertionLifetime;
 
     /** Default artifact type for the relying party. */
-    private int defaultArtifactType;
+    private int outboundArtifactType;
 
     /** Whether assertions should be signed. */
     private boolean signAssertions;
@@ -91,8 +91,8 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @return default artifact type for the relying party
      */
-    public int getDefaultArtifactType() {
-        return defaultArtifactType;
+    public int getOutboundArtifactType() {
+        return outboundArtifactType;
     }
 
     /**
@@ -100,8 +100,8 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @param type default artifact type for the relying party
      */
-    public void setDefaultArtifactType(int type) {
-        defaultArtifactType = type;
+    public void setOutboundArtifactType(int type) {
+        outboundArtifactType = type;
     }
 
     /**
@@ -184,7 +184,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     protected void populateBean(AbstractSAMLProfileConfiguration configuration) {
         configuration.setAssertionAudiences(getAudiences());
         configuration.setAssertionLifetime(getAssertionLifetime());
-        configuration.setDefaultArtifactType(getDefaultArtifactType());
+        configuration.setOutboundArtifactType(getOutboundArtifactType());
         configuration.setSignRequests(getSignRequests());
         configuration.setSignResponses(getSignResposnes());
         configuration.setSignAssertions(getSignAssertions());

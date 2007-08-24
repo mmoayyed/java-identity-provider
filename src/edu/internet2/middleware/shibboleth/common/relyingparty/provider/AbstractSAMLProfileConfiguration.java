@@ -36,7 +36,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     private long assertionLifetime;
 
     /** Default artifact type. */
-    private int defaultArtifactType;
+    private int outboundArtifactType;
 
     /** Security policy for this profile. */
     private SecurityPolicy profileSecurityPolicy;
@@ -83,8 +83,8 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @return default artifact type
      */
-    public int getDefaultArtifactType() {
-        return defaultArtifactType;
+    public int getOutboundArtifactType() {
+        return outboundArtifactType;
     }
 
     /** {@inheritDoc} */
@@ -151,8 +151,8 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @param type default artifact type
      */
-    public void setDefaultArtifactType(int type) {
-        defaultArtifactType = type;
+    public void setOutboundArtifactType(int type) {
+        outboundArtifactType = type;
     }
 
     /**

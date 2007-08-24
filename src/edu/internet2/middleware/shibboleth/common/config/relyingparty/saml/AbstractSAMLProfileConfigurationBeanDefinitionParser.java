@@ -57,8 +57,8 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
         builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "assertionLifetime"))));
 
-        builder.addPropertyValue("defaultArtifactType", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
-                .getAttributeNS(null, "defaultArtifactType"))));
+        builder.addPropertyValue("outboundArtifactType", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
+                .getAttributeNS(null, "outboundArtifactType"))));
 
         builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
                 "signRequests")));

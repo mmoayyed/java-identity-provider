@@ -197,9 +197,9 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="defaultArtifactType" type="integer" default="4">
+                <attribute name="outboundArtifactType" type="integer">
                     <annotation>
-                        <documentation>The default artifact type to use.</documentation>
+                        <documentation>The artifact type to use when sending an outbound, artifact encoded, message.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="signingCredentialRef" type="string">
