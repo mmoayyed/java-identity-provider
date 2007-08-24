@@ -35,8 +35,8 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     /** Life of the assertion in milliseconds. */
     private long assertionLifetime;
 
-    /** Default artifact type. */
-    private int outboundArtifactType;
+    /** 2-byte artifact type used on outbound messages */
+    private byte[] outboundArtifactType;
 
     /** Security policy for this profile. */
     private SecurityPolicy profileSecurityPolicy;
@@ -79,11 +79,11 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     }
 
     /**
-     * Gets the default artifact type.
+     * Gets the 2-byte artifact type used on outbound messages.
      * 
-     * @return default artifact type
+     * @return 2-byte artifact type used on outbound messages
      */
-    public int getOutboundArtifactType() {
+    public byte[] getOutboundArtifactType() {
         return outboundArtifactType;
     }
 
@@ -147,11 +147,11 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     }
 
     /**
-     * Sets the default artifact type.
+     * Sets the 2-byte artifact type used on outbound messages.
      * 
-     * @param type default artifact type
+     * @param type 2-byte artifact type used on outbound messages.
      */
-    public void setOutboundArtifactType(int type) {
+    public void setOutboundArtifactType(byte[] type) {
         outboundArtifactType = type;
     }
 

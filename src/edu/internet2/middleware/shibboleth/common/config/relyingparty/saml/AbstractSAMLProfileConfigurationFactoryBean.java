@@ -34,8 +34,8 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     /** Amount of time before an issued assertion expires. */
     private long assertionLifetime;
 
-    /** Default artifact type for the relying party. */
-    private int outboundArtifactType;
+    /** 2-byte artifact type used for outbound messages. */
+    private byte[] outboundArtifactType;
 
     /** Whether assertions should be signed. */
     private boolean signAssertions;
@@ -87,20 +87,20 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     }
 
     /**
-     * Gets the default artifact type for the relying party.
+     * Gets the 2-byte artifact type used for outbound messages.
      * 
-     * @return default artifact type for the relying party
+     * @return 2-byte artifact type used for outbound messages
      */
-    public int getOutboundArtifactType() {
+    public  byte[] getOutboundArtifactType() {
         return outboundArtifactType;
     }
 
     /**
-     * Sets the default artifact type for the relying party.
+     * Sets the 2-byte artifact type used for outbound messages.
      * 
-     * @param type default artifact type for the relying party
+     * @param type 2-byte artifact type used for outbound messages
      */
-    public void setOutboundArtifactType(int type) {
+    public void setOutboundArtifactType(byte[] type) {
         outboundArtifactType = type;
     }
 
