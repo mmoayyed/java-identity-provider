@@ -57,13 +57,12 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
         builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "assertionLifetime"))));
 
-        int artifactType = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
-                .getAttributeNS(null, "outboundArtifactType")));
-        byte[] artifactTypeBytes = DatatypeHelper.intToByteArray(artifactType);
-        byte[] trimmedArtifactTypeBytes = new byte[2];
-        trimmedArtifactTypeBytes[0] = artifactTypeBytes[2];
-        trimmedArtifactTypeBytes[1] = artifactTypeBytes[3];
-        builder.addPropertyValue("outboundArtifactType", trimmedArtifactTypeBytes);
+        String artifactType = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "outboundArtifactType"));
+        if (artifactType != null) {
+            byte[] artifactTypeBytes = DatatypeHelper.intToByteArray(Integer.parseInt(artifactType));
+            byte[] trimmedArtifactTypeBytes = { artifactTypeBytes[2], artifactTypeBytes[3] };
+            builder.addPropertyValue("outboundArtifactType", trimmedArtifactTypeBytes);
+        }
 
         builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
                 "signRequests")));
