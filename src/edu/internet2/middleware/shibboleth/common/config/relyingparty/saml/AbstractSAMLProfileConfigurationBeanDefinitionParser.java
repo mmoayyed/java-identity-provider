@@ -36,8 +36,6 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
-
         Map<QName, List<Element>> children = XMLHelper.getChildElements(element);
 
         List<Element> audienceElems = children.get(new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE, "Audience"));
