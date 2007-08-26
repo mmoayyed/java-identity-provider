@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 import javax.xml.namespace.QName;
 
+import org.apache.log4j.Logger;
 import org.opensaml.xml.security.SecurityHelper;
 import org.opensaml.xml.security.x509.X509Util;
 import org.opensaml.xml.util.DatatypeHelper;
@@ -47,6 +48,9 @@ import org.w3c.dom.Element;
  * Base class for X509 credential beans.
  */
 public abstract class AbstractX509CredentialBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+    
+    /** Class logger. */
+    private final Logger log = Logger.getLogger(FilesystemX509CredentialBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -60,6 +64,10 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        if(log.isDebugEnabled()){
+            log.debug("Parsing x509 credential: " + element.getAttributeNS(null, "id"));
+        }
+        
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(element);
 
         parseKeyNames(configChildren, builder);
@@ -76,6 +84,9 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
      * @param builder credential build
      */
     protected void parseKeyNames(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
+        if(log.isDebugEnabled()){
+            log.debug("Parsing x509 credential key names");
+        }
         List<Element> keyNameElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "KeyName"));
         if (keyNameElems == null || keyNameElems.isEmpty()) {
             return;
@@ -105,6 +116,9 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
             return;
         }
 
+        if(log.isDebugEnabled()){
+            log.debug("Parsing x509 credential secret key");
+        }
         Element secretKeyElem = keyElems.get(0);
         byte[] encodedKey = getEncodedSecretKey(DatatypeHelper.safeTrimOrNullString(secretKeyElem.getTextContent()));
         String keyPassword = DatatypeHelper.safeTrimOrNullString(secretKeyElem.getAttributeNS(null, "password"));
@@ -131,12 +145,15 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
      * @param configChildren children of the credential element
      * @param builder credential build
      */
-    protected void parsePrivateKey(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
+    protected void parsePrivateKey(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {        
         List<Element> keyElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "PrivateKey"));
         if (keyElems == null || keyElems.isEmpty()) {
             return;
         }
-
+        
+        if(log.isDebugEnabled()){
+            log.debug("Parsing x509 credential private key");
+        }
         Element privKeyElem = keyElems.get(0);
         byte[] encodedKey = getEncodedPrivateKey(DatatypeHelper.safeTrimOrNullString(privKeyElem.getTextContent()));
         String keyPassword = DatatypeHelper.safeTrimOrNullString(privKeyElem.getAttributeNS(null, "password"));
@@ -171,6 +188,9 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
             return;
         }
 
+        if(log.isDebugEnabled()){
+            log.debug("Parsing x509 credential certificates");
+        }
         ArrayList<X509Certificate> certs = new ArrayList<X509Certificate>();
         byte[] encodedCert;
         Collection<X509Certificate> decodedCerts;
@@ -212,6 +232,9 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
             return;
         }
 
+        if(log.isDebugEnabled()){
+            log.debug("Parsing x509 credential CRLs");
+        }
         ArrayList<X509CRL> crls = new ArrayList<X509CRL>();
         byte[] encodedCRL;
         Collection<X509CRL> decodedCRLs;
