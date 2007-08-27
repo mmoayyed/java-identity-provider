@@ -20,7 +20,10 @@ import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.opensaml.xml.schema.XSString;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.w3c.dom.Attr;
+
+import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
 
 /**
  * Thread-safe unmarshaller for {@link org.opensaml.xml.schema.XSString} objects.
@@ -35,7 +38,13 @@ public class ShibbolethScopedValueUnmarshaller extends AbstractXMLObjectUnmarsha
 
     /** {@inheritDoc} */
     protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
-        // no attributes
+        ShibbolethScopedValue sv = (ShibbolethScopedValue) xmlObject;
+
+        if (DatatypeHelper.isEmpty(sv.getScopeAttributeName())) {
+            sv.setScopeAttributeName(attribute.getName());
+            sv.setScope(attribute.getValue());
+        }
+
     }
 
     /** {@inheritDoc} */

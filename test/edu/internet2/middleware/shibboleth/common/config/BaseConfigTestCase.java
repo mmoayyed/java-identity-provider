@@ -38,7 +38,6 @@ public class BaseConfigTestCase extends BaseTestCase {
     /** {@inheritDoc} */
     protected void setUp() throws Exception {
         configResources = new ArrayList<Resource>();
-        configResources.add(new ClasspathResource("/data/conf/shibboleth-2.0-config-opensaml.xml"));
     }
 
     /**
