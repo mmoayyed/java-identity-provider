@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 import jargs.gnu.CmdLineParser;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -149,18 +150,23 @@ public class AttributeAuthorityCLI {
                     + " does not exist, is not a directory, or is not readable", null);
         }
 
-        File[] configs = configDirectory.listFiles();
+        FilenameFilter filter = new FilenameFilter() {
+            public boolean accept(File directory, String filename) {
+                return filename.endsWith(".xml");
+            }
+        };
+
+        File[] configs = configDirectory.listFiles(filter);
 
         GenericApplicationContext gContext = new GenericApplicationContext();
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(gContext);
         configReader.setDocumentLoader(new SpringDocumentLoader());
 
-        int numOfConfigs = configs.length + 1;
+        int numOfConfigs = configs.length;
         File config;
         Resource[] configSources = new Resource[numOfConfigs];
-        configSources[0] = new ClassPathResource("/shibboleth-2.0-config-internal.xml");
-        for (int i = 1; i <= configs.length; i++) {
-            config = configs[i - 1];
+        for (int i = 0; i < configs.length; i++) {
+            config = configs[i];
             if (config.isDirectory() || !config.canRead()) {
                 errorAndExit("Configuration file " + config.getAbsolutePath() + " is a directory or is not readable",
                         null);
@@ -309,9 +315,10 @@ public class AttributeAuthorityCLI {
                 "SAML entity ID of the attribute issuer. For example, the IdPs entity ID"));
         out.println(String
                 .format("  --%-16s %s", CLIParserBuilder.AUTHN_METHOD, "Method used to authenticate the user"));
-        out.println(String
-                .format("  --%-16s %s", CLIParserBuilder.SAML1,
-                    "No-value parameter indicating the attribute authority should answer as if it received a SAML 1 request"));
+        out
+                .println(String
+                        .format("  --%-16s %s", CLIParserBuilder.SAML1,
+                                "No-value parameter indicating the attribute authority should answer as if it received a SAML 1 request"));
 
         out.println();
     }
