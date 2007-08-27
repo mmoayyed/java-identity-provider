@@ -21,7 +21,7 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="SAML1Base64">
         <annotation>
             <documentation>Defines a SAML 1 Base64 encoder for an attribute.</documentation>
@@ -36,14 +36,15 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="SAML1StringNameIdentifier">
         <annotation>
             <documentation>Defines a SAML 1 string encoder for a NameIdentifier.</documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:1.0:nameidformat:unspecified">
+                <attribute name="nameFormat" type="string"
+                    default="urn:oasis:names:tc:SAML:1.0:nameidformat:unspecified">
                     <annotation>
                         <documentation>The SAML 1 NameFormat of the NameIdentifier.</documentation>
                     </annotation>
@@ -76,7 +77,7 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="SAML2Base64">
         <annotation>
             <documentation>Defines a SAML 2 Base64 encoder for an attribute.</documentation>
@@ -96,14 +97,15 @@
             </extension>
         </complexContent>
     </complexType>
-    
+
     <complexType name="SAML2StringNameID">
         <annotation>
             <documentation>Defines a SAML 2 string encoder for a NameID.</documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified">
+                <attribute name="nameFormat" type="string"
+                    default="urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
                     </annotation>
@@ -123,14 +125,6 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="scopeType" type="encoder:ScopeType" use="optional">
-                    <annotation>
-                        <documentation>
-                            The type of scoping to use for the encoded attribute. Valid values are "inline" or
-                            "attribute".
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="scopeDelimiter" type="string" use="optional" default="@">
                     <annotation>
                         <documentation>
@@ -139,7 +133,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeAttribute" type="string" use="optional" default="scope">
+                <attribute name="scopeAttribute" type="string" use="optional" default="Scope">
                     <annotation>
                         <documentation>
                             If scopeType is "attribute", this is the name of the name of the attribute used to carry the
@@ -157,6 +151,14 @@
         </annotation>
         <complexContent>
             <extension base="encoder:BaseScopedAttributeEncoderType">
+                <attribute name="scopeType" type="encoder:ScopeType" use="optional" default="attribute">
+                    <annotation>
+                        <documentation>
+                            The type of scoping to use for the encoded attribute. Valid values are "inline" or
+                            "attribute".
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
@@ -172,6 +174,14 @@
         </annotation>
         <complexContent>
             <extension base="encoder:BaseScopedAttributeEncoderType">
+                <attribute name="scopeType" type="encoder:ScopeType" use="optional" default="inline">
+                    <annotation>
+                        <documentation>
+                            The type of scoping to use for the encoded attribute. Valid values are "inline" or
+                            "attribute".
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
