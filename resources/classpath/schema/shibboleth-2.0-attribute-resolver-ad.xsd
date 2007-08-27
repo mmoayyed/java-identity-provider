@@ -185,7 +185,12 @@
 
     <complexType name="Template">
         <annotation>
-            <documentation></documentation>
+            <documentation>
+                An Attribute Definition that constructs its values based on the values of its dependencies using the
+                Velocity Template Language. Dependencies may have multiple values, however multiples dependencies must
+                have the same number of values. In the case of multi-valued dependencies, the template will be evaluated
+                multiples times, iterating over each dependency.
+            </documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
@@ -202,7 +207,9 @@
                             <documentation>
                                 Attribute IDs which should be used in this definition, rather than the sourceAttributeID
                                 attribute. Each source attribute is available to be used in the Template as
-                                ${attribute_name}.
+                                ${attribute_name}. If the source attribute has multiple values, only one value is
+                                available to the template at a time, but the template will be evaluated once for each
+                                value.
                             </documentation>
                         </annotation>
                     </element>

@@ -38,7 +38,10 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeRe
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
 /**
- * Simple attribute definition.
+ * An {@link AttributeDefinition} that constructs its values based on the values of its dependencies using the Velocity
+ * Template Language. Dependencies may have multiple values, however multiples dependencies must have the same number of
+ * values. In the case of multi-valued dependencies, the template will be evaluated multiples times, iterating over each
+ * dependency.
  */
 public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
@@ -61,7 +64,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /**
      * Constructor.
-     *
+     * 
      * @param newVelocityEngine velocity engine used to parse template.
      */
     public TemplateAttributeDefinition(VelocityEngine newVelocityEngine) {
