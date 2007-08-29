@@ -183,7 +183,8 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
         try {
             SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
-
+            newServiceContext.refresh();
+            
             Lock writeLock = getReadWriteLock().writeLock();
             writeLock.lock();
             newContextCreated(newServiceContext);
@@ -198,6 +199,12 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
             log.error("Configuration was not loaded for " + getId() + " service, unable to load resource", e);
             throw new ServiceException("Configuration was not loaded for " + getId()
                     + " service, unable to load resource", e);
+        } catch(Exception e){
+            // Here we catch all the other exceptions thrown by Spring when it starts up the context
+            setInitialized(false);
+            log.error("Configuration was not loaded for " + getId() + " service, error creating components", e);
+            throw new ServiceException("Configuration was not loaded for " + getId()
+                    + " service, error creating components", e);
         }
     }
 
