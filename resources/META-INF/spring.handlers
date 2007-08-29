@@ -11,4 +11,5 @@ urn\:mace\:shibboleth\:2.0\:resolver\:dc = edu.internet2.middleware.shibboleth.c
 urn\:mace\:shibboleth\:2.0\:resolver\:pc = edu.internet2.middleware.shibboleth.common.config.attribute.resolver.principalConnector.PrincipalConnectorNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:resource =  edu.internet2.middleware.shibboleth.common.config.resource.ResourceNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:security = edu.internet2.middleware.shibboleth.common.config.security.SecurityNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:security\:saml = edu.internet2.middleware.shibboleth.common.config.security.saml.SAMLSecurityNamespaceHandler
 urn\:mace\:shibboleth\:2.0\:services = edu.internet2.middleware.shibboleth.common.config.service.ServiceNamespaceHandler

@@ -2,66 +2,49 @@
 <schema targetNamespace="urn:mace:shibboleth:2.0:security:saml" xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:samlsec="urn:mace:shibboleth:2.0:security:saml" xmlns:sec="urn:mace:shibboleth:2.0:security"
     elementFormDefault="qualified">
-    
+
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="classpath:/schema/shibboleth-2.0-security.xsd" />
 
     <complexType name="SAML1Protocol">
+        <annotation>
+            <documentation>
+                Message rule that extract information such as issuer and issue instant from the incoming SAML 1
+                messages.
+            </documentation>
+        </annotation>
         <complexContent>
-            <extension base="sec:SecurityPolicyRuleType">
-                <attribute name="schemaValidate" type="boolean" default="false">
-                    <annotation>
-                        <documentation>
-                            Whether the SAML message should be schema validated.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="sec:SecurityPolicyRuleType" />
         </complexContent>
     </complexType>
-    
+
     <complexType name="SAML2Protocol">
+        <annotation>
+            <documentation>
+                Message rule that extract information such as issuer and issue instant from the incoming SAML 2
+                messages.
+            </documentation>
+        </annotation>
         <complexContent>
-            <extension base="sec:SecurityPolicyRuleType">
-                <attribute name="schemaValidate" type="boolean" default="false">
-                    <annotation>
-                        <documentation>
-                            Whether the SAML message should be schema validated.
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
+            <extension base="sec:SecurityPolicyRuleType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="MandatoryIssuer">
+        <annotation>
+            <documentation>
+                A rule that requires that the issuer of the inbound SAML message, within the message context, be
+                populated.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType" />
         </complexContent>
     </complexType>
 
     <complexType name="IssueInstant">
-        <complexContent>
-            <extension base="sec:SecurityPolicyRuleType">
-                <attribute name="expirationThreshold" type="positiveInteger" default="300">
-                    <annotation>
-                        <documentation>
-                            Time, in seconds, after a message is issued before it is considered expired.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="clockSkew" type="positiveInteger" default="10">
-                    <annotation>
-                        <documentation>
-                            Clock skew time in seconds.
-                            
-                            Defines the valid life time of a message issue instant as:
-                            (instant - skew) &lt; now &gt; (instant + expirationThreshold + skew)
-                        </documentation>
-                    </annotation>
-                </attribute>
-            </extension>
-        </complexContent>
-    </complexType>
-
-    <complexType name="Replay">
         <annotation>
             <documentation>
-                A security policy rule that ensure the a recieved SAML message's issue instant is not before 
-                the current time (as defined by the system) or older than a given expiration threshold.
+                A rule that inspects the message issue instant and ensures that it within a certain timeframe.
             </documentation>
         </annotation>
         <complexContent>
@@ -77,16 +60,46 @@
                     <annotation>
                         <documentation>
                             Clock skew time in seconds.
-                            
-                            Defines the valid life time of a message issue instant as:
-                            (instant - skew) &lt; now &gt; (instant + expirationThreshold + skew)
+
+                            Defines the valid life time of a message issue instant as: (instant - skew) &lt; now &gt;
+                            (instant + expirationThreshold + skew)
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="storageRef" type="string" default="shibboleth.Storage" >
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Replay">
+        <annotation>
+            <documentation>
+                A security policy rule that ensure the a recieved SAML message's issue instant is not before the current
+                time (as defined by the system) or older than a given expiration threshold.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType">
+                <attribute name="expirationThreshold" type="positiveInteger" default="300">
                     <annotation>
                         <documentation>
-                            Name of the storage instance used for the replay cache.  This should not be changed.
+                            Time, in seconds, after a message is issued before it is considered expired.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="clockSkew" type="positiveInteger" default="10">
+                    <annotation>
+                        <documentation>
+                            Clock skew time in seconds.
+
+                            Defines the valid life time of a message issue instant as: (instant - skew) &lt; now &gt;
+                            (instant + expirationThreshold + skew)
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="storageRef" type="string" default="shibboleth.Storage">
+                    <annotation>
+                        <documentation>
+                            Name of the storage instance used for the replay cache. This should not be changed.
                         </documentation>
                     </annotation>
                 </attribute>

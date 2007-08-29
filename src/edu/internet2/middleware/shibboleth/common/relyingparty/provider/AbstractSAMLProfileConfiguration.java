@@ -35,7 +35,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     /** Life of the assertion in milliseconds. */
     private long assertionLifetime;
 
-    /** 2-byte artifact type used on outbound messages */
+    /** 2-byte artifact type used on outbound messages. */
     private byte[] outboundArtifactType;
 
     /** Security policy for this profile. */

@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.security;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
 /**
@@ -33,6 +35,10 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(InlineX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
                 new InlineX509CredentialBeanDefinitionParser());
+        
+        BeanDefinitionParser parser = new ShibbolethSecurityPolicyBeanDefinitionParser();
+        registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.SCHEMA_TYPE, parser);
     }
 
 }

@@ -190,8 +190,8 @@
     </complexType>
     
     <!-- SECURITY POLICY RELATED OBJECTS -->
-    <element name="SecurityPolicy" type="sec:SecurityPolicyType" abstract="true" />
-    <complexType name="SecurityPolicyType" abstract="true">
+    <element name="SecurityPolicy" type="sec:SecurityPolicyType" />
+    <complexType name="SecurityPolicyType">
         <annotation>
             <documentation>
                 Security policies define a set of rules that are evaluated against incomming messages to

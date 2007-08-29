@@ -24,43 +24,22 @@
             <documentation>Root of the attribute resolver configuration file.</documentation>
         </annotation>
         <keyref name="AttributeDefinitionAttributeDefinitionDependencyRef"
-            refer="resolver:AttributeDefinitionDependencyKey">
-            <selector xpath="./resolver:AttributeDefinition/resolver:AttributeDefinitionDependency" />
+            refer="resolver:PluginDependencyKey">
+            <selector xpath="./resolver:AttributeDefinition/resolver:Dependency" />
             <field xpath="@ref" />
         </keyref>
         <keyref name="DataConnectorAttributeDefinitionDependencyRef"
-            refer="resolver:AttributeDefinitionDependencyKey">
-            <selector xpath="./resolver:DataConnector/resolver:AttributeDefinitionDependency" />
+            refer="resolver:PluginDependencyKey">
+            <selector xpath="./resolver:DataConnector/resolver:Dependency" />
             <field xpath="@ref" />
         </keyref>
         <keyref name="PrincipalConnectorAttributeDefinitionDependencyRef"
-            refer="resolver:AttributeDefinitionDependencyKey">
-            <selector xpath="./resolver:PrincipalConnector/resolver:AttributeDefinitionDependency" />
+            refer="resolver:PluginDependencyKey">
+            <selector xpath="./resolver:PrincipalConnector/resolver:Dependency" />
             <field xpath="@ref" />
         </keyref>
-        <key name="AttributeDefinitionDependencyKey">
-            <selector xpath="./resolver:AttributeDefinition" />
-            <field xpath="@id" />
-        </key>
-
-        <keyref name="AttributeDefinitionDataConnectorDependencyRef" refer="resolver:DataConnectorDependencyKey">
-            <selector xpath="./resolver:AttributeDefinition/resolver:DataConnectorDependency" />
-            <field xpath="@ref" />
-        </keyref>
-        <keyref name="DataConnectorDataConnectorDependencyRef" refer="resolver:DataConnectorDependencyKey">
-            <selector xpath="./resolver:DataConnector/resolver:DataConnectorDependency" />
-            <field xpath="@ref" />
-        </keyref>
-        <keyref name="FailoverDataConnectorDataConnectorDependencyRef" refer="resolver:DataConnectorDependencyKey">
-            <selector xpath="./resolver:DataConnector/resolver:FailoverDataConnector" />
-            <field xpath="@ref" />
-        </keyref>
-        <keyref name="PrincipalConnectorDataConnectorDependencyRef" refer="resolver:DataConnectorDependencyKey">
-            <selector xpath="./resolver:PrincipalConnector/resolver:DataConnectorDependency" />
-            <field xpath="@ref" />
-        </keyref>
-        <key name="DataConnectorDependencyKey">
-            <selector xpath="./resolver:DataConnector" />
+        <key name="PluginDependencyKey">
+            <selector xpath="./resolver:AttributeDefinition or ./resolver:DataConnector" />
             <field xpath="@id" />
         </key>
     </element>
