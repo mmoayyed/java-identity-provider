@@ -39,7 +39,7 @@
             <field xpath="@ref" />
         </keyref>
         <key name="PluginDependencyKey">
-            <selector xpath="./resolver:AttributeDefinition or ./resolver:DataConnector" />
+            <selector xpath="./resolver:AttributeDefinition|./resolver:DataConnector" />
             <field xpath="@id" />
         </key>
     </element>
