@@ -27,10 +27,10 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for Shibboleth file backed url metadata provider definition. 
  */
-public class URLMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
+public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "URLMetadataProvider");
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "HTTPMetadataProvider");
 
     /** Metadata URL configuration option attribute name. */
     public static final String METADATA_URL_ATTRIBUTE_NAME = "metadataURL";

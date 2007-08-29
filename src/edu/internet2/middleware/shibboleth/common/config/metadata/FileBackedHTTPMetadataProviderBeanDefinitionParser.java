@@ -27,11 +27,11 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition for Shibboleth file backed metadata provider.
  */
-public class FileBackedURLMetadataProviderBeanDefinitionParser extends URLMetadataProviderBeanDefinitionParser {
+public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMetadataProviderBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, 
-            "FileBackedURLMetadataProvider");
+            "FileBackedHTTPMetadataProvider");
 
     /** Backing file attirbute name. */
     public static final String BACKING_FILE_ATTRIBUTE_NAME = "backingFile";

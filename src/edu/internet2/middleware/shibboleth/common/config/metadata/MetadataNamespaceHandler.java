@@ -40,11 +40,11 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(InlineMetadataProviderBeanDefinitionParser.TYPE_NAME,
                 new InlineMetadataProviderBeanDefinitionParser());
         
-        registerBeanDefinitionParser(FileBackedURLMetadataProviderBeanDefinitionParser.TYPE_NAME,
-                new FileBackedURLMetadataProviderBeanDefinitionParser());
+        registerBeanDefinitionParser(FileBackedHTTPMetadataProviderBeanDefinitionParser.TYPE_NAME,
+                new FileBackedHTTPMetadataProviderBeanDefinitionParser());
         
-        registerBeanDefinitionParser(URLMetadataProviderBeanDefinitionParser.TYPE_NAME,
-                new URLMetadataProviderBeanDefinitionParser());
+        registerBeanDefinitionParser(HTTPMetadataProviderBeanDefinitionParser.TYPE_NAME,
+                new HTTPMetadataProviderBeanDefinitionParser());
         
         registerBeanDefinitionParser(FilesystemMetadataProviderBeanDefinitionParser.TYPE_NAME,
                 new FilesystemMetadataProviderBeanDefinitionParser());
