@@ -210,7 +210,7 @@
         </attribute>
     </complexType>
 
-    <element name="Rule" type="sec:SecurityPolicyRuleType" abstract="true" />
+    <element name="Rule" type="sec:SecurityPolicyRuleType" />
     <complexType name="SecurityPolicyRuleType" abstract="true">
         <annotation>
             <documentation>
