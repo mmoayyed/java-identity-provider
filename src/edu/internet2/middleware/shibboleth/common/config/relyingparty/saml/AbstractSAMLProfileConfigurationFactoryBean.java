@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
 import java.util.List;
 
+import org.opensaml.ws.security.SecurityPolicy;
 import org.opensaml.xml.security.credential.Credential;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
@@ -48,7 +49,10 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
 
     /** Credential used to sign assertions. */
     private Credential signingCredential;
-
+    
+    /** Security policy for this profile. */
+    private SecurityPolicy profileSecurityPolicy;
+    
     /**
      * Gets the amount of time, in milliseconds, before an issued assertion expires. A negative value indicates the
      * assertion never expires.
@@ -58,16 +62,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     public long getAssertionLifetime() {
         return assertionLifetime;
     }
-
-    /**
-     * Sets the amount of time before an issued assertion expires.
-     * 
-     * @param lifetime amount of time before an issued assertion expires
-     */
-    public void setAssertionLifetime(long lifetime) {
-        assertionLifetime = lifetime;
-    }
-
+    
     /**
      * Gets the audiences of issued assertions.
      * 
@@ -75,15 +70,6 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      */
     public List<String> getAudiences() {
         return audiences;
-    }
-
-    /**
-     * Sets the audiences of issued assertions.
-     * 
-     * @param newAudiences audiences of issued assertions
-     */
-    public void setAudiences(List<String> newAudiences) {
-        audiences = newAudiences;
     }
 
     /**
@@ -96,48 +82,12 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     }
 
     /**
-     * Sets the 2-byte artifact type used for outbound messages.
+     * Gets the security policy for this profile.
      * 
-     * @param type 2-byte artifact type used for outbound messages
+     * @return security policy for this profile
      */
-    public void setOutboundArtifactType(byte[] type) {
-        outboundArtifactType = type;
-    }
-
-    /**
-     * Gets whether to sign protocol requests.
-     * 
-     * @return whether to sign protocol requests
-     */
-    public boolean getSignRequests() {
-        return signRequests;
-    }
-
-    /**
-     * Sets whether to sign protocol requests.
-     * 
-     * @param sign whether to sign protocol requests
-     */
-    public void setSignRequests(boolean sign) {
-        signRequests = sign;
-    }
-
-    /**
-     * Gets whether to sign protocol responses.
-     * 
-     * @return whether to sign protocol responses
-     */
-    public boolean getSignResposnes() {
-        return signResponses;
-    }
-
-    /**
-     * Sets whether to sign protocol responses.
-     * 
-     * @param sign whether to sign protocol responses
-     */
-    public void setSignResponses(boolean sign) {
-        signResponses = sign;
+    public SecurityPolicy getProfileSecurityPolicy() {
+        return profileSecurityPolicy;
     }
 
     /**
@@ -150,21 +100,75 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     }
 
     /**
-     * Sets whether assertions should be signed.
-     * 
-     * @param sign whether assertions should be signed
-     */
-    public void setSignAssertions(boolean sign) {
-        signAssertions = sign;
-    }
-
-    /**
      * Gets the credential used to sign assertions.
      * 
      * @return credential used to sign assertions
      */
     public Credential getSigningCredential() {
         return signingCredential;
+    }
+
+    /**
+     * Gets whether to sign protocol requests.
+     * 
+     * @return whether to sign protocol requests
+     */
+    public boolean getSignRequests() {
+        return signRequests;
+    }
+
+    /**
+     * Gets whether to sign protocol responses.
+     * 
+     * @return whether to sign protocol responses
+     */
+    public boolean getSignResposnes() {
+        return signResponses;
+    }
+
+    /**
+     * Sets the amount of time before an issued assertion expires.
+     * 
+     * @param lifetime amount of time before an issued assertion expires
+     */
+    public void setAssertionLifetime(long lifetime) {
+        assertionLifetime = lifetime;
+    }
+
+    /**
+     * Sets the audiences of issued assertions.
+     * 
+     * @param newAudiences audiences of issued assertions
+     */
+    public void setAudiences(List<String> newAudiences) {
+        audiences = newAudiences;
+    }
+
+    /**
+     * Sets the 2-byte artifact type used for outbound messages.
+     * 
+     * @param type 2-byte artifact type used for outbound messages
+     */
+    public void setOutboundArtifactType(byte[] type) {
+        outboundArtifactType = type;
+    }
+
+    /**
+     * Sets the security policy for this profile.
+     * 
+     * @param policy security policy for this profile
+     */
+    public void setProfileSecurityPolicy(SecurityPolicy policy) {
+        profileSecurityPolicy = policy;
+    }
+
+    /**
+     * Sets whether assertions should be signed.
+     * 
+     * @param sign whether assertions should be signed
+     */
+    public void setSignAssertions(boolean sign) {
+        signAssertions = sign;
     }
 
     /**
@@ -177,6 +181,24 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     }
 
     /**
+     * Sets whether to sign protocol requests.
+     * 
+     * @param sign whether to sign protocol requests
+     */
+    public void setSignRequests(boolean sign) {
+        signRequests = sign;
+    }
+
+    /**
+     * Sets whether to sign protocol responses.
+     * 
+     * @param sign whether to sign protocol responses
+     */
+    public void setSignResponses(boolean sign) {
+        signResponses = sign;
+    }
+    
+    /**
      * Populates the given profile configuration with standard information.
      * 
      * @param configuration configuration to populate
@@ -184,6 +206,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     protected void populateBean(AbstractSAMLProfileConfiguration configuration) {
         configuration.setAssertionAudiences(getAudiences());
         configuration.setAssertionLifetime(getAssertionLifetime());
+        configuration.setSecurityPolicy(getProfileSecurityPolicy());
         configuration.setOutboundArtifactType(getOutboundArtifactType());
         configuration.setSignRequests(getSignRequests());
         configuration.setSignResponses(getSignResposnes());

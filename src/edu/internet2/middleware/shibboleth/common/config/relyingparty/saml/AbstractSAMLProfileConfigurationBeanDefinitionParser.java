@@ -71,6 +71,8 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
 
         builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
                 null, "signAssertions")));
+
+        builder.addPropertyReference("profileSecurityPolicy", element.getAttributeNS(null, "securityPolicyRef"));
     }
 
     /** {@inheritDoc} */

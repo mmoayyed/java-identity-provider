@@ -234,6 +234,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.DefaultSecurityPolicy>
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
