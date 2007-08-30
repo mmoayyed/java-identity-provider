@@ -34,7 +34,7 @@
                                        
         <dc:FilterTemplate>
             <![CDATA[
-                (uid=${principal})
+                (uid=$requestContext.principalName)
             ]]>
         </dc:FilterTemplate>
         

@@ -4,6 +4,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
     default-autowire="byType">
 
+    <!-- Shibboleth Internal Beans -->
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
         <property name="velocityProperties">
             <props>
@@ -17,7 +18,13 @@
             </props>
         </property>
     </bean>
+    
+    <bean id="shibboleth.TemplateEngine" class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.TemplateEngine" lazy-init="true">
+        <constructor-arg ref="shibboleth.VelocityEngine" />
+    </bean>
 
+
+    <!-- Test Resolver Configurations -->
     <bean id="staticConfig" class="org.opensaml.util.resource.ClasspathResource">
         <constructor-arg
             value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver.xml" />
@@ -28,6 +35,24 @@
             value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-db.xml" />
     </bean>
 
+    <bean id="ldapConfig" class="org.opensaml.util.resource.ClasspathResource">
+        <constructor-arg
+            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-ldap.xml" />
+    </bean>
+    
+    <bean id="mappedConfig" class="org.opensaml.util.resource.ClasspathResource">
+        <constructor-arg
+            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-mapped.xml" />
+    </bean>
+
+    <bean id="templateConfig" class="org.opensaml.util.resource.ClasspathResource">
+        <constructor-arg
+            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-template.xml" />
+    </bean>
+    
+    
+    
+    <!-- Test resolver instances -->
     <bean id="resolver"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
@@ -38,11 +63,26 @@
         </constructor-arg>
     </bean>
 
-    <bean id="mappedConfig" class="org.opensaml.util.resource.ClasspathResource">
-        <constructor-arg
-            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-mapped.xml" />
+    <bean id="resolver-db"
+        class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
+        init-method="initialize">
+        <constructor-arg>
+            <list>
+                <ref bean="dbConfig" />
+            </list>
+        </constructor-arg>
     </bean>
-
+    
+    <bean id="resolver-ldap"
+        class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
+        init-method="initialize">
+        <constructor-arg>
+            <list>
+                <ref bean="ldapConfig" />
+            </list>
+        </constructor-arg>
+    </bean>
+    
     <bean id="resolver-mapped"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
@@ -51,11 +91,6 @@
                 <ref bean="mappedConfig" />
             </list>
         </constructor-arg>
-    </bean>
-
-    <bean id="templateConfig" class="org.opensaml.util.resource.ClasspathResource">
-        <constructor-arg
-            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-template.xml" />
     </bean>
 
     <bean id="resolver-template"

@@ -32,31 +32,26 @@ import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfi
  */
 public class DBAttributeResolverTest extends BaseConfigTestCase {
 
-    /** Application Context. */
-    private ApplicationContext ac;
-
-    /** {@inheritDoc} */
-    public void setUp() throws ResourceException {
-        String[] configs = { "shibboleth-2.0-config-internal.xml",
-                "data/edu/internet2/middleware/shibboleth/common/config/resolver/resolver-db.xml", };
-
-        ac = createSpringContext(configs);
-    }
-
-    /** Test Handle Request. */
-    public void testResolverInstantiation() {
-        AttributeResolver resolver = (AttributeResolver) ac.getBean("shibboleth.AttributeResolver");
+    /**
+     * Test Handle Request.
+     * 
+     * @throws ResourceException if unable to access resource
+     * @throws AttributeResolutionException if unable to resolve attributes
+     */
+    @SuppressWarnings("unchecked")
+    public void testResolverInstantiation() throws ResourceException, AttributeResolutionException {
+        ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/resolver/service-config.xml");
+        AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver-db");
 
         BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();
         context.setPrincipalName("astone");
 
         try {
             Collection<BaseAttribute> attributes = resolver.resolveAttributes(context).values();
-            
+
             for (BaseAttribute attribute : attributes) {
                 System.out.println(attribute.getId() + ":" + attribute.getValues());
             }
-
 
         } catch (AttributeResolutionException e) {
             fail(e.getMessage());

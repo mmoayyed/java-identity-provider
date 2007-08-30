@@ -23,7 +23,7 @@
             <![CDATA[
                 importPackage(Packages.edu.internet2.middleware.shibboleth.common.attribute.provider);
                 fullname = new BasicAttribute("fullname");
-                fullname.getValues().add(FIRSTNAME.getValues().first() + " " + LASTNAME.getValues().first());
+                fullname.getValues().add(FIRSTNAME.getValues().get(0) + " " + LASTNAME.getValues().get(0));
             ]]>
         </ad:Script>
     </resolver:AttributeDefinition>
@@ -51,7 +51,7 @@
                                                            
         <dc:QueryTemplate>
             <![CDATA[
-                SELECT * FROM PEOPLE WHERE netid='${principal}'
+                SELECT * FROM PEOPLE WHERE netid='${requestContext.principalName}'
             ]]>
         </dc:QueryTemplate>
         
