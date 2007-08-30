@@ -19,7 +19,6 @@ package edu.internet2.middleware.shibboleth.common.xmlobject.impl;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
-import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.w3c.dom.Attr;
 
@@ -49,8 +48,8 @@ public class ShibbolethScopedValueUnmarshaller extends AbstractXMLObjectUnmarsha
 
     /** {@inheritDoc} */
     protected void processElementContent(XMLObject xmlObject, String elementContent) {
-        XSString xsiString = (XSString) xmlObject;
+        ShibbolethScopedValue sv = (ShibbolethScopedValue) xmlObject;
 
-        xsiString.setValue(elementContent);
+        sv.setValue(elementContent);
     }
 }

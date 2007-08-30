@@ -16,19 +16,21 @@
 
 package edu.internet2.middleware.shibboleth.common.xmlobject.impl;
 
-import org.opensaml.xml.schema.impl.XSStringImpl;
+import javax.xml.namespace.QName;
+
+import org.opensaml.xml.ElementProxy;
 
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
 
 /**
  * Concrete implementation of {@link org.opensaml.xml.schema.XSString}.
  */
-public class ShibbolethScopedValueImpl extends XSStringImpl implements ShibbolethScopedValue {
+public class ShibbolethScopedValueImpl extends ElementProxy implements ShibbolethScopedValue {
 
     /** Scope of this string element. */
     private String scope;
 
-    /** Scope attribute naem for this element. */
+    /** Scope attribute name for this element. */
     private String scopeAttributeName;
 
     /**
@@ -55,10 +57,35 @@ public class ShibbolethScopedValueImpl extends XSStringImpl implements Shibbolet
     /** {@inheritDoc} */
     public void setScope(String newScope) {
         scope = prepareForAssignment(scope, newScope);
+        if (scope != null && scopeAttributeName != null) {
+            getUnknownAttributes().put(new QName(scopeAttributeName), scope);
+        }
     }
 
     /** {@inheritDoc} */
     public void setScopeAttributeName(String newScopeAttributeName) {
+        if (scopeAttributeName != null) {
+            QName oldName = new QName(scopeAttributeName);
+            if (getUnknownAttributes().containsKey(oldName)) {
+                getUnknownAttributes().remove(oldName);
+            }
+        }
+
         scopeAttributeName = prepareForAssignment(scopeAttributeName, newScopeAttributeName);
+        
+        if (scope != null) {
+            getUnknownAttributes().put(new QName(scopeAttributeName), scope);
+        }
     }
+
+    /** {@inheritDoc} */
+    public String getValue() {
+        return getTextContent();
+    }
+
+    /** {@inheritDoc} */
+    public void setValue(String newValue) {
+        setTextContent(newValue);
+    }
+
 }

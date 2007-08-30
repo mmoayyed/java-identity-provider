@@ -19,45 +19,60 @@ package edu.internet2.middleware.shibboleth.common.xmlobject;
 import javax.xml.namespace.QName;
 
 import org.opensaml.common.SAMLObject;
-import org.opensaml.xml.schema.XSString;
+
+import edu.internet2.middleware.shibboleth.common.config.attribute.encoding.AttributeEncoderNamespaceHandler;
 
 /**
  * Represents a string value that contains an attribute containing a scope.
  */
-public interface ShibbolethScopedValue extends XSString, SAMLObject {
+public interface ShibbolethScopedValue extends SAMLObject {
 
     /** Local name of the XSI type. */
     public static final String TYPE_LOCAL_NAME = "ScopedValue";
 
     /** QName of the XSI type. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", TYPE_LOCAL_NAME,
-            "shib");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, TYPE_LOCAL_NAME,
+            "encoder");
 
-    /** 
+    /**
      * Gets the name of the scope attribute.
      * 
      * @return name of the scope attribute
      */
     public String getScopeAttributeName();
-    
+
     /**
      * Sets the name of the scope attribute.
      * 
      * @param attribute name of the scope attribute
      */
     public void setScopeAttributeName(String attribute);
-    
+
     /**
      * Gets the scope value.
      * 
      * @return scope value
      */
     public String getScope();
-    
+
     /**
      * Sets the scope value.
      * 
      * @param scope scope value
      */
     public void setScope(String scope);
+
+    /**
+     * Set the attribute value.
+     * 
+     * @param newContent the new attribute value
+     */
+    public void setValue(String newContent);
+
+    /**
+     * Get the attribute value.
+     * 
+     * @return the attribute value.
+     */
+    public String getValue();
 }

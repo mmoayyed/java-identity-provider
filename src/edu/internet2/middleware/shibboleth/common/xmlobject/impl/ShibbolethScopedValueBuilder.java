@@ -26,9 +26,8 @@ import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValu
 public class ShibbolethScopedValueBuilder extends AbstractXMLObjectBuilder<ShibbolethScopedValue> {
 
     /** {@inheritDoc} */
-    
     public ShibbolethScopedValue buildObject(String namespaceURI, String localName, String namespacePrefix) {
         return new ShibbolethScopedValueImpl(namespaceURI, localName, namespacePrefix);
     }
-    
+
 }

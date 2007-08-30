@@ -17,7 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.xmlobject.impl;
 
 import edu.internet2.middleware.shibboleth.common.xmlobject.BaseShibObjectProviderTestCase;
-import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataScope;
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
 
 /**
@@ -25,10 +24,24 @@ import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValu
  */
 public class ShibScopedValueTest extends BaseShibObjectProviderTestCase {
 
+    /**
+     * Expected attribute value.
+     */
     private String expectedValue;
+
+    /**
+     * Expected scope value.
+     */
     private String expectedScope;
-    
+
+    /**
+     * Name of the scope attribute.
+     */
     private String scopeAttribute;
+
+    /**
+     * Scope delimiter.
+     */
     private String scopeDelimiter;
 
     /** Constructor. */
@@ -55,15 +68,15 @@ public class ShibScopedValueTest extends BaseShibObjectProviderTestCase {
 
         assertEquals(expectedDOM, sv);
     }
-    
+
     /** {@inheritDoc} */
     public void testSingleElementOptionalAttributesMarshall() {
         ShibbolethScopedValue sv = (ShibbolethScopedValue) buildXMLObject(ShibbolethScopedValue.TYPE_NAME);
-        
+
         sv.setValue(expectedValue);
         sv.setScopeAttributeName(scopeAttribute);
         sv.setScope(expectedScope);
-        
+
         assertEquals(expectedOptionalAttributesDOM, sv);
     }
 
@@ -79,10 +92,10 @@ public class ShibScopedValueTest extends BaseShibObjectProviderTestCase {
     public void testSingleElementOptionalAttributesUnmarshall() {
         ShibbolethScopedValue sv = (ShibbolethScopedValue) unmarshallElement(singleElementOptionalAttributesFile);
         sv.setScopeAttributeName(scopeAttribute);
-        
         assertNotNull("Unmarshalled object was null", sv);
         assertEquals("Scoped value", expectedValue, sv.getValue());
         assertEquals("Scope value", expectedScope, sv.getScope());
         assertEquals("Scope attribute name", scopeAttribute, sv.getScopeAttributeName());
     }
+
 }

@@ -107,7 +107,8 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
      * 
      * @return the list of encoded attribute values
      */
-    protected List<SAMLObject> encodeAttributeValue(QName valueElementQName, BaseAttribute<ScopedAttributeValue> attribute) {
+    protected List<SAMLObject> encodeAttributeValue(QName valueElementQName,
+            BaseAttribute<ScopedAttributeValue> attribute) {
         ArrayList<SAMLObject> encodedValues = new ArrayList<SAMLObject>();
 
         XMLObjectBuilder<ShibbolethScopedValue> valueBuilder = Configuration.getBuilderFactory().getBuilder(
@@ -115,11 +116,11 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
 
         ShibbolethScopedValue scopedValue;
         for (ScopedAttributeValue attributeValue : attribute.getValues()) {
-            if(attributeValue == null){
+            if (attributeValue == null) {
                 continue;
             }
-            
-            scopedValue = valueBuilder.buildObject(valueElementQName, ShibbolethScopedValue.TYPE_NAME);
+
+            scopedValue = valueBuilder.buildObject(valueElementQName);
 
             // handle "attribute" scopeType
             if ("attribute".equals(getScopeType())) {
