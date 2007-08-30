@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 import edu.internet2.middleware.shibboleth.common.config.metadata.MetadataNamespaceHandler;
+import edu.internet2.middleware.shibboleth.common.config.security.SecurityNamespaceHandler;
 
 /**
  * Spring bean definition parser for relying party group configurations.
@@ -68,7 +69,9 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
                     parserContext));
         }
 
-        children = configChildren.get(new QName(RelyingPartyNamespaceHandler.NAMESPACE, "Credential"));
+        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecurityPolicy"));
+        
+        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
         builder.addPropertyValue("credentials", SpringConfigurationUtils.parseCustomElements(children, parserContext));
 
         return builder.getBeanDefinition();
