@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty;
 import java.util.List;
 
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.ws.security.SecurityPolicy;
 import org.opensaml.xml.security.credential.Credential;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
@@ -39,9 +40,30 @@ public class RelyingPartyGroup {
 
     /** Metadata provider for the group. */
     private MetadataProvider metadataProvider;
+    
+    /** Security policies for the group. */
+    private List<SecurityPolicy> securityPolicies;
 
     /** Credentials for the group. */
     private List<Credential> groupCredentials;
+    
+    /**
+     * Gets the security policies for the group.
+     * 
+     * @return security policies for the group
+     */
+    public List<SecurityPolicy> getSecurityPolicies() {
+        return securityPolicies;
+    }
+    
+    /**
+     * Sets the security policies for the group.
+     * 
+     * @param policies security policies for the group
+     */
+    public void setSecurityPolicies(List<SecurityPolicy> policies) {
+        securityPolicies = policies;
+    }
 
     /**
      * Gets the anonymous relying party config for the group.

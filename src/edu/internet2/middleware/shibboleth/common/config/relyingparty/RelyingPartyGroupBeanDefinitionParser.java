@@ -70,7 +70,9 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
         }
 
         children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecurityPolicy"));
-        
+        builder.addPropertyValue("securityPolicies", SpringConfigurationUtils.parseCustomElements(children,
+                parserContext));
+
         children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
         builder.addPropertyValue("credentials", SpringConfigurationUtils.parseCustomElements(children, parserContext));
 
