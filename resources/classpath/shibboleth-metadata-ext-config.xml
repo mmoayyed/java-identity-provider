@@ -2,6 +2,7 @@
 <XMLTooling xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opensaml.org/xmltooling-config ../../src/schema/xmltooling-config.xsd"
 	xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"
+    xmlns:encoder="urn:mace:shibboleth:2.0:attribute:encoder"
 	xmlns="http://www.opensaml.org/xmltooling-config">
 
 	<!-- Shibboleth SAML Metadata Extensions Object providers -->
@@ -20,6 +21,12 @@
 			<MarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityMarshaller" />
 			<UnmarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethMetadataKeyAuthorityUnmarshaller" />
 		</ObjectProvider>
+        
+        <ObjectProvider qualifiedName="encoder:ScopedValue">
+            <BuilderClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethScopedValueBuilder" />
+            <MarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethScopedValueMarshaller" />
+            <UnmarshallingClass className="edu.internet2.middleware.shibboleth.common.xmlobject.impl.ShibbolethScopedValueUnmarshaller" />
+        </ObjectProvider>
 		
 	</ObjectProviders>
 </XMLTooling>
