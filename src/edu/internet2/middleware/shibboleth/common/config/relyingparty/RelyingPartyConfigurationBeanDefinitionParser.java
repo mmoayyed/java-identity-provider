@@ -67,33 +67,37 @@ public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSimpl
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String rpId = getRelyingPartyId(config);
         if (log.isDebugEnabled()) {
-            log.debug("Relying party configuration: relying party id " + rpId);
+            log.debug("Relying party configuration - relying party id " + rpId);
         }
         builder.addPropertyValue("relyingPartyId", rpId);
 
         String provider = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "provider"));
         if (log.isDebugEnabled()) {
-            log.debug("Relying party configuration: provider " + provider);
+            log.debug("Relying party configuration - provider ID: " + provider);
         }
         builder.addPropertyValue("providerId", provider);
 
         String authnMethod = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null,
                 "defaultAuthenticationMethod"));
         if (log.isDebugEnabled()) {
-            log.debug("Relying party configuration: default authentication method " + authnMethod);
+            log.debug("Relying party configuration - default authentication method: " + authnMethod);
         }
         builder.addPropertyValue("defaultAuthenticationMethod", authnMethod);
 
-        if (config.hasAttributeNS(null, "defaultSigningCredentialRef")) {
-            builder.addPropertyReference("defaultSigningCredential", config.getAttributeNS(null,
-                    "defaultSigningCredentialRef"));
+        String secCredRef = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null,
+                "defaultSigningCredentialRef"));
+        if (secCredRef != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Relying party configuration - default signing credential: " + secCredRef);
+            }
+            builder.addPropertyReference("defaultSigningCredential", secCredRef);
         }
 
         List<Element> profileConfigs = XMLHelper.getChildElementsByTagNameNS(config,
                 RelyingPartyNamespaceHandler.NAMESPACE, "ProfileConfiguration");
         if (profileConfigs != null && profileConfigs.size() > 0) {
             if (log.isDebugEnabled()) {
-                log.debug("Relying party configuration: setting default signing credential");
+                log.debug("Relying party configuration - profile configurations: " + profileConfigs);
             }
             builder.addPropertyValue("profileConfigurations", SpringConfigurationUtils.parseCustomElements(
                     profileConfigs, parserContext));
