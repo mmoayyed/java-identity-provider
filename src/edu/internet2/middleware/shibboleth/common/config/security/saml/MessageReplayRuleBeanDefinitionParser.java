@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.security.saml;
 import javax.xml.namespace.QName;
 
 import org.opensaml.common.binding.security.MessageReplayRule;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -27,7 +28,7 @@ import org.w3c.dom.Element;
  * Spring bean definition parser for message replay rules.
  */
 public class MessageReplayRuleBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(SAMLSecurityNamespaceHandler.NAMESPACE, "Replay");
 
@@ -43,8 +44,12 @@ public class MessageReplayRuleBeanDefinitionParser extends AbstractSingleBeanDef
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        builder.addConstructorArg(element.getAttributeNS(null, "clockSkew"));
-        builder.addConstructorArg(element.getAttributeNS(null, "expirationThreshold"));
-        builder.addConstructorArgReference("storageRef");
+        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "clockSkew")));
+        
+        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
+                "expirationThreshold")));
+        
+        builder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
+                "storageRef")));
     }
 }
