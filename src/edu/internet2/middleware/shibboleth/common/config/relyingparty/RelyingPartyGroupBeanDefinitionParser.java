@@ -46,6 +46,28 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
 
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
 
+        List<Element> mds = configChildren.get(new QName(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider"));
+        if (mds != null && mds.size() > 0) {
+            builder.addPropertyValue("metadataProvider", SpringConfigurationUtils.parseCustomElement(mds.get(0),
+                    parserContext));
+        }
+
+        parseRelyingPartyConfiguration(configChildren, builder, parserContext);
+
+        parseSecurityConfiguration(configChildren, builder, parserContext);
+
+        return builder.getBeanDefinition();
+    }
+
+    /**
+     * Parses the relying party related configuration elements.
+     * 
+     * @param configChildren relying party group children
+     * @param builder bean definition builder
+     * @param parserContext current parsing context
+     */
+    protected void parseRelyingPartyConfiguration(Map<QName, List<Element>> configChildren,
+            BeanDefinitionBuilder builder, ParserContext parserContext) {
         List<Element> anonRP = configChildren.get(RelyingPartyConfigurationBeanDefinitionParser.ANON_RP_ELEMENT_NAME);
         if (anonRP != null && anonRP.size() > 0) {
             builder.addPropertyValue("anonymousRP", SpringConfigurationUtils.parseCustomElement(anonRP.get(0),
@@ -60,13 +82,21 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
         }
 
         List<Element> rps = configChildren.get(RelyingPartyConfigurationBeanDefinitionParser.RP_ELEMENT_NAME);
-        builder.addPropertyValue("relyingParties", SpringConfigurationUtils.parseCustomElements(rps, parserContext));
-
-        List<Element> mds = configChildren.get(new QName(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider"));
-        if (mds != null && mds.size() > 0) {
-            builder.addPropertyValue("metadataProvider", SpringConfigurationUtils.parseCustomElement(mds.get(0),
-                    parserContext));
+        if (rps != null && rps.size() > 0) {
+            builder.addPropertyValue("relyingParties", SpringConfigurationUtils
+                            .parseCustomElements(rps, parserContext));
         }
+    }
+
+    /**
+     * Parses the security related configuration elements.
+     * 
+     * @param configChildren relying party group children
+     * @param builder bean definition builder
+     * @param parserContext current parsing context
+     */
+    protected void parseSecurityConfiguration(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder,
+            ParserContext parserContext) {
 
         List<Element> creds = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
         if (creds != null && creds.size() > 0) {
@@ -84,8 +114,6 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
             builder.addPropertyValue("securityPolicies", SpringConfigurationUtils.parseCustomElements(secPols,
                     parserContext));
         }
-
-        return builder.getBeanDefinition();
     }
 
     /** {@inheritDoc} */

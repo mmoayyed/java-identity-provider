@@ -38,8 +38,6 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
                 new SAMLMDRelyingPartyConfigurationManagerBeanDefinitionParser());
 
         BeanDefinitionParser parser = new RelyingPartyConfigurationBeanDefinitionParser();
-        registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.URP_TYPE_NAME, parser);
-        registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.RP_TYPE_NAME, parser);
         registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.ANON_RP_ELEMENT_NAME, parser);
         registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.DEFAULT_RP_ELEMENT_NAME, parser);
         registerBeanDefinitionParser(RelyingPartyConfigurationBeanDefinitionParser.RP_ELEMENT_NAME, parser);
