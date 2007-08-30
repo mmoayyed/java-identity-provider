@@ -68,13 +68,16 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
             builder.addPropertyValue("metadataProvider", SpringConfigurationUtils.parseCustomElement(children.get(0),
                     parserContext));
         }
+        
+        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
+        builder.addPropertyValue("credentials", SpringConfigurationUtils.parseCustomElements(children, parserContext));
+
+        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "TrustEngine"));
+        builder.addPropertyValue("trustEngines", SpringConfigurationUtils.parseCustomElements(children, parserContext));
 
         children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecurityPolicy"));
         builder.addPropertyValue("securityPolicies", SpringConfigurationUtils.parseCustomElements(children,
                 parserContext));
-
-        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
-        builder.addPropertyValue("credentials", SpringConfigurationUtils.parseCustomElements(children, parserContext));
 
         return builder.getBeanDefinition();
     }

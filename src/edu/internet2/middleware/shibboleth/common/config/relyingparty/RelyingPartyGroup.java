@@ -21,6 +21,7 @@ import java.util.List;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.ws.security.SecurityPolicy;
 import org.opensaml.xml.security.credential.Credential;
+import org.opensaml.xml.security.trust.TrustEngine;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
@@ -43,28 +44,13 @@ public class RelyingPartyGroup {
     
     /** Security policies for the group. */
     private List<SecurityPolicy> securityPolicies;
+    
+    /** Trust engines for the group. */
+    private List<TrustEngine> trustEngines;
 
     /** Credentials for the group. */
     private List<Credential> groupCredentials;
     
-    /**
-     * Gets the security policies for the group.
-     * 
-     * @return security policies for the group
-     */
-    public List<SecurityPolicy> getSecurityPolicies() {
-        return securityPolicies;
-    }
-    
-    /**
-     * Sets the security policies for the group.
-     * 
-     * @param policies security policies for the group
-     */
-    public void setSecurityPolicies(List<SecurityPolicy> policies) {
-        securityPolicies = policies;
-    }
-
     /**
      * Gets the anonymous relying party config for the group.
      * 
@@ -73,16 +59,7 @@ public class RelyingPartyGroup {
     public RelyingPartyConfiguration getAnonymousRP() {
         return anonymousRP;
     }
-
-    /**
-     * Sets the anonymous relying party config for the group.
-     * 
-     * @param config anonymous relying party config for the group
-     */
-    public void setAnonymousRP(RelyingPartyConfiguration config) {
-        anonymousRP = config;
-    }
-
+    
     /**
      * Gets the credentials for the group.
      * 
@@ -91,16 +68,7 @@ public class RelyingPartyGroup {
     public List<Credential> getCredentials() {
         return groupCredentials;
     }
-
-    /**
-     * Sets the credentials for the group.
-     * 
-     * @param credentials credentials for the group
-     */
-    public void setCredentials(List<Credential> credentials) {
-        groupCredentials = credentials;
-    }
-
+    
     /**
      * Gets the default relying party for the group.
      * 
@@ -109,16 +77,7 @@ public class RelyingPartyGroup {
     public RelyingPartyConfiguration getDefaultRP() {
         return defaultRP;
     }
-
-    /**
-     * Sets the default relying party for the group.
-     * 
-     * @param config default relying party for the group
-     */
-    public void setDefaultRP(RelyingPartyConfiguration config) {
-        defaultRP = config;
-    }
-
+    
     /**
      * Gets the metadata provider for the group.
      * 
@@ -126,15 +85,6 @@ public class RelyingPartyGroup {
      */
     public MetadataProvider getMetadataProvider() {
         return metadataProvider;
-    }
-
-    /**
-     * Sets the metadata provider for the group.
-     * 
-     * @param provider metadata provider for the group
-     */
-    public void setMetadataProvider(MetadataProvider provider) {
-        metadataProvider = provider;
     }
 
     /**
@@ -147,11 +97,83 @@ public class RelyingPartyGroup {
     }
 
     /**
+     * Gets the security policies for the group.
+     * 
+     * @return security policies for the group
+     */
+    public List<SecurityPolicy> getSecurityPolicies() {
+        return securityPolicies;
+    }
+
+    /**
+     * Gets the trust engines for the group.
+     * 
+     * @return trust engines for the group
+     */
+    public List<TrustEngine> getTrustEngines() {
+        return trustEngines;
+    }
+
+    /**
+     * Sets the anonymous relying party config for the group.
+     * 
+     * @param config anonymous relying party config for the group
+     */
+    public void setAnonymousRP(RelyingPartyConfiguration config) {
+        anonymousRP = config;
+    }
+
+    /**
+     * Sets the credentials for the group.
+     * 
+     * @param credentials credentials for the group
+     */
+    public void setCredentials(List<Credential> credentials) {
+        groupCredentials = credentials;
+    }
+
+    /**
+     * Sets the default relying party for the group.
+     * 
+     * @param config default relying party for the group
+     */
+    public void setDefaultRP(RelyingPartyConfiguration config) {
+        defaultRP = config;
+    }
+
+    /**
+     * Sets the metadata provider for the group.
+     * 
+     * @param provider metadata provider for the group
+     */
+    public void setMetadataProvider(MetadataProvider provider) {
+        metadataProvider = provider;
+    }
+
+    /**
      * Sets the relying party configurations for the group.
      * 
      * @param configurations relying party configurations for the group
      */
     public void setRelyingParties(List<RelyingPartyConfiguration> configurations) {
         relyingParties = configurations;
+    }
+
+    /**
+     * Sets the security policies for the group.
+     * 
+     * @param policies security policies for the group
+     */
+    public void setSecurityPolicies(List<SecurityPolicy> policies) {
+        securityPolicies = policies;
+    }
+
+    /**
+     * Sets the trust engines for the group.
+     * 
+     * @param engines trust engines for the group
+     */
+    public void setTrustEngines(List<TrustEngine> engines) {
+        trustEngines = engines;
     }
 }
