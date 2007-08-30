@@ -96,7 +96,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="storageRef" type="string" default="shibboleth.Storage">
+                <attribute name="storageRef" type="string" default="shibboleth.StorageService">
                     <annotation>
                         <documentation>
                             Name of the storage instance used for the replay cache. This should not be changed.
