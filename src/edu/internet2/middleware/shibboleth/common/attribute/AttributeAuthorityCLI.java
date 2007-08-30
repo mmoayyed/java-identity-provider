@@ -23,6 +23,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.ConsoleAppender;
@@ -33,20 +35,19 @@ import org.opensaml.Configuration;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.util.resource.FilesystemResource;
+import org.opensaml.util.resource.Resource;
+import org.opensaml.util.resource.ResourceException;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.util.XMLHelper;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
-import edu.internet2.middleware.shibboleth.common.config.SpringDocumentLoader;
+import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
@@ -142,8 +143,9 @@ public class AttributeAuthorityCLI {
      * @return loaded application context
      * 
      * @throws IOException throw if there is an error loading the configuration files
+     * @throws ResourceException if there is an error loading the configuration files
      */
-    private static ApplicationContext loadConfigurations(String configDir) throws IOException {
+    private static ApplicationContext loadConfigurations(String configDir) throws IOException, ResourceException {
         File configDirectory = new File(configDir);
         if (!configDirectory.exists() || !configDirectory.isDirectory() || !configDirectory.canRead()) {
             errorAndExit("Configuration directory " + configDir
@@ -155,27 +157,23 @@ public class AttributeAuthorityCLI {
                 return filename.endsWith(".xml");
             }
         };
-
-        File[] configs = configDirectory.listFiles(filter);
-
-        GenericApplicationContext gContext = new GenericApplicationContext();
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(gContext);
-        configReader.setDocumentLoader(new SpringDocumentLoader());
-
-        int numOfConfigs = configs.length;
+        File[] files = configDirectory.listFiles(filter);
+        List<Resource> configs = new ArrayList<Resource>();
+        
         File config;
-        Resource[] configSources = new Resource[numOfConfigs];
-        for (int i = 0; i < configs.length; i++) {
-            config = configs[i];
+        for (int i = 0; i < files.length; i++) {
+            config = files[i];
             if (config.isDirectory() || !config.canRead()) {
                 errorAndExit("Configuration file " + config.getAbsolutePath() + " is a directory or is not readable",
                         null);
             }
-            configSources[i] = new FileSystemResource(config);
+            configs.add(new FilesystemResource(config.getPath()));
         }
 
-        configReader.loadBeanDefinitions(configSources);
 
+        GenericApplicationContext gContext = new GenericApplicationContext();
+        SpringConfigurationUtils.populateRegistry(gContext, configs);
+        gContext.refresh();
         return gContext;
     }
 
