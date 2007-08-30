@@ -45,39 +45,45 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(RelyingPartyGroup.class);
 
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
-        List<Element> children;
 
-        children = configChildren.get(new QName(RelyingPartyNamespaceHandler.NAMESPACE, "AnonymousRelyingParty"));
-        if (children != null && children.size() > 0) {
-            builder.addPropertyValue("anonymousRP", SpringConfigurationUtils.parseCustomElement(children.get(0),
+        List<Element> anonRP = configChildren.get(RelyingPartyConfigurationBeanDefinitionParser.ANON_RP_ELEMENT_NAME);
+        if (anonRP != null && anonRP.size() > 0) {
+            builder.addPropertyValue("anonymousRP", SpringConfigurationUtils.parseCustomElement(anonRP.get(0),
                     parserContext));
         }
 
-        children = configChildren.get(new QName(RelyingPartyNamespaceHandler.NAMESPACE, "DefaultRelyingParty"));
-        if (children != null && children.size() > 0) {
-            builder.addPropertyValue("defaultRP", SpringConfigurationUtils.parseCustomElement(children.get(0),
+        List<Element> defaultRP = configChildren
+                .get(RelyingPartyConfigurationBeanDefinitionParser.DEFAULT_RP_ELEMENT_NAME);
+        if (defaultRP != null && defaultRP.size() > 0) {
+            builder.addPropertyValue("defaultRP", SpringConfigurationUtils.parseCustomElement(defaultRP.get(0),
                     parserContext));
         }
 
-        children = configChildren.get(new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingParty"));
-        builder.addPropertyValue("relyingParties", SpringConfigurationUtils
-                .parseCustomElements(children, parserContext));
+        List<Element> rps = configChildren.get(RelyingPartyConfigurationBeanDefinitionParser.RP_ELEMENT_NAME);
+        builder.addPropertyValue("relyingParties", SpringConfigurationUtils.parseCustomElements(rps, parserContext));
 
-        children = configChildren.get(new QName(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider"));
-        if (children != null && children.size() > 0) {
-            builder.addPropertyValue("metadataProvider", SpringConfigurationUtils.parseCustomElement(children.get(0),
+        List<Element> mds = configChildren.get(new QName(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider"));
+        if (mds != null && mds.size() > 0) {
+            builder.addPropertyValue("metadataProvider", SpringConfigurationUtils.parseCustomElement(mds.get(0),
                     parserContext));
         }
-        
-        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
-        builder.addPropertyValue("credentials", SpringConfigurationUtils.parseCustomElements(children, parserContext));
 
-        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "TrustEngine"));
-        builder.addPropertyValue("trustEngines", SpringConfigurationUtils.parseCustomElements(children, parserContext));
+        List<Element> creds = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
+        if (creds != null && creds.size() > 0) {
+            builder.addPropertyValue("credentials", SpringConfigurationUtils.parseCustomElements(creds, parserContext));
+        }
 
-        children = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecurityPolicy"));
-        builder.addPropertyValue("securityPolicies", SpringConfigurationUtils.parseCustomElements(children,
-                parserContext));
+        List<Element> engines = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "TrustEngine"));
+        if (engines != null && engines.size() > 0) {
+            builder.addPropertyValue("trustEngines", SpringConfigurationUtils.parseCustomElements(engines,
+                    parserContext));
+        }
+
+        List<Element> secPols = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecurityPolicy"));
+        if (secPols != null && secPols.size() > 0) {
+            builder.addPropertyValue("securityPolicies", SpringConfigurationUtils.parseCustomElements(secPols,
+                    parserContext));
+        }
 
         return builder.getBeanDefinition();
     }
