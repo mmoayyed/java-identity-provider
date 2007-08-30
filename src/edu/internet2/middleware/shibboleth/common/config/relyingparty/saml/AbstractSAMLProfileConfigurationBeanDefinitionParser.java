@@ -48,9 +48,11 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             builder.addPropertyValue("audiences", audiences);
         }
 
-        if (element.hasAttributeNS(null, "signingCredentialRef")) {
-            builder.addPropertyReference("signingCredential", DatatypeHelper.safeTrimOrNullString(element
-                    .getAttributeNS(null, "signingCredentialRef")));
+        String secCredRef = DatatypeHelper.safeTrimOrNullString(element
+                .getAttributeNS(null, "signingCredentialRef"));
+        if (secCredRef != null) {
+            builder.addDependsOn(secCredRef);
+            builder.addPropertyReference("signingCredential", secCredRef);
         }
 
         builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
@@ -72,7 +74,11 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
         builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
                 null, "signAssertions")));
 
-        builder.addPropertyReference("profileSecurityPolicy", element.getAttributeNS(null, "securityPolicyRef"));
+        String secPolRef = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "securityPolicyRef"));
+        if(secPolRef != null){
+            builder.addDependsOn(secPolRef);
+            builder.addPropertyReference("profileSecurityPolicy", secPolRef);
+        }
     }
 
     /** {@inheritDoc} */
