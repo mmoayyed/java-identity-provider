@@ -31,6 +31,7 @@ import org.opensaml.util.resource.Resource;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
+import edu.internet2.middleware.shibboleth.common.config.relyingparty.RelyingPartyGroup;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfigurationManager;
 import edu.internet2.middleware.shibboleth.common.service.ServiceException;
@@ -171,27 +172,22 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
     /** {@inheritDoc} */
     protected void newContextCreated(ApplicationContext newServiceContext) throws ServiceException {
-        String[] metadataProviderNames = newServiceContext.getBeanNamesForType(MetadataProvider.class);
-        String[] configNames = newServiceContext.getBeanNamesForType(RelyingPartyConfiguration.class);
-        
-        if(log.isDebugEnabled()){
-            log.debug("Loading " + configNames.length + " new configurations into relying party manager.");
-        }
+        String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
+        RelyingPartyGroup rpGroup = (RelyingPartyGroup) newServiceContext.getBean(relyingPartyGroupNames[0]);
 
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
         
-        if(metadataProviderNames.length > 0){
-            metadataProvider = (MetadataProvider) newServiceContext.getBean(metadataProviderNames[0]);
-        }
+        metadataProvider = rpGroup.getMetadataProvider();
 
         rpConfigs.clear();
-        RelyingPartyConfiguration rpConfg;
-        for (String configName : configNames) {
-            rpConfg = (RelyingPartyConfiguration) newServiceContext.getBean(configName);
-            rpConfigs.put(rpConfg.getRelyingPartyId(), rpConfg);
-            if(log.isDebugEnabled()){
-                log.debug("Registering configuration for relying party: " + rpConfg.getRelyingPartyId());
+        List<RelyingPartyConfiguration> newRpConfigs = rpGroup.getRelyingParties();
+        if(rpConfigs != null){
+            for(RelyingPartyConfiguration newRpConfig : newRpConfigs){
+                rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
+                if(log.isDebugEnabled()){
+                    log.debug("Registering configuration for relying party: " + newRpConfig.getRelyingPartyId());
+                }
             }
         }
 
