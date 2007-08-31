@@ -50,10 +50,10 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
  */
 public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableService implements
         RelyingPartyConfigurationManager {
-    
+
     /** ID used for anonymous relying party. */
     public static final String ANONYMOUS_RP_NAME = "anonymous";
-    
+
     /** ID used for default relying party. */
     public static final String DEFAULT_RP_NAME = "default";
 
@@ -138,9 +138,9 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
         }
         try {
             EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
-            if(entityDescriptor != null){
+            if (entityDescriptor != null) {
                 EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
-                while(entityGroup != null){
+                while (entityGroup != null) {
                     if (rpConfigs.containsKey(entityGroup.getName())) {
                         if (log.isDebugEnabled()) {
                             log.debug("Relying party configuration found for " + relyingPartyEntityID
@@ -161,7 +161,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                     + " using default configuration");
         }
         readLock.unlock();
-        
+
         return getDefaultRelyingPartyConfiguration();
     }
 
@@ -175,21 +175,37 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
         String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
         RelyingPartyGroup rpGroup = (RelyingPartyGroup) newServiceContext.getBean(relyingPartyGroupNames[0]);
 
+        String[] rpConfigBeanNames = newServiceContext.getBeanNamesForType(RelyingPartyConfiguration.class);
+
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
-        
+
         metadataProvider = rpGroup.getMetadataProvider();
 
         rpConfigs.clear();
-        List<RelyingPartyConfiguration> newRpConfigs = rpGroup.getRelyingParties();
-        if(rpConfigs != null){
-            for(RelyingPartyConfiguration newRpConfig : newRpConfigs){
-                rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
-                if(log.isDebugEnabled()){
-                    log.debug("Registering configuration for relying party: " + newRpConfig.getRelyingPartyId());
+        RelyingPartyConfiguration rpConfig;
+        if (rpConfigBeanNames != null && relyingPartyGroupNames.length > 0) {
+            for (String rpConfigBeanName : rpConfigBeanNames) {
+                rpConfig = (RelyingPartyConfiguration) newServiceContext.getBean(rpConfigBeanName);
+                rpConfigs.put(rpConfig.getRelyingPartyId(), rpConfig);
+                if (log.isDebugEnabled()) {
+                    log.debug("Registering configuration for relying party: " + rpConfig.getRelyingPartyId());
                 }
             }
         }
+
+        // This results, for some reason, in Spring trying to cast profile configurations as relying party
+        // configurations
+        // TODO figure this out
+        // List<RelyingPartyConfiguration> newRpConfigs = newServiceContext.get;
+        // if(rpConfigs != null){
+        // for(RelyingPartyConfiguration newRpConfig : newRpConfigs){
+        // rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
+        // if(log.isDebugEnabled()){
+        // log.debug("Registering configuration for relying party: " + newRpConfig.getRelyingPartyId());
+        // }
+        // }
+        // }
 
         writeLock.unlock();
     }
