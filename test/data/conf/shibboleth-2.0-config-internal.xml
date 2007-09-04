@@ -9,7 +9,7 @@
         <constructor-arg>
             <list>                
                 <bean id="shibMetadataExtensions" class="org.opensaml.util.resource.ClasspathResource">
-                    <constructor-arg value="/shibboleth-metadata-ext-config.xml" />
+                    <constructor-arg value="/shibboleth-saml-ext-config.xml" />
                 </bean>   
             </list>
         </constructor-arg>

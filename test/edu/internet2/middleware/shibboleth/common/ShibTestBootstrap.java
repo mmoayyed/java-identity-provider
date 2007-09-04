@@ -27,7 +27,7 @@ public class ShibTestBootstrap extends TestBootstrap {
     
     /** List of XMLTooling configuration files with test configuration. */
     private static String[] testConfigs = { 
-        "/shibboleth-metadata-ext-config.xml", 
+        "/shibboleth-saml-ext-config.xml", 
     };
     
     /** {@inheritDoc} */
