@@ -22,9 +22,9 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.XMLHelper;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -35,15 +35,18 @@ import edu.internet2.middleware.shibboleth.common.config.security.SecurityNamesp
 /**
  * Spring bean definition parser for relying party group configurations.
  */
-public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitionParser {
+public class RelyingPartyGroupBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingPartyGroup");
 
     /** {@inheritDoc} */
-    protected AbstractBeanDefinition parseInternal(Element config, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(RelyingPartyGroup.class);
-
+    protected Class getBeanClass(Element element) {
+        return RelyingPartyGroup.class;
+    }
+    
+    /** {@inheritDoc} */
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
 
         List<Element> mds = configChildren.get(new QName(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider"));
@@ -55,8 +58,6 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
         parseRelyingPartyConfiguration(configChildren, builder, parserContext);
 
         parseSecurityConfiguration(configChildren, builder, parserContext);
-
-        return builder.getBeanDefinition();
     }
 
     /**
@@ -83,8 +84,9 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractBeanDefinitio
 
         List<Element> rps = configChildren.get(RelyingPartyConfigurationBeanDefinitionParser.RP_ELEMENT_NAME);
         if (rps != null && rps.size() > 0) {
-            builder.addPropertyValue("relyingParties", SpringConfigurationUtils
-                            .parseCustomElements(rps, parserContext));
+            ManagedList relyingParties = SpringConfigurationUtils
+            .parseCustomElements(rps, parserContext);
+            builder.addPropertyValue("relyingParties", relyingParties);
         }
     }
 

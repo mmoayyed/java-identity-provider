@@ -183,7 +183,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
         try {
             SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
-            //newServiceContext.refresh();
+            newServiceContext.refresh();
             
             Lock writeLock = getReadWriteLock().writeLock();
             writeLock.lock();

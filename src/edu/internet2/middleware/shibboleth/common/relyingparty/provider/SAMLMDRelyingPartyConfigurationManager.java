@@ -175,37 +175,21 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
         String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
         RelyingPartyGroup rpGroup = (RelyingPartyGroup) newServiceContext.getBean(relyingPartyGroupNames[0]);
 
-        String[] rpConfigBeanNames = newServiceContext.getBeanNamesForType(RelyingPartyConfiguration.class);
-
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
 
         metadataProvider = rpGroup.getMetadataProvider();
 
         rpConfigs.clear();
-        RelyingPartyConfiguration rpConfig;
-        if (rpConfigBeanNames != null && relyingPartyGroupNames.length > 0) {
-            for (String rpConfigBeanName : rpConfigBeanNames) {
-                rpConfig = (RelyingPartyConfiguration) newServiceContext.getBean(rpConfigBeanName);
-                rpConfigs.put(rpConfig.getRelyingPartyId(), rpConfig);
+        List<RelyingPartyConfiguration> newRpConfigs = rpGroup.getRelyingParties();
+        if (rpConfigs != null) {
+            for (RelyingPartyConfiguration newRpConfig : newRpConfigs) {
+                rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
                 if (log.isDebugEnabled()) {
-                    log.debug("Registering configuration for relying party: " + rpConfig.getRelyingPartyId());
+                    log.debug("Registering configuration for relying party: " + newRpConfig.getRelyingPartyId());
                 }
             }
         }
-
-        // This results, for some reason, in Spring trying to cast profile configurations as relying party
-        // configurations
-        // TODO figure this out
-        // List<RelyingPartyConfiguration> newRpConfigs = newServiceContext.get;
-        // if(rpConfigs != null){
-        // for(RelyingPartyConfiguration newRpConfig : newRpConfigs){
-        // rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
-        // if(log.isDebugEnabled()){
-        // log.debug("Registering configuration for relying party: " + newRpConfig.getRelyingPartyId());
-        // }
-        // }
-        // }
 
         writeLock.unlock();
     }
