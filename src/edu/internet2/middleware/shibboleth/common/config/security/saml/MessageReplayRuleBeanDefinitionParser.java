@@ -44,12 +44,7 @@ public class MessageReplayRuleBeanDefinitionParser extends AbstractSingleBeanDef
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "clockSkew")));
-        
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
-                "expirationThreshold")));
-        
         builder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
-                "storageRef")));
+                "replayCacheRef")));
     }
 }

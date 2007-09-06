@@ -79,28 +79,9 @@
         </annotation>
         <complexContent>
             <extension base="sec:SecurityPolicyRuleType">
-                <attribute name="expirationThreshold" type="positiveInteger" default="300">
+                <attribute name="replayCacheRef" type="string" default="shibboleth.ReplayCache">
                     <annotation>
-                        <documentation>
-                            Time, in seconds, after a message is issued before it is considered expired.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="clockSkew" type="positiveInteger" default="10">
-                    <annotation>
-                        <documentation>
-                            Clock skew time in seconds.
-
-                            Defines the valid life time of a message issue instant as: (instant - skew) &lt; now &gt;
-                            (instant + expirationThreshold + skew)
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="storageRef" type="string" default="shibboleth.StorageService">
-                    <annotation>
-                        <documentation>
-                            Name of the storage instance used for the replay cache. This should not be changed.
-                        </documentation>
+                        <documentation>Name of the replay cache to use.</documentation>
                     </annotation>
                 </attribute>
             </extension>
