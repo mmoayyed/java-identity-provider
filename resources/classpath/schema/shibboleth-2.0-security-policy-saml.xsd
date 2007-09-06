@@ -4,31 +4,7 @@
     elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="classpath:/schema/shibboleth-2.0-security.xsd" />
-
-    <complexType name="SAML1Protocol">
-        <annotation>
-            <documentation>
-                Message rule that extract information such as issuer and issue instant from the incoming SAML 1
-                messages.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="sec:SecurityPolicyRuleType" />
-        </complexContent>
-    </complexType>
-
-    <complexType name="SAML2Protocol">
-        <annotation>
-            <documentation>
-                Message rule that extract information such as issuer and issue instant from the incoming SAML 2
-                messages.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="sec:SecurityPolicyRuleType" />
-        </complexContent>
-    </complexType>
-
+    
     <complexType name="MandatoryIssuer">
         <annotation>
             <documentation>
