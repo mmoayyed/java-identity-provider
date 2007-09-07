@@ -72,7 +72,7 @@ public class SAML2ScopedStringAttributeEncoder extends
         samlAttribute.setName(getAttributeName());
         samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.setFriendlyName(getFriendlyName());
-        samlAttribute.getAttributeValues().addAll(encodeAttributeValue(AttributeValue.DEFAULT_ELEMENT_NAME, attribute));
+        samlAttribute.getAttributeValues().addAll(encodeAttributeValues(AttributeValue.DEFAULT_ELEMENT_NAME, attribute));
 
         return samlAttribute;
     }

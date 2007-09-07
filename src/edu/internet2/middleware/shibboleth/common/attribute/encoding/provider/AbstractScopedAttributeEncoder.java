@@ -22,8 +22,10 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.opensaml.Configuration;
-import org.opensaml.common.SAMLObject;
+import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.XMLObjectBuilder;
+import org.opensaml.xml.schema.XSString;
+import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
@@ -102,39 +104,48 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
     /**
      * Encodes attributes whose values are scoped.
      * 
-     * @param valueElementQName name of the attribute value element to create for each value
+     * @param objectName name of the attribute value element to create for each value
      * @param attribute the attribute whose values will be encoded
      * 
      * @return the list of encoded attribute values
      */
-    protected List<SAMLObject> encodeAttributeValue(QName valueElementQName,
-            BaseAttribute<ScopedAttributeValue> attribute) {
-        ArrayList<SAMLObject> encodedValues = new ArrayList<SAMLObject>();
+    @SuppressWarnings("unchecked")
+    protected List<XMLObject> encodeAttributeValues(QName objectName, BaseAttribute<ScopedAttributeValue> attribute) {
+        ArrayList<XMLObject> encodedValues = new ArrayList<XMLObject>();
 
-        XMLObjectBuilder<ShibbolethScopedValue> valueBuilder = Configuration.getBuilderFactory().getBuilder(
-                ShibbolethScopedValue.TYPE_NAME);
+        if ("attribute".equals(getScopeType())) {
+            XMLObjectBuilder<ShibbolethScopedValue> valueBuilder = Configuration.getBuilderFactory().getBuilder(
+                    ShibbolethScopedValue.TYPE_NAME);
+            ShibbolethScopedValue scopedValue;
+            
+            for (ScopedAttributeValue attributeValue : attribute.getValues()) {
+                if (attributeValue == null) {
+                    continue;
+                }
 
-        ShibbolethScopedValue scopedValue;
-        for (ScopedAttributeValue attributeValue : attribute.getValues()) {
-            if (attributeValue == null) {
-                continue;
-            }
-
-            scopedValue = valueBuilder.buildObject(valueElementQName);
-
-            // handle "attribute" scopeType
-            if ("attribute".equals(getScopeType())) {
+                scopedValue = valueBuilder.buildObject(objectName);
                 scopedValue.setScopeAttributeName(getScopeAttribute());
                 scopedValue.setScope(attributeValue.getScope());
                 scopedValue.setValue(attributeValue.getValue());
+
+                encodedValues.add(scopedValue);
             }
 
-            // handle "inline" scopeType
-            if ("inline".equals(getScopeType())) {
+        } else if ("inline".equals(getScopeType())) {
+            XSStringBuilder valueBuilder = new XSStringBuilder();
+            XSString scopedValue;
+            
+            for (ScopedAttributeValue attributeValue : attribute.getValues()) {
+                if (attributeValue == null) {
+                    continue;
+                }
+
+                scopedValue = valueBuilder.buildObject(objectName, XSString.TYPE_NAME);
                 scopedValue.setValue(attributeValue.getValue() + getScopeDelimiter() + attributeValue.getScope());
+
+                encodedValues.add(scopedValue);
             }
 
-            encodedValues.add(scopedValue);
         }
 
         return encodedValues;
