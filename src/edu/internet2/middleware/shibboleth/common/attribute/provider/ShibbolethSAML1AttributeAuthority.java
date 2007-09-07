@@ -128,7 +128,7 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
             throws AttributeRequestException {
         if (requestContext.getInboundMessageIssuer() == null || requestContext.getSubjectNameIdentifier() == null) {
             throw new AttributeRequestException(
-                    "Unable to resolve principal, attribute request ID and subject name identifier may not be null");
+                    "Unable to resolve principal, attribute requester ID and subject name identifier may not be null");
         }
         return attributeResolver.resolvePrincipalName(requestContext);
     }
@@ -146,7 +146,7 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
         HashSet<String> requestedAttributes = new HashSet<String>();
 
         // get attributes from the message
-        Set<String> queryAttributeIds = getAttributeIds((SAMLObject) requestContext.getInboundMessage());
+        Set<String> queryAttributeIds = getAttributeIds(requestContext.getInboundSAMLMessage());
         requestedAttributes.addAll(queryAttributeIds);
 
         // get attributes from metadata
