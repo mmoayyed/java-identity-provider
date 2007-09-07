@@ -137,6 +137,9 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                     + " looking up configuration based on metadata groups");
         }
         try {
+            if(metadataProvider == null){
+                log.debug("No metadata provider available, unable to lookup configuration based on entity group");
+            }else{
             EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
             if (entityDescriptor != null) {
                 EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
@@ -152,12 +155,13 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                     entityGroup = (EntitiesDescriptor) entityGroup.getParent();
                 }
             }
+            }
         } catch (MetadataProviderException e) {
             log.error("Error fetching metadata for relying party " + relyingPartyEntityID, e);
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("No realying party configuration found for " + relyingPartyEntityID
+            log.debug("No relying party configuration found for " + relyingPartyEntityID
                     + " using default configuration");
         }
         readLock.unlock();
@@ -190,6 +194,9 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                 }
             }
         }
+        
+        rpConfigs.put(ANONYMOUS_RP_NAME, rpGroup.getAnonymousRP());
+        rpConfigs.put(DEFAULT_RP_NAME, rpGroup.getDefaultRP());
 
         writeLock.unlock();
     }
