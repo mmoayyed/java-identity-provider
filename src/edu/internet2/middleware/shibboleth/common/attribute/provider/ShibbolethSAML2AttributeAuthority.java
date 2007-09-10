@@ -189,11 +189,13 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
             throws AttributeEncodingException {
         Collection<Attribute> encodedAttributes = new ArrayList<Attribute>();
 
-        boolean attributeEncoded = false;
+        boolean attributeEncoded;
         Attribute samlAttribute;
         SAML2StringAttributeEncoder defaultEncoder;
 
         for (BaseAttribute<?> shibbolethAttribute : attributes) {
+            attributeEncoded = false;
+            
             if (shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() == 0) {
                 continue;
             }
