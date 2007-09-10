@@ -19,7 +19,6 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 import jargs.gnu.CmdLineParser;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -64,6 +63,12 @@ public class AttributeAuthorityCLI {
     /** Class logger. */
     private static Logger log = Logger.getLogger(AttributeAuthorityCLI.class);
 
+    /** List of configuration files used with the AACLI. */
+    private static String[] aacliConfigs = {         
+        "/service.xml",
+        "/internal.xml",
+    };
+    
     /** Loaded metadata provider. */
     private static MetadataProvider metadataProvider;
 
@@ -151,18 +156,12 @@ public class AttributeAuthorityCLI {
             errorAndExit("Configuration directory " + configDir
                     + " does not exist, is not a directory, or is not readable", null);
         }
-
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File directory, String filename) {
-                return filename.endsWith(".xml");
-            }
-        };
-        File[] files = configDirectory.listFiles(filter);
+        
         List<Resource> configs = new ArrayList<Resource>();
         
         File config;
-        for (int i = 0; i < files.length; i++) {
-            config = files[i];
+        for (int i = 0; i < aacliConfigs.length; i++) {
+            config = new File(configDir + aacliConfigs[i]);
             if (config.isDirectory() || !config.canRead()) {
                 errorAndExit("Configuration file " + config.getAbsolutePath() + " is a directory or is not readable",
                         null);
