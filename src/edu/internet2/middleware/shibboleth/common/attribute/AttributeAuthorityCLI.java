@@ -39,6 +39,7 @@ import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -64,11 +65,8 @@ public class AttributeAuthorityCLI {
     private static Logger log = Logger.getLogger(AttributeAuthorityCLI.class);
 
     /** List of configuration files used with the AACLI. */
-    private static String[] aacliConfigs = {         
-        "/service.xml",
-        "/internal.xml",
-    };
-    
+    private static String[] aacliConfigs = { "/service.xml", "/internal.xml", };
+
     /** Loaded metadata provider. */
     private static MetadataProvider metadataProvider;
 
@@ -151,24 +149,30 @@ public class AttributeAuthorityCLI {
      * @throws ResourceException if there is an error loading the configuration files
      */
     private static ApplicationContext loadConfigurations(String configDir) throws IOException, ResourceException {
-        File configDirectory = new File(configDir);
+        File configDirectory;
+
+        if (configDir != null) {
+            configDirectory = new File(configDir);
+        } else {
+            configDirectory = new File(System.getenv("IDP_HOME") + "/conf");
+        }
+
         if (!configDirectory.exists() || !configDirectory.isDirectory() || !configDirectory.canRead()) {
             errorAndExit("Configuration directory " + configDir
                     + " does not exist, is not a directory, or is not readable", null);
         }
-        
+
         List<Resource> configs = new ArrayList<Resource>();
-        
+
         File config;
         for (int i = 0; i < aacliConfigs.length; i++) {
-            config = new File(configDir + aacliConfigs[i]);
+            config = new File(configDirectory.getPath() + aacliConfigs[i]);
             if (config.isDirectory() || !config.canRead()) {
                 errorAndExit("Configuration file " + config.getAbsolutePath() + " is a directory or is not readable",
                         null);
             }
             configs.add(new FilesystemResource(config.getPath()));
         }
-
 
         GenericApplicationContext gContext = new GenericApplicationContext();
         SpringConfigurationUtils.populateRegistry(gContext, configs);
@@ -231,7 +235,7 @@ public class AttributeAuthorityCLI {
         String issuer = (String) parser.getOptionValue(CLIParserBuilder.ISSUER_ARG);
         String requester = (String) parser.getOptionValue(CLIParserBuilder.REQUESTER_ARG);
 
-        RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration(issuer, requester);
+        RelyingPartyConfiguration rpConfig = new RelyingPartyConfiguration(requester, issuer);
 
         BaseSAMLProfileRequestContext attribReqCtx = new BaseSAMLProfileRequestContext();
         attribReqCtx.setInboundMessageIssuer(requester);
