@@ -157,8 +157,12 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
         Element privKeyElem = keyElems.get(0);
         byte[] encodedKey = getEncodedPrivateKey(DatatypeHelper.safeTrimOrNullString(privKeyElem.getTextContent()));
         String keyPassword = DatatypeHelper.safeTrimOrNullString(privKeyElem.getAttributeNS(null, "password"));
+        char[] keyPasswordCharArray = null;
+        if (keyPassword != null) {
+            keyPasswordCharArray = keyPassword.toCharArray();
+        }
         try {
-            PrivateKey privKey = SecurityHelper.decodePrivateKey(encodedKey, keyPassword.toCharArray());
+            PrivateKey privKey = SecurityHelper.decodePrivateKey(encodedKey, keyPasswordCharArray);
             PublicKey pubKey = SecurityHelper.derivePublicKey(privKey);
             builder.addPropertyValue("privateKey", privKey);
             builder.addPropertyValue("publicKey", pubKey);
