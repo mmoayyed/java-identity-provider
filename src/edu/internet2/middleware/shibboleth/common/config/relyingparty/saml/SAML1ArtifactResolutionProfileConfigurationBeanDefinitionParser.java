@@ -23,15 +23,15 @@ import org.w3c.dom.Element;
 /**
  * Spring configuration parser for SAML 1 artifact query profile configurations.
  */
-public class SAML1ArtifactQueryProfileConfigurationBeanDefinitionParser extends
+public class SAML1ArtifactResolutionProfileConfigurationBeanDefinitionParser extends
         AbstractSAML1ProfileConfigurationBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE,
-            "SAML1ArtifactQueryProfile");
+            "SAML1ArtifactResolutionProfile");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return SAML1ArtifactQueryProfileConfigurationFactoryBean.class;
+        return SAML1ArtifactResolutionProfileConfigurationFactoryBean.class;
     }
 }

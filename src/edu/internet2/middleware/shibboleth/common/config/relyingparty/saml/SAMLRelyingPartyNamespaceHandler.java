@@ -35,8 +35,8 @@ public class SAMLRelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler
         registerBeanDefinitionParser(SAML1AttributeQueryProfileConfigurationBeanDefinitionParser.TYPE_NAME,
                 new SAML1AttributeQueryProfileConfigurationBeanDefinitionParser());
 
-        registerBeanDefinitionParser(SAML1ArtifactQueryProfileConfigurationBeanDefinitionParser.TYPE_NAME,
-                new SAML1ArtifactQueryProfileConfigurationBeanDefinitionParser());
+        registerBeanDefinitionParser(SAML1ArtifactResolutionProfileConfigurationBeanDefinitionParser.TYPE_NAME,
+                new SAML1ArtifactResolutionProfileConfigurationBeanDefinitionParser());
 
         registerBeanDefinitionParser(SAML2SSOProfileConfigurationBeanDefinitionParser.TYPE_NAME,
                 new SAML2SSOProfileConfigurationBeanDefinitionParser());

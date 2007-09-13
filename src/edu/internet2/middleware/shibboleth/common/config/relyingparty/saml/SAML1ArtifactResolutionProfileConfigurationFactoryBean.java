@@ -21,7 +21,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.Ar
 /**
  * Spring factory for SAML 1 artifact query profile configurations.
  */
-public class SAML1ArtifactQueryProfileConfigurationFactoryBean extends AbstractSAML1ProfileConfigurationFactoryBean {
+public class SAML1ArtifactResolutionProfileConfigurationFactoryBean extends AbstractSAML1ProfileConfigurationFactoryBean {
 
     /** {@inheritDoc} */
     public Class getObjectType() {

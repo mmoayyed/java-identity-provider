@@ -107,7 +107,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="SAML1ArtifactQueryProfile">
+    <complexType name="SAML1ArtifactResolutionProfile">
         <annotation>
             <documentation>SAML 1.0 and 1.1 artifact query communication profile configurations.</documentation>
         </annotation>
