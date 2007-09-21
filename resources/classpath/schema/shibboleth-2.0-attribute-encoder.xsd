@@ -44,7 +44,7 @@
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
                 <attribute name="nameFormat" type="string"
-                    default="urn:oasis:names:tc:SAML:1.0:nameidformat:unspecified">
+                    default="urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified">
                     <annotation>
                         <documentation>The SAML 1 NameFormat of the NameIdentifier.</documentation>
                     </annotation>
