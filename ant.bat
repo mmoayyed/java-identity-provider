@@ -26,7 +26,7 @@ if defined CLASSPATH (
 
 REM add in the dependency .jar files
 for %%i in (%ANT_HOME%\build-lib\*.jar) do (
-	call %ANT_HOME%\tools\cpappend.bat %%i
+	call %ANT_HOME%\cpappend.bat %%i
 )
 
 if exist %JAVA_HOME%\lib\tools.jar (
