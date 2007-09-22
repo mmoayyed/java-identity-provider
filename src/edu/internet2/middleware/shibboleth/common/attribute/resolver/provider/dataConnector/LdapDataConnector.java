@@ -755,7 +755,16 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      */
     protected Map<String, BaseAttribute> buildBaseAttributes(Iterator<SearchResult> results)
             throws AttributeResolutionException {
+
         Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
+
+        if (!results.hasNext()) {
+            //
+            // Nothing to add, return the empty set
+            //
+            return attributes;
+        }
+
         SearchResult sr = results.next();
         Map<String, List<String>> attrs = mergeAttributes(new HashMap<String, List<String>>(), sr.getAttributes());
         // merge additional results if requested
