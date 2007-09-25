@@ -27,7 +27,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for {@link TransientIdAttribtueDefinitionFactoryBean}s.
+ * Spring bean definition parser for {@link TransientIdAttributeDefinitionFactoryBean}s.
  */
 public class TransientIdAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
@@ -36,7 +36,7 @@ public class TransientIdAttributeDefinitionBeanDefinitionParser extends BaseAttr
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return TransientIdAttribtueDefinitionFactoryBean.class;
+        return TransientIdAttributeDefinitionFactoryBean.class;
     }
 
     /** {@inheritDoc} */
@@ -44,7 +44,7 @@ public class TransientIdAttributeDefinitionBeanDefinitionParser extends BaseAttr
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        pluginBuilder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null,
-                "storageServiceRef")));
+        pluginBuilder.addPropertyReference("identifierStore", DatatypeHelper.safeTrimOrNullString(pluginConfig
+                .getAttributeNS(null, "storageServiceRef")));
     }
 }

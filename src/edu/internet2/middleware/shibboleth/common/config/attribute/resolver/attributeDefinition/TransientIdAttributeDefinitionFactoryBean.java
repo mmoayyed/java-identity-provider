@@ -24,7 +24,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.at
 /**
  * Spring factory bean producing {@link TransientIdAttributeDefinition}s.
  */
-public class TransientIdAttribtueDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
+public class TransientIdAttributeDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
 
     /** Store used to map transient identifier tokens to principal names. */
     private StorageService<String, IdEntry> identifierStore;
