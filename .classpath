@@ -101,5 +101,6 @@
 			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.0.x/api/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.4.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

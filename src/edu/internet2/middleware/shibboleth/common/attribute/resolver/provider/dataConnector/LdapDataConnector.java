@@ -26,7 +26,8 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -74,7 +75,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     };
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(LdapDataConnector.class);
+    private static Logger log = LoggerFactory.getLogger(LdapDataConnector.class);
 
     /** Whether multiple result sets should be merged. */
     private boolean mergeMultipleResults;
@@ -648,14 +649,10 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        if (log.isDebugEnabled()) {
-            log.debug("Begin resolve for " + resolutionContext.getAttributeRequestContext().getPrincipalName());
-        }
+        log.debug("Begin resolve for {}", resolutionContext.getAttributeRequestContext().getPrincipalName());
 
         String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDependencyIds());
-        if (log.isDebugEnabled()) {
-            log.debug("search filter = " + searchFilter);
-        }
+        log.debug("Search filter: {}", searchFilter);
 
         // create Attribute objects to return
         Map<String, BaseAttribute> attributes = null;
@@ -669,9 +666,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
         }
         // results not found in the cache
         if (attributes == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Retrieving attributes from LDAP");
-            }
+            log.debug("Retrieving attributes from LDAP");
             Iterator<SearchResult> results = searchLdap(searchFilter);
             // check for empty result set
             if (noResultsIsError && !results.hasNext()) {
@@ -682,9 +677,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             attributes = buildBaseAttributes(results);
             if (cacheResults && attributes != null) {
                 setCachedAttributes(resolutionContext, searchFilter, attributes);
-                if (log.isDebugEnabled()) {
-                    log.debug("Stored results in the cache");
-                }
+                log.debug("Stored results in the cache");
             }
         }
         return attributes;
@@ -774,9 +767,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
         }
         // populate list of attributes
         for (Map.Entry<String, List<String>> entry : attrs.entrySet()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Found the following attribute: " + entry);
-            }
+            log.debug("Found the following attribute: {}", entry);
             BasicAttribute<String> attribute = new BasicAttribute<String>();
             attribute.setId(entry.getKey());
             attribute.getValues().addAll(entry.getValue());

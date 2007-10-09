@@ -23,12 +23,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-import org.opensaml.log.Level;
 import org.opensaml.ws.transport.http.HTTPInTransport;
 import org.opensaml.ws.transport.http.HTTPOutTransport;
 import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
 import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.log.AccessLogEntry;
 
@@ -41,10 +41,10 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 3750548606378986211L;
 
     /** Class logger. */
-    private final Logger log = Logger.getLogger(ProfileRequestDispatcherServlet.class);
+    private final Logger log = LoggerFactory.getLogger(ProfileRequestDispatcherServlet.class);
 
     /** Access logger. */
-    private final Logger accessLog = Logger.getLogger(AccessLogEntry.ACCESS_LOGGER_NAME);
+    private final Logger accessLog = LoggerFactory.getLogger(AccessLogEntry.ACCESS_LOGGER_NAME);
 
     /**
      * Gets the manager used to retrieve handlers for requests.
@@ -61,7 +61,7 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
             IOException {
         if (accessLog.isInfoEnabled()) {
             AccessLogEntry accessEntry = new AccessLogEntry(httpRequest);
-            accessLog.log(Level.CRITICAL, accessEntry);
+            accessLog.info(accessEntry.toString());
         }
 
         HTTPInTransport profileReq = new HttpServletRequestAdapter(httpRequest);
@@ -79,7 +79,7 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
                 httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
             }
         } else {
-            log.warn("No profile handler configured for request at path: " + httpRequest.getPathInfo());
+            log.warn("No profile handler configured for request at path: {}", httpRequest.getPathInfo());
             httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, new NoProfileHandlerException(
                     "No profile handler configured for request at path: " + httpRequest.getPathInfo()));
         }

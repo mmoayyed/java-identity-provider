@@ -18,8 +18,9 @@ package edu.internet2.middleware.shibboleth.common.config.security;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -39,9 +40,9 @@ public class ShibbolethSecurityPolicyBeanDefinitionParser extends AbstractSingle
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "SecurityPolicyType");
-    
+
     /** Class logger. */
-    private final Logger log = Logger.getLogger(ShibbolethSecurityPolicyBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(ShibbolethSecurityPolicyBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -55,10 +56,9 @@ public class ShibbolethSecurityPolicyBeanDefinitionParser extends AbstractSingle
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        if(log.isDebugEnabled()){
-            log.debug("Configuring security policy: " + element.getAttributeNS(null, "id"));
-        }
-        builder.addPropertyValue("policyId", element.getAttributeNS(null, "id"));
+        String policyId = element.getAttributeNS(null, "id");
+        log.debug("Configuring security policy: {}" + policyId);
+        builder.addPropertyValue("policyId", policyId);
 
         ManagedList rules = SpringConfigurationUtils.parseCustomElements(XMLHelper.getChildElementsByTagNameNS(element,
                 SecurityNamespaceHandler.NAMESPACE, "Rule"), parserContext);

@@ -28,7 +28,6 @@ import java.util.Timer;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 
-import org.apache.log4j.Logger;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
@@ -38,6 +37,8 @@ import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
@@ -70,7 +71,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             AttributeDefinition.class, PrincipalConnector.class, });
 
     /** Log4j logger. */
-    private static Logger log = Logger.getLogger(ShibbolethAttributeResolver.class.getName());
+    private final Logger log = LoggerFactory.getLogger(ShibbolethAttributeResolver.class.getName());
 
     /** Data connectors defined for this resolver. */
     private Map<String, DataConnector> dataConnectors;
@@ -140,25 +141,18 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             throws AttributeResolutionException {
         ShibbolethResolutionContext resolutionContext = new ShibbolethResolutionContext(attributeRequestContext);
 
-        if (log.isDebugEnabled()) {
-            log.debug(getId() + " resolving attributes for principal " + attributeRequestContext.getPrincipalName());
-        }
+        log.debug("{} resolving attributes for principal {}", getId(), attributeRequestContext.getPrincipalName());
+
         if (getAttributeDefinitions().size() == 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("No attribute definitions loaded in " + getId()
-                        + " so no attributes can be resolved for principal "
-                        + attributeRequestContext.getPrincipalName());
-            }
+            log.debug("No attribute definitions loaded in {} so no attributes can be resolved for principal {}",
+                    getId(), attributeRequestContext.getPrincipalName());
             return new HashMap<String, BaseAttribute>();
         }
 
         Map<String, BaseAttribute> resolvedAttributes = resolveAttributes(resolutionContext);
         cleanResolvedAttributes(resolvedAttributes, resolutionContext);
 
-        if (log.isDebugEnabled()) {
-            log.debug(getId() + " returning " + resolvedAttributes.size() + " attributes for principal "
-                    + attributeRequestContext.getPrincipalName());
-        }
+        log.debug("{} returning attributes for principal {}", getId(), attributeRequestContext.getPrincipalName());
         return resolvedAttributes;
     }
 
@@ -198,9 +192,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     public String resolvePrincipalName(SAMLProfileRequestContext requestContext) throws AttributeResolutionException {
         String nameIdFormat = getNameIdentifierFormat(requestContext.getSubjectNameIdentifier());
 
-        if (log.isDebugEnabled()) {
-            log.debug("Resolving principal name from name identifier of format: " + nameIdFormat);
-        }
+        log.debug("Resolving principal name from name identifier of format: {}", nameIdFormat);
 
         PrincipalConnector effectiveConnector = null;
         for (PrincipalConnector connector : principalConnectors.values()) {
@@ -221,10 +213,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                     "No principal connector available to resolve a subject name with format " + nameIdFormat
                             + " for relying party " + requestContext.getInboundMessageIssuer());
         }
-
-        if (log.isDebugEnabled()) {
-            log.debug("Using principal connector " + effectiveConnector.getId() + " to resolve principal name.");
-        }
+        log.debug("Using principal connector {} to resolve principal name.", effectiveConnector.getId());
         effectiveConnector = new ContextualPrincipalConnector(effectiveConnector);
 
         ShibbolethResolutionContext resolutionContext = new ShibbolethResolutionContext(requestContext);
@@ -277,11 +266,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
         // if no attributes requested, then resolve everything
         if (attributeIDs == null || attributeIDs.isEmpty()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Specific attributes for principal "
-                        + resolutionContext.getAttributeRequestContext().getPrincipalName()
-                        + " were not requested, resolving all attributes.");
-            }
+            log.debug("Specific attributes for principal {} were not requested, resolving all attributes.",
+                    resolutionContext.getAttributeRequestContext().getPrincipalName());
             attributeIDs = getAttributeDefinitions().keySet();
         }
 
@@ -295,10 +281,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         }
         readLock.unlock();
 
-        if (log.isDebugEnabled()) {
-            log.debug(getId() + " resolved " + resolvedAttributes.size() + " attributes for principal "
-                    + resolutionContext.getAttributeRequestContext().getPrincipalName());
-        }
+        log.debug("{} resolved attributes for principal {}", getId(), resolutionContext.getAttributeRequestContext()
+                .getPrincipalName());
         return resolvedAttributes;
     }
 
@@ -320,16 +304,13 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         AttributeDefinition definition = resolutionContext.getResolvedAttributeDefinitions().get(attributeID);
 
         if (definition == null) {
-            if (log.isDebugEnabled()) {
-                log.debug(getId() + " resolving attribute " + attributeID + " for principal "
-                        + resolutionContext.getAttributeRequestContext().getPrincipalName());
-            }
+            log.debug("Resolving attribute {} for principal {}", attributeID, resolutionContext
+                    .getAttributeRequestContext().getPrincipalName());
 
             definition = getAttributeDefinitions().get(attributeID);
             if (definition == null) {
-                log.warn(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer()
-                        + " requested attribute " + attributeID + " of " + getId()
-                        + " but no attribute definition exists for that attribute");
+                log.warn("{} requested attribute {} but no attribute definition exists for that attribute",
+                        resolutionContext.getAttributeRequestContext().getInboundMessageIssuer(), attributeID);
                 return null;
             } else {
                 // wrap attribute definition for use within the given resolution context
@@ -345,10 +326,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
         // return the actual resolution of the definition
         BaseAttribute attribute = definition.resolve(resolutionContext);
-        if (log.isDebugEnabled()) {
-            log.debug(getId() + " resolved attribute " + attributeID + ".  Attribtute contains "
-                    + attribute.getValues().size() + " values.");
-        }
+        log.debug("Resolved attribute {}.  Attribtute contains {} values.", attributeID, attribute.getValues().size());
         return attribute;
     }
 
@@ -366,15 +344,13 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         DataConnector dataConnector = resolutionContext.getResolvedDataConnectors().get(connectorID);
 
         if (dataConnector == null) {
-            if (log.isDebugEnabled()) {
-                log.debug(getId() + " resolving data connector " + connectorID + " for principal "
-                        + resolutionContext.getAttributeRequestContext().getPrincipalName());
-            }
+            log.debug("Resolving data connector {} for principal {}", connectorID, resolutionContext
+                    .getAttributeRequestContext().getPrincipalName());
 
             dataConnector = getDataConnectors().get(connectorID);
             if (dataConnector == null) {
-                log.warn(getId() + " requested to resolve data connector" + connectorID
-                        + " but does not have such a data connector");
+                log.warn("{} requested to resolve data connector {} but does not have such a data connector", getId(),
+                        connectorID);
             } else {
                 // wrap connector for use within the given resolution context
                 dataConnector = new ContextualDataConnector(dataConnector);
@@ -432,12 +408,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             // remove value-less attributes
             resolvedAttribute = attributeItr.next().getValue();
             if (resolvedAttribute.getValues().size() == 0) {
-                if (log.isDebugEnabled()) {
-                    log.debug(getId() + " removing attribute " + resolvedAttribute.getId()
-                            + " from resolution result for principal "
-                            + resolutionContext.getAttributeRequestContext().getPrincipalName()
-                            + ".  It contains no values.");
-                }
+                log.debug("Removing attribute {} from resolution result for principal {}.  It contains no values.",
+                        resolvedAttribute.getId(), resolutionContext.getAttributeRequestContext().getPrincipalName());
                 attributeItr.remove();
                 continue;
             }
@@ -445,12 +417,11 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             // remove dependency-only attributes
             attributeDefinition = getAttributeDefinitions().get(resolvedAttribute.getId());
             if (attributeDefinition.isDependencyOnly()) {
-                if (log.isDebugEnabled()) {
-                    log.debug(getId() + "removing attribute " + resolvedAttribute.getId()
-                            + "  from resolution result for principal "
-                            + resolutionContext.getAttributeRequestContext().getPrincipalName()
-                            + ".  It is a dependency-only attribute.");
-                }
+                log
+                        .debug(
+                                "Removing attribute {}  from resolution result for principal {}.  It is a dependency-only attribute.",
+                                resolvedAttribute.getId(), resolutionContext.getAttributeRequestContext()
+                                        .getPrincipalName());
                 attributeItr.remove();
                 continue;
             }
@@ -461,12 +432,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             while (valueItr.hasNext()) {
                 Object value = valueItr.next();
                 if (!values.add(value)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(getId() + " removing value " + value + " of attribute " + resolvedAttribute.getId()
-                                + " from resolution result for principal "
-                                + resolutionContext.getAttributeRequestContext().getPrincipalName()
-                                + ".  It is a duplicate value.");
-                    }
+                    log.debug("Removing duplicate value {} of attribute {} from resolution result", value,
+                            resolvedAttribute.getId());
                     valueItr.remove();
                 }
             }
@@ -505,9 +472,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         principalConnectors.clear();
         PrincipalConnector pConnector;
         beanNames = newServiceContext.getBeanNamesForType(PrincipalConnector.class);
-        if (log.isDebugEnabled()) {
-            log.debug("Loading " + beanNames.length + " principal connectors");
-        }
+        log.debug("Loading {} principal connectors", beanNames.length);
         for (String beanName : beanNames) {
             pConnector = (PrincipalConnector) newServiceContext.getBean(beanName);
             principalConnectors.put(pConnector.getId(), pConnector);
@@ -516,9 +481,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         dataConnectors.clear();
         DataConnector dConnector;
         beanNames = newServiceContext.getBeanNamesForType(DataConnector.class);
-        if (log.isDebugEnabled()) {
-            log.debug("Loading " + beanNames.length + " data connectors");
-        }
+        log.debug("Loading {} data connectors", beanNames.length);
         for (String beanName : beanNames) {
             dConnector = (DataConnector) newServiceContext.getBean(beanName);
             dataConnectors.put(dConnector.getId(), dConnector);
@@ -527,9 +490,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         definitions.clear();
         AttributeDefinition aDefinition;
         beanNames = newServiceContext.getBeanNamesForType(AttributeDefinition.class);
-        if (log.isDebugEnabled()) {
-            log.debug("Loading " + beanNames.length + " attribute definitions");
-        }
+        log.debug("Loading {} attribute definitions", beanNames.length);
         for (String beanName : beanNames) {
             aDefinition = (AttributeDefinition) newServiceContext.getBean(beanName);
             definitions.put(aDefinition.getId(), aDefinition);

@@ -24,13 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
@@ -46,7 +47,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(TemplateAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinition.class);
 
     /** Velocity engine to use to render attribute values. */
     private VelocityEngine velocity;
@@ -107,9 +108,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             }
 
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Populating the following " + templateName + " template");
-                }
+                log.debug("Populating the following {} template", templateName);
 
                 StringWriter output = new StringWriter();
                 Template template = velocity.getTemplate(templateName);

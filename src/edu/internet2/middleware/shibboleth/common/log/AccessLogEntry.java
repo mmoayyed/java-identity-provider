@@ -19,6 +19,9 @@ package edu.internet2.middleware.shibboleth.common.log;
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.util.HttpHelper;
@@ -30,6 +33,9 @@ public class AccessLogEntry {
     
     /** Name of the Shibboleth Access logging category. */
     public static final String ACCESS_LOGGER_NAME = "Shibboleth-Access";
+    
+    /** Formatter used to convert timestamps to strings. */
+    private static DateTimeFormatter dateFormatter = ISODateTimeFormat.basicDateTimeNoMillis();
     
     /** Request timestamp. */
     private DateTime requestTime;
@@ -122,7 +128,22 @@ public class AccessLogEntry {
     
     /** {@inheritDoc} */
     public String toString() {
-        CSVAccessEventRenderer render = new CSVAccessEventRenderer();
-        return render.doRender(this);
+        StringBuilder entryString = new StringBuilder();
+
+        entryString.append(getRequestTime().toString(dateFormatter.withZone(DateTimeZone.UTC)));
+        entryString.append("|");
+
+        entryString.append(getRemoteHost());
+        entryString.append("|");
+
+        entryString.append(getServerHost());
+        entryString.append(":");
+        entryString.append(getServerPort());
+        entryString.append("|");
+
+        entryString.append(getRequestPath());
+        entryString.append("|");
+
+        return entryString.toString();
     }
 }

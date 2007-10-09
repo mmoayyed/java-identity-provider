@@ -21,7 +21,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -35,7 +36,7 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(ScriptedAttributeDefinitionBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -48,27 +49,21 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
         String scriptLanguage = pluginConfig.getAttributeNS(null, "language");
-        if (log.isDebugEnabled()) {
-            log.debug("Attribute definition " + pluginId + " scripting language: " + scriptLanguage);
-        }
+        log.debug("Attribute definition {} scripting language: {}", pluginId, scriptLanguage);
         pluginBuilder.addPropertyValue("language", scriptLanguage);
 
         List<Element> scriptElem = pluginConfigChildren.get(new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
                 "Script"));
         if (scriptElem != null && scriptElem.size() > 0) {
             String script = scriptElem.get(0).getTextContent();
-            if (log.isDebugEnabled()) {
-                log.debug("Attribute definition " + pluginId + " script: " + script);
-            }
+            log.debug("Attribute definition {} script: {}", pluginId, script);
             pluginBuilder.addPropertyValue("script", script);
         } else {
             List<Element> scriptFileElem = pluginConfigChildren.get(new QName(
                     AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile"));
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 String scriptFile = scriptFileElem.get(0).getTextContent();
-                if (log.isDebugEnabled()) {
-                    log.debug("Attribute definition " + pluginId + " script file: " + scriptFile);
-                }
+                log.debug("Attribute definition {} script file: {}", pluginId, scriptFile);
                 pluginBuilder.addPropertyValue("sciptFile", scriptFile);
             }
         }

@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -40,7 +41,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.at
 public class TemplateEngine {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(TemplateEngine.class);
+    private final Logger log = LoggerFactory.getLogger(TemplateEngine.class);
 
     /** Velocity engine to use to render templates. */
     private VelocityEngine velocity;
@@ -82,9 +83,7 @@ public class TemplateEngine {
         VelocityContext vContext = createVelocityContext(resolutionContext, dependencies);
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Populating the following " + templateName + " template");
-            }
+            log.debug("Populating the following {} template", templateName);
 
             StringWriter output = new StringWriter();
             Template template = velocity.getTemplate(templateName);
@@ -109,9 +108,7 @@ public class TemplateEngine {
     @SuppressWarnings("unchecked")
     protected VelocityContext createVelocityContext(ShibbolethResolutionContext resolutionContext,
             List<String> dependencies) throws AttributeResolutionException {
-        if (log.isDebugEnabled()) {
-            log.debug("Populating velocity context");
-        }
+        log.debug("Populating velocity context");
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("requestContext", resolutionContext.getAttributeRequestContext());
 
@@ -122,28 +119,24 @@ public class TemplateEngine {
         for (String dependencyId : dependencies) {
             plugin = resolutionContext.getResolvedPlugins().get(dependencyId);
             if (plugin instanceof DataConnector) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Resolving attributes from data connector " + dependencyId);
-                }
+                log.debug("Resolving attributes from data connector {}", dependencyId);
                 attributes = ((DataConnector) plugin).resolve(resolutionContext);
 
                 for (String attributeId : attributes.keySet()) {
                     if (!vCtx.containsKey(attributeId)) {
                         vCtx.put(attributeId, new ArrayList<String>());
                     }
-                    ((List<String>)vCtx.get(attributeId)).addAll(attributes.get(attributeId).getValues());
+                    ((List<String>) vCtx.get(attributeId)).addAll(attributes.get(attributeId).getValues());
                 }
             } else if (plugin instanceof AttributeDefinition) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Resolving attributes from attribute definition " + dependencyId);
-                }
+                log.debug("Resolving attributes from attribute definition {}", dependencyId);
                 attribute = ((AttributeDefinition) plugin).resolve(resolutionContext);
                 if (!vCtx.containsKey(attribute.getId())) {
                     vCtx.put(attribute.getId(), new ArrayList<String>());
                 }
-                ((List<String>)vCtx.get(attribute.getId())).addAll(attribute.getValues());
+                ((List<String>) vCtx.get(attribute.getId())).addAll(attribute.getValues());
             } else {
-                log.debug("Unable to locate resolution plugin " + dependencyId);
+                log.debug("Unable to locate resolution plugin {}", dependencyId);
             }
         }
 

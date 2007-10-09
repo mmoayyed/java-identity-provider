@@ -22,8 +22,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -45,17 +46,15 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractReso
             AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
 
     /** Log4j logger. */
-    private static Logger log = Logger.getLogger(BaseDataConnectorBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(BaseDataConnectorBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         List<String> failoverDataConnectors = parseFailoverDependencies(pluginConfigChildren
                 .get(FAILOVER_DATA_CONNECTOR_ELEMENT_NAME));
-        if (log.isDebugEnabled()) {
-            log.debug("Setting the following failover data connector dependencies for " + pluginConfig.getLocalName()
-                    + " plugin " + pluginId + ": " + failoverDataConnectors);
-        }
+        log.debug("Setting the following failover data connector dependencies for plugin {}: {}", pluginId,
+                failoverDataConnectors);
         pluginBuilder.addPropertyValue("failoverDataConnectorIds", failoverDataConnectors);
     }
 

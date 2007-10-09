@@ -22,12 +22,13 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.concurrent.locks.Lock;
 
-import org.apache.log4j.Logger;
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.util.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseReloadableService;
@@ -58,7 +59,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     public static final String DEFAULT_RP_NAME = "default";
 
     /** Class logger. */
-    private final Logger log = Logger.getLogger(SAMLMDRelyingPartyConfigurationManager.class);
+    private final Logger log = LoggerFactory.getLogger(SAMLMDRelyingPartyConfigurationManager.class);
 
     /** Metadata provider used to lookup information about entities. */
     private MetadataProvider metadataProvider;
@@ -121,49 +122,40 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     public RelyingPartyConfiguration getRelyingPartyConfiguration(String relyingPartyEntityID) {
         Lock readLock = getReadWriteLock().readLock();
         readLock.lock();
-        if (log.isDebugEnabled()) {
-            log.debug("Looking up relying party configuration for " + relyingPartyEntityID);
-        }
+
+        log.debug("Looking up relying party configuration for {}", relyingPartyEntityID);
         if (rpConfigs.containsKey(relyingPartyEntityID)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Relying party configuration found for " + relyingPartyEntityID);
-            }
+            log.debug("Relying party configuration found for {}", relyingPartyEntityID);
             readLock.unlock();
             return rpConfigs.get(relyingPartyEntityID);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("No relying party configuration was registered for " + relyingPartyEntityID
-                    + " looking up configuration based on metadata groups");
-        }
+        log.debug(
+            "No relying party configuration was registered for {} looking up configuration based on metadata groups",
+                        relyingPartyEntityID);
         try {
-            if(metadataProvider == null){
+            if (metadataProvider == null) {
                 log.debug("No metadata provider available, unable to lookup configuration based on entity group");
-            }else{
-            EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
-            if (entityDescriptor != null) {
-                EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
-                while (entityGroup != null) {
-                    if (rpConfigs.containsKey(entityGroup.getName())) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Relying party configuration found for " + relyingPartyEntityID
-                                    + " as member of metadata group " + entityGroup.getName());
+            } else {
+                EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
+                if (entityDescriptor != null) {
+                    EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
+                    while (entityGroup != null) {
+                        if (rpConfigs.containsKey(entityGroup.getName())) {
+                            log.debug("Relying party configuration found for {} as member of metadata group {}",
+                                    relyingPartyEntityID, entityGroup.getName());
+                            readLock.unlock();
+                            return rpConfigs.get(entityGroup.getName());
                         }
-                        readLock.unlock();
-                        return rpConfigs.get(entityGroup.getName());
+                        entityGroup = (EntitiesDescriptor) entityGroup.getParent();
                     }
-                    entityGroup = (EntitiesDescriptor) entityGroup.getParent();
                 }
-            }
             }
         } catch (MetadataProviderException e) {
             log.error("Error fetching metadata for relying party " + relyingPartyEntityID, e);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("No relying party configuration found for " + relyingPartyEntityID
-                    + " using default configuration");
-        }
+        log.debug("No relying party configuration found for {} using default configuration", relyingPartyEntityID);
         readLock.unlock();
 
         return getDefaultRelyingPartyConfiguration();
@@ -189,12 +181,10 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
         if (rpConfigs != null) {
             for (RelyingPartyConfiguration newRpConfig : newRpConfigs) {
                 rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
-                if (log.isDebugEnabled()) {
-                    log.debug("Registering configuration for relying party: " + newRpConfig.getRelyingPartyId());
-                }
+                log.debug("Registering configuration for relying party: {}", newRpConfig.getRelyingPartyId());
             }
         }
-        
+
         rpConfigs.put(ANONYMOUS_RP_NAME, rpGroup.getAnonymousRP());
         rpConfigs.put(DEFAULT_RP_NAME, rpGroup.getDefaultRP());
 

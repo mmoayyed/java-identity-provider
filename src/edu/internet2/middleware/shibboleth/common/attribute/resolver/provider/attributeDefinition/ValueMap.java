@@ -23,8 +23,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Performs many to one mapping of source values to a return value. SourceValue strings may include regular expressions
@@ -33,7 +34,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 public class ValueMap {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(ValueMap.class);
+    private final Logger log = LoggerFactory.getLogger(ValueMap.class);
 
     /** Return value. */
     private String returnValue;
@@ -96,8 +97,7 @@ public class ValueMap {
                     }
                 }
             } catch (PatternSyntaxException e) {
-                log.debug("MappedAttributeDefinition caught an exception when trying to match value " + sourceValue
-                        + ".  Skipping this value.");
+                log.debug("MappedAttributeDefinition caught an exception when trying to match value {}.  Skipping this value.", sourceValue);
             }
         }
 

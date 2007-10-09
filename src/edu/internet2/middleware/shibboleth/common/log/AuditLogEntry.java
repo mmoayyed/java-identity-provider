@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * Represents an auditable event in the system.
@@ -28,6 +31,9 @@ public class AuditLogEntry {
 
     /** Name of the Logger for the shibboleth audit log. */
     public static final String AUDIT_LOGGER_NAME = "Shibboleth-Audit";
+    
+    /** Formatter used to convert timestamps to strings. */
+    private static DateTimeFormatter dateFormatter = ISODateTimeFormat.basicDateTimeNoMillis();
 
     /** UTC IS8601 timestamp of the audit event. */
     private DateTime auditEventTime;
@@ -250,7 +256,52 @@ public class AuditLogEntry {
     
     /** {@inheritDoc} */
     public String toString() {
-        CSVAuditEventRenderer renderer = new CSVAuditEventRenderer();
-        return renderer.doRender(this);
+        StringBuilder entryString = new StringBuilder();
+
+        entryString.append(getAuditEventTime().toString(dateFormatter.withZone(DateTimeZone.UTC)));
+        entryString.append("|");
+
+        if (getRequestBinding() != null) {
+            entryString.append(getRequestBinding());
+        }
+        entryString.append("|");
+
+        if (getRequestId() != null) {
+            entryString.append(getRequestId());
+        }
+        entryString.append("|");
+
+        entryString.append(getRelyingPartyId());
+        entryString.append("|");
+
+        entryString.append(getMessageProfile());
+        entryString.append("|");
+
+        entryString.append(getAssertingPartyId());
+        entryString.append("|");
+
+        entryString.append(getResponseBinding());
+        entryString.append("|");
+
+        entryString.append(getResponseId());
+        entryString.append("|");
+
+        if (getPrincipalName() != null) {
+            entryString.append(getPrincipalName());
+        }
+        entryString.append("|");
+
+        if (getPrincipalAuthenticationMethod() != null) {
+            entryString.append(getPrincipalAuthenticationMethod());
+        }
+        entryString.append("|");
+
+        for (String attribute : getReleasedAttributes()) {
+            entryString.append(attribute);
+            entryString.append(",");
+        }
+        entryString.append("|");
+
+        return entryString.toString();
     }
 }

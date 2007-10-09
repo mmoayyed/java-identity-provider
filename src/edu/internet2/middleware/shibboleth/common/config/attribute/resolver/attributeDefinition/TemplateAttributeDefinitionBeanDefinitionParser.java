@@ -22,8 +22,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -45,7 +46,7 @@ public class TemplateAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             "SourceAttribute");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(TemplateAttributeDefinitionBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {

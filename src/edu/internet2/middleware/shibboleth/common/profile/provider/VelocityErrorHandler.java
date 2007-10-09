@@ -19,7 +19,6 @@ package edu.internet2.middleware.shibboleth.common.profile.provider;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -28,6 +27,8 @@ import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.opensaml.ws.transport.InTransport;
 import org.opensaml.ws.transport.OutTransport;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
 
@@ -52,7 +53,7 @@ import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
 public class VelocityErrorHandler extends AbstractErrorHandler {
 
     /** Class logger. */
-    private final Logger log = Logger.getLogger(VelocityErrorHandler.class);
+    private final Logger log = LoggerFactory.getLogger(VelocityErrorHandler.class);
 
     /** Velocity engine used to render error page. */
     private VelocityEngine velocityEngine;
@@ -103,7 +104,7 @@ public class VelocityErrorHandler extends AbstractErrorHandler {
             template.merge(context, responseWriter);
             responseWriter.flush();
         } catch (Throwable t) {
-            log.fatal("Unable to evaluate velocity error template", t);
+            log.error("Unable to evaluate velocity error template", t);
         }
 
         return;

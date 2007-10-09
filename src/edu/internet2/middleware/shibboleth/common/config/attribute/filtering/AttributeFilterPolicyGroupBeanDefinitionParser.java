@@ -21,9 +21,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -53,7 +54,7 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser extends BaseFilterBe
             "PermitValue");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(AttributeFilterPolicyGroupBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -67,9 +68,7 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser extends BaseFilterBe
         String policyId = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "id"));
         builder.addConstructorArg(policyId);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Parsing attribute filter policy group" + policyId);
-        }
+        log.debug("Parsing attribute filter policy group {}", policyId);
 
         List<Element> children;
         Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(configElement);

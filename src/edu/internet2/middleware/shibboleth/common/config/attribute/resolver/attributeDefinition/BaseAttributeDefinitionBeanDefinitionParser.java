@@ -21,8 +21,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -45,37 +46,29 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
             "AttributeEncoder");
 
     /** Class logger. */
-    private Logger log = Logger.getLogger(BaseAttributeDefinitionBeanDefinitionParser.class);
+    private Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
 
         String sourceAttributeId = pluginConfig.getAttributeNS(null, "sourceAttributeID");
-        if (log.isDebugEnabled()) {
-            log.debug("Setting source attribute ID for attribute definition " + pluginId + " to: " + sourceAttributeId);
-        }
+        log.debug("Setting source attribute ID for attribute definition {} to: {}", pluginId, sourceAttributeId);
         pluginBuilder.addPropertyValue("sourceAttributeId", sourceAttributeId);
 
         String displayName = pluginConfig.getAttributeNS(null, "displayName");
-        if (log.isDebugEnabled()) {
-            log.debug("Setting display name for attribute definition " + pluginId + " to: " + displayName);
-        }
+        log.debug("Setting display name for attribute definition {} to: {}", pluginId, displayName);
         pluginBuilder.addPropertyValue("displayName", displayName);
 
         String displayDescription = pluginConfig.getAttributeNS(null, "displayDescription");
-        if (log.isDebugEnabled()) {
-            log
-                    .debug("Setting display description for attribute definition " + pluginId + " to: "
-                            + displayDescription);
-        }
+        log.debug("Setting display description for attribute definition {} to: {}", pluginId, displayDescription);
         pluginBuilder.addPropertyValue("displayDescription", displayDescription);
 
         boolean dependencyOnly = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "dependencyOnly"));
         if (log.isDebugEnabled()) {
-            log.debug("Attribute definition " + pluginId + " produces attributes that are only dependencies: "
-                    + dependencyOnly);
+            log.debug("Attribute definition {} produces attributes that are only dependencies: {}", pluginId,
+                    dependencyOnly);
         }
         pluginBuilder.addPropertyValue("dependencyOnly", dependencyOnly);
 

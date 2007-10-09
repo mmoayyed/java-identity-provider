@@ -16,7 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.profile;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -32,7 +33,7 @@ public class JSPErrorHandlerBeanDefinitionParser extends AbstractSingleBeanDefin
     public static final String ELEMENT_NAME = "JSPErrorHandler";
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(JSPErrorHandlerBeanDefinitionParser.class);
+    private static Logger log = LoggerFactory.getLogger(JSPErrorHandlerBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -41,9 +42,7 @@ public class JSPErrorHandlerBeanDefinitionParser extends AbstractSingleBeanDefin
 
     /** {@inheritDoc} */
     protected void doParse(Element config, BeanDefinitionBuilder builder) {
-        if (log.isInfoEnabled()) {
-            log.info("Parsing configuration for velocity error handler.");
-        }
+        log.info("Parsing configuration for velocity error handler.");
         super.doParse(config, builder);
 
         builder.addConstructorArg(config.getAttributeNS(null, "jspPagePath"));

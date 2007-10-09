@@ -18,12 +18,13 @@ package edu.internet2.middleware.shibboleth.common.xmlobject.impl;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.opensaml.xml.signature.KeyInfo;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataKeyAuthority;
@@ -34,7 +35,7 @@ import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataKe
 public class ShibbolethMetadataKeyAuthorityUnmarshaller extends AbstractXMLObjectUnmarshaller {
     
     /** Logger. */
-    private static Logger log = Logger.getLogger(ShibbolethMetadataKeyAuthorityUnmarshaller.class);
+    private final Logger log = LoggerFactory.getLogger(ShibbolethMetadataKeyAuthorityUnmarshaller.class);
 
     /** {@inheritDoc} */
     protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
@@ -60,18 +61,13 @@ public class ShibbolethMetadataKeyAuthorityUnmarshaller extends AbstractXMLObjec
         if (childXMLObject instanceof KeyInfo) {
             authority.getKeyInfos().add((KeyInfo) childXMLObject);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Ignorning unknown child element " + childXMLObject.getElementQName().toString());
-            }
+            log.debug("Ignorning unknown child element {}", childXMLObject.getElementQName());
         }
 
     }
 
     /** {@inheritDoc} */
     protected void processElementContent(XMLObject xmlObject, String elementContent) {
-        if (log.isDebugEnabled()) {
-            log.debug("Ignorning unsupported element text content");
-        }
+        log.debug("Ignorning unsupported element text content");
     }
-
 }

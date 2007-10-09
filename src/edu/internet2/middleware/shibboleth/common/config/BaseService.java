@@ -23,9 +23,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.apache.log4j.Logger;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -43,7 +44,7 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 public abstract class BaseService implements Service, ApplicationContextAware, BeanNameAware {
 
     /** Class logger. */
-    private final Logger log = Logger.getLogger(BaseService.class);
+    private final Logger log = LoggerFactory.getLogger(BaseService.class);
 
     /** Unqiue name of this service. */
     private String serviceName;
@@ -177,29 +178,25 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      * @throws ServiceException thrown if the configuration for this service could not be loaded
      */
     protected void loadContext() throws ServiceException {
-        if (log.isDebugEnabled()) {
-            log.debug("Loading configuration for service: " + getId());
-        }
+        log.debug("Loading configuration for service: {}", getId());
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
         try {
             SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
             newServiceContext.refresh();
-            
+
             Lock writeLock = getReadWriteLock().writeLock();
             writeLock.lock();
             newContextCreated(newServiceContext);
             setServiceContext(newServiceContext);
             writeLock.unlock();
             setInitialized(true);
-            if (log.isInfoEnabled()) {
-                log.info(getId() + " service configuration loaded");
-            }
+            log.info("{} service configuration loaded", getId());
         } catch (ResourceException e) {
             setInitialized(false);
             log.error("Configuration was not loaded for " + getId() + " service, unable to load resource", e);
             throw new ServiceException("Configuration was not loaded for " + getId()
                     + " service, unable to load resource", e);
-        } catch(Exception e){
+        } catch (Exception e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
             setInitialized(false);
             log.error("Configuration was not loaded for " + getId() + " service, error creating components", e);

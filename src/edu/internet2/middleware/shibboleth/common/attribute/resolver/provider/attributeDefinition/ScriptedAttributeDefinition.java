@@ -26,8 +26,9 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -42,7 +43,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(ScriptedAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinition.class);
 
     /** The scripting language. */
     private String scriptLanguage;
@@ -142,8 +143,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             }
         } catch (ScriptException e) {
             compiledScript = null;
-            log.warn("ScriptletAttributeDefinition " + getId()
-                    + " unable to compile even though the scripting engine supports this functionality.");
+            log.warn("ScriptletAttributeDefinition {} unable to compile even though the scripting engine supports this functionality.", getId());
         }
     }
 

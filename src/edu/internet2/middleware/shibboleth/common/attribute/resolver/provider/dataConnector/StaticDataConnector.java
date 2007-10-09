@@ -13,7 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -25,7 +26,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 public class StaticDataConnector extends BaseDataConnector {
 
     /** Log4j logger. */
-    private static Logger log = Logger.getLogger(StaticDataConnector.class.getName());
+    private final Logger log = LoggerFactory.getLogger(StaticDataConnector.class.getName());
 
     /** Source Data. */
     private Map<String, BaseAttribute> attributes;
@@ -36,7 +37,7 @@ public class StaticDataConnector extends BaseDataConnector {
      * @param staticAttributes attributes this data connector will return
      */
     public StaticDataConnector(List<BaseAttribute<String>> staticAttributes) {
-        if(staticAttributes != null){
+        if (staticAttributes != null) {
             attributes = new HashMap<String, BaseAttribute>();
             for (BaseAttribute<String> attribute : staticAttributes) {
                 attributes.put(attribute.getId(), attribute);
@@ -47,8 +48,8 @@ public class StaticDataConnector extends BaseDataConnector {
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        log.debug("Resolving connector: (" + getId() + ") for principal: ("
-                + resolutionContext.getAttributeRequestContext().getPrincipalName() + ")");
+        log.debug("Resolving connector: {} for principal: {}", getId(), resolutionContext.getAttributeRequestContext()
+                .getPrincipalName());
 
         return attributes;
     }

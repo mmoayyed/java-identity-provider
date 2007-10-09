@@ -18,8 +18,9 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.filtering;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -38,7 +39,7 @@ public class ShibbolethAttributeFilteringEngineBeanDefinitionParser extends
             "ShibbolethAttributeFilteringEngine");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(ShibbolethAttributeFilteringEngineBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(ShibbolethAttributeFilteringEngineBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -49,9 +50,7 @@ public class ShibbolethAttributeFilteringEngineBeanDefinitionParser extends
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        if (log.isInfoEnabled()) {
-            log.info("Parsing configuration for attribute filtering engine "
-                    + DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id")));
-        }
+        log.info("Parsing configuration for attribute filtering engine {}", DatatypeHelper.safeTrimOrNullString(config
+                .getAttributeNS(null, "id")));
     }
 }

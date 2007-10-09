@@ -16,10 +16,11 @@
 
 package edu.internet2.middleware.shibboleth.common.xmlobject.impl;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataScope;
@@ -30,7 +31,7 @@ import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataSc
 public class ShibbolethMetadataScopeUnmarshaller extends AbstractXMLObjectUnmarshaller {
     
     /** Logger. */
-    private static Logger log = Logger.getLogger(ShibbolethMetadataScopeUnmarshaller.class);
+    private final Logger log = LoggerFactory.getLogger(ShibbolethMetadataScopeUnmarshaller.class);
 
     /** {@inheritDoc} */
     protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
@@ -39,9 +40,7 @@ public class ShibbolethMetadataScopeUnmarshaller extends AbstractXMLObjectUnmars
         if (attribute.getLocalName().equals(ShibbolethMetadataScope.REGEXP_ATTRIB_NAME)) {
             scope.setRegexp(Boolean.valueOf(attribute.getValue()));
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Ignorning unknown attribute " + attribute.getLocalName());
-            }
+            log.debug("Ignorning unknown attribute {}", attribute.getLocalName());
         }
         
     }
@@ -49,10 +48,7 @@ public class ShibbolethMetadataScopeUnmarshaller extends AbstractXMLObjectUnmars
     /** {@inheritDoc} */
     protected void processChildElement(XMLObject parentXMLObject, XMLObject childXMLObject)
             throws UnmarshallingException {
-        
-            if (log.isDebugEnabled()) {
-                log.debug("Ignorning unknown child element " + childXMLObject.getElementQName().toString());
-            }
+        log.debug("Ignorning unknown child element {}", childXMLObject.getElementQName());
     }
 
     /** {@inheritDoc} */

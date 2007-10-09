@@ -21,8 +21,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.xml.BeanDefinitionDecorator;
@@ -41,9 +42,9 @@ import org.w3c.dom.Node;
  * type is preferred.
  */
 public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
-    
+
     /** Class logger. */
-    private final Logger log = Logger.getLogger(BaseSpringNamespaceHandler.class);
+    private final Logger log = LoggerFactory.getLogger(BaseSpringNamespaceHandler.class);
 
     /**
      * Stores the {@link BeanDefinitionParser} implementations keyed by the local name of the {@link Element Elements}
@@ -100,19 +101,17 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
      */
     protected BeanDefinitionParser findParserForElement(Element element) {
         QName parserId;
-        BeanDefinitionParser parser;
+        BeanDefinitionParser parser = null;
 
         parserId = XMLHelper.getXSIType(element);
-        if(log.isDebugEnabled() && parserId != null){
-            log.debug("Attempting to find parser for element of type: " + parserId);
+        if (parserId != null) {
+            log.debug("Attempting to find parser for element of type: {}", parserId);
+            parser = parsers.get(parserId);
         }
-        parser = parsers.get(parserId);
 
         if (parser == null) {
             parserId = XMLHelper.getNodeQName(element);
-            if(log.isDebugEnabled()){
-                log.debug("Attempting to find parser with element name: " + parserId);
-            }
+            log.debug("Attempting to find parser with element name: {}", parserId);
             parser = parsers.get(parserId);
         }
 
@@ -162,7 +161,7 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
      * @param parser the parser to register
      */
     protected void registerBeanDefinitionParser(QName elementNameOrType, BeanDefinitionParser parser) {
-        this.parsers.put(elementNameOrType, parser);
+        parsers.put(elementNameOrType, parser);
     }
 
     /**
@@ -173,7 +172,7 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
      * @param decorator the decorator to register
      */
     protected void registerBeanDefinitionDecorator(QName elementNameOrType, BeanDefinitionDecorator decorator) {
-        this.decorators.put(elementNameOrType, decorator);
+        decorators.put(elementNameOrType, decorator);
     }
 
     /**
@@ -184,6 +183,6 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
      * @param decorator the decorator to register
      */
     protected void registerBeanDefinitionDecoratorForAttribute(QName attributeName, BeanDefinitionDecorator decorator) {
-        this.attributeDecorators.put(attributeName, decorator);
+        attributeDecorators.put(attributeName, decorator);
     }
 }

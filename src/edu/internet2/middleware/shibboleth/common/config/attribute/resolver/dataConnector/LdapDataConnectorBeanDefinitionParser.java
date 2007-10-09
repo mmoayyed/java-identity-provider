@@ -23,9 +23,10 @@ import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -41,19 +42,13 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(LdapDataConnectorBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(LdapDataConnectorBeanDefinitionParser.class);
 
     /** FilterTemplate element name. */
-    private static final QName FILTER_TEMPLATE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
-            "FilterTemplate");
 
     /** ReturnAttributes element name. */
-    private static final QName RETURN_ATTRIBUTES_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
-            "ReturnAttributes");
 
     /** LDAPProperty element name. */
-    private static final QName LDAP_PROPERTY_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
-            "LDAPProperty");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -66,100 +61,73 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
         String ldapURL = pluginConfig.getAttributeNS(null, "ldapUrl");
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " LDAP URL: " + ldapURL);
-        }
+        log.debug("Data connector {} LDAP URL: {}", pluginId, ldapURL);
         pluginBuilder.addPropertyValue("ldapUrl", ldapURL);
 
         String baseDN = pluginConfig.getAttributeNS(null, "baseDN");
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " base DN: " + baseDN);
-        }
+        log.debug("Data connector {} base DN: {}", pluginId, baseDN);
         pluginBuilder.addPropertyValue("baseDN", baseDN);
 
         String principal = pluginConfig.getAttributeNS(null, "principal");
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " principal: " + principal);
-        }
+        log.debug("Data connector {} principal: {}", pluginId, principal);
         pluginBuilder.addPropertyValue("principal", principal);
 
         String credential = pluginConfig.getAttributeNS(null, "principalCredential");
         pluginBuilder.addPropertyValue("principalCredential", credential);
 
-        String filterTemplate = pluginConfigChildren.get(FILTER_TEMPLATE_ELEMENT_NAME).get(0).getTextContent();
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " LDAP filter template: " + filterTemplate);
-        }
+        String filterTemplate = pluginConfigChildren.get(
+                new QName(DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate")).get(0).getTextContent();
+        log.debug("Data connector {} LDAP filter template: {}", pluginId, filterTemplate);
         pluginBuilder.addPropertyValue("filterTemplate", filterTemplate);
 
         SEARCH_SCOPE searchScope = SEARCH_SCOPE.valueOf(pluginConfig.getAttributeNS(null, "searchScope"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " search scope: " + searchScope);
-        }
+        log.debug("Data connector {} search scope: {}", pluginId, searchScope);
         pluginBuilder.addPropertyValue("searchScope", searchScope);
 
-        String[] returnAttributes = processReturnAttributes(pluginConfigChildren.get(RETURN_ATTRIBUTES_ELEMENT_NAME));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " return attributes: " + returnAttributes);
-        }
+        String[] returnAttributes = processReturnAttributes(pluginConfigChildren.get(new QName(
+                DataConnectorNamespaceHandler.NAMESPACE, "ReturnAttributes")));
+        log.debug("Data connector {} return attributes: {}", pluginId, returnAttributes);
         pluginBuilder.addPropertyValue("returnAttributes", returnAttributes);
 
-        Map<String, String> ldapProperties = processLDAPProperties(pluginConfigChildren.get(LDAP_PROPERTY_ELEMENT_NAME));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " LDAP properties: " + ldapProperties);
-        }
+        Map<String, String> ldapProperties = processLDAPProperties(pluginConfigChildren.get(new QName(
+                DataConnectorNamespaceHandler.NAMESPACE, "LDAPProperty")));
+        log.debug("Data connector {} LDAP properties: {}", pluginId, ldapProperties);
         pluginBuilder.addPropertyValue("ldapProperties", ldapProperties);
 
         boolean useStartTLS = XMLHelper
                 .getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "useStartTLS"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " use startTLS: " + useStartTLS);
-        }
+        log.debug("Data connector {} use startTLS: {}", pluginId, useStartTLS);
         pluginBuilder.addPropertyValue("useStartTLS", useStartTLS);
 
         int poolInitialSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "poolInitialSize"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " initial connection pool size: " + poolInitialSize);
-        }
+        log.debug("Data connector {} initial connection pool size: {}", pluginId, poolInitialSize);
         pluginBuilder.addPropertyValue("poolInitialSize", poolInitialSize);
 
         int poolMaxIdleSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "poolMaxIdleSize"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " maximum idle connection pool size: " + poolMaxIdleSize);
-        }
+        log.debug("Data connector {} maximum idle connection pool size: {}", pluginId, poolMaxIdleSize);
         pluginBuilder.addPropertyValue("poolMaxIdleSize", poolMaxIdleSize);
 
         int searchTimeLimit = Integer.parseInt(pluginConfig.getAttributeNS(null, "searchTimeLimit"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " search timeout: " + searchTimeLimit + "ms");
-        }
+        log.debug("Data connector {} search timeout: {}ms", pluginId, searchTimeLimit);
         pluginBuilder.addPropertyValue("searchTimeLimit", searchTimeLimit);
 
         int maxResultSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "maxResultSize"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " max search result size: " + maxResultSize);
-        }
+        log.debug("Data connector {} max search result size: {}", pluginId, maxResultSize);
         pluginBuilder.addPropertyValue("maxResultSize", maxResultSize);
 
         boolean cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "cacheResults"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " cache results: " + cacheResults);
-        }
+        log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
         pluginBuilder.addPropertyValue("cacheResults", cacheResults);
 
         boolean mergeResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "mergeResults"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " merge results: " + mergeResults);
-        }
+        log.debug("Data connector{} merge results: {}", pluginId, mergeResults);
         pluginBuilder.addPropertyValue("mergeResults", mergeResults);
 
         boolean noResultsIsError = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "noResultIsError"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " no results is error: " + noResultsIsError);
-        }
+        log.debug("Data connector {} no results is error: {}", pluginId, noResultsIsError);
         pluginBuilder.addPropertyValue("noResultsIsError", noResultsIsError);
 
         String templateEngineRef = pluginConfig.getAttributeNS(null, "templateEngine");

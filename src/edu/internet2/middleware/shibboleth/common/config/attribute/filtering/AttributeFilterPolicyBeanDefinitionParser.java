@@ -21,9 +21,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
@@ -46,7 +47,7 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
             "AttributeFilterPolicyType");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(AttributeFilterPolicyBeanDefinitionParser.class);
+    private static Logger log = LoggerFactory.getLogger(AttributeFilterPolicyBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -58,9 +59,7 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
         super.doParse(config, parserContext, builder);
 
         String policyId = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
-        if (log.isInfoEnabled()) {
-            log.info("Parsing configuration for attribute filter policy " + policyId);
-        }
+        log.info("Parsing configuration for attribute filter policy {}", policyId);
         builder.addPropertyValue("policyId", policyId);
 
         List<Element> children;
@@ -73,8 +72,7 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
         } else {
             children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
                     "PolicyRequirementRuleReference"));
-            String reference = getAbsoluteReference(config, "PolicyRequirementRule", children.get(0)
-                    .getTextContent());
+            String reference = getAbsoluteReference(config, "PolicyRequirementRule", children.get(0).getTextContent());
             builder.addPropertyReference("policyRequirement", reference);
         }
 

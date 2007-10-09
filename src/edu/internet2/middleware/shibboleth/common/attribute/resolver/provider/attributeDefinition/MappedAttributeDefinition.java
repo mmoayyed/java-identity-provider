@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
@@ -35,7 +36,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(MappedAttributeDefinition.class);
+    private static Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
 
     /** Default return value. */
     private String defaultValue;
@@ -55,7 +56,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        log.debug("Resolving attribute: (" + getId() + ")");
+        log.debug("Resolving attribute: {}", getId());
 
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getId());
