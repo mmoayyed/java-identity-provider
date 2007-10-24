@@ -137,24 +137,24 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                     + " looking up configuration based on metadata groups");
         }
         try {
-            if(metadataProvider == null){
+            if (metadataProvider == null) {
                 log.debug("No metadata provider available, unable to lookup configuration based on entity group");
-            }else{
-            EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
-            if (entityDescriptor != null) {
-                EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
-                while (entityGroup != null) {
-                    if (rpConfigs.containsKey(entityGroup.getName())) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Relying party configuration found for " + relyingPartyEntityID
-                                    + " as member of metadata group " + entityGroup.getName());
+            } else {
+                EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
+                if (entityDescriptor != null) {
+                    EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
+                    while (entityGroup != null) {
+                        if (rpConfigs.containsKey(entityGroup.getName())) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("Relying party configuration found for " + relyingPartyEntityID
+                                        + " as member of metadata group " + entityGroup.getName());
+                            }
+                            readLock.unlock();
+                            return rpConfigs.get(entityGroup.getName());
                         }
-                        readLock.unlock();
-                        return rpConfigs.get(entityGroup.getName());
+                        entityGroup = (EntitiesDescriptor) entityGroup.getParent();
                     }
-                    entityGroup = (EntitiesDescriptor) entityGroup.getParent();
                 }
-            }
             }
         } catch (MetadataProviderException e) {
             log.error("Error fetching metadata for relying party " + relyingPartyEntityID, e);
@@ -194,7 +194,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                 }
             }
         }
-        
+
         rpConfigs.put(ANONYMOUS_RP_NAME, rpGroup.getAnonymousRP());
         rpConfigs.put(DEFAULT_RP_NAME, rpGroup.getDefaultRP());
 
