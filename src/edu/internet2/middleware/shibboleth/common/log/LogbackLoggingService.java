@@ -47,6 +47,7 @@ public class LogbackLoggingService {
         try{
             Resource configResource = new FilesystemResource(loggingConfigurationFile);
             LogbackConfigurationChangeListener configChangeListener = new LogbackConfigurationChangeListener();
+            configChangeListener.onResourceCreate(configResource);
             
             ResourceChangeWatcher resourceWatcher = new ResourceChangeWatcher(configResource, pollingFrequency, 5);
             resourceWatcher.getResourceListeners().add(configChangeListener);
