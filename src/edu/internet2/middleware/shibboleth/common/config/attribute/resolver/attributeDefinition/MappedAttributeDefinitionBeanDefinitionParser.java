@@ -22,9 +22,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -56,7 +57,7 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
             "DefaultValue");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(MappedAttributeDefinitionBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(MappedAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -76,17 +77,17 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
             String defaultValue = DatatypeHelper.safeTrimOrNullString(defaultValueElems.get(0).getTextContent());
             pluginBuilder.addPropertyValue("defaultValue", defaultValue);
             if (log.isDebugEnabled()) {
-                log.debug("Attribute definition " + pluginId + " default value: " + defaultValue);
+                log.debug("Attribute definition {} default value: {}", pluginId, defaultValue);
             }
 
             boolean passThru = XMLHelper.getAttributeValueAsBoolean(defaultValueElems.get(0).getAttributeNodeNS(null,
                     "passThru"));
             pluginBuilder.addPropertyValue("passThru", passThru);
             if (log.isDebugEnabled()) {
-                log.debug("Attribute definition " + pluginId + " uses default value pass thru: " + passThru);
+                log.debug("Attribute definition {} uses default value pass thru: {}", pluginId, passThru);
             }
         }
-        
+
     }
 
     /**

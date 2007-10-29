@@ -43,6 +43,6 @@ public class TransientPrincipalConnectorBeanDefinitionParser extends BasePrincip
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        pluginBuilder.addPropertyReference("identifierStore", pluginConfig.getAttributeNS(null, "identifierStoreID"));
+        pluginBuilder.addConstructorArgReference(pluginConfig.getAttributeNS(null, "identifierStoreID"));
     }
 }

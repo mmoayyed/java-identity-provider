@@ -21,15 +21,10 @@ import jargs.gnu.CmdLineParser;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.opensaml.Configuration;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.common.SAMLObject;
@@ -39,8 +34,9 @@ import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.w3c.dom.Element;
@@ -62,7 +58,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfi
 public class AttributeAuthorityCLI {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(AttributeAuthorityCLI.class);
+    private static Logger log = LoggerFactory.getLogger(AttributeAuthorityCLI.class);
 
     /** List of configuration files used with the AACLI. */
     private static String[] aacliConfigs = { "/service.xml", "/internal.xml", };
@@ -111,7 +107,6 @@ public class AttributeAuthorityCLI {
      * @throws Exception thrown if the underlying libraries could not be initialized
      */
     private static CmdLineParser initialize(String[] args) throws Exception {
-        configureLogging();
         DefaultBootstrap.bootstrap();
 
         if (args.length < 2) {
@@ -266,24 +261,6 @@ public class AttributeAuthorityCLI {
         } catch (MarshallingException e) {
             errorAndExit("Unable to marshall attribute statement", e);
         }
-    }
-
-    /**
-     * Configures the logging for this tool. Default logging level is error.
-     */
-    private static void configureLogging() {
-        ConsoleAppender console = new ConsoleAppender();
-        console.setWriter(new PrintWriter(System.err));
-        console.setName("stderr");
-        console.setLayout(new PatternLayout("%d{ABSOLUTE} %-5p [%c{1}] %m%n"));
-
-        Logger root = Logger.getRootLogger();
-        root.addAppender(console);
-        root.setLevel(Level.ERROR);
-
-        log = Logger.getLogger("edu.internet2.middleware.shibboleth.common.attribute");
-        log.addAppender(console);
-        log.setLevel(Level.ERROR);
     }
 
     /**

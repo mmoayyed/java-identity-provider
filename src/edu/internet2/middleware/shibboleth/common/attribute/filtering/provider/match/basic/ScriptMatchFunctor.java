@@ -24,8 +24,9 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
@@ -37,7 +38,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.S
 public class ScriptMatchFunctor implements MatchFunctor {
 
     /** Class logger. */
-    private final Logger log = Logger.getLogger(ScriptMatchFunctor.class);
+    private final Logger log = LoggerFactory.getLogger(ScriptMatchFunctor.class);
 
     /** The scripting language. */
     private String scriptLanguage;

@@ -27,9 +27,10 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -63,7 +64,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
     public static final QName COLUMN_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Column");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(RDBMSDataConnectorBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(RDBMSDataConnectorBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -79,9 +80,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         pluginBuilder.addPropertyValue("connectionDataSource", connectionSource);
 
         String queryTemplate = processesQueryTemplate(pluginId, pluginConfigChildren, pluginBuilder);
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " database query template: " + queryTemplate);
-        }
+        log.debug("Data connector {} database query template: {}", pluginId, queryTemplate);
         pluginBuilder.addPropertyValue("queryTemplate", queryTemplate);
 
         List<RDBMSColumnDescriptor> descriptors = processColumnDescriptors(pluginId, pluginConfigChildren,
@@ -89,30 +88,22 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         pluginBuilder.addPropertyValue("columnDescriptors", descriptors);
 
         String validationQuery = pluginConfig.getAttributeNS(null, "validationQuery");
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " database connection validation query: " + validationQuery);
-        }
+        log.debug("Data connector {} database connection validation query: {}", pluginId, validationQuery);
         pluginBuilder.addPropertyValue("connectionValidationQuery", validationQuery);
 
         boolean cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "cacheResults"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " cache results: " + cacheResults);
-        }
+        log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
         pluginBuilder.addPropertyValue("cacheResults", cacheResults);
 
         boolean useSP = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "queryUsesStoredProcedure"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " query uses stored procedures: " + useSP);
-        }
+        log.debug("Data connector {} query uses stored procedures: {}", pluginId, useSP);
         pluginBuilder.addPropertyValue("queryUsesStoredProcedures", useSP);
 
         boolean readOnlyCtx = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                 "readOnlyConnection"));
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " connections are read only: " + readOnlyCtx);
-        }
+        log.debug("Data connector {} connections are read only: {}", pluginId, readOnlyCtx);
         pluginBuilder.addPropertyValue("readOnlyConnections", readOnlyCtx);
 
         String templateEngineRef = pluginConfig.getAttributeNS(null, "templateEngine");
@@ -157,14 +148,13 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
             InitialContext initCtx = new InitialContext(initCtxProps);
             DataSource dataSource = (DataSource) initCtx.lookup(jndiResource);
             if (log.isDebugEnabled()) {
-                log.debug("Retrieved data source for data connector " + pluginId + " from JNDI location "
-                        + jndiResource + " using properties " + initCtxProps);
+                log.debug("Retrieved data source for data connector {} from JNDI location {} using properties ",
+                        pluginId, initCtxProps);
             }
             return dataSource;
         } catch (NamingException e) {
-            String error = "Unable to retrieve data source for data connector " + pluginId + " from JNDI location "
-                    + jndiResource + " using properties " + initCtxProps;
-            log.error(error, e);
+            log.error("Unable to retrieve data source for data connector " + pluginId + " from JNDI location "
+                    + jndiResource + " using properties " + initCtxProps, e);
             return null;
         }
     }
@@ -204,15 +194,11 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                     "poolMaxIdleTime"))));
             datasource.setIdleConnectionTestPeriod(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
                     "poolIdleTestPeriod"))));
-            if (log.isDebugEnabled()) {
-                log.debug("Created application managed data source for data connector " + pluginId);
-            }
+            log.debug("Created application managed data source for data connector {}", pluginId);
             return datasource;
         } catch (PropertyVetoException e) {
-            if (log.isDebugEnabled()) {
-                log.error("Unable to create data source for data connector " + pluginId + " with JDBC driver class "
-                        + driverClass);
-            }
+            log.error("Unable to create data source for data connector {} with JDBC driver class {}", pluginId,
+                    driverClass);
             return null;
         }
     }
@@ -230,9 +216,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
             BeanDefinitionBuilder pluginBuilder) {
         List<Element> queryTemplateElems = pluginConfigChildren.get(QUERY_TEMPLATE_ELEMENT_NAME);
         String queryTemplate = queryTemplateElems.get(0).getTextContent();
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + pluginId + " query template: " + queryTemplate);
-        }
+        log.debug("Data connector {} query template: {}", pluginId, queryTemplate);
         return queryTemplate;
     }
 
@@ -261,10 +245,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                 columnDescriptor = new RDBMSColumnDescriptor(columnName, attributeId, DATA_TYPES.valueOf(dataType));
                 columnDescriptors.add(columnDescriptor);
             }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Data connector " + pluginId + " column descriptors: " + columnDescriptors);
-            }
+            log.debug("Data connector {} column descriptors: {}", pluginId, columnDescriptors);
         }
 
         return columnDescriptors;

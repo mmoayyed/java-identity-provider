@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.opensaml.Configuration;
-import org.opensaml.common.SAMLObject;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.core.Attribute;
@@ -37,6 +35,8 @@ import org.opensaml.saml2.core.StatusResponseType;
 import org.opensaml.saml2.metadata.AttributeAuthorityDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObjectBuilderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
@@ -47,7 +47,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SA
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
-import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AbstractSAML2ProfileConfiguration;
 
 /**
@@ -56,7 +55,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.Ab
 public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthority {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(ShibbolethSAML2AttributeAuthority.class);
+    private final Logger log = LoggerFactory.getLogger(ShibbolethSAML2AttributeAuthority.class);
 
     /** For building attribute statements. */
     private SAMLObjectBuilder<AttributeStatement> statementBuilder;
@@ -195,7 +194,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
 
         for (BaseAttribute<?> shibbolethAttribute : attributes) {
             attributeEncoded = false;
-            
+
             if (shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() == 0) {
                 continue;
             }
@@ -206,12 +205,10 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
                     try {
                         encodedAttributes.add((Attribute) encoder.encode(shibbolethAttribute));
                         attributeEncoded = true;
-                        if (log.isDebugEnabled()) {
-                            log.debug("Encoded attribute " + shibbolethAttribute.getId() + " with encoder of type "
-                                    + encoder.getClass().getName());
-                        }
+                        log.debug("Encoded attribute {} with encoder of type {}", shibbolethAttribute.getId(), encoder
+                                .getClass().getName());
                     } catch (AttributeEncodingException e) {
-                        log.warn("unable to encode attribute (" + shibbolethAttribute.getId() + "): " + e.getMessage());
+                        log.warn("unable to encode attribute: " + shibbolethAttribute.getId(), e);
                     }
                 }
             }
@@ -230,10 +227,8 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
                 }
 
                 encodedAttributes.add(defaultEncoder.encode(shibbolethAttribute));
-                if (log.isDebugEnabled()) {
-                    log.debug("Encoded attribute " + shibbolethAttribute.getId() + " with encoder of type "
-                            + defaultEncoder.getClass().getName());
-                }
+                log.debug("Encoded attribute {} with encoder of type {}", shibbolethAttribute.getId(), defaultEncoder
+                        .getClass().getName());
             }
         }
 
@@ -260,7 +255,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
     /**
      * Gets the attribute IDs for those attributes requested in the attribute query.
      * 
-     * @param query the attribute query
+     * @param samlRequest incomming SAML request
      * 
      * @return attribute IDs for those attributes requested in the attribute query
      */
@@ -274,9 +269,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
         if (query != null) {
             List<org.opensaml.saml2.core.Attribute> queryAttributes = query.getAttributes();
             queryAttributeIds = getAttributeIds(queryAttributes);
-            if (log.isDebugEnabled()) {
-                log.debug("query message contains the following attributes: " + queryAttributeIds);
-            }
+            log.debug("query message contains the following attributes: {}", queryAttributeIds);
         }
 
         return queryAttributeIds;
@@ -297,9 +290,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
             if (aaDescriptor != null) {
                 List<org.opensaml.saml2.core.Attribute> metadataAttributes = aaDescriptor.getAttributes();
                 metadataAttributeIds = getAttributeIds(metadataAttributes);
-                if (log.isDebugEnabled()) {
-                    log.debug("metadata contains the following attributes: " + metadataAttributeIds);
-                }
+                log.debug("metadata contains the following attributes: {}", metadataAttributeIds);
             }
         }
 

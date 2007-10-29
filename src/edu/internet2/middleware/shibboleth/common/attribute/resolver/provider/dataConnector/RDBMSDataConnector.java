@@ -26,12 +26,12 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -52,7 +52,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     };
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(RDBMSDataConnector.class);
+    private final Logger log = LoggerFactory.getLogger(RDBMSDataConnector.class);
 
     /** Indicates whether this connector has been initialized. */
     private boolean initialized;
@@ -229,12 +229,9 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        String query = queryCreator.createStatement(queryTemplateName, resolutionContext,
-                getDependencyIds());
+        String query = queryCreator.createStatement(queryTemplateName, resolutionContext, getDependencyIds());
 
-        if (log.isDebugEnabled()) {
-            log.debug("Data connector " + getId() + " resolving attributes with query: " + query);
-        }
+        log.debug("Data connector {} resolving attributes with query: {}", getId(), query);
 
         Map<String, BaseAttribute> resolvedAttributes = null;
 
@@ -260,9 +257,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-        if (log.isDebugEnabled()) {
-            log.debug("Validating RDBMS data connector " + getId() + " configuration.");
-        }
+        log.debug("Validating RDBMS data connector {} configuration.", getId());
         try {
             Connection connection = dataSource.getConnection();
 
@@ -281,10 +276,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                 throw new AttributeResolutionException("Validation query for RDBMS data connector " + getId()
                         + " did not return any results");
             }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Validating RDBMS data connector " + getId() + " configuration is valid.");
-            }
+            log.debug("Validating RDBMS data connector {} configuration is valid.", getId());
         } catch (SQLException e) {
             log.error("Unable to validate RDBMS data connector " + getId() + " configuration", e);
             throw new AttributeResolutionException("Unable to validate RDBMS data connector " + getId()
@@ -325,10 +317,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         if (queryCache != null) {
             SoftReference<Map<String, BaseAttribute>> cachedAttributes = queryCache.get(query);
             if (cachedAttributes != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("RDBMS Data Connector " + getId() + ": Fetched attributes from cache for principal "
-                            + princpal + " with query " + query);
-                }
+                log.debug("RDBMS Data Connector {}: Fetched attributes from cache for principal {}",
+                        getId(), princpal);
                 return cachedAttributes.get();
             }
         }
@@ -346,7 +336,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * @throws AttributeResolutionException thrown if there is a problem retrieving data from the database or
      *             transforming that data into {@link BaseAttribute}s
      */
-    protected Map<String, BaseAttribute> retrieveAttributesFromDatabase(String query) throws AttributeResolutionException {
+    protected Map<String, BaseAttribute> retrieveAttributesFromDatabase(String query)
+            throws AttributeResolutionException {
         Map<String, BaseAttribute> resolvedAttributes;
         Connection connection = null;
         ResultSet queryResult = null;
@@ -355,16 +346,10 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             if (readOnlyConnection) {
                 connection.setReadOnly(true);
             }
-            if (log.isDebugEnabled()) {
-                log.debug("RDBMS Data Connector " + getId() + ": Querying database for attributes with query: "
-                                + query);
-            }
+            log.debug("RDBMS Data Connector {}: Querying database for attributes with query: {}", getId(), query);
             queryResult = connection.createStatement().executeQuery(query);
             resolvedAttributes = processResultSet(queryResult);
-            if (log.isDebugEnabled()) {
-                log.debug("RDBMS Data Connector " + getId() + ": Retrieved  " + resolvedAttributes.size()
-                        + " attributes: " + resolvedAttributes.keySet());
-            }
+            log.debug("RDBMS Data Connector {}: Retrieved attributes: {}", getId(), resolvedAttributes.keySet());
             return resolvedAttributes;
         } catch (SQLException e) {
             log.error("RDBMS Data Connector " + getId() + ": Unable to execute SQL query\n" + query, e);

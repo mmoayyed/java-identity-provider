@@ -21,7 +21,8 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -35,7 +36,7 @@ public class ScopedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(ScopedAttributeDefinitionBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -48,9 +49,7 @@ public class ScopedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
         String scope = pluginConfig.getAttributeNS(null, "scope");
-        if (log.isDebugEnabled()) {
-            log.debug("Setting scope of attribute definition " + pluginId + " to: " + scope);
-        }
+        log.debug("Setting scope of attribute definition {} to: {}", pluginId, scope);
         pluginBuilder.addPropertyValue("scope", scope);
     }
 }

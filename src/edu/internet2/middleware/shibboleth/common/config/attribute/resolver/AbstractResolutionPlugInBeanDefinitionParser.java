@@ -19,13 +19,13 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -38,11 +38,11 @@ import org.w3c.dom.Element;
 public abstract class AbstractResolutionPlugInBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Name of resolution plug-in dependency. */
-    public static final QName DEPENDENCY_ELEMENT_NAME = new QName(
-            AttributeResolverNamespaceHandler.NAMESPACE, "Dependency");
+    public static final QName DEPENDENCY_ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+            "Dependency");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(AbstractResolutionPlugInBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractResolutionPlugInBeanDefinitionParser.class);
 
     /**
      * Parses the plugins ID and attribute definition and data connector dependencies.
@@ -51,18 +51,13 @@ public abstract class AbstractResolutionPlugInBeanDefinitionParser extends Abstr
      */
     protected final void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String pluginId = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
-        if (log.isInfoEnabled()) {
-            log.info("Parsing configuration for " + config.getLocalName() + " plugin with ID: " + pluginId);
-        }
+        log.info("Parsing configuration for {} plugin with ID: {}", config.getLocalName(), pluginId);
         builder.addPropertyValue("pluginId", pluginId);
 
         Map<QName, List<Element>> children = XMLHelper.getChildElements(config);
 
         List<String> dependencyIds = parseDependencies(children.get(DEPENDENCY_ELEMENT_NAME));
-        if (log.isDebugEnabled()) {
-            log.debug("Setting the following attribute definition dependencies for " + config.getLocalName()
-                    + " plugin " + pluginId + ": " + dependencyIds);
-        }
+        log.debug("Setting the following attribute definition dependencies for plugin {}: {}", pluginId, dependencyIds);
         builder.addPropertyValue("dependencyIds", dependencyIds);
 
         doParse(pluginId, config, children, builder, parserContext);

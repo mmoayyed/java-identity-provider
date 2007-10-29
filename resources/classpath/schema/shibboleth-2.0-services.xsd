@@ -33,7 +33,7 @@
                 <attribute name="configurationResourcePollingFrequency" type="nonNegativeInteger">
                     <annotation>
                         <documentation>
-                            The frequency, in milliseconds, the configuration resources should be polled for changes.
+                            The frequency, in seconds, the configuration resources should be polled for changes.
                         </documentation>
                     </annotation>
                 </attribute>

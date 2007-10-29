@@ -19,14 +19,16 @@ package edu.internet2.middleware.shibboleth.common.config;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.parse.ClasspathResolver;
-import org.opensaml.xml.parse.LoggingErrorHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.xml.DocumentLoader;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * A document loader for Spring that uses a {@link ClasspathResolver} for resolving schema information.
@@ -34,7 +36,7 @@ import org.xml.sax.InputSource;
 public class SpringDocumentLoader implements DocumentLoader {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(SpringDocumentLoader.class);
+    private final Logger log = LoggerFactory.getLogger(SpringDocumentLoader.class);
 
     /** {@inheritDoc} */
     public Document loadDocument(InputSource inputSource, EntityResolver entityResolver, ErrorHandler errorHandler,
@@ -51,5 +53,41 @@ public class SpringDocumentLoader implements DocumentLoader {
         builder.setErrorHandler(new LoggingErrorHandler(log));
         builder.setEntityResolver(new ClasspathResolver());
         return builder.parse(inputSource);
+    }
+    
+    /**
+     * A SAX error handler that logs errors a {@link Logger} before rethrowing them.
+     */
+    public class LoggingErrorHandler implements ErrorHandler{
+        
+        /** Error logger. */
+        private Logger log;
+        
+        /**
+         * Constructor.
+         *
+         * @param logger logger errors will be written to
+         */
+        public LoggingErrorHandler(Logger logger){
+            log = logger;
+        }
+
+        /** {@inheritDoc} */
+        public void error(SAXParseException exception) throws SAXException {
+            log.error("Error parsing XML", exception);
+            throw exception;
+        }
+
+        /** {@inheritDoc} */
+        public void fatalError(SAXParseException exception) throws SAXException {
+            log.error("Fatal XML parsing XML error", exception);
+            throw exception;
+        }
+
+        /** {@inheritDoc} */
+        public void warning(SAXParseException exception) throws SAXException {
+            log.warn("XML parsing warning", exception);
+            throw exception;
+        }
     }
 }

@@ -19,11 +19,12 @@ package edu.internet2.middleware.shibboleth.common.config;
 import java.util.List;
 import java.util.Timer;
 
-import org.apache.log4j.Logger;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceChangeListener;
 import org.opensaml.util.resource.ResourceChangeWatcher;
 import org.opensaml.util.resource.ResourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.service.ReloadableService;
 import edu.internet2.middleware.shibboleth.common.service.ServiceException;
@@ -45,7 +46,7 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 public abstract class BaseReloadableService extends BaseService implements ReloadableService {
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(BaseReloadableService.class);
+    private final Logger log = LoggerFactory.getLogger(BaseReloadableService.class);
 
     /** Frequency policy resources are polled for updates. */
     private long resourcePollingFrequency;
@@ -119,9 +120,7 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
     /** {@inheritDoc} */
     public void initialize() throws ServiceException {
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Initializing " + getId() + " service with resources: " + getServiceConfigurations());
-            }
+            log.debug("Initializing {} service with resources: {}", getId(), getServiceConfigurations());
             if (resourcePollingFrequency > 0) {
                 ResourceChangeWatcher changeWatcher;
                 ResourceChangeListener changeListener = new ConfigurationResourceListener();
@@ -160,8 +159,9 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
             try {
                 loadContext();
             } catch (ServiceException e) {
-                log.error("Error reloading configuration, upon configuration resource creation, for service " 
-                        + getId(), e);
+                log.error(
+                        "Error reloading configuration, upon configuration resource creation, for service " + getId(),
+                        e);
             }
         }
 
@@ -170,8 +170,9 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
             try {
                 loadContext();
             } catch (ServiceException e) {
-                log.error("Error reloading configuration, upon configuration resource deletion, for service "
-                        + getId(), e);
+                log.error(
+                        "Error reloading configuration, upon configuration resource deletion, for service " + getId(),
+                        e);
             }
         }
 

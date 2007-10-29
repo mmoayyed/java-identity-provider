@@ -16,7 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
@@ -30,7 +31,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Log4j logger. */
-    private static Logger log = Logger.getLogger(ScopedAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinition.class);
 
     /** Scope value. */
     private String scope;
@@ -46,7 +47,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     
     /** {@inheritDoc} */
     public BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
-        log.debug("Resolving attribute: (" + getId() + ")");
+        log.debug("Resolving attribute: {}", getId());
 
         BasicAttribute<ScopedAttributeValue> attribute = new BasicAttribute<ScopedAttributeValue>();
         attribute.setId(getId());

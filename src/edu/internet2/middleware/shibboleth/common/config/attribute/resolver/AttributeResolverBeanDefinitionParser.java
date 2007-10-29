@@ -21,9 +21,10 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -45,7 +46,7 @@ public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDef
             "AttributeResolver");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(AttributeResolverBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeResolverBeanDefinitionParser.class);
     
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -55,9 +56,7 @@ public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDef
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
         String id = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
-        if (log.isInfoEnabled()) {
-            log.info("Parsing configuration for attribute resolver " + id);
-        }
+        log.info("Parsing configuration for attribute resolver {}", id);
         
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
         List<Element> children;

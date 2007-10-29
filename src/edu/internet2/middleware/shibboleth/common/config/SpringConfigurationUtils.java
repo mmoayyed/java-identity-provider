@@ -18,11 +18,12 @@ package edu.internet2.middleware.shibboleth.common.config;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -42,7 +43,7 @@ import org.w3c.dom.NodeList;
 public final class SpringConfigurationUtils {
 
     /** Log4j logger. */
-    private static Logger log = Logger.getLogger(SpringConfigurationUtils.class);
+    private static Logger log = LoggerFactory.getLogger(SpringConfigurationUtils.class);
 
     /** Private Constructor. */
     private SpringConfigurationUtils() {
@@ -71,8 +72,8 @@ public final class SpringConfigurationUtils {
             if (configurationResource != null && configurationResource.exists()) {
                 configSources[i] = new InputStreamResource(configurationResources.get(i).getInputStream());
             } else {
-                log.warn("Configuration resource not loaded because it does not exist: "
-                        + configurationResource.getLocation());
+                log.warn("Configuration resource not loaded because it does not exist: {}", configurationResource
+                        .getLocation());
             }
         }
 

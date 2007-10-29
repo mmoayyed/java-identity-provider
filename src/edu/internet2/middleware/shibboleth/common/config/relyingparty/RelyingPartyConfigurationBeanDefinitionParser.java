@@ -20,9 +20,10 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
@@ -42,7 +43,8 @@ public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSimpl
             "UnidentifiedRelyingParty");
 
     /** Schema type name. */
-    public static final QName RP_TYPE_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "IdentifiedRelyingParty");
+    public static final QName RP_TYPE_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, 
+            "IdentifiedRelyingParty");
 
     /** Name of the anonymous relying party configuration element. */
     public static final QName ANON_RP_ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE,
@@ -56,7 +58,7 @@ public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSimpl
     public static final QName RP_ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingParty");
 
     /** Class logger. */
-    private static Logger log = Logger.getLogger(RelyingPartyConfigurationBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(RelyingPartyConfigurationBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -66,39 +68,29 @@ public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSimpl
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String rpId = getRelyingPartyId(config);
-        if (log.isDebugEnabled()) {
-            log.debug("Relying party configuration - relying party id " + rpId);
-        }
+        log.debug("Relying party configuration - relying party id: {}", rpId);
         builder.addPropertyValue("relyingPartyId", rpId);
 
         String provider = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "provider"));
-        if (log.isDebugEnabled()) {
-            log.debug("Relying party configuration - provider ID: " + provider);
-        }
+        log.debug("Relying party configuration - provider ID: {}", provider);
         builder.addPropertyValue("providerId", provider);
 
         String authnMethod = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null,
                 "defaultAuthenticationMethod"));
-        if (log.isDebugEnabled()) {
-            log.debug("Relying party configuration - default authentication method: " + authnMethod);
-        }
+        log.debug("Relying party configuration - default authentication method: {}", authnMethod);
         builder.addPropertyValue("defaultAuthenticationMethod", authnMethod);
 
         String secCredRef = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null,
                 "defaultSigningCredentialRef"));
         if (secCredRef != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Relying party configuration - default signing credential: " + secCredRef);
-            }
+            log.debug("Relying party configuration - default signing credential: {}", secCredRef);
             builder.addPropertyReference("defaultSigningCredential", secCredRef);
         }
 
         List<Element> profileConfigs = XMLHelper.getChildElementsByTagNameNS(config,
                 RelyingPartyNamespaceHandler.NAMESPACE, "ProfileConfiguration");
         if (profileConfigs != null && profileConfigs.size() > 0) {
-            if (log.isDebugEnabled()) {
-                log.debug("Relying party configuration - " + profileConfigs.size() + " profile configurations");
-            }
+            log.debug("Relying party configuration - {} profile configurations", profileConfigs.size());
             builder.addPropertyValue("profileConfigurations", SpringConfigurationUtils.parseCustomElements(
                     profileConfigs, parserContext));
         }
