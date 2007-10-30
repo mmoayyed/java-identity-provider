@@ -18,17 +18,15 @@ package edu.internet2.middleware.shibboleth.common.relyingparty;
 
 import java.util.ArrayList;
 
+import org.opensaml.ws.message.MessageContext;
 import org.opensaml.ws.security.SecurityPolicy;
 import org.opensaml.ws.security.SecurityPolicyResolver;
-import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.SecurityException;
-import org.opensaml.xml.security.criteria.PeerEntityIDCriteria;
-
-import edu.internet2.middleware.shibboleth.common.security.CommunicationProfileCriteria;
+import org.opensaml.xml.util.DatatypeHelper;
 
 /**
- * A security policy resolver that selects the active security policy based on {@link PeerEntityIDCriteria} and
- * {@link CommunicationProfileCriteria}.
+ * A security policy resolver that selects the active security policy based on the inbound message issuer ID and the
+ * communication profile used.
  */
 public class RelyingPartySecurityPolicyResolver implements SecurityPolicyResolver {
 
@@ -48,33 +46,32 @@ public class RelyingPartySecurityPolicyResolver implements SecurityPolicyResolve
     }
 
     /** {@inheritDoc} */
-    public Iterable<SecurityPolicy> resolve(CriteriaSet criteria) throws SecurityException {
+    public Iterable<SecurityPolicy> resolve(MessageContext messageContext) throws SecurityException {
         ArrayList<SecurityPolicy> policies = new ArrayList<SecurityPolicy>();
-        policies.add(resolveSingle(criteria));
+        policies.add(resolveSingle(messageContext));
         return policies;
     }
 
     /** {@inheritDoc} */
-    public SecurityPolicy resolveSingle(CriteriaSet criteria) throws SecurityException {
-        PeerEntityIDCriteria peerCriteria = criteria.get(PeerEntityIDCriteria.class);
-        if (peerCriteria == null) {
+    public SecurityPolicy resolveSingle(MessageContext messageContext) throws SecurityException {
+        String peerEntityId = messageContext.getInboundMessageIssuer();
+        if (DatatypeHelper.isEmpty(peerEntityId)) {
             throw new SecurityException(
                     "Unable to select security policy, no communication profile criteria available.");
         }
 
-        RelyingPartyConfiguration rpConfig = rpConfigManager.getRelyingPartyConfiguration(peerCriteria.getPeerID());
+        RelyingPartyConfiguration rpConfig = rpConfigManager.getRelyingPartyConfiguration(peerEntityId);
         if (rpConfig == null) {
             return null;
         }
 
-        CommunicationProfileCriteria profileCriteria = criteria.get(CommunicationProfileCriteria.class);
-        if (profileCriteria == null) {
+        String profileId = messageContext.getCommunicationProfileId();
+        if (DatatypeHelper.isEmpty(profileId)) {
             throw new SecurityException(
                     "Unable to select security policy, no communication profile criteria available.");
         }
 
-        ProfileConfiguration profileConfig = rpConfig
-                .getProfileConfiguration(profileCriteria.getCommunicationProfile());
+        ProfileConfiguration profileConfig = rpConfig.getProfileConfiguration(profileId);
         if (profileConfig == null) {
             return null;
         }
