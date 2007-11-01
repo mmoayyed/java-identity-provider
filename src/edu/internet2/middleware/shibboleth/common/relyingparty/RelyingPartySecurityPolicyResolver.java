@@ -43,6 +43,8 @@ public class RelyingPartySecurityPolicyResolver implements SecurityPolicyResolve
         if (configManager == null) {
             throw new IllegalArgumentException("Relying party configuraiton manager may not be null");
         }
+        
+        rpConfigManager = configManager;
     }
 
     /** {@inheritDoc} */
