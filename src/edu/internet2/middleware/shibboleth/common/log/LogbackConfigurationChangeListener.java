@@ -58,9 +58,11 @@ public class LogbackConfigurationChangeListener implements ResourceChangeListene
         StatusManager statusManager = loggerContext.getStatusManager();
         statusManager.add(new InfoStatus("Loading logging configuration file: " + configuration.getLocation(), this));
         try {
+            loggerContext.shutdownAndReset();
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(loggerContext);
             configurator.doConfigure(configuration.getInputStream());
+            loggerContext.start();
         } catch (JoranException e) {
             statusManager.add(new ErrorStatus("Error loading logging configuration file: "
                     + configuration.getLocation(), this, e));
