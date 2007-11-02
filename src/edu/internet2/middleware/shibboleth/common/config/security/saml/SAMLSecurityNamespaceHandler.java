@@ -28,6 +28,9 @@ public class SAMLSecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     public void init() {
+        registerBeanDefinitionParser(SAMLProtocolMessageXMLSignatureSecurityPolicyBeanDefinitionParser.SCHEMA_TYPE,
+                new SAMLProtocolMessageXMLSignatureSecurityPolicyBeanDefinitionParser());
+
         registerBeanDefinitionParser(IssueInstantRuleBeanDefinitionParser.SCHEMA_TYPE,
                 new IssueInstantRuleBeanDefinitionParser());
 

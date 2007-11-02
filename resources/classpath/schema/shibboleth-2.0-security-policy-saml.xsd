@@ -5,6 +5,63 @@
 
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="classpath:/schema/shibboleth-2.0-security.xsd" />
     
+    <complexType name="ProtocolWithXMLSignature">
+        <annotation>
+            <documentation>
+                A rule that checks the signature on SAML protocols messages.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType">
+                <attribute name="trustEngineRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            Reference to the trust engine used to validate the signature. 
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SAML2HTTPPostSimpleSign">
+        <annotation>
+            <documentation>
+                A rule that checks the signature on SAML protocols messages.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType">
+                <attribute name="trustEngineRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            Reference to the trust engine used to validate the signature. 
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SAML2HTTPRedirectSimpleSign">
+        <annotation>
+            <documentation>
+                A rule that checks the signature on SAML protocols messages.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType">
+                <attribute name="trustEngineRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            Reference to the trust engine used to validate the signature. 
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="MandatoryIssuer">
         <annotation>
             <documentation>

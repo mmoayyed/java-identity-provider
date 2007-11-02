@@ -144,7 +144,26 @@
     <complexType name="ExplicitX509Credential">
         <annotation>
             <documentation>
-                Trust engine used to validate an X509 credential against metadata.
+                Trust engine used to validate an X509 credentials against metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PKIXX509Credential">
+        <annotation>
+            <documentation>
+                Trust engine used to validate an X509 credentials against PKIX information from metadata.
             </documentation>
         </annotation>
         <complexContent>
@@ -163,7 +182,26 @@
     <complexType name="ExplicitKeySignature">
         <annotation>
             <documentation>
-                Trust engine used to validate signatures with keys validated against metadata.
+                Trust engine used to validate signatures with keys from metadata.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <attribute name="metadataProviderRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the metadata provider used to look up trust information.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PKIXSignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate signatures with PKIX-validated certificates from metadata.
             </documentation>
         </annotation>
         <complexContent>
@@ -211,6 +249,26 @@
     </complexType>
 
     <element name="Rule" type="sec:SecurityPolicyRuleType" />
+    
+    <complexType name="ClientCertAuth">
+        <annotation>
+            <documentation>
+                A security rule that validates a client certificate, available from the inbound transport, with a trust engine.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType">
+                <attribute name="trustEngineRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            Reference to the trust engine used to validate the signature. 
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="SecurityPolicyRuleType" abstract="true">
         <annotation>
             <documentation>

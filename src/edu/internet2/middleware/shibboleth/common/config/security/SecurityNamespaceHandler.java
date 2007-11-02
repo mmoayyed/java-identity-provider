@@ -51,6 +51,9 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(PKIXSignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
                 new PKIXSignatureTrustEngineBeanDefinitionParser());
+
+        registerBeanDefinitionParser(ClientCertAuthRuleBeanDefinitionParser.SCHEMA_TYPE,
+                new ClientCertAuthRuleBeanDefinitionParser());
     }
 
 }
