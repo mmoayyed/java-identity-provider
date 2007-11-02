@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
 
 /** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}ExplicitX509Credential elements. */
 public class ExplicitX509CredentialTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "ExplicitX509Credential");
 
@@ -35,12 +35,13 @@ public class ExplicitX509CredentialTrustEngineBeanDefinitionParser extends Abstr
     protected Class getBeanClass(Element element) {
         return ExplicitKeySignatureTrustEngineFactoryBean.class;
     }
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        builder.addPropertyReference("metadataProvider", "metadataProviderRef");
+        builder.addPropertyReference("metadataProvider", DatatypeHelper.safeTrim(element.getAttributeNS(null,
+                "metadataProviderRef")));
     }
-    
+
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         return DatatypeHelper.safeTrim(element.getAttributeNS(null, "id"));

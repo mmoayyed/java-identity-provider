@@ -38,7 +38,8 @@ public class ExplicitKeySignatureTrustEngineBeanDefinitionParser extends Abstrac
     
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        builder.addPropertyReference("metadataProvider", "metadataProviderRef");
+        builder.addPropertyReference("metadataProvider", DatatypeHelper.safeTrim(element.getAttributeNS(null,
+                "metadataProviderRef")));
     }
     
     /** {@inheritDoc} */
