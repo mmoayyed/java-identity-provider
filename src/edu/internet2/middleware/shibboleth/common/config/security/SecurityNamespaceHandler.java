@@ -35,10 +35,22 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(InlineX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
                 new InlineX509CredentialBeanDefinitionParser());
-        
+
         BeanDefinitionParser parser = new ShibbolethSecurityPolicyBeanDefinitionParser();
         registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.SCHEMA_TYPE, parser);
+
+        registerBeanDefinitionParser(ExplicitX509CredentialTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new ExplicitX509CredentialTrustEngineBeanDefinitionParser());
+
+        registerBeanDefinitionParser(PKIXX509CredentialTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new PKIXX509CredentialTrustEngineBeanDefinitionParser());
+
+        registerBeanDefinitionParser(ExplicitKeySignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new ExplicitKeySignatureTrustEngineBeanDefinitionParser());
+
+        registerBeanDefinitionParser(PKIXSignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new PKIXSignatureTrustEngineBeanDefinitionParser());
     }
 
 }
