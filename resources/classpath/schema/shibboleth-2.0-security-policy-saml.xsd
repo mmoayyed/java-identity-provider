@@ -39,6 +39,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="parserPoolRef" type="string" use="required" default="shibboleth.ParserPool"">
+                    <annotation>
+                        <documentation>
+                            Reference to the parser pool used to parser incoming XML message.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -55,6 +62,13 @@
                     <annotation>
                         <documentation>
                             Reference to the trust engine used to validate the signature. 
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="parserPoolRef" type="string" use="required" default="shibboleth.ParserPool"">
+                    <annotation>
+                        <documentation>
+                            Reference to the parser pool used to parser incoming XML message.
                         </documentation>
                     </annotation>
                 </attribute>

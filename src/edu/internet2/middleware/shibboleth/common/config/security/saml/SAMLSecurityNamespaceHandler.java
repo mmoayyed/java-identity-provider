@@ -39,5 +39,11 @@ public class SAMLSecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(MandatoryIssuerRuleBeanDefinitionParser.SCHEMA_TYPE,
                 new MandatoryIssuerRuleBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2HTTPPostSimpleSignRuleBeanDefinitionParser.SCHEMA_TYPE,
+                new SAML2HTTPPostSimpleSignRuleBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2HTTPRedirectDeflateSignatureRuleBeanDefinitionParser.SCHEMA_TYPE,
+                new SAML2HTTPRedirectDeflateSignatureRuleBeanDefinitionParser());
     }
 }
