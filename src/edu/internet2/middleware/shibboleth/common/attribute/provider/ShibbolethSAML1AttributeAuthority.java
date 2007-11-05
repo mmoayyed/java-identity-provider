@@ -229,8 +229,6 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
         Collection<Attribute> encodedAttributes = new ArrayList<Attribute>();
 
         boolean attributeEncoded = false;
-        AttributeDesignator samlAttribute;
-        SAML1StringAttributeEncoder defaultEncoder;
 
         for (BaseAttribute<?> shibbolethAttribute : attributes) {
             if (shibbolethAttribute.getValues() == null || shibbolethAttribute.getValues().size() == 0) {
@@ -248,26 +246,15 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
                                     encoder.getClass().getName());
                         }
                     } catch (AttributeEncodingException e) {
-                        log.warn("unable to encode attribute: " + shibbolethAttribute.getId(), e);
+                        log.warn("Unable to encode attribute: {}", shibbolethAttribute.getId(), e);
                     }
                 }
             }
 
-            // if it couldn't be encoded try using the default encoder
+            // if it couldn't be encoded log it
             if (!attributeEncoded) {
-                defaultEncoder = new SAML1StringAttributeEncoder();
-                samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
-                if (samlAttribute != null) {
-                    defaultEncoder.setAttributeName(samlAttribute.getAttributeName());
-                    defaultEncoder.setNamespace(samlAttribute.getAttributeNamespace());
-                } else {
-                    defaultEncoder.setAttributeName(shibbolethAttribute.getId());
-                    defaultEncoder.setNamespace("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
-                }
-
-                encodedAttributes.add(defaultEncoder.encode(shibbolethAttribute));
-                log.debug("Encoded attribute {} with encoder of type {}", shibbolethAttribute.getId(), defaultEncoder
-                        .getClass().getName());
+                log.info("Attribute {} was not encoded because no SAML1AttributeEncoder was attached to it.",
+                        shibbolethAttribute.getId());
             }
         }
 

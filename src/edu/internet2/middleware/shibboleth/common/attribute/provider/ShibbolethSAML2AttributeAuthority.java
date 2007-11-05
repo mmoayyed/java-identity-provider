@@ -43,7 +43,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringAttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
@@ -189,8 +188,6 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
         Collection<Attribute> encodedAttributes = new ArrayList<Attribute>();
 
         boolean attributeEncoded;
-        Attribute samlAttribute;
-        SAML2StringAttributeEncoder defaultEncoder;
 
         for (BaseAttribute<?> shibbolethAttribute : attributes) {
             attributeEncoded = false;
@@ -213,22 +210,10 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
                 }
             }
 
-            // if it couldn't be encoded try using the default encoder
+            // if it couldn't be encoded log it
             if (!attributeEncoded) {
-                defaultEncoder = new SAML2StringAttributeEncoder();
-                samlAttribute = getSAMLAttributeByAttributeID(shibbolethAttribute.getId());
-                if (samlAttribute != null) {
-                    defaultEncoder.setAttributeName(samlAttribute.getName());
-                    defaultEncoder.setNameFormat(samlAttribute.getNameFormat());
-                    defaultEncoder.setFriendlyName(samlAttribute.getFriendlyName());
-                } else {
-                    defaultEncoder.setAttributeName(shibbolethAttribute.getId());
-                    defaultEncoder.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified");
-                }
-
-                encodedAttributes.add(defaultEncoder.encode(shibbolethAttribute));
-                log.debug("Encoded attribute {} with encoder of type {}", shibbolethAttribute.getId(), defaultEncoder
-                        .getClass().getName());
+                log.info("Attribute {} was not encoded because no SAML2AttributeEncoder was attached to it.",
+                        shibbolethAttribute.getId());
             }
         }
 
