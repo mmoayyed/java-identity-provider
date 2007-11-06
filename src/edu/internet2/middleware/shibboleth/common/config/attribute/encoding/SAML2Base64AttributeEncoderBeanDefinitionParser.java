@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.DatatypeHelper;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -44,6 +46,11 @@ public class SAML2Base64AttributeEncoderBeanDefinitionParser extends BaseAttribu
 
         builder.addPropertyValue("nameFormat", element.getAttribute(NAME_FORMAT_ATTRIBUTE_NAME));
         builder.addPropertyValue("friendlyName", element.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
+        
+        String attributeName = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "name"));
+        if (attributeName == null) {
+            throw new BeanCreationException("SAML 2 attribute encoders must contain a name");
+        }
     }
 
     /** {@inheritDoc} */

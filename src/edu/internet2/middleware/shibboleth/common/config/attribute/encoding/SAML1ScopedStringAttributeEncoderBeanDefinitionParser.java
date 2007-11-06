@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.DatatypeHelper;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -41,6 +43,11 @@ public class SAML1ScopedStringAttributeEncoderBeanDefinitionParser extends
         super.doParse(element, parserContext, builder);
 
         builder.addPropertyValue("namespace", element.getAttribute(NAMESPACE_ATTRIBUTE_NAME));
+
+        String attributeName = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "name"));
+        if (attributeName == null) {
+            throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
+        }
     }
 
     /** {@inheritDoc} */

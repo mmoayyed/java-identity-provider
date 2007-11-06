@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -25,12 +26,13 @@ import org.w3c.dom.Element;
  * Base class for Spring bean definition parser for Shibboleth attribute encoders.
  */
 public abstract class BaseAttributeEncoderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        builder.addPropertyValue("attributeName", element.getAttribute("name"));
+        builder.addPropertyValue("attributeName", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
+                "name")));
     }
-    
+
     /** {@inheritDoc} */
     public boolean shouldGenerateId() {
         return true;
