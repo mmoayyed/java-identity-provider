@@ -207,7 +207,7 @@
                         <documentation>ID of the credential to use to sign SAML assertions.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signAssertions" type="boolean" default="true">
+                <attribute name="signAssertions" type="boolean" default="false">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether issued assertions should be signed. If no signing
