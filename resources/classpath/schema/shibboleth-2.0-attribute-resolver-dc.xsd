@@ -2,10 +2,13 @@
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc" xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-    elementFormDefault="qualified">
+    xmlns:security="urn:mace:shibboleth:2.0:security" elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+        
+    <import namespace="urn:mace:shibboleth:2.0:security"
+        schemaLocation="classpath:/schema/sshibboleth-2.0-security.xsd" />
 
     <complexType name="Static">
         <annotation>
@@ -334,6 +337,7 @@
                             </documentation>
                         </annotation>
                     </element>
+                    <element ref="security:Credential" minOccurs="0" />
                 </sequence>
                 <attribute name="ldapUrl" type="string" use="required">
                     <annotation>
@@ -363,6 +367,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="authenticationType" type="dc:AuthenticationType" default="SIMPLE">
+                    <annotation>
+                        <documentation>
+                            The LDAP authentication type. Acceptable values are ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI.
+                            If no type is given SIMPLE is used.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="searchScope" type="dc:SearchScopeType" default="SUBTREE">
                     <annotation>
                         <documentation>
@@ -375,6 +387,20 @@
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether startTLS should be used when connecting to the LDAP.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sslTrustCredential" type="security:Credential">
+                    <annotation>
+                        <documentation>
+                            X509 Credential to use for determining trust in SSL connections.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sslClientAuthCredential" type="security:Credential">
+                    <annotation>
+                        <documentation>
+                            X509 Credential to send in response to SSL client authentication requests.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -439,6 +465,21 @@
             </extension>
         </complexContent>
     </complexType>
+
+    <simpleType name="AuthenticationType">
+        <annotation>
+            <documentation>Supported authentication types.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="ANONYMOUS" />
+            <enumeration value="SIMPLE" />
+            <enumeration value="STRONG" />
+            <enumeration value="EXTERNAL" />
+            <enumeration value="DIGEST_MD5" />
+            <enumeration value="CRAM_MD5" />
+            <enumeration value="GSSAPI" />
+        </restriction>
+    </simpleType>
 
     <simpleType name="SearchScopeType">
         <annotation>
