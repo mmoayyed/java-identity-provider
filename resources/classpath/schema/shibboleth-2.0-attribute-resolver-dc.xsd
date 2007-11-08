@@ -8,7 +8,7 @@
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
         
     <import namespace="urn:mace:shibboleth:2.0:security"
-        schemaLocation="classpath:/schema/sshibboleth-2.0-security.xsd" />
+        schemaLocation="classpath:/schema/shibboleth-2.0-security.xsd" />
 
     <complexType name="Static">
         <annotation>
