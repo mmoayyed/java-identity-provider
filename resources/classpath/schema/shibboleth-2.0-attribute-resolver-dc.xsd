@@ -2,14 +2,10 @@
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc" xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-    xmlns:security="urn:mace:shibboleth:2.0:security" elementFormDefault="qualified">
+    elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
-        
-    <import namespace="urn:mace:shibboleth:2.0:security"
-        schemaLocation="classpath:/schema/shibboleth-2.0-security.xsd" />
-
     <complexType name="Static">
         <annotation>
             <documentation>
@@ -337,9 +333,6 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <!-- Does not work for some reason, fix it later
-                    <element ref="security:Credential" minOccurs="0" />
-                    -->
                 </sequence>
                 <attribute name="ldapUrl" type="string" use="required">
                     <annotation>
