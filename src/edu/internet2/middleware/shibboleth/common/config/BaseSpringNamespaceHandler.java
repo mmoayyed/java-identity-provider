@@ -105,13 +105,13 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
 
         parserId = XMLHelper.getXSIType(element);
         if (parserId != null) {
-            log.debug("Attempting to find parser for element of type: {}", parserId);
+            log.trace("Attempting to find parser for element of type: {}", parserId);
             parser = parsers.get(parserId);
         }
 
         if (parser == null) {
             parserId = XMLHelper.getNodeQName(element);
-            log.debug("Attempting to find parser with element name: {}", parserId);
+            log.trace("Attempting to find parser with element name: {}", parserId);
             parser = parsers.get(parserId);
         }
 
