@@ -49,4 +49,9 @@ public class ClientCertAuthRuleBeanDefinitionParser extends AbstractSingleBeanDe
         
         builder.addConstructorArg(nameOptions);
     }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
+    }
 }
