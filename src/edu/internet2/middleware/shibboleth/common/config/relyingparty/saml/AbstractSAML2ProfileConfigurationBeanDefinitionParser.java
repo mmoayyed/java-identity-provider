@@ -35,8 +35,6 @@ public abstract class AbstractSAML2ProfileConfigurationBeanDefinitionParser exte
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        // TODO encryption credentials
-
         List<Element> proxyAudiences = XMLHelper.getChildElementsByTagNameNS(element,
                 SAMLRelyingPartyNamespaceHandler.NAMESPACE, "ProxyAudience");
         if (proxyAudiences != null && proxyAudiences.size() > 0) {
