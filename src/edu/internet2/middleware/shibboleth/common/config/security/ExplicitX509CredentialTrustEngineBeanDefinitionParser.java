@@ -33,7 +33,7 @@ public class ExplicitX509CredentialTrustEngineBeanDefinitionParser extends Abstr
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return ExplicitKeySignatureTrustEngineFactoryBean.class;
+        return ExplicitX509CredentialTrustEngineFactoryBean.class;
     }
 
     /** {@inheritDoc} */

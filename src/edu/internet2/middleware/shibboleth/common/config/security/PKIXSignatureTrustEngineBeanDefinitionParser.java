@@ -33,7 +33,7 @@ public class PKIXSignatureTrustEngineBeanDefinitionParser extends AbstractSingle
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return ExplicitKeySignatureTrustEngineFactoryBean.class;
+        return PKIXSignatureTrustEngineFactoryBean.class;
     }
 
     /** {@inheritDoc} */

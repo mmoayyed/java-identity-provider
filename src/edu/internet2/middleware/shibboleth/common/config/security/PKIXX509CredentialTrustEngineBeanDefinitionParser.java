@@ -33,7 +33,7 @@ public class PKIXX509CredentialTrustEngineBeanDefinitionParser extends AbstractS
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return ExplicitKeySignatureTrustEngineFactoryBean.class;
+        return PKIXX509CredentialTrustEngineFactoryBean.class;
     }
 
     /** {@inheritDoc} */
