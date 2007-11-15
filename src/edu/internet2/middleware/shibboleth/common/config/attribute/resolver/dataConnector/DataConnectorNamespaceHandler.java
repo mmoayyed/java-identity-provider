@@ -10,7 +10,7 @@ public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:dc";
-    
+
     /** {@inheritDoc} */
     public void init() {
         registerBeanDefinitionParser(StaticDataConnectorBeanDefinitionParser.TYPE_NAME,
@@ -19,6 +19,7 @@ public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
                 new RDBMSDataConnectorBeanDefinitionParser());
         registerBeanDefinitionParser(LdapDataConnectorBeanDefinitionParser.TYPE_NAME,
                 new LdapDataConnectorBeanDefinitionParser());
+        registerBeanDefinitionParser(PersistentIdDataConnectorBeanDefinitionParser.TYPE_NAME,
+                new PersistentIdDataConnectorBeanDefinitionParser());
     }
-
 }

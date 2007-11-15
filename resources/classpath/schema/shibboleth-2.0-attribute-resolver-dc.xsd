@@ -46,6 +46,38 @@
         </complexContent>
     </complexType>
     
+    <complexType name="PersistentId">
+        <annotation>
+            <documentation>
+                A connector that either generates a persistent ID by hashing or by looking it up in a database.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <choice>
+                    <element name="Salt" type="string"/>
+                    <choice>
+                        <element ref="dc:ContainerManagedConnection">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed the application
+                                    container.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element ref="dc:ApplicationManagedConnection">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed the data connector.
+                                </documentation>
+                            </annotation>
+                        </element>
+                    </choice>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="RelationalDatabase">
         <annotation>
             <documentation>
