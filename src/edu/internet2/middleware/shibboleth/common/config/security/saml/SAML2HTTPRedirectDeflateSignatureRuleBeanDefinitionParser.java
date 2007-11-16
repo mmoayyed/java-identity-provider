@@ -16,18 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.config.security.saml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.binding.security.SAML2HTTPRedirectDeflateSignatureRule;
-import org.opensaml.xml.security.keyinfo.BasicProviderKeyInfoCredentialResolver;
-import org.opensaml.xml.security.keyinfo.KeyInfoCredentialResolver;
-import org.opensaml.xml.security.keyinfo.KeyInfoProvider;
-import org.opensaml.xml.security.keyinfo.provider.DSAKeyValueProvider;
-import org.opensaml.xml.security.keyinfo.provider.InlineX509DataProvider;
-import org.opensaml.xml.security.keyinfo.provider.RSAKeyValueProvider;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -54,15 +45,6 @@ public class SAML2HTTPRedirectDeflateSignatureRuleBeanDefinitionParser extends A
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         builder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
                 "trustEngineRef")));
-
-        builder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
-                "parserPoolRef")));
-
-        List<KeyInfoProvider> keyInfoProviders = new ArrayList<KeyInfoProvider>();
-        keyInfoProviders.add(new DSAKeyValueProvider());
-        keyInfoProviders.add(new RSAKeyValueProvider());
-        keyInfoProviders.add(new InlineX509DataProvider());
-        KeyInfoCredentialResolver keyInfoCredResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviders);
-        builder.addConstructorArg(keyInfoCredResolver);
+        
     }
 }
