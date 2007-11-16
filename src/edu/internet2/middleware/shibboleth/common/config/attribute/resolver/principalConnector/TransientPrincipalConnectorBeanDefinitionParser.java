@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -43,6 +44,7 @@ public class TransientPrincipalConnectorBeanDefinitionParser extends BasePrincip
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        pluginBuilder.addConstructorArgReference(pluginConfig.getAttributeNS(null, "identifierStoreID"));
+        pluginBuilder.addPropertyReference("identifierStore", DatatypeHelper.safeTrimOrNullString(pluginConfig
+                .getAttributeNS(null, "storageServiceRef")));
     }
 }
