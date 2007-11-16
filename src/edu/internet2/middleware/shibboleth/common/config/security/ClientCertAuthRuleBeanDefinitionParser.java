@@ -19,11 +19,14 @@ package edu.internet2.middleware.shibboleth.common.config.security;
 import javax.xml.namespace.QName;
 
 import org.opensaml.ws.security.provider.CertificateNameOptions;
-import org.opensaml.ws.security.provider.ClientCertAuthRule;
+import org.opensaml.xml.security.x509.X500DNHandler;
+import org.opensaml.xml.security.x509.X509Util;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
+
+import edu.internet2.middleware.shibboleth.common.binding.security.ShibbolethClientCertAuthRule;
 
 /** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}ClientCertificate elements. */
 public class ClientCertAuthRuleBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -33,7 +36,7 @@ public class ClientCertAuthRuleBeanDefinitionParser extends AbstractSingleBeanDe
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return ClientCertAuthRule.class;
+        return ShibbolethClientCertAuthRule.class;
     }
 
     /** {@inheritDoc} */
@@ -42,10 +45,11 @@ public class ClientCertAuthRuleBeanDefinitionParser extends AbstractSingleBeanDe
                 "trustEngineRef")));
         
         CertificateNameOptions nameOptions = new CertificateNameOptions();
+        nameOptions.setX500SubjectDNFormat(X500DNHandler.FORMAT_RFC2253);
         nameOptions.setEvaluateSubjectDN(false);
         nameOptions.setEvaluateSubjectCommonName(true);
-        nameOptions.getSubjectAltNames().add(2);
-        nameOptions.getSubjectAltNames().add(6);
+        nameOptions.getSubjectAltNames().add(X509Util.DNS_ALT_NAME);
+        nameOptions.getSubjectAltNames().add(X509Util.URI_ALT_NAME);
         
         builder.addConstructorArg(nameOptions);
     }

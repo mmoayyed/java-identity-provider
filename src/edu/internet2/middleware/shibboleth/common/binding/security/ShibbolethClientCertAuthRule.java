@@ -13,7 +13,7 @@ import org.opensaml.xml.security.x509.X509Util;
  * Specialization of {@link SAMLMDClientCertAuthRule} which may include Shibboleth-specific
  * method overrides for client certificate authentication processing.
  */
-class ShibbolethClientCertAuthRule extends SAMLMDClientCertAuthRule {
+public class ShibbolethClientCertAuthRule extends SAMLMDClientCertAuthRule {
 
     /**
      * Constructor.
