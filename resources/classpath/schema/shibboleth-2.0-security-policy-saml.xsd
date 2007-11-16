@@ -39,7 +39,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="parserPoolRef" type="string" default="shibboleth.ParserPool" use="required">
+                <attribute name="parserPoolRef" type="string" default="shibboleth.ParserPool">
                     <annotation>
                         <documentation>
                             Reference to the parser pool used to parse incoming XML message.
