@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.saml2.binding.security.SAML2HTTPostSimpleSignRule;
+import org.opensaml.saml2.binding.security.SAML2HTTPPostSimpleSignRule;
 import org.opensaml.xml.security.keyinfo.BasicProviderKeyInfoCredentialResolver;
 import org.opensaml.xml.security.keyinfo.KeyInfoCredentialResolver;
 import org.opensaml.xml.security.keyinfo.KeyInfoProvider;
@@ -41,7 +41,7 @@ public class SAML2HTTPPostSimpleSignRuleBeanDefinitionParser extends AbstractSin
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return SAML2HTTPostSimpleSignRule.class;
+        return SAML2HTTPPostSimpleSignRule.class;
     }
 
     /** {@inheritDoc} */
