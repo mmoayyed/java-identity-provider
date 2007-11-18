@@ -18,13 +18,13 @@ package edu.internet2.middleware.shibboleth.common.config.security;
 
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.security.MetadataCredentialResolver;
-import org.opensaml.xml.security.trust.ExplicitX509CertificateTrustEngine;
+import org.opensaml.xml.security.trust.ExplicitKeyTrustEngine;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
- * Spring factory bean used to created {@link ExplicitX509CertificateTrustEngine}s.
+ * Spring factory bean used to created {@link ExplicitKeyTrustEngine}s.
  */
-public class ExplicitX509CredentialTrustEngineFactoryBean extends AbstractFactoryBean {
+public class ExplicitKeyTrustEngineFactoryBean extends AbstractFactoryBean {
     
     /** Metadata provider used to look up key information for peer entities. */
     private MetadataProvider metadataProvider;
@@ -49,12 +49,12 @@ public class ExplicitX509CredentialTrustEngineFactoryBean extends AbstractFactor
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return ExplicitX509CertificateTrustEngine.class;
+        return ExplicitKeyTrustEngine.class;
     }
     
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         MetadataCredentialResolver credResolver = new MetadataCredentialResolver(getMetadataProvider());        
-        return new ExplicitX509CertificateTrustEngine(credResolver);
+        return new ExplicitKeyTrustEngine(credResolver);
     }
 }

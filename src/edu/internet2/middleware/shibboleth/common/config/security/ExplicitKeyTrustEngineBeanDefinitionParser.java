@@ -25,15 +25,15 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}ExplicitX509Credential elements. */
-public class ExplicitX509CredentialTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}ExplicitKey elements. */
+public class ExplicitKeyTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "ExplicitX509Credential");
+    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "ExplicitKey");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return ExplicitX509CredentialTrustEngineFactoryBean.class;
+        return ExplicitKeyTrustEngineFactoryBean.class;
     }
 
     /** {@inheritDoc} */

@@ -141,10 +141,10 @@
     <!-- TRUST ENGINE RELATED OBJECTS -->
     <element name="TrustEngine" type="sec:TrustEngineType" />
     
-    <complexType name="ExplicitX509Credential">
+    <complexType name="ExplicitKey">
         <annotation>
             <documentation>
-                Trust engine used to validate an X509 credentials against metadata.
+                Trust engine used to validate a key against trusted keys obtained from metadata.
             </documentation>
         </annotation>
         <complexContent>
