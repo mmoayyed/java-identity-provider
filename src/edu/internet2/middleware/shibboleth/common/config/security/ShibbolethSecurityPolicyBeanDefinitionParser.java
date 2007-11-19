@@ -57,7 +57,7 @@ public class ShibbolethSecurityPolicyBeanDefinitionParser extends AbstractSingle
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String policyId = element.getAttributeNS(null, "id");
-        log.debug("Configuring security policy: {}" + policyId);
+        log.debug("Configuring security policy: {}", policyId);
         builder.addPropertyValue("policyId", policyId);
 
         ManagedList rules = SpringConfigurationUtils.parseCustomElements(XMLHelper.getChildElementsByTagNameNS(element,

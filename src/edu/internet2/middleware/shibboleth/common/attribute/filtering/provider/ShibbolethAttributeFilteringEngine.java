@@ -164,7 +164,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         Collection attributeValues = filterContext.getRetainedValues(attributeRule.getAttributeId(), true);
         MatchFunctor permitValue = attributeRule.getPermitValueRule();
 
-        log.debug("Filtering values of attribute {} for principal {}" + attributeRule.getAttributeId(), filterContext
+        log.debug("Filtering values of attribute {} for principal {}", attributeRule.getAttributeId(), filterContext
                 .getAttributeRequestContext().getPrincipalName());
 
         Iterator<Object> attributeValueItr = attributeValues.iterator();
