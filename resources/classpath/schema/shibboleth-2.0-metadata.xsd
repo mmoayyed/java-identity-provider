@@ -39,7 +39,7 @@
         <complexContent>
             <extension base="shibmd:MetadataProviderType">
                 <sequence>
-                    <element ref="shibmd:MetadataProvider" minOccurs="1" maxOccurs="unbounded">
+                    <element ref="shibmd:MetadataProvider" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
                                 A member metadata provider that will be searched for information.
