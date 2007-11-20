@@ -28,6 +28,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.xml.namespace.QName;
 
@@ -58,8 +61,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataKeyAuthority;
 
-// TODO thread safety - need locks or synchronized access to caches
-
 /**
  * An implementation of {@link PKIXValidationInformationResolver} which resolves {@link PKIXValidationInformation} based
  * on information stored in SAML 2 metadata. Validation information is retrieved from Shibboleth-specific metadata
@@ -71,6 +72,9 @@ import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethMetadataKe
  */
 public class MetadataPKIXValidationInformationResolver implements PKIXValidationInformationResolver {
 
+    /** Default value for Shibboleth KeyAuthority verify depth. */
+    public static final int KEY_AUTHORITY_VERIFY_DEPTH_DEFAULT = 1;
+    
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MetadataPKIXValidationInformationResolver.class);
 
@@ -85,6 +89,9 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
 
     /** Cache of resolved info. [MetadataCacheKey, Strings(trusted key names)] */
     private Map<MetadataCacheKey, SoftReference<Set<String>>> entityNamesCache;
+    
+    /** Lock used to synchronize access to the caches. */
+    private ReadWriteLock rwlock;
 
     /**
      * Constructor.
@@ -103,6 +110,8 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         entityPKIXCache = new HashMap<MetadataCacheKey, SoftReference<Collection<PKIXValidationInformation>>>();
         extensionsCache = new HashMap<Extensions, SoftReference<Collection<PKIXValidationInformation>>>();
         entityNamesCache = new HashMap<MetadataCacheKey, SoftReference<Set<String>>>();
+        
+        rwlock = new ReentrantReadWriteLock();
 
         if (metadata instanceof ObservableMetadataProvider) {
             ObservableMetadataProvider observable = (ObservableMetadataProvider) metadataProvider;
@@ -181,6 +190,15 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
     /** {@inheritDoc} */
     public boolean supportsTrustedNameResolution() {
         return true;
+    }
+    
+    /**
+     * Get the lock instance used to synchronize access to the caches.
+     * 
+     * @return a read-write lock instance
+     */
+    protected ReadWriteLock getReadWriteLock() {
+        return rwlock;
     }
 
     /**
@@ -274,12 +292,26 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         if (pkixInfoSet != null) {
             return pkixInfoSet;
         }
+        
+        if (log.isDebugEnabled()) {
+            String parentName = getExtensionsParentName(extensions);
+            if (parentName != null) {
+                if (extensions.getParent() instanceof EntityDescriptor) {
+                    log.debug("Resolving PKIX validation info for Extensions "
+                            + "with EntityDescriptor parent: {}", parentName);
+                } else  if (extensions.getParent() instanceof EntitiesDescriptor) {
+                    log.debug("Resolving PKIX validation info for Extensions " 
+                            + "with EntitiesDescriptor parent: {}", parentName);
+                }
+            } else {
+                log.debug("Resolving PKIX validation info for Extensions " 
+                        + "with unidentified parent");
+            }
+        }
 
         pkixInfoSet = new HashSet<PKIXValidationInformation>();
-        for (XMLObject unknown : extensions.getUnknownXMLObjects()) {
-            if (unknown instanceof ShibbolethMetadataKeyAuthority) {
-                pkixInfoSet.add(resolvePKIXInfo((ShibbolethMetadataKeyAuthority) unknown));
-            }
+        for (XMLObject xmlObj : extensions.getUnknownXMLObjects(ShibbolethMetadataKeyAuthority.DEFAULT_ELEMENT_NAME)) {
+            pkixInfoSet.add(resolvePKIXInfo((ShibbolethMetadataKeyAuthority) xmlObj));
         }
         cacheExtensionsInfo(extensions, pkixInfoSet);
         return pkixInfoSet;
@@ -300,7 +332,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         List<X509CRL> crls = new ArrayList<X509CRL>();
         Integer depth = keyAuthority.getVerifyDepth();
         if (depth == null) {
-            depth = 1;
+            depth = KEY_AUTHORITY_VERIFY_DEPTH_DEFAULT;
         }
 
         for (KeyInfo keyInfo : keyAuthority.getKeyInfos()) {
@@ -355,8 +387,8 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * 
      * @throws SecurityException thrown if there is an error extracting trusted name information
      */
-    protected Set<String> retrieveTrustedNamesFromMetadata(String entityID, QName role, String protocol, UsageType usage)
-            throws SecurityException {
+    protected Set<String> retrieveTrustedNamesFromMetadata(String entityID, QName role, String protocol,
+            UsageType usage) throws SecurityException {
 
         log.debug("Attempting to retrieve trusted names for PKIX validation from metadata for entity: {}", entityID);
         Set<String> trustedNames = new HashSet<String>();
@@ -444,18 +476,23 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      */
     protected Collection<PKIXValidationInformation> retrievePKIXInfoFromCache(MetadataCacheKey cacheKey) {
         log.debug("Attempting to retrieve PKIX validation info from cache using index: {}", cacheKey);
-        if (entityPKIXCache.containsKey(cacheKey)) {
-            SoftReference<Collection<PKIXValidationInformation>> reference = entityPKIXCache.get(cacheKey);
-            if (reference.get() != null) {
-                log.debug("Retrieved PKIX validataion info from cache using index: {}", cacheKey);
-                return reference.get();
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        log.debug("Read lock over cache acquired");
+        try {
+            if (entityPKIXCache.containsKey(cacheKey)) {
+                SoftReference<Collection<PKIXValidationInformation>> reference = entityPKIXCache.get(cacheKey);
+                if (reference.get() != null) {
+                    log.debug("Retrieved PKIX validation info from cache using index: {}", cacheKey);
+                    return reference.get();
+                }
             }
-
+        } finally {
+            readLock.unlock();
+            log.debug("Read lock over cache released");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Unable to retrieve PKIX validation info from cache using index: {}", cacheKey);
-        }
+        log.debug("Unable to retrieve PKIX validation info from cache using index: {}", cacheKey);
         return null;
     }
 
@@ -466,19 +503,41 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @return the collection of cached info or null
      */
     protected Collection<PKIXValidationInformation> retrieveExtensionsInfoFromCache(Extensions extensions) {
-        log.debug("Attempting to retrieve PKIX validation info from cache using index: {}", extensions);
-        if (extensionsCache.containsKey(extensions)) {
-            SoftReference<Collection<PKIXValidationInformation>> reference = extensionsCache.get(extensions);
-            if (reference.get() != null) {
-                log.debug("Retrieved PKIX validataion info from cache using index: {}", extensions);
-                return reference.get();
+        if (log.isDebugEnabled()) {
+            String parentName = getExtensionsParentName(extensions);
+            if (parentName != null) {
+                if (extensions.getParent() instanceof EntityDescriptor) {
+                    log.debug("Attempting to retrieve PKIX validation info from cache for Extensions "
+                            + "with EntityDescriptor parent: {}", parentName);
+                } else  if (extensions.getParent() instanceof EntitiesDescriptor) {
+                    log.debug("Attempting to retrieve PKIX validation info from cache for Extensions " 
+                            + "with EntitiesDescriptor parent: {}", parentName);
+                }
+            } else {
+                log.debug("Attempting to retrieve PKIX validation info from cache for Extensions " 
+                        + "with unidentified parent");
             }
-
+        }
+        
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        log.debug("Read lock over cache acquired");
+        try {
+            if (extensionsCache.containsKey(extensions)) {
+                SoftReference<Collection<PKIXValidationInformation>> reference = extensionsCache.get(extensions);
+                if (reference.get() != null) {
+                    log.debug("Retrieved PKIX validation info from cache using index: {}", extensions);
+                    return reference.get();
+                }
+            }
+        } finally {
+            readLock.unlock();
+            log.debug("Read lock over cache released");
         }
         log.debug("Unable to retrieve PKIX validation info from cache using index: {}", extensions);
         return null;
     }
-
+    
     /**
      * Retrieves pre-resolved trusted names from the cache.
      * 
@@ -487,13 +546,20 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      */
     protected Set<String> retrieveTrustedNamesFromCache(MetadataCacheKey cacheKey) {
         log.debug("Attempting to retrieve trusted names from cache using index: {}", cacheKey);
-        if (entityNamesCache.containsKey(cacheKey)) {
-            SoftReference<Set<String>> reference = entityNamesCache.get(cacheKey);
-            if (reference.get() != null) {
-                log.debug("Retrieved trusted names from cache using index: {}", cacheKey);
-                return reference.get();
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        log.debug("Read lock over cache acquired");
+        try {
+            if (entityNamesCache.containsKey(cacheKey)) {
+                SoftReference<Set<String>> reference = entityNamesCache.get(cacheKey);
+                if (reference.get() != null) {
+                    log.debug("Retrieved trusted names from cache using index: {}", cacheKey);
+                    return reference.get();
+                }
             }
-
+        } finally {
+            readLock.unlock();
+            log.debug("Read lock over cache released");
         }
 
         log.debug("Unable to retrieve trusted names from cache using index: {}", cacheKey);
@@ -507,7 +573,16 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param pkixInfo collection of PKIX information to cache
      */
     protected void cachePKIXInfo(MetadataCacheKey cacheKey, Collection<PKIXValidationInformation> pkixInfo) {
-        entityPKIXCache.put(cacheKey, new SoftReference<Collection<PKIXValidationInformation>>(pkixInfo));
+        Lock writeLock = getReadWriteLock().writeLock();
+        writeLock.lock();
+        log.debug("Write lock over cache acquired");
+        try {
+            entityPKIXCache.put(cacheKey, new SoftReference<Collection<PKIXValidationInformation>>(pkixInfo));
+            log.debug("Added new PKIX info to entity cache with key: {}", cacheKey);
+        } finally {
+            writeLock.unlock();
+            log.debug("Write lock over cache released"); 
+        }
     }
 
     /**
@@ -517,7 +592,19 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param pkixInfo collection of PKIX information to cache
      */
     protected void cacheExtensionsInfo(Extensions extensions, Collection<PKIXValidationInformation> pkixInfo) {
-        extensionsCache.put(extensions, new SoftReference<Collection<PKIXValidationInformation>>(pkixInfo));
+        Lock writeLock = getReadWriteLock().writeLock();
+        writeLock.lock();
+        log.debug("Write lock over cache acquired");
+        try {
+            extensionsCache.put(extensions, new SoftReference<Collection<PKIXValidationInformation>>(pkixInfo));
+            if (log.isDebugEnabled()) {
+                log.debug("Added new PKIX info to cache for Extensions with parent: {}",
+                        getExtensionsParentName(extensions));
+            }
+        } finally {
+            writeLock.unlock();
+            log.debug("Write lock over cache released"); 
+        }
     }
 
     /**
@@ -527,7 +614,39 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param names collection of names to cache
      */
     protected void cacheTrustedNames(MetadataCacheKey cacheKey, Set<String> names) {
-        entityNamesCache.put(cacheKey, new SoftReference<Set<String>>(names));
+        Lock writeLock = getReadWriteLock().writeLock();
+        writeLock.lock();
+        log.debug("Write lock over cache acquired");
+        try {
+            entityNamesCache.put(cacheKey, new SoftReference<Set<String>>(names));
+            log.debug("Added new PKIX info to entity cache with key: {}", cacheKey);
+        } finally {
+            writeLock.unlock();
+            log.debug("Write lock over cache released"); 
+        }
+    }
+
+    /**
+     * Get the name of the parent element of an {@link Extensions} element in metadata, mostly
+     * useful for logging purposes.
+     * 
+     * If the parent is an EntityDescriptor, return the entityID value.  If an EntitiesDescriptor,
+     * return the name value.
+     * 
+     * @param extensions the Extensions element
+     * @return the Extensions element's parent's name
+     */
+    protected String getExtensionsParentName(Extensions extensions) {
+        XMLObject parent = extensions.getParent();
+        if (parent == null) {
+            return null;
+        }
+        if (parent instanceof EntityDescriptor) {
+            return ((EntityDescriptor) parent).getEntityID();
+        } else  if (extensions.getParent() instanceof EntitiesDescriptor) {
+            return ((EntitiesDescriptor) parent).getName();
+        }
+        return null;
     }
 
     /**
@@ -621,9 +740,18 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
 
         /** {@inheritDoc} */
         public void onEvent(MetadataProvider provider) {
-            entityPKIXCache.clear();
-            extensionsCache.clear();
-            entityNamesCache.clear();
+            Lock writeLock = getReadWriteLock().writeLock();
+            writeLock.lock();
+            log.debug("Write lock over cache acquired");
+            try {
+                entityPKIXCache.clear();
+                extensionsCache.clear();
+                entityNamesCache.clear();
+                log.info("PKIX validation info cache cleared");
+            } finally {
+                writeLock.unlock();
+                log.debug("Write lock over cache released"); 
+            }
         }
     }
 
