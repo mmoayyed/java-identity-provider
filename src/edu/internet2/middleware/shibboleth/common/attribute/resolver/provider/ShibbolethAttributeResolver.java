@@ -366,8 +366,19 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         try {
             dataConnector.resolve(resolutionContext);
         } catch (AttributeResolutionException e) {
-            // TODO add failover connector support here
-            throw e;
+            String failoverDataConnectorId = dataConnector.getFailoverDependencyId();
+            if (DatatypeHelper.isEmpty(failoverDataConnectorId)) {
+                throw e;
+            }
+
+            log.error("Received the following error from data connector " + dataConnector.getId()
+                    + ", using its failover connector " + failoverDataConnectorId, e);
+            try {
+                resolveDataConnector(failoverDataConnectorId, resolutionContext);
+            } catch (AttributeResolutionException foe) {
+                log.error("Recieved the following error from failover data connector " + failoverDataConnectorId, foe);
+                throw e;
+            }
         }
     }
 
@@ -417,11 +428,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             // remove dependency-only attributes
             attributeDefinition = getAttributeDefinitions().get(resolvedAttribute.getId());
             if (attributeDefinition.isDependencyOnly()) {
-                log
-                        .debug(
-                                "Removing attribute {}  from resolution result for principal {}.  It is a dependency-only attribute.",
-                                resolvedAttribute.getId(), resolutionContext.getAttributeRequestContext()
-                                        .getPrincipalName());
+                log.debug("Removing dependency-only attribute {} from resolution result for principal {}.",
+                        resolvedAttribute.getId(), resolutionContext.getAttributeRequestContext().getPrincipalName());
                 attributeItr.remove();
                 continue;
             }

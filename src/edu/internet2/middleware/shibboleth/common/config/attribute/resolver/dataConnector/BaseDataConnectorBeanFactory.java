@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector;
 
-import java.util.List;
-
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.BaseDataConnector;
 import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.AbstractResolutionPluginFactoryBean;
 
@@ -26,25 +24,25 @@ import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.Abst
  */
 public abstract class BaseDataConnectorBeanFactory extends AbstractResolutionPluginFactoryBean {
 
-    /** IDs of failover data connectors for this plugin. */
-    private List<String> failoverDataConnectorIds;
+    /** ID of failover data connectors for this plugin. */
+    private String failoverDataConnectorId;
 
     /**
-     * Gets the IDs of failover data connectors for this plugin.
+     * Gets the ID of failover data connectors for this plugin.
      * 
-     * @return IDs of failover data connectors for this plugin
+     * @return ID of failover data connectors for this plugin
      */
-    public List<String> getFailoverDataConnectorIds() {
-        return failoverDataConnectorIds;
+    public String getFailoverDataConnectorId() {
+        return failoverDataConnectorId;
     }
 
     /**
-     * Sets the IDs of failover data connectors for this plugin.
+     * Sets the ID of failover data connectors for this plugin.
      * 
-     * @param ids IDs of failover data connectors for this plugin
+     * @param id ID of failover data connectors for this plugin
      */
-    public void setFailoverDataConnectorIds(List<String> ids) {
-        failoverDataConnectorIds = ids;
+    public void setFailoverDataConnectorIds(String id) {
+        failoverDataConnectorId = id;
     }
 
     /**
@@ -59,8 +57,8 @@ public abstract class BaseDataConnectorBeanFactory extends AbstractResolutionPlu
             connector.getDependencyIds().addAll(getDependencyIds());
         }
 
-        if (getFailoverDataConnectorIds() != null) {
-            connector.setFailoverDependencyIds(getFailoverDataConnectorIds());
+        if (getFailoverDataConnectorId() != null) {
+            connector.setFailoverDependencyIds(getFailoverDataConnectorId());
         }
     }
 }

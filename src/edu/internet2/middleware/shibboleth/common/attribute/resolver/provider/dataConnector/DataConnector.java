@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
-import java.util.List;
 import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
@@ -30,9 +29,9 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Re
 public interface DataConnector extends ResolutionPlugIn<Map<String, BaseAttribute>> {
 
     /**
-     * Returns the IDs of data connectors to use if this one fails.
+     * Returns the ID of data connectors to use if this one fails.
      * 
-     * @return IDs of data connectors to use if this one fails
+     * @return ID of data connectors to use if this one fails
      */
-    public List<String> getFailoverDependencyIds();
+    public String getFailoverDependencyId();
 }

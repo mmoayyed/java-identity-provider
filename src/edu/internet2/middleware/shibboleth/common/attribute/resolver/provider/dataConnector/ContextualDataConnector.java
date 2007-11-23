@@ -60,8 +60,8 @@ public class ContextualDataConnector implements DataConnector {
     }
 
     /** {@inheritDoc} */
-    public List<String> getFailoverDependencyIds() {
-        return connector.getFailoverDependencyIds();
+    public String getFailoverDependencyId() {
+        return connector.getFailoverDependencyId();
     }
 
     /** {@inheritDoc} */

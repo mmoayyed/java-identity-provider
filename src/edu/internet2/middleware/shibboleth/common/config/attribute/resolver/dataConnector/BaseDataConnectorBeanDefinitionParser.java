@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,30 +50,14 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractReso
     /** {@inheritDoc} */
     protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
-        List<String> failoverDataConnectors = parseFailoverDependencies(pluginConfigChildren
-                .get(FAILOVER_DATA_CONNECTOR_ELEMENT_NAME));
-        log.debug("Setting the following failover data connector dependencies for plugin {}: {}", pluginId,
-                failoverDataConnectors);
-        pluginBuilder.addPropertyValue("failoverDataConnectorIds", failoverDataConnectors);
-    }
 
-    /**
-     * Parse dependency elements.
-     * 
-     * @param elements DOM elements of type <code>resolver:PluginDependencyType</code>
-     * 
-     * @return the dependency IDs
-     */
-    protected List<String> parseFailoverDependencies(List<Element> elements) {
-        if (elements == null || elements.size() == 0) {
-            return null;
+        List<Element> failoverConnector = pluginConfigChildren.get(FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
+        if (failoverConnector != null && !failoverConnector.isEmpty()) {
+            String connectorId = DatatypeHelper.safeTrimOrNullString(failoverConnector.get(0).getAttributeNS(null,
+                    "ref"));
+            log.debug("Setting the following failover data connector dependencies for plugin {}: {}", pluginId,
+                    connectorId);
+            pluginBuilder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
-
-        List<String> dependencyIds = new ArrayList<String>();
-        for (Element dependency : elements) {
-            dependencyIds.add(DatatypeHelper.safeTrimOrNullString(dependency.getAttributeNS(null, "ref")));
-        }
-
-        return dependencyIds;
     }
 }

@@ -139,7 +139,7 @@
         <complexContent>
             <extension base="resolver:BaseResolutionPlugInType">
                 <sequence>
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
                 </sequence>
             </extension>
         </complexContent>
