@@ -115,11 +115,15 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
 
         filterAttributesByValue(query, encodedAttributes);
 
-        AttributeStatement statement = statementBuilder.buildObject();
-        List<org.opensaml.saml2.core.Attribute> samlAttributes = statement.getAttributes();
-        samlAttributes.addAll(encodedAttributes);
-
-        return statement;
+        if(!encodedAttributes.isEmpty()){
+            AttributeStatement statement = statementBuilder.buildObject();
+            List<org.opensaml.saml2.core.Attribute> samlAttributes = statement.getAttributes();
+            samlAttributes.addAll(encodedAttributes);
+            return statement;
+        }else{
+            log.debug("No attributes remained after encoding and filtering by value, no attribute statement built");
+            return null;
+        }
     }
 
     /** {@inheritDoc} */

@@ -113,9 +113,14 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
 
         Collection<Attribute> encodedAttributes = encodeAttributes(attributes);
 
-        AttributeStatement statement = statementBuilder.buildObject();
-        statement.getAttributes().addAll(encodedAttributes);
-        return statement;
+        if(!encodedAttributes.isEmpty()){
+            AttributeStatement statement = statementBuilder.buildObject();
+            statement.getAttributes().addAll(encodedAttributes);
+            return statement;
+        }else{
+            log.debug("No attributes remained after encoding and filtering by value, no attribute statement built");
+            return null;
+        }
     }
 
     /** {@inheritDoc} */
