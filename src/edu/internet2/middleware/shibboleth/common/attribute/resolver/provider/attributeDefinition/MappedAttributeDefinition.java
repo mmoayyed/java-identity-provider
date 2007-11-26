@@ -56,8 +56,6 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        log.debug("Resolving attribute: {}", getId());
-
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getId());
         boolean valueMapMatch;

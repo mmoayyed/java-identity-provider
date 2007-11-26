@@ -16,8 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
@@ -30,29 +29,33 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
  */
 public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
-    /** Log4j logger. */
-    private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinition.class);
-
     /** Scope value. */
     private String scope;
-    
+
     /**
      * Constructor.
-     *
+     * 
      * @param newScope scope of the attribute
      */
-    public ScopedAttributeDefinition(String newScope){
+    public ScopedAttributeDefinition(String newScope) {
         this.scope = newScope;
     }
-    
+
     /** {@inheritDoc} */
-    public BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
-        log.debug("Resolving attribute: {}", getId());
+    public BaseAttribute<ScopedAttributeValue> doResolve(ShibbolethResolutionContext resolutionContext)
+            throws AttributeResolutionException {
+        Collection<?> values = getValuesFromAllDependencies(resolutionContext);
+
+        if (values == null || values.isEmpty()) {
+            return null;
+        }
 
         BasicAttribute<ScopedAttributeValue> attribute = new BasicAttribute<ScopedAttributeValue>();
         attribute.setId(getId());
-        for (Object o : getValuesFromAllDependencies(resolutionContext)) {
-            attribute.getValues().add(new ScopedAttributeValue(o.toString(), scope));
+        for (Object value : values) {
+            if (value != null) {
+                attribute.getValues().add(new ScopedAttributeValue(value.toString(), scope));
+            }
         }
 
         return attribute;
@@ -60,6 +63,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
     /**
      * Get scope value.
+     * 
      * @return Returns the scope.
      */
     public String getScope() {
@@ -68,6 +72,6 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-        //do nothing
+        // do nothing
     }
 }

@@ -416,19 +416,26 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         BaseAttribute<?> resolvedAttribute;
         Set<Object> values;
         while (attributeItr.hasNext()) {
-            // remove value-less attributes
             resolvedAttribute = attributeItr.next().getValue();
-            if (resolvedAttribute.getValues().size() == 0) {
-                log.debug("Removing attribute {} from resolution result for principal {}.  It contains no values.",
-                        resolvedAttribute.getId(), resolutionContext.getAttributeRequestContext().getPrincipalName());
+            
+            // remove nulls
+            if(resolvedAttribute == null){
                 attributeItr.remove();
                 continue;
             }
-
+            
             // remove dependency-only attributes
             attributeDefinition = getAttributeDefinitions().get(resolvedAttribute.getId());
             if (attributeDefinition.isDependencyOnly()) {
                 log.debug("Removing dependency-only attribute {} from resolution result for principal {}.",
+                        resolvedAttribute.getId(), resolutionContext.getAttributeRequestContext().getPrincipalName());
+                attributeItr.remove();
+                continue;
+            }
+            
+            // remove value-less attributes
+            if (resolvedAttribute.getValues().size() == 0) {
+                log.debug("Removing attribute {} from resolution result for principal {}.  It contains no values.",
                         resolvedAttribute.getId(), resolutionContext.getAttributeRequestContext().getPrincipalName());
                 attributeItr.remove();
                 continue;

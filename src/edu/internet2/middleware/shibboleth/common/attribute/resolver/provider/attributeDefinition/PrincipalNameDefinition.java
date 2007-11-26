@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
+import org.opensaml.xml.util.DatatypeHelper;
+
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -27,11 +29,16 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 public class PrincipalNameDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext) {
-        BasicAttribute<Object> attribute = new BasicAttribute<Object>();
-        attribute.setId(getId());
-        attribute.getValues().add(resolutionContext.getAttributeRequestContext().getPrincipalName());
+    protected BaseAttribute<String> doResolve(ShibbolethResolutionContext resolutionContext) {
+        String name = resolutionContext.getAttributeRequestContext().getPrincipalName();
 
+        if (DatatypeHelper.isEmpty(name)) {
+            return null;
+        }
+
+        BasicAttribute<String> attribute = new BasicAttribute<String>();
+        attribute.setId(getId());
+        attribute.getValues().add(name);
         return attribute;
     }
 

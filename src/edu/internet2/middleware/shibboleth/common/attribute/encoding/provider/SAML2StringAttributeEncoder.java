@@ -16,11 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
+import java.util.List;
+
 import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
+import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
@@ -36,6 +41,9 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.op
 
     /** XSString factory. */
     private static XSStringBuilder stringBuilder;
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(SAML2StringAttributeEncoder.class);
 
     /** Format of attribute. */
     private String format;
@@ -85,13 +93,19 @@ public class SAML2StringAttributeEncoder extends AbstractAttributeEncoder<org.op
             if (o == null) {
                 continue;
             }
-            
+
             attributeValue = o.toString();
             if (!(DatatypeHelper.isEmpty(attributeValue))) {
                 samlAttributeValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
                 samlAttributeValue.setValue(attributeValue);
                 samlAttribute.getAttributeValues().add(samlAttributeValue);
             }
+        }
+
+        List<XMLObject> attributeValues = samlAttribute.getAttributeValues();
+        if (attributeValues == null || attributeValues.isEmpty()) {
+            log.debug("Unable to encode {} attribute.  It does not contain any values", attribute.getId());
+            return null;
         }
 
         return samlAttribute;

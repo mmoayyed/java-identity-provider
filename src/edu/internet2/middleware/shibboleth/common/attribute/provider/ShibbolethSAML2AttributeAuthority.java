@@ -115,12 +115,12 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
 
         filterAttributesByValue(query, encodedAttributes);
 
-        if(!encodedAttributes.isEmpty()){
+        if (!encodedAttributes.isEmpty()) {
             AttributeStatement statement = statementBuilder.buildObject();
             List<org.opensaml.saml2.core.Attribute> samlAttributes = statement.getAttributes();
             samlAttributes.addAll(encodedAttributes);
             return statement;
-        }else{
+        } else {
             log.debug("No attributes remained after encoding and filtering by value, no attribute statement built");
             return null;
         }
@@ -200,14 +200,17 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
                 continue;
             }
 
-            // first try to encode with an SAML 2 attribute encoders
+            Attribute attribute;
             for (AttributeEncoder encoder : shibbolethAttribute.getEncoders()) {
                 if (encoder instanceof SAML2AttributeEncoder) {
                     try {
-                        encodedAttributes.add((Attribute) encoder.encode(shibbolethAttribute));
-                        attributeEncoded = true;
-                        log.debug("Encoded attribute {} with encoder of type {}", shibbolethAttribute.getId(), encoder
-                                .getClass().getName());
+                        attribute = (Attribute) encoder.encode(shibbolethAttribute);
+                        if (attribute != null) {
+                            encodedAttributes.add(attribute);
+                            attributeEncoded = true;
+                            log.debug("Encoded attribute {} with encoder of type {}", shibbolethAttribute.getId(),
+                                    encoder.getClass().getName());
+                        }
                     } catch (AttributeEncodingException e) {
                         log.warn("unable to encode attribute: " + shibbolethAttribute.getId(), e);
                     }

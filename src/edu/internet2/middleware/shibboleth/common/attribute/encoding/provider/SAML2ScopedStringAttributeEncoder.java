@@ -16,8 +16,13 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
+import java.util.List;
+
 import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
+import org.opensaml.xml.XMLObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
@@ -31,6 +36,9 @@ public class SAML2ScopedStringAttributeEncoder extends
 
     /** Attribute factory. */
     private static AttributeBuilder attributeBuilder;
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(SAML2ScopedStringAttributeEncoder.class);
 
     /** Format of attribute. */
     private String format;
@@ -72,7 +80,14 @@ public class SAML2ScopedStringAttributeEncoder extends
         samlAttribute.setName(getAttributeName());
         samlAttribute.setNameFormat(getNameFormat());
         samlAttribute.setFriendlyName(getFriendlyName());
-        samlAttribute.getAttributeValues().addAll(encodeAttributeValues(AttributeValue.DEFAULT_ELEMENT_NAME, attribute));
+        samlAttribute.getAttributeValues()
+                .addAll(encodeAttributeValues(AttributeValue.DEFAULT_ELEMENT_NAME, attribute));
+
+        List<XMLObject> attributeValues = samlAttribute.getAttributeValues();
+        if (attributeValues == null || attributeValues.isEmpty()) {
+            log.debug("Unable to encode {} attribute.  It does not contain any values", attribute.getId());
+            return null;
+        }
 
         return samlAttribute;
     }

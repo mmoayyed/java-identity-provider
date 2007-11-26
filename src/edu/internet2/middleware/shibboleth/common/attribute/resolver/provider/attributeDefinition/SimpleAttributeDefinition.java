@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
+import java.util.Collection;
+
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -27,13 +29,19 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
+    protected BaseAttribute<?> doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
+        Collection<?> values = getValuesFromAllDependencies(resolutionContext);
+        
+        if(values == null || values.isEmpty()){
+            return null;
+        }
+        
         BasicAttribute<Object> attribute = new BasicAttribute<Object>();
         attribute.setId(getId());
-        for (Object o : getValuesFromAllDependencies(resolutionContext)) {
-            attribute.getValues().add(o);
+        for (Object value : values) {
+            attribute.getValues().add(value);
         }
 
         return attribute;

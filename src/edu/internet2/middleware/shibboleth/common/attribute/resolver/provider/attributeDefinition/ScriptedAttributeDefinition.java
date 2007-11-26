@@ -112,7 +112,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected BaseAttribute doResolve(ShibbolethResolutionContext resolutionContext)
+    protected BaseAttribute<?> doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         ScriptContext context = getScriptContext(resolutionContext);
 
@@ -143,7 +143,8 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             }
         } catch (ScriptException e) {
             compiledScript = null;
-            log.warn("ScriptletAttributeDefinition {} unable to compile even though the scripting engine supports this functionality.", getId());
+            log.warn("ScriptletAttributeDefinition {} unable to compile even though the scripting engine supports this functionality.",
+                            getId());
         }
     }
 
@@ -173,14 +174,14 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             for (String dependency : getDependencyIds()) {
                 plugin = resolutionContext.getResolvedPlugins().get(dependency);
                 if (plugin instanceof DataConnector) {
-                    attributes = ((DataConnector)plugin).resolve(resolutionContext);
+                    attributes = ((DataConnector) plugin).resolve(resolutionContext);
                     if (attributes != null) {
                         for (BaseAttribute attr : attributes.values()) {
                             scriptContext.setAttribute(attr.getId(), attr, ScriptContext.ENGINE_SCOPE);
                         }
                     }
                 } else if (plugin instanceof AttributeDefinition) {
-                    attribute = ((AttributeDefinition)plugin).resolve(resolutionContext);
+                    attribute = ((AttributeDefinition) plugin).resolve(resolutionContext);
                     if (attribute != null) {
                         scriptContext.setAttribute(attribute.getId(), attribute, ScriptContext.ENGINE_SCOPE);
                     }

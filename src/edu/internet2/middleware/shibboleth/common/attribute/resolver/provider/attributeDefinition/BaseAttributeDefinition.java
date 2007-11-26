@@ -21,6 +21,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
@@ -33,6 +36,9 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
  */
 public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<BaseAttribute> implements
         AttributeDefinition {
+    
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinition.class);
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
@@ -79,6 +85,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
 
     /** {@inheritDoc} */
     public BaseAttribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
+        log.debug("Resolving attribute: {}", getId());
         BaseAttribute resolvedAttribute = doResolve(resolutionContext);
 
         if (getAttributeEncoders() != null) {

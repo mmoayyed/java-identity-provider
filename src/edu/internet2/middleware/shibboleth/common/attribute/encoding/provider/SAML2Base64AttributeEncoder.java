@@ -16,18 +16,22 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
+import java.util.List;
+
 import org.opensaml.saml2.core.AttributeValue;
 import org.opensaml.saml2.core.impl.AttributeBuilder;
+import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.opensaml.xml.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
 
 /**
  * Implementation of SAML 2.0 attribute encoder.
- * 
  *  * This attribute encoder only operates of {@link BaseAttribute}s with value of type <code>byte[]</code>.
  */
 public class SAML2Base64AttributeEncoder extends AbstractAttributeEncoder<org.opensaml.saml2.core.Attribute> implements
@@ -38,6 +42,9 @@ public class SAML2Base64AttributeEncoder extends AbstractAttributeEncoder<org.op
 
     /** XSString factory. */
     private static XSStringBuilder stringBuilder;
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(SAML2Base64AttributeEncoder.class);
 
     /** Format of attribute. */
     private String format;
@@ -87,11 +94,17 @@ public class SAML2Base64AttributeEncoder extends AbstractAttributeEncoder<org.op
             if (o == null || !(o instanceof byte[])) {
                 continue;
             }
-            
+
             attributeValue = (byte[]) o;
             samlAttributeValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
             samlAttributeValue.setValue(Base64.encodeBytes(attributeValue));
             samlAttribute.getAttributeValues().add(samlAttributeValue);
+        }
+
+        List<XMLObject> attributeValues = samlAttribute.getAttributeValues();
+        if (attributeValues == null || attributeValues.isEmpty()) {
+            log.debug("Unable to encode {} attribute.  It does not contain any values", attribute.getId());
+            return null;
         }
 
         return samlAttribute;
