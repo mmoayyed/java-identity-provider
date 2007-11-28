@@ -89,14 +89,14 @@
         </annotation>
         <complexContent>
             <extension base="sec:SecurityPolicyRuleType">
-                <attribute name="expirationThreshold" type="positiveInteger" default="300">
+                <attribute name="expirationThreshold" type="positiveInteger" default="60">
                     <annotation>
                         <documentation>
                             Time, in seconds, after a message is issued before it is considered expired.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="clockSkew" type="positiveInteger" default="10">
+                <attribute name="clockSkew" type="positiveInteger" default="180">
                     <annotation>
                         <documentation>
                             Clock skew time in seconds.
