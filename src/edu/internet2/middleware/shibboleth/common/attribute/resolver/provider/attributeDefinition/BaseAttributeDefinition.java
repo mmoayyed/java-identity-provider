@@ -88,7 +88,7 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
         log.debug("Resolving attribute: {}", getId());
         BaseAttribute resolvedAttribute = doResolve(resolutionContext);
 
-        if (getAttributeEncoders() != null) {
+        if (resolvedAttribute != null && getAttributeEncoders() != null) {
             resolvedAttribute.getEncoders().addAll(getAttributeEncoders());
         }
 
