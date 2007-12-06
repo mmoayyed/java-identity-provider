@@ -367,7 +367,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="ldapUrl" type="string" use="required">
+                <attribute name="ldapURL" type="string" use="required">
                     <annotation>
                         <documentation>
                         The URL to the LDAP server.  This URL MUST NOT include the base DN.

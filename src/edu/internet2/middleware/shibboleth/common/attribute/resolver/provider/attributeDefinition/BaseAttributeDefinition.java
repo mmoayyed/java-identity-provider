@@ -88,7 +88,12 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
         log.debug("Resolving attribute: {}", getId());
         BaseAttribute resolvedAttribute = doResolve(resolutionContext);
 
-        if (resolvedAttribute != null && getAttributeEncoders() != null) {
+        if(resolvedAttribute == null){
+            log.error("{} produced a null attribute, this is not allowed", getId());
+            throw new AttributeResolutionException(getId() + " produced a null attribute");
+        }
+        
+        if (getAttributeEncoders() != null) {
             resolvedAttribute.getEncoders().addAll(getAttributeEncoders());
         }
 

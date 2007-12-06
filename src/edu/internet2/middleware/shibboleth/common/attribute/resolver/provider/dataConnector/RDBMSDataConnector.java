@@ -341,6 +341,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         Map<String, BaseAttribute> resolvedAttributes;
         Connection connection = null;
         ResultSet queryResult = null;
+        
         try {
             connection = dataSource.getConnection();
             if (readOnlyConnection) {
@@ -382,6 +383,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     protected Map<String, BaseAttribute> processResultSet(ResultSet resultSet) throws AttributeResolutionException {
         Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
+        
         try {
             if (!resultSet.next()) {
                 return attributes;

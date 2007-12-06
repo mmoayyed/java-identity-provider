@@ -46,7 +46,7 @@ public interface ResolutionPlugIn<ResolvedType> {
      * 
      * @param resolutionContext the context for the resolution
      * 
-     * @return the attributes made available by the resolution
+     * @return the attributes made available by the resolution, never null
      * 
      * @throws AttributeResolutionException the problem that occured during the resolution
      */

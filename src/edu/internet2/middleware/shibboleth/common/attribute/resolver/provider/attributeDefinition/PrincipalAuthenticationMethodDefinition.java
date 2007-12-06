@@ -30,15 +30,14 @@ public class PrincipalAuthenticationMethodDefinition extends BaseAttributeDefini
 
     /** {@inheritDoc} */
     protected BaseAttribute<String> doResolve(ShibbolethResolutionContext resolutionContext) {
-        String authnMethod = resolutionContext.getAttributeRequestContext().getPrincipalAuthenticationMethod();
-
-        if(DatatypeHelper.isEmpty(authnMethod)){
-            return null;
-        }
-        
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getId());
-        attribute.getValues().add(authnMethod);
+
+        String authnMethod = resolutionContext.getAttributeRequestContext().getPrincipalAuthenticationMethod();
+        if (!DatatypeHelper.isEmpty(authnMethod)) {
+            attribute.getValues().add(authnMethod);
+        }
+
         return attribute;
     }
 

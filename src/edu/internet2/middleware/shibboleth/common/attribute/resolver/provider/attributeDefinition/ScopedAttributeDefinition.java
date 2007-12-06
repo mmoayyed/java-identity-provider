@@ -44,17 +44,15 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     public BaseAttribute<ScopedAttributeValue> doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Collection<?> values = getValuesFromAllDependencies(resolutionContext);
-
-        if (values == null || values.isEmpty()) {
-            return null;
-        }
-
         BasicAttribute<ScopedAttributeValue> attribute = new BasicAttribute<ScopedAttributeValue>();
         attribute.setId(getId());
-        for (Object value : values) {
-            if (value != null) {
-                attribute.getValues().add(new ScopedAttributeValue(value.toString(), scope));
+
+        Collection<?> values = getValuesFromAllDependencies(resolutionContext);
+        if (values != null && !values.isEmpty()) {
+            for (Object value : values) {
+                if (value != null) {
+                    attribute.getValues().add(new ScopedAttributeValue(value.toString(), scope));
+                }
             }
         }
 

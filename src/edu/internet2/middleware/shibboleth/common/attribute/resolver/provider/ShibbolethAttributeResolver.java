@@ -326,7 +326,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
         // return the actual resolution of the definition
         BaseAttribute attribute = definition.resolve(resolutionContext);
-        log.debug("Resolved attribute {}.  Attribtute contains {} values.", attributeID, attribute.getValues().size());
+        log.debug("Resolved attribute {} containing {} values", attributeID, attribute.getValues().size());
         return attribute;
     }
 

@@ -123,7 +123,13 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
                 scriptEngine.eval(script, context);
             }
 
-            return (BaseAttribute) context.getAttribute(getId());
+            BaseAttribute attribute = (BaseAttribute) context.getAttribute(getId());
+            if(attribute != null){
+                log.error("{} produced a null attribute", getId());
+                throw new AttributeResolutionException(getId() + " produced a null attributes");
+            }
+            
+            return attribute;
         } catch (ScriptException e) {
             log.error("ScriptletAttributeDefinition " + getId() + " unable to execute script", e);
             throw new AttributeResolutionException("ScriptletAttributeDefinition " + getId()

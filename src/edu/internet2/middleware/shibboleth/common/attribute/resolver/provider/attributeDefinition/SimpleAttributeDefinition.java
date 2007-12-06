@@ -31,17 +31,14 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     protected BaseAttribute<?> doResolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-
-        Collection<?> values = getValuesFromAllDependencies(resolutionContext);
-        
-        if(values == null || values.isEmpty()){
-            return null;
-        }
-        
         BasicAttribute<Object> attribute = new BasicAttribute<Object>();
         attribute.setId(getId());
-        for (Object value : values) {
-            attribute.getValues().add(value);
+
+        Collection<?> values = getValuesFromAllDependencies(resolutionContext);
+        if (values != null && !values.isEmpty()) {
+            for (Object value : values) {
+                attribute.getValues().add(value);
+            }
         }
 
         return attribute;

@@ -60,7 +60,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        String ldapURL = pluginConfig.getAttributeNS(null, "ldapUrl");
+        String ldapURL = pluginConfig.getAttributeNS(null, "ldapURL");
         log.debug("Data connector {} LDAP URL: {}", pluginId, ldapURL);
         pluginBuilder.addPropertyValue("ldapUrl", ldapURL);
 

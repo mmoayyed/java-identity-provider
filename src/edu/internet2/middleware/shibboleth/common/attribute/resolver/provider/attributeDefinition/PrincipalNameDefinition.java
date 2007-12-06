@@ -30,15 +30,14 @@ public class PrincipalNameDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     protected BaseAttribute<String> doResolve(ShibbolethResolutionContext resolutionContext) {
-        String name = resolutionContext.getAttributeRequestContext().getPrincipalName();
-
-        if (DatatypeHelper.isEmpty(name)) {
-            return null;
-        }
-
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getId());
-        attribute.getValues().add(name);
+
+        String name = resolutionContext.getAttributeRequestContext().getPrincipalName();
+        if (!DatatypeHelper.isEmpty(name)) {
+            attribute.getValues().add(name);
+        }
+
         return attribute;
     }
 

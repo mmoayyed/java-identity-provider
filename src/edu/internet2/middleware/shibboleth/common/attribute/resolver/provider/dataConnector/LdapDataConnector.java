@@ -664,6 +664,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
                 log.debug("Returning attributes from cache");
             }
         }
+        
         // results not found in the cache
         if (attributes == null) {
             log.debug("Retrieving attributes from LDAP");
@@ -680,6 +681,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
                 log.debug("Stored results in the cache");
             }
         }
+        
         return attributes;
     }
 
