@@ -57,7 +57,7 @@ public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunct
      * @return true if the entity is in the group, false if not
      */
     protected boolean isEntityInGroup(EntityDescriptor entity){
-        if(entity.getParent() == null || entityGroup == null){
+        if(entity == null || entity.getParent() == null || entityGroup == null){
             return false;
         }
         
