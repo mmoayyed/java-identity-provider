@@ -45,6 +45,27 @@
         </complexContent>
     </complexType>
     
+    <complexType name="FileBackedHttpResource">
+        <complexContent>
+            <extension base="res:ResourceType">
+                <attribute name="url" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The URL this resource represents.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="file" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The file the resource will be saved to and read from when the URL resource is not available.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="ResourceType" abstract="true" />
     
 </schema>

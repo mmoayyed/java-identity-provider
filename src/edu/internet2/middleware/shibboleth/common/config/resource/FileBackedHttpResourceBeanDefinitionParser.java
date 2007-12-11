@@ -14,36 +14,38 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.common.config.storage;
+package edu.internet2.middleware.shibboleth.common.config.resource;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.util.resource.HttpResource;
+import org.opensaml.util.resource.FileBackedHttpResource;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
 
 
 /**
- * Bean definition parser for {@link HttpResource}s.
+ * Bean definition parser for {@link FileBackedHttpResource}s.
  */
-public class HttpResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class FileBackedHttpResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     
-    /** Default element name. */
-    public static final QName ELEMENT_NAME = new QName(StorageNamespaceHandler.NAMESPACE, "HttpResource");
-    
-    /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(StorageNamespaceHandler.NAMESPACE, "HttpResourceType");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "FileBackedHttpResource");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
-        return HttpResource.class;
+        return FileBackedHttpResource.class;
     }
     
     /** {@inheritDoc} */
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
-        super.doParse(configElement, builder);
-        
-        builder.addConstructorArg(configElement.getTextContent());
+        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "url")));
+        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "file")));
+    }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
     }
 }
