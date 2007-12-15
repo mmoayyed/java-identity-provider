@@ -63,7 +63,7 @@ public class TransientPrincipalConnector extends BasePrincipalConnector {
         }
 
         IdEntry idToken = identifierStore.get(partition, transientId);
-        if (idToken == null && idToken.isExpired()) {
+        if (idToken == null || idToken.isExpired()) {
             throw new AttributeResolutionException("No information associated with transient identifier: "
                     + transientId);
         }
