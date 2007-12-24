@@ -18,14 +18,9 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.d
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -37,6 +32,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.PersistentIDStore.PersistentIdEntry;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
@@ -46,27 +42,15 @@ import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRe
  * If a salt is supplied at construction time the generated IDs will be the Base64-encoded SHA-1 hash of the user's
  * principal name, the peer entity ID, and the salt.
  * 
- * If a {@link DataSource} is provided at construction IDs are looked up in a database. IF the ID does not exist a
- * {@link UUID} is generated, stored in the database, and used as the ID. The DDL for the database is
- * <tt>CREATE TABLE shibpid {princpal VARCHAR NOT NULL, peerEntity VARCHAR NOT NULL, localEntity VARCHAR NOT NULL, persistentId VARCHAR NOT NULL, creationDate TIMESTAMP NOT NULL, deactivationDate TIMESTAMP}</tt>.
- * An index should be created on the <tt>principa</tt>, <tt>peerEntity</tt>, <tt>localEntity</tt>, and
- * <tt>deactivationDate</tt> columns as these are used to query for the persistent ID. Specifically, the query used to
- * lookup the persistent identifier is
- * <tt>SELECT persistentId FROM shibpid WHERE princiaplName = ? AND peerEntity = ? AND localEntity = ? AND deactivationDate IS NULL</tt>
+ * If a {@link DataSource} is supplied the IDs are created and managed as described by {@link PersistentIDStore}.
  */
 public class PersistentIdDataConnector extends BaseDataConnector {
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(PersistentIdDataConnector.class);
 
-    /** JDBC data source for retrieving connections. */
-    private DataSource dataSource;
-
-    /** SQL used to lookup the persistent ID. */
-    private String lookupIdSQL = "SELECT persistentId FROM shibpid WHERE princiaplName = '%s' AND peerEntity = '%s' AND localEntity = '%s' AND deactivationDate IS NULL";
-
-    /** SQL used to store the persistent ID. */
-    private String insertIdSQL = "INSERT INTO shibpid ('princpal', 'peerEntity', 'localEntity', 'persistentId', 'creationDate') VALUES ('%s', '%s', '%s', '%s', '%s')";
+    /** Persistent identifier data store. */
+    private PersistentIDStore pidStore;
 
     /** Hashing salt. */
     private byte[] salt;
@@ -77,7 +61,7 @@ public class PersistentIdDataConnector extends BaseDataConnector {
      * @param source datasouce used to communicate with the database
      */
     public PersistentIdDataConnector(DataSource source) {
-        dataSource = source;
+        pidStore = new PersistentIDStore(source);
     }
 
     /**
@@ -112,23 +96,23 @@ public class PersistentIdDataConnector extends BaseDataConnector {
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         String persistentId = null;
-        if(salt != null){
+        if (salt != null) {
             persistentId = generateHashedId(resolutionContext);
-        }else{
+        } else {
             persistentId = getStoredId(resolutionContext);
         }
-        
+
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId("persistentId");
         attribute.getValues().add(persistentId);
-        
+
         Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
         attributes.put(attribute.getId(), attribute);
         return attributes;
     }
 
     /**
-     * Generates a persitent ID by hash.
+     * Generates a persistent ID by hash.
      * 
      * @param resolutionContext current resolution context
      * 
@@ -162,61 +146,19 @@ public class PersistentIdDataConnector extends BaseDataConnector {
      */
     protected String getStoredId(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         SAMLProfileRequestContext requestCtx = resolutionContext.getAttributeRequestContext();
-        Connection dbConnection = null;
+
         try {
-            String persistentId = null;
-            String idQuery = String.format(lookupIdSQL, requestCtx.getPrincipalName(), requestCtx
+            PersistentIdEntry idEntry = pidStore.getActivePersistentIdEntry(requestCtx.getPrincipalName(), requestCtx
                     .getInboundMessageIssuer(), requestCtx.getLocalEntityId());
-            dbConnection = dataSource.getConnection();
-            Statement statement = dbConnection.createStatement();
-            ResultSet results = statement.executeQuery(idQuery);
-            if (results.first()) {
-                persistentId = results.getString("persistentId");
+            if (idEntry != null) {
+                return idEntry.getPersistentId();
             } else {
-                persistentId = createAndPersistId(dbConnection, requestCtx);
+                return pidStore.createPersisnentId(requestCtx.getPrincipalName(), requestCtx.getInboundMessageIssuer(),
+                        requestCtx.getLocalEntityId());
             }
-
-            return persistentId;
         } catch (SQLException e) {
-            log.error("Error looking up persistent ID", e);
-            throw new AttributeResolutionException("Error looking up persistent ID", e);
-        } finally {
-            try {
-                if (dbConnection != null && !dbConnection.isClosed()) {
-                    dbConnection.close();
-                }
-            } catch (SQLException e) {
-                log.error("Error closing database connection", e);
-            }
+            log.error("Database error retrieving persistent identifier", e);
+            throw new AttributeResolutionException("Database error retrieving persistent identifier", e);
         }
-    }
-
-    /**
-     * Creates a UUID based persistent identifer and stores it in the database.
-     * 
-     * @param dbConnection connection used to communication with the database
-     * @param requestCtx current request context
-     * 
-     * @return generated persistent ID
-     * 
-     * @throws AttributeResolutionException thrown if the ID can not be stored in the database
-     */
-    protected String createAndPersistId(Connection dbConnection, SAMLProfileRequestContext requestCtx)
-            throws AttributeResolutionException {
-        String persistentId = UUID.randomUUID().toString();
-
-        String now = new Timestamp(System.currentTimeMillis()).toString();
-        String sql = String.format(insertIdSQL, requestCtx.getPrincipalName(), requestCtx.getInboundMessageIssuer(),
-                requestCtx.getLocalEntityId(), persistentId, now);
-
-        try {
-            Statement statement = dbConnection.createStatement();
-            statement.execute(sql);
-        } catch (SQLException e) {
-            log.error("Error storing persistent ID", e);
-            throw new AttributeResolutionException("Error storing persistent ID", e);
-        }
-
-        return persistentId;
     }
 }
