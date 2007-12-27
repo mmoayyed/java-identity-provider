@@ -21,6 +21,7 @@ import java.io.File;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -35,9 +36,6 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadata
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "FilesystemMetadataProvider");
 
     /** Maintain expired metadata configuration option attribute name. */
-    public static final String METADATA_FILE_ATTRIBUTE_NAME = "metadataFile";
-
-    /** Maintain expired metadata configuration option attribute name. */
     public static final String MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME = "maintainExpiredMetadata";
 
     /** {@inheritDoc} */
@@ -49,17 +47,16 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadata
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FilesystemMetadataProvider.class);
         parseCommonConfig(builder, element, parserContext);
-        
+
         builder.setInitMethodName("initialize");
         builder.addPropertyReference("parserPool", "shibboleth.ParserPool");
-        
-        String metadataFile = element.getAttributeNS(null, METADATA_FILE_ATTRIBUTE_NAME);
+
+        String metadataFile = element.getAttributeNS(null, "metadataFile");
         builder.addConstructorArg(new File(metadataFile));
-        
-        boolean maintainExpiredMetadata = Boolean.parseBoolean(element.getAttributeNS(null,
-                MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME));
-        builder.addPropertyValue("maintainExpiredMetadata", maintainExpiredMetadata);
-        
+
+        builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
+                .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+
         return builder.getBeanDefinition();
     }
 }

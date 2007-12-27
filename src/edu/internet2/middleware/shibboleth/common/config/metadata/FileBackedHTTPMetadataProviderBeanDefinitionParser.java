@@ -33,9 +33,6 @@ public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMeta
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, 
             "FileBackedHTTPMetadataProvider");
 
-    /** Backing file attirbute name. */
-    public static final String BACKING_FILE_ATTRIBUTE_NAME = "backingFile";
-
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
         return FileBackedHTTPMetadataProvider.class;
@@ -59,7 +56,7 @@ public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMeta
     protected void parseConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
         super.parseConfig(builder, element, context);
         
-        String backingFile = element.getAttributeNS(null, BACKING_FILE_ATTRIBUTE_NAME);
+        String backingFile = element.getAttributeNS(null, "backingFile");
         builder.addConstructorArg(backingFile);
     }
 }

@@ -19,36 +19,19 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for Shibboleth file backed url metadata provider definition. 
+ * Spring bean definition parser for Shibboleth file backed url metadata provider definition.
  */
 public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "HTTPMetadataProvider");
-
-    /** Metadata URL configuration option attribute name. */
-    public static final String METADATA_URL_ATTRIBUTE_NAME = "metadataURL";
-
-    /** Maintain expired metadata configuration option attribute name. */
-    public static final String MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME = "maintainExpiredMetadata";
-
-    /** Cache duration configuration option attribute name. */
-    public static final String CACHE_DURATION_ATTRIBUTE_NAME = "cacheDuration";
-
-    /** Request timeout configuration option attribute name. */
-    public static final String REQUEST_TIMEOUT_ATTRIBUTE_NAME = "requestTimeout";
-
-    /** Basic auth user name configuration option attribute name. */
-    public static final String BASIC_AUTH_USER_ATTRIBUTE_NAME = "basicAuthUser";
-
-    /** Basic auth password configuration option attribute name. */
-    public static final String BASIC_AUTH_PASSWORD_ATTRIBUTE_NAME = "basicAuthUser";
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -62,7 +45,7 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
         parseConfig(builder, element, parserContext);
         return builder.getBeanDefinition();
     }
-    
+
     /**
      * Parses the configuration for this provider.
      * 
@@ -73,22 +56,19 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
     protected void parseConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
         builder.setInitMethodName("initialize");
         builder.addPropertyReference("parserPool", "shibboleth.ParserPool");
-        
-        String metadataURL = element.getAttributeNS(null, METADATA_URL_ATTRIBUTE_NAME);
+
+        String metadataURL = element.getAttributeNS(null, "metadataURL");
         builder.addConstructorArg(metadataURL);
-        
-        int requestTimeout = Integer.parseInt(element.getAttributeNS(null, REQUEST_TIMEOUT_ATTRIBUTE_NAME));
+
+        int requestTimeout = Integer.parseInt(element.getAttributeNS(null, "requestTimeout"));
         builder.addConstructorArg(requestTimeout);
-        
-        int cacheDuration = Integer.parseInt(element.getAttributeNS(null, CACHE_DURATION_ATTRIBUTE_NAME));
+
+        int cacheDuration = Integer.parseInt(element.getAttributeNS(null, "cacheDuration"));
         builder.addPropertyValue("maxCacheDuration", cacheDuration);
-        
-        boolean maintainExpiredMetadata = Boolean.parseBoolean(element.getAttributeNS(null,
-                MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME));
-        builder.addPropertyValue("maintainExpiredMetadata", maintainExpiredMetadata);
-        
-        String basicAuthUser = element.getAttributeNS(null, BASIC_AUTH_USER_ATTRIBUTE_NAME);
-        String basicAuthPassword = element.getAttributeNS(null, BASIC_AUTH_PASSWORD_ATTRIBUTE_NAME);
+
+        builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
+                .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+
         // TODO basic auth credentials
     }
 }

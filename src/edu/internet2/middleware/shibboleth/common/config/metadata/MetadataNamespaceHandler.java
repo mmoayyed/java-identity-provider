@@ -25,28 +25,31 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
-    
-    /** Local tag name for MetadataProvider tags. */
-    public static final String METADATA_PROVIDER_ELEMENT_LOCAL_NAME = "MetadataProvider";
-    
-    /** Local tag name for MetadataFilter tags. */
-    public static final String METADATA_FILTER_ELEMENT_LOCAL_NAME = "MetadataFilter";
-    
+
     /** {@inheritDoc} */
     public void init() {
         registerBeanDefinitionParser(ChainingMetadataProviderBeanDefinitionParser.TYPE_NAME,
                 new ChainingMetadataProviderBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(InlineMetadataProviderBeanDefinitionParser.TYPE_NAME,
                 new InlineMetadataProviderBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(FileBackedHTTPMetadataProviderBeanDefinitionParser.TYPE_NAME,
                 new FileBackedHTTPMetadataProviderBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(HTTPMetadataProviderBeanDefinitionParser.TYPE_NAME,
                 new HTTPMetadataProviderBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(FilesystemMetadataProviderBeanDefinitionParser.TYPE_NAME,
                 new FilesystemMetadataProviderBeanDefinitionParser());
+
+        registerBeanDefinitionParser(MetadataFilterChainBeanDefinitionParser.TYPE_NAME,
+                new MetadataFilterChainBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SignatureValidationFilterBeanDefinitionParser.TYPE_NAME,
+                new SignatureValidationFilterBeanDefinitionParser());
+
+        registerBeanDefinitionParser(EntityRoleFilterBeanDefinitionParser.TYPE_NAME,
+                new EntityRoleFilterBeanDefinitionParser());
     }
 }
