@@ -27,11 +27,13 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.LdapDataConnector.SEARCH_SCOPE;
+import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /**
  * Spring bean definition parser for configuring an LDAP data connector.
@@ -93,6 +95,16 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
                 DataConnectorNamespaceHandler.NAMESPACE, "LDAPProperty")));
         log.debug("Data connector {} LDAP properties: {}", pluginId, ldapProperties);
         pluginBuilder.addPropertyValue("ldapProperties", ldapProperties);
+
+        BeanDefinition trustCredential = processCredential(pluginConfigChildren.get(new QName(
+                DataConnectorNamespaceHandler.NAMESPACE, "SSLTLSTrustCredential")), parserContext);
+        log.debug("Data connector {} using provided SSL/TLS trust material", pluginId);
+        pluginBuilder.addPropertyValue("trustCredential", trustCredential);
+
+        BeanDefinition connectionCredential = processCredential(pluginConfigChildren.get(new QName(
+                DataConnectorNamespaceHandler.NAMESPACE, "SSLTLSAuthenticationCredential")), parserContext);
+        log.debug("Data connector {} using provided SSL/TLS client authentication material", pluginId);
+        pluginBuilder.addPropertyValue("connectionCredential", connectionCredential);
 
         boolean useStartTLS = XMLHelper
                 .getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "useStartTLS"));
@@ -176,5 +188,22 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         }
 
         return properties;
+    }
+
+    /**
+     * Processes a credential element.
+     * 
+     * @param credentials list containing the element to process.
+     * @param parserContext current parser context
+     * 
+     * @return the bean definition for the credential
+     */
+    protected BeanDefinition processCredential(List<Element> credentials, ParserContext parserContext) {
+        if (credentials == null) {
+            return null;
+        }
+
+        Element credentialElem = credentials.get(0);
+        return SpringConfigurationUtils.parseCustomElement(credentialElem, parserContext);
     }
 }

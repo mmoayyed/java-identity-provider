@@ -16,6 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,9 +28,17 @@ import java.util.StringTokenizer;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.opensaml.xml.security.x509.X509Credential;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -76,6 +87,12 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
 
     /** Class logger. */
     private static Logger log = LoggerFactory.getLogger(LdapDataConnector.class);
+
+    /** SSL trust managers. */
+    private TrustManager[] sslTrustManagers;
+
+    /** SSL key managers. */
+    private KeyManager[] sslKeyManagers;
 
     /** Whether multiple result sets should be merged. */
     private boolean mergeMultipleResults;
@@ -317,45 +334,120 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /**
      * This returns the SSL Socket Factory that will be used for all TLS and SSL connections to the ldap.
      * 
-     * @return <code>String</code>
+     * @return <code>SSLSocketFactory</code>
      */
-    public String getSslSocketFactory() {
+    public SSLSocketFactory getSslSocketFactory() {
         return ldapConfig.getSslSocketFactory();
     }
 
     /**
-     * This sets the SSL Socket Factory that will be used for all TLS and SSL connections to the ldap. s should be a
-     * fully qualified class name. This method will remove any cached results and initialize the ldap pool.
+     * This sets the SSL Socket Factory that will be used for all TLS and SSL connections to the ldap. This method will
+     * remove any cached results and initialize the ldap pool.
      * 
      * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
      * 
-     * @param s <code>String</code>
+     * @param sf <code>SSLSocketFactory</code>
      */
-    public void setSslSocketFactory(String s) {
-        ldapConfig.setSslSocketFactory(s);
+    public void setSslSocketFactory(SSLSocketFactory sf) {
+        ldapConfig.setSslSocketFactory(sf);
         clearCache();
         initializeLdapPool();
     }
 
     /**
+     * This returns the trust managers that will be used for all TLS and SSL connections to the ldap.
+     * 
+     * @return <code>TrustManager[]</code>
+     */
+    public TrustManager[] getSslTrustManagers() {
+        return sslTrustManagers;
+    }
+
+    /**
+     * This sets the trust managers that will be used for all TLS and SSL connections to the ldap. This method will
+     * remove any cached results and initialize the ldap pool.
+     * 
+     * @see {@link #clearCache()}, {@link #initializeLdapPool()}, and {@link #setSslSocketFactory(SSLSocketFactory)}.
+     * 
+     * @param tc <code>X509Credential</code> to create TrustManagers with
+     */
+    public void setSslTrustManagers(X509Credential tc) {
+        if (tc != null) {
+            try {
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+                for (X509Certificate c : tc.getEntityCertificateChain()) {
+                    keystore.setCertificateEntry("ldap_tls_trust_" + c.getSerialNumber(), c);
+                }
+                tmf.init(keystore);
+                sslTrustManagers = tmf.getTrustManagers();
+                SSLContext ctx = SSLContext.getInstance("TLS");
+                ctx.init(sslKeyManagers, sslTrustManagers, null);
+                ldapConfig.setSslSocketFactory(ctx.getSocketFactory());
+                clearCache();
+                initializeLdapPool();
+            } catch (GeneralSecurityException e) {
+                log.error("Error initializing trust managers", e);
+            }
+        }
+    }
+
+    /**
+     * This returns the key managers that will be used for all TLS and SSL connections to the ldap.
+     * 
+     * @return <code>KeyManager[]</code>
+     */
+    public KeyManager[] getSslKeyManagers() {
+        return sslKeyManagers;
+    }
+
+    /**
+     * This sets the key managers that will be used for all TLS and SSL connections to the ldap. This method will remove
+     * any cached results and initialize the ldap pool.
+     * 
+     * @see {@link #clearCache()}, {@link #initializeLdapPool()}, and {@link #setSslSocketFactory(SSLSocketFactory)}.
+     * 
+     * @param kc <code>X509Credential</code> to create KeyManagers with
+     */
+    public void setSslKeyManagers(X509Credential kc) {
+        if (kc != null) {
+            try {
+                KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+                keystore.setKeyEntry("ldap_tls_client_auth", kc.getPrivateKey(), "changeit".toCharArray(), kc
+                        .getEntityCertificateChain().toArray(new X509Certificate[0]));
+                kmf.init(keystore, "changeit".toCharArray());
+                sslKeyManagers = kmf.getKeyManagers();
+                SSLContext ctx = SSLContext.getInstance("TLS");
+                ctx.init(sslKeyManagers, sslTrustManagers, null);
+                ldapConfig.setSslSocketFactory(ctx.getSocketFactory());
+                clearCache();
+                initializeLdapPool();
+            } catch (GeneralSecurityException e) {
+                log.error("Error initializing key managers", e);
+            }
+        }
+    }
+
+    /**
      * This returns the hostname verifier that will be used for all TLS and SSL connections to the ldap.
      * 
-     * @return <code>String</code>
+     * @return <code>HostnameVerifier</code>
      */
-    public String getHostnameVerifier() {
+    public HostnameVerifier getHostnameVerifier() {
         return ldapConfig.getHostnameVerifier();
     }
 
     /**
-     * This sets the hostname verifier that will be used for all TLS and SSL connections to the ldap. s should be a
-     * fully qualified class name. This method will remove any cached results and initialize the ldap pool.
+     * This sets the hostname verifier that will be used for all TLS and SSL connections to the ldap. This method will
+     * remove any cached results and initialize the ldap pool.
      * 
      * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
      * 
-     * @param s <code>String</code>
+     * @param hv <code>HostnameVerifier</code>
      */
-    public void setHostnameVerifier(String s) {
-        ldapConfig.setHostnameVerifier(s);
+    public void setHostnameVerifier(HostnameVerifier hv) {
+        ldapConfig.setHostnameVerifier(hv);
         clearCache();
         initializeLdapPool();
     }

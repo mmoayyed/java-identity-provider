@@ -2,10 +2,13 @@
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:resolver:dc" xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-    elementFormDefault="qualified">
+    xmlns:sec="urn:mace:shibboleth:2.0:security" elementFormDefault="qualified">
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+        
+    <import namespace="urn:mace:shibboleth:2.0:security"
+        schemaLocation="classpath:/schema/shibboleth-2.0-security.xsd" />
 
     <complexType name="Static">
         <annotation>
@@ -355,7 +358,7 @@
                     <element name="ReturnAttributes" type="string" minOccurs="0">
                         <annotation>
                             <documentation>
-                                A space seperated list of attributes that should be returned from the query.
+                                A space separated list of attributes that should be returned from the query.
                             </documentation>
                         </annotation>
                     </element>
@@ -363,6 +366,20 @@
                         <annotation>
                             <documentation>
                                 LDAP connection properties relevant to the underlying provider being used.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="SSLTLSTrustCredential" type="sec:X509Credential" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="SSLTLSAuthenticationCredential" type="sec:X509Credential" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
                             </documentation>
                         </annotation>
                     </element>
