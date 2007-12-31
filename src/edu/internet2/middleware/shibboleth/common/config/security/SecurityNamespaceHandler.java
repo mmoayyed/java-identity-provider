@@ -54,6 +54,9 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(ClientCertAuthRuleBeanDefinitionParser.SCHEMA_TYPE,
                 new ClientCertAuthRuleBeanDefinitionParser());
+
+        registerBeanDefinitionParser(MandatoryMessageAuthenticationRuleBeanDefinitionParser.SCHEMA_TYPE,
+                new MandatoryMessageAuthenticationRuleBeanDefinitionParser());
     }
 
 }

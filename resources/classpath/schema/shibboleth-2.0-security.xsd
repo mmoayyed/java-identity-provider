@@ -250,6 +250,17 @@
 
     <element name="Rule" type="sec:SecurityPolicyRuleType" />
     
+    <complexType name="MandatoryMessageAuthentication">
+        <annotation>
+            <documentation>
+                A security rule that requires that an incoming message by authenticated.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType" />
+        </complexContent>
+    </complexType>
+    
     <complexType name="ClientCertAuth">
         <annotation>
             <documentation>
