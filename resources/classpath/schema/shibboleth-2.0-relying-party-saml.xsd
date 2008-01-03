@@ -86,7 +86,7 @@
                         <documentation>A boolean flag indicating whether NameIDs should be encrypted.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="encryptAssertions" type="boolean" default="false">
+                <attribute name="encryptAssertions" type="boolean" default="true">
                     <annotation>
                         <documentation>A boolean flag indicating whether assertions should be encrypted.</documentation>
                     </annotation>
