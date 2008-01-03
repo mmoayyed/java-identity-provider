@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata"
-    xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata">
+    xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata"
+    elementFormDefault="qualified">
 
     <annotation>
         <documentation>Schema describing metadata providers and filters.</documentation>
