@@ -61,15 +61,15 @@
 			<attribute name="javadoc_location" value="http://www.mozilla.org/rhino/apidocs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/logback-classic-0.9.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/logback-core-0.9.8.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.7-beans.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.7-context.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.7-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.7-support.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.7-web.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0.7-webmvc.jar"/>
-	<classpathentry kind="lib" path="lib/vt-ldap-2.8.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/vt-ldap-2.8.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.5.0-beans.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.5.0-context.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.5.0-context-support.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.5.0-core.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.5.0-web.jar"/>
+	<classpathentry kind="lib" path="lib/spring-2.5.0-webmvc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
