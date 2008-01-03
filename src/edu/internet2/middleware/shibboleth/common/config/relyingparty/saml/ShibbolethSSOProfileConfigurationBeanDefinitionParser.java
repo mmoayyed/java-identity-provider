@@ -41,7 +41,9 @@ public class ShibbolethSSOProfileConfigurationBeanDefinitionParser extends
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("includeAttributeStatement", XMLHelper.getAttributeValueAsBoolean(element
-                .getAttributeNodeNS(null, "includeAttributeStatement")));
+        if (element.hasAttributeNS(null, "includeAttributeStatement")) {
+            builder.addPropertyValue("includeAttributeStatement", XMLHelper.getAttributeValueAsBoolean(element
+                    .getAttributeNodeNS(null, "includeAttributeStatement")));
+        }
     }
 }

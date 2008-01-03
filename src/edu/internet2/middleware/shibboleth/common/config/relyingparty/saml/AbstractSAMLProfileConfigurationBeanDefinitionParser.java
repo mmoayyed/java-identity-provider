@@ -48,8 +48,7 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             builder.addPropertyValue("audiences", audiences);
         }
 
-        String secCredRef = DatatypeHelper.safeTrimOrNullString(element
-                .getAttributeNS(null, "signingCredentialRef"));
+        String secCredRef = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "signingCredentialRef"));
         if (secCredRef != null) {
             builder.addDependsOn(secCredRef);
             builder.addPropertyReference("signingCredential", secCredRef);
@@ -65,17 +64,23 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             builder.addPropertyValue("outboundArtifactType", trimmedArtifactTypeBytes);
         }
 
-        builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
-                "signRequests")));
+        if (element.hasAttributeNS(null, "signRequests")) {
+            builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                    null, "signRequests")));
+        }
 
-        builder.addPropertyValue("signResponses", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
-                "signResponses")));
+        if (element.hasAttributeNS(null, "signResponses")) {
+            builder.addPropertyValue("signResponses", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                    null, "signResponses")));
+        }
 
-        builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                null, "signAssertions")));
+        if (element.hasAttributeNS(null, "signAssertions")) {
+            builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                    null, "signAssertions")));
+        }
 
         String secPolRef = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "securityPolicyRef"));
-        if(secPolRef != null){
+        if (secPolRef != null) {
             builder.addDependsOn(secPolRef);
             builder.addPropertyReference("profileSecurityPolicy", secPolRef);
         }

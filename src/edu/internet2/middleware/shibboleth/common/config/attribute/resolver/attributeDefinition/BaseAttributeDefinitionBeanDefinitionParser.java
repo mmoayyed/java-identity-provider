@@ -64,13 +64,15 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         log.debug("Setting display description for attribute definition {} to: {}", pluginId, displayDescription);
         pluginBuilder.addPropertyValue("displayDescription", displayDescription);
 
-        boolean dependencyOnly = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-                "dependencyOnly"));
-        if (log.isDebugEnabled()) {
-            log.debug("Attribute definition {} produces attributes that are only dependencies: {}", pluginId,
-                    dependencyOnly);
+        if (pluginConfig.hasAttributeNS(null, "dependencyOnly")) {
+            boolean dependencyOnly = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+                    "dependencyOnly"));
+            if (log.isDebugEnabled()) {
+                log.debug("Attribute definition {} produces attributes that are only dependencies: {}", pluginId,
+                        dependencyOnly);
+            }
+            pluginBuilder.addPropertyValue("dependencyOnly", dependencyOnly);
         }
-        pluginBuilder.addPropertyValue("dependencyOnly", dependencyOnly);
 
         ManagedList encoders = processAttributeEncoders(pluginConfigChildren.get(ATTRIBUTE_ENCODER_ELEMENT_NAME),
                 parserContext);

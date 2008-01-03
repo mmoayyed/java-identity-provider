@@ -43,8 +43,10 @@ public class SignatureValidationFilterBeanDefinitionParser extends AbstractSingl
         builder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
                 "trustEngineRef")));
 
-        builder.addPropertyValue("requireSignature", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                null, "requireSignedMetadata")));
+        if (element.hasAttributeNS(null, "requireSignedMetadata")) {
+            builder.addPropertyValue("requireSignature", XMLHelper.getAttributeValueAsBoolean(element
+                    .getAttributeNodeNS(null, "requireSignedMetadata")));
+        }
     }
 
     /** {@inheritDoc} */

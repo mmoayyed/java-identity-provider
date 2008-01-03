@@ -91,20 +91,26 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         log.debug("Data connector {} database connection validation query: {}", pluginId, validationQuery);
         pluginBuilder.addPropertyValue("connectionValidationQuery", validationQuery);
 
-        boolean cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-                "cacheResults"));
-        log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
-        pluginBuilder.addPropertyValue("cacheResults", cacheResults);
+        if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
+            boolean cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+                    "cacheResults"));
+            log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
+            pluginBuilder.addPropertyValue("cacheResults", cacheResults);
+        }
 
-        boolean useSP = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-                "queryUsesStoredProcedure"));
-        log.debug("Data connector {} query uses stored procedures: {}", pluginId, useSP);
-        pluginBuilder.addPropertyValue("queryUsesStoredProcedures", useSP);
+        if (pluginConfig.hasAttributeNS(null, "queryUsesStoredProcedure")) {
+            boolean useSP = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+                    "queryUsesStoredProcedure"));
+            log.debug("Data connector {} query uses stored procedures: {}", pluginId, useSP);
+            pluginBuilder.addPropertyValue("queryUsesStoredProcedures", useSP);
+        }
 
-        boolean readOnlyCtx = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-                "readOnlyConnection"));
-        log.debug("Data connector {} connections are read only: {}", pluginId, readOnlyCtx);
-        pluginBuilder.addPropertyValue("readOnlyConnections", readOnlyCtx);
+        if (pluginConfig.hasAttributeNS(null, "readOnlyConnection")) {
+            boolean readOnlyCtx = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+                    "readOnlyConnection"));
+            log.debug("Data connector {} connections are read only: {}", pluginId, readOnlyCtx);
+            pluginBuilder.addPropertyValue("readOnlyConnections", readOnlyCtx);
+        }
 
         String templateEngineRef = pluginConfig.getAttributeNS(null, "templateEngine");
         pluginBuilder.addPropertyReference("templateEngine", templateEngineRef);
@@ -183,8 +189,11 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                     "poolAcquireRetryAttempts"))));
             datasource.setAcquireRetryDelay(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
                     "poolAcquireRetryDelay"))));
-            datasource.setBreakAfterAcquireFailure(XMLHelper.getAttributeValueAsBoolean(amc.getAttributeNodeNS(null,
-                    "poolBreakAfterAcquireFailure")));
+
+            if (amc.hasAttributeNS(null, "poolBreakAfterAcquireFailure")) {
+                datasource.setBreakAfterAcquireFailure(XMLHelper.getAttributeValueAsBoolean(amc.getAttributeNodeNS(
+                        null, "poolBreakAfterAcquireFailure")));
+            }
 
             datasource.setMinPoolSize(Integer
                     .parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "poolMinSize"))));

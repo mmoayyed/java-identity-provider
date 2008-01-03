@@ -54,8 +54,10 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadata
         String metadataFile = element.getAttributeNS(null, "metadataFile");
         builder.addConstructorArg(new File(metadataFile));
 
-        builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
-                .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+        if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
+            builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
+                    .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+        }
 
         return builder.getBeanDefinition();
     }

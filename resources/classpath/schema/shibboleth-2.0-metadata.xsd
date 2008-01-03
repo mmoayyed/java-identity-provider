@@ -150,6 +150,14 @@
                         <documentation>The path to the metadata file.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="maintainExpiredMetadata" type="boolean" default="false">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether expired metadata should continue to be used until such
+                            time as fresh metadata can be retrieved from the remote server.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

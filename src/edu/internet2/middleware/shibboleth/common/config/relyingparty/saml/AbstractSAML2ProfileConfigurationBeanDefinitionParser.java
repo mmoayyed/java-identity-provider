@@ -49,11 +49,15 @@ public abstract class AbstractSAML2ProfileConfigurationBeanDefinitionParser exte
         builder.addPropertyReference("attributeAuthority", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
                 null, "attributeAuthority")));
 
-        builder.addPropertyValue("encryptNameIds", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                null, "encryptNameIds")));
+        if (element.hasAttributeNS(null, "encryptNameIds")) {
+            builder.addPropertyValue("encryptNameIds", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                    null, "encryptNameIds")));
+        }
 
-        builder.addPropertyValue("encryptAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                null, "encryptAssertions")));
+        if (element.hasAttributeNS(null, "encryptAssertions")) {
+            builder.addPropertyValue("encryptAssertions", XMLHelper.getAttributeValueAsBoolean(element
+                    .getAttributeNodeNS(null, "encryptAssertions")));
+        }
 
         builder.addPropertyValue("assertionProxyCount", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "assertionProxyCount"))));

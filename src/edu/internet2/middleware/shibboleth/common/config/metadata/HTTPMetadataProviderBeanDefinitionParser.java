@@ -66,8 +66,10 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
         int cacheDuration = Integer.parseInt(element.getAttributeNS(null, "cacheDuration"));
         builder.addPropertyValue("maxCacheDuration", cacheDuration);
 
-        builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
-                .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+        if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
+            builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
+                    .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+        }
 
         // TODO basic auth credentials
     }

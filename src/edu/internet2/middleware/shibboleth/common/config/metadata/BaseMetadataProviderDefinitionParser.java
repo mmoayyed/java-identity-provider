@@ -49,12 +49,14 @@ public abstract class BaseMetadataProviderDefinitionParser extends AbstractBeanD
         String id = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
         log.info("Parsing configuration for {} metadata provider with ID: {}", config.getLocalName(), id);
 
-        Boolean requireValidMDBool = XMLHelper.getAttributeValueAsBoolean(config.getAttributeNodeNS(null,
-                "requireValidMetadata"));
-        if (log.isDebugEnabled()) {
-            log.debug("Metadata provider {} requires valid metadata: {}", id, requireValidMDBool);
+        if (config.hasAttributeNS(null, "requireValidMetadata")) {
+            boolean requireValidMDBool = XMLHelper.getAttributeValueAsBoolean(config.getAttributeNodeNS(null,
+                    "requireValidMetadata"));
+            if (log.isDebugEnabled()) {
+                log.debug("Metadata provider {} requires valid metadata: {}", id, requireValidMDBool);
+            }
+            builder.addPropertyValue("requireValidMetadata", requireValidMDBool);
         }
-        builder.addPropertyValue("requireValidMetadata", requireValidMDBool);
 
         NodeList childElems = config.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE, "MetadataFilter");
         if (childElems.getLength() > 0) {

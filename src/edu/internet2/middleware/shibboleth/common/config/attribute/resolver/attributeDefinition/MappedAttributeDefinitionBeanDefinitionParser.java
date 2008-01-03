@@ -80,11 +80,14 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
                 log.debug("Attribute definition {} default value: {}", pluginId, defaultValue);
             }
 
-            boolean passThru = XMLHelper.getAttributeValueAsBoolean(defaultValueElems.get(0).getAttributeNodeNS(null,
-                    "passThru"));
-            pluginBuilder.addPropertyValue("passThru", passThru);
-            if (log.isDebugEnabled()) {
-                log.debug("Attribute definition {} uses default value pass thru: {}", pluginId, passThru);
+            Element defaultValueElem = defaultValueElems.get(0);
+            if (defaultValueElem.hasAttributeNS(null, "passThru")) {
+                boolean passThru = XMLHelper.getAttributeValueAsBoolean(defaultValueElem.getAttributeNodeNS(null,
+                        "passThru"));
+                pluginBuilder.addPropertyValue("passThru", passThru);
+                if (log.isDebugEnabled()) {
+                    log.debug("Attribute definition {} uses default value pass thru: {}", pluginId, passThru);
+                }
             }
         }
 

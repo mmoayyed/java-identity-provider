@@ -53,11 +53,15 @@ public class EntityRoleFilterBeanDefinitionParser extends AbstractSingleBeanDefi
         }
         builder.addConstructorArg(retainedRoles);
 
-        builder.addPropertyValue("removeRolelessEntityDescriptors", XMLHelper.getAttributeValueAsBoolean(element
-                .getAttributeNodeNS(null, "removeRolelessEntityDescriptors")));
+        if (element.hasAttributeNS(null, "removeRolelessEntityDescriptors")) {
+            builder.addPropertyValue("removeRolelessEntityDescriptors", XMLHelper.getAttributeValueAsBoolean(element
+                    .getAttributeNodeNS(null, "removeRolelessEntityDescriptors")));
+        }
 
-        builder.addPropertyValue("removeEmptyEntitiesDescriptors", XMLHelper.getAttributeValueAsBoolean(element
-                .getAttributeNodeNS(null, "removeEmptyEntitiesDescriptors")));
+        if (element.hasAttributeNS(null, "removeEmptyEntitiesDescriptors")) {
+            builder.addPropertyValue("removeEmptyEntitiesDescriptors", XMLHelper.getAttributeValueAsBoolean(element
+                    .getAttributeNodeNS(null, "removeEmptyEntitiesDescriptors")));
+        }
     }
 
     /** {@inheritDoc} */

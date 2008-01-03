@@ -148,8 +148,10 @@ public class PersistentIdDataConnectorBeanDefinitionParser extends BaseDataConne
                     "poolAcquireRetryAttempts"))));
             datasource.setAcquireRetryDelay(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
                     "poolAcquireRetryDelay"))));
-            datasource.setBreakAfterAcquireFailure(XMLHelper.getAttributeValueAsBoolean(amc.getAttributeNodeNS(null,
-                    "poolBreakAfterAcquireFailure")));
+            if (amc.hasAttributeNS(null, "poolBreakAfterAcquireFailure")) {
+                datasource.setBreakAfterAcquireFailure(XMLHelper.getAttributeValueAsBoolean(amc.getAttributeNodeNS(
+                        null, "poolBreakAfterAcquireFailure")));
+            }
 
             datasource.setMinPoolSize(Integer
                     .parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "poolMinSize"))));
