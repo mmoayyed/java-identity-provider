@@ -53,9 +53,6 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
     /** Whether results should be cached. */
     private boolean cacheResults;
 
-    /** SQL query used to validate database connections. */
-    private String connectionValidationQuery;
-
     /** {@inheritDoc} */
     public Class getObjectType() {
         return RDBMSDataConnector.class;
@@ -113,24 +110,6 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
      */
     public void setConnectionDataSource(DataSource source) {
         connectionDataSource = source;
-    }
-
-    /**
-     * Gets the SQL query used to validate a connection's liveness.
-     * 
-     * @return SQL query used to validate a connection's liveness
-     */
-    public String getConnectionValidationQuery() {
-        return connectionValidationQuery;
-    }
-
-    /**
-     * Sets the SQL query used to validate a connection's liveness.
-     * 
-     * @param query SQL query used to validate a connection's liveness
-     */
-    public void setConnectionValidationQuery(String query) {
-        connectionValidationQuery = DatatypeHelper.safeTrimOrNullString(query);
     }
 
     /**
@@ -207,8 +186,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        RDBMSDataConnector connector = new RDBMSDataConnector(getConnectionDataSource(),
-                getConnectionValidationQuery(), getCacheResults());
+        RDBMSDataConnector connector = new RDBMSDataConnector(getConnectionDataSource(), getCacheResults());
         populateDataConnector(connector);
         connector.setTemplateEngine(getTemplateEngine());
         connector.setQueryTemplate(getQueryTemplate());

@@ -87,10 +87,6 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                 pluginBuilder);
         pluginBuilder.addPropertyValue("columnDescriptors", descriptors);
 
-        String validationQuery = pluginConfig.getAttributeNS(null, "validationQuery");
-        log.debug("Data connector {} database connection validation query: {}", pluginId, validationQuery);
-        pluginBuilder.addPropertyValue("connectionValidationQuery", validationQuery);
-
         if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
             boolean cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                     "cacheResults"));

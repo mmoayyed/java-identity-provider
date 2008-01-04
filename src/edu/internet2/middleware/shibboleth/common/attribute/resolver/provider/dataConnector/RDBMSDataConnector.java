@@ -69,9 +69,6 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** Whether to cache query results. */
     private boolean cacheResults;
 
-    /** Query to use to validate connectivity with the database. */
-    private String validationQuery;
-
     /** Name the query template is registered under with the statement creator. */
     private String queryTemplateName;
 
@@ -91,14 +88,12 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * Constructor.
      * 
      * @param source data source used to retrieve connections
-     * @param validation query used to validate connections to the database, should be very fast
      * @param resultCaching whether query results should be cached
      */
-    public RDBMSDataConnector(DataSource source, String validation, boolean resultCaching) {
+    public RDBMSDataConnector(DataSource source, boolean resultCaching) {
         super();
         initialized = false;
         dataSource = source;
-        validationQuery = DatatypeHelper.safeTrimOrNullString(validation);
         cacheResults = resultCaching;
         usesStoredProcedure = false;
         columnDescriptors = new HashMap<String, RDBMSColumnDescriptor>();
@@ -158,15 +153,6 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     public boolean getCacheResults() {
         return cacheResults;
-    }
-
-    /**
-     * Gets the query used to validate connectivity with the database.
-     * 
-     * @return query used to validate connectivity with the database
-     */
-    public String getValidationQuery() {
-        return validationQuery;
     }
 
     /**
@@ -260,6 +246,11 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         log.debug("Validating RDBMS data connector {} configuration.", getId());
         try {
             Connection connection = dataSource.getConnection();
+            if (connection == null) {
+                log.error("Unable to create connections for RDBMS data connector " + getId());
+                throw new AttributeResolutionException("Unable to create connections for RDBMS data connector "
+                        + getId());
+            }
 
             DatabaseMetaData dbmd = connection.getMetaData();
             if (!dbmd.supportsStoredProcedures() && usesStoredProcedure) {
@@ -269,13 +260,6 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                         + " is configured to use stored procedures but database does not support them.");
             }
 
-            Statement validationStatement = connection.createStatement();
-            ResultSet result = validationStatement.executeQuery(validationQuery);
-            if (!result.first()) {
-                log.error("Validation query for RDBMS data connector " + getId() + " did not return any results");
-                throw new AttributeResolutionException("Validation query for RDBMS data connector " + getId()
-                        + " did not return any results");
-            }
             log.debug("Validating RDBMS data connector {} configuration is valid.", getId());
         } catch (SQLException e) {
             log.error("Unable to validate RDBMS data connector " + getId() + " configuration", e);
@@ -317,8 +301,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         if (queryCache != null) {
             SoftReference<Map<String, BaseAttribute>> cachedAttributes = queryCache.get(query);
             if (cachedAttributes != null) {
-                log.debug("RDBMS Data Connector {}: Fetched attributes from cache for principal {}",
-                        getId(), princpal);
+                log.debug("RDBMS Data Connector {}: Fetched attributes from cache for principal {}", getId(), princpal);
                 return cachedAttributes.get();
             }
         }
@@ -341,7 +324,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         Map<String, BaseAttribute> resolvedAttributes;
         Connection connection = null;
         ResultSet queryResult = null;
-        
+
         try {
             connection = dataSource.getConnection();
             if (readOnlyConnection) {
@@ -383,7 +366,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     protected Map<String, BaseAttribute> processResultSet(ResultSet resultSet) throws AttributeResolutionException {
         Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
-        
+
         try {
             if (!resultSet.next()) {
                 return attributes;

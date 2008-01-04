@@ -176,14 +176,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="validationQuery" type="string" use="required">
-                    <annotation>
-                        <documentation>
-                            A simple SQL query that may be executed to ensure a proper configuration. This query should
-                            execute as quckly as possible and must return at least one result.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
                     <annotation>
                         <documentation>
