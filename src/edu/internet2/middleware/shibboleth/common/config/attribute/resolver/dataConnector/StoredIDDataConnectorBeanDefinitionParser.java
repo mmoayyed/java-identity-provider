@@ -37,27 +37,19 @@ import org.w3c.dom.Element;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
- * Spring bean definition parser for persistent ID data connector.
+ * Spring bean definition parser for stored ID data connector.
  */
-public class PersistentIdDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
+public class StoredIDDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "PersistentId");
-
-    /** ContainerManagedApplication element name. */
-    public static final QName CONTAINER_MANAGED_CONNECTION_ELEMENT_NAME = new QName(
-            DataConnectorNamespaceHandler.NAMESPACE, "ContainerManagedConnection");
-
-    /** ApplicationManagedApplication element name. */
-    public static final QName APPLICATION_MANAGED_CONNECTION_ELEMENT_NAME = new QName(
-            DataConnectorNamespaceHandler.NAMESPACE, "ApplicationManagedConnection");
+    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "StoredId");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(PersistentIdDataConnectorBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return PersistentIdDataConnectorBeanFactory.class;
+        return StoredIDDataConnectorBeanFactory.class;
     }
 
     /** {@inheritDoc} */
@@ -65,18 +57,16 @@ public class PersistentIdDataConnectorBeanDefinitionParser extends BaseDataConne
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        QName saltQName = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Salt");
-        if (pluginConfigChildren.containsKey(saltQName)) {
-            Element salt = pluginConfigChildren.get(saltQName).get(0);
-            pluginBuilder.addPropertyValue("salt", salt.getTextContent());
-        } else {
-            DataSource connectionSource = processConnectionManagement(pluginId, pluginConfigChildren, pluginBuilder);
-            pluginBuilder.addPropertyValue("connectionDataSource", connectionSource);
-        }
+        pluginBuilder.addPropertyValue("generatedAttribute", pluginConfig.getAttributeNS(null, "generatedAttributeID"));
+        pluginBuilder.addPropertyValue("sourceAttribute", pluginConfig.getAttributeNS(null, "sourceAttributeID"));
+        pluginBuilder.addPropertyValue("salt", pluginConfig.getAttributeNS(null, "salt").getBytes());
+        
+        DataSource connectionSource = processConnectionManagement(pluginId, pluginConfigChildren, pluginBuilder);
+        pluginBuilder.addPropertyValue("datasource", connectionSource);
     }
 
     /**
-     * Processes the connection management configuraiton.
+     * Processes the connection management configuration.
      * 
      * @param pluginId ID of this data connector
      * @param pluginConfigChildren configuration elements for this connector
@@ -86,12 +76,14 @@ public class PersistentIdDataConnectorBeanDefinitionParser extends BaseDataConne
      */
     protected DataSource processConnectionManagement(String pluginId, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder) {
-        List<Element> cmc = pluginConfigChildren.get(CONTAINER_MANAGED_CONNECTION_ELEMENT_NAME);
+        List<Element> cmc = pluginConfigChildren.get(new QName(
+                DataConnectorNamespaceHandler.NAMESPACE, "ContainerManagedConnection"));
         if (cmc != null && cmc.get(0) != null) {
             return buildContainerManagedConnection(pluginId, cmc.get(0));
         } else {
             return buildApplicationManagedConnection(pluginId, pluginConfigChildren.get(
-                    APPLICATION_MANAGED_CONNECTION_ELEMENT_NAME).get(0));
+                    new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "ApplicationManagedConnection")).get(0));
         }
     }
 
