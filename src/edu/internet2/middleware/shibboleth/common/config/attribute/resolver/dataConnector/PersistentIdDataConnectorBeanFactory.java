@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.PersistentIdDataConnector;
 
 /** Spring factory bean for {@link PersistentIdDataConnector}s. */
-public class PersistentIdDataConnectorBeanFactory extends BaseDataConnectorBeanFactory {
+public class PersistentIdDataConnectorBeanFactory extends BaseDataConnectorFactoryBean {
 
     /** Datasource used to communicate with database. */
     private DataSource datasource;

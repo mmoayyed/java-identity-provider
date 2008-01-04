@@ -46,12 +46,6 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(LdapDataConnectorBeanDefinitionParser.class);
 
-    /** FilterTemplate element name. */
-
-    /** ReturnAttributes element name. */
-
-    /** LDAPProperty element name. */
-
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
         return LdapDataConnectorFactoryBean.class;

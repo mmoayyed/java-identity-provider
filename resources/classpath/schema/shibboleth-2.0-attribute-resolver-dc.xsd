@@ -49,6 +49,39 @@
         </complexContent>
     </complexType>
     
+    <complexType name="ComputedId">
+        <annotation>
+            <documentation>
+                An ID created by taking the SHA-1 hash of the requesting entity's ID, an attribute value (usually a user identifier), and a salt.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <attribute name="generatedAttributeID" type="string" default="computedId">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute which should be used to as input to the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceAttributeID" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute which should be used to as input to the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="salt" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            A salt, of at least 16 bytes, used in the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="PersistentId">
         <annotation>
             <documentation>

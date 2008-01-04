@@ -22,7 +22,7 @@ import edu.internet2.middleware.shibboleth.common.config.attribute.resolver.Abst
 /**
  * Base class for data connector factories.
  */
-public abstract class BaseDataConnectorBeanFactory extends AbstractResolutionPluginFactoryBean {
+public abstract class BaseDataConnectorFactoryBean extends AbstractResolutionPluginFactoryBean {
 
     /** ID of failover data connectors for this plugin. */
     private String failoverDataConnectorId;

@@ -30,7 +30,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 /**
  * Spring factory bean that produces {@link RDBMSDataConnector}s.
  */
-public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
+public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
 
     /** Template engine used to transform query templates into queries. */
     private TemplateEngine templateEngine;

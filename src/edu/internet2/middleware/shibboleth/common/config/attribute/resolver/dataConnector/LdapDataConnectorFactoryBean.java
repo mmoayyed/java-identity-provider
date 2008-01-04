@@ -28,7 +28,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 /**
  * Spring factory for creating {@link LdapDataConnector} beans.
  */
-public class LdapDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
+public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
 
     /** Template engine used to construct filter queries. */
     private TemplateEngine templateEngine;

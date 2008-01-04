@@ -24,7 +24,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 /**
  * Spring bean factory that produces {@link StaticDataConnector}s.
  */
-public class StaticDataConnectorFactoryBean extends BaseDataConnectorBeanFactory {
+public class StaticDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
 
     /** Static attributes returned by the created data connector. */
     private List<BaseAttribute<String>> staticAttributes;
