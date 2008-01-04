@@ -402,14 +402,14 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="SSLTLSTrustCredential" type="sec:X509Credential" minOccurs="0">
+                    <element name="StartTLSTrustCredential" type="sec:X509Credential" minOccurs="0">
                         <annotation>
                             <documentation>
                                 The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="SSLTLSAuthenticationCredential" type="sec:X509Credential" minOccurs="0">
+                    <element name="StartTLSAuthenticationCredential" type="sec:X509Credential" minOccurs="0">
                         <annotation>
                             <documentation>
                                 The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.

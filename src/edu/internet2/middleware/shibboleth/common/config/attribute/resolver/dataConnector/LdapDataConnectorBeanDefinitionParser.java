@@ -91,12 +91,12 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         pluginBuilder.addPropertyValue("ldapProperties", ldapProperties);
 
         BeanDefinition trustCredential = processCredential(pluginConfigChildren.get(new QName(
-                DataConnectorNamespaceHandler.NAMESPACE, "SSLTLSTrustCredential")), parserContext);
+                DataConnectorNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")), parserContext);
         log.debug("Data connector {} using provided SSL/TLS trust material", pluginId);
         pluginBuilder.addPropertyValue("trustCredential", trustCredential);
 
         BeanDefinition connectionCredential = processCredential(pluginConfigChildren.get(new QName(
-                DataConnectorNamespaceHandler.NAMESPACE, "SSLTLSAuthenticationCredential")), parserContext);
+                DataConnectorNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential")), parserContext);
         log.debug("Data connector {} using provided SSL/TLS client authentication material", pluginId);
         pluginBuilder.addPropertyValue("connectionCredential", connectionCredential);
 
