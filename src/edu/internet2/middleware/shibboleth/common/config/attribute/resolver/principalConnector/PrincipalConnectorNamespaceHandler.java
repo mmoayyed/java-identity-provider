@@ -33,6 +33,9 @@ public class PrincipalConnectorNamespaceHandler extends BaseSpringNamespaceHandl
 
         registerBeanDefinitionParser(TransientPrincipalConnectorBeanDefinitionParser.SCHEMA_TYPE,
                 new TransientPrincipalConnectorBeanDefinitionParser());
+
+        registerBeanDefinitionParser(StoredIDPrincipalConnectorBeanDefinitionParser.SCHEMA_TYPE,
+                new StoredIDPrincipalConnectorBeanDefinitionParser());
     }
 
 }

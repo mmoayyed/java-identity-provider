@@ -6,11 +6,14 @@
 
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
+        
+    <import namespace="urn:mace:shibboleth:2.0:resolver:dc"
+        schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd" />
 
     <complexType name="Transient">
         <annotation>
             <documentation>
-                A princpal connector that returns the SAML name identifier value as the principal name.
+                A principal connector that returns the SAML name identifier value as the principal name.
             </documentation>
         </annotation>
         <complexContent>
@@ -25,11 +28,30 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="StoredId">
+        <annotation>
+            <documentation>
+                A principal connector that returns the SAML name identifier value as the principal name.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BasePrincipalConnectorType">
+                <attribute name="storedIdDataConnectorRef" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The ID of the StoredId data connector that created the ID to be resolved.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
     <complexType name="Direct">
         <annotation>
             <documentation>
-                A princpal connector that returns the SAML name identifier value as the principal name.
+                A principal connector that returns the SAML name identifier value as the principal name.
             </documentation>
         </annotation>
         <complexContent>

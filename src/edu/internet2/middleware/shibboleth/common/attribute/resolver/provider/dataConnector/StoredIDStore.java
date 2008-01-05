@@ -17,8 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
 import java.io.Serializable;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,12 +24,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.sql.DataSource;
 
-import org.joda.time.DateTime;
-import org.opensaml.xml.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +34,7 @@ import org.slf4j.LoggerFactory;
  * Represents as persistent, database-backed, store of identifiers.
  * 
  * The DDL for the database is
- * <tt>CREATE TABLE shibpid {localEntity VARCHAR NOT NULL, peerEntity VARCHAR NOT NULL, localId VARCHAR NOT NULL, persistentId VARCHAR NOT NULL, peerProvidedId VARCHAR, creationDate TIMESTAMP NOT NULL, deactivationDate TIMESTAMP}</tt>.
- * 
- * An index should be created on the <tt>persistentId</tt> and <tt>deactivationDate</tt> column as this is used to
- * query for principal names associated with the a given persistent identifier.
- * 
- * An index should be created on the <tt>principal</tt>, <tt>peerEntity</tt>, <tt>localEntity</tt>, and
- * <tt>deactivationDate</tt> columns as these are used to query for the persistent ID.
+ * <tt>CREATE TABLE shibpid {localEntity VARCHAR NOT NULL, peerEntity VARCHAR NOT NULL, principalName VARCHAR NOT NULL, localId VARCHAR NOT NULL, persistentId VARCHAR NOT NULL, peerProvidedId VARCHAR, creationDate TIMESTAMP NOT NULL, deactivationDate TIMESTAMP}</tt>.
  */
 public class StoredIDStore {
 
@@ -58,14 +47,17 @@ public class StoredIDStore {
     /** Name of the database table. */
     private final String table = "shibpid";
 
-    /** Name of the local ID column. */
-    private final String localIdColumn = "localId";
+    /** Name of the local entity ID column. */
+    private final String localEntityColumn = "localEntity";
 
     /** Name of the peer entity ID name column. */
     private final String peerEntityColumn = "peerEntity";
 
-    /** Name of the local entity ID column. */
-    private final String localEntityColumn = "localEntity";
+    /** Name of the principal name column. */
+    private final String principalNameColumn = "principalName";
+
+    /** Name of the local ID column. */
+    private final String localIdColumn = "localId";
 
     /** Name of the persistent ID column. */
     private final String persistentIdColumn = "persistentId";
@@ -80,10 +72,10 @@ public class StoredIDStore {
     private final String deactivationTimeColumn = "deactivationDate";
 
     /** Partial select query for ID entries. */
-    private final String idEntrySelectSQL = "SELECT * FROM shibpid WHERE ";
+    private final String idEntrySelectSQL = "SELECT * FROM " + table + " WHERE ";
 
     /** SQL used to deactivate an ID. */
-    private final String deactivateIdSQL = "UPDATE shibidp SET " + deactivationTimeColumn + "='%s' WHERE "
+    private final String deactivateIdSQL = "UPDATE " + table + " SET " + deactivationTimeColumn + "='%s' WHERE "
             + persistentIdColumn + "='%s'";
 
     /**
@@ -94,7 +86,7 @@ public class StoredIDStore {
     public StoredIDStore(DataSource source) {
         dataSource = source;
     }
-    
+
     /**
      * Gets all the number persistent ID entries for a (principal, peer, local) tuple.
      * 
@@ -107,7 +99,7 @@ public class StoredIDStore {
      * @throws SQLException thrown if there is a problem communication with the database
      */
     public int getNumberOfPersistentIdEntries(String localEntity, String peerEntity, String localId)
-    throws SQLException {
+            throws SQLException {
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("SELECT");
         sqlBuilder.append(" count(").append(persistentIdColumn).append(")");
@@ -117,7 +109,7 @@ public class StoredIDStore {
         sqlBuilder.append(peerEntityColumn).append(" = '").append(peerEntity).append("'");
         sqlBuilder.append(" AND ");
         sqlBuilder.append(localIdColumn).append(" = '").append(localId).append("'");
-        
+
         String sql = sqlBuilder.toString();
         Connection dbConn = null;
         try {
@@ -269,21 +261,26 @@ public class StoredIDStore {
         sqlBuilder.append(" (");
         sqlBuilder.append("'").append(localEntityColumn).append("', ");
         sqlBuilder.append("'").append(peerEntityColumn).append("', ");
+        sqlBuilder.append("'").append(principalNameColumn).append("', ");
         sqlBuilder.append("'").append(localIdColumn).append("', ");
         sqlBuilder.append("'").append(persistentIdColumn).append("', ");
         sqlBuilder.append("'").append(peerProvidedIdColumn).append("', ");
-        sqlBuilder.append("'").append(peerProvidedIdColumn).append("'");
+        sqlBuilder.append("'").append(createTimeColumn).append("'");
         sqlBuilder.append(") VALUES (");
 
+        sqlBuilder.append("'").append(entry.getLocalEntityId()).append("', ");
+        sqlBuilder.append("'").append(entry.getPeerEntityId()).append("', ");
+        sqlBuilder.append("'").append(entry.getPrincipalName()).append("', ");
+        sqlBuilder.append("'").append(entry.getLocalId()).append("', ");
         sqlBuilder.append("'").append(entry.getPersistentId()).append("', ");
-        sqlBuilder.append("'").append(entry.getLocalEntity()).append("', ");
-        sqlBuilder.append("'").append(entry.getPeerEntity()).append("', ");
-        sqlBuilder.append("'").append(entry.getPersistentId()).append("', ");
+        sqlBuilder.append("'").append(entry.getLocalEntityId()).append("', ");
+
         if (entry.getPeerProvidedId() == null) {
             sqlBuilder.append(" NULL,");
         } else {
             sqlBuilder.append("'").append(entry.getPeerProvidedId()).append("', ");
         }
+
         sqlBuilder.append("'").append(new Timestamp(System.currentTimeMillis()).toString()).append("')");
 
         Connection dbConn = null;
@@ -341,47 +338,6 @@ public class StoredIDStore {
     }
 
     /**
-     * Creates a persistent ID that is unique for a given local/peer/localId tuple.
-     * 
-     * If an ID has never been issued for to the given tuple then an ID is created by taking a SHA-1 hash of the peer's
-     * entity ID, the local ID, and a salt. This is to ensure compatability with IDs created by the now deprecated
-     * {@link ComputedIDDataConnector}.
-     * 
-     * If an ID has been issued to the given tuple than a new, random type 4 UUID is generated as the persistent ID.
-     * 
-     * @param localEntity entity ID of the ID issuer
-     * @param peerEntity entity ID of the peer the ID is for
-     * @param localId principal the the persistent ID represents
-     * @param salt salt used when computing a persistent ID via SHA-1 hash
-     * 
-     * @return the created identifier
-     * 
-     * @throws SQLException thrown if there is a problem communication with the database
-     */
-    public String createPersisnentId(String localEntity, String peerEntity, String localId, byte[] salt)
-            throws SQLException {
-        int numberOfExistingEntries = getNumberOfPersistentIdEntries(localEntity, peerEntity, localId);
-        
-        if (numberOfExistingEntries == 0) {
-            try {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(peerEntity.getBytes());
-                md.update((byte) '!');
-                md.update(localId.getBytes());
-                md.update((byte) '!');
-                md.digest(salt);
-
-                return Base64.encodeBytes(md.digest());
-            } catch (NoSuchAlgorithmException e) {
-                log.error("JVM error, SHA-1 is not supported, unable to compute ID");
-                throw new SQLException("SHA-1 is not supported, unable to compute ID");
-            }
-        } else {
-            return UUID.randomUUID().toString();
-        }
-    }
-
-    /**
      * Gets a list of {@link PersistentIdEntry}s based on the given SQL where clause.
      * 
      * @param whereClause selection criteria
@@ -427,25 +383,16 @@ public class StoredIDStore {
     protected List<PersistentIdEntry> buildIdentifierEntries(ResultSet resultSet) throws SQLException {
         ArrayList<PersistentIdEntry> entries = new ArrayList<PersistentIdEntry>();
 
-        String persistentId;
-        String peerEntity;
-        String localEntity;
-        String principalName;
-        String peerProvidedId;
-        Timestamp creationTime;
-        Timestamp deactivationTime;
         PersistentIdEntry entry;
         while (resultSet.next()) {
-            persistentId = resultSet.getString(persistentIdColumn);
-            peerEntity = resultSet.getString(peerEntityColumn);
-            localEntity = resultSet.getString(localEntityColumn);
-            principalName = resultSet.getString(localIdColumn);
-            peerProvidedId = resultSet.getString(peerProvidedIdColumn);
-            creationTime = resultSet.getTimestamp(createTimeColumn);
-            deactivationTime = resultSet.getTimestamp(deactivationTimeColumn);
-
-            entry = new PersistentIdEntry(persistentId, peerEntity, localEntity, principalName, peerProvidedId,
-                    creationTime, deactivationTime);
+            entry = new PersistentIdEntry();
+            entry.setLocalEntityId(resultSet.getString(localEntityColumn));
+            entry.setPeerEntityId(resultSet.getString(peerEntityColumn));
+            entry.setPrincipalName(resultSet.getString(principalNameColumn));
+            entry.setLocalId(resultSet.getString(localIdColumn));
+            entry.setPeerProvidedId(resultSet.getString(peerProvidedIdColumn));
+            entry.setCreationTime(resultSet.getTimestamp(createTimeColumn));
+            entry.setDeactivationTime(resultSet.getTimestamp(deactivationTimeColumn));
             entries.add(entry);
         }
 
@@ -458,68 +405,32 @@ public class StoredIDStore {
         /** Serial version UID . */
         private static final long serialVersionUID = -8711779466442306767L;
 
-        /** The persistent identifier. */
-        private String persistentId;
+        /** ID of the entity that issued that identifier. */
+        private String localEntityId;
 
         /** ID of the entity to which the identifier was issued. */
-        private String peerEntity;
-
-        /** ID, associated with the persistent identifier, provided by the peer. */
-        private String peerProvidedId;
-
-        /** ID of the entity that issued that identifier. */
-        private String localEntity;
+        private String peerEntityId;
 
         /** Name of the principal represented by the identifier. */
         private String principalName;
 
+        /** Local component portion of the persistent ID entry. */
+        private String localId;
+
+        /** The persistent identifier. */
+        private String persistentId;
+
+        /** ID, associated with the persistent identifier, provided by the peer. */
+        private String peerProvidedId;
+
         /** Time the identifier was created. */
-        private DateTime creationTime;
+        private Timestamp creationTime;
 
         /** Time the identifier was deactivated. */
-        private DateTime deactivationTime;
+        private Timestamp deactivationTime;
 
-        /**
-         * Constructor.
-         * 
-         * @param persistentId the persistent identifier
-         * @param peerEntity ID of the entity to which the identifier was issued
-         * @param localEntity ID of the entity that issued the identifier
-         * @param principalName name of the principal represented by the identifier
-         * @param peerProvidedId ID, associated with the persistent identifier, provided by the peer
-         * @param creationTime time the identifier was created
-         * @param deactivationTime time the identifier was deactivated
-         */
-        public PersistentIdEntry(String persistentId, String peerEntity, String localEntity, String principalName,
-                String peerProvidedId, Timestamp creationTime, Timestamp deactivationTime) {
-            this.persistentId = persistentId;
-            this.peerEntity = peerEntity;
-            this.localEntity = localEntity;
-            this.principalName = principalName;
-            this.peerProvidedId = peerProvidedId;
-            this.creationTime = new DateTime(creationTime.getTime());
-
-            if (deactivationTime != null) {
-                this.deactivationTime = new DateTime(deactivationTime.getTime());
-            }
-        }
-
-        /**
-         * Gets the persistent identifier.
-         * 
-         * @return the persistent identifier
-         */
-        public String getPersistentId() {
-            return persistentId;
-        }
-
-        /**
-         * Gets the ID of the entity to which the identifier was issued.
-         * 
-         * @return ID of the entity to which the identifier was issued
-         */
-        public String getPeerEntity() {
-            return peerEntity;
+        /** Constructor. */
+        public PersistentIdEntry() {
         }
 
         /**
@@ -527,8 +438,35 @@ public class StoredIDStore {
          * 
          * @return ID of the entity that issued the identifier
          */
-        public String getLocalEntity() {
-            return localEntity;
+        public String getLocalEntityId() {
+            return localEntityId;
+        }
+
+        /**
+         * Sets the ID of the entity that issued the identifier.
+         * 
+         * @param id ID of the entity that issued the identifier
+         */
+        public void setLocalEntityId(String id) {
+            localEntityId = id;
+        }
+
+        /**
+         * Gets the ID of the entity to which the identifier was issued.
+         * 
+         * @return ID of the entity to which the identifier was issued
+         */
+        public String getPeerEntityId() {
+            return peerEntityId;
+        }
+
+        /**
+         * Sets the ID of the entity to which the identifier was issued.
+         * 
+         * @param id ID of the entity to which the identifier was issued
+         */
+        public void setPeerEntityId(String id) {
+            peerEntityId = id;
         }
 
         /**
@@ -541,21 +479,48 @@ public class StoredIDStore {
         }
 
         /**
-         * Gets the time the identifier was created.
+         * Sets the name of the principal the identifier represents.
          * 
-         * @return time the identifier was created
+         * @param name name of the principal the identifier represents
          */
-        public DateTime getCreationTime() {
-            return creationTime;
+        public void setPrincipalName(String name) {
+            principalName = name;
         }
 
         /**
-         * Gets the time the identifier was deactivated.
+         * Gets the local ID component of the persistent identifier.
          * 
-         * @return time the identifier was deactivated
+         * @return local ID component of the persistent identifier
          */
-        public DateTime getDeactivationTime() {
-            return deactivationTime;
+        public String getLocalId() {
+            return localId;
+        }
+
+        /**
+         * Sets the local ID component of the persistent identifier.
+         * 
+         * @param id local ID component of the persistent identifier
+         */
+        public void setLocalId(String id) {
+            localId = id;
+        }
+
+        /**
+         * Gets the persistent identifier.
+         * 
+         * @return the persistent identifier
+         */
+        public String getPersistentId() {
+            return persistentId;
+        }
+
+        /**
+         * Set the persistent identifier.
+         * 
+         * @param id the persistent identifier
+         */
+        public void setPersistentId(String id) {
+            persistentId = id;
         }
 
         /**
@@ -565,6 +530,51 @@ public class StoredIDStore {
          */
         public String getPeerProvidedId() {
             return peerProvidedId;
+        }
+
+        /**
+         * Sets the ID, provided by the peer, associated with this ID.
+         * 
+         * @param id ID, provided by the peer, associated with this ID
+         */
+        public void setPeerProvidedId(String id) {
+            peerProvidedId = id;
+        }
+
+        /**
+         * Gets the time the identifier was created.
+         * 
+         * @return time the identifier was created
+         */
+        public Timestamp getCreationTime() {
+            return creationTime;
+        }
+
+        /**
+         * Sets the time the identifier was created.
+         * 
+         * @param time time the identifier was created
+         */
+        public void setCreationTime(Timestamp time) {
+            creationTime = time;
+        }
+
+        /**
+         * Gets the time the identifier was deactivated.
+         * 
+         * @return time the identifier was deactivated
+         */
+        public Timestamp getDeactivationTime() {
+            return deactivationTime;
+        }
+
+        /**
+         * Sets the time the identifier was deactivated.
+         * 
+         * @param time the time the identifier was deactivated
+         */
+        public void setDeactivationTime(Timestamp time) {
+            this.deactivationTime = time;
         }
     }
 }

@@ -19,9 +19,11 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.d
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 
@@ -72,16 +74,16 @@ public class StoredIDDataConnector extends BaseDataConnector {
      * @param idSalt salt used when computing the ID
      */
     public StoredIDDataConnector(DataSource source, String generatedAttributeId, String sourceAttributeId, byte[] idSalt) {
-        if(source == null){
+        if (source == null) {
             throw new IllegalArgumentException("Data source may not be null");
         }
         pidStore = new StoredIDStore(source);
-        
+
         if (DatatypeHelper.isEmpty(generatedAttributeId)) {
             throw new IllegalArgumentException("Provided generated attribute ID must not be empty");
         }
         generatedAttribute = generatedAttributeId;
-        
+
         if (DatatypeHelper.isEmpty(sourceAttributeId)) {
             throw new IllegalArgumentException("Provided source attribute ID must not be empty");
         }
@@ -91,6 +93,15 @@ public class StoredIDDataConnector extends BaseDataConnector {
             throw new IllegalArgumentException("Provided salt must be at least 16 bytes in size.");
         }
         salt = idSalt;
+    }
+
+    /**
+     * Gets the data store used to manage stored IDs.
+     * 
+     * @return data store used to manage stored IDs
+     */
+    public StoredIDStore getStoredIDStore() {
+        return pidStore;
     }
 
     /**
@@ -144,15 +155,16 @@ public class StoredIDDataConnector extends BaseDataConnector {
         attributes.put(attribute.getId(), attribute);
         return attributes;
     }
-    
+
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-        if(getDependencyIds() == null || getDependencyIds().size() != 1){
+        if (getDependencyIds() == null || getDependencyIds().size() != 1) {
             log.error("Computed ID " + getId() + " data connectore requires exactly one dependency");
-            throw new AttributeResolutionException("Computed ID " + getId() + " data connectore requires exactly one dependency");
+            throw new AttributeResolutionException("Computed ID " + getId()
+                    + " data connectore requires exactly one dependency");
         }
     }
-    
+
     /**
      * Gets the persistent ID stored in the database. If one does not exist it is created.
      * 
@@ -165,15 +177,17 @@ public class StoredIDDataConnector extends BaseDataConnector {
     protected String getStoredId(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         SAMLProfileRequestContext requestCtx = resolutionContext.getAttributeRequestContext();
 
+        String localId = getLocalId(resolutionContext);
+        PersistentIdEntry idEntry;
         try {
-            PersistentIdEntry idEntry = pidStore.getActivePersistentIdEntry(requestCtx.getPrincipalName(), requestCtx
-                    .getInboundMessageIssuer(), requestCtx.getLocalEntityId());
-            if (idEntry != null) {
-                return idEntry.getPersistentId();
-            } else {
-                return pidStore.createPersisnentId(requestCtx.getPrincipalName(), requestCtx.getInboundMessageIssuer(),
-                        requestCtx.getLocalEntityId(), null);
+            idEntry = pidStore.getActivePersistentIdEntry(requestCtx.getLocalEntityId(), requestCtx
+                    .getInboundMessageIssuer(), localId);
+            if (idEntry == null) {
+                idEntry = createPersisnentId(resolutionContext, localId, salt);
+                pidStore.storePersistentIdEntry(idEntry);
             }
+
+            return idEntry.getPersistentId();
         } catch (SQLException e) {
             log.error("Database error retrieving persistent identifier", e);
             throw new AttributeResolutionException("Database error retrieving persistent identifier", e);
@@ -181,17 +195,15 @@ public class StoredIDDataConnector extends BaseDataConnector {
     }
 
     /**
-     * Generates a persistent ID by hash.
+     * Gets the local ID component of the persistent ID.
      * 
      * @param resolutionContext current resolution context
      * 
-     * @return generated ID
+     * @return local ID component of the persistent ID
      * 
-     * @throws AttributeResolutionException thrown if SHA-1 is not supported by the VM
+     * @throws AttributeResolutionException thrown if there is a problem resolving the local id
      */
-    protected String generateHashedId(ShibbolethResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        
+    protected String getLocalId(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         Collection<Object> sourceIdValues = getValuesFromAllDependencies(resolutionContext, getSourceAttributeId());
         if (sourceIdValues == null || sourceIdValues.isEmpty()) {
             log.error("Source attribute {} for connector {} provide no values", getSourceAttributeId(), getId());
@@ -203,23 +215,60 @@ public class StoredIDDataConnector extends BaseDataConnector {
             log.warn("Source attribute {} for connector {} has more than one value, only the first value is used",
                     getSourceAttributeId(), getId());
         }
-        String sourceId = sourceIdValues.iterator().next().toString();
 
-        BasicAttribute<String> computedIdAttrib = new BasicAttribute<String>();
-        computedIdAttrib.setId(getGeneratedAttributeId());
-
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA");
-            md.update(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer().getBytes());
-            md.update((byte) '!');
-            md.update(sourceId.getBytes());
-            md.update((byte) '!');
-            md.digest(salt);
-
-           return Base64.encodeBytes(md.digest());
-        } catch (NoSuchAlgorithmException e) {
-            log.error("JVM error, SHA-1 hash is not supported.");
-            throw new AttributeResolutionException("SHA-1A has is not supported, unable to compute ID");
-        }
+        return sourceIdValues.iterator().next().toString();
     }
+
+    /**
+     * Creates a persistent ID that is unique for a given local/peer/localId tuple.
+     * 
+     * If an ID has never been issued for to the given tuple then an ID is created by taking a SHA-1 hash of the peer's
+     * entity ID, the local ID, and a salt. This is to ensure compatability with IDs created by the now deprecated
+     * {@link ComputedIDDataConnector}.
+     * 
+     * If an ID has been issued to the given tuple than a new, random type 4 UUID is generated as the persistent ID.
+     * 
+     * @param resolutionContext current resolution context
+     * @param localId principal the the persistent ID represents
+     * @param salt salt used when computing a persistent ID via SHA-1 hash
+     * 
+     * @return the created identifier
+     * 
+     * @throws SQLException thrown if there is a problem communication with the database
+     */
+    protected PersistentIdEntry createPersisnentId(ShibbolethResolutionContext resolutionContext, String localId,
+            byte[] salt) throws SQLException {
+        PersistentIdEntry entry = pidStore.new PersistentIdEntry();
+        entry.setLocalEntityId(resolutionContext.getAttributeRequestContext().getLocalEntityId());
+        entry.setPeerEntityId(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer());
+        entry.setPrincipalName(resolutionContext.getAttributeRequestContext().getPrincipalName());
+        entry.setLocalId(localId);
+
+        String persisentId;
+        int numberOfExistingEntries = pidStore.getNumberOfPersistentIdEntries(entry.getLocalEntityId(), entry
+                .getPeerEntityId(), entry.getLocalId());
+        if (numberOfExistingEntries == 0) {
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(entry.getPeerEntityId().getBytes());
+                md.update((byte) '!');
+                md.update(localId.getBytes());
+                md.update((byte) '!');
+                md.digest(salt);
+
+                persisentId = Base64.encodeBytes(md.digest());
+            } catch (NoSuchAlgorithmException e) {
+                log.error("JVM error, SHA-1 is not supported, unable to compute ID");
+                throw new SQLException("SHA-1 is not supported, unable to compute ID");
+            }
+        } else {
+            persisentId = UUID.randomUUID().toString();
+        }
+        entry.setPersistentId(persisentId);
+
+        entry.setCreationTime(new Timestamp(System.currentTimeMillis()));
+
+        return entry;
+    }
+
 }
