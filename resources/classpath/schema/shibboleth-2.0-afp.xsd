@@ -98,7 +98,7 @@
                         <element name="PolicyRequirementRuleReference" type="afp:ReferenceType">
                             <annotation>
                                 <documentation>
-                                    Rerfence to a PolicyRequirement defined within this policy group or another.
+                                    Reference to a PolicyRequirement defined within this policy group or another.
                                 </documentation>
                             </annotation>
                         </element>
@@ -114,7 +114,7 @@
                         <element name="AttributeRuleReference" type="afp:ReferenceType">
                             <annotation>
                                 <documentation>
-                                    Rerfence to a AttribtueRule defined within this policy group or another.
+                                    Reference to a AttributeRule defined within this policy group or another.
                                 </documentation>
                             </annotation>
                         </element>
@@ -144,7 +144,7 @@
                     <element name="PermitValueRuleReference" type="afp:ReferenceType">
                         <annotation>
                             <documentation>
-                                Rerfence to a PermitValueRule defined within this policy group or another.
+                                Reference to a PermitValueRule defined within this policy group or another.
                             </documentation>
                         </annotation>
                     </element>

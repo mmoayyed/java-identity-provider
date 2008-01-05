@@ -75,7 +75,7 @@
     <complexType name="NOT">
         <annotation>
             <documentation>
-                A match function that performs a logical NOT on the resultof the contained matching function.
+                A match function that performs a logical NOT on the result of the contained matching function.
             </documentation>
         </annotation>
         <complexContent>
@@ -249,7 +249,7 @@
         <annotation>
             <documentation>
                 A match function that matches an attribute value against the specified regular expression. This function
-                evaluates to true if any value matches the given expression
+                evaluates to true if any value matches the given expression.
             </documentation>
         </annotation>
         <complexContent>

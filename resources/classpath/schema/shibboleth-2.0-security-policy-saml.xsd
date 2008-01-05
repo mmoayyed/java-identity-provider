@@ -8,7 +8,7 @@
     <complexType name="ProtocolWithXMLSignature">
         <annotation>
             <documentation>
-                A rule that checks the signature on SAML protocols messages.
+                A rule that checks the signature on SAML protocol messages.
             </documentation>
         </annotation>
         <complexContent>
@@ -27,7 +27,7 @@
     <complexType name="SAML2HTTPPostSimpleSign">
         <annotation>
             <documentation>
-                A rule that checks the signature on SAML protocols messages.
+                A rule that checks the signature on SAML protocol messages.
             </documentation>
         </annotation>
         <complexContent>
@@ -53,7 +53,7 @@
     <complexType name="SAML2HTTPRedirectSimpleSign">
         <annotation>
             <documentation>
-                A rule that checks the signature on SAML protocols messages.
+                A rule that checks the signature on SAML protocol messages.
             </documentation>
         </annotation>
         <complexContent>
@@ -84,7 +84,7 @@
     <complexType name="IssueInstant">
         <annotation>
             <documentation>
-                A rule that inspects the message issue instant and ensures that it within a certain timeframe.
+                A rule that inspects the message issue instant and ensures that it is within a certain timeframe.
             </documentation>
         </annotation>
         <complexContent>
@@ -113,8 +113,7 @@
     <complexType name="Replay">
         <annotation>
             <documentation>
-                A security policy rule that ensure the a recieved SAML message's issue instant is not before the current
-                time (as defined by the system) or older than a given expiration threshold.
+                A security policy rule that ensure a received SAML message has not already been processed.
             </documentation>
         </annotation>
         <complexContent>

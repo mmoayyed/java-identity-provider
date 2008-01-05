@@ -248,8 +248,10 @@
     <complexType name="EntityRoleWhiteList">
         <annotation>
             <documentation>
-                Filters out, from an entity descriptor, that do not appear in the role whitelist.  Optionally 
-                role-less entity descriptor and entity/entities discriptor-less entities descriptors may be removed.
+                A filter that removes roles, from an entity descriptor, that do not appear in the filters whitelist.
+                Optionally an entity descriptor may be completely removed if it does not contain at least one role 
+                after the filter.  Entity descriptors may be removed if they do not contain at least one entity or 
+                entities descriptor after the filtering.
             </documentation>
         </annotation>
         <complexContent>
@@ -268,14 +270,16 @@
                 <attribute name="removeRolelessEntityDescriptors" type="boolean" default="true">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating that entity descriptors, after filter, contain no roles should be removed.
+                            A boolean flag indicating that entity descriptors that do not contain at least one role, 
+                            after filtering, should be removed.
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="removeEmptyEntitiesDescriptors" type="boolean" default="true">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating that entities descriptors, after filter, contain no entity or entities descriptors.
+                            A boolean flag indicating that entities descriptors that do not contain at least one 
+                            entity or entities descriptor, after filtering, shouldbe removed.
                         </documentation>
                     </annotation>
                 </attribute>

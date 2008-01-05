@@ -56,7 +56,7 @@
                 </attribute>
                 <attribute name="nameIdQualifier" type="string" use="optional">
                     <annotation>
-                        <documentation>The SAML 1 NameQualfier of the NameIdentifier.</documentation>
+                        <documentation>The SAML 1 NameQualifier of the NameIdentifier.</documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -143,7 +143,7 @@
                 </attribute>
                 <attribute name="nameIdQualifier" type="string" use="optional">
                     <annotation>
-                        <documentation>The SAML 2 NameQualfier of the NameID.</documentation>
+                        <documentation>The SAML 2 NameQualifier of the NameID.</documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -180,7 +180,7 @@
                 <attribute name="scopeDelimiter" type="string" use="optional" default="@">
                     <annotation>
                         <documentation>
-                            If scopeType is "inline", this is the delimeter used to between the attribute value and
+                            If scopeType is "inline", this is the delimeter used between the attribute value and
                             scope.
                         </documentation>
                     </annotation>

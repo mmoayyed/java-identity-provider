@@ -27,7 +27,7 @@
     <complexType name="AttributeIssuerInEntityGroup">
         <annotation>
             <documentation>
-                A match function that evaluates to true if the attribute producer is found in metadata and is a member
+                A match function that evaluates to true if the attribute issuer is found in metadata and is a member
                 of the given entity group.
             </documentation>
         </annotation>
@@ -51,7 +51,7 @@
     <complexType name="AttributeScopeMatchesShibMDScope">
         <annotation>
             <documentation>
-                A match function that ensures that an attributes value's scope matches a scope given in metadata for the entity or role.
+                A match function that ensures that an attribute value's scope matches a scope given in metadata for the entity or role.
             </documentation>
         </annotation>
         <complexContent>

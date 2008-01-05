@@ -36,7 +36,7 @@
 
     <complexType name="TransientId">
         <annotation>
-            <documentation>A attribute definition used to construct transient subejct identifiers.</documentation>
+            <documentation>A attribute definition used to construct transient subeject identifiers.</documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
@@ -70,7 +70,7 @@
                 An attribute definition that constructs its attributes by means of a script supported by JSR-223. The
                 script is provided all the edu.internet2.middleware.shibboleth.common.attribute.Attribute object
                 resolved from all the definitions dependencies. The resultant attribute definition must then be bound to
-                script attribute corresponding to the script variable whose name is the ID of the definition. This
+                a script attribute corresponding to the script variable whose name is the ID of the definition. This
                 variable is injected into the script by the attribute definition.
             </documentation>
         </annotation>
@@ -187,7 +187,7 @@
         <annotation>
             <documentation>
                 An Attribute Definition that constructs its values based on the values of its dependencies using the
-                Velocity Template Language. Dependencies may have multiple values, however multiples dependencies must
+                Velocity Template Language. Dependencies may have multiple values, however multiple dependencies must
                 have the same number of values. In the case of multi-valued dependencies, the template will be evaluated
                 multiples times, iterating over each dependency.
             </documentation>

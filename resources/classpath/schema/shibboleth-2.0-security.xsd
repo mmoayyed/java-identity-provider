@@ -22,7 +22,7 @@
     <complexType name="X509Filesystem">
         <annotation>
             <documentation>
-                Allows credential compents to be specified by filesystem path. Keys, Certificates, and CRLs may be
+                Allows credential components to be specified by filesystem path. Keys, Certificates, and CRLs may be
                 PKCS#12, DER, or PEM encoded and may be encrypted or not.
             </documentation>
         </annotation>
@@ -111,7 +111,7 @@
             <annotation>
                 <documentation>
                     Usage type for this credential. Acceptable values are "Encryption" or "Signing". If no usage type is
-                    given components may chose to use the credential for either encryption of signing operations.
+                    given components may choose to use the credential for either encryption or signing operations.
                 </documentation>
             </annotation>
         </attribute>
@@ -163,7 +163,7 @@
     <complexType name="PKIXX509Credential">
         <annotation>
             <documentation>
-                Trust engine used to validate an X509 credentials against PKIX information from metadata.
+                Trust engine used to validate an X509 credential against PKIX information from metadata.
             </documentation>
         </annotation>
         <complexContent>
@@ -232,7 +232,7 @@
     <complexType name="SecurityPolicyType">
         <annotation>
             <documentation>
-                Security policies define a set of rules that are evaluated against incomming messages to
+                Security policies define a set of rules that are evaluated against incoming messages to
                 determine whether the messages should be processed.
             </documentation>
         </annotation>
@@ -253,7 +253,7 @@
     <complexType name="MandatoryMessageAuthentication">
         <annotation>
             <documentation>
-                A security rule that requires that an incoming message by authenticated.
+                A security rule that requires that an incoming message be authenticated.
             </documentation>
         </annotation>
         <complexContent>

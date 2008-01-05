@@ -10,7 +10,7 @@
     <complexType name="Transient">
         <annotation>
             <documentation>
-                A princpal connector that returns the SAML name identifier valueas the principal name.
+                A princpal connector that returns the SAML name identifier value as the principal name.
             </documentation>
         </annotation>
         <complexContent>
@@ -29,7 +29,7 @@
     <complexType name="Direct">
         <annotation>
             <documentation>
-                A princpal connector that returns the SAML name identifier valueas the principal name.
+                A princpal connector that returns the SAML name identifier value as the principal name.
             </documentation>
         </annotation>
         <complexContent>

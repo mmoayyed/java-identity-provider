@@ -94,7 +94,7 @@
                     <element ref="dc:ContainerManagedConnection">
                         <annotation>
                             <documentation>
-                                A connection, or pool of connections, to the database managed the application
+                                A connection, or pool of connections, to the database managed by the application
                                 container.
                             </documentation>
                         </annotation>
@@ -102,7 +102,7 @@
                     <element ref="dc:ApplicationManagedConnection">
                         <annotation>
                             <documentation>
-                                A connection, or pool of connections, to the database managed the data connector.
+                                A connection, or pool of connections, to the database managed by the data connector.
                             </documentation>
                         </annotation>
                     </element>
@@ -146,7 +146,7 @@
                         <element ref="dc:ContainerManagedConnection">
                             <annotation>
                                 <documentation>
-                                    A connection, or pool of connections, to the database managed the application
+                                    A connection, or pool of connections, to the database managed by the application
                                     container.
                                 </documentation>
                             </annotation>
@@ -154,7 +154,7 @@
                         <element ref="dc:ApplicationManagedConnection">
                             <annotation>
                                 <documentation>
-                                    A connection, or pool of connections, to the database managed the data connector.
+                                    A connection, or pool of connections, to the database managed by the data connector.
                                 </documentation>
                             </annotation>
                         </element>
@@ -162,7 +162,7 @@
                     <element name="QueryTemplate" type="string">
                         <annotation>
                             <documentation>
-                                A template that will be used to create SQL query used to pull information from the
+                                A template that will be used to create the SQL query thats pulls information from the
                                 database.
                             </documentation>
                         </annotation>
@@ -197,7 +197,7 @@
                 <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
                     <annotation>
                         <documentation>
-                            Name of the template engine defined within the applicaiton.
+                            Name of the template engine defined within the application.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -217,7 +217,7 @@
             <element name="JNDIConnectionProperty" type="dc:PropertyType" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
-                        A property used when contrusting a JNDI initial context which in turn is used to lookup the
+                        A property used when constructing a JNDI initial context which in turn is used to lookup the
                         database DataSource.
                     </documentation>
                 </annotation>
@@ -266,21 +266,21 @@
         <attribute name="poolAcquireIncrement" type="positiveInteger" default="3">
             <annotation>
                 <documentation>
-                    The number of new connection that will be created when the pool is exhausted.
+                    The number of new connections that will be created when the pool is exhausted.
                 </documentation>
             </annotation>
         </attribute>
         <attribute name="poolAcquireRetryAttempts" type="positiveInteger" default="36">
             <annotation>
                 <documentation>
-                    The number of times the pool will try to get establish a connection to a database.
+                    The number of times the pool will try to establish a connection to a database.
                 </documentation>
             </annotation>
         </attribute>
         <attribute name="poolAcquireRetryDelay" type="positiveInteger" default="5000">
             <annotation>
                 <documentation>
-                    The ammount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
+                    The amount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
                     after it has failed.
                 </documentation>
             </annotation>
@@ -289,7 +289,7 @@
             <annotation>
                 <documentation>
                     A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new
-                    connection can not be established after the accquire retry attempts is reached.
+                    connection can not be established after the acquire retry attempts is reached.
                 </documentation>
             </annotation>
         </attribute>
@@ -422,7 +422,7 @@
                     <element name="StartTLSAuthenticationCredential" type="sec:X509Credential" minOccurs="0">
                         <annotation>
                             <documentation>
-                                The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
+                                The X.509 client authentication information to use when connecting to the directory over LDAPS or startTLS.
                             </documentation>
                         </annotation>
                     </element>
@@ -436,7 +436,7 @@
                 </attribute>
                 <attribute name="principal" type="string">
                     <annotation>
-                        <documentation>The DN for the principal connecting the LDAP directory.</documentation>
+                        <documentation>The DN for the principal connecting to the LDAP directory.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="principalCredential" type="string">
@@ -508,7 +508,7 @@
                 <attribute name="mergeResults" type="boolean" default="false">
                     <annotation>
                         <documentation>
-                            A boolean flag inidicating that if multiple results are returned they should be merged into
+                            A boolean flag indicating that if multiple results are returned they should be merged into
                             a single result that contains the combined attributes and values of all the results. If more
                             than one result is returned and this is set to false and exception will be thrown.
                         </documentation>
@@ -517,7 +517,7 @@
                 <attribute name="noResultIsError" type="boolean" default="false">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating whether a query returing no results should be considered error. If
+                            A boolean flag indicating whether a query returning no results should be considered an error. If
                             an error is raised and a failover dependency is defined for this connector the failover will
                             be invoked.
                         </documentation>
@@ -525,7 +525,7 @@
                 </attribute>
                 <attribute name="templateEngine" type="string" fixed="shibboleth.TemplateEngine">
                     <annotation>
-                        <documentation>Name of the template engine defined within the applicaiton.</documentation>
+                        <documentation>Name of the template engine defined within the application.</documentation>
                     </annotation>
                 </attribute>
             </extension>

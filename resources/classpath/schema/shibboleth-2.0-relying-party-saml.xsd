@@ -212,7 +212,7 @@
                         <documentation>
                             A boolean flag indicating whether issued assertions should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
-                            on the relying party configuration than signing will not occur regardless of this setting.
+                            on the relying party configuration then signing will not occur regardless of this setting.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -221,7 +221,7 @@
                         <documentation>
                             A boolean flag indicating whether protocol requests should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
-                            on the relying party configuration than signing will not occur regardless of this setting.
+                            on the relying party configuration then signing will not occur regardless of this setting.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -230,7 +230,7 @@
                         <documentation>
                             A boolean flag indicating whether protocol responses should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
-                            on the relying party configuration than signing will not occur regardless of this setting.
+                            on the relying party configuration then signing will not occur regardless of this setting.
                         </documentation>
                     </annotation>
                 </attribute>
