@@ -18,9 +18,11 @@ package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
 import java.util.List;
 
+import org.opensaml.Configuration;
+import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeValue;
-import org.opensaml.saml2.core.impl.AttributeBuilder;
 import org.opensaml.xml.XMLObject;
+import org.opensaml.xml.XMLObjectBuilder;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.opensaml.xml.util.Base64;
@@ -28,65 +30,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
 
 /**
- * Implementation of SAML 2.0 attribute encoder.
- *  * This attribute encoder only operates of {@link BaseAttribute}s with value of type <code>byte[]</code>.
+ * Implementation of SAML 2.0 attribute encoder. * This attribute encoder only operates of {@link BaseAttribute}s with
+ * value of type <code>byte[]</code>.
  */
-public class SAML2Base64AttributeEncoder extends AbstractAttributeEncoder<org.opensaml.saml2.core.Attribute> implements
-        SAML2AttributeEncoder {
-
-    /** Attribute factory. */
-    private static AttributeBuilder attributeBuilder;
-
-    /** XSString factory. */
-    private static XSStringBuilder stringBuilder;
+public class SAML2Base64AttributeEncoder extends AbstractSAML2AttributeEncoder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(SAML2Base64AttributeEncoder.class);
 
-    /** Format of attribute. */
-    private String format;
-
-    /** Friendly name of attribute. */
-    private String friendlyName;
+    /** XSString factory. */
+    private final XMLObjectBuilder<XSString> stringBuilder;
 
     /** Constructor. */
     public SAML2Base64AttributeEncoder() {
-        attributeBuilder = new AttributeBuilder();
-        stringBuilder = new XSStringBuilder();
-
+        super();
+        stringBuilder = (XSStringBuilder) Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
     }
 
     /** {@inheritDoc} */
-    public String getNameFormat() {
-        return format;
-    }
-
-    /** {@inheritDoc} */
-    public String getFriendlyName() {
-        return friendlyName;
-    }
-
-    /** {@inheritDoc} */
-    public void setNameFormat(String newFormat) {
-        format = newFormat;
-    }
-
-    /** {@inheritDoc} */
-    public void setFriendlyName(String name) {
-        friendlyName = name;
-    }
-
-    /** {@inheritDoc} */
-    public org.opensaml.saml2.core.Attribute encode(BaseAttribute attribute) {
-        org.opensaml.saml2.core.Attribute samlAttribute;
-        samlAttribute = attributeBuilder.buildObject();
-
-        samlAttribute.setName(getAttributeName());
-        samlAttribute.setNameFormat(getNameFormat());
-        samlAttribute.setFriendlyName(getFriendlyName());
+    public Attribute encode(BaseAttribute attribute) {
+        Attribute samlAttribute = attributeBuilder.buildObject();
+        populateAttribute(samlAttribute);
 
         byte[] attributeValue;
         XSString samlAttributeValue;

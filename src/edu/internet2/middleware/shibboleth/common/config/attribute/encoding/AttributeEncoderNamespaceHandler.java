@@ -37,6 +37,9 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
         registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML1ScopedStringAttributeEncoderBeanDefinitionParser());
 
+        registerBeanDefinitionParser(SAML1NameIdentifierAttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML1NameIdentifierAttributeEncoderBeanDefinitionParser());
+
         registerBeanDefinitionParser(SAML1StringNameIdentifierEncoderBeanDefinitionParser.SCHEMA_TYPE,
                 new SAML1StringNameIdentifierEncoderBeanDefinitionParser());
 
@@ -49,9 +52,11 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
         registerBeanDefinitionParser(SAML2Base64AttributeEncoderBeanDefinitionParser.TYPE_NAME,
                 new SAML2Base64AttributeEncoderBeanDefinitionParser());
 
+        registerBeanDefinitionParser(SAML2NameIDAttributeEncoderBeanDefinitionParser.TYPE_NAME,
+                new SAML2NameIDAttributeEncoderBeanDefinitionParser());
+
         registerBeanDefinitionParser(SAML2StringNameIDEncoderBeanDefinitionParser.SCHEMA_TYPE,
                 new SAML2StringNameIDEncoderBeanDefinitionParser());
 
     }
-
 }

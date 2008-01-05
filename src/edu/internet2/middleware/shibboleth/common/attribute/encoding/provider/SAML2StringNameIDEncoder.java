@@ -23,13 +23,13 @@ import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2NameIDAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2NameIDEncoder;
 
 /**
  * An attribute encoder that takes the first value of an attribute and creates a {@link NameID} of it. Attribute values
  * are turned into the values for the NameID by invoking the values {@link Object#toString()} method.
  */
-public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> implements SAML2NameIDAttributeEncoder {
+public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> implements SAML2NameIDEncoder {
 
     /** NameID builder object. */
     private SAMLObjectBuilder<NameID> nameIdBuilder;

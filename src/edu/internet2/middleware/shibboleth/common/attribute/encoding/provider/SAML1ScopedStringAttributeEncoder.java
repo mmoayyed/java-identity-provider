@@ -18,8 +18,10 @@ package edu.internet2.middleware.shibboleth.common.attribute.encoding.provider;
 
 import java.util.List;
 
+import org.opensaml.Configuration;
+import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.saml1.core.Attribute;
 import org.opensaml.saml1.core.AttributeValue;
-import org.opensaml.saml1.core.impl.AttributeBuilder;
 import org.opensaml.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +36,11 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML1Attrib
 public class SAML1ScopedStringAttributeEncoder extends
         AbstractScopedAttributeEncoder<org.opensaml.saml1.core.Attribute> implements SAML1AttributeEncoder {
 
-    /** Attribute factory. */
-    private static AttributeBuilder attributeBuilder;
-
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(SAML1ScopedStringAttributeEncoder.class);
+
+    /** Attribute factory. */
+    private final SAMLObjectBuilder<Attribute> attributeBuilder;
 
     /** Namespace of attribute. */
     private String namespace;
@@ -46,7 +48,8 @@ public class SAML1ScopedStringAttributeEncoder extends
     /** Constructor. */
     public SAML1ScopedStringAttributeEncoder() {
         super();
-        attributeBuilder = new AttributeBuilder();
+        attributeBuilder = (SAMLObjectBuilder<Attribute>) Configuration.getBuilderFactory().getBuilder(
+                Attribute.DEFAULT_ELEMENT_NAME);
     }
 
     /** {@inheritDoc} */
@@ -60,14 +63,10 @@ public class SAML1ScopedStringAttributeEncoder extends
     }
 
     /** {@inheritDoc} */
-    public org.opensaml.saml1.core.Attribute encode(BaseAttribute attribute) throws AttributeEncodingException {
-
-        org.opensaml.saml1.core.Attribute samlAttribute;
-        samlAttribute = attributeBuilder.buildObject();
-
+    public Attribute encode(BaseAttribute attribute) throws AttributeEncodingException {
+        Attribute samlAttribute = attributeBuilder.buildObject();
         samlAttribute.setAttributeName(getAttributeName());
         samlAttribute.setAttributeNamespace(getNamespace());
-
         samlAttribute.getAttributeValues()
                 .addAll(encodeAttributeValues(AttributeValue.DEFAULT_ELEMENT_NAME, attribute));
 

@@ -21,7 +21,7 @@ import org.opensaml.saml2.core.NameID;
 /**
  * SAML 2.0 NameID attribute encoder.
  */
-public interface SAML2NameIDAttributeEncoder extends XMLObjectAttributeEncoder<NameID> {
+public interface SAML2NameIDEncoder extends XMLObjectAttributeEncoder<NameID> {
 
     /**
      * Gets the name format URI for the NameID.

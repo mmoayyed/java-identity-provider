@@ -18,14 +18,14 @@ package edu.internet2.middleware.shibboleth.common.xmlobject.impl;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.xml.ElementProxy;
+import org.opensaml.xml.schema.impl.XSAnyImpl;
 
 import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValue;
 
 /**
  * Concrete implementation of {@link org.opensaml.xml.schema.XSString}.
  */
-public class ShibbolethScopedValueImpl extends ElementProxy implements ShibbolethScopedValue {
+public class ShibbolethScopedValueImpl extends XSAnyImpl implements ShibbolethScopedValue {
 
     /** Scope of this string element. */
     private String scope;

@@ -25,7 +25,6 @@ import org.opensaml.Configuration;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.XMLObjectBuilder;
 import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
@@ -37,6 +36,14 @@ import edu.internet2.middleware.shibboleth.common.xmlobject.ShibbolethScopedValu
  * @param <EncodedType> the type of object created by encoding the attribute
  */
 public abstract class AbstractScopedAttributeEncoder<EncodedType> extends AbstractAttributeEncoder<EncodedType> {
+
+    /** Builder of Shibboleth scoped value XMLObjects. */
+    private final XMLObjectBuilder<ShibbolethScopedValue> shibScopeValueBuilder = Configuration.getBuilderFactory()
+            .getBuilder(ShibbolethScopedValue.TYPE_NAME);
+
+    /** Builder of string XMLObjects. */
+    private final XMLObjectBuilder<XSString> stringValueBuilder = Configuration.getBuilderFactory().getBuilder(
+            XSString.TYPE_NAME);
 
     /** Type of scoping to use. */
     private String scopeType;
@@ -114,16 +121,14 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
         ArrayList<XMLObject> encodedValues = new ArrayList<XMLObject>();
 
         if ("attribute".equals(getScopeType())) {
-            XMLObjectBuilder<ShibbolethScopedValue> valueBuilder = Configuration.getBuilderFactory().getBuilder(
-                    ShibbolethScopedValue.TYPE_NAME);
             ShibbolethScopedValue scopedValue;
-            
+
             for (ScopedAttributeValue attributeValue : attribute.getValues()) {
                 if (attributeValue == null) {
                     continue;
                 }
 
-                scopedValue = valueBuilder.buildObject(objectName);
+                scopedValue = shibScopeValueBuilder.buildObject(objectName);
                 scopedValue.setScopeAttributeName(getScopeAttribute());
                 scopedValue.setScope(attributeValue.getScope());
                 scopedValue.setValue(attributeValue.getValue());
@@ -132,15 +137,14 @@ public abstract class AbstractScopedAttributeEncoder<EncodedType> extends Abstra
             }
 
         } else if ("inline".equals(getScopeType())) {
-            XSStringBuilder valueBuilder = new XSStringBuilder();
             XSString scopedValue;
-            
+
             for (ScopedAttributeValue attributeValue : attribute.getValues()) {
                 if (attributeValue == null) {
                     continue;
                 }
 
-                scopedValue = valueBuilder.buildObject(objectName, XSString.TYPE_NAME);
+                scopedValue = stringValueBuilder.buildObject(objectName, XSString.TYPE_NAME);
                 scopedValue.setValue(attributeValue.getValue() + getScopeDelimiter() + attributeValue.getScope());
 
                 encodedValues.add(scopedValue);

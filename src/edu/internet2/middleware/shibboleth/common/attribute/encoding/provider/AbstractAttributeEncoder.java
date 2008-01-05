@@ -28,7 +28,6 @@ public abstract class AbstractAttributeEncoder<EncodedType> implements Attribute
     /** Name of the attribute. */
     private String attributeName;
 
-    
     /** {@inheritDoc} */
     public String getAttributeName() {
         return attributeName;
