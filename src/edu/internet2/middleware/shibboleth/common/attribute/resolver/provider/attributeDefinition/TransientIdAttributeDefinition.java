@@ -31,17 +31,21 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 
 /**
- * An attribute definition that generates random identifiers useful for transient subject ids.
+ * An attribute definition that generates random identifiers useful for transient subject IDs.
+ * 
+ * Information about the created IDs are stored within a provided {@link StorageService} in the form of {@link IdEntry}s.
+ * Each entry is mapped under two keys; the generated ID and a key derived from the tuple (outbound message issuer,
+ * inbound message issuer, principal name).
  */
 public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
     /** Store used to map tokens to principals. */
     private StorageService<String, IdEntry> idStore;
 
-    /** Storage parition in which IDs are stored. */
+    /** Storage partition in which IDs are stored. */
     private String partition;
 
-    /** Generater of randome, hex-encdoded, tokens. */
+    /** Generator of random, hex-encoded, tokens. */
     private IdentifierGenerator idGenerator;
 
     /** Size, in bytes, of the token. */
@@ -55,8 +59,8 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param store store used to map tokens to principals
      * 
-     * @throws NoSuchAlgorithmException thrown if the SHA1PRNG, used as the default random number generation algo, is
-     *             not supported
+     * @throws NoSuchAlgorithmException thrown if the SHA1PRNG, used as the default random number generation algorithm,
+     *             is not supported
      */
     public TransientIdAttributeDefinition(StorageService<String, IdEntry> store) throws NoSuchAlgorithmException {
         idGenerator = new SecureRandomIdentifierGenerator();
@@ -71,15 +75,24 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
             throws AttributeResolutionException {
 
         SAMLProfileRequestContext requestContext = resolutionContext.getAttributeRequestContext();
-        String token = idGenerator.generateIdentifier(idSize);
 
-        IdEntry tokenEntry = new IdEntry(idLifetime, requestContext.getInboundMessageIssuer(), requestContext
-                .getPrincipalName(), token);
-        idStore.put(partition, token, tokenEntry);
+        StringBuilder principalTokenIdBuilder = new StringBuilder();
+        principalTokenIdBuilder.append(requestContext.getOutboundMessageIssuer()).append("!").append(
+                requestContext.getInboundMessageIssuer()).append("!").append(requestContext.getPrincipalName());
+        String principalTokenId = principalTokenIdBuilder.toString();
+
+        IdEntry tokenEntry = idStore.get(partition, principalTokenId);
+        if (tokenEntry == null || tokenEntry.isExpired()) {
+            String token = idGenerator.generateIdentifier(idSize);
+            tokenEntry = new IdEntry(idLifetime, requestContext.getInboundMessageIssuer(), requestContext
+                    .getPrincipalName(), token);
+            idStore.put(partition, token, tokenEntry);
+            idStore.put(partition, principalTokenId, tokenEntry);
+        }
 
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getId());
-        attribute.getValues().add(token);
+        attribute.getValues().add(tokenEntry.getId());
 
         return attribute;
     }
