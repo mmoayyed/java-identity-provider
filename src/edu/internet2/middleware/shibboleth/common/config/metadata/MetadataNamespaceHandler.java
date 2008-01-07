@@ -46,6 +46,9 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(MetadataFilterChainBeanDefinitionParser.TYPE_NAME,
                 new MetadataFilterChainBeanDefinitionParser());
 
+        registerBeanDefinitionParser(SchemaValidationFilterBeanDefinitionParser.TYPE_NAME,
+                new SchemaValidationFilterBeanDefinitionParser());
+
         registerBeanDefinitionParser(SignatureValidationFilterBeanDefinitionParser.TYPE_NAME,
                 new SignatureValidationFilterBeanDefinitionParser());
 
