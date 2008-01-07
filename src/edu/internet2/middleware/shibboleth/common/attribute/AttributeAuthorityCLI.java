@@ -252,6 +252,11 @@ public class AttributeAuthorityCLI {
      * @param attributeStatement attribute statement to print
      */
     private static void printAttributeStatement(SAMLObject attributeStatement) {
+        if (attributeStatement == null) {
+            System.out.println("No attribute statement.");
+            return;
+        }
+        
         Marshaller statementMarshaller = Configuration.getMarshallerFactory().getMarshaller(attributeStatement);
 
         try {
