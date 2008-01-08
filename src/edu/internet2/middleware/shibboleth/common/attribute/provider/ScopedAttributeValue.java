@@ -61,9 +61,34 @@ public class ScopedAttributeValue {
     public String getScope() {
         return scope;
     }
-    
+
     /** {@inheritDoc} */
     public String toString() {
         return value;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        int hash = 1;
+        hash = hash * 31 + value.hashCode();
+        hash = hash * 31 + scope.hashCode();
+        
+        return hash;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if(this == obj){
+            return true;
+        }
+        
+        if (!(obj instanceof ScopedAttributeValue)) {
+            return false;
+        }
+
+        ScopedAttributeValue otherValue = (ScopedAttributeValue) obj;
+
+        return (DatatypeHelper.safeEquals(getValue(), otherValue.getValue()) && DatatypeHelper.safeEquals(getScope(),
+                otherValue.getScope()));
     }
 }

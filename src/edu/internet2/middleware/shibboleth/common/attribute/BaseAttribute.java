@@ -32,11 +32,15 @@ public abstract class BaseAttribute<ValueType> {
     /** Human intelligible attribute name. */
     private String displayName;
     
-    /** Human readbale description of attribute. */
+    /** Human readable description of attribute. */
     private String displayDescription;
     
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        
         if(obj instanceof BaseAttribute){
             return obj.hashCode() == hashCode();
         }
