@@ -42,7 +42,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncodingException;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML1AttributeEncoder;
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1StringAttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
@@ -112,12 +111,14 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
             throws AttributeEncodingException {
 
         Collection<Attribute> encodedAttributes = encodeAttributes(attributes);
-
-        AttributeStatement statement = statementBuilder.buildObject();
-        if (!encodedAttributes.isEmpty()) {
+        if (encodedAttributes != null && !encodedAttributes.isEmpty()) {
+            AttributeStatement statement = statementBuilder.buildObject();
             statement.getAttributes().addAll(encodedAttributes);
+            return statement;
+        }else{
+            log.debug("No attributes were encoded, no attribute statement created.");
+            return null;
         }
-        return statement;
     }
 
     /** {@inheritDoc} */
