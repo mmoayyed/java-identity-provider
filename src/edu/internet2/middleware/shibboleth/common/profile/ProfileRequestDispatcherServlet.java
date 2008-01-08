@@ -65,7 +65,7 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
         }
 
         HTTPInTransport profileReq = new HttpServletRequestAdapter(httpRequest);
-        HTTPOutTransport profileResp = new HttpServletResponseAdapter(httpResponse);
+        HTTPOutTransport profileResp = new HttpServletResponseAdapter(httpResponse, httpRequest.isSecure());
 
         AbstractErrorHandler errorHandler = getHandlerManager().getErrorHandler();
         ProfileHandler handler = getHandlerManager().getProfileHandler(httpRequest);
