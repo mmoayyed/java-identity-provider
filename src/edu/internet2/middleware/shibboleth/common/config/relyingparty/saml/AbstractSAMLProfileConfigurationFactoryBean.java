@@ -23,6 +23,7 @@ import org.opensaml.xml.security.credential.Credential;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.CryptoOperationRequirementLevel;
 
 /**
  * Base Spring factory bean for creating SAML profile configurations.
@@ -39,13 +40,13 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
     private byte[] outboundArtifactType;
 
     /** Whether assertions should be signed. */
-    private boolean signAssertions;
+    private CryptoOperationRequirementLevel signAssertions;
 
     /** Whether to sign protocol requests. */
-    private boolean signRequests;
+    private CryptoOperationRequirementLevel signRequests;
 
     /** Whether to sign protocol responses. */
-    private boolean signResponses;
+    private CryptoOperationRequirementLevel signResponses;
 
     /** Credential used to sign assertions. */
     private Credential signingCredential;
@@ -95,7 +96,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @return whether assertions should be signed
      */
-    public boolean getSignAssertions() {
+    public CryptoOperationRequirementLevel getSignAssertions() {
         return signAssertions;
     }
 
@@ -113,7 +114,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @return whether to sign protocol requests
      */
-    public boolean getSignRequests() {
+    public CryptoOperationRequirementLevel getSignRequests() {
         return signRequests;
     }
 
@@ -122,7 +123,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @return whether to sign protocol responses
      */
-    public boolean getSignResposnes() {
+    public CryptoOperationRequirementLevel getSignResposnes() {
         return signResponses;
     }
 
@@ -167,7 +168,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @param sign whether assertions should be signed
      */
-    public void setSignAssertions(boolean sign) {
+    public void setSignAssertions(CryptoOperationRequirementLevel sign) {
         signAssertions = sign;
     }
 
@@ -185,7 +186,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @param sign whether to sign protocol requests
      */
-    public void setSignRequests(boolean sign) {
+    public void setSignRequests(CryptoOperationRequirementLevel sign) {
         signRequests = sign;
     }
 
@@ -194,7 +195,7 @@ public abstract class AbstractSAMLProfileConfigurationFactoryBean extends Abstra
      * 
      * @param sign whether to sign protocol responses
      */
-    public void setSignResponses(boolean sign) {
+    public void setSignResponses(CryptoOperationRequirementLevel sign) {
         signResponses = sign;
     }
     

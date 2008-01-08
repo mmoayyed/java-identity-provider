@@ -81,12 +81,12 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="encryptNameIds" type="boolean" default="false">
+                <attribute name="encryptNameIds" type="samlrp:cryptoReqType" default="conditional">
                     <annotation>
                         <documentation>A boolean flag indicating whether NameIDs should be encrypted.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="encryptAssertions" type="boolean" default="true">
+                <attribute name="encryptAssertions" type="samlrp:cryptoReqType" default="conditional">
                     <annotation>
                         <documentation>A boolean flag indicating whether assertions should be encrypted.</documentation>
                     </annotation>
@@ -207,7 +207,7 @@
                         <documentation>ID of the credential to use to sign SAML assertions.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signAssertions" type="boolean" default="false">
+                <attribute name="signAssertions" type="samlrp:cryptoReqType" default="never">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether issued assertions should be signed. If no signing
@@ -216,7 +216,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signRequests" type="boolean" default="true">
+                <attribute name="signRequests" type="samlrp:cryptoReqType" default="conditional">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether protocol requests should be signed. If no signing
@@ -225,7 +225,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="signResponses" type="boolean" default="true">
+                <attribute name="signResponses" type="samlrp:cryptoReqType" default="conditional">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether protocol responses should be signed. If no signing
@@ -245,4 +245,14 @@
         </complexContent>
     </complexType>
 
+    <simpleType name="cryptoReqType">
+        <annotation>
+            <documentation>Requirement level for crypto functions like signing and encryption</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="always" />
+            <enumeration value="conditional" />
+            <enumeration value="never" />
+        </restriction>
+    </simpleType>
 </schema>

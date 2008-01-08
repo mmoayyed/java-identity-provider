@@ -21,6 +21,7 @@ import java.util.HashSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.CryptoOperationRequirementLevel;
 
 /**
  * SAML 2 communication profile configuration settings.
@@ -29,39 +30,39 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
 
     /** Attribute authority to use. */
     private SAML2AttributeAuthority attributeAuthority;
-    
+
     /** Whether to encrypt NameIDs. */
-    private boolean encryptNameID;
+    private CryptoOperationRequirementLevel encryptNameID;
 
     /** Whether to encrypt Assertions. */
-    private boolean encryptAssertion;
+    private CryptoOperationRequirementLevel encryptAssertion;
 
     /** Maximum proxy count for an assertion. */
     private int proxyCount;
 
     /** Audiences for the proxy. */
     private Collection<String> proxyAudiences;
-    
+
     /** Constructor. */
-    protected AbstractSAML2ProfileConfiguration(){
+    protected AbstractSAML2ProfileConfiguration() {
         proxyAudiences = new HashSet<String>();
     }
-    
+
     /**
      * Gets the Attribute authority to use.
      * 
      * @return Attribute authority to use
      */
-    public SAML2AttributeAuthority getAttributeAuthority(){
+    public SAML2AttributeAuthority getAttributeAuthority() {
         return attributeAuthority;
     }
-    
+
     /**
      * Sets the Attribute authority to use.
      * 
      * @param authority Attribute authority to use
      */
-    public void setAttributeAuthority(SAML2AttributeAuthority authority){
+    public void setAttributeAuthority(SAML2AttributeAuthority authority) {
         attributeAuthority = authority;
     }
 
@@ -70,7 +71,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @return whether NameIDs should be encrypted
      */
-    public boolean getEncryptNameID() {
+    public CryptoOperationRequirementLevel getEncryptNameID() {
         return encryptNameID;
     }
 
@@ -79,7 +80,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @param encrypt whether NameIDs should be encrypted
      */
-    public void setEncryptNameID(boolean encrypt) {
+    public void setEncryptNameID(CryptoOperationRequirementLevel encrypt) {
         encryptNameID = encrypt;
     }
 
@@ -88,7 +89,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @return whether assertions should be encrypted
      */
-    public boolean getEncryptAssertion() {
+    public CryptoOperationRequirementLevel getEncryptAssertion() {
         return encryptAssertion;
     }
 
@@ -97,7 +98,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @param encrypt whether assertions should be encrypted
      */
-    public void setEncryptAssertion(boolean encrypt) {
+    public void setEncryptAssertion(CryptoOperationRequirementLevel encrypt) {
         encryptAssertion = encrypt;
     }
 

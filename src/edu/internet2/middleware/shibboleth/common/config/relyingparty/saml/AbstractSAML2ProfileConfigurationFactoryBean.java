@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 import java.util.List;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.CryptoOperationRequirementLevel;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AbstractSAML2ProfileConfiguration;
 
 /**
@@ -30,10 +31,10 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
     private SAML2AttributeAuthority attributeAuthority;
     
     /** Whether to encrypt NameIDs. */
-    private boolean encryptNameIds;
+    private CryptoOperationRequirementLevel encryptNameIds;
 
     /** Whether to encryptAssertions. */
-    private boolean encryptAssertions;
+    private CryptoOperationRequirementLevel encryptAssertions;
 
     /** Maximum number of times an assertion may be proxied. */
     private int assertionProxyCount;
@@ -82,7 +83,7 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
      * 
      * @return whether to encryption assertions
      */
-    public boolean isEncryptAssertions() {
+    public CryptoOperationRequirementLevel isEncryptAssertions() {
         return encryptAssertions;
     }
 
@@ -91,7 +92,7 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
      * 
      * @param encrypt whether to encryption assertions
      */
-    public void setEncryptAssertions(boolean encrypt) {
+    public void setEncryptAssertions(CryptoOperationRequirementLevel encrypt) {
         encryptAssertions = encrypt;
     }
 
@@ -100,7 +101,7 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
      * 
      * @return whether to encrypt NameIDs
      */
-    public boolean isEncryptNameIds() {
+    public CryptoOperationRequirementLevel isEncryptNameIds() {
         return encryptNameIds;
     }
 
@@ -109,7 +110,7 @@ public abstract class AbstractSAML2ProfileConfigurationFactoryBean extends Abstr
      * 
      * @param encrypt whether to encrypt NameIDs
      */
-    public void setEncryptNameIds(boolean encrypt) {
+    public void setEncryptNameIds(CryptoOperationRequirementLevel encrypt) {
         encryptNameIds = encrypt;
     }
     

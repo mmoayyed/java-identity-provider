@@ -29,6 +29,8 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.CryptoOperationRequirementLevel;
+
 /**
  * Base Spring configuration parser for SAML profile configurations.
  */
@@ -64,20 +66,13 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             builder.addPropertyValue("outboundArtifactType", trimmedArtifactTypeBytes);
         }
 
-        if (element.hasAttributeNS(null, "signRequests")) {
-            builder.addPropertyValue("signRequests", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                    null, "signRequests")));
-        }
+        builder.addPropertyValue("signRequests", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
+                "signRequests")));
 
-        if (element.hasAttributeNS(null, "signResponses")) {
-            builder.addPropertyValue("signResponses", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                    null, "signResponses")));
-        }
-
-        if (element.hasAttributeNS(null, "signAssertions")) {
-            builder.addPropertyValue("signAssertions", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                    null, "signAssertions")));
-        }
+        builder.addPropertyValue("signResponses", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
+                "signResponses")));
+        builder.addPropertyValue("signAssertions", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
+                "signAssertions")));
 
         String secPolRef = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "securityPolicyRef"));
         if (secPolRef != null) {

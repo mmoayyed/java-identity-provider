@@ -28,7 +28,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfigurat
  * Profile settings common to SAML 1 and SAML 2.
  */
 public abstract class AbstractSAMLProfileConfiguration implements ProfileConfiguration {
-
+    
     /** Audiences for the assertion. */
     private Collection<String> assertionAudiences;
 
@@ -42,16 +42,16 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
     private SecurityPolicy profileSecurityPolicy;
 
     /** Whether to sign assertions. */
-    private boolean signAssertions;
+    private CryptoOperationRequirementLevel signAssertions;
 
     /** Assertion signing credential. */
     private Credential signingCredential;
 
     /** Whether to sign protocol requests. */
-    private boolean signRequests;
+    private CryptoOperationRequirementLevel signRequests;
 
     /** Whether to sign protocol responses. */
-    private boolean signResponses;
+    private CryptoOperationRequirementLevel signResponses;
 
     /** Constructor. */
     protected AbstractSAMLProfileConfiguration() {
@@ -97,7 +97,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @return whether assertions should be signed
      */
-    public boolean getSignAssertions() {
+    public CryptoOperationRequirementLevel getSignAssertions() {
         return signAssertions;
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @return whether to sign protocol requests
      */
-    public boolean getSignRequests() {
+    public CryptoOperationRequirementLevel getSignRequests() {
         return signRequests;
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @return whether to sign protocol responses
      */
-    public boolean getSignResponses() {
+    public CryptoOperationRequirementLevel getSignResponses() {
         return signResponses;
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @param sign whether assertions should be signed
      */
-    public void setSignAssertions(boolean sign) {
+    public void setSignAssertions(CryptoOperationRequirementLevel sign) {
         signAssertions = sign;
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @param sign whether to sign protocol requests
      */
-    public void setSignRequests(boolean sign) {
+    public void setSignRequests(CryptoOperationRequirementLevel sign) {
         signRequests = sign;
     }
 
@@ -200,7 +200,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
      * 
      * @param sign whether to sign protocol responses
      */
-    public void setSignResponses(boolean sign) {
+    public void setSignResponses(CryptoOperationRequirementLevel sign) {
         signResponses = sign;
     }
 }

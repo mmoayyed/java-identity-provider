@@ -25,6 +25,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.CryptoOperationRequirementLevel;
+
 /**
  * Base Spring configuration parser for SAML 2 profile configurations.
  */
@@ -49,15 +51,11 @@ public abstract class AbstractSAML2ProfileConfigurationBeanDefinitionParser exte
         builder.addPropertyReference("attributeAuthority", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
                 null, "attributeAuthority")));
 
-        if (element.hasAttributeNS(null, "encryptNameIds")) {
-            builder.addPropertyValue("encryptNameIds", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
-                    null, "encryptNameIds")));
-        }
+        builder.addPropertyValue("encryptNameIds", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
+                "encryptNameIds")));
 
-        if (element.hasAttributeNS(null, "encryptAssertions")) {
-            builder.addPropertyValue("encryptAssertions", XMLHelper.getAttributeValueAsBoolean(element
-                    .getAttributeNodeNS(null, "encryptAssertions")));
-        }
+        builder.addPropertyValue("encryptAssertions", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(
+                null, "encryptAssertions")));
 
         builder.addPropertyValue("assertionProxyCount", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
                 .getAttributeNS(null, "assertionProxyCount"))));
