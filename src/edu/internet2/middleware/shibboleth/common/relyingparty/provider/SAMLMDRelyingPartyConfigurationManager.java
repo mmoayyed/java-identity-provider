@@ -178,7 +178,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
         rpConfigs.clear();
         List<RelyingPartyConfiguration> newRpConfigs = rpGroup.getRelyingParties();
-        if (rpConfigs != null) {
+        if (newRpConfigs != null) {
             for (RelyingPartyConfiguration newRpConfig : newRpConfigs) {
                 rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
                 log.debug("Registering configuration for relying party: {}", newRpConfig.getRelyingPartyId());
