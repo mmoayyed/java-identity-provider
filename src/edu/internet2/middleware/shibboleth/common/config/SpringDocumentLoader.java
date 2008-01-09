@@ -74,19 +74,19 @@ public class SpringDocumentLoader implements DocumentLoader {
 
         /** {@inheritDoc} */
         public void error(SAXParseException exception) throws SAXException {
-            log.error("Error parsing XML", exception);
+            log.trace("Error parsing XML", exception);
             throw exception;
         }
 
         /** {@inheritDoc} */
         public void fatalError(SAXParseException exception) throws SAXException {
-            log.error("Fatal XML parsing XML error", exception);
+            log.trace("Fatal XML parsing XML error", exception);
             throw exception;
         }
 
         /** {@inheritDoc} */
         public void warning(SAXParseException exception) throws SAXException {
-            log.warn("XML parsing warning", exception);
+            log.trace("XML parsing warning", exception);
             throw exception;
         }
     }
