@@ -199,7 +199,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
             }
             log.error("Configuration was not loaded for " + getId()
                     + " service, error creating components.  The root cause of this error was: "
-                    + rootCause.getMessage(), e);
+                    + rootCause.toString(), e);
             throw new ServiceException("Configuration was not loaded for " + getId()
                     + " service, error creating components.");
         }
