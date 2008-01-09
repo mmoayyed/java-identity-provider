@@ -24,7 +24,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.opensaml.util.resource.Resource;
-import org.opensaml.util.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
@@ -191,11 +190,6 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
             writeLock.unlock();
             setInitialized(true);
             log.info("{} service configuration loaded", getId());
-        } catch (ResourceException e) {
-            setInitialized(false);
-            log.error("Configuration was not loaded for " + getId() + " service, unable to load resource", e);
-            throw new ServiceException("Configuration was not loaded for " + getId()
-                    + " service, unable to load resource", e);
         } catch (Exception e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
             setInitialized(false);
