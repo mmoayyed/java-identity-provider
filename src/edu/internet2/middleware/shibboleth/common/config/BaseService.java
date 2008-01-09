@@ -193,9 +193,15 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
         } catch (Exception e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
             setInitialized(false);
-            log.error("Configuration was not loaded for " + getId() + " service, error creating components", e);
+            Throwable rootCause = e.getCause();
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause();
+            }
+            log.error("Configuration was not loaded for " + getId()
+                    + " service, error creating components.  The root cause of this error was: "
+                    + rootCause.getMessage(), e);
             throw new ServiceException("Configuration was not loaded for " + getId()
-                    + " service, error creating components", e);
+                    + " service, error creating components.");
         }
     }
 
