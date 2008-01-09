@@ -76,7 +76,12 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
             } catch (Throwable t) {
                 log.error("Encountered error processing request to " + httpRequest.getPathInfo()
                         + ", invoking error handler", t);
-                httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
+                if (t.getMessage() != null) {
+                    httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
+                } else {
+                    httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY,
+                            "Unknown. Please refer to the process log for the full error message");
+                }
             }
         } else {
             log.warn("No profile handler configured for request at path: {}", httpRequest.getPathInfo());
