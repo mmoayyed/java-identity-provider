@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.security.saml;
 import javax.xml.namespace.QName;
 
 import org.opensaml.common.binding.security.IssueInstantRule;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -27,7 +28,7 @@ import org.w3c.dom.Element;
  * Spring bean definition parser for issue instant rules.
  */
 public class IssueInstantRuleBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(SAMLSecurityNamespaceHandler.NAMESPACE, "IssueInstant");
 
@@ -45,5 +46,8 @@ public class IssueInstantRuleBeanDefinitionParser extends AbstractSingleBeanDefi
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         builder.addConstructorArg(element.getAttributeNS(null, "clockSkew"));
         builder.addConstructorArg(element.getAttributeNS(null, "expirationThreshold"));
+
+        builder.addPropertyValue("requiredRule", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
+                "required")));
     }
 }

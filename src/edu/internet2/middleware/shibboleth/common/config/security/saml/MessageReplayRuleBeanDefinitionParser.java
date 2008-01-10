@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.common.binding.security.MessageReplayRule;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -46,5 +47,8 @@ public class MessageReplayRuleBeanDefinitionParser extends AbstractSingleBeanDef
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         builder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
                 "replayCacheRef")));
+
+        builder.addPropertyValue("requiredRule", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
+                "required")));
     }
 }

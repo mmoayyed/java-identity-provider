@@ -106,6 +106,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="required" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether this rule is required to be evaluated.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -121,6 +128,13 @@
                 <attribute name="replayCacheRef" type="string" default="shibboleth.ReplayCache">
                     <annotation>
                         <documentation>Name of the replay cache to use.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="required" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether this rule is required to be evaluated.
+                        </documentation>
                     </annotation>
                 </attribute>
             </extension>

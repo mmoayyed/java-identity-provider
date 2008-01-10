@@ -12,7 +12,15 @@
             <documentation>SAML 2.0 artifact query communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType" />
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2ArtifactResolutionSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -21,7 +29,15 @@
             <documentation>SAML 2.0 attribute query communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType" />
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2AttributeQuerySecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -30,7 +46,15 @@
             <documentation>SAML 2.0 logout request communication profile configuration.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML2ProfileConfigurationType" />
+            <extension base="samlrp:SAML2ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2SLOSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -61,6 +85,13 @@
                         <documentation>
                             Boolean flag indicating whether an attribute statement should be included with the
                             authentication statement in the response sent back to the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML2SSOSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -112,7 +143,15 @@
             <documentation>SAML 1.0 and 1.1 artifact query communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML1ProfileConfigurationType" />
+            <extension base="samlrp:SAML1ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML1ArtifactResolutionSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -121,7 +160,15 @@
             <documentation>SAML 1.0 and 1.1 attribute query communication profile configurations.</documentation>
         </annotation>
         <complexContent>
-            <extension base="samlrp:SAML1ProfileConfigurationType" />
+            <extension base="samlrp:SAML1ProfileConfigurationType">
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.SAML1AttributeQuerySecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
@@ -152,6 +199,13 @@
                         <documentation>
                             Boolean flag indicating whether an attribute statement should be included with the
                             authentication statement in the response sent back to the relying party.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="securityPolicyRef" type="string" default="shibboleth.ShibbolethSSOSecurityPolicy">
+                    <annotation>
+                        <documentation>
+                            Reference, by ID, to the security policy to use for this profile.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -231,13 +285,6 @@
                             A boolean flag indicating whether protocol responses should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
                             on the relying party configuration then signing will not occur regardless of this setting.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="securityPolicyRef" type="string" default="shibboleth.DefaultSecurityPolicy">
-                    <annotation>
-                        <documentation>
-                            Reference, by ID, to the security policy to use for this profile.
                         </documentation>
                     </annotation>
                 </attribute>
