@@ -104,7 +104,7 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
                     values.add(o);
                 }
             } catch (AttributeResolutionException e) {
-                // TODO Auto-generated catch block
+                
             }
         }
     
@@ -135,7 +135,7 @@ public abstract class AbstractResolutionPlugIn<ResolvedType> implements Resoluti
                     }
                 }
             } catch (AttributeResolutionException e) {
-                // TODO Auto-generated catch block
+                
             }
     
         }

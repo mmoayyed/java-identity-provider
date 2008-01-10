@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.session;
 
-import java.net.InetAddress;
-
 /**
  * Session managers are responsible for creating, managing, and destroying Shibboleth sessions.
  * 
@@ -31,12 +29,11 @@ public interface SessionManager<SessionType extends Session> {
     /**
      * Creates a Shibboleth session.
      * 
-     * @param presenter the IP address of the presenter
      * @param principal the principal name of the user
      * 
      * @return a Shibboleth session
      */
-    public SessionType createSession(InetAddress presenter, String principal);
+    public SessionType createSession(String principal);
 
     /**
      * Gets the user's session based on session's ID.

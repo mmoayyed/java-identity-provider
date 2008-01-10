@@ -89,7 +89,6 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             if (valueCount == -1) {
                 valueCount = values.size();
             } else if (valueCount != values.size()) {
-                // TODO maybe allow this somehow in the future?
                 log.error("All attributes used in TemplateAttributeDefinition " + getId()
                         + " must have the same number of values.");
                 throw new AttributeResolutionException("All attributes used in TemplateAttributeDefinition " + getId()
