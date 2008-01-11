@@ -46,6 +46,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.TemplateEngine.CharacterEscapingStrategy;
 import edu.internet2.middleware.shibboleth.common.session.LogoutEvent;
 import edu.vt.middleware.ldap.Ldap;
 import edu.vt.middleware.ldap.LdapConfig;
@@ -133,6 +134,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /** Whether this data connector has been initialized. */
     private boolean initialized;
 
+    /** Filter value escaping strategy. */
+    private final LDAPValueEscapingStrategy escapingStrategy;
+
     /**
      * This creates a new ldap data connector with the supplied properties.
      * 
@@ -148,6 +152,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
         ldapConfig.useTls(startTls);
         poolMaxIdle = maxIdle;
         poolInitIdleCapacity = initIdleCapacity;
+        escapingStrategy = new LDAPValueEscapingStrategy();
     }
 
     /**
@@ -743,7 +748,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             throws AttributeResolutionException {
         log.debug("Begin resolve for {}", resolutionContext.getAttributeRequestContext().getPrincipalName());
 
-        String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDependencyIds());
+        String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDependencyIds(),
+                escapingStrategy);
         log.debug("Search filter: {}", searchFilter);
 
         // create Attribute objects to return
@@ -756,7 +762,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
                 log.debug("Returning attributes from cache");
             }
         }
-        
+
         // results not found in the cache
         if (attributes == null) {
             log.debug("Retrieving attributes from LDAP");
@@ -773,7 +779,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
                 log.debug("Stored results in the cache");
             }
         }
-        
+
         return attributes;
     }
 
@@ -941,5 +947,16 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             throw new AttributeResolutionException("Error parsing LDAP attributes");
         }
         return attrs;
+    }
+
+    /**
+     * Escapes values that will be included within an LDAP filter.
+     */
+    protected class LDAPValueEscapingStrategy implements CharacterEscapingStrategy {
+
+        /** {@inheritDoc} */
+        public String escape(String value) {
+            return value.replace("*", "\\*").replace("(", "\\(").replace(")", "\\)").replace("\\", "\\");
+        }
     }
 }

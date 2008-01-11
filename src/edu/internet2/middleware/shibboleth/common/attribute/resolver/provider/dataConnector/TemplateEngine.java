@@ -72,6 +72,7 @@ public class TemplateEngine {
      * @param templateName name of the template
      * @param resolutionContext the current resolution context
      * @param dependencies the list of resolution plug-in dependencies that will provider attributes
+     * @param escapingStrategy strategy used to escape values, may be null if no escaping is necessary
      * 
      * @return constructed statement
      * 
@@ -79,8 +80,8 @@ public class TemplateEngine {
      *             the given data connectors or attribute definitions error out during resolution
      */
     public String createStatement(String templateName, ShibbolethResolutionContext resolutionContext,
-            List<String> dependencies) throws AttributeResolutionException {
-        VelocityContext vContext = createVelocityContext(resolutionContext, dependencies);
+            List<String> dependencies, CharacterEscapingStrategy escapingStrategy) throws AttributeResolutionException {
+        VelocityContext vContext = createVelocityContext(resolutionContext, dependencies, escapingStrategy);
 
         try {
             log.debug("Populating the following {} template", templateName);
@@ -100,6 +101,7 @@ public class TemplateEngine {
      * 
      * @param resolutionContext the resolution context containing the currently resolved attribute information
      * @param dependencies resolution plug-in dependencies that will provide attributes to the velocity context
+     * @param escapingStrategy strategy used to escape values
      * 
      * @return the velocity context to use when evaluating the template
      * 
@@ -107,7 +109,7 @@ public class TemplateEngine {
      */
     @SuppressWarnings("unchecked")
     protected VelocityContext createVelocityContext(ShibbolethResolutionContext resolutionContext,
-            List<String> dependencies) throws AttributeResolutionException {
+            List<String> dependencies, CharacterEscapingStrategy escapingStrategy) throws AttributeResolutionException {
         log.debug("Populating velocity context");
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("requestContext", resolutionContext.getAttributeRequestContext());
@@ -115,7 +117,6 @@ public class TemplateEngine {
         ResolutionPlugIn plugin;
         Map<String, BaseAttribute> attributes;
         BaseAttribute attribute;
-
         for (String dependencyId : dependencies) {
             plugin = resolutionContext.getResolvedPlugins().get(dependencyId);
             if (plugin instanceof DataConnector) {
@@ -123,10 +124,7 @@ public class TemplateEngine {
                 attributes = ((DataConnector) plugin).resolve(resolutionContext);
 
                 for (String attributeId : attributes.keySet()) {
-                    if (!vCtx.containsKey(attributeId)) {
-                        vCtx.put(attributeId, new ArrayList<String>());
-                    }
-                    ((List<String>) vCtx.get(attributeId)).addAll(attributes.get(attributeId).getValues());
+                    vCtx.put(attributeId, prepareAttributeValues(attributes.get(attributeId), escapingStrategy));
                 }
             } else if (plugin instanceof AttributeDefinition) {
                 log.debug("Resolving attributes from attribute definition {}", dependencyId);
@@ -141,5 +139,50 @@ public class TemplateEngine {
         }
 
         return vCtx;
+    }
+
+    /**
+     * Prepares an attributes values for use within a template.
+     * 
+     * @param attribute attribute whose values are to be prepared
+     * @param escapingStrategy character escaping strategy to be sued
+     * 
+     * @return prepared values
+     */
+    protected List<Object> prepareAttributeValues(BaseAttribute attribute, CharacterEscapingStrategy escapingStrategy) {
+        ArrayList<Object> preparedValues = new ArrayList<Object>();
+
+        if (attribute == null || attribute.getValues() == null || attribute.getValues().isEmpty()) {
+            return preparedValues;
+        }
+
+        if (escapingStrategy == null) {
+            preparedValues.addAll(attribute.getValues());
+        } else {
+            for (Object value : attribute.getValues()) {
+                if(value instanceof String){
+                    preparedValues.add(escapingStrategy.escape(value.toString()));
+                }else{
+                    preparedValues.add(value);
+                }
+            }
+        }
+
+        return preparedValues;
+    }
+
+    /**
+     * Represents a domain specific strategy for escaping values used within a template.
+     */
+    public interface CharacterEscapingStrategy {
+
+        /**
+         * Creates a new string with necessary escaping rules.
+         * 
+         * @param value the value to be escaped
+         * 
+         * @return the escaped string
+         */
+        public String escape(String value);
     }
 }
