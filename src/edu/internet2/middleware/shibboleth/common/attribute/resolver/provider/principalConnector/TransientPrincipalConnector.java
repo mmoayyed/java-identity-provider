@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector;
 
+import org.opensaml.common.SAMLObject;
 import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.util.storage.StorageService;
@@ -32,7 +33,7 @@ public class TransientPrincipalConnector extends BasePrincipalConnector {
 
     /** Store used to map transient identifier tokens to principal names. */
     private StorageService<String, IdEntry> identifierStore;
-    
+
     /** Storage parition in which IDs are stored. */
     private String partition;
 
@@ -53,13 +54,24 @@ public class TransientPrincipalConnector extends BasePrincipalConnector {
     public String resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         SAMLProfileRequestContext requestContext = resolutionContext.getAttributeRequestContext();
 
-        String transientId;
-        if (requestContext.getSubjectNameIdentifier() instanceof NameIdentifier) {
-            transientId = ((NameIdentifier) requestContext.getSubjectNameIdentifier()).getNameIdentifier();
+        String transientId = null;
+        SAMLObject subjectId = requestContext.getSubjectNameIdentifier();
+        if (subjectId instanceof NameIdentifier) {
+            NameIdentifier nameId = (NameIdentifier) requestContext.getSubjectNameIdentifier();
+            if (nameId != null) {
+                transientId = nameId.getNameIdentifier();
+            }
         } else if (requestContext.getSubjectNameIdentifier() instanceof NameID) {
-            transientId = ((NameID) requestContext.getSubjectNameIdentifier()).getValue();
+            NameID nameId = (NameID) requestContext.getSubjectNameIdentifier();
+            if (nameId != null) {
+                transientId = nameId.getValue();
+            }
         } else {
             throw new AttributeResolutionException("Subject name identifier is not of a supported type");
+        }
+
+        if (transientId == null) {
+            throw new AttributeResolutionException("Invalid subject name identifier");
         }
 
         IdEntry idToken = identifierStore.get(partition, transientId);
