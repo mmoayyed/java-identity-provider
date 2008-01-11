@@ -33,8 +33,8 @@
         </annotation>
         <complexType>
             <sequence>
-                <element ref="rp:AnonymousRelyingParty" minOccurs="0" />
-                <element ref="rp:DefaultRelyingParty" minOccurs="0" />
+                <element ref="rp:AnonymousRelyingParty" minOccurs="1" />
+                <element ref="rp:DefaultRelyingParty" minOccurs="1" />
                 <element ref="rp:RelyingParty" minOccurs="0" maxOccurs="unbounded" />
                 <element ref="shibmd:MetadataProvider" minOccurs="0" />
                 <element ref="security:Credential" minOccurs="0" maxOccurs="unbounded" />
