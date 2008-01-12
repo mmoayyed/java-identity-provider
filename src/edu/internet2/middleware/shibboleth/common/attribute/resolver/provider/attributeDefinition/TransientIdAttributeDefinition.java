@@ -68,6 +68,9 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         partition = "transientId";
         idSize = 16;
         idLifetime = 1000 * 60 * 60 * 4;
+        
+        // Prime the generator
+        idGenerator.generateIdentifier(idSize);
     }
 
     /** {@inheritDoc} */
