@@ -25,23 +25,23 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}PKIXX509Credential elements. */
-public class PKIXX509CredentialTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-
+/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}MetadataExplicitKeySignature elements. */
+public class MetadataExplicitKeySignatureTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+    
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXX509Credential");
+    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "MetadataExplicitKeySignature");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return PKIXX509CredentialTrustEngineFactoryBean.class;
+        return MetadataExplicitKeySignatureTrustEngineFactoryBean.class;
     }
-
+    
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         builder.addPropertyReference("metadataProvider", DatatypeHelper.safeTrim(element.getAttributeNS(null,
                 "metadataProviderRef")));
     }
-
+    
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         return DatatypeHelper.safeTrim(element.getAttributeNS(null, "id"));

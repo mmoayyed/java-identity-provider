@@ -20,37 +20,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.security.MetadataCredentialResolver;
 import org.opensaml.xml.security.keyinfo.BasicProviderKeyInfoCredentialResolver;
 import org.opensaml.xml.security.keyinfo.KeyInfoCredentialResolver;
 import org.opensaml.xml.security.keyinfo.KeyInfoProvider;
 import org.opensaml.xml.security.keyinfo.provider.DSAKeyValueProvider;
 import org.opensaml.xml.security.keyinfo.provider.InlineX509DataProvider;
 import org.opensaml.xml.security.keyinfo.provider.RSAKeyValueProvider;
-import org.opensaml.xml.signature.impl.ExplicitKeySignatureTrustEngine;
+import org.opensaml.xml.signature.impl.PKIXSignatureTrustEngine;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
+import edu.internet2.middleware.shibboleth.common.security.MetadataPKIXValidationInformationResolver;
+
 /**
- * Spring factory bean used to created {@link ExplicitKeySignatureTrustEngine}s.
+ * Spring factory bean used to created {@link PKIXSignatureTrustEngine}s based on a metadata provider.
  */
-public class ExplicitKeySignatureTrustEngineFactoryBean extends AbstractFactoryBean {
-    
-    /** Metadata provider used to look up key information for peer entities. */
+public class MetadataPKIXSignatureTrustEngineFactoryBean extends AbstractFactoryBean {
+
+    /** Metadata provider used to look up PKIX information for peer entities. */
     private MetadataProvider metadataProvider;
 
     /**
-     * Gets the metadata provider used to look up key information for peer entities.
+     * Gets the metadata provider used to look up PKIX information for peer entities.
      * 
-     * @return metadata provider used to look up key information for peer entities
+     * @return metadata provider used to look up PKIX information for peer entities
      */
     public MetadataProvider getMetadataProvider() {
         return metadataProvider;
     }
 
     /**
-     * Sets the metadata provider used to look up key information for peer entities.
+     * Sets the metadata provider used to look up PKIX information for peer entities.
      * 
-     * @param provider metadata provider used to look up key information for peer entities
+     * @param provider metadata provider used to look up PKIX information for peer entities
      */
     public void setMetadataProvider(MetadataProvider provider) {
         metadataProvider = provider;
@@ -58,19 +59,20 @@ public class ExplicitKeySignatureTrustEngineFactoryBean extends AbstractFactoryB
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return ExplicitKeySignatureTrustEngine.class;
+        return PKIXSignatureTrustEngine.class;
     }
-    
+
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        MetadataCredentialResolver credResolver = new MetadataCredentialResolver(getMetadataProvider());
-        
+        MetadataPKIXValidationInformationResolver pviResolver = new MetadataPKIXValidationInformationResolver(
+                getMetadataProvider());
+
         List<KeyInfoProvider> keyInfoProviders = new ArrayList<KeyInfoProvider>();
         keyInfoProviders.add(new DSAKeyValueProvider());
         keyInfoProviders.add(new RSAKeyValueProvider());
         keyInfoProviders.add(new InlineX509DataProvider());
         KeyInfoCredentialResolver keyInfoCredResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviders);
-        
-        return new ExplicitKeySignatureTrustEngine(credResolver, keyInfoCredResolver);
+
+        return new PKIXSignatureTrustEngine(pviResolver, keyInfoCredResolver);
     }
 }

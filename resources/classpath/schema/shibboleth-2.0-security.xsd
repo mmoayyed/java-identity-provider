@@ -141,7 +141,7 @@
     <!-- TRUST ENGINE RELATED OBJECTS -->
     <element name="TrustEngine" type="sec:TrustEngineType" />
     
-    <complexType name="ExplicitKey">
+    <complexType name="MetadataExplicitKey">
         <annotation>
             <documentation>
                 Trust engine used to validate a key against trusted keys obtained from metadata.
@@ -160,7 +160,7 @@
         </complexContent>
     </complexType>
     
-    <complexType name="PKIXX509Credential">
+    <complexType name="MetadataPKIXX509Credential">
         <annotation>
             <documentation>
                 Trust engine used to validate an X509 credential against PKIX information from metadata.
@@ -179,7 +179,7 @@
         </complexContent>
     </complexType>
     
-    <complexType name="ExplicitKeySignature">
+    <complexType name="MetadataExplicitKeySignature">
         <annotation>
             <documentation>
                 Trust engine used to validate signatures with keys from metadata.
@@ -198,7 +198,7 @@
         </complexContent>
     </complexType>
     
-    <complexType name="PKIXSignature">
+    <complexType name="MetadataPKIXSignature">
         <annotation>
             <documentation>
                 Trust engine used to validate signatures with PKIX-validated certificates from metadata.

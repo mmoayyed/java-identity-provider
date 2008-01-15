@@ -16,17 +16,25 @@
 
 package edu.internet2.middleware.shibboleth.common.config.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.xml.security.x509.PKIXX509CredentialTrustEngine;
+import org.opensaml.security.MetadataCredentialResolver;
+import org.opensaml.xml.security.keyinfo.BasicProviderKeyInfoCredentialResolver;
+import org.opensaml.xml.security.keyinfo.KeyInfoCredentialResolver;
+import org.opensaml.xml.security.keyinfo.KeyInfoProvider;
+import org.opensaml.xml.security.keyinfo.provider.DSAKeyValueProvider;
+import org.opensaml.xml.security.keyinfo.provider.InlineX509DataProvider;
+import org.opensaml.xml.security.keyinfo.provider.RSAKeyValueProvider;
+import org.opensaml.xml.signature.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
-import edu.internet2.middleware.shibboleth.common.security.MetadataPKIXValidationInformationResolver;
-
 /**
- * Spring factory bean used to created {@link PKIXX509CredentialTrustEngine}s.
+ * Spring factory bean used to created {@link ExplicitKeySignatureTrustEngine}s based on a metadata provider.
  */
-public class PKIXX509CredentialTrustEngineFactoryBean extends AbstractFactoryBean {
-
+public class MetadataExplicitKeySignatureTrustEngineFactoryBean extends AbstractFactoryBean {
+    
     /** Metadata provider used to look up key information for peer entities. */
     private MetadataProvider metadataProvider;
 
@@ -50,13 +58,19 @@ public class PKIXX509CredentialTrustEngineFactoryBean extends AbstractFactoryBea
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return PKIXX509CredentialTrustEngine.class;
+        return ExplicitKeySignatureTrustEngine.class;
     }
-
+    
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        MetadataPKIXValidationInformationResolver pviResolver = new MetadataPKIXValidationInformationResolver(
-                getMetadataProvider());
-        return new PKIXX509CredentialTrustEngine(pviResolver);
+        MetadataCredentialResolver credResolver = new MetadataCredentialResolver(getMetadataProvider());
+        
+        List<KeyInfoProvider> keyInfoProviders = new ArrayList<KeyInfoProvider>();
+        keyInfoProviders.add(new DSAKeyValueProvider());
+        keyInfoProviders.add(new RSAKeyValueProvider());
+        keyInfoProviders.add(new InlineX509DataProvider());
+        KeyInfoCredentialResolver keyInfoCredResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviders);
+        
+        return new ExplicitKeySignatureTrustEngine(credResolver, keyInfoCredResolver);
     }
 }

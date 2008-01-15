@@ -17,15 +17,16 @@
 package edu.internet2.middleware.shibboleth.common.config.security;
 
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.security.MetadataCredentialResolver;
-import org.opensaml.xml.security.trust.ExplicitKeyTrustEngine;
+import org.opensaml.xml.security.x509.PKIXX509CredentialTrustEngine;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
+import edu.internet2.middleware.shibboleth.common.security.MetadataPKIXValidationInformationResolver;
+
 /**
- * Spring factory bean used to created {@link ExplicitKeyTrustEngine}s.
+ * Spring factory bean used to created {@link PKIXX509CredentialTrustEngine}s based on a metadata provider.
  */
-public class ExplicitKeyTrustEngineFactoryBean extends AbstractFactoryBean {
-    
+public class MetadataPKIXX509CredentialTrustEngineFactoryBean extends AbstractFactoryBean {
+
     /** Metadata provider used to look up key information for peer entities. */
     private MetadataProvider metadataProvider;
 
@@ -49,12 +50,13 @@ public class ExplicitKeyTrustEngineFactoryBean extends AbstractFactoryBean {
 
     /** {@inheritDoc} */
     public Class getObjectType() {
-        return ExplicitKeyTrustEngine.class;
+        return PKIXX509CredentialTrustEngine.class;
     }
-    
+
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        MetadataCredentialResolver credResolver = new MetadataCredentialResolver(getMetadataProvider());        
-        return new ExplicitKeyTrustEngine(credResolver);
+        MetadataPKIXValidationInformationResolver pviResolver = new MetadataPKIXValidationInformationResolver(
+                getMetadataProvider());
+        return new PKIXX509CredentialTrustEngine(pviResolver);
     }
 }

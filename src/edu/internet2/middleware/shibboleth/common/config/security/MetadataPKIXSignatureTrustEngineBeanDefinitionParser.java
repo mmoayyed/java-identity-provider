@@ -25,23 +25,23 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}ExplicitKeySignature elements. */
-public class ExplicitKeySignatureTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}MetadataPKIXSignature elements. */
+public class MetadataPKIXSignatureTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "ExplicitKeySignature");
+    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "MetadataPKIXSignature");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return ExplicitKeySignatureTrustEngineFactoryBean.class;
+        return MetadataPKIXSignatureTrustEngineFactoryBean.class;
     }
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         builder.addPropertyReference("metadataProvider", DatatypeHelper.safeTrim(element.getAttributeNS(null,
                 "metadataProviderRef")));
     }
-    
+
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         return DatatypeHelper.safeTrim(element.getAttributeNS(null, "id"));

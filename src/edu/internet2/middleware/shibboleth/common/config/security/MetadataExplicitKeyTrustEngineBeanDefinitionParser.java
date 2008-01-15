@@ -25,15 +25,15 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}PKIXSignature elements. */
-public class PKIXSignatureTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+/** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}MetadataExplicitKey elements. */
+public class MetadataExplicitKeyTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXSignature");
+    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "MetadataExplicitKey");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return PKIXSignatureTrustEngineFactoryBean.class;
+        return MetadataExplicitKeyTrustEngineFactoryBean.class;
     }
 
     /** {@inheritDoc} */

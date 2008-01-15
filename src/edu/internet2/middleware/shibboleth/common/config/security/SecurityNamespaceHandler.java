@@ -40,17 +40,17 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.SCHEMA_TYPE, parser);
 
-        registerBeanDefinitionParser(ExplicitKeyTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
-                new ExplicitKeyTrustEngineBeanDefinitionParser());
+        registerBeanDefinitionParser(MetadataExplicitKeyTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new MetadataExplicitKeyTrustEngineBeanDefinitionParser());
 
-        registerBeanDefinitionParser(PKIXX509CredentialTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
-                new PKIXX509CredentialTrustEngineBeanDefinitionParser());
+        registerBeanDefinitionParser(MetadataPKIXX509CredentialTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new MetadataPKIXX509CredentialTrustEngineBeanDefinitionParser());
 
-        registerBeanDefinitionParser(ExplicitKeySignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
-                new ExplicitKeySignatureTrustEngineBeanDefinitionParser());
+        registerBeanDefinitionParser(MetadataExplicitKeySignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new MetadataExplicitKeySignatureTrustEngineBeanDefinitionParser());
 
-        registerBeanDefinitionParser(PKIXSignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
-                new PKIXSignatureTrustEngineBeanDefinitionParser());
+        registerBeanDefinitionParser(MetadataPKIXSignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new MetadataPKIXSignatureTrustEngineBeanDefinitionParser());
 
         registerBeanDefinitionParser(ClientCertAuthRuleBeanDefinitionParser.SCHEMA_TYPE,
                 new ClientCertAuthRuleBeanDefinitionParser());
