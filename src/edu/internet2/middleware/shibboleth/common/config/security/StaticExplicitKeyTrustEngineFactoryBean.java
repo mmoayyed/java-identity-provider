@@ -45,7 +45,7 @@ public class StaticExplicitKeyTrustEngineFactoryBean extends AbstractFactoryBean
      * 
      * @param newCredentials the new list of trusted credentials
      */
-    public void setMetadataProvider(List<Credential> newCredentials) {
+    public void setCredentials(List<Credential> newCredentials) {
         credentials = newCredentials;
     }
 

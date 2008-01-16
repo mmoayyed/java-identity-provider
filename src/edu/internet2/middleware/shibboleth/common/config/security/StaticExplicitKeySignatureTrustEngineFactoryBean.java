@@ -52,7 +52,7 @@ public class StaticExplicitKeySignatureTrustEngineFactoryBean extends AbstractFa
      * 
      * @param newCredentials the new list of trusted credentials
      */
-    public void setMetadataProvider(List<Credential> newCredentials) {
+    public void setCredentials(List<Credential> newCredentials) {
         credentials = newCredentials;
     }
 
