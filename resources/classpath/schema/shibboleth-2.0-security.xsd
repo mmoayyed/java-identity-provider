@@ -141,6 +141,7 @@
     <!-- TRUST ENGINE RELATED OBJECTS -->
     <element name="TrustEngine" type="sec:TrustEngineType" />
     
+    <!-- Trust engines which use metadata provider-based resolvers -->
     <complexType name="MetadataExplicitKey">
         <annotation>
             <documentation>
@@ -213,6 +214,75 @@
                         </documentation>
                     </annotation>
                 </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <!-- Trust engines which use resolvers configured via static information -->
+    <complexType name="StaticExplicitKey">
+        <annotation>
+            <documentation>
+                Trust engine used to validate a key against statically-configured trusted keys.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element ref="sec:Credential" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A trusted credential to be included in the static trusted credential set.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StaticPKIXX509Credential">
+        <annotation>
+            <documentation>
+                Trust engine used to validate an X509 credential against statically-configured PKIX information.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <!-- TODO -->
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StaticExplicitKeySignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate a signature against statically-configured trusted keys.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <sequence>
+                    <element ref="sec:Credential" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A trusted credential to be included in the static trusted credential set.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="StaticPKIXSignature">
+        <annotation>
+            <documentation>
+                Trust engine used to validate signatures against statically-configured PKIX information.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <!-- TODO -->
             </extension>
         </complexContent>
     </complexType>
