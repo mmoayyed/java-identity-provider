@@ -50,7 +50,7 @@ import org.opensaml.xml.security.credential.UsageType;
 import org.opensaml.xml.security.criteria.EntityIDCriteria;
 import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.opensaml.xml.security.keyinfo.KeyInfoHelper;
-import org.opensaml.xml.security.x509.BasicPKIXValdiationInformation;
+import org.opensaml.xml.security.x509.BasicPKIXValidationInformation;
 import org.opensaml.xml.security.x509.PKIXValidationInformation;
 import org.opensaml.xml.security.x509.PKIXValidationInformationResolver;
 import org.opensaml.xml.signature.KeyInfo;
@@ -340,7 +340,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
             crls.addAll(getX509CRLs(keyInfo));
         }
 
-        return new BasicPKIXValdiationInformation(certs, crls, depth);
+        return new BasicPKIXValidationInformation(certs, crls, depth);
     }
 
     /**
