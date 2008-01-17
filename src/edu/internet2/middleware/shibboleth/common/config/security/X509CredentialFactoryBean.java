@@ -20,6 +20,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.SecretKey;
@@ -71,11 +72,11 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
         
         if(certificates != null){
             credential.setEntityCertificate(certificates.get(0));
-            credential.setEntityCertificateChain(certificates);
+            credential.setEntityCertificateChain(new ArrayList<X509Certificate>(certificates));
         }
         
         if(x509crls != null){
-            credential.setCRLs(x509crls);
+            credential.setCRLs(new ArrayList<X509CRL>(x509crls));
         }
         
         return credential;
