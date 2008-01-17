@@ -51,7 +51,7 @@ public class FilesystemX509CredentialBeanDefinitionParser extends AbstractX509Cr
             ins.read(encoded);
             return encoded;
         } catch (IOException e) {
-            throw new FatalBeanException("Unable to read certifacte(s) from file " + certConfigContent, e);
+            throw new FatalBeanException("Unable to read certificate(s) from file " + certConfigContent, e);
         }
     }
 
