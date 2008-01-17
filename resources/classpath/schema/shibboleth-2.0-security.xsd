@@ -138,6 +138,80 @@
         </simpleContent>
     </complexType>
     
+    <!-- VALIDATION RELATED OBJECTS, FOR EXAMPLE PKIX INFO -->
+    <element name="ValidationInfo" type="sec:ValidationInfoType" />
+    
+    <complexType name="PKIXInline">
+        <annotation>
+            <documentation>
+                Allows PKIX validation info components to be specified as content within the child elements.
+                Certificates and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:PKIXValidationInfoType" />
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PKIXFilesystem">
+        <annotation>
+            <documentation>
+                Allows PKIX validation info components to be specified by filesystem path.
+                Certificates, and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:PKIXValidationInfoType" />
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PKIXValidationInfoType" abstract="true">
+        <annotation>
+            <documentation>
+                Defines the components of a set of PKIX validation information.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:ValidationInfoType">
+                <sequence>
+                    <element name="Certificate" type="sec:PasswordBearingString" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Trusted certificates, typically of root and intermediate CA's , which are used
+                                as input to the PKIX validation process.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="CRL" type="sec:PasswordBearingString" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Certificate revocation lists which are used as input to the PKIX validation process.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+                <attribute name="VerifyDepth" type="unsignedByte" use="optional" default="1">
+                    <annotation>
+                        <documentation>
+                            The maximum path verification depth to consider when constructing a PKIX cert path.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ValidationInfoType" abstract="true">
+        <annotation>
+            <documentation>Base type for validation information.</documentation>
+        </annotation>
+        <attribute name="id" type="string">
+            <annotation>
+                <documentation>Unique id for this validation info set.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
     <!-- TRUST ENGINE RELATED OBJECTS -->
     <element name="TrustEngine" type="sec:TrustEngineType" />
     
@@ -248,7 +322,15 @@
         </annotation>
         <complexContent>
             <extension base="sec:TrustEngineType">
-                <!-- TODO -->
+                <sequence>
+                    <element ref="sec:ValidationInfo" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                PKIX validation info against which to validate an X509 credential.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
             </extension>
         </complexContent>
     </complexType>
@@ -282,7 +364,15 @@
         </annotation>
         <complexContent>
             <extension base="sec:TrustEngineType">
-                <!-- TODO -->
+                <sequence>
+                    <element ref="sec:ValidationInfo" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                PKIX validation info against which to validate a signature.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
             </extension>
         </complexContent>
     </complexType>

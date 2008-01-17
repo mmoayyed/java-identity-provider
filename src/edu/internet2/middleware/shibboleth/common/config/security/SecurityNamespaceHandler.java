@@ -36,6 +36,12 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(InlineX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
                 new InlineX509CredentialBeanDefinitionParser());
 
+        registerBeanDefinitionParser(FilesystemPKIXValidationInformationBeanDefinitionParser.SCHEMA_TYPE,
+                new FilesystemPKIXValidationInformationBeanDefinitionParser());
+
+        registerBeanDefinitionParser(InlinePKIXValidationInformationBeanDefinitionParser.SCHEMA_TYPE,
+                new InlinePKIXValidationInformationBeanDefinitionParser());
+
         BeanDefinitionParser parser = new ShibbolethSecurityPolicyBeanDefinitionParser();
         registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(ShibbolethSecurityPolicyBeanDefinitionParser.SCHEMA_TYPE, parser);
@@ -57,6 +63,12 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(StaticExplicitKeySignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
                 new StaticExplicitKeySignatureTrustEngineBeanDefinitionParser());
+
+        registerBeanDefinitionParser(StaticPKIXX509CredentialTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new StaticPKIXX509CredentialTrustEngineBeanDefinitionParser());
+
+        registerBeanDefinitionParser(StaticPKIXSignatureTrustEngineBeanDefinitionParser.SCHEMA_TYPE,
+                new StaticPKIXSignatureTrustEngineBeanDefinitionParser());
 
         registerBeanDefinitionParser(ClientCertAuthRuleBeanDefinitionParser.SCHEMA_TYPE,
                 new ClientCertAuthRuleBeanDefinitionParser());
