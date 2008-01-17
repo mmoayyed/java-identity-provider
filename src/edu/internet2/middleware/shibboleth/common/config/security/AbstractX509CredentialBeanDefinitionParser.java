@@ -42,6 +42,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
 
@@ -194,10 +195,27 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
             if (encodedCert == null) {
                 continue;
             }
+            
+            boolean isEntityCert = false;
+            Attr entityCertAttr = certElem.getAttributeNodeNS(null, "entityCertificate");
+            if (entityCertAttr != null) {
+                isEntityCert = XMLHelper.getAttributeValueAsBoolean(entityCertAttr);
+            }
+            if (isEntityCert) {
+                log.debug("Element config flag found indicating entity certificate");
+            }
 
             try {
                 decodedCerts = X509Util.decodeCertificate(encodedCert);
                 certs.addAll(decodedCerts);
+                if (isEntityCert) {
+                    if (decodedCerts.size() == 1) {
+                        builder.addPropertyValue("entityCertificate", decodedCerts.iterator().next());
+                    } else {
+                        throw new FatalBeanException(
+                                "Config element indicated an entityCertificate, but multiple certs where decoded");
+                    }
+                }
             } catch (CertificateException e) {
                 throw new FatalBeanException("Unable to create X509 credential, unable to parse certificates", e);
             }

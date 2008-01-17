@@ -49,6 +49,9 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
 
     /** Public key respresented by this credential. */
     private PublicKey publicKey;
+    
+    /** The end-entity certificate. */
+    private X509Certificate entityCertificate;
 
     /** Certificate respresented by this credential. */
     private List<X509Certificate> certificates;
@@ -71,8 +74,12 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
         credential.setPublicKey(publicKey);
         
         if(certificates != null){
-            credential.setEntityCertificate(certificates.get(0));
             credential.setEntityCertificateChain(new ArrayList<X509Certificate>(certificates));
+            if (entityCertificate != null) {
+                credential.setEntityCertificate(entityCertificate);
+            } else {
+                credential.setEntityCertificate(certificates.get(0));
+            }
         }
         
         if(x509crls != null){
@@ -82,6 +89,15 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
         return credential;
     }
 
+    /**
+     * Gets the end-entity cerificate respresented by this credential.
+     * 
+     * @return entity certificate respresented by this credential
+     */
+    public X509Certificate getEntityCertificate() {
+        return entityCertificate;
+    }
+    
     /**
      * Gets the cerificates respresented by this credential.
      * 
@@ -150,6 +166,15 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
         return usageType;
     }
 
+    /**
+     * Sets the end-entity cerificate respresented by this credential.
+     * 
+     * @param newCert the new entity certificate respresented by this credential
+     */
+    public void setEntityCertificate(X509Certificate newCert) {
+        entityCertificate = newCert;
+    }
+    
     /**
      * Sets the cerificates respresented by this credential.
      * 
