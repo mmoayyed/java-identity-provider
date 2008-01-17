@@ -50,10 +50,10 @@ public class StaticExplicitKeyTrustEngineBeanDefinitionParser extends AbstractSi
         String id = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
         log.info("Parsing configuration for static explicit key trust engine with ID: {}", id);
         
-        NodeList providerElems = element.getElementsByTagNameNS(SecurityNamespaceHandler.NAMESPACE, "Credential");
-        if(providerElems != null){
+        NodeList childElems = element.getElementsByTagNameNS(SecurityNamespaceHandler.NAMESPACE, "Credential");
+        if(childElems != null){
             ManagedList credentials = 
-                SpringConfigurationUtils.parseCustomElements(providerElems, parserContext);        
+                SpringConfigurationUtils.parseCustomElements(childElems, parserContext);        
             builder.addPropertyValue("credentials", credentials);
         }
     }
