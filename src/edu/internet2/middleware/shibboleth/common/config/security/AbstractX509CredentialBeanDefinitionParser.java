@@ -51,7 +51,7 @@ import org.w3c.dom.Element;
 public abstract class AbstractX509CredentialBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
     
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(FilesystemX509CredentialBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractX509CredentialBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
