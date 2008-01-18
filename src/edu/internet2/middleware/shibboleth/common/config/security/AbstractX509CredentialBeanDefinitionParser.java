@@ -16,9 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config.security;
 
-import java.security.KeyException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
@@ -28,10 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.crypto.SecretKey;
 import javax.xml.namespace.QName;
 
-import org.opensaml.xml.security.SecurityHelper;
 import org.opensaml.xml.security.x509.X509Util;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
@@ -40,7 +35,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -49,7 +43,7 @@ import org.w3c.dom.Element;
 /**
  * Base class for X509 credential beans.
  */
-public abstract class AbstractX509CredentialBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public abstract class AbstractX509CredentialBeanDefinitionParser extends AbstractCredentialBeanDefinitionParser {
     
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractX509CredentialBeanDefinitionParser.class);
@@ -68,111 +62,16 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         log.debug("Parsing x509 credential: {}", element.getAttributeNS(null, "id"));
         
+        parseAttributes(element, builder);
+        
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(element);
+        
+        parseCommon(configChildren, builder);
 
-        parseKeyNames(configChildren, builder);
-        parseSecretKey(configChildren, builder);
         parsePrivateKey(configChildren, builder);
         parseCertificates(configChildren, builder);
         parseCRLs(configChildren, builder);
     }
-
-    /**
-     * Parses the key names from the credential configuration.
-     * 
-     * @param configChildren children of the credential element
-     * @param builder credential build
-     */
-    protected void parseKeyNames(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
-        log.debug("Parsing x509 credential key names");
-        List<Element> keyNameElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "KeyName"));
-        if (keyNameElems == null || keyNameElems.isEmpty()) {
-            return;
-        }
-
-        String keyName;
-        ArrayList<String> keyNames = new ArrayList<String>();
-        for (Element keyNameElem : keyNameElems) {
-            keyName = DatatypeHelper.safeTrimOrNullString(keyNameElem.getTextContent());
-            if (keyName != null) {
-                keyNames.add(keyName);
-            }
-        }
-
-        builder.addPropertyValue("keyNames", keyNames);
-    }
-
-    /**
-     * Parses the secret key from the credential configuration.
-     * 
-     * @param configChildren children of the credential element
-     * @param builder credential build
-     */
-    protected void parseSecretKey(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {
-        List<Element> keyElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecretKey"));
-        if (keyElems == null || keyElems.isEmpty()) {
-            return;
-        }
-
-        log.debug("Parsing x509 credential secret key");
-        Element secretKeyElem = keyElems.get(0);
-        byte[] encodedKey = getEncodedSecretKey(DatatypeHelper.safeTrimOrNullString(secretKeyElem.getTextContent()));
-        String keyPassword = DatatypeHelper.safeTrimOrNullString(secretKeyElem.getAttributeNS(null, "password"));
-        try {
-            SecretKey key = SecurityHelper.decodeSecretKey(encodedKey, keyPassword.toCharArray());
-            builder.addPropertyValue("secretKey", key);
-        } catch (KeyException e) {
-            throw new FatalBeanException("Unable to create X509 credential, unable to parse secret key", e);
-        }
-    }
-
-    /**
-     * Extracts the secret key bytes from the content of the SecretKey configuration element.
-     * 
-     * @param keyConfigContent content of the SecretKey configuration element
-     * 
-     * @return secret key bytes
-     */
-    protected abstract byte[] getEncodedSecretKey(String keyConfigContent);
-
-    /**
-     * Parses the private from the credential configuration.
-     * 
-     * @param configChildren children of the credential element
-     * @param builder credential build
-     */
-    protected void parsePrivateKey(Map<QName, List<Element>> configChildren, BeanDefinitionBuilder builder) {        
-        List<Element> keyElems = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "PrivateKey"));
-        if (keyElems == null || keyElems.isEmpty()) {
-            return;
-        }
-        
-        log.debug("Parsing x509 credential private key");
-        Element privKeyElem = keyElems.get(0);
-        byte[] encodedKey = getEncodedPrivateKey(DatatypeHelper.safeTrimOrNullString(privKeyElem.getTextContent()));
-        String keyPassword = DatatypeHelper.safeTrimOrNullString(privKeyElem.getAttributeNS(null, "password"));
-        char[] keyPasswordCharArray = null;
-        if (keyPassword != null) {
-            keyPasswordCharArray = keyPassword.toCharArray();
-        }
-        try {
-            PrivateKey privKey = SecurityHelper.decodePrivateKey(encodedKey, keyPasswordCharArray);
-            PublicKey pubKey = SecurityHelper.derivePublicKey(privKey);
-            builder.addPropertyValue("privateKey", privKey);
-            builder.addPropertyValue("publicKey", pubKey);
-        } catch (KeyException e) {
-            throw new FatalBeanException("Unable to create X509 credential, unable to parse private key", e);
-        }
-    }
-
-    /**
-     * Extracts the private key bytes from the content of the PrivateKey configuration element.
-     * 
-     * @param keyConfigContent content of the Private configuration element
-     * 
-     * @return private key bytes
-     */
-    protected abstract byte[] getEncodedPrivateKey(String keyConfigContent);
 
     /**
      * Parses the certificates from the credential configuration.

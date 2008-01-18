@@ -35,6 +35,12 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(InlineX509CredentialBeanDefinitionParser.SCHEMA_TYPE,
                 new InlineX509CredentialBeanDefinitionParser());
+        
+        registerBeanDefinitionParser(FilesystemBasicCredentialBeanDefinitionParser.SCHEMA_TYPE,
+                new FilesystemBasicCredentialBeanDefinitionParser());
+
+        registerBeanDefinitionParser(InlineBasicCredentialBeanDefinitionParser.SCHEMA_TYPE,
+                new InlineBasicCredentialBeanDefinitionParser());
 
         registerBeanDefinitionParser(FilesystemPKIXValidationInformationBeanDefinitionParser.SCHEMA_TYPE,
                 new FilesystemPKIXValidationInformationBeanDefinitionParser());

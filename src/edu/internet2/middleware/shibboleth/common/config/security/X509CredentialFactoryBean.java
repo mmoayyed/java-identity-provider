@@ -17,38 +17,21 @@
 package edu.internet2.middleware.shibboleth.common.config.security;
 
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.crypto.SecretKey;
-
-import org.opensaml.xml.security.credential.UsageType;
 import org.opensaml.xml.security.x509.BasicX509Credential;
 import org.opensaml.xml.security.x509.X509Credential;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
  * Factory bean for building {@link X509Credential}s.
  */
-public class X509CredentialFactoryBean extends AbstractFactoryBean {
-    
-    /** Usage type of the credential. */
-    private UsageType usageType;
-
-    /** Names for the key represented by the credential. */
-    private List<String> keyNames;
-
-    /** Secret key respresented by this credential. */
-    private SecretKey secretKey;
+public class X509CredentialFactoryBean extends AbstractCredentialFactoryBean {
 
     /** Private key respresented by this credential. */
     private PrivateKey privateKey;
-
-    /** Public key respresented by this credential. */
-    private PublicKey publicKey;
     
     /** The end-entity certificate. */
     private X509Certificate entityCertificate;
@@ -63,15 +46,13 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
     protected Object createInstance() throws Exception {
         BasicX509Credential credential = new BasicX509Credential();
         
-        credential.setUsageType(usageType);
+        credential.setUsageType(getUsageType());
         
-        if(keyNames != null){
-            credential.getKeyNames().addAll(keyNames);
+        credential.setEntityId(getEntityID());
+        
+        if(getKeyNames() != null){
+            credential.getKeyNames().addAll(getKeyNames());
         }
-
-        credential.setSecretKey(secretKey);
-        credential.setPrivateKey(privateKey);
-        credential.setPublicKey(publicKey);
         
         if(certificates != null){
             credential.setEntityCertificateChain(new ArrayList<X509Certificate>(certificates));
@@ -86,7 +67,17 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
             credential.setCRLs(new ArrayList<X509CRL>(x509crls));
         }
         
+        credential.setPrivateKey(privateKey);
+        //TODO may adjust BasicX509Credential to make this unnecessary
+        credential.setPublicKey(credential.getEntityCertificate().getPublicKey());
+        
+        
         return credential;
+    }
+    
+    /** {@inheritDoc} */
+    public Class getObjectType() {
+        return X509Credential.class;
     }
 
     /**
@@ -115,20 +106,7 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
     public List<X509CRL> getCrls() {
         return x509crls;
     }
-    
-    /**
-     * Gets the names for the key represented by the credential.
-     * 
-     * @return names for the key represented by the credential
-     */
-    public List<String> getKeyNames() {
-        return keyNames;
-    }
 
-    /** {@inheritDoc} */
-    public Class getObjectType() {
-        return X509Credential.class;
-    }
 
     /**
      * Gets the private key respresented by this credential.
@@ -137,33 +115,6 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
      */
     public PrivateKey getPrivateKey() {
         return privateKey;
-    }
-
-    /**
-     * Gets the public key respresented by this credential.
-     * 
-     * @return public key respresented by this credential
-     */
-    public PublicKey getPublicKey() {
-        return publicKey;
-    }
-
-    /**
-     * Gets the secret key respresented by this credential.
-     * 
-     * @return secret key respresented by this credential
-     */
-    public SecretKey getSecretKey() {
-        return secretKey;
-    }
-
-    /**
-     * Gets the usage type of the credential.
-     * 
-     * @return usage type of the credential
-     */
-    public UsageType getUsageType(){
-        return usageType;
     }
 
     /**
@@ -194,15 +145,6 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
     }
 
     /**
-     * Sets the names for the key represented by the credential.
-     * 
-     * @param names names for the key represented by the credential
-     */
-    public void setKeyNames(List<String> names) {
-        keyNames = names;
-    }
-
-    /**
      * Sets the private key respresented by this credential.
      * 
      * @param key private key respresented by this credential
@@ -210,31 +152,5 @@ public class X509CredentialFactoryBean extends AbstractFactoryBean {
     public void setPrivateKey(PrivateKey key) {
         privateKey = key;
     }
-
-    /**
-     * Sets the public key respresented by this credential.
-     * 
-     * @param key public key respresented by this credential
-     */
-    public void setPublicKey(PublicKey key) {
-        publicKey = key;
-    }
-
-    /**
-     * Sets the secret key respresented by this credential.
-     * 
-     * @param key secret key respresented by this credential
-     */
-    public void setSecretKey(SecretKey key) {
-        secretKey = key;
-    }
-
-    /**
-     * Sets the usage type of the credential.
-     * 
-     * @param type usage type of the credential
-     */
-    public void setUsageType(UsageType type){
-        usageType = type;
-    }
+    
 }

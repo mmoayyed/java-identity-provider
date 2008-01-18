@@ -40,13 +40,86 @@
         <complexContent>
             <extension base="sec:CredentialType">
                 <sequence>
-                    <element name="KeyName" type="string" minOccurs="0" maxOccurs="unbounded">
+                    <element name="PrivateKey" type="sec:PasswordBearingString" minOccurs="0">
                         <annotation>
-                            <documentation>Name(s) of the key this credential represents.</documentation>
+                            <documentation>Credential's RSA/DSA private key.</documentation>
                         </annotation>
                     </element>
+                    <element name="Certificate" minOccurs="1" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Certificate associated with the credential. More than one certificate
+                                may be present within a single element, if the encoding form used allows
+                                it, or multiple certificate elements may be used, or both.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="sec:PasswordBearingString">
+                                    <attribute name="entityCertificate" type="boolean"
+                                        default="false">
+                                        <annotation>
+                                            <documentation>
+                                                Indicates that this certificate is the end entity
+                                                certificate within this chain.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <element name="CRL" type="sec:PasswordBearingString" minOccurs="0"
+                        maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Certificate revocation list associated with the Credential. More than
+                                one CRL may be present within a single element, if the encoding form
+                                used allows it, or multiple CRL elements may be used, or both.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="BasicInline">
+        <annotation>
+            <documentation>
+                Allows credentials to be components to be specified as content within the child elements.
+                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:BasicCredential"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="BasicFilesystem">
+        <annotation>
+            <documentation>
+                Allows credential components to be specified by filesystem path.
+                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:BasicCredential" />
+        </complexContent>
+    </complexType>
+    
+    <complexType name="BasicCredential" abstract="true">
+        <annotation>
+            <documentation>
+                Defines the components of a basic credential containing either a 
+                public key and optional private key, or a symmetric (secret) key.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:CredentialType">
+                <sequence>
                     <choice>
-                        <element name="SecretKey" type="sec:PasswordBearingString" minOccurs="0">
+                        <element name="SecretKey" type="sec:PasswordBearingString">
                             <annotation>
                                 <documentation>Credential's symmetric key.</documentation>
                             </annotation>
@@ -57,38 +130,9 @@
                                     <documentation>Credential's RSA/DSA private key.</documentation>
                                 </annotation>
                             </element>
-                            <element name="Certificate" minOccurs="0" maxOccurs="unbounded">
+                            <element name="PublicKey" type="sec:PasswordBearingString">
                                 <annotation>
-                                    <documentation>
-                                        Certificate associated with the credential. More than one certificate
-                                        may be present within a single element, if the encoding form used allows
-                                        it, or multiple certificate elements may be used, or both.
-                                    </documentation>
-                                </annotation>
-                                <complexType>
-                                    <simpleContent>
-                                        <extension base="sec:PasswordBearingString">
-                                            <attribute name="entityCertificate" type="boolean"
-                                                default="false">
-                                                <annotation>
-                                                    <documentation>
-                                                        Indicates that this certificate is the end entity
-                                                        certificate within this chain.
-                                                    </documentation>
-                                                </annotation>
-                                            </attribute>
-                                        </extension>
-                                    </simpleContent>
-                                </complexType>
-                            </element>
-                            <element name="CRL" type="sec:PasswordBearingString" minOccurs="0"
-                                maxOccurs="unbounded">
-                                <annotation>
-                                    <documentation>
-                                        Certificate revocation list associated with the Credential. More than
-                                        one CRL may be present within a single element, if the encoding form
-                                        used allows it, or multiple CRL elements may be used, or both.
-                                    </documentation>
+                                    <documentation>Credential's RSA/DSA public key.</documentation>
                                 </annotation>
                             </element>
                         </sequence>
@@ -102,9 +146,21 @@
         <annotation>
             <documentation>Base type for credential information.</documentation>
         </annotation>
+        <sequence>
+            <element name="KeyName" type="string" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>Name(s) of the key this credential represents.</documentation>
+                </annotation>
+            </element>
+        </sequence>
         <attribute name="id" type="string">
             <annotation>
                 <documentation>Unique id for this credential.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="entityID" type="string">
+            <annotation>
+                <documentation>Identifier for the entity which owns this credential.</documentation>
             </annotation>
         </attribute>
         <attribute name="usage" type="sec:CredentialUsageType">
