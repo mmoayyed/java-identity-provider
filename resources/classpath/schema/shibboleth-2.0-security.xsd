@@ -271,6 +271,40 @@
     <!-- TRUST ENGINE RELATED OBJECTS -->
     <element name="TrustEngine" type="sec:TrustEngineType" />
     
+    <complexType name="Chaining">
+        <annotation>
+            <documentation>
+                Trust engine which chains together other trust engine instances, evaluating a token
+                against each engine in chain order.
+                
+                If the token to be evaluated can be established as trusted by one member of the chain,
+                then the token is trusted.  Otherwise it is evaluated as untrusted.
+                
+                Trust chain members must all evalute tokens of a compatible type,
+                for example a Credential or Signature.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <choice minOccurs="1" maxOccurs="unbounded">
+                    <element ref="sec:TrustEngine" />
+                    <element name="TrustEngineRef">
+                        <annotation>
+                            <documentation>Reference to a trust engine.</documentation>
+                        </annotation>
+                        <complexType>
+                            <attribute name="ref">
+                                <annotation>
+                                    <documentation>Bean reference id for a trust engine declared elsewhere.</documentation>
+                                </annotation>
+                            </attribute>
+                        </complexType>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <!-- Trust engines which use metadata provider-based resolvers -->
     <complexType name="MetadataExplicitKey">
         <annotation>
