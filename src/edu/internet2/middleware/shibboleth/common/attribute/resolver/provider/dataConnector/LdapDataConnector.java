@@ -757,6 +757,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
 
         // check for cached data
         if (cacheResults) {
+            log.debug("Checking cache for search results");
             attributes = getCachedAttributes(resolutionContext, searchFilter);
             if (attributes != null && log.isDebugEnabled()) {
                 log.debug("Returning attributes from cache");
