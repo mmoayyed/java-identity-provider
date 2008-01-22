@@ -121,8 +121,8 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             }
         }
 
-        log.debug("Filtered attributes for principal {}.  {} attributes remain.", context.getPrincipalName(),
-                attributes.size());
+        log.debug("Filtered attributes for principal {}.  The following attributes remain: {}", context
+                .getPrincipalName(), attributes.keySet());
         return attributes;
     }
 
