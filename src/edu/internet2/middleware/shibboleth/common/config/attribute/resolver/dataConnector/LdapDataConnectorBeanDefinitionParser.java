@@ -123,12 +123,13 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         log.debug("Data connector {} max search result size: {}", pluginId, maxResultSize);
         pluginBuilder.addPropertyValue("maxResultSize", maxResultSize);
 
+        boolean cacheResults = true;
         if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
-            boolean cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+             cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                     "cacheResults"));
-            log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
-            pluginBuilder.addPropertyValue("cacheResults", cacheResults);
         }
+        log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
+        pluginBuilder.addPropertyValue("cacheResults", cacheResults);
 
         if (pluginConfig.hasAttributeNS(null, "mergeResults")) {
             boolean mergeResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,

@@ -87,12 +87,13 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                 pluginBuilder);
         pluginBuilder.addPropertyValue("columnDescriptors", descriptors);
 
+        boolean cacheResults = true;
         if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
-            boolean cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+            cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                     "cacheResults"));
-            log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
-            pluginBuilder.addPropertyValue("cacheResults", cacheResults);
         }
+        log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
+        pluginBuilder.addPropertyValue("cacheResults", cacheResults);
 
         if (pluginConfig.hasAttributeNS(null, "queryUsesStoredProcedure")) {
             boolean useSP = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
@@ -101,12 +102,13 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
             pluginBuilder.addPropertyValue("queryUsesStoredProcedures", useSP);
         }
 
+        boolean readOnlyCtx = true;
         if (pluginConfig.hasAttributeNS(null, "readOnlyConnection")) {
-            boolean readOnlyCtx = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+            readOnlyCtx = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                     "readOnlyConnection"));
-            log.debug("Data connector {} connections are read only: {}", pluginId, readOnlyCtx);
-            pluginBuilder.addPropertyValue("readOnlyConnections", readOnlyCtx);
         }
+        log.debug("Data connector {} connections are read only: {}", pluginId, readOnlyCtx);
+        pluginBuilder.addPropertyValue("readOnlyConnections", readOnlyCtx);
 
         String templateEngineRef = pluginConfig.getAttributeNS(null, "templateEngine");
         pluginBuilder.addPropertyReference("templateEngine", templateEngineRef);
