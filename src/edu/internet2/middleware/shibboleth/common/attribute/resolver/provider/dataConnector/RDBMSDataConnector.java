@@ -22,14 +22,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
@@ -216,11 +214,9 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         String query = queryCreator.createStatement(queryTemplateName, resolutionContext, getDependencyIds(), null);
-
-        log.debug("Data connector {} resolving attributes with query: {}", getId(), query);
+        log.debug("Search Query: {}", query);
 
         Map<String, BaseAttribute> resolvedAttributes = null;
-
         resolvedAttributes = retrieveAttributesFromCache(resolutionContext.getAttributeRequestContext()
                 .getPrincipalName(), query);
 

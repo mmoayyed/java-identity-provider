@@ -260,7 +260,7 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
 
             // if it couldn't be encoded log it
             if (!attributeEncoded) {
-                log.info("Attribute {} was not encoded because no SAML1AttributeEncoder was attached to it.",
+                log.debug("Attribute {} was not encoded because no SAML1AttributeEncoder was attached to it.",
                         shibbolethAttribute.getId());
             }
         }

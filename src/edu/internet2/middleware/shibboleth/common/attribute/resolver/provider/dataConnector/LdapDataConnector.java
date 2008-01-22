@@ -746,8 +746,6 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        log.debug("Begin resolve for {}", resolutionContext.getAttributeRequestContext().getPrincipalName());
-
         String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDependencyIds(),
                 escapingStrategy);
         log.debug("Search filter: {}", searchFilter);

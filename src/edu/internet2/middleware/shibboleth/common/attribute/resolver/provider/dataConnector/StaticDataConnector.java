@@ -13,9 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
@@ -24,9 +21,6 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.Sh
  * Data connector implementation that returns staticly defined attributes.
  */
 public class StaticDataConnector extends BaseDataConnector {
-
-    /** Log4j logger. */
-    private final Logger log = LoggerFactory.getLogger(StaticDataConnector.class.getName());
 
     /** Source Data. */
     private Map<String, BaseAttribute> attributes;
@@ -48,9 +42,6 @@ public class StaticDataConnector extends BaseDataConnector {
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        log.debug("Resolving connector: {} for principal: {}", getId(), resolutionContext.getAttributeRequestContext()
-                .getPrincipalName());
-
         return attributes;
     }
 

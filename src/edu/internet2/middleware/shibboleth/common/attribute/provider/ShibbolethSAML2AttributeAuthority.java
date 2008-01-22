@@ -219,7 +219,7 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
 
             // if it couldn't be encoded log it
             if (!attributeEncoded) {
-                log.info("Attribute {} was not encoded because no SAML2AttributeEncoder was attached to it.",
+                log.debug("Attribute {} was not encoded because no SAML2AttributeEncoder was attached to it.",
                         shibbolethAttribute.getId());
             }
         }

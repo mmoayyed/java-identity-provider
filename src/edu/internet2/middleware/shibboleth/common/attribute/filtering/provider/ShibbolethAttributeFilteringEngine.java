@@ -86,7 +86,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     public Map<String, BaseAttribute> filterAttributes(Map<String, BaseAttribute> attributes,
             SAMLProfileRequestContext context) throws AttributeFilteringException {
 
-        log.debug("Filtering {} attributes for principal {}", attributes.size(), context.getPrincipalName());
+        log.debug(getId() +" filtering {} attributes for principal {}", attributes.size(), context.getPrincipalName());
 
         if (attributes.size() == 0) {
             return new HashMap<String, BaseAttribute>();

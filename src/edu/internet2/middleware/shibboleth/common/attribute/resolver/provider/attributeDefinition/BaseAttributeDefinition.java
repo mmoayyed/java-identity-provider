@@ -83,7 +83,6 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
 
     /** {@inheritDoc} */
     public BaseAttribute resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
-        log.debug("Resolving attribute: {}", getId());
         BaseAttribute resolvedAttribute = doResolve(resolutionContext);
 
         if(resolvedAttribute == null){
