@@ -152,7 +152,8 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         Map<String, BaseAttribute> resolvedAttributes = resolveAttributes(resolutionContext);
         cleanResolvedAttributes(resolvedAttributes, resolutionContext);
 
-        log.debug("{} returning attributes for principal {}", getId(), attributeRequestContext.getPrincipalName());
+        log.debug(getId() + " resolved, for principal {}, the attributes: {}", attributeRequestContext
+                .getPrincipalName(), resolvedAttributes.keySet());
         return resolvedAttributes;
     }
 
@@ -281,8 +282,6 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         }
         readLock.unlock();
 
-        log.debug("{} resolved attributes for principal {}", getId(), resolutionContext.getAttributeRequestContext()
-                .getPrincipalName());
         return resolvedAttributes;
     }
 
@@ -417,13 +416,13 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         Set<Object> values;
         while (attributeItr.hasNext()) {
             resolvedAttribute = attributeItr.next().getValue();
-            
+
             // remove nulls
-            if(resolvedAttribute == null){
+            if (resolvedAttribute == null) {
                 attributeItr.remove();
                 continue;
             }
-            
+
             // remove dependency-only attributes
             attributeDefinition = getAttributeDefinitions().get(resolvedAttribute.getId());
             if (attributeDefinition.isDependencyOnly()) {
@@ -432,7 +431,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
                 attributeItr.remove();
                 continue;
             }
-            
+
             // remove value-less attributes
             if (resolvedAttribute.getValues().size() == 0) {
                 log.debug("Removing attribute {} from resolution result for principal {}.  It contains no values.",
