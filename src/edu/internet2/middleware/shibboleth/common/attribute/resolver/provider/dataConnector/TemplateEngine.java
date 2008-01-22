@@ -84,7 +84,7 @@ public class TemplateEngine {
         VelocityContext vContext = createVelocityContext(resolutionContext, dependencies, escapingStrategy);
 
         try {
-            log.debug("Populating the following {} template", templateName);
+            log.trace("Populating the following {} template", templateName);
 
             StringWriter output = new StringWriter();
             Template template = velocity.getTemplate(templateName);
@@ -110,7 +110,7 @@ public class TemplateEngine {
     @SuppressWarnings("unchecked")
     protected VelocityContext createVelocityContext(ShibbolethResolutionContext resolutionContext,
             List<String> dependencies, CharacterEscapingStrategy escapingStrategy) throws AttributeResolutionException {
-        log.debug("Populating velocity context");
+        log.trace("Populating velocity context");
         VelocityContext vCtx = new VelocityContext();
         vCtx.put("requestContext", resolutionContext.getAttributeRequestContext());
 
@@ -120,21 +120,21 @@ public class TemplateEngine {
         for (String dependencyId : dependencies) {
             plugin = resolutionContext.getResolvedPlugins().get(dependencyId);
             if (plugin instanceof DataConnector) {
-                log.debug("Resolving attributes from data connector {}", dependencyId);
+                log.trace("Resolving attributes from data connector {}", dependencyId);
                 attributes = ((DataConnector) plugin).resolve(resolutionContext);
 
                 for (String attributeId : attributes.keySet()) {
                     vCtx.put(attributeId, prepareAttributeValues(attributes.get(attributeId), escapingStrategy));
                 }
             } else if (plugin instanceof AttributeDefinition) {
-                log.debug("Resolving attributes from attribute definition {}", dependencyId);
+                log.trace("Resolving attributes from attribute definition {}", dependencyId);
                 attribute = ((AttributeDefinition) plugin).resolve(resolutionContext);
                 if (!vCtx.containsKey(attribute.getId())) {
                     vCtx.put(attribute.getId(), new ArrayList<String>());
                 }
                 ((List<String>) vCtx.get(attribute.getId())).addAll(attribute.getValues());
             } else {
-                log.debug("Unable to locate resolution plugin {}", dependencyId);
+                log.trace("Unable to locate resolution plugin {}", dependencyId);
             }
         }
 
