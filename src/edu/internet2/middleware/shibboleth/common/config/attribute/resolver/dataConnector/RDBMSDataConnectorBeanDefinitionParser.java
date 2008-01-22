@@ -80,6 +80,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         pluginBuilder.addPropertyValue("connectionDataSource", connectionSource);
 
         String queryTemplate = processesQueryTemplate(pluginId, pluginConfigChildren, pluginBuilder);
+        queryTemplate = DatatypeHelper.safeTrimOrNullString(queryTemplate);
         log.debug("Data connector {} database query template: {}", pluginId, queryTemplate);
         pluginBuilder.addPropertyValue("queryTemplate", queryTemplate);
 

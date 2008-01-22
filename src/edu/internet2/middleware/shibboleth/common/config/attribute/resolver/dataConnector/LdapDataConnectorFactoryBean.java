@@ -450,7 +450,8 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
             connector.setSslKeyManagers(connectionCredential);
         }
         
-        connector.setFilterTemplate(getFilterTemplate());
+        connector.setCacheResults(cacheResults);
+        connector.setFilterTemplate(filterTemplate);
         connector.setMaxResultSize(maxResultSize);
         connector.setMergeResults(mergeResults);
         connector.setNoResultsIsError(noResultsIsError);

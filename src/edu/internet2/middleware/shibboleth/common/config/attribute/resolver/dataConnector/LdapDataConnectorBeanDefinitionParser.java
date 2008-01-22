@@ -73,6 +73,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
 
         String filterTemplate = pluginConfigChildren.get(
                 new QName(DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate")).get(0).getTextContent();
+        filterTemplate = DatatypeHelper.safeTrimOrNullString(filterTemplate);
         log.debug("Data connector {} LDAP filter template: {}", pluginId, filterTemplate);
         pluginBuilder.addPropertyValue("filterTemplate", filterTemplate);
 
