@@ -21,6 +21,9 @@ Shibboleth Implementation Team
       
    Will Norris
    University of Southern California
+   
+   Rod Widdowson
+   University of Edinburgh
 
  Project Management
 
@@ -39,3 +42,5 @@ Thanks to:
     Internet2
 
     Daniel Fisher, from Virginia Tech, for his work on the LDAP data connector and JAAS module
+    
+    Derek Morr, from Penn State University, for his initial work on the 2.0 IdP authentication engine
