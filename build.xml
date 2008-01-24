@@ -112,29 +112,6 @@
     <target name="package" depends="compile-core" description="Creates the project library jar file.">
         <mkdir dir="${dist.dir}" />
 
-        <if>
-            <equals arg1="${jdk.target}" arg2="1.4" />
-            <then>
-                <java classname="com.rc.retroweaver.Weaver">
-                    <arg value="-source" />
-                    <arg value="${core-classes.dir}" />
-                    <classpath>
-                        <fileset dir="${thirdpaty-lib.dir}">
-                            <include name="**/*.jar" />
-                        </fileset>
-                    </classpath>
-                </java>
-
-                <echo message="**************************************************************" />
-                <echo message="    Remember, you must include the retroweaver-rt jar" />
-                <echo message="    file, located in the thirdparty-lib directory, along with the" />
-                <echo message="    ${jar.name} on your" />
-                <echo message="    classpath in order to use this with JDK 1.4" />
-                <echo message="**************************************************************" />
-
-            </then>
-        </if>
-
         <jar destfile="${dist.dir}/${jar.name}" basedir="${core-classes.dir}" whenempty="fail">
         	<fileset dir="${classpathres.dir}" />
         	<metainf dir="${metainf.dir}" />
