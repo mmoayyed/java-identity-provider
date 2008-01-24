@@ -136,7 +136,7 @@
                     </annotation>
                 </attribute>
                 <attribute name="nameIdFormat" type="string"
-                    default="urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified">
+                    default="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
                     </annotation>
