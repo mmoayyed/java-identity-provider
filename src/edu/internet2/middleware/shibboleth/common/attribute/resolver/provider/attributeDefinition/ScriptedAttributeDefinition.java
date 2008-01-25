@@ -124,7 +124,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             }
 
             BaseAttribute attribute = (BaseAttribute) context.getAttribute(getId());
-            if(attribute != null){
+            if (attribute == null){
                 log.error("{} produced a null attribute", getId());
                 throw new AttributeResolutionException(getId() + " produced a null attributes");
             }
