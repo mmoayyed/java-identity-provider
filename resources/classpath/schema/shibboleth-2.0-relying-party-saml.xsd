@@ -112,14 +112,14 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="encryptNameIds" type="samlrp:cryptoReqType" default="conditional">
+                <attribute name="encryptNameIds" type="samlrp:cryptoReqType" default="never">
                     <annotation>
-                        <documentation>A boolean flag indicating whether NameIDs should be encrypted.</documentation>
+                        <documentation>A flag indicating whether NameIDs should be encrypted.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="encryptAssertions" type="samlrp:cryptoReqType" default="conditional">
                     <annotation>
-                        <documentation>A boolean flag indicating whether assertions should be encrypted.</documentation>
+                        <documentation>A flag indicating whether assertions should be encrypted.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="assertionProxyCount" type="nonNegativeInteger" default="0">
@@ -264,7 +264,7 @@
                 <attribute name="signAssertions" type="samlrp:cryptoReqType" default="never">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating whether issued assertions should be signed. If no signing
+                            A flag indicating whether issued assertions should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
                             on the relying party configuration then signing will not occur regardless of this setting.
                         </documentation>
@@ -273,7 +273,7 @@
                 <attribute name="signRequests" type="samlrp:cryptoReqType" default="conditional">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating whether protocol requests should be signed. If no signing
+                            A flag indicating whether protocol requests should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
                             on the relying party configuration then signing will not occur regardless of this setting.
                         </documentation>
@@ -282,7 +282,7 @@
                 <attribute name="signResponses" type="samlrp:cryptoReqType" default="conditional">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating whether protocol responses should be signed. If no signing
+                            A flag indicating whether protocol responses should be signed. If no signing
                             credential is provided on this configuration and no default signing credential is provided
                             on the relying party configuration then signing will not occur regardless of this setting.
                         </documentation>
