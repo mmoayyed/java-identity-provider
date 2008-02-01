@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
@@ -381,6 +382,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             try {
                 TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                 KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+                keystore.load(null, null);
                 for (X509Certificate c : tc.getEntityCertificateChain()) {
                     keystore.setCertificateEntry("ldap_tls_trust_" + c.getSerialNumber(), c);
                 }
@@ -392,6 +394,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
                 clearCache();
                 initializeLdapPool();
             } catch (GeneralSecurityException e) {
+                log.error("Error initializing trust managers", e);
+            } catch (IOException e) {
                 log.error("Error initializing trust managers", e);
             }
         }
@@ -419,6 +423,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             try {
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
                 KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+                keystore.load(null, null);
                 keystore.setKeyEntry("ldap_tls_client_auth", kc.getPrivateKey(), "changeit".toCharArray(), kc
                         .getEntityCertificateChain().toArray(new X509Certificate[0]));
                 kmf.init(keystore, "changeit".toCharArray());
@@ -429,6 +434,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
                 clearCache();
                 initializeLdapPool();
             } catch (GeneralSecurityException e) {
+                log.error("Error initializing key managers", e);
+            } catch (IOException e) {
                 log.error("Error initializing key managers", e);
             }
         }
