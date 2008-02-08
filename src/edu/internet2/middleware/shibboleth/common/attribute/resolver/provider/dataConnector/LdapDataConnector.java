@@ -749,10 +749,6 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     }
 
     /** {@inheritDoc} */
-    public void setNotificationAddress(String notificationAddress) {
-    }
-
-    /** {@inheritDoc} */
     public void onApplicationEvent(ApplicationEvent evt) {
         if (evt instanceof LogoutEvent) {
             LogoutEvent logoutEvent = (LogoutEvent) evt;

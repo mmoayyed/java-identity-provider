@@ -32,11 +32,6 @@ public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMeta
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, 
             "FileBackedHTTPMetadataProvider");
-
-    /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return FileBackedHTTPMetadataProvider.class;
-    }
     
     /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
