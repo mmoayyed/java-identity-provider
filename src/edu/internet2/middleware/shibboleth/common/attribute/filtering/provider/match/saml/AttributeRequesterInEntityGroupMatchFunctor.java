@@ -20,8 +20,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A match function that evaluates to true if {@link SAMLFilterContext#getRequesterMetadata()} matches the provided
- * entity group name.
+ * A match function that evaluates to true if attribute requester matches the provided entity group name.
  */
 public class AttributeRequesterInEntityGroupMatchFunctor extends AbstractEntityGroupMatchFunctor {
 

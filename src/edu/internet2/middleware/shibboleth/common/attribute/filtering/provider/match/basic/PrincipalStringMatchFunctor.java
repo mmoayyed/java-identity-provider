@@ -20,7 +20,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A match function that evaluates to true if {@link FilterContext#getPrincipalName()} matches the given match string.
+ * A match function that evaluates to true if user's principal name matches the given match string.
  */
 public class PrincipalStringMatchFunctor extends AbstractStringMatchFunctor {
 

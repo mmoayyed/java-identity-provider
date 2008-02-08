@@ -219,7 +219,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets whether this connector will merge multiple search results into one result. This method will remove any
      * cached results.
      * 
-     * @see {@link #clearCache()}.
+     * @see #clearCache()
      * 
      * @param b <code>boolean</code>
      */
@@ -240,7 +240,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /**
      * This sets whether this connector will cache search results.
      * 
-     * @see {@link #initializeCache()}.
+     * @see #initializeCache()
      * 
      * @param b <code>boolean</code>
      */
@@ -350,7 +350,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the SSL Socket Factory that will be used for all TLS and SSL connections to the ldap. This method will
      * remove any cached results and initialize the ldap pool.
      * 
-     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
      * 
      * @param sf <code>SSLSocketFactory</code>
      */
@@ -373,7 +374,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the trust managers that will be used for all TLS and SSL connections to the ldap. This method will
      * remove any cached results and initialize the ldap pool.
      * 
-     * @see {@link #clearCache()}, {@link #initializeLdapPool()}, and {@link #setSslSocketFactory(SSLSocketFactory)}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
+     * @see #setSslSocketFactory(SSLSocketFactory)
      * 
      * @param tc <code>X509Credential</code> to create TrustManagers with
      */
@@ -414,7 +417,9 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the key managers that will be used for all TLS and SSL connections to the ldap. This method will remove
      * any cached results and initialize the ldap pool.
      * 
-     * @see {@link #clearCache()}, {@link #initializeLdapPool()}, and {@link #setSslSocketFactory(SSLSocketFactory)}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
+     * @see #setSslSocketFactory(SSLSocketFactory)
      * 
      * @param kc <code>X509Credential</code> to create KeyManagers with
      */
@@ -454,7 +459,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the hostname verifier that will be used for all TLS and SSL connections to the ldap. This method will
      * remove any cached results and initialize the ldap pool.
      * 
-     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
      * 
      * @param hv <code>HostnameVerifier</code>
      */
@@ -493,7 +499,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the authentication type used when binding to the ldap. This method will remove any cached results and
      * initialize the ldap pool.
      * 
-     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
      * 
      * @param type <code>AUTHENTICATION_TYPE</code>
      */
@@ -537,7 +544,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /**
      * This sets the search scope used when searching the ldap. This method will remove any cached results.
      * 
-     * @see {@link #clearCache()}.
+     * @see #clearCache()
      * 
      * @param scope directory search scope
      */
@@ -565,7 +572,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the attributes that all searches will request from the ldap. This method will remove any cached
      * results.
      * 
-     * @see {@link #clearCache()}.
+     * @see #clearCache()
      * 
      * @param s <code>String[]</code>
      */
@@ -602,7 +609,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the time in milliseconds that the ldap will wait for search results. A value of 0 means to wait
      * indefinitely. This method will remove any cached results.
      * 
-     * @see {@link #clearCache()}.
+     * @see #clearCache()
      * 
      * @param i <code>int</code> milliseconds
      */
@@ -625,7 +632,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the maximum number of search results the ldap will return. A value of 0 all entries will be returned.
      * This method will remove any cached results.
      * 
-     * @see {@link #clearCache()}.
+     * @see #clearCache()
      * 
      * @param l <code>long</code> maximum number of search results
      */
@@ -646,7 +653,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /**
      * This sets whether objects will be returned in the search results. This method will remove any cached results.
      * 
-     * @see {@link #clearCache()}.
+     * @see #clearCache()
      * 
      * @param b <code>boolean</code>
      */
@@ -667,7 +674,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
     /**
      * This sets whether link dereferencing will be used during the search. This method will remove any cached results.
      * 
-     * @see {@link #clearCache()}.
+     * @see #clearCache()
      * 
      * @param b <code>boolean</code>
      */
@@ -689,7 +696,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the principal dn used to bind to the ldap for all searches. This method will remove any cached results
      * and initialize the ldap pool.
      * 
-     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
      * 
      * @param s <code>String</code> principal dn
      */
@@ -712,7 +720,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets the principal credential used to bind to the ldap for all searches. This method will remove any cached
      * results and initialize the ldap pool.
      * 
-     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
      * 
      * @param s <code>String</code> principal credential
      */
@@ -726,7 +735,8 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
      * This sets additional ldap context environment properties. This method will remove any cached results and
      * initialize the ldap pool.
      * 
-     * @see {@link #clearCache()} and {@link #initializeLdapPool()}.
+     * @see #clearCache()
+     * @see #initializeLdapPool()
      * 
      * @param ldapProperties <code>Map</code> of name/value pairs
      */

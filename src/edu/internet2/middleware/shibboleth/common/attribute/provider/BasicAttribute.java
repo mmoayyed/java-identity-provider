@@ -26,7 +26,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 
 /**
- * Basic {@Attribute} implementation.
+ * An attribute implementation that operates on simple value types.
  * 
  * @param <ValueType> value type
  */

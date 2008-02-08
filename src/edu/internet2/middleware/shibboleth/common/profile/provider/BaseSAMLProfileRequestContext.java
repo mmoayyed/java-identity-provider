@@ -95,11 +95,6 @@ public class BaseSAMLProfileRequestContext<InboundMessage extends SAMLObject, Ou
     }
 
     /** {@inheritDoc} */
-    public Map<String, BaseAttribute> getPrincipalAttributes() {
-        return principalAttributes;
-    }
-
-    /** {@inheritDoc} */
     public String getPrincipalAuthenticationMethod() {
         return principalAuthenticationMethod;
     }

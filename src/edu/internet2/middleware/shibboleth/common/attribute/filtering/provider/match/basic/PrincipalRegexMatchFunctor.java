@@ -20,8 +20,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.F
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * A match function that evaluates to true if {@link FilterContext#getPrincipalName()} matches the provided regular
- * expression.
+ * A match function that evaluates to true if user's principal name matches the provided regular expression.
  */
 public class PrincipalRegexMatchFunctor extends AbstractRegexMatchFunctor {
 

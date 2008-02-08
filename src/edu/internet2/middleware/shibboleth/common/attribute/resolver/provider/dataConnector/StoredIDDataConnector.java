@@ -132,18 +132,6 @@ public class StoredIDDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    protected BaseAttribute<String> doResolve(ShibbolethResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-
-        String persistentId = null;
-
-        BasicAttribute<String> attribute = new BasicAttribute<String>();
-        attribute.setId(getId());
-        attribute.getValues().add(persistentId);
-        return attribute;
-    }
-
-    /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         String persistentId = getStoredId(resolutionContext);

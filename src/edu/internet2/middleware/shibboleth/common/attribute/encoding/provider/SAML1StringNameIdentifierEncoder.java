@@ -48,11 +48,6 @@ public class SAML1StringNameIdentifierEncoder extends AbstractAttributeEncoder<N
     }
 
     /** {@inheritDoc} */
-    public String getEncoderCategory() {
-        return nameFormat;
-    }
-
-    /** {@inheritDoc} */
     public String getNameFormat() {
         return nameFormat;
     }

@@ -34,11 +34,6 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "HTTPMetadataProvider");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return HTTPMetadataProvider.class;
-    }
-
-    /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(HTTPMetadataProvider.class);
         parseCommonConfig(builder, element, parserContext);

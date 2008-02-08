@@ -24,8 +24,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeRe
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 
 /**
- * Wrapper for an {@link AttributeDefinition} within a {@link AttributeResolutionContext}. This wrapper ensures that the
- * definition is resolved only once per context.
+ * Wrapper for an {@link AttributeDefinition} within a {@link ShibbolethResolutionContext}. This wrapper ensures that
+ * the definition is resolved only once per context.
  */
 public class ContextualAttributeDefinition implements AttributeDefinition {
 
@@ -48,7 +48,7 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     public boolean equals(Object obj) {
         return definition.equals(obj);
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         return definition.hashCode();

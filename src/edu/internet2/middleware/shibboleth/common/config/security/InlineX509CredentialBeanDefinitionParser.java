@@ -40,9 +40,4 @@ public class InlineX509CredentialBeanDefinitionParser extends AbstractX509Creden
     protected byte[] getEncodedPrivateKey(String keyConfigContent) {
         return keyConfigContent.getBytes();
     }
-
-    /** {@inheritDoc} */
-    protected byte[] getEncodedSecretKey(String keyConfigContent) {
-        return keyConfigContent.getBytes();
-    }
 }

@@ -66,16 +66,4 @@ public class FilesystemX509CredentialBeanDefinitionParser extends AbstractX509Cr
             throw new FatalBeanException("Unable to read private key from file " + keyConfigContent, e);
         }
     }
-
-    /** {@inheritDoc} */
-    protected byte[] getEncodedSecretKey(String keyConfigContent) {
-        try {
-            FileInputStream ins = new FileInputStream(keyConfigContent);
-            byte[] encoded = new byte[ins.available()];
-            ins.read(encoded);
-            return encoded;
-        } catch (IOException e) {
-            throw new FatalBeanException("Unable to read secret key from file " + keyConfigContent, e);
-        }
-    }
 }

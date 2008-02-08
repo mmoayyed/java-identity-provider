@@ -22,7 +22,7 @@ import org.opensaml.xml.security.credential.UsageType;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
- * Abstract factory bean for building {@link Credential}s.
+ * Abstract factory bean for building {@link org.opensaml.xml.security.credential.Credential}s.
  */
 public abstract class AbstractCredentialFactoryBean extends AbstractFactoryBean {
     

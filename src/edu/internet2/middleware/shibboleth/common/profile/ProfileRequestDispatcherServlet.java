@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import edu.internet2.middleware.shibboleth.common.log.AccessLogEntry;
 
 /**
- * Servlet responsible for dispatching incoming requests to the appropriate {@link AbstractProfileHandler}.
+ * Servlet responsible for dispatching incoming requests to the appropriate {@link ProfileHandler}.
  */
 public class ProfileRequestDispatcherServlet extends HttpServlet {
 

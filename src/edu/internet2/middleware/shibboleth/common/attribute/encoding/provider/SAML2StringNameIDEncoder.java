@@ -67,11 +67,6 @@ public class SAML2StringNameIDEncoder extends AbstractAttributeEncoder<NameID> i
     }
 
     /** {@inheritDoc} */
-    public String getEncoderCategory() {
-        return nameFormat;
-    }
-
-    /** {@inheritDoc} */
     public String getNameFormat() {
         return nameFormat;
     }

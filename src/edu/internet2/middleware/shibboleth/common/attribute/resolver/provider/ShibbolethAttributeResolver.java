@@ -287,7 +287,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
     /**
      * Resolve the {@link AttributeDefinition} which has the specified ID. The definition is then added to the
-     * {@link AttributeResolutionContext} for use by other {@link ResolutionPlugIn}s and the resolution of the
+     * {@link ShibbolethResolutionContext} for use by other {@link ResolutionPlugIn}s and the resolution of the
      * specified definition is added to <code>resolvedAttributes</code> to be returned by the resolver.
      * 
      * @param attributeID id of the attribute definition to resolve

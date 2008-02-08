@@ -39,11 +39,6 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadata
     public static final String MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME = "maintainExpiredMetadata";
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return FilesystemMetadataProvider.class;
-    }
-
-    /** {@inheritDoc} */
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FilesystemMetadataProvider.class);
         parseCommonConfig(builder, element, parserContext);

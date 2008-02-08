@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.common.profile;
 import javax.servlet.ServletRequest;
 
 /**
- * This manager is responsible for determining the correct {@link AbstractProfileHandler} for a given request. The
+ * This manager is responsible for determining the correct {@link ProfileHandler} for a given request. The
  * manner in which this is done is completely implementation specific but implementers should make the selection process
  * as quick and simple as absolutely possible as this process will be run on every request.
  */
