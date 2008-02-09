@@ -194,7 +194,9 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
             writeLock.unlock();
             
             setInitialized(true);
-            replacedServiceContext.close();
+            if(replacedServiceContext != null){
+                replacedServiceContext.close();
+            }
             log.info("{} service configuration loaded", getId());
         } catch (Exception e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
