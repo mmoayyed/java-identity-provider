@@ -55,7 +55,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
     private ApplicationContext owningContext;
 
     /** Context containing loaded with service content. */
-    private ApplicationContext serviceContext;
+    private GenericApplicationContext serviceContext;
 
     /** List of configuration resources for this service. */
     private ArrayList<Resource> serviceConfigurations;
@@ -142,7 +142,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      * 
      * @param context this service's context
      */
-    protected void setServiceContext(ApplicationContext context) {
+    protected void setServiceContext(GenericApplicationContext context) {
         serviceContext = context;
     }
 
@@ -179,16 +179,22 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
     protected void loadContext() throws ServiceException {
         log.debug("Loading configuration for service: {}", getId());
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
+        newServiceContext.setDisplayName("ApplicationContext:" + getId());
         try {
             SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
             newServiceContext.refresh();
 
+            GenericApplicationContext replacedServiceContext;
+            
             Lock writeLock = getReadWriteLock().writeLock();
             writeLock.lock();
-            newContextCreated(newServiceContext);
+            replacedServiceContext = serviceContext;
+            onNewContextCreated(newServiceContext);
             setServiceContext(newServiceContext);
             writeLock.unlock();
+            
             setInitialized(true);
+            replacedServiceContext.close();
             log.info("{} service configuration loaded", getId());
         } catch (Exception e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
@@ -222,5 +228,5 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      * 
      * @throws ServiceException thrown if there is a problem with the given service context
      */
-    protected abstract void newContextCreated(ApplicationContext newServiceContext) throws ServiceException;
+    protected abstract void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException;
 }

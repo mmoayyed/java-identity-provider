@@ -480,7 +480,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     }
 
     /** {@inheritDoc} */
-    protected void newContextCreated(ApplicationContext newServiceContext) throws ServiceException {
+    protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         String[] beanNames;
 
         principalConnectors.clear();

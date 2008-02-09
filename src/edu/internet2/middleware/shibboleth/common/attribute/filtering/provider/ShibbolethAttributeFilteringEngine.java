@@ -178,7 +178,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     }
 
     /** {@inheritDoc} */
-    protected void newContextCreated(ApplicationContext newServiceContext) throws ServiceException {
+    protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         filterPolicies.clear();
         String[] beanNames = newServiceContext.getBeanNamesForType(AttributeFilterPolicy.class);
         for (String beanName : beanNames) {
