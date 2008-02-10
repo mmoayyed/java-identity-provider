@@ -244,7 +244,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         }
 
         if (DatatypeHelper.isEmpty(subjectNameFormat)) {
-            subjectNameFormat = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
+            subjectNameFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
         }
 
         return subjectNameFormat;
