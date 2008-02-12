@@ -59,7 +59,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        log.info("Parsing configuration for {} X509 credential with id: {}", XMLHelper.getXSIType(element)
+        log.info("Parsing configuration for {} credential with id: {}", XMLHelper.getXSIType(element)
                 .getLocalPart(), element.getAttributeNS(null, "id"));
 
         parseAttributes(element, builder);

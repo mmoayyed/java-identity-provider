@@ -21,6 +21,8 @@ import java.util.List;
 
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -31,8 +33,14 @@ import org.w3c.dom.Element;
 public abstract class AbstractRequestURIMappedProfileHandlerBeanDefinitionParser extends
         AbstractSingleBeanDefinitionParser {
 
+    /** Class loggger. */
+    private static Logger log = LoggerFactory
+            .getLogger(AbstractRequestURIMappedProfileHandlerBeanDefinitionParser.class);
+
     /** {@inheritDoc} */
     protected void doParse(Element config, BeanDefinitionBuilder builder) {
+        log.info("Parsing configuration for profile handler: {}", XMLHelper.getXSIType(config).getLocalPart());
+
         builder.addPropertyValue("requestPaths", getRequestPaths(config));
     }
 
