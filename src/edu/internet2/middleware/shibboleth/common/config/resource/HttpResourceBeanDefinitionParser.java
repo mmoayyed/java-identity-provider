@@ -20,8 +20,10 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.util.resource.HttpResource;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
@@ -38,12 +40,13 @@ public class HttpResourceBeanDefinitionParser extends AbstractSingleBeanDefiniti
     }
 
     /** {@inheritDoc} */
+    protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
+        return HttpResource.class.getName() + ":"
+                + DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "url"));
+    }
+
+    /** {@inheritDoc} */
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
         builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "url")));
-    }
-    
-    /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
-        return true;
     }
 }

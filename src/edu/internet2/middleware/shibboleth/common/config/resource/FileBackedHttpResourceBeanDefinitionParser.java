@@ -20,16 +20,17 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.util.resource.FileBackedHttpResource;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
 
 /**
  * Bean definition parser for {@link FileBackedHttpResource}s.
  */
 public class FileBackedHttpResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "FileBackedHttpResource");
 
@@ -37,15 +38,17 @@ public class FileBackedHttpResourceBeanDefinitionParser extends AbstractSingleBe
     protected Class getBeanClass(Element arg0) {
         return FileBackedHttpResource.class;
     }
-    
+
+    /** {@inheritDoc} */
+    protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
+        return FileBackedHttpResource.class.getName() + ":("
+                + DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "url")) + ","
+                + DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "file")) + ")";
+    }
+
     /** {@inheritDoc} */
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
         builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "url")));
         builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "file")));
-    }
-    
-    /** {@inheritDoc} */
-    protected boolean shouldGenerateId() {
-        return true;
     }
 }
