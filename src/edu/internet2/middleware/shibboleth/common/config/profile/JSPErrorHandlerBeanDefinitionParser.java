@@ -42,7 +42,7 @@ public class JSPErrorHandlerBeanDefinitionParser extends AbstractSingleBeanDefin
 
     /** {@inheritDoc} */
     protected void doParse(Element config, BeanDefinitionBuilder builder) {
-        log.info("Parsing configuration for velocity error handler.");
+        log.info("Parsing configuration for JSP error handler.");
         super.doParse(config, builder);
 
         builder.addConstructorArg(config.getAttributeNS(null, "jspPagePath"));

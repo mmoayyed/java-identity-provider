@@ -19,6 +19,9 @@ package edu.internet2.middleware.shibboleth.common.config.security;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -30,6 +33,9 @@ public class MetadataPKIXX509CredentialTrustEngineBeanDefinitionParser extends A
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "MetadataPKIXX509Credential");
+    
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(MetadataPKIXX509CredentialTrustEngineBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -38,6 +44,9 @@ public class MetadataPKIXX509CredentialTrustEngineBeanDefinitionParser extends A
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element)
+                .getLocalPart(), element.getAttributeNS(null, "id"));
+        
         builder.addPropertyReference("metadataProvider", DatatypeHelper.safeTrim(element.getAttributeNS(null,
                 "metadataProviderRef")));
     }

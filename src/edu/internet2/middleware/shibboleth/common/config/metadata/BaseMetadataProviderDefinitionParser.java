@@ -47,7 +47,8 @@ public abstract class BaseMetadataProviderDefinitionParser extends AbstractBeanD
      */
     protected void parseCommonConfig(BeanDefinitionBuilder builder, Element config, ParserContext context) {
         String id = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
-        log.info("Parsing configuration for {} metadata provider with ID: {}", config.getLocalName(), id);
+        log.debug("Parsing configuration for {} metadata provider with ID: {}", XMLHelper.getXSIType(config)
+                .getLocalPart(), id);
 
         if (config.hasAttributeNS(null, "requireValidMetadata")) {
             boolean requireValidMDBool = XMLHelper.getAttributeValueAsBoolean(config.getAttributeNodeNS(null,

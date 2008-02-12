@@ -177,7 +177,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      * @throws ServiceException thrown if the configuration for this service could not be loaded
      */
     protected void loadContext() throws ServiceException {
-        log.debug("Loading configuration for service: {}", getId());
+        log.info("Loading configuration for service: {}", getId());
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
         newServiceContext.setDisplayName("ApplicationContext:" + getId());
         try {

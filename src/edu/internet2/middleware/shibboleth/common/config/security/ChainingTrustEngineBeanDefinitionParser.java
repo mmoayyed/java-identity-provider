@@ -55,7 +55,8 @@ public class ChainingTrustEngineBeanDefinitionParser extends AbstractSingleBeanD
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        log.debug("Parsing chaining trust engine: {}", element.getAttributeNS(null, "id"));
+        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element)
+                .getLocalPart(), element.getAttributeNS(null, "id"));
         
         ManagedList managedChain = new ManagedList();
         

@@ -21,7 +21,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +54,6 @@ public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDef
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
-        String id = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
-        log.info("Parsing configuration for attribute resolver {}", id);
-        
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
         List<Element> children;
 

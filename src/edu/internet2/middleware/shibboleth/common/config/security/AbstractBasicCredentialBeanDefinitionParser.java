@@ -35,12 +35,11 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-
 /**
  * Base class for X509 credential beans.
  */
 public abstract class AbstractBasicCredentialBeanDefinitionParser extends AbstractCredentialBeanDefinitionParser {
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractBasicCredentialBeanDefinitionParser.class);
 
@@ -56,12 +55,13 @@ public abstract class AbstractBasicCredentialBeanDefinitionParser extends Abstra
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        log.debug("Parsing basic credential: {}", element.getAttributeNS(null, "id"));
-        
+        log.info("Parsing configuration for {} credential with id: {}", XMLHelper.getXSIType(element).getLocalPart(),
+                element.getAttributeNS(null, "id"));
+
         parseAttributes(element, builder);
-        
+
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(element);
-        
+
         parseCommon(configChildren, builder);
 
         parseSecretKey(configChildren, builder);
@@ -101,7 +101,7 @@ public abstract class AbstractBasicCredentialBeanDefinitionParser extends Abstra
      * @return secret key bytes
      */
     protected abstract byte[] getEncodedSecretKey(String keyConfigContent);
-    
+
     /**
      * Parses the public key from the credential configuration.
      * 
@@ -113,7 +113,7 @@ public abstract class AbstractBasicCredentialBeanDefinitionParser extends Abstra
         if (keyElems == null || keyElems.isEmpty()) {
             return;
         }
-        
+
         log.debug("Parsing credential public key");
         Element pubKeyElem = keyElems.get(0);
         byte[] encodedKey = getEncodedPublicKey(DatatypeHelper.safeTrimOrNullString(pubKeyElem.getTextContent()));
@@ -129,7 +129,7 @@ public abstract class AbstractBasicCredentialBeanDefinitionParser extends Abstra
             throw new FatalBeanException("Unable to create credential, unable to parse public key", e);
         }
     }
-    
+
     /**
      * Extracts the public key bytes from the content of the PublicKey configuration element.
      * 
@@ -138,5 +138,5 @@ public abstract class AbstractBasicCredentialBeanDefinitionParser extends Abstra
      * @return private key bytes
      */
     protected abstract byte[] getEncodedPublicKey(String keyConfigContent);
- 
+
 }

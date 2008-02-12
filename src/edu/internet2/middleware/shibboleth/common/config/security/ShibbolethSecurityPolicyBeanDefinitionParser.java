@@ -56,6 +56,9 @@ public class ShibbolethSecurityPolicyBeanDefinitionParser extends AbstractSingle
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        log.info("Parsing configuration for {} security policy with id: {}", XMLHelper.getXSIType(element)
+                .getLocalPart(), element.getAttributeNS(null, "id"));
+        
         String policyId = element.getAttributeNS(null, "id");
         log.debug("Configuring security policy: {}", policyId);
         builder.addPropertyValue("policyId", policyId);

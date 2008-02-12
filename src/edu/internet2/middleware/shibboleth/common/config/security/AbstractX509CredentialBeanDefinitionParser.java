@@ -39,12 +39,11 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
-
 /**
  * Base class for X509 credential beans.
  */
 public abstract class AbstractX509CredentialBeanDefinitionParser extends AbstractCredentialBeanDefinitionParser {
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractX509CredentialBeanDefinitionParser.class);
 
@@ -60,12 +59,13 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        log.debug("Parsing x509 credential: {}", element.getAttributeNS(null, "id"));
-        
+        log.info("Parsing configuration for {} X509 credential with id: {}", XMLHelper.getXSIType(element)
+                .getLocalPart(), element.getAttributeNS(null, "id"));
+
         parseAttributes(element, builder);
-        
+
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(element);
-        
+
         parseCommon(configChildren, builder);
 
         parsePrivateKey(configChildren, builder);
@@ -94,7 +94,7 @@ public abstract class AbstractX509CredentialBeanDefinitionParser extends Abstrac
             if (encodedCert == null) {
                 continue;
             }
-            
+
             boolean isEntityCert = false;
             Attr entityCertAttr = certElem.getAttributeNodeNS(null, "entityCertificate");
             if (entityCertAttr != null) {

@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.security;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -47,9 +48,9 @@ public class StaticExplicitKeySignatureTrustEngineBeanDefinitionParser extends A
     
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        String id = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "id"));
-        log.info("Parsing configuration for static explicit key signature trust engine with ID: {}", id);
-        
+        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element)
+                .getLocalPart(), element.getAttributeNS(null, "id"));
+                
         NodeList childElems = element.getElementsByTagNameNS(SecurityNamespaceHandler.NAMESPACE, "Credential");
         if(childElems != null){
             ManagedList credentials = 

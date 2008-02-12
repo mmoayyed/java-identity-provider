@@ -68,7 +68,7 @@ public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSimpl
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String rpId = getRelyingPartyId(config);
-        log.debug("Relying party configuration - relying party id: {}", rpId);
+        log.info("Parsing configuration for relying party with id: {}", rpId);
         builder.addPropertyValue("relyingPartyId", rpId);
 
         String provider = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "provider"));

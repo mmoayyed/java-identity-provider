@@ -19,6 +19,9 @@ package edu.internet2.middleware.shibboleth.common.config.security;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -27,21 +30,29 @@ import org.w3c.dom.Element;
 
 /** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}MetadataExplicitKeySignature elements. */
 public class MetadataExplicitKeySignatureTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "MetadataExplicitKeySignature");
+    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
+            "MetadataExplicitKeySignature");
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory
+            .getLogger(MetadataExplicitKeySignatureTrustEngineBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
         return MetadataExplicitKeySignatureTrustEngineFactoryBean.class;
     }
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element)
+                .getLocalPart(), element.getAttributeNS(null, "id"));
+
         builder.addPropertyReference("metadataProvider", DatatypeHelper.safeTrim(element.getAttributeNS(null,
                 "metadataProviderRef")));
     }
-    
+
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         return DatatypeHelper.safeTrim(element.getAttributeNS(null, "id"));
