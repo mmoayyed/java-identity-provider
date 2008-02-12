@@ -36,9 +36,9 @@ public interface SessionManager<SessionType extends Session> {
     public SessionType createSession(String principal);
 
     /**
-     * Gets the user's session based on session's ID.
+     * Gets the user's session based on session's ID or the user's prinicpal name.
      * 
-     * @param sessionID the ID of the session
+     * @param sessionID the ID of the session or the user's principal name
      * 
      * @return the session
      */
