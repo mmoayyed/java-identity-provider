@@ -64,7 +64,7 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 String scriptFile = scriptFileElem.get(0).getTextContent();
                 log.debug("Attribute definition {} script file: {}", pluginId, scriptFile);
-                pluginBuilder.addPropertyValue("sciptFile", scriptFile);
+                pluginBuilder.addPropertyValue("scriptFile", scriptFile);
             }
         }
     }
