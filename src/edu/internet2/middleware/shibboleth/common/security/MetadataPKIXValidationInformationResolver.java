@@ -22,7 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -82,10 +82,10 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
     private MetadataProvider metadata;
 
     /** Cache of resolved info. [MetadataCacheKey, Credentials] */
-    private Map<MetadataCacheKey, SoftReference<Collection<PKIXValidationInformation>>> entityPKIXCache;
+    private Map<MetadataCacheKey, SoftReference<List<PKIXValidationInformation>>> entityPKIXCache;
 
     /** Cache of resolved info. [Extensions, Credentials] */
-    private Map<Extensions, SoftReference<Collection<PKIXValidationInformation>>> extensionsCache;
+    private Map<Extensions, SoftReference<List<PKIXValidationInformation>>> extensionsCache;
 
     /** Cache of resolved info. [MetadataCacheKey, Strings(trusted key names)] */
     private Map<MetadataCacheKey, SoftReference<Set<String>>> entityNamesCache;
@@ -107,8 +107,8 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         }
         metadata = metadataProvider;
 
-        entityPKIXCache = new HashMap<MetadataCacheKey, SoftReference<Collection<PKIXValidationInformation>>>();
-        extensionsCache = new HashMap<Extensions, SoftReference<Collection<PKIXValidationInformation>>>();
+        entityPKIXCache = new HashMap<MetadataCacheKey, SoftReference<List<PKIXValidationInformation>>>();
+        extensionsCache = new HashMap<Extensions, SoftReference<List<PKIXValidationInformation>>>();
         entityNamesCache = new HashMap<MetadataCacheKey, SoftReference<Set<String>>>();
         
         rwlock = new ReentrantReadWriteLock();
@@ -148,7 +148,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         }
 
         MetadataCacheKey cacheKey = new MetadataCacheKey(entityID, role, protocol, usage);
-        Collection<PKIXValidationInformation> pkixInfoSet = retrievePKIXInfoFromCache(cacheKey);
+        List<PKIXValidationInformation> pkixInfoSet = retrievePKIXInfoFromCache(cacheKey);
 
         if (pkixInfoSet == null) {
             pkixInfoSet = retrievePKIXInfoFromMetadata(entityID, role, protocol, usage);
@@ -236,14 +236,19 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @throws SecurityException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
-    protected Collection<PKIXValidationInformation> retrievePKIXInfoFromMetadata(String entityID, QName role,
+    protected List<PKIXValidationInformation> retrievePKIXInfoFromMetadata(String entityID, QName role,
             String protocol, UsageType usage) throws SecurityException {
 
         log.debug("Attempting to retrieve PKIX validation info from metadata for entity: {}", entityID);
-        Collection<PKIXValidationInformation> pkixInfoSet = new HashSet<PKIXValidationInformation>();
+        List<PKIXValidationInformation> pkixInfoSet = new ArrayList<PKIXValidationInformation>();
+        
+        List<RoleDescriptor> roleDescriptors = getRoleDescriptors(entityID, role, protocol);
+        if(roleDescriptors == null || roleDescriptors.isEmpty()){
+            return pkixInfoSet;
+        }
 
-        for (RoleDescriptor roleDescriptor : getRoleDescriptors(entityID, role, protocol)) {
-            Collection<PKIXValidationInformation> roleInfo = resolvePKIXInfo(roleDescriptor);
+        for (RoleDescriptor roleDescriptor : roleDescriptors) {
+            List<PKIXValidationInformation> roleInfo = resolvePKIXInfo(roleDescriptor);
             if (roleInfo != null && !roleInfo.isEmpty()) {
                 pkixInfoSet.addAll(roleInfo);
             }
@@ -261,10 +266,10 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      *             format
      * 
      */
-    protected Collection<PKIXValidationInformation> resolvePKIXInfo(RoleDescriptor roleDescriptor)
+    protected List<PKIXValidationInformation> resolvePKIXInfo(RoleDescriptor roleDescriptor)
             throws SecurityException {
 
-        Set<PKIXValidationInformation> pkixInfoSet = new HashSet<PKIXValidationInformation>();
+        List<PKIXValidationInformation> pkixInfoSet = new ArrayList<PKIXValidationInformation>();
 
         XMLObject current = roleDescriptor.getParent();
         while (current != null) {
@@ -286,9 +291,12 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @throws SecurityException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
-    protected Collection<PKIXValidationInformation> resolvePKIXInfo(Extensions extensions) throws SecurityException {
+    protected List<PKIXValidationInformation> resolvePKIXInfo(Extensions extensions) throws SecurityException {
+        if (extensions == null) {
+            return Collections.emptyList();
+        }
 
-        Collection<PKIXValidationInformation> pkixInfoSet = retrieveExtensionsInfoFromCache(extensions);
+        List<PKIXValidationInformation> pkixInfoSet = retrieveExtensionsInfoFromCache(extensions);
         if (pkixInfoSet != null) {
             return pkixInfoSet;
         }
@@ -309,9 +317,19 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
             }
         }
 
-        pkixInfoSet = new HashSet<PKIXValidationInformation>();
-        for (XMLObject xmlObj : extensions.getUnknownXMLObjects(ShibbolethMetadataKeyAuthority.DEFAULT_ELEMENT_NAME)) {
-            pkixInfoSet.add(resolvePKIXInfo((ShibbolethMetadataKeyAuthority) xmlObj));
+        pkixInfoSet = new ArrayList<PKIXValidationInformation>();
+        
+        List<XMLObject> authorities = 
+            extensions.getUnknownXMLObjects(ShibbolethMetadataKeyAuthority.DEFAULT_ELEMENT_NAME);
+        if (authorities == null || authorities.isEmpty()) {
+            return pkixInfoSet;
+        }
+        
+        for (XMLObject xmlObj : authorities) {
+            PKIXValidationInformation authoritySet = resolvePKIXInfo((ShibbolethMetadataKeyAuthority) xmlObj);
+            if (authoritySet != null) {
+                pkixInfoSet.add(authoritySet);
+            }            
         }
         cacheExtensionsInfo(extensions, pkixInfoSet);
         return pkixInfoSet;
@@ -334,10 +352,20 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         if (depth == null) {
             depth = KEY_AUTHORITY_VERIFY_DEPTH_DEFAULT;
         }
-
-        for (KeyInfo keyInfo : keyAuthority.getKeyInfos()) {
+        
+        List<KeyInfo> keyInfos = keyAuthority.getKeyInfos();
+        if (keyInfos == null || keyInfos.isEmpty()) {
+            return null;
+        }
+        
+        for (KeyInfo keyInfo : keyInfos) {
             certs.addAll(getX509Certificates(keyInfo));
             crls.addAll(getX509CRLs(keyInfo));
+        }
+        
+        // Unlikely, but go ahead and check.
+        if (certs.isEmpty() && crls.isEmpty()) {
+            return null;
         }
 
         return new BasicPKIXValidationInformation(certs, crls, depth);
@@ -350,7 +378,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @return a collection of X509 certificates, possibly empty
      * @throws SecurityException thrown if the certificate information is represented in an unsupported format
      */
-    protected Collection<X509Certificate> getX509Certificates(KeyInfo keyInfo) throws SecurityException {
+    protected List<X509Certificate> getX509Certificates(KeyInfo keyInfo) throws SecurityException {
         try {
             return KeyInfoHelper.getCertificates(keyInfo);
         } catch (CertificateException e) {
@@ -366,7 +394,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @return a collection of X509 CRL's, possibly empty
      * @throws SecurityException thrown if the CRL information is represented in an unsupported format
      */
-    protected Collection<X509CRL> getX509CRLs(KeyInfo keyInfo) throws SecurityException {
+    protected List<X509CRL> getX509CRLs(KeyInfo keyInfo) throws SecurityException {
         try {
             return KeyInfoHelper.getCRLs(keyInfo);
         } catch (CRLException e) {
@@ -392,9 +420,17 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
 
         log.debug("Attempting to retrieve trusted names for PKIX validation from metadata for entity: {}", entityID);
         Set<String> trustedNames = new HashSet<String>();
+        
+        List<RoleDescriptor> roleDescriptors = getRoleDescriptors(entityID, role, protocol);
+        if(roleDescriptors == null || roleDescriptors.isEmpty()){
+            return trustedNames;
+        }
 
-        for (RoleDescriptor roleDescriptor : getRoleDescriptors(entityID, role, protocol)) {
+        for (RoleDescriptor roleDescriptor : roleDescriptors) {
             List<KeyDescriptor> keyDescriptors = roleDescriptor.getKeyDescriptors();
+            if(keyDescriptors == null || keyDescriptors.isEmpty()){
+                return trustedNames;
+            }         
             for (KeyDescriptor keyDescriptor : keyDescriptors) {
                 UsageType mdUsage = keyDescriptor.getUse();
                 if (mdUsage == null) {
@@ -474,14 +510,14 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param cacheKey the key to the metadata cache
      * @return the collection of cached info or null
      */
-    protected Collection<PKIXValidationInformation> retrievePKIXInfoFromCache(MetadataCacheKey cacheKey) {
+    protected List<PKIXValidationInformation> retrievePKIXInfoFromCache(MetadataCacheKey cacheKey) {
         log.debug("Attempting to retrieve PKIX validation info from cache using index: {}", cacheKey);
         Lock readLock = getReadWriteLock().readLock();
         readLock.lock();
         log.debug("Read lock over cache acquired");
         try {
             if (entityPKIXCache.containsKey(cacheKey)) {
-                SoftReference<Collection<PKIXValidationInformation>> reference = entityPKIXCache.get(cacheKey);
+                SoftReference<List<PKIXValidationInformation>> reference = entityPKIXCache.get(cacheKey);
                 if (reference.get() != null) {
                     log.debug("Retrieved PKIX validation info from cache using index: {}", cacheKey);
                     return reference.get();
@@ -502,7 +538,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param extensions the key to the metadata cache
      * @return the collection of cached info or null
      */
-    protected Collection<PKIXValidationInformation> retrieveExtensionsInfoFromCache(Extensions extensions) {
+    protected List<PKIXValidationInformation> retrieveExtensionsInfoFromCache(Extensions extensions) {
         if (log.isDebugEnabled()) {
             String parentName = getExtensionsParentName(extensions);
             if (parentName != null) {
@@ -524,7 +560,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         log.debug("Read lock over cache acquired");
         try {
             if (extensionsCache.containsKey(extensions)) {
-                SoftReference<Collection<PKIXValidationInformation>> reference = extensionsCache.get(extensions);
+                SoftReference<List<PKIXValidationInformation>> reference = extensionsCache.get(extensions);
                 if (reference.get() != null) {
                     log.debug("Retrieved PKIX validation info from cache using index: {}", extensions);
                     return reference.get();
@@ -572,12 +608,12 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param cacheKey the key for caching the information
      * @param pkixInfo collection of PKIX information to cache
      */
-    protected void cachePKIXInfo(MetadataCacheKey cacheKey, Collection<PKIXValidationInformation> pkixInfo) {
+    protected void cachePKIXInfo(MetadataCacheKey cacheKey, List<PKIXValidationInformation> pkixInfo) {
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
         log.debug("Write lock over cache acquired");
         try {
-            entityPKIXCache.put(cacheKey, new SoftReference<Collection<PKIXValidationInformation>>(pkixInfo));
+            entityPKIXCache.put(cacheKey, new SoftReference<List<PKIXValidationInformation>>(pkixInfo));
             log.debug("Added new PKIX info to entity cache with key: {}", cacheKey);
         } finally {
             writeLock.unlock();
@@ -591,12 +627,12 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      * @param extensions the key for caching the information
      * @param pkixInfo collection of PKIX information to cache
      */
-    protected void cacheExtensionsInfo(Extensions extensions, Collection<PKIXValidationInformation> pkixInfo) {
+    protected void cacheExtensionsInfo(Extensions extensions, List<PKIXValidationInformation> pkixInfo) {
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
         log.debug("Write lock over cache acquired");
         try {
-            extensionsCache.put(extensions, new SoftReference<Collection<PKIXValidationInformation>>(pkixInfo));
+            extensionsCache.put(extensions, new SoftReference<List<PKIXValidationInformation>>(pkixInfo));
             if (log.isDebugEnabled()) {
                 log.debug("Added new PKIX info to cache for Extensions with parent: {}",
                         getExtensionsParentName(extensions));
