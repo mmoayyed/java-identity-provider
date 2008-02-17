@@ -22,11 +22,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 
-import org.opensaml.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -50,26 +48,9 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     /** List of unmodifiable loaded filter policies. */
     private List<AttributeFilterPolicy> filterPolicies;
 
-    /**
-     * Constructor.
-     * 
-     * @param resources list of policy resources
-     */
-    public ShibbolethAttributeFilteringEngine(List<Resource> resources) {
-        super(resources);
-        filterPolicies = new ArrayList<AttributeFilterPolicy>();
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param timer timer resource polling tasks are scheduled with
-     * @param resources list of policy resources
-     * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
-     *            than zero
-     */
-    public ShibbolethAttributeFilteringEngine(List<Resource> resources, Timer timer, long pollingFrequency) {
-        super(timer, resources, pollingFrequency);
+    /** Constructor. */
+    public ShibbolethAttributeFilteringEngine() {
+        super();
         filterPolicies = new ArrayList<AttributeFilterPolicy>();
     }
 

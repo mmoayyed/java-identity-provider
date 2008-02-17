@@ -71,34 +71,21 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      * 
      * @param configurations configuration resources for this service
      */
-    public BaseService(List<Resource> configurations) {
+    public BaseService() {
         serviceContextRWLock = new ReentrantReadWriteLock(true);
-        serviceConfigurations = new ArrayList<Resource>(configurations);
         isInitialized = false;
     }
 
     /** {@inheritDoc} */
-    public String getId() {
-        return serviceName;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isInitialized() {
-        return isInitialized();
-    }
-
-    /**
-     * Sets wether this service has been initialized.
-     * 
-     * @param initialized wether this service has been initialized
-     */
-    protected void setInitialized(boolean initialized) {
-        isInitialized = initialized;
-    }
-
-    /** {@inheritDoc} */
-    public void setBeanName(String name) {
-        serviceName = name;
+    public void destroy() throws ServiceException {
+        Lock writeLock = getReadWriteLock().writeLock();
+        writeLock.lock();
+        isDestroyed = true;
+        serviceContext = null;
+        serviceConfigurations.clear();
+        setInitialized(false);
+        writeLock.unlock();
+        serviceContextRWLock = null;
     }
 
     /**
@@ -110,21 +97,26 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
         return owningContext;
     }
 
-    /**
-     * Sets the application context that is the parent to this service's context.
-     * 
-     * {@inheritDoc}
-     */
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        owningContext = applicationContext;
+    /** {@inheritDoc} */
+    public String getId() {
+        return serviceName;
     }
-
+    
     /**
-     * Gets an unmodifiable list of service configuration files.
+     * Gets the read-write lock guarding the service context.
      * 
-     * @return unmodifiable list of service configuration files
+     * @return read-write lock guarding the service context
      */
-    public List<Resource> getServiceConfigurations() {
+    protected ReadWriteLock getReadWriteLock() {
+        return serviceContextRWLock;
+    }
+    
+    /**
+     * Gets an unmodifiable list of configurations for this service.
+     * 
+     * @return unmodifiable list of configurations for this service
+     */
+    public List<Resource> getServiceConfigurations(){
         return Collections.unmodifiableList(serviceConfigurations);
     }
 
@@ -135,15 +127,6 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      */
     public ApplicationContext getServiceContext() {
         return serviceContext;
-    }
-
-    /**
-     * Sets this service's context.
-     * 
-     * @param context this service's context
-     */
-    protected void setServiceContext(GenericApplicationContext context) {
-        serviceContext = context;
     }
 
     /** {@inheritDoc} */
@@ -160,15 +143,8 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
     }
 
     /** {@inheritDoc} */
-    public void destroy() throws ServiceException {
-        Lock writeLock = getReadWriteLock().writeLock();
-        writeLock.lock();
-        isDestroyed = true;
-        serviceContext = null;
-        serviceConfigurations.clear();
-        setInitialized(false);
-        writeLock.unlock();
-        serviceContextRWLock = null;
+    public boolean isInitialized() {
+        return isInitialized;
     }
 
     /**
@@ -221,15 +197,6 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
     }
 
     /**
-     * Gets the read-write lock guarding the service context.
-     * 
-     * @return read-write lock guarding the service context
-     */
-    protected ReadWriteLock getReadWriteLock() {
-        return serviceContextRWLock;
-    }
-
-    /**
      * Called after a new context has been created but before it set as the service's context. If an exception is thrown
      * the new context will not be set as the service's context and the current service context will be retained.
      * 
@@ -238,4 +205,49 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      * @throws ServiceException thrown if there is a problem with the given service context
      */
     protected abstract void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException;
+
+    /**
+     * Sets the application context that is the parent to this service's context.
+     * 
+     * {@inheritDoc}
+     */
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        owningContext = applicationContext;
+    }
+
+    /** {@inheritDoc} */
+    public void setBeanName(String name) {
+        serviceName = name;
+    }
+
+    /**
+     * Sets whether this service has been initialized.
+     * 
+     * @param initialized whether this service has been initialized
+     */
+    protected void setInitialized(boolean initialized) {
+        isInitialized = initialized;
+    }
+
+    /**
+     * Sets the service's configuration resources.
+     * 
+     * @param configurations configuration resources for the service
+     * @throws IllegalStateException thrown if the service has already been initialized
+     */
+    public void setServiceConfigurations(List<Resource> configurations) throws IllegalStateException{
+        if(isInitialized){
+            throw new IllegalStateException("Service already initialized");
+        }
+        serviceConfigurations = new ArrayList<Resource>(configurations);
+    }
+
+    /**
+     * Sets this service's context.
+     * 
+     * @param context this service's context
+     */
+    protected void setServiceContext(GenericApplicationContext context) {
+        serviceContext = context;
+    }
 }

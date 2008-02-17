@@ -19,14 +19,12 @@ package edu.internet2.middleware.shibboleth.common.relyingparty.provider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 import java.util.concurrent.locks.Lock;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -67,26 +65,9 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     /** Regisered relying party configurations. */
     private HashMap<String, RelyingPartyConfiguration> rpConfigs;
 
-    /**
-     * Constructor.
-     * 
-     * @param configurations configuration resources for this service
-     */
-    public SAMLMDRelyingPartyConfigurationManager(List<Resource> configurations) {
-        super(configurations);
-        rpConfigs = new HashMap<String, RelyingPartyConfiguration>();
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param timer timer resource polling tasks are scheduled with
-     * @param configurations configuration resources for this service
-     * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
-     *            than zero
-     */
-    public SAMLMDRelyingPartyConfigurationManager(List<Resource> configurations, Timer timer, long pollingFrequency) {
-        super(timer, configurations, pollingFrequency);
+    /** Constructor. */
+    public SAMLMDRelyingPartyConfigurationManager() {
+        super();
         rpConfigs = new HashMap<String, RelyingPartyConfiguration>();
     }
 
@@ -130,8 +111,9 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
             return rpConfigs.get(relyingPartyEntityID);
         }
 
-        log.debug(
-            "No relying party configuration was registered for {} looking up configuration based on metadata groups",
+        log
+                .debug(
+                        "No relying party configuration was registered for {} looking up configuration based on metadata groups",
                         relyingPartyEntityID);
         try {
             if (metadataProvider == null) {

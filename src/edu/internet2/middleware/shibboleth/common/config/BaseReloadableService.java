@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.config;
 
-import java.util.List;
 import java.util.Timer;
 
 import org.opensaml.util.resource.Resource;
@@ -59,35 +58,28 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
 
     /**
      * Constructor. Configuration resources are not monitored for changes.
-     * 
-     * @param configurations configuration resources for this service
      */
-    public BaseReloadableService(List<Resource> configurations) {
-        super(configurations);
+    public BaseReloadableService() {
         resourcePollingFrequency = 0;
         resourcePollingRetryAttempts = 0;
     }
-
+    
     /**
-     * Constructor.
+     * Gets the timer used to resource polling jobs.
      * 
-     * @param timer timer resource polling tasks are scheduled with
-     * @param configurations configuration resources for this service
-     * @param pollingFrequency the frequency, in milliseconds, to poll the policy resources for changes, must be greater
-     *            than zero
+     * @return timer used to resource polling jobs
      */
-    public BaseReloadableService(Timer timer, List<Resource> configurations, long pollingFrequency) {
-        super(configurations);
-        if (timer == null) {
-            throw new IllegalArgumentException("Resource polling timer may not be null");
-        }
+    public Timer getPollingTimer(){
+        return pollingTimer;
+    }
+   
+    /**
+     * Sets the timer used to resource polling jobs.
+     * 
+     * @param timer timer used to resource polling jobs
+     */
+    public void setPollingTimer(Timer timer){
         pollingTimer = timer;
-
-        if (pollingFrequency <= 0) {
-            throw new IllegalArgumentException("Polling frequency must be greater than zero.");
-        }
-        resourcePollingFrequency = pollingFrequency;
-        resourcePollingRetryAttempts = 5;
     }
 
     /**
@@ -97,6 +89,15 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
      */
     public long getPollingFrequency() {
         return resourcePollingFrequency;
+    }
+    
+    /**
+     * Sets the frequency, in millseconds, that the configuration resources are polled.
+     * 
+     * @param frequency the frequency, in millseconds, that the configuration resources are polled
+     */
+    public void setPollingFrequency(long frequency){
+        resourcePollingFrequency = frequency;
     }
 
     /**

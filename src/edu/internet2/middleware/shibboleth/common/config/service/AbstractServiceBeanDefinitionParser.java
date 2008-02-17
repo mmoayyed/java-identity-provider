@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
-/** Base bean definition parser for service objects.*/
+/** Base bean definition parser for service objects. */
 public abstract class AbstractServiceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
@@ -37,15 +37,17 @@ public abstract class AbstractServiceBeanDefinitionParser extends AbstractSingle
 
         List<Element> configurationResources = XMLHelper.getChildElementsByTagNameNS(configElement,
                 ServiceNamespaceHandler.NAMESPACE, "ConfigurationResource");
-        ManagedList resources = SpringConfigurationUtils.parseCustomElements(configurationResources, parserContext);
-        builder.addConstructorArg(resources);
-
-        builder.setInitMethodName("initialize");
+        if (configurationResources != null && !configurationResources.isEmpty()) {
+            ManagedList resources = SpringConfigurationUtils.parseCustomElements(configurationResources, parserContext);
+            builder.addPropertyValue("serviceConfigurations", resources);
+        }
 
         for (String dependency : XMLHelper
                 .getAttributeValueAsList(configElement.getAttributeNodeNS(null, "depends-on"))) {
             builder.addDependsOn(dependency);
         }
+        
+        builder.setInitMethodName("initialize");
     }
 
     /** {@inheritDoc} */

@@ -32,12 +32,12 @@ public abstract class AbstractReloadableServiceBeanDefinitionParser extends Abst
 
         if (configElement.hasAttributeNS(null, "configurationResourcePollingFrequency")
                 && configElement.hasAttributeNS(null, "configurationResourcePollingRetryAttempts")) {
-            
-            builder.addConstructorArgReference(configElement.getAttributeNS(null, "timerId"));
+
+            builder.addPropertyReference("pollingTimer", configElement.getAttributeNS(null, "timerId"));
 
             long frequency = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
                     "configurationResourcePollingFrequency")));
-            builder.addConstructorArg(frequency);
+            builder.addPropertyValue("pollingFrequency", frequency);
 
             int retryAttempts = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
                     "configurationResourcePollingRetryAttempts")));

@@ -21,10 +21,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 
@@ -35,7 +33,6 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml2.core.NameID;
-import org.opensaml.util.resource.Resource;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,28 +79,9 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     /** Prinicpal connectors defined for this resolver. */
     private Map<String, PrincipalConnector> principalConnectors;
 
-    /**
-     * Constructor.
-     * 
-     * @param resources list of resolver configuration files
-     */
-    public ShibbolethAttributeResolver(List<Resource> resources) {
-        super(resources);
-        dataConnectors = new HashMap<String, DataConnector>();
-        definitions = new HashMap<String, AttributeDefinition>();
-        principalConnectors = new HashMap<String, PrincipalConnector>();
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param timer timer resource polling tasks are scheduled with
-     * @param resources list of resolver configuration files
-     * @param pollingFrequency the frequency, in milliseconds, to poll the configuration resources for changes, must be
-     *            greater than zero
-     */
-    public ShibbolethAttributeResolver(List<Resource> resources, Timer timer, long pollingFrequency) {
-        super(timer, resources, pollingFrequency);
+    /** Constructor. */
+    public ShibbolethAttributeResolver() {
+        super();
         dataConnectors = new HashMap<String, DataConnector>();
         definitions = new HashMap<String, AttributeDefinition>();
         principalConnectors = new HashMap<String, PrincipalConnector>();
