@@ -63,7 +63,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="service:ServicesType" />
+            <extension base="service:ServiceType" />
         </complexContent>
     </complexType>
 
