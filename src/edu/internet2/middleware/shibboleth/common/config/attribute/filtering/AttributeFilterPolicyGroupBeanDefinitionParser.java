@@ -25,8 +25,8 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -35,7 +35,7 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 /**
  * Spring bean definition parser for Shibboleth attribute filtering engine attribute filter policy.
  */
-public class AttributeFilterPolicyGroupBeanDefinitionParser extends BaseFilterBeanDefinitionParser {
+public class AttributeFilterPolicyGroupBeanDefinitionParser implements BeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
@@ -57,31 +57,26 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser extends BaseFilterBe
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(configElement, parserContext, builder);
-
-        String policyId = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "id"));
+    public BeanDefinition parse(Element config, ParserContext context) {
+        String policyId = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
 
         log.debug("Parsing attribute filter policy group {}", policyId);
 
         List<Element> children;
-        Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(configElement);
+        Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(config);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
-        SpringConfigurationUtils.parseCustomElements(children, parserContext);
+        SpringConfigurationUtils.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule"));
-        SpringConfigurationUtils.parseCustomElements(children, parserContext);
+        SpringConfigurationUtils.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PermitValueRule"));
-        SpringConfigurationUtils.parseCustomElements(children, parserContext);
+        SpringConfigurationUtils.parseCustomElements(children, context);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeFilterPolicy"));
-        SpringConfigurationUtils.parseCustomElements(children, parserContext);
-    }
+        SpringConfigurationUtils.parseCustomElements(children, context);
 
-    /** {@inheritDoc} */
-    protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
-        return DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "id"));
+        return null;
     }
 }
