@@ -33,8 +33,6 @@ public abstract class AbstractServiceBeanDefinitionParser extends AbstractSingle
 
     /** {@inheritDoc} */
     protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(configElement, parserContext, builder);
-
         List<Element> configurationResources = XMLHelper.getChildElementsByTagNameNS(configElement,
                 ServiceNamespaceHandler.NAMESPACE, "ConfigurationResource");
         if (configurationResources != null && !configurationResources.isEmpty()) {
