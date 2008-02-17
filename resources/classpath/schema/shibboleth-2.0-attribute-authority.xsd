@@ -27,15 +27,15 @@
             <documentation>Service definition for the Shibboleth attribute authority.</documentation>
         </annotation>
         <complexContent>
-            <extension base="service:ServiceType"
-                <attribute name="resolver" type="string" use="required"/>
+            <extension base="service:ServiceType">
+                <attribute name="resolver" type="string" use="required">
                     <annotation>
                         <documentation>
                             The ID of the attribute resolver used by this authority.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="filter" type="string" />
+                <attribute name="filter" type="string">
                     <annotation>
                         <documentation>
                             The ID of the attribute filter used by this authority.
