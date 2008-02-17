@@ -22,8 +22,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.XMLHelper;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -32,7 +32,7 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 /**
  * Spring configuration parser for {@link AttributeResolverBean}s.
  */
-public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class AttributeResolverBeanDefinitionParser implements BeanDefinitionParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
@@ -43,7 +43,7 @@ public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDef
             "AttributeResolver");
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
+    public BeanDefinition parse(Element config, ParserContext context) {
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
         List<Element> children;
 
@@ -55,5 +55,7 @@ public class AttributeResolverBeanDefinitionParser extends AbstractSimpleBeanDef
 
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "AttributeDefinition"));
         SpringConfigurationUtils.parseCustomElements(children, context);
+
+        return null;
     }
 }

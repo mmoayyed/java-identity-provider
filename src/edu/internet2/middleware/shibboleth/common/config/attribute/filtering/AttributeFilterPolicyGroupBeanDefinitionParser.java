@@ -25,6 +25,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -77,5 +78,10 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser extends BaseFilterBe
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeFilterPolicy"));
         SpringConfigurationUtils.parseCustomElements(children, parserContext);
+    }
+
+    /** {@inheritDoc} */
+    protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
+        return DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "id"));
     }
 }
