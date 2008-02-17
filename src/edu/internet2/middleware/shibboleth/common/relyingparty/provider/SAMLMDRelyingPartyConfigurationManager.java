@@ -151,7 +151,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     /** {@inheritDoc} */
     protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
-        if(relyingPartyGroupNames == null || relyingPartyGroupNames.length > 1){
+        if(relyingPartyGroupNames == null || relyingPartyGroupNames.length < 1){
             return;
         }
         
