@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <schema targetNamespace="urn:mace:shibboleth:2.0:attribute:authority" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:authority="urn:mace:shibboleth:2.0:attribute:authority"
     xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:service="urn:mace:shibboleth:2.0:services"
     elementFormDefault="qualified">
 
@@ -12,13 +13,13 @@
 
     <complexType name="SAML1AttributeAuthority">
         <complexContent>
-            <extension base="AttributeAuthorityType" />
+            <extension base="authority:AttributeAuthorityType" />
         </complexContent>
     </complexType>
 
     <complexType name="SAML2AttributeAuthority">
         <complexContent>
-            <extension base="AttributeAuthorityType" />
+            <extension base="authority:AttributeAuthorityType" />
         </complexContent>
     </complexType>
 
