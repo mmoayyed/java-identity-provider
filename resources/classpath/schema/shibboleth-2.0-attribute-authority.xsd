@@ -16,7 +16,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="SAML1AttributeAuthority">
+    <complexType name="SAML2AttributeAuthority">
         <complexContent>
             <extension base="AttributeAuthorityType" />
         </complexContent>
