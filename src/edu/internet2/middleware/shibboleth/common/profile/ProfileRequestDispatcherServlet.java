@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.profile;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,7 @@ import org.opensaml.ws.transport.http.HTTPInTransport;
 import org.opensaml.ws.transport.http.HTTPOutTransport;
 import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
 import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,13 +48,19 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
     /** Access logger. */
     private final Logger accessLog = LoggerFactory.getLogger(AccessLogEntry.ACCESS_LOGGER_NAME);
 
-    /**
-     * Gets the manager used to retrieve handlers for requests.
-     * 
-     * @return manager used to retrieve handlers for requests
-     */
-    public ProfileHandlerManager getHandlerManager() {
-        return (ProfileHandlerManager) getServletContext().getAttribute("handlerManager");
+    /** Profile handler manager. */
+    private ProfileHandlerManager handlerManager;
+
+    /** {@inheritDoc} */
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+
+        String handlerManagerId = config.getInitParameter("handlerManagerId");
+        if (DatatypeHelper.isEmpty(handlerManagerId)) {
+            handlerManagerId = "shibboleth.HandlerManager";
+        }
+
+        handlerManager = (ProfileHandlerManager) getServletContext().getAttribute(handlerManagerId);
     }
 
     /** {@inheritDoc} */
@@ -67,8 +75,8 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
         HTTPInTransport profileReq = new HttpServletRequestAdapter(httpRequest);
         HTTPOutTransport profileResp = new HttpServletResponseAdapter(httpResponse, httpRequest.isSecure());
 
-        AbstractErrorHandler errorHandler = getHandlerManager().getErrorHandler();
-        ProfileHandler handler = getHandlerManager().getProfileHandler(httpRequest);
+        AbstractErrorHandler errorHandler = handlerManager.getErrorHandler();
+        ProfileHandler handler = handlerManager.getProfileHandler(httpRequest);
         if (handler != null) {
             try {
                 handler.processRequest(profileReq, profileResp);

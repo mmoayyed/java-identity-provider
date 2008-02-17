@@ -44,8 +44,8 @@ public interface Service {
     public void initialize() throws ServiceException;
 
     /**
-     * Destroys a service, freeing any resources it may currently be using. Wether a service can be re-initialized after
-     * being destroyed is implementation dependant.
+     * Destroys a service, freeing any resources it may currently be using. Whether a service can be re-initialized
+     * after being destroyed is implementation dependent.
      * 
      * @throws ServiceException thrown if there is a problem destroying the service
      */

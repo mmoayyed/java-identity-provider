@@ -18,9 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.service;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
-/**
- * Spring namespace handler for service definitions.
- */
+/** Spring namespace handler for service definitions. */
 public class ServiceNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Services namespace URI. */
@@ -28,6 +26,11 @@ public class ServiceNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     public void init() {
-        // No bean definitions are currently declared in this namespace
+        ServicesBeanDefinitionParser parser = new ServicesBeanDefinitionParser();
+        registerBeanDefinitionParser(ServicesBeanDefinitionParser.ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(ServicesBeanDefinitionParser.SCHEMA_TYPE, parser);
+
+        registerBeanDefinitionParser(ServletContextAttributeExporterBeanDefinitionParser.TYPE_NAME,
+                new ServletContextAttributeExporterBeanDefinitionParser());
     }
 }

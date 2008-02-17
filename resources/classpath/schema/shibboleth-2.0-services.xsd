@@ -10,12 +10,18 @@
         <documentation>Schema describing a set of isolated services used by Shibboleth.</documentation>
     </annotation>
     
-    <element name="Service" type="service:ServiceType" />
+    <element name="Services" type="service:ServicesType" />
+    <complexType name="ServicesType">
+        <sequence>
+            <element ref="service:Service" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
     
+    <element name="Service" type="service:ServiceType" />
     <complexType name="ReloadableServiceType" abstract="true">
         <annotation>
             <documentation>
-                A service that periodically checks if its configuration resources have changed. If a change has occured
+                A service that periodically checks if its configuration resources have changed. If a change has occurred
                 the service will reload its configuration.
 
                 If no polling frequency is specified this service will not reload its configuration files.
@@ -48,6 +54,18 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="ServletContextAttributeExporter">
+        <annotation>
+            <documentation>
+                A service that exports all services that it depends on into the servlet context.
+                This requires that the loading application context is a WebApplicationContext.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="service:ServicesType" />
+        </complexContent>
+    </complexType>
 
     <complexType name="ServiceType" abstract="true">
         <annotation>
@@ -69,6 +87,16 @@
             <annotation>
                 <documentation>The application unique name of the service.</documentation>
             </annotation>
+        </attribute>
+        <attribute name="depends-on">
+            <annotation>
+                <documentation>
+                    The services, identified by a space separated list of their IDs, upon which this service depends.
+                </documentation>
+            </annotation>
+            <simpleType>
+                <list itemType="string" />
+            </simpleType>
         </attribute>
     </complexType>
 
