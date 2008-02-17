@@ -201,7 +201,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
         } catch (Exception e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
             setInitialized(false);
-            Throwable rootCause = e.getCause();
+            Throwable rootCause = e;
             while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause();
             }
