@@ -36,6 +36,7 @@ import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
@@ -44,13 +45,15 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEn
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML1AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
+import edu.internet2.middleware.shibboleth.common.config.BaseService;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml1.AbstractSAML1ProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
  * SAML 1 Attribute Authority.
  */
-public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthority {
+public class ShibbolethSAML1AttributeAuthority extends BaseService implements SAML1AttributeAuthority {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ShibbolethSAML1AttributeAuthority.class);
@@ -115,7 +118,7 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
             AttributeStatement statement = statementBuilder.buildObject();
             statement.getAttributes().addAll(encodedAttributes);
             return statement;
-        }else{
+        } else {
             log.debug("No attributes were encoded, no attribute statement created.");
             return null;
         }
@@ -266,5 +269,10 @@ public class ShibbolethSAML1AttributeAuthority implements SAML1AttributeAuthorit
         }
 
         return encodedAttributes;
+    }
+
+    /** {@inheritDoc} */
+    protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
+
     }
 }

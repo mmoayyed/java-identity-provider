@@ -37,6 +37,7 @@ import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.attribute.AttributeRequestException;
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
@@ -45,13 +46,15 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEn
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.SAML2AttributeEncoder;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver;
+import edu.internet2.middleware.shibboleth.common.config.BaseService;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.AbstractSAML2ProfileConfiguration;
+import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /**
  * SAML 2.0 Attribute Authority.
  */
-public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthority {
+public class ShibbolethSAML2AttributeAuthority extends BaseService implements SAML2AttributeAuthority {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ShibbolethSAML2AttributeAuthority.class);
@@ -304,5 +307,10 @@ public class ShibbolethSAML2AttributeAuthority implements SAML2AttributeAuthorit
             }
         }
         return attributeIds;
+    }
+
+    /** {@inheritDoc} */
+    protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
+
     }
 }
