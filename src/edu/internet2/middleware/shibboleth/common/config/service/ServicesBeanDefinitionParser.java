@@ -45,10 +45,15 @@ public class ServicesBeanDefinitionParser extends AbstractSimpleBeanDefinitionPa
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext context, BeanDefinitionBuilder builder) {
-        log.info("Beginning to load services configuration");
+        log.info("Beginning to load service configurations");
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
         List<Element> children = configChildren.get(new QName(ServiceNamespaceHandler.NAMESPACE, "Service"));
         SpringConfigurationUtils.parseCustomElements(children, context);
-        log.info("Finished loading services configuration");
+        log.info("Finished loading service configurations");
+    }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
     }
 }
