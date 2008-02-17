@@ -178,6 +178,12 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      */
     protected void loadContext() throws ServiceException {
         log.info("Loading configuration for service: {}", getId());
+        
+        if(serviceConfigurations == null || serviceConfigurations.isEmpty()){
+            setInitialized(true);
+            return;
+        }
+        
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
         newServiceContext.setDisplayName("ApplicationContext:" + getId());
         try {
