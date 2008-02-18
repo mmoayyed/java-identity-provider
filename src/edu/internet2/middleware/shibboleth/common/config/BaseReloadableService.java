@@ -142,9 +142,7 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
                 }
             }
             
-            log.debug("Initializing service {}", getId());
             loadContext();
-            log.debug("Finished nitializing service {}", getId());
         } catch (ResourceException e) {
             throw new ServiceException("Unable to initialize service: " + getId(), e);
         }
