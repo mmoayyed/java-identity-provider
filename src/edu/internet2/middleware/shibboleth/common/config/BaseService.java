@@ -127,21 +127,25 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
 
     /** {@inheritDoc} */
     public void initialize() throws ServiceException {
-        log.debug("Initializing service {}", getId());
-        if (isDestroyed) {
+        if (isDestroyed()) {
             throw new SecurityException(getId() + " service has been destroyed, it may not be initialized.");
         }
 
-        if (isInitialized) {
+        if (isInitialized()) {
             return;
         }
-
+        log.debug("Initializing service {}", getId());
         loadContext();
     }
 
     /** {@inheritDoc} */
     public boolean isInitialized() {
         return isInitialized;
+    }
+    
+    /** {@inheritDoc} */
+    public boolean isDestroyed() {
+        return isDestroyed;
     }
 
     /**

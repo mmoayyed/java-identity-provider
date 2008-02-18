@@ -94,4 +94,9 @@ public class ServletContextAttributeExporter implements Service, ApplicationCont
     public void setBeanName(String name) {
         id = name;
     }
+
+    /** {@inheritDoc} */
+    public boolean isDestroyed() {
+        return false;
+    }
 }

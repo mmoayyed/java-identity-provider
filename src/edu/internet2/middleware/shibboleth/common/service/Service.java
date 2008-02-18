@@ -44,6 +44,13 @@ public interface Service {
     public void initialize() throws ServiceException;
 
     /**
+     * Gets whether the service has been destroyed.
+     * 
+     * @return true if the service has been destroyed
+     */
+    public boolean isDestroyed();
+
+    /**
      * Destroys a service, freeing any resources it may currently be using. Whether a service can be re-initialized
      * after being destroyed is implementation dependent.
      * 

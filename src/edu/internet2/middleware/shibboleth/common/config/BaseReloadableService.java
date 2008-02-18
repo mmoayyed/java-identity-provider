@@ -121,7 +121,14 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
 
     /** {@inheritDoc} */
     public void initialize() throws ServiceException {
-        log.debug("Initializing service {}", getId());
+        if (isDestroyed()) {
+            throw new SecurityException(getId() + " service has been destroyed, it may not be initialized.");
+        }
+
+        if (isInitialized()) {
+            return;
+        }
+
         try {
             log.debug("Initializing {} service with resources: {}", getId(), getServiceConfigurations());
             if (resourcePollingFrequency > 0) {
@@ -134,7 +141,8 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
                     pollingTimer.schedule(changeWatcher, resourcePollingFrequency, resourcePollingFrequency);
                 }
             }
-
+            
+            log.debug("Initializing service {}", getId());
             loadContext();
             log.debug("Finished nitializing service {}", getId());
         } catch (ResourceException e) {
