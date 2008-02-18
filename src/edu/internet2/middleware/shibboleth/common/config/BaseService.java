@@ -168,7 +168,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
             GenericApplicationContext replacedServiceContext = serviceContext;
             
             log.debug("New service context's name: {}", newServiceContext.getDisplayName());
-            log.debug("New service context's parent's name: {}", newServiceContext.getDisplayName());
+            log.debug("New service context's parent's name: {}", newServiceContext.getParent().getDisplayName());
             log.debug("New service context contains {} beans total", newServiceContext.getBeanDefinitionCount());
             
             onNewContextCreated(newServiceContext);
