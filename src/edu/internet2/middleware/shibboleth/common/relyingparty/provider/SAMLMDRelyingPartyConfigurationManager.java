@@ -148,15 +148,8 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
     /** {@inheritDoc} */
     protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
-        log.debug("Configuration reources: {}", getServiceConfigurations());
-        log.debug("Initialized: {}", isInitialized());
-        log.debug("New service context's name: {}", newServiceContext.getDisplayName());
-        log.debug("New service context's parent's name: {}", newServiceContext.getDisplayName());
-        log.debug("New service context contains {} beans total", newServiceContext.getBeanDefinitionCount());
-        
         String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
         if (relyingPartyGroupNames == null || relyingPartyGroupNames.length == 0) {
-            log.error("No relying party group definition loaded, retaining existng configuration", new ServiceException());
             throw new ServiceException("No relying party group definition loaded");
         }
 
