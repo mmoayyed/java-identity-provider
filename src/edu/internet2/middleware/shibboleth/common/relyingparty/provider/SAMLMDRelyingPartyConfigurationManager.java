@@ -111,10 +111,8 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
             return rpConfigs.get(relyingPartyEntityID);
         }
 
-        log
-                .debug(
-                        "No relying party configuration was registered for {} looking up configuration based on metadata groups",
-                        relyingPartyEntityID);
+        log.debug("No configuration was registered for {}, looking up configuration based on metadata groups",
+                relyingPartyEntityID);
         try {
             if (metadataProvider == null) {
                 log.debug("No metadata provider available, unable to lookup configuration based on entity group");
@@ -151,12 +149,13 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     /** {@inheritDoc} */
     protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
-        if(relyingPartyGroupNames == null || relyingPartyGroupNames.length < 1){
-            return;
+        if(relyingPartyGroupNames == null || relyingPartyGroupNames.length == 0){
+            log.error("No relying party group definition loaded");
+            throw new ServiceException("No relying party group definition loaded");
         }
         
         RelyingPartyGroup rpGroup = (RelyingPartyGroup) newServiceContext.getBean(relyingPartyGroupNames[0]);
-
+        
         Lock writeLock = getReadWriteLock().writeLock();
         writeLock.lock();
 

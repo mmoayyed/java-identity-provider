@@ -66,11 +66,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
     /** Indicates if the service has been destroyed. */
     private boolean isDestroyed;
 
-    /**
-     * Constructor.
-     * 
-     * @param configurations configuration resources for this service
-     */
+    /** Constructor. */
     public BaseService() {
         serviceContextRWLock = new ReentrantReadWriteLock(true);
         isInitialized = false;
