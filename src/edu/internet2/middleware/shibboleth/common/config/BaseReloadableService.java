@@ -60,6 +60,7 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
      * Constructor. Configuration resources are not monitored for changes.
      */
     public BaseReloadableService() {
+        super();
         resourcePollingFrequency = 0;
         resourcePollingRetryAttempts = 0;
     }
@@ -134,7 +135,6 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
             }
 
             loadContext();
-            setInitialized(true);
         } catch (ResourceException e) {
             throw new ServiceException("Unable to initialize service: " + getId(), e);
         }
@@ -143,7 +143,6 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
     /** {@inheritDoc} */
     public void reload() throws ServiceException {
         loadContext();
-        setInitialized(true);
     }
 
     /** {@inheritDoc} */
