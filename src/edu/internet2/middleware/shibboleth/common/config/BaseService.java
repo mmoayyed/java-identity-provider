@@ -155,7 +155,6 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      */
     protected void loadContext() throws ServiceException {
         log.info("Loading configuration for service: {}", getId());
-        log.debug("Class: {}", this.getClass().getCanonicalName());
         
         if(serviceConfigurations == null || serviceConfigurations.isEmpty()){
             setInitialized(true);
@@ -171,12 +170,6 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
             newServiceContext.refresh();
 
             GenericApplicationContext replacedServiceContext = serviceContext;
-            
-            log.debug("Class: {}", this.getClass().getCanonicalName());
-            log.debug("New service context's name: {}", newServiceContext.getDisplayName());
-            log.debug("New service context's parent's name: {}", newServiceContext.getParent().getDisplayName());
-            log.debug("New service context contains {} beans total", newServiceContext.getBeanDefinitionCount());
-            
             onNewContextCreated(newServiceContext);
             setServiceContext(newServiceContext);
             setInitialized(true);
