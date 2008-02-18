@@ -155,6 +155,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      */
     protected void loadContext() throws ServiceException {
         log.info("Loading configuration for service: {}", getId());
+        log.debug("Class: {}", this.getClass().getCanonicalName());
         
         if(serviceConfigurations == null || serviceConfigurations.isEmpty()){
             setInitialized(true);
