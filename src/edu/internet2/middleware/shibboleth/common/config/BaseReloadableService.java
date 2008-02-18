@@ -121,6 +121,7 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
 
     /** {@inheritDoc} */
     public void initialize() throws ServiceException {
+        log.debug("Initializing service {}", getId());
         try {
             log.debug("Initializing {} service with resources: {}", getId(), getServiceConfigurations());
             if (resourcePollingFrequency > 0) {

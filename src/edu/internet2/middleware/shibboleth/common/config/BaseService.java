@@ -127,6 +127,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
 
     /** {@inheritDoc} */
     public void initialize() throws ServiceException {
+        log.debug("Initializing service {}", getId());
         if (isDestroyed) {
             throw new SecurityException(getId() + " service has been destroyed, it may not be initialized.");
         }
@@ -159,13 +160,12 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
         newServiceContext.setDisplayName("ApplicationContext:" + getId());
         Lock writeLock = getReadWriteLock().writeLock();
+        writeLock.lock();
         try {
             SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
             newServiceContext.refresh();
 
-            GenericApplicationContext replacedServiceContext;
-            writeLock.lock();
-            replacedServiceContext = serviceContext;
+            GenericApplicationContext replacedServiceContext = serviceContext;
             onNewContextCreated(newServiceContext);
             setServiceContext(newServiceContext);
             setInitialized(true);
