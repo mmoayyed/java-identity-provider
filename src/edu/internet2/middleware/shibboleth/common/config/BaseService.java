@@ -158,19 +158,16 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
         
         GenericApplicationContext newServiceContext = new GenericApplicationContext(getApplicationContext());
         newServiceContext.setDisplayName("ApplicationContext:" + getId());
+        Lock writeLock = getReadWriteLock().writeLock();
         try {
             SpringConfigurationUtils.populateRegistry(newServiceContext, getServiceConfigurations());
             newServiceContext.refresh();
 
             GenericApplicationContext replacedServiceContext;
-            
-            Lock writeLock = getReadWriteLock().writeLock();
             writeLock.lock();
             replacedServiceContext = serviceContext;
             onNewContextCreated(newServiceContext);
             setServiceContext(newServiceContext);
-            writeLock.unlock();
-            
             setInitialized(true);
             if(replacedServiceContext != null){
                 replacedServiceContext.close();
@@ -189,6 +186,8 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
             log.trace("Full stacktrace is: ", e);
             throw new ServiceException("Configuration was not loaded for " + getId()
                     + " service, error creating components.");
+        }finally{
+            writeLock.unlock();
         }
     }
 
