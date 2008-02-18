@@ -33,6 +33,11 @@ public class ServletContextAttributeExporterBeanDefinitionParser extends Abstrac
             "ServletContextAttributeExporter");
 
     /** {@inheritDoc} */
+    protected Class getBeanClass(Element element) {
+        return ServletContextAttributeExporter.class;
+    }
+
+    /** {@inheritDoc} */
     protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
@@ -42,5 +47,10 @@ public class ServletContextAttributeExporterBeanDefinitionParser extends Abstrac
             services.add(dependency);
         }
         builder.addConstructorArg(services);
+    }
+
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
     }
 }
