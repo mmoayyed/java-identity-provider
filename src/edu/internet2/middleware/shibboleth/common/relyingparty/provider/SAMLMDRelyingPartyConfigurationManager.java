@@ -149,30 +149,34 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     /** {@inheritDoc} */
     protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
-        if(relyingPartyGroupNames == null || relyingPartyGroupNames.length == 0){
+        if (relyingPartyGroupNames == null || relyingPartyGroupNames.length == 0) {
             log.error("No relying party group definition loaded");
             throw new ServiceException("No relying party group definition loaded");
         }
-        
+
         RelyingPartyGroup rpGroup = (RelyingPartyGroup) newServiceContext.getBean(relyingPartyGroupNames[0]);
-        
+
         Lock writeLock = getReadWriteLock().writeLock();
-        writeLock.lock();
+        try {
+            writeLock.lock();
 
-        metadataProvider = rpGroup.getMetadataProvider();
+            metadataProvider = rpGroup.getMetadataProvider();
 
-        rpConfigs.clear();
-        List<RelyingPartyConfiguration> newRpConfigs = rpGroup.getRelyingParties();
-        if (newRpConfigs != null) {
-            for (RelyingPartyConfiguration newRpConfig : newRpConfigs) {
-                rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
-                log.debug("Registering configuration for relying party: {}", newRpConfig.getRelyingPartyId());
+            rpConfigs.clear();
+            List<RelyingPartyConfiguration> newRpConfigs = rpGroup.getRelyingParties();
+            if (newRpConfigs != null) {
+                for (RelyingPartyConfiguration newRpConfig : newRpConfigs) {
+                    rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
+                    log.debug("Registering configuration for relying party: {}", newRpConfig.getRelyingPartyId());
+                }
             }
+
+            rpConfigs.put(ANONYMOUS_RP_NAME, rpGroup.getAnonymousRP());
+            rpConfigs.put(DEFAULT_RP_NAME, rpGroup.getDefaultRP());
+        } catch (Exception e) {
+            log.error("Error loading information from new context", e);
+        } finally {
+            writeLock.unlock();
         }
-
-        rpConfigs.put(ANONYMOUS_RP_NAME, rpGroup.getAnonymousRP());
-        rpConfigs.put(DEFAULT_RP_NAME, rpGroup.getDefaultRP());
-
-        writeLock.unlock();
     }
 }
