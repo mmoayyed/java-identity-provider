@@ -67,7 +67,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     public Map<String, BaseAttribute> filterAttributes(Map<String, BaseAttribute> attributes,
             SAMLProfileRequestContext context) throws AttributeFilteringException {
 
-        log.debug(getId() +" filtering {} attributes for principal {}", attributes.size(), context.getPrincipalName());
+        log.debug(getId() + " filtering {} attributes for principal {}", attributes.size(), context.getPrincipalName());
 
         if (attributes.size() == 0) {
             return new HashMap<String, BaseAttribute>();
@@ -160,10 +160,17 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
 
     /** {@inheritDoc} */
     protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
-        filterPolicies.clear();
-        String[] beanNames = newServiceContext.getBeanNamesForType(AttributeFilterPolicy.class);
-        for (String beanName : beanNames) {
-            filterPolicies.add((AttributeFilterPolicy) newServiceContext.getBean(beanName));
+        List<AttributeFilterPolicy> oldFilterPolicies = filterPolicies;
+
+        try {
+            List<AttributeFilterPolicy> newFilterPolicies = new ArrayList<AttributeFilterPolicy>();
+            String[] beanNames = newServiceContext.getBeanNamesForType(AttributeFilterPolicy.class);
+            for (String beanName : beanNames) {
+                newFilterPolicies.add((AttributeFilterPolicy) newServiceContext.getBean(beanName));
+            }
+        } catch (Exception e) {
+            filterPolicies = oldFilterPolicies;
+            throw new ServiceException(getId() + " configuration is not valid, retaining old configuration", e);
         }
     }
 }

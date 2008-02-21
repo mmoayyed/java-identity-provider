@@ -61,13 +61,11 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 public class ShibbolethAttributeResolver extends BaseReloadableService implements
         AttributeResolver<SAMLProfileRequestContext> {
 
-    /**
-     * Resolution plug-in types.
-     */
+    /** Resolution plug-in types. */
     public static final Collection<Class> PLUGIN_TYPES = Arrays.asList(new Class[] { DataConnector.class,
             AttributeDefinition.class, PrincipalConnector.class, });
 
-    /** Log4j logger. */
+    /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ShibbolethAttributeResolver.class.getName());
 
     /** Data connectors defined for this resolver. */
@@ -76,7 +74,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     /** Attribute definitions defined for this resolver. */
     private Map<String, AttributeDefinition> definitions;
 
-    /** Prinicpal connectors defined for this resolver. */
+    /** Principal connectors defined for this resolver. */
     private Map<String, PrincipalConnector> principalConnectors;
 
     /** Constructor. */
@@ -127,8 +125,15 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             return new HashMap<String, BaseAttribute>();
         }
 
-        Map<String, BaseAttribute> resolvedAttributes = resolveAttributes(resolutionContext);
-        cleanResolvedAttributes(resolvedAttributes, resolutionContext);
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        Map<String, BaseAttribute> resolvedAttributes = null;
+        try {
+            resolvedAttributes = resolveAttributes(resolutionContext);
+            cleanResolvedAttributes(resolvedAttributes, resolutionContext);
+        } finally {
+            readLock.unlock();
+        }
 
         log.debug(getId() + " resolved, for principal {}, the attributes: {}", attributeRequestContext
                 .getPrincipalName(), resolvedAttributes.keySet());
@@ -143,18 +148,23 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
         dependencyGraph = new SimpleDirectedGraph<ResolutionPlugIn, DefaultEdge>(DefaultEdge.class);
         cycleDetector = new CycleDetector<ResolutionPlugIn, DefaultEdge>(dependencyGraph);
 
-        for (AttributeDefinition definition : getAttributeDefinitions().values()) {
-            addVertex(dependencyGraph, definition);
-        }
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        try {
+            for (AttributeDefinition definition : getAttributeDefinitions().values()) {
+                addVertex(dependencyGraph, definition);
+            }
 
-        for (DataConnector connector : getDataConnectors().values()) {
-            addVertex(dependencyGraph, connector);
-        }
+            for (DataConnector connector : getDataConnectors().values()) {
+                addVertex(dependencyGraph, connector);
+            }
 
-        // check for a dependency loop
-        if (cycleDetector.detectCycles()) {
-            throw new AttributeResolutionException(getId()
-                    + "configuration contains a resolution plug-in dependency loop.");
+            if (cycleDetector.detectCycles()) {
+                throw new AttributeResolutionException(getId()
+                        + "configuration contains a resolution plug-in dependency loop.");
+            }
+        } finally {
+            readLock.unlock();
         }
     }
 
@@ -461,37 +471,46 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
     protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
         String[] beanNames;
 
-        principalConnectors.clear();
-        PrincipalConnector pConnector;
-        beanNames = newServiceContext.getBeanNamesForType(PrincipalConnector.class);
-        log.debug("Loading {} principal connectors", beanNames.length);
-        for (String beanName : beanNames) {
-            pConnector = (PrincipalConnector) newServiceContext.getBean(beanName);
-            principalConnectors.put(pConnector.getId(), pConnector);
-        }
-
-        dataConnectors.clear();
+        Map<String, DataConnector> oldDataConnectors = dataConnectors;
+        Map<String, DataConnector> newDataConnectors = new HashMap<String, DataConnector>();
         DataConnector dConnector;
         beanNames = newServiceContext.getBeanNamesForType(DataConnector.class);
         log.debug("Loading {} data connectors", beanNames.length);
         for (String beanName : beanNames) {
             dConnector = (DataConnector) newServiceContext.getBean(beanName);
-            dataConnectors.put(dConnector.getId(), dConnector);
+            newDataConnectors.put(dConnector.getId(), dConnector);
         }
 
-        definitions.clear();
+        Map<String, AttributeDefinition> oldAttributeDefinitions = definitions;
+        Map<String, AttributeDefinition> newAttributeDefinitions = new HashMap<String, AttributeDefinition>();
         AttributeDefinition aDefinition;
         beanNames = newServiceContext.getBeanNamesForType(AttributeDefinition.class);
         log.debug("Loading {} attribute definitions", beanNames.length);
         for (String beanName : beanNames) {
             aDefinition = (AttributeDefinition) newServiceContext.getBean(beanName);
-            definitions.put(aDefinition.getId(), aDefinition);
+            newAttributeDefinitions.put(aDefinition.getId(), aDefinition);
+        }
+
+        Map<String, PrincipalConnector> oldPrincipalConnectors = principalConnectors;
+        Map<String, PrincipalConnector> newPrincipalConnectors = new HashMap<String, PrincipalConnector>();
+        PrincipalConnector pConnector;
+        beanNames = newServiceContext.getBeanNamesForType(PrincipalConnector.class);
+        log.debug("Loading {} principal connectors", beanNames.length);
+        for (String beanName : beanNames) {
+            pConnector = (PrincipalConnector) newServiceContext.getBean(beanName);
+            newPrincipalConnectors.put(pConnector.getId(), pConnector);
         }
 
         try {
+            dataConnectors = newDataConnectors;
+            definitions = newAttributeDefinitions;
+            principalConnectors = newPrincipalConnectors;
             validate();
         } catch (AttributeResolutionException e) {
-            throw new ServiceException(getId() + " configuration is not valid", e);
+            dataConnectors = oldDataConnectors;
+            definitions = oldAttributeDefinitions;
+            principalConnectors = oldPrincipalConnectors;
+            throw new ServiceException(getId() + " configuration is not valid, retaining old configuration", e);
         }
     }
 }

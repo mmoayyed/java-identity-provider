@@ -62,7 +62,7 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
     /** Metadata provider used to lookup information about entities. */
     private MetadataProvider metadataProvider;
 
-    /** Regisered relying party configurations. */
+    /** Registered relying party configurations. */
     private HashMap<String, RelyingPartyConfiguration> rpConfigs;
 
     /** Constructor. */
@@ -73,12 +73,24 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
     /** {@inheritDoc} */
     public RelyingPartyConfiguration getAnonymousRelyingConfiguration() {
-        return rpConfigs.get(ANONYMOUS_RP_NAME);
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        try {
+            return rpConfigs.get(ANONYMOUS_RP_NAME);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     /** {@inheritDoc} */
     public RelyingPartyConfiguration getDefaultRelyingPartyConfiguration() {
-        return rpConfigs.get(DEFAULT_RP_NAME);
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        try {
+            return rpConfigs.get(DEFAULT_RP_NAME);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     /**
@@ -87,7 +99,13 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
      * @return metadata provider used to lookup information about entities
      */
     public MetadataProvider getMetadataProvider() {
-        return metadataProvider;
+        Lock readLock = getReadWriteLock().readLock();
+        readLock.lock();
+        try {
+            return metadataProvider;
+        } finally {
+            readLock.unlock();
+        }
     }
 
     /**
@@ -104,41 +122,41 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
         Lock readLock = getReadWriteLock().readLock();
         readLock.lock();
 
-        log.debug("Looking up relying party configuration for {}", relyingPartyEntityID);
-        if (rpConfigs.containsKey(relyingPartyEntityID)) {
-            log.debug("Relying party configuration found for {}", relyingPartyEntityID);
-            readLock.unlock();
-            return rpConfigs.get(relyingPartyEntityID);
-        }
-
-        log.debug("No configuration was registered for {}, looking up configuration based on metadata groups",
-                relyingPartyEntityID);
         try {
-            if (metadataProvider == null) {
-                log.debug("No metadata provider available, unable to lookup configuration based on entity group");
-            } else {
-                EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
-                if (entityDescriptor != null) {
-                    EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
-                    while (entityGroup != null) {
-                        if (rpConfigs.containsKey(entityGroup.getName())) {
-                            log.debug("Relying party configuration found for {} as member of metadata group {}",
-                                    relyingPartyEntityID, entityGroup.getName());
-                            readLock.unlock();
-                            return rpConfigs.get(entityGroup.getName());
+            log.debug("Looking up relying party configuration for {}", relyingPartyEntityID);
+            if (rpConfigs.containsKey(relyingPartyEntityID)) {
+                log.debug("Relying party configuration found for {}", relyingPartyEntityID);
+                return rpConfigs.get(relyingPartyEntityID);
+            }
+
+            log.debug("No configuration was registered for {}, looking up configuration based on metadata groups",
+                    relyingPartyEntityID);
+            try {
+                if (metadataProvider == null) {
+                    log.debug("No metadata provider available, unable to lookup configuration based on entity group");
+                } else {
+                    EntityDescriptor entityDescriptor = metadataProvider.getEntityDescriptor(relyingPartyEntityID);
+                    if (entityDescriptor != null) {
+                        EntitiesDescriptor entityGroup = (EntitiesDescriptor) entityDescriptor.getParent();
+                        while (entityGroup != null) {
+                            if (rpConfigs.containsKey(entityGroup.getName())) {
+                                log.debug("Relying party configuration found for {} as member of metadata group {}",
+                                        relyingPartyEntityID, entityGroup.getName());
+                                return rpConfigs.get(entityGroup.getName());
+                            }
+                            entityGroup = (EntitiesDescriptor) entityGroup.getParent();
                         }
-                        entityGroup = (EntitiesDescriptor) entityGroup.getParent();
                     }
                 }
+            } catch (MetadataProviderException e) {
+                log.error("Error fetching metadata for relying party " + relyingPartyEntityID, e);
             }
-        } catch (MetadataProviderException e) {
-            log.error("Error fetching metadata for relying party " + relyingPartyEntityID, e);
+
+            log.debug("No relying party configuration found for {} using default configuration", relyingPartyEntityID);
+            return getDefaultRelyingPartyConfiguration();
+        } finally {
+            readLock.unlock();
         }
-
-        log.debug("No relying party configuration found for {} using default configuration", relyingPartyEntityID);
-        readLock.unlock();
-
-        return getDefaultRelyingPartyConfiguration();
     }
 
     /** {@inheritDoc} */
@@ -148,30 +166,30 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
 
     /** {@inheritDoc} */
     protected void onNewContextCreated(ApplicationContext newServiceContext) throws ServiceException {
-        String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
-        RelyingPartyGroup rpGroup = (RelyingPartyGroup) newServiceContext.getBean(relyingPartyGroupNames[0]);
-
-        Lock writeLock = getReadWriteLock().writeLock();
+        MetadataProvider oldProvider = metadataProvider;
+        HashMap<String, RelyingPartyConfiguration> oldRpConfigs = rpConfigs;
         try {
-            writeLock.lock();
+            String[] relyingPartyGroupNames = newServiceContext.getBeanNamesForType(RelyingPartyGroup.class);
+            RelyingPartyGroup newRpGroup = (RelyingPartyGroup) newServiceContext.getBean(relyingPartyGroupNames[0]);
 
-            metadataProvider = rpGroup.getMetadataProvider();
+            metadataProvider = newRpGroup.getMetadataProvider();
 
-            rpConfigs.clear();
-            List<RelyingPartyConfiguration> newRpConfigs = rpGroup.getRelyingParties();
-            if (newRpConfigs != null) {
-                for (RelyingPartyConfiguration newRpConfig : newRpConfigs) {
-                    rpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
+            HashMap<String, RelyingPartyConfiguration> newRpConfigs = new HashMap<String, RelyingPartyConfiguration>();
+            List<RelyingPartyConfiguration> loadRpConfigs = newRpGroup.getRelyingParties();
+            if (loadRpConfigs != null) {
+                for (RelyingPartyConfiguration newRpConfig : loadRpConfigs) {
+                    newRpConfigs.put(newRpConfig.getRelyingPartyId(), newRpConfig);
                     log.debug("Registering configuration for relying party: {}", newRpConfig.getRelyingPartyId());
                 }
             }
+            newRpConfigs.put(ANONYMOUS_RP_NAME, newRpGroup.getAnonymousRP());
+            newRpConfigs.put(DEFAULT_RP_NAME, newRpGroup.getDefaultRP());
+            rpConfigs = newRpConfigs;
 
-            rpConfigs.put(ANONYMOUS_RP_NAME, rpGroup.getAnonymousRP());
-            rpConfigs.put(DEFAULT_RP_NAME, rpGroup.getDefaultRP());
         } catch (Exception e) {
-            log.error("Error loading information from new context", e);
-        } finally {
-            writeLock.unlock();
+            metadataProvider = oldProvider;
+            rpConfigs = oldRpConfigs;
+            throw new ServiceException(getId() + " configuration is not valid, retaining old configuration", e);
         }
     }
 }

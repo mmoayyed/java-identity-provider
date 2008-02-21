@@ -38,17 +38,17 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
  * A service whose Spring beans are loaded into a service specific {@link ApplicationContext} that is a child of the
  * context provided in {@link #setApplicationContext(ApplicationContext)}.
  * 
- * Services derived from this base class may not be reinitilized after they have been destroyed.
+ * Services derived from this base class may not be re-initialized after they have been destroyed.
  */
 public abstract class BaseService implements Service, ApplicationContextAware, BeanNameAware {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseService.class);
 
-    /** Unqiue name of this service. */
+    /** Unique name of this service. */
     private String serviceName;
 
-    /** Read/Write lock for the AFP context. */
+    /** Read/Write lock for the context. */
     private ReentrantReadWriteLock serviceContextRWLock;
 
     /** Application context owning this engine. */
