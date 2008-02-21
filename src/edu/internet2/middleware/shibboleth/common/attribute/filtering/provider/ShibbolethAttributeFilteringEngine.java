@@ -168,6 +168,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             for (String beanName : beanNames) {
                 newFilterPolicies.add((AttributeFilterPolicy) newServiceContext.getBean(beanName));
             }
+            filterPolicies = newFilterPolicies;
         } catch (Exception e) {
             filterPolicies = oldFilterPolicies;
             throw new ServiceException(getId() + " configuration is not valid, retaining old configuration", e);
