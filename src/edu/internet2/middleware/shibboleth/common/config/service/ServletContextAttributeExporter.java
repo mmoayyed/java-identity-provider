@@ -20,6 +20,8 @@ import java.util.Collection;
 
 import javax.servlet.ServletContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,6 +32,9 @@ import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
 /** A simple service that exports services into the Servlet context as an attribute. */
 public class ServletContextAttributeExporter implements Service, ApplicationContextAware, BeanNameAware {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ServletContextAttributeExporter.class);
 
     /** Application context into which we're loaded. */
     private ApplicationContext appCtx;
@@ -65,8 +70,8 @@ public class ServletContextAttributeExporter implements Service, ApplicationCont
     /** {@inheritDoc} */
     public void initialize() throws ServiceException {
         if (!(appCtx instanceof WebApplicationContext)) {
-            throw new ServiceException(
-                    "This service may only be used when services are loaded within a WebApplicationContext");
+            log.warn("This service may only be used when services are loaded within a WebApplicationContext");
+            return;
         }
 
         if (exportedServices != null) {
