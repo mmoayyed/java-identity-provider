@@ -84,9 +84,6 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
             } catch (Throwable t) {
                 if (t.getMessage() != null) {
                     httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
-                } else {
-                    httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY,
-                            "Unknown. Please refer to the process log for the full error message");
                 }
             }
         } else {

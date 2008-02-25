@@ -94,7 +94,7 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
         if (rpcManager != null) {
             return rpcManager.getRelyingPartyConfiguration(relyingPartyId);
         }
-
+        
         return null;
     }
 
