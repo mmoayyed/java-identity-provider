@@ -82,8 +82,8 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
                 handler.processRequest(profileReq, profileResp);
                 return;
             } catch (Throwable t) {
+                log.error("Error processing profile request", t);
                 if (t.getMessage() != null) {
-                    log.error("Error processing profile request", t);
                     httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
                 }
             }
