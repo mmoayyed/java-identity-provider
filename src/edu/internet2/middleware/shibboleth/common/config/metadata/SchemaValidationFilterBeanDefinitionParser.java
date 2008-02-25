@@ -41,14 +41,18 @@ public class SchemaValidationFilterBeanDefinitionParser extends AbstractSingleBe
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
+        String[] extensions = null;
+        
         List<Element> elems = XMLHelper.getChildElementsByTagNameNS(element, MetadataNamespaceHandler.NAMESPACE,
                 "ExtensionSchema");
         if (elems != null) {
-            String[] extensions = new String[elems.size()];
+            extensions = new String[elems.size()];
             for (int i = 0; i < elems.size(); i++) {
                 extensions[i] = elems.get(i).getTextContent();
             }
         }
+        
+        builder.addConstructorArg(extensions);
     }
 
     /** {@inheritDoc} */
