@@ -125,12 +125,12 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
         try {
             log.debug("Looking up relying party configuration for {}", relyingPartyEntityID);
             if (rpConfigs.containsKey(relyingPartyEntityID)) {
-                log.debug("Relying party configuration found for {}", relyingPartyEntityID);
+                log.debug("Custom relying party configuration found for {}", relyingPartyEntityID);
                 return rpConfigs.get(relyingPartyEntityID);
             }
 
-            log.debug("No configuration was registered for {}, looking up configuration based on metadata groups",
-                    relyingPartyEntityID);
+            log.debug("No custom relying party configuration found for {}, looking up configuration based on metadata groups.",
+                            relyingPartyEntityID);
             try {
                 if (metadataProvider == null) {
                     log.debug("No metadata provider available, unable to lookup configuration based on entity group");
@@ -152,7 +152,8 @@ public class SAMLMDRelyingPartyConfigurationManager extends BaseReloadableServic
                 log.error("Error fetching metadata for relying party " + relyingPartyEntityID, e);
             }
 
-            log.debug("No relying party configuration found for {} using default configuration", relyingPartyEntityID);
+            log.debug("No custom or group-based relying party configuration found for {}. Using default relying party configuration.",
+                    relyingPartyEntityID);
             return getDefaultRelyingPartyConfiguration();
         } finally {
             readLock.unlock();
