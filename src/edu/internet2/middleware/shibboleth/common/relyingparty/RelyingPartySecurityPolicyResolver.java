@@ -59,7 +59,7 @@ public class RelyingPartySecurityPolicyResolver implements SecurityPolicyResolve
         String peerEntityId = messageContext.getInboundMessageIssuer();
         if (DatatypeHelper.isEmpty(peerEntityId)) {
             throw new SecurityException(
-                    "Unable to select security policy, no communication profile criteria available.");
+                    "Unable to select security policy, ID of the peer unknown.");
         }
 
         RelyingPartyConfiguration rpConfig = rpConfigManager.getRelyingPartyConfiguration(peerEntityId);
@@ -70,7 +70,7 @@ public class RelyingPartySecurityPolicyResolver implements SecurityPolicyResolve
         String profileId = messageContext.getCommunicationProfileId();
         if (DatatypeHelper.isEmpty(profileId)) {
             throw new SecurityException(
-                    "Unable to select security policy, no communication profile criteria available.");
+                    "Unable to select security policy, communication profile ID unknown.");
         }
 
         ProfileConfiguration profileConfig = rpConfig.getProfileConfiguration(profileId);
