@@ -57,7 +57,7 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends AbstractReso
                     "ref"));
             log.debug("Setting the following failover data connector dependencies for plugin {}: {}", pluginId,
                     connectorId);
-            pluginBuilder.addPropertyValue("failoverDataConnectorId", connectorId);
+            pluginBuilder.addPropertyValue("failoverDataConnectorIds", connectorId);
         }
     }
 }
