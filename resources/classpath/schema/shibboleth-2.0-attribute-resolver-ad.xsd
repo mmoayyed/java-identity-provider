@@ -63,6 +63,21 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="RegexSplit">
+        <annotation>
+            <documentation>An attribute definition that splits the source attribute's values based on a regular expression.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="regex" type="string" use="required">
+                    <annotation>
+                        <documentation>The regular expression used to split a value.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
     <complexType name="Script">
         <annotation>
