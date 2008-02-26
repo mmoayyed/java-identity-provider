@@ -122,6 +122,8 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
                 filterContext.getAttributeRequestContext().getPrincipalName());
         MatchFunctor policyRequirement = filterPolicy.getPolicyRequirementRule();
         if (policyRequirement == null || !policyRequirement.evaluatePolicyRequirement(filterContext)) {
+            log.debug("Filter policy {} is not active for principal {}", filterPolicy.getPolicyId(), filterContext
+                    .getAttributeRequestContext().getPrincipalName());
             return;
         }
 

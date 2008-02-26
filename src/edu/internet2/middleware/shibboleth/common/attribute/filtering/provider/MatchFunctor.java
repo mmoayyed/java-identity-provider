@@ -22,7 +22,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 public interface MatchFunctor {
 
     /**
-     * Evaluates this matching criteria. This evaluation is used while the filtering engine determiens policy
+     * Evaluates this matching criteria. This evaluation is used while the filtering engine determines policy
      * applicability.
      * 
      * @param filterContext current filtering context
@@ -39,7 +39,7 @@ public interface MatchFunctor {
      * 
      * @param filterContext the current filtering context
      * @param attributeId ID of the attribute being evaluated
-     * @param attributeValue value of the attribute being evalauted
+     * @param attributeValue value of the attribute being evaluated
      * 
      * @return true if the criteria for this matching function are meant
      * 

@@ -20,7 +20,7 @@
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
                 <sequence>
-                    <element name="Attribute" maxOccurs="unbounded">
+                    <element name="Attribute" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
                                 Specifies an attribute, and its values, to be exposed by this connector.

@@ -61,11 +61,12 @@ public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunct
             return false;
         }
         
-        EntitiesDescriptor currentGroup = (EntitiesDescriptor) entity.getParent();
+        EntitiesDescriptor currentGroup = (EntitiesDescriptor) entity.getParent();        
         do{
             if(entityGroup.equals(currentGroup.getName())){
                 return true;
             }
+            currentGroup = (EntitiesDescriptor) currentGroup.getParent();
         }while(currentGroup.getParent() != null);
         
         return false;
