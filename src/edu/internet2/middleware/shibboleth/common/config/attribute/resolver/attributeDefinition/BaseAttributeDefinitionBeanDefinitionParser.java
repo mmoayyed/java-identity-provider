@@ -63,7 +63,7 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
                 "DisplayName"));
         if (displayNames != null) {
             log.debug("Setting {} display names for attribute definition {}", displayNames.size(), pluginId);
-            pluginBuilder.addPropertyValue("displayNames", displayNames);
+            pluginBuilder.addPropertyValue("displayNames", processLocalizedElement(displayNames));
         }
 
         List<Element> displayDescriptions = pluginConfigChildren.get(new QName(
@@ -71,7 +71,7 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         if (displayDescriptions != null) {
             log.debug("Setting {} display descriptions for attribute definition {}", displayDescriptions.size(),
                     pluginId);
-            pluginBuilder.addPropertyValue("displayDescriptions", displayDescriptions);
+            pluginBuilder.addPropertyValue("displayDescriptions", processLocalizedElement(displayDescriptions));
         }
 
         if (pluginConfig.hasAttributeNS(null, "dependencyOnly")) {
