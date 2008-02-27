@@ -19,6 +19,9 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
         registerBeanDefinitionParser(ScopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new ScopedAttributeDefinitionBeanDefinitionParser());
 
+        registerBeanDefinitionParser(RegexSplitAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new RegexSplitAttributeDefinitionBeanDefinitionParser());
+
         registerBeanDefinitionParser(ScriptedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new ScriptedAttributeDefinitionBeanDefinitionParser());
 
@@ -27,13 +30,13 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
 
         registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(MappedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new MappedAttributeDefinitionBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(TransientIdAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new TransientIdAttributeDefinitionBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(TemplateAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new TemplateAttributeDefinitionBeanDefinitionParser());
     }
