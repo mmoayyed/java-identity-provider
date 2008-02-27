@@ -67,11 +67,11 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         }
 
         List<Element> displayDescriptions = pluginConfigChildren.get(new QName(
-                AttributeResolverNamespaceHandler.NAMESPACE, "DisplayDescriptions"));
+                AttributeResolverNamespaceHandler.NAMESPACE, "DisplayDescription"));
         if (displayDescriptions != null) {
             log.debug("Setting {} display descriptions for attribute definition {}", displayDescriptions.size(),
                     pluginId);
-            pluginBuilder.addPropertyValue("displayNames", displayDescriptions);
+            pluginBuilder.addPropertyValue("displayDescriptions", displayDescriptions);
         }
 
         if (pluginConfig.hasAttributeNS(null, "dependencyOnly")) {
