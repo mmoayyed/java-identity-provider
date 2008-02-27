@@ -17,6 +17,8 @@
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.opensaml.xml.util.DatatypeHelper;
 
@@ -38,11 +40,11 @@ public abstract class BaseAttributeDefinitionFactoryBean extends AbstractResolut
     /** Encoders for the attributes. */
     private List<AttributeEncoder> attributeEncoders;
 
-    /** Human intelligible attribute name. */
-    private String displayName;
+    /** Localized human intelligible attribute name. */
+    private Map<Locale, String> displayNames;
 
-    /** Human readbale description of attribute. */
-    private String displayDescription;
+    /** Localized human readable description of attribute. */
+    private Map<Locale, String> displayDescriptions;
 
     /**
      * Gets the encoders for the attributes.
@@ -54,21 +56,21 @@ public abstract class BaseAttributeDefinitionFactoryBean extends AbstractResolut
     }
 
     /**
-     * Gets the human readbale description of attribute.
+     * Gets the localized human readable description of attribute.
      * 
-     * @return human readbale description of attribute
+     * @return human readable description of attribute
      */
-    public String getDisplayDescription() {
-        return displayDescription;
+    public Map<Locale, String> getDisplayDescriptions() {
+        return displayDescriptions;
     }
 
     /**
-     * Gets the human readable name of the attribute.
+     * Gets the localized human readable name of the attribute.
      * 
      * @return human readable name of the attribute
      */
-    public String getDisplayName() {
-        return displayName;
+    public Map<Locale, String> getDisplayNames() {
+        return displayNames;
     }
 
     /**
@@ -96,17 +98,23 @@ public abstract class BaseAttributeDefinitionFactoryBean extends AbstractResolut
      */
     protected void populateAttributeDefinition(BaseAttributeDefinition definition) {
         definition.setDependencyOnly(isDependencyOnly());
-        definition.setDisplayDescription(getDisplayDescription());
-        definition.setDisplayName(getDisplayName());
+
+        if (getDisplayNames() != null) {
+            definition.getDisplayNames().putAll(getDisplayNames());
+        }
+
+        if (getDisplayDescriptions() != null) {
+            definition.getDisplayDescriptions().putAll(getDisplayDescriptions());
+        }
 
         if (getDependencyIds() != null) {
             definition.getDependencyIds().addAll(getDependencyIds());
         }
-        
-        if(getAttributeEncoders() != null){
+
+        if (getAttributeEncoders() != null) {
             definition.getAttributeEncoders().addAll(getAttributeEncoders());
         }
-        
+
         definition.setId(getPluginId());
         definition.setSourceAttributeID(getSourceAttributeId());
     }
@@ -130,21 +138,21 @@ public abstract class BaseAttributeDefinitionFactoryBean extends AbstractResolut
     }
 
     /**
-     * Sets the human readbale description of attribute.
+     * Sets the human readable description of attribute.
      * 
-     * @param description human readbale description of attribute
+     * @param descriptions human readable descriptions of attribute
      */
-    public void setDisplayDescription(String description) {
-        displayDescription = DatatypeHelper.safeTrimOrNullString(description);
+    public void setDisplayDescriptions(Map<Locale, String> descriptions) {
+        displayDescriptions = descriptions;
     }
 
     /**
      * Sets the human readable name of the attribute.
      * 
-     * @param name human readable name of the attribute
+     * @param names human readable names of the attribute
      */
-    public void setDisplayName(String name) {
-        displayName = DatatypeHelper.safeTrimOrNullString(name);
+    public void setDisplayNames(Map<Locale, String> names) {
+        displayNames = names;
     }
 
     /**

@@ -18,7 +18,10 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
 
@@ -29,41 +32,34 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEn
  */
 public abstract class BaseAttribute<ValueType> {
     
-    /** Human intelligible attribute name. */
-    private String displayName;
+    /** Localized human intelligible attribute name. */
+    private Map<Locale, String> displayNames;
     
-    /** Human readable description of attribute. */
-    private String displayDescription;
+    /** Localized human readable description of attribute. */
+    private Map<Locale, String> displayDescriptions;
     
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if(obj == this){
-            return true;
-        }
-        
-        if(obj instanceof BaseAttribute){
-            return obj.hashCode() == hashCode();
-        }
-        
-        return false;
+    /** Constructor. */
+    protected BaseAttribute(){
+        displayNames = new HashMap<Locale, String>();
+        displayDescriptions = new HashMap<Locale, String>();
     }
 
     /**
-     * Gets the human readbale description of attribute.
+     * Gets the localized human readable description of attribute.
      * 
-     * @return human readbale description of attribute
+     * @return human readable description of attribute
      */
-    public String getDisplayDescription() {
-        return displayDescription;
+    public Map<Locale, String> getDisplayDescriptions() {
+        return displayDescriptions;
     }
 
     /**
-     * Gets the human readable name of the attribute.
+     * Gets the localized human readable name of the attribute.
      * 
      * @return human readable name of the attribute
      */
-    public String getDisplayName() {
-        return displayName;
+    public Map<Locale, String> getDisplayNames() {
+        return displayNames;
     }
 
     /**
@@ -99,23 +95,18 @@ public abstract class BaseAttribute<ValueType> {
     public int hashCode() {
         return getId().hashCode();
     }
-
-    /**
-     * Sets the human readbale description of attribute.
-     * 
-     * @param description human readbale description of attribute
-     */
-    public void setDisplayDescription(String description) {
-        displayDescription = description;
-    }
     
-    /**
-     * Sets the human readable name of the attribute.
-     * 
-     * @param name human readable name of the attribute
-     */
-    public void setDisplayName(String name) {
-        displayName = name;
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if(obj == this){
+            return true;
+        }
+        
+        if(obj instanceof BaseAttribute){
+            return obj.hashCode() == hashCode();
+        }
+        
+        return false;
     }
     
     /** {@inheritDoc} */

@@ -17,6 +17,8 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
@@ -30,6 +32,20 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
  */
 public interface AttributeDefinition extends ResolutionPlugIn<BaseAttribute> {
 
+    /**
+     * Gets the localized human readable description of attribute.
+     * 
+     * @return human readable description of attribute
+     */
+    public Map<Locale, String> getDisplayDescriptions();
+
+    /**
+     * Gets the localized human readable name of the attribute.
+     * 
+     * @return human readable name of the attribute
+     */
+    public Map<Locale, String> getDisplayNames();
+    
     /**
      * Gets the map of encoders to be added to attributes produced by this definition, keyed on encoder category.
      * 

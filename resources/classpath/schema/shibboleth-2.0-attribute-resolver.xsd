@@ -65,6 +65,28 @@
         <complexContent>
             <extension base="resolver:BaseResolutionPlugInType">
                 <sequence>
+                    <element name="DisplayName" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A human readable name of for this attribute. This name may, for example, be displayed
+                                to the user with an attribute release approval request.
+                                
+                                If multiple display names are used they should bear an xml:lang attribute to 
+                                distinguish them.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="DisplayDescription" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                A human readable description of for this attribute. This name may, for example, be 
+                                displayed to the user with an attribute release approval request.
+                                
+                                If multiple display descriptions are used they should bear an xml:lang attribute to 
+                                distinguish them.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
                 <attribute name="dependencyOnly" type="boolean" default="false">
@@ -84,22 +106,6 @@
                             have a source attribute of "uid" along with an appropriate scope value. This is an optional
                             attribute, and if left empty the ID of the attribute definition will be used for the source
                             attribute.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="displayName" type="string">
-                    <annotation>
-                        <documentation>
-                            A human readable name of for this attribute. This name may, for example, be displayed to the
-                            user with an attribute release approval request.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="displayDescription" type="string">
-                    <annotation>
-                        <documentation>
-                            A human readable description of for this attribute. This name may, for example, be displayed
-                            to the user with an attribute release approval request.
                         </documentation>
                     </annotation>
                 </attribute>

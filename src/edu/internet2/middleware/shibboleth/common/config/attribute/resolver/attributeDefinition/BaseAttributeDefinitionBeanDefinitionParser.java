@@ -16,7 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -26,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -56,13 +59,20 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         log.debug("Setting source attribute ID for attribute definition {} to: {}", pluginId, sourceAttributeId);
         pluginBuilder.addPropertyValue("sourceAttributeId", sourceAttributeId);
 
-        String displayName = pluginConfig.getAttributeNS(null, "displayName");
-        log.debug("Setting display name for attribute definition {} to: {}", pluginId, displayName);
-        pluginBuilder.addPropertyValue("displayName", displayName);
+        List<Element> displayNames = pluginConfigChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+                "DisplayName"));
+        if (displayNames != null) {
+            log.debug("Setting {} display names for attribute definition {}", displayNames.size(), pluginId);
+            pluginBuilder.addPropertyValue("displayNames", displayNames);
+        }
 
-        String displayDescription = pluginConfig.getAttributeNS(null, "displayDescription");
-        log.debug("Setting display description for attribute definition {} to: {}", pluginId, displayDescription);
-        pluginBuilder.addPropertyValue("displayDescription", displayDescription);
+        List<Element> displayDescriptions = pluginConfigChildren.get(new QName(
+                AttributeResolverNamespaceHandler.NAMESPACE, "DisplayDescriptions"));
+        if (displayDescriptions != null) {
+            log.debug("Setting {} display descriptions for attribute definition {}", displayDescriptions.size(),
+                    pluginId);
+            pluginBuilder.addPropertyValue("displayNames", displayDescriptions);
+        }
 
         if (pluginConfig.hasAttributeNS(null, "dependencyOnly")) {
             boolean dependencyOnly = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
@@ -77,6 +87,22 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         ManagedList encoders = processAttributeEncoders(pluginConfigChildren.get(ATTRIBUTE_ENCODER_ELEMENT_NAME),
                 parserContext);
         pluginBuilder.addPropertyValue("attributeEncoders", encoders);
+    }
+
+    /**
+     * Used to process string elements that contain an xml:lang attribute expressing localization.
+     * 
+     * @param elements list of elements, must not be null, may be empty
+     * 
+     * @return the localized string indexed by locale
+     */
+    protected Map<Locale, String> processLocalizedElement(List<Element> elements) {
+        HashMap<Locale, String> localizedString = new HashMap<Locale, String>();
+        for (Element element : elements) {
+            localizedString.put(XMLHelper.getLanguage(element), element.getTextContent());
+        }
+
+        return localizedString;
     }
 
     /**

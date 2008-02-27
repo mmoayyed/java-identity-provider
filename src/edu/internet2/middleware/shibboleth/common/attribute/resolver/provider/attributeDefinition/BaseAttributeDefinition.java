@@ -18,7 +18,10 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,18 +50,36 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     /** Name of the attribute from data connectors to use to populate this definition. */
     private String sourceAttributeID;
 
-    /** Human intelligible attribute name. */
-    private String displayName;
+    /** Localized human intelligible attribute name. */
+    private Map<Locale, String> displayNames;
+    
+    /** Localized human readable description of attribute. */
+    private Map<Locale, String> displayDescriptions;
 
-    /** Human readable description of attribute. */
-    private String displayDescription;
-
-    /**
-     * Constructor.
-     */
+    /** Constructor. */
     public BaseAttributeDefinition() {
         dependencyOnly = false;
         encoders = new ArrayList<AttributeEncoder>();
+        displayNames = new HashMap<Locale, String>();
+        displayDescriptions = new HashMap<Locale, String>();
+    }
+    
+    /**
+     * Gets the localized human readable description of attribute.
+     * 
+     * @return human readable description of attribute
+     */
+    public Map<Locale, String> getDisplayDescriptions() {
+        return displayDescriptions;
+    }
+
+    /**
+     * Gets the localized human readable name of the attribute.
+     * 
+     * @return human readable name of the attribute
+     */
+    public Map<Locale, String> getDisplayNames() {
+        return displayNames;
     }
 
     /** {@inheritDoc} */
@@ -88,6 +109,14 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
         if(resolvedAttribute == null){
             log.error("{} produced a null attribute, this is not allowed", getId());
             throw new AttributeResolutionException(getId() + " produced a null attribute");
+        }
+        
+        if(getDisplayNames() != null) {
+            resolvedAttribute.getDisplayNames().putAll(displayNames);
+        }
+        
+        if(getDisplayDescriptions() != null){
+            resolvedAttribute.getDisplayDescriptions().putAll(displayDescriptions);
         }
         
         if (getAttributeEncoders() != null) {
@@ -140,41 +169,5 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
      */
     public void setSourceAttributeID(String newSourceAttributeID) {
         sourceAttributeID = newSourceAttributeID;
-    }
-
-    /**
-     * Gets the human readable description of attribute.
-     * 
-     * @return human readable description of attribute
-     */
-    public String getDisplayDescription() {
-        return displayDescription;
-    }
-
-    /**
-     * Gets the human readable name of the attribute.
-     * 
-     * @return human readable name of the attribute
-     */
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    /**
-     * Sets the human readable description of attribute.
-     * 
-     * @param description human readable description of attribute
-     */
-    public void setDisplayDescription(String description) {
-        displayDescription = description;
-    }
-
-    /**
-     * Sets the human readable name of the attribute.
-     * 
-     * @param name human readable name of the attribute
-     */
-    public void setDisplayName(String name) {
-        displayName = name;
     }
 }

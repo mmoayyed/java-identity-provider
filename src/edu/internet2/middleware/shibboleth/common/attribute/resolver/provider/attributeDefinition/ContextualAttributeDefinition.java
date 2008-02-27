@@ -17,6 +17,8 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEncoder;
@@ -50,8 +52,8 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public int hashCode() {
-        return definition.hashCode();
+    public List<AttributeEncoder> getAttributeEncoders() {
+        return definition.getAttributeEncoders();
     }
 
     /** {@inheritDoc} */
@@ -60,13 +62,28 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public List<AttributeEncoder> getAttributeEncoders() {
-        return definition.getAttributeEncoders();
+    public Map<Locale, String> getDisplayDescriptions() {
+        return definition.getDisplayDescriptions();
+    }
+
+    /** {@inheritDoc} */
+    public Map<Locale, String> getDisplayNames() {
+        return definition.getDisplayNames();
     }
 
     /** {@inheritDoc} */
     public String getId() {
         return definition.getId();
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return definition.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isDependencyOnly() {
+        return definition.isDependencyOnly();
     }
 
     /** {@inheritDoc} */
@@ -81,10 +98,5 @@ public class ContextualAttributeDefinition implements AttributeDefinition {
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
         definition.validate();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isDependencyOnly() {
-        return definition.isDependencyOnly();
     }
 }
