@@ -75,7 +75,7 @@ public class ChainingTrustEngineBeanDefinitionParser extends AbstractSingleBeanD
                 throw new FatalBeanException("Unsupported child element of chaining trust engine encountered");
             }
             
-            child = XMLHelper.getNextSiblingElement(element);
+            child = XMLHelper.getNextSiblingElement(child);
         }
         
         builder.addPropertyValue("chain", managedChain);
