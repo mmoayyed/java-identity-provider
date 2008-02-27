@@ -64,10 +64,10 @@ public class ChainingTrustEngineBeanDefinitionParser extends AbstractSingleBeanD
         while (child != null) {
             QName childName = XMLHelper.getNodeQName(child);
             if (TRUST_ENGINE_NAME.equals(childName)) {
-                log.debug("Parsing chain member trust engine");
+                log.debug("Parsing chain trust engine member {}", element.getAttributeNS(null, "id"));
                 managedChain.add(SpringConfigurationUtils.parseCustomElement(child, parserContext));
             } else if (TRUST_ENGINE_REF_NAME.equals(childName)) {
-                log.debug("Parsing chain member trust engine reference");
+                log.debug("Parsing chain trust engine member reference {}", element.getAttributeNS(null, "ref") );
                 managedChain.add(SpringConfigurationUtils.parseCustomElementReference(child, "ref", parserContext));
             } else {
                 log.error("Unsupported child element of chaining trust engine '{}' encountered with name: {}", 
@@ -79,7 +79,6 @@ public class ChainingTrustEngineBeanDefinitionParser extends AbstractSingleBeanD
         }
         
         builder.addPropertyValue("chain", managedChain);
-        
     }
     
     /** {@inheritDoc} */

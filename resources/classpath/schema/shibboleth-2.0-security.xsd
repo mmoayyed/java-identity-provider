@@ -280,7 +280,7 @@
                 If the token to be evaluated can be established as trusted by one member of the chain,
                 then the token is trusted.  Otherwise it is evaluated as untrusted.
                 
-                Trust chain members must all evalute tokens of a compatible type,
+                Trust chain members must all evaluate tokens of a compatible type,
                 for example a Credential or Signature.
             </documentation>
         </annotation>
