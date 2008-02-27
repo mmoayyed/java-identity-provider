@@ -61,10 +61,7 @@ public class AttributeAuthorityCLI {
     private static Logger log = LoggerFactory.getLogger(AttributeAuthorityCLI.class);
 
     /** List of configuration files used with the AACLI. */
-    private static String[] aacliConfigs = { "/service.xml", "/internal.xml", };
-
-    /** Loaded metadata provider. */
-    private static MetadataProvider metadataProvider;
+    private static String[] aacliConfigs = {"/internal.xml", "/service.xml", };
 
     /** Loaded SAML 1 Attribute Authority. */
     private static SAML1AttributeAuthority saml1AA;
@@ -75,7 +72,7 @@ public class AttributeAuthorityCLI {
     /**
      * Runs this application. Help message prints if no arguments are given or if the "help" argument is given.
      * 
-     * @param args command line arguements
+     * @param args command line arguments
      * 
      * @throws Exception thrown if there is a problem during program execution
      */
