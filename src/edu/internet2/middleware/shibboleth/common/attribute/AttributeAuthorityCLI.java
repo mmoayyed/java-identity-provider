@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.opensaml.Configuration;
-import org.opensaml.DefaultBootstrap;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.util.resource.FilesystemResource;
@@ -104,8 +103,6 @@ public class AttributeAuthorityCLI {
      * @throws Exception thrown if the underlying libraries could not be initialized
      */
     private static CmdLineParser initialize(String[] args) throws Exception {
-        DefaultBootstrap.bootstrap();
-
         if (args.length < 2) {
             printHelp(System.out);
             System.out.flush();
@@ -126,7 +123,7 @@ public class AttributeAuthorityCLI {
             System.out.flush();
             System.exit(0);
         }
-
+        
         return parser;
     }
 
