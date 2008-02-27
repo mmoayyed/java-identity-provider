@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute;
 import jargs.gnu.CmdLineParser;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -40,6 +41,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.w3c.dom.Element;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.status.ErrorStatus;
+import ch.qos.logback.core.status.InfoStatus;
+import ch.qos.logback.core.status.StatusManager;
+
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML1AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
@@ -60,7 +68,7 @@ public class AttributeAuthorityCLI {
     private static Logger log = LoggerFactory.getLogger(AttributeAuthorityCLI.class);
 
     /** List of configuration files used with the AACLI. */
-    private static String[] aacliConfigs = {"/internal.xml", "/service.xml", };
+    private static String[] aacliConfigs = { "/internal.xml", "/service.xml", };
 
     /** Loaded SAML 1 Attribute Authority. */
     private static SAML1AttributeAuthority saml1AA;
@@ -76,7 +84,7 @@ public class AttributeAuthorityCLI {
      * @throws Exception thrown if there is a problem during program execution
      */
     public static void main(String[] args) throws Exception {
-        CmdLineParser parser = initialize(args);
+        CmdLineParser parser = parseCommandArguments(args);
         ApplicationContext appCtx = loadConfigurations((String) parser.getOptionValue(CLIParserBuilder.CONFIG_DIR_ARG));
 
         saml1AA = (SAML1AttributeAuthority) appCtx.getBean("shibboleth.SAML1AttributeAuthority");
@@ -94,7 +102,7 @@ public class AttributeAuthorityCLI {
     }
 
     /**
-     * Initialize the application.
+     * Parses the command line arguments
      * 
      * @param args command line arguments
      * 
@@ -102,7 +110,7 @@ public class AttributeAuthorityCLI {
      * 
      * @throws Exception thrown if the underlying libraries could not be initialized
      */
-    private static CmdLineParser initialize(String[] args) throws Exception {
+    private static CmdLineParser parseCommandArguments(String[] args) throws Exception {
         if (args.length < 2) {
             printHelp(System.out);
             System.out.flush();
@@ -123,7 +131,7 @@ public class AttributeAuthorityCLI {
             System.out.flush();
             System.exit(0);
         }
-        
+
         return parser;
     }
 
@@ -150,6 +158,8 @@ public class AttributeAuthorityCLI {
             errorAndExit("Configuration directory " + configDir
                     + " does not exist, is not a directory, or is not readable", null);
         }
+        
+        loadLoggingConfiguration(configDirectory.getAbsolutePath());
 
         List<Resource> configs = new ArrayList<Resource>();
 
@@ -167,6 +177,31 @@ public class AttributeAuthorityCLI {
         SpringConfigurationUtils.populateRegistry(gContext, configs);
         gContext.refresh();
         return gContext;
+    }
+    
+
+    /**
+     * Loads the logging configuration.
+     * 
+     * @param configDir IdP configuration directory
+     */
+    private static void loadLoggingConfiguration(String configDir) {
+        String loggingConfig = configDir + File.pathSeparator + "logging.xml";
+
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        StatusManager statusManager = loggerContext.getStatusManager();
+        statusManager.add(new InfoStatus("Loading logging configuration file: " + loggingConfig, null));
+        try {
+            loggerContext.shutdownAndReset();
+            JoranConfigurator configurator = new JoranConfigurator();
+            configurator.setContext(loggerContext);
+            configurator.doConfigure(new FileInputStream(loggingConfig));
+            loggerContext.start();
+        } catch (JoranException e) {
+            statusManager.add(new ErrorStatus("Error loading logging configuration file: " + configDir, null, e));
+        } catch (IOException e) {
+            statusManager.add(new ErrorStatus("Error loading logging configuration file: " + configDir, null, e));
+        }
     }
 
     /**
@@ -250,7 +285,7 @@ public class AttributeAuthorityCLI {
             System.out.println("No attribute statement.");
             return;
         }
-        
+
         Marshaller statementMarshaller = Configuration.getMarshallerFactory().getMarshaller(attributeStatement);
 
         try {
