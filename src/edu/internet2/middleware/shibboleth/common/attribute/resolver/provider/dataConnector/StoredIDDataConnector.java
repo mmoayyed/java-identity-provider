@@ -199,7 +199,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
                     + getId() + " provided no values");
         }
 
-        if (sourceIdValues.size() > 0) {
+        if (sourceIdValues.size() > 1) {
             log.warn("Source attribute {} for connector {} has more than one value, only the first value is used",
                     getSourceAttributeId(), getId());
         }
