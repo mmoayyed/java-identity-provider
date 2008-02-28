@@ -60,7 +60,7 @@ public class ComputedIDDataConnector extends BaseDataConnector {
      * @param idSalt salt used when computing the ID
      */
     public ComputedIDDataConnector(String generatedAttributeId, String sourceAttributeId, byte[] idSalt) {
-        log.warn("This data connector is depricated.  The StoredID data connector should be used in its place.");
+        log.warn("This data connector is deprecated.  The StoredID data connector should be used in its place.");
 
         if (DatatypeHelper.isEmpty(generatedAttributeId)) {
             throw new IllegalArgumentException("Provided generated attribute ID must not be empty");
@@ -116,7 +116,7 @@ public class ComputedIDDataConnector extends BaseDataConnector {
                     + getId() + " provided no values");
         }
 
-        if (sourceIdValues.size() > 0) {
+        if (sourceIdValues.size() > 1) {
             log.warn("Source attribute {} for connector {} has more than one value, only the first value is used",
                     getSourceAttributeId(), getId());
         }
@@ -141,7 +141,7 @@ public class ComputedIDDataConnector extends BaseDataConnector {
             return attribtues;
         } catch (NoSuchAlgorithmException e) {
             log.error("JVM error, SHA-1 hash is not supported.");
-            throw new AttributeResolutionException("SHA-1A has is not supported, unable to compute ID");
+            throw new AttributeResolutionException("SHA-1A is not supported, unable to compute ID");
         }
     }
 
