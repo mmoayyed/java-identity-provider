@@ -28,14 +28,14 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for configuring an computed ID data connector.
  */
-public class ComputedIDDataConnectorBeanDefinitionParaser extends BaseDataConnectorBeanDefinitionParser {
+public class ComputedIDDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** Schema type. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return ComputedIDDataConnectorFactoyBean.class;
+        return ComputedIDDataConnectorFactoryBean.class;
     }
 
     /** {@inheritDoc} */
