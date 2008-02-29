@@ -95,7 +95,8 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             attributeEntry = attributeEntryItr.next();
             attribute = attributeEntry.getValue();
             retainedValues = filterContext.getRetainedValues(attribute.getId(), false);
-            attribute.getValues().retainAll(retainedValues);
+            attribute.getValues().clear();
+            attribute.getValues().addAll(retainedValues);
             if (attribute.getValues().size() == 0) {
                 log.debug("Removing attribute from return set, no more values: {}", attribute.getId());
                 attributeEntryItr.remove();
