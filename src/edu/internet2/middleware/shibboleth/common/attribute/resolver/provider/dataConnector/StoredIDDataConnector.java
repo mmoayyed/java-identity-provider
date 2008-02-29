@@ -242,9 +242,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
                 md.update((byte) '!');
                 md.update(localId.getBytes());
                 md.update((byte) '!');
-                md.digest(salt);
-
-                persisentId = Base64.encodeBytes(md.digest());
+                persisentId = Base64.encodeBytes(md.digest(salt));
             } catch (NoSuchAlgorithmException e) {
                 log.error("JVM error, SHA-1 is not supported, unable to compute ID");
                 throw new SQLException("SHA-1 is not supported, unable to compute ID");
