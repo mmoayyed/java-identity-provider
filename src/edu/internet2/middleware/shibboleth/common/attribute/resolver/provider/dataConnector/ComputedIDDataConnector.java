@@ -66,7 +66,7 @@ public class ComputedIDDataConnector extends BaseDataConnector {
             throw new IllegalArgumentException("Provided generated attribute ID must not be empty");
         }
         generatedAttribute = generatedAttributeId;
-        
+
         if (DatatypeHelper.isEmpty(sourceAttributeId)) {
             throw new IllegalArgumentException("Provided source attribute ID must not be empty");
         }
@@ -131,10 +131,8 @@ public class ComputedIDDataConnector extends BaseDataConnector {
             md.update((byte) '!');
             md.update(sourceId.getBytes());
             md.update((byte) '!');
-            md.digest(salt);
 
-            String computedId = Base64.encodeBytes(md.digest());
-            computedIdAttrib.getValues().add(computedId);
+            computedIdAttrib.getValues().add(Base64.encodeBytes(md.digest(salt)));
 
             HashMap<String, BaseAttribute> attribtues = new HashMap<String, BaseAttribute>();
             attribtues.put(getGeneratedAttributeId(), computedIdAttrib);
@@ -147,9 +145,10 @@ public class ComputedIDDataConnector extends BaseDataConnector {
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-        if(getDependencyIds() == null || getDependencyIds().size() != 1){
+        if (getDependencyIds() == null || getDependencyIds().size() != 1) {
             log.error("Computed ID " + getId() + " data connectore requires exactly one dependency");
-            throw new AttributeResolutionException("Computed ID " + getId() + " data connectore requires exactly one dependency");
+            throw new AttributeResolutionException("Computed ID " + getId()
+                    + " data connectore requires exactly one dependency");
         }
     }
 }
