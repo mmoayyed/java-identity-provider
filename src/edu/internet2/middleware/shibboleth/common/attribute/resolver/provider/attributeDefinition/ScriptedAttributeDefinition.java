@@ -124,11 +124,11 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             }
 
             BaseAttribute attribute = (BaseAttribute) context.getAttribute(getId());
-            if (attribute == null){
+            if (attribute == null) {
                 log.error("{} produced a null attribute", getId());
                 throw new AttributeResolutionException(getId() + " produced a null attributes");
             }
-            
+
             return attribute;
         } catch (ScriptException e) {
             log.error("ScriptletAttributeDefinition " + getId() + " unable to execute script", e);
@@ -149,8 +149,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             }
         } catch (ScriptException e) {
             compiledScript = null;
-            log.warn("ScriptletAttributeDefinition {} unable to compile even though the scripting engine supports this functionality.",
-                            getId());
+            log.warn("{} unable to compile even though the scripting engine supports this functionality.", getId());
         }
     }
 

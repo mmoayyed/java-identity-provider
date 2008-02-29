@@ -64,6 +64,24 @@
         </complexContent>
     </complexType>
     
+    <complexType name="Precoped">
+        <annotation>
+            <documentation>
+                An attribute definition that splits the values of the source attribute into an attribute value 
+                with a value and scope.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="scopeDelimiter" type="string" defualt="@">
+                    <annotation>
+                        <documentation>Delimiter between the value and scope.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="RegexSplit">
         <annotation>
             <documentation>An attribute definition that splits the source attribute's values based on a regular expression.</documentation>

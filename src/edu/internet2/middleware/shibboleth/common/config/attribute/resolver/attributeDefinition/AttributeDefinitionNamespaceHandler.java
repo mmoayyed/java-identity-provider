@@ -19,6 +19,9 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
         registerBeanDefinitionParser(ScopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new ScopedAttributeDefinitionBeanDefinitionParser());
 
+        registerBeanDefinitionParser(PrescopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new PrescopedAttributeDefinitionBeanDefinitionParser());
+
         registerBeanDefinitionParser(RegexSplitAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new RegexSplitAttributeDefinitionBeanDefinitionParser());
 
