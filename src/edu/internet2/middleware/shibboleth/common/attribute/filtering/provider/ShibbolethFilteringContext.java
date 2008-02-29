@@ -16,10 +16,11 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
@@ -78,10 +79,10 @@ public class ShibbolethFilteringContext {
      * @return attribute values not yet filtered out, never null
      */
     public Collection getRetainedValues(String attributeId, boolean prepopulate) {
+        BaseAttribute attribute = unfilteredAttributes.get(attributeId);
         Collection attributeValues = null;
         if (!retainedValues.containsKey(attributeId) && prepopulate) {
             if (prepopulate) {
-                BaseAttribute attribute = unfilteredAttributes.get(attributeId);
                 if (attribute != null) {
                     attributeValues = attribute.getValues();
                 }
@@ -93,8 +94,21 @@ public class ShibbolethFilteringContext {
         }
 
         if (attributeValues == null) {
-            attributeValues = new ArrayList<Object>();
+            Comparator valueComparator = attribute.getValueComparator();
+            if(valueComparator == null){
+                valueComparator = new ObjectStringComparator();
+            }
+            attributeValues = new TreeSet<Object>(valueComparator);
         }
         return attributeValues;
+    }
+
+    /** Class that compares objects based on their String representation. */
+    private class ObjectStringComparator implements Comparator<Object>{
+
+        /** {@inheritDoc} */
+        public int compare(Object o1, Object o2) {
+            return o1.toString().compareTo(o2.toString());
+        }
     }
 }
