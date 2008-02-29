@@ -30,7 +30,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.AttributeEn
  * 
  * @param <ValueType> the object type of the values for this attribute
  */
-public abstract class BaseAttribute<ValueType> {
+public abstract class BaseAttribute<ValueType> implements Comparable<BaseAttribute> {
     
     /** Localized human intelligible attribute name. */
     private Map<Locale, String> displayNames;
@@ -107,6 +107,11 @@ public abstract class BaseAttribute<ValueType> {
         }
         
         return false;
+    }
+    
+    /** {@inheritDoc} */
+    public int compareTo(BaseAttribute o) {
+        return getId().compareTo(o.getId());
     }
     
     /** {@inheritDoc} */
