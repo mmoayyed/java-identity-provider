@@ -64,7 +64,7 @@
         </complexContent>
     </complexType>
     
-    <complexType name="Precoped">
+    <complexType name="Prescoped">
         <annotation>
             <documentation>
                 An attribute definition that splits the values of the source attribute into an attribute value 
