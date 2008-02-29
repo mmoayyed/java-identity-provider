@@ -94,7 +94,10 @@ public class ShibbolethFilteringContext {
         }
 
         if (attributeValues == null) {
-            Comparator valueComparator = attribute.getValueComparator();
+            Comparator valueComparator = null;
+            if(attribute != null){
+                valueComparator = attribute.getValueComparator();
+            }
             if(valueComparator == null){
                 valueComparator = new ObjectStringComparator();
             }
@@ -108,6 +111,14 @@ public class ShibbolethFilteringContext {
 
         /** {@inheritDoc} */
         public int compare(Object o1, Object o2) {
+            if(o1 == null){
+                return -1;
+            }
+            
+            if(o2 == null){
+                return 1;
+            }
+            
             return o1.toString().compareTo(o2.toString());
         }
     }
