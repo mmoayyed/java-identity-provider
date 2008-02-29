@@ -16,10 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeSet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.profile.provider.SAMLProfileRequestContext;
@@ -93,7 +93,7 @@ public class ShibbolethFilteringContext {
         }
 
         if (attributeValues == null) {
-            attributeValues = new TreeSet<Object>();
+            attributeValues = new ArrayList<Object>();
         }
         return attributeValues;
     }
