@@ -73,7 +73,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
-                <attribute name="scopeDelimiter" type="string" defualt="@">
+                <attribute name="scopeDelimiter" type="string" default="@">
                     <annotation>
                         <documentation>Delimiter between the value and scope.</documentation>
                     </annotation>
