@@ -61,7 +61,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
 
         String[] stringValues;
         for (Object value : values) {
-            if (value instanceof String && value != null) {
+            if (!(value instanceof String)) {
                 continue;
             }
 
