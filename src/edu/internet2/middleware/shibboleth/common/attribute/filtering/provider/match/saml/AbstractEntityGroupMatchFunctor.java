@@ -46,7 +46,7 @@ public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunct
      * @param group entity group to match against
      */
     public void setEntityGroup(String group){
-        entityGroup = DatatypeHelper.safeTrimOrNullString(entityGroup);
+        entityGroup = DatatypeHelper.safeTrimOrNullString(group);
     }
     
     /**
