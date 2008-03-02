@@ -62,7 +62,7 @@ public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunct
      */
     protected boolean isEntityInGroup(EntityDescriptor entity) {
         if (entityGroup == null) {
-            log.debug("No entity group specificed, unable to check if entity is in group");
+            log.debug("No entity group specified, unable to check if entity is in group");
             return false;
         }
 
@@ -73,7 +73,7 @@ public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunct
 
         EntitiesDescriptor currentGroup = (EntitiesDescriptor) entity.getParent();
         if (currentGroup == null) {
-            log.debug("No entity descriptor does not have a parent object, unable to check if entity is in group {}",
+            log.debug("Entity descriptor does not have a parent object, unable to check if entity is in group {}",
                     entityGroup);
             return false;
         }
@@ -83,7 +83,7 @@ public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunct
                 return true;
             }
             currentGroup = (EntitiesDescriptor) currentGroup.getParent();
-        } while (currentGroup.getParent() != null);
+        } while (currentGroup != null);
 
         return false;
     }
