@@ -19,36 +19,40 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic.AbstractMatchFunctor;
-
 
 /**
  * Base class for match functors that check if a given entity is in an entity group.
  */
-public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunctor{
+public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunctor {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AbstractEntityGroupMatchFunctor.class);
 
     /** The entity group to match against. */
     private String entityGroup;
-    
+
     /**
      * Gets the entity group to match against.
      * 
      * @return entity group to match against
      */
-    public String getEntityGroup(){
+    public String getEntityGroup() {
         return entityGroup;
     }
-    
+
     /**
      * Sets the entity group to match against.
      * 
      * @param group entity group to match against
      */
-    public void setEntityGroup(String group){
+    public void setEntityGroup(String group) {
         entityGroup = DatatypeHelper.safeTrimOrNullString(group);
     }
-    
+
     /**
      * Checks if the given entity is in the provided entity group.
      * 
@@ -56,19 +60,31 @@ public abstract class AbstractEntityGroupMatchFunctor extends AbstractMatchFunct
      * 
      * @return true if the entity is in the group, false if not
      */
-    protected boolean isEntityInGroup(EntityDescriptor entity){
-        if(entity == null || entity.getParent() == null || entityGroup == null){
+    protected boolean isEntityInGroup(EntityDescriptor entity) {
+        if (entityGroup == null) {
+            log.debug("No entity group specificed, unable to check if entity is in group");
             return false;
         }
-        
-        EntitiesDescriptor currentGroup = (EntitiesDescriptor) entity.getParent();        
-        do{
-            if(entityGroup.equals(currentGroup.getName())){
+
+        if (entity == null) {
+            log.debug("No entity metadata available, unable to check if entity is in group {}", entityGroup);
+            return false;
+        }
+
+        EntitiesDescriptor currentGroup = (EntitiesDescriptor) entity.getParent();
+        if (currentGroup == null) {
+            log.debug("No entity descriptor does not have a parent object, unable to check if entity is in group {}",
+                    entityGroup);
+            return false;
+        }
+
+        do {
+            if (entityGroup.equals(currentGroup.getName())) {
                 return true;
             }
             currentGroup = (EntitiesDescriptor) currentGroup.getParent();
-        }while(currentGroup.getParent() != null);
-        
+        } while (currentGroup.getParent() != null);
+
         return false;
     }
 }
