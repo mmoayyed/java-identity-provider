@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 import edu.internet2.middleware.shibboleth.common.service.Service;
 import edu.internet2.middleware.shibboleth.common.service.ServiceException;
 
-/** A simple service that exports services into the Servlet context as an attribute. */
+/** A simple service that exports Spring beans into the Servlet context as an attribute. */
 public class ServletContextAttributeExporter implements Service, ApplicationContextAware, BeanNameAware {
 
     /** Class logger. */
@@ -45,16 +45,16 @@ public class ServletContextAttributeExporter implements Service, ApplicationCont
     /** Whether this service has been initialized. */
     private boolean initialized;
 
-    /** ID of services exported into the servlet context. */
-    private Collection<String> exportedServices;
+    /** ID of beans exported into the servlet context. */
+    private Collection<String> exportedBeans;
 
     /**
      * Constructor.
      * 
-     * @param services ID of services exported into the servlet context
+     * @param beans ID of beans exported into the servlet context
      */
-    public ServletContextAttributeExporter(Collection<String> services) {
-        exportedServices = services;
+    public ServletContextAttributeExporter(Collection<String> beans) {
+        exportedBeans = beans;
     }
 
     /** {@inheritDoc} */
@@ -70,15 +70,22 @@ public class ServletContextAttributeExporter implements Service, ApplicationCont
     /** {@inheritDoc} */
     public void initialize() throws ServiceException {
         if (!(appCtx instanceof WebApplicationContext)) {
-            log.warn("This service may only be used when services are loaded within a WebApplicationContext");
+            log.warn("This service may only be used when services are loaded within a web application context.");
             return;
         }
 
-        if (exportedServices != null) {
+        Object bean;
+        if (exportedBeans != null) {
             WebApplicationContext webAppCtx = (WebApplicationContext) appCtx;
             ServletContext servletCtx = webAppCtx.getServletContext();
-            for (String service : exportedServices) {
-                servletCtx.setAttribute(service, webAppCtx.getBean(service));
+            for (String beanId : exportedBeans) {
+                bean = webAppCtx.getBean(beanId);
+                if(bean != null){
+                    log.debug("Exporting bean {} to servlet context.", beanId);
+                    servletCtx.setAttribute(beanId, bean);
+                }else{
+                    log.warn("No {} bean located, unable to export it to the servlet context", beanId);
+                }
             }
         }
 
