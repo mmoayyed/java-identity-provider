@@ -305,6 +305,39 @@
         </complexContent>
     </complexType>
     
+    <complexType name="SignatureChaining">
+        <annotation>
+            <documentation>
+                Trust engine which chains together other signature trust engine instances, evaluating the signature
+                against each engine in chain order.
+                
+                If the signature to be evaluated can be established as trusted by one member of the chain,
+                then the signature is trusted.  Otherwise it is evaluated as untrusted.
+                
+                Trust chain members must all evaluate signatures.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:TrustEngineType">
+                <choice minOccurs="1" maxOccurs="unbounded">
+                    <element ref="sec:TrustEngine" />
+                    <element name="TrustEngineRef">
+                        <annotation>
+                            <documentation>Reference to a trust engine.</documentation>
+                        </annotation>
+                        <complexType>
+                            <attribute name="ref">
+                                <annotation>
+                                    <documentation>Bean reference id for a trust engine declared elsewhere.</documentation>
+                                </annotation>
+                            </attribute>
+                        </complexType>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <!-- Trust engines which use metadata provider-based resolvers -->
     <complexType name="MetadataExplicitKey">
         <annotation>
