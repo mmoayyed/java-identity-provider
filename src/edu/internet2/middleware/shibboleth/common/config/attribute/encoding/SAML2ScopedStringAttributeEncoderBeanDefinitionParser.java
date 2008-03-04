@@ -33,7 +33,7 @@ public class SAML2ScopedStringAttributeEncoderBeanDefinitionParser extends
         BaseScopedAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML2ScopedString");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2ScopedString");
 
     /** Local name of name format attribute. */
     public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";

@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2008 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,21 +24,26 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1NameIDAttributeEncoder;
 
 /**
  * Spring Bean Definition Parser for SAML2 string attribute encoder.
  */
-public class SAML2StringAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
+public class SAML1NameIDAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2String");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1NameIDAttribute");
 
     /** Local name of name format attribute. */
     public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
 
     /** Local name of friendly name attribute. */
     public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
+
+    /** {@inheritDoc} */
+    protected Class getBeanClass(Element element) {
+        return SAML1NameIDAttributeEncoder.class;
+    }
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -51,11 +56,8 @@ public class SAML2StringAttributeEncoderBeanDefinitionParser extends BaseAttribu
         if (attributeName == null) {
             throw new BeanCreationException("SAML 2 attribute encoders must contain a name");
         }
-    }
 
-    /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return SAML2StringAttributeEncoder.class;
+        builder.addPropertyValue("nameIdFormat", element.getAttributeNS(null, "nameIdFormat"));
+        builder.addPropertyValue("nameIdQualifier", element.getAttributeNS(null, "nameIdQualifier"));
     }
-
 }

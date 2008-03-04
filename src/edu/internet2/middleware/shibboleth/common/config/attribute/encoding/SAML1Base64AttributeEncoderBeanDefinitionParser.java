@@ -32,7 +32,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SA
 public class SAML1Base64AttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", "SAML1Base64");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1Base64");
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

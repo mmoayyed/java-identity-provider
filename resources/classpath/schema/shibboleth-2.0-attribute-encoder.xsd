@@ -39,7 +39,9 @@
     
     <complexType name="SAML1NameIdentifierAttribute">
         <annotation>
-            <documentation>Defines a SAML 1 string encoder for an attribute.</documentation>
+            <documentation>
+                Encodes the attribute as a SAML 1 attribute whose value is a SAML 1 NameIdentifier.
+            </documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
@@ -57,6 +59,34 @@
                 <attribute name="nameIdQualifier" type="string" use="optional">
                     <annotation>
                         <documentation>The SAML 1 NameQualifier of the NameIdentifier.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SAML1NameIDAttribute">
+        <annotation>
+            <documentation>
+                Encodes the attribute as a SAML 1 attribute whose value is a SAML 2 NameID.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeEncoderType">
+                <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                    <annotation>
+                        <documentation>The SAML 1 Namespace of the attribute.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdFormat" type="string"
+                    default="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 NameQualifier of the NameID.</documentation>
                     </annotation>
                 </attribute>
             </extension>
