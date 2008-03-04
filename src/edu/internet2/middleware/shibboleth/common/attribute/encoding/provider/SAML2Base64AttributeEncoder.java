@@ -58,6 +58,7 @@ public class SAML2Base64AttributeEncoder extends AbstractSAML2AttributeEncoder {
         XSString samlAttributeValue;
         for (Object o : attribute.getValues()) {
             if (o == null || !(o instanceof byte[])) {
+                log.debug("Skipping attribute value because it is either null or not a byte[]");
                 continue;
             }
 

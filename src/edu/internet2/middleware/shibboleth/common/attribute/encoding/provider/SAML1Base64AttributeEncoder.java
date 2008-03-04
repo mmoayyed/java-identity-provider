@@ -43,9 +43,6 @@ public class SAML1Base64AttributeEncoder extends AbstractSAML1AttributeEncoder {
     /** XSString factory. */
     private final XMLObjectBuilder<XSString> stringBuilder;
 
-    /** Namespace of attribute. */
-    private String namespace;
-
     /** Constructor. */
     public SAML1Base64AttributeEncoder() {
         super();
@@ -62,8 +59,10 @@ public class SAML1Base64AttributeEncoder extends AbstractSAML1AttributeEncoder {
         XSString samlAttributeValue;
         for (Object o : attribute.getValues()) {
             if (o == null || !(o instanceof byte[])) {
+                log.debug("Skipping attribute value because it is either null or not a byte[]");
                 continue;
             }
+            
             attributeValue = (byte[]) o;
             samlAttributeValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
             samlAttributeValue.setValue(Base64.encodeBytes(attributeValue));
