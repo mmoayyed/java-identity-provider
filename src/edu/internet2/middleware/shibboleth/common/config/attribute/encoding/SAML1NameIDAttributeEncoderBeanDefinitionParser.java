@@ -48,13 +48,13 @@ public class SAML1NameIDAttributeEncoderBeanDefinitionParser extends BaseAttribu
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-
-        builder.addPropertyValue("nameFormat", element.getAttribute(NAME_FORMAT_ATTRIBUTE_NAME));
-        builder.addPropertyValue("friendlyName", element.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
-
+        
+        String namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "namespace"));
+        builder.addPropertyValue("namespace", namespace);
+        
         String attributeName = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "name"));
         if (attributeName == null) {
-            throw new BeanCreationException("SAML 2 attribute encoders must contain a name");
+            throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
         }
 
         builder.addPropertyValue("nameIdFormat", element.getAttributeNS(null, "nameIdFormat"));
