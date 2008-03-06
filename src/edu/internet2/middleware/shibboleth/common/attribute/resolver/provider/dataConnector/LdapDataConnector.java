@@ -804,12 +804,12 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
                 throw new NamingException();
             }
         } catch (NamingException e) {
-            log.error("An error occured when atteming to search the LDAP: " + ldapConfig.getEnvironment(), e);
-            throw new AttributeResolutionException("An error occurred when attemping to search the LDAP");
+            log.error("An error occured when attempting to search the LDAP: " + ldapConfig.getEnvironment(), e);
+            throw new AttributeResolutionException("An error occurred when attempting to search the LDAP");
         } catch (Exception e) {
             log.error("Could not retrieve Ldap object from pool", e);
             throw new AttributeResolutionException(
-                    "An error occurred when attemping to retrieve a LDAP connection from the pool");
+                    "An error occurred when attempting to retrieve a LDAP connection from the pool");
         } finally {
             if (ldap != null) {
                 try {
@@ -834,12 +834,12 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             ldap = (Ldap) ldapPool.borrowObject();
             return ldap.search(searchFilter, returnAttributes);
         } catch (NamingException e) {
-            log.error("An error occured when atteming to search the LDAP: " + ldapConfig.getEnvironment(), e);
-            throw new AttributeResolutionException("An error occurred when attemping to search the LDAP");
+            log.error("An error occured when attempting to search the LDAP: " + ldapConfig.getEnvironment(), e);
+            throw new AttributeResolutionException("An error occurred when attempting to search the LDAP");
         } catch (Exception e) {
             log.error("Could not retrieve Ldap object from pool", e);
             throw new AttributeResolutionException(
-                    "An error occurred when attemping to retrieve a LDAP connection from the pool");
+                    "An error occurred when attempting to retrieve a LDAP connection from the pool");
         } finally {
             if (ldap != null) {
                 try {

@@ -360,12 +360,13 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
             log.error("Received the following error from data connector " + dataConnector.getId()
                     + ", using its failover connector " + failoverDataConnectorId, e);
-            try {
-                resolveDataConnector(failoverDataConnectorId, resolutionContext);
-            } catch (AttributeResolutionException foe) {
-                log.error("Recieved the following error from failover data connector " + failoverDataConnectorId, foe);
-                throw e;
-            }
+            resolveDataConnector(failoverDataConnectorId, resolutionContext);
+
+            DataConnector failoverConnector = resolutionContext.getResolvedDataConnectors()
+                    .get(failoverDataConnectorId);
+            log.debug("Using failover connector {} in place of {} for the remainder of this resolution",
+                    failoverConnector.getId(), connectorID);
+            resolutionContext.getResolvedPlugins().put(connectorID, failoverConnector);
         }
     }
 
