@@ -359,7 +359,7 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
             }
 
             log.error("Received the following error from data connector " + dataConnector.getId()
-                    + ", using its failover connector " + failoverDataConnectorId, e);
+                    + ", trying its failover connector " + failoverDataConnectorId, e);
             resolveDataConnector(failoverDataConnectorId, resolutionContext);
 
             DataConnector failoverConnector = resolutionContext.getResolvedDataConnectors()
