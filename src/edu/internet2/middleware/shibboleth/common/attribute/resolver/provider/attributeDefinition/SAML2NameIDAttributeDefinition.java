@@ -128,7 +128,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
             nameId.setNameQualifier(resolutionContext.getAttributeRequestContext().getLocalEntityId());
         }
 
-        nameId.setSPNameQualifier(resolutionContext.getAttributeRequestContext().getPeerEntityId());
+        nameId.setSPNameQualifier(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer());
 
         return nameId;
     }
