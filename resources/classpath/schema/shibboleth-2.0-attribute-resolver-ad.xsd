@@ -104,6 +104,48 @@
         </complexContent>
     </complexType>
 
+    <complexType name="SAML1NameIdentifier">
+        <annotation>
+            <documentation>An attribute definition that creates attributes whose values are SAML 1 NameIdentifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="nameIdFormat" type="string"
+                    default="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
+                    <annotation>
+                        <documentation>The SAML 1 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 1 NameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2NameID">
+        <annotation>
+            <documentation>An attribute definition that creates attributes whose values are SAML 2 NameIDs.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="nameIdFormat" type="string"
+                    default="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 NameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="Script">
         <annotation>
             <documentation>

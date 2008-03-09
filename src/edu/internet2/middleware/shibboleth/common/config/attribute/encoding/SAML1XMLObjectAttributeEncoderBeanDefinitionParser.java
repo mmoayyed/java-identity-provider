@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2008 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,15 +24,13 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2NameIDAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML1XMLObjectAttributeEncoder;
 
-/**
- * Spring Bean Definition Parser for SAML2 string attribute encoder.
- */
-public class SAML2NameIDAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
+/** Spring Bean Definition Parser for SAML1 XMLObject attribute encoder. */
+public class SAML1XMLObjectAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2NameIDAttribute");
+    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1XMLObject");
 
     /** Local name of name format attribute. */
     public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
@@ -44,20 +42,18 @@ public class SAML2NameIDAttributeEncoderBeanDefinitionParser extends BaseAttribu
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("nameFormat", element.getAttribute(NAME_FORMAT_ATTRIBUTE_NAME));
-        builder.addPropertyValue("friendlyName", element.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
+        String namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "namespace"));
+        builder.addPropertyValue("namespace", namespace);
 
         String attributeName = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "name"));
         if (attributeName == null) {
-            throw new BeanCreationException("SAML 2 attribute encoders must contain a name");
+            throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
         }
-
-        builder.addPropertyValue("nameIdFormat", element.getAttributeNS(null, "nameIdFormat"));
-        builder.addPropertyValue("nameIdQualifier", element.getAttributeNS(null, "nameIdQualifier"));
     }
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return SAML2NameIDAttributeEncoder.class;
+        return SAML1XMLObjectAttributeEncoder.class;
     }
+
 }

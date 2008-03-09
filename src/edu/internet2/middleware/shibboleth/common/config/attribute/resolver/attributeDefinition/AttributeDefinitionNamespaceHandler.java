@@ -25,6 +25,12 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
         registerBeanDefinitionParser(RegexSplitAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new RegexSplitAttributeDefinitionBeanDefinitionParser());
 
+        registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser());
+
+        registerBeanDefinitionParser(SAML2NameIDAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new SAML2NameIDAttributeDefinitionBeanDefinitionParser());
+
         registerBeanDefinitionParser(ScriptedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new ScriptedAttributeDefinitionBeanDefinitionParser());
 
