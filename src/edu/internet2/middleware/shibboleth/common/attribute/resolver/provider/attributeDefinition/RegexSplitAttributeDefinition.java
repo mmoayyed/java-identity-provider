@@ -35,14 +35,19 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
 
     /** Regular expression used to split values. */
     private Pattern regex;
-
+    
     /**
      * Constructor.
      * 
      * @param regularExpression expression used to split attribute values
+     * @param caseSensitive whether the regular expression is case sensitive
      */
-    public RegexSplitAttributeDefinition(String regularExpression) {
-        regex = Pattern.compile(regularExpression);
+    public RegexSplitAttributeDefinition(String regularExpression, boolean caseSensitive) {
+        if(!caseSensitive){
+            regex = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
+        }else{
+            regex = Pattern.compile(regularExpression);
+        }
     }
 
     /** {@inheritDoc} */

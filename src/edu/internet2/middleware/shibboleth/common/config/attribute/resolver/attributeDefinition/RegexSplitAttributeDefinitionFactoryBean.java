@@ -23,6 +23,9 @@ public class RegexSplitAttributeDefinitionFactoryBean extends BaseAttributeDefin
 
     /** Regular expression used to split values. */
     private String regex;
+    
+    /** Whether the regular expression is case sensitive. */
+    private boolean caseSensitive;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
@@ -46,10 +49,28 @@ public class RegexSplitAttributeDefinitionFactoryBean extends BaseAttributeDefin
     public void setRegex(String regularExpression) {
         regex = regularExpression;
     }
+    
+    /**
+     * Gets whether the regular expression is case sensitive.
+     * 
+     * @return whether the regular expression is case sensitive
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+    
+    /**
+     * Sets whether the regular expression is case sensitive.
+     * 
+     * @param isSensitive whether the regular expression is case sensitive
+     */
+    public void setCaseSensitive(boolean isSensitive) {
+        caseSensitive = isSensitive;
+    }
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        RegexSplitAttributeDefinition definition = new RegexSplitAttributeDefinition(regex);
+        RegexSplitAttributeDefinition definition = new RegexSplitAttributeDefinition(regex, caseSensitive);
         populateAttributeDefinition(definition);
 
         return definition;

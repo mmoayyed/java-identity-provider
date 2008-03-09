@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -46,5 +47,8 @@ public class RegexSplitAttributeDefinitionBeanDefinitionParser extends BaseAttri
 
         pluginBuilder.addPropertyValue("regex", DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null,
                 "regex")));
+
+        pluginBuilder.addPropertyValue("caseSensitive", XMLHelper.getAttributeValueAsBoolean(pluginConfig
+                .getAttributeNodeNS(null, "caseSensitive")));
     }
 }

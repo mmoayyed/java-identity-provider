@@ -93,6 +93,13 @@
                         <documentation>The regular expression used to split a value.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="caseSensitive" type="boolean" default="true">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating the case sensitivity of the regular expression.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
