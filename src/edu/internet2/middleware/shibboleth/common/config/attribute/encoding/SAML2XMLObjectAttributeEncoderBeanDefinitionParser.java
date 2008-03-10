@@ -24,7 +24,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2StringAttributeEncoder;
+import edu.internet2.middleware.shibboleth.common.attribute.encoding.provider.SAML2XMLObjectAttributeEncoder;
 
 /** Spring Bean Definition Parser for SAML2 XMLObject attribute encoder. */
 public class SAML2XMLObjectAttributeEncoderBeanDefinitionParser extends BaseAttributeEncoderBeanDefinitionParser {
@@ -53,6 +53,6 @@ public class SAML2XMLObjectAttributeEncoderBeanDefinitionParser extends BaseAttr
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return SAML2StringAttributeEncoder.class;
+        return SAML2XMLObjectAttributeEncoder.class;
     }
 }
