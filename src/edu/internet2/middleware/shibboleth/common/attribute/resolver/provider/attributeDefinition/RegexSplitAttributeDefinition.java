@@ -67,7 +67,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
             if (value instanceof String) {
                 matcher = regex.matcher((String) value);
                 if(matcher.matches()){
-                    attribute.getValues().add(matcher.group(0));
+                    attribute.getValues().add(matcher.group(1));
                 } else {
                     log.debug("Value {} did not result in any values when split by regular expression {}", value, regex
                             .toString());
