@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition;
 
 import java.util.Collection;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -61,12 +62,12 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
             return attribute;
         }
 
-        String[] splitValues;
+        Matcher matcher;
         for (Object value : values) {
             if (value instanceof String) {
-                splitValues = regex.split((String) value);
-                if (splitValues != null && splitValues.length > 0) {
-                    attribute.getValues().add(splitValues[0]);
+                matcher = regex.matcher((String) value);
+                if(matcher.matches()){
+                    attribute.getValues().add(matcher.group(0));
                 } else {
                     log.debug("Value {} did not result in any values when split by regular expression {}", value, regex
                             .toString());
