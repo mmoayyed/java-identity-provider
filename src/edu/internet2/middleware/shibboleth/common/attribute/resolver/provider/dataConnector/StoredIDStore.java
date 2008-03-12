@@ -18,10 +18,12 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.d
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +120,7 @@ public class StoredIDStore {
             Statement stmt = dbConn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             rs.next();
-            return rs.getInt(0);
+            return rs.getInt(1);
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -255,44 +257,44 @@ public class StoredIDStore {
      * @throws SQLException thrown is there is a problem writing to the database
      */
     public void storePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
+
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
         sqlBuilder.append(table);
 
         sqlBuilder.append(" (");
-        sqlBuilder.append("'").append(localEntityColumn).append("', ");
-        sqlBuilder.append("'").append(peerEntityColumn).append("', ");
-        sqlBuilder.append("'").append(principalNameColumn).append("', ");
-        sqlBuilder.append("'").append(localIdColumn).append("', ");
-        sqlBuilder.append("'").append(persistentIdColumn).append("', ");
-        sqlBuilder.append("'").append(peerProvidedIdColumn).append("', ");
-        sqlBuilder.append("'").append(createTimeColumn).append("'");
-        sqlBuilder.append(") VALUES (");
+        sqlBuilder.append(localEntityColumn).append(", ");
+        sqlBuilder.append(peerEntityColumn).append(", ");
+        sqlBuilder.append(principalNameColumn).append(", ");
+        sqlBuilder.append(localIdColumn).append(", ");
+        sqlBuilder.append(persistentIdColumn).append(", ");
+        sqlBuilder.append(peerProvidedIdColumn).append(", ");
+        sqlBuilder.append(createTimeColumn);
+        sqlBuilder.append(") VALUES (?, ?, ?, ?, ?, ?, ?);");
 
-        sqlBuilder.append("'").append(entry.getLocalEntityId()).append("', ");
-        sqlBuilder.append("'").append(entry.getPeerEntityId()).append("', ");
-        sqlBuilder.append("'").append(entry.getPrincipalName()).append("', ");
-        sqlBuilder.append("'").append(entry.getLocalId()).append("', ");
-        sqlBuilder.append("'").append(entry.getPersistentId()).append("', ");
-        sqlBuilder.append("'").append(entry.getLocalEntityId()).append("', ");
-
-        if (entry.getPeerProvidedId() == null) {
-            sqlBuilder.append(" NULL,");
-        } else {
-            sqlBuilder.append("'").append(entry.getPeerProvidedId()).append("', ");
-        }
-
-        sqlBuilder.append("'").append(new Timestamp(System.currentTimeMillis()).toString()).append("')");
+        String sql = sqlBuilder.toString();
 
         Connection dbConn = null;
         try {
+            dbConn = dataSource.getConnection();
+            PreparedStatement statement = dbConn.prepareStatement(sql);
+
+            statement.setString(1, entry.getLocalEntityId());
+            statement.setString(2, entry.getPeerEntityId());
+            statement.setString(3, entry.getPrincipalName());
+            statement.setString(4, entry.getLocalId());
+            statement.setString(5, entry.getPersistentId());
+            if (entry.getPeerProvidedId() == null) {
+                statement.setNull(6, Types.NULL);
+            } else {
+                statement.setString(6, entry.getPeerProvidedId());
+            }
+            statement.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+
             log.debug("Inserting newly created persistent id {} for principal {}", entry.getPersistentId(), entry
                     .getPrincipalName());
-            dbConn = dataSource.getConnection();
-            Statement stmt = dbConn.createStatement();
 
-            String sql = sqlBuilder.toString();
             log.trace("Executing SQL statement {}", sql);
-            stmt.execute(sql);
+            statement.executeUpdate();
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -348,7 +350,7 @@ public class StoredIDStore {
      */
     protected List<PersistentIdEntry> getIdentifierEntries(String whereClause) throws SQLException {
         Connection dbConn = null;
-        List<PersistentIdEntry> entires;
+        List<PersistentIdEntry> entries;
         String query = idEntrySelectSQL + whereClause;
 
         try {
@@ -357,9 +359,9 @@ public class StoredIDStore {
             Statement stmt = dbConn.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
-            entires = buildIdentifierEntries(rs);
-            log.debug("{} persitent ID entries retrieved", entires.size());
-            return entires;
+            entries = buildIdentifierEntries(rs);
+            log.debug("{} persitent ID entries retrieved", entries.size());
+            return entries;
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -389,6 +391,7 @@ public class StoredIDStore {
             entry.setLocalEntityId(resultSet.getString(localEntityColumn));
             entry.setPeerEntityId(resultSet.getString(peerEntityColumn));
             entry.setPrincipalName(resultSet.getString(principalNameColumn));
+            entry.setPersistentId(resultSet.getString(persistentIdColumn));
             entry.setLocalId(resultSet.getString(localIdColumn));
             entry.setPeerProvidedId(resultSet.getString(peerProvidedIdColumn));
             entry.setCreationTime(resultSet.getTimestamp(createTimeColumn));
