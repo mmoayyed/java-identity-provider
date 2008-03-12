@@ -264,6 +264,7 @@ public class AttributeAuthorityCLI {
         BaseSAMLProfileRequestContext attribReqCtx = new BaseSAMLProfileRequestContext();
         attribReqCtx.setInboundMessageIssuer(requester);
         attribReqCtx.setOutboundMessageIssuer(issuer);
+        attribReqCtx.setLocalEntityId(issuer);
         attribReqCtx.setRelyingPartyConfiguration(rpConfig);
 
         String principal = (String) parser.getOptionValue(CLIParserBuilder.PRINCIPAL_ARG);
