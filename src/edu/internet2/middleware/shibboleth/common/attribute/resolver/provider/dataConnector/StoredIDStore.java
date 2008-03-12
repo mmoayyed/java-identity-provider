@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -77,26 +76,26 @@ public class StoredIDStore {
     private final String idEntrySelectSQL = "SELECT * FROM " + table + " WHERE ";
 
     /** SQL used to deactivate an ID. */
-    private final String deactivateIdSQL = "UPDATE " + table + " SET " + deactivationTimeColumn + "='%s' WHERE "
-            + persistentIdColumn + "='%s'";
+    private final String deactivateIdSQL = "UPDATE " + table + " SET " + deactivationTimeColumn + "= ? WHERE "
+            + persistentIdColumn + "= ?";
 
     /**
      * Constructor.
      * 
-     * @param source datasouce used to communicate with the database
+     * @param source datasource used to communicate with the database
      */
     public StoredIDStore(DataSource source) {
         dataSource = source;
     }
 
     /**
-     * Gets all the number persistent ID entries for a (principal, peer, local) tuple.
+     * Gets the number of persistent ID entries for a (principal, peer, local) tuple.
      * 
-     * @param localId local ID part of the persistent ID
-     * @param peerEntity entity ID of the peer the ID is for
      * @param localEntity entity ID of the ID issuer
+     * @param peerEntity entity ID of the peer the ID is for
+     * @param localId local ID part of the persistent ID
      * 
-     * @return the active identifier
+     * @return the number of identifiers
      * 
      * @throws SQLException thrown if there is a problem communication with the database
      */
@@ -106,19 +105,24 @@ public class StoredIDStore {
         sqlBuilder.append("SELECT");
         sqlBuilder.append(" count(").append(persistentIdColumn).append(")");
         sqlBuilder.append(" FROM ").append(table).append(" WHERE ");
-        sqlBuilder.append(localEntityColumn).append(" = '").append(localEntity).append("'");
+        sqlBuilder.append(localEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ");
-        sqlBuilder.append(peerEntityColumn).append(" = '").append(peerEntity).append("'");
+        sqlBuilder.append(peerEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ");
-        sqlBuilder.append(localIdColumn).append(" = '").append(localId).append("'");
+        sqlBuilder.append(localIdColumn).append(" = ?");
 
         String sql = sqlBuilder.toString();
         Connection dbConn = null;
         try {
-            log.debug("Selecting number of persistent ID entry based on SQL query: {}", sql);
+            log.debug("Selecting number of persistent ID entries based on SQL query: {}", sql);
             dbConn = dataSource.getConnection();
-            Statement stmt = dbConn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
+            PreparedStatement statement = dbConn.prepareStatement(sql);
+
+            statement.setString(1, localEntity);
+            statement.setString(2, peerEntity);
+            statement.setString(3, localId);
+
+            ResultSet rs = statement.executeQuery();
             rs.next();
             return rs.getInt(1);
         } finally {
@@ -145,14 +149,17 @@ public class StoredIDStore {
      */
     public List<PersistentIdEntry> getPersistentIdEntries(String localEntity, String peerEntity, String localId)
             throws SQLException {
-        StringBuilder whereClauseBuilder = new StringBuilder();
-        whereClauseBuilder.append(localEntityColumn).append(" = '").append(localEntity).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(peerEntityColumn).append(" = '").append(peerEntity).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(localIdColumn).append(" = '").append(localId).append("'");
+        StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
+        sqlBuilder.append(localEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
 
-        return getIdentifierEntries(whereClauseBuilder.toString());
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        statement.setString(1, localEntity);
+        statement.setString(2, peerEntity);
+        statement.setString(3, localId);
+
+        return getIdentifierEntries(statement);
     }
 
     /**
@@ -165,12 +172,14 @@ public class StoredIDStore {
      * @throws SQLException thrown if there is a problem communication with the database
      */
     public PersistentIdEntry getActivePersistentIdEntry(String persistentId) throws SQLException {
-        StringBuilder whereClauseBuilder = new StringBuilder();
-        whereClauseBuilder.append(persistentIdColumn).append(" = '").append(persistentId).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(deactivationTimeColumn).append(" IS NULL");
+        StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
+        sqlBuilder.append(persistentIdColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
 
-        List<PersistentIdEntry> entries = getIdentifierEntries(whereClauseBuilder.toString());
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        statement.setString(1, persistentId);
+
+        List<PersistentIdEntry> entries = getIdentifierEntries(statement);
 
         if (entries == null || entries.size() == 0) {
             return null;
@@ -196,16 +205,19 @@ public class StoredIDStore {
      */
     public PersistentIdEntry getActivePersistentIdEntry(String localEntity, String peerEntity, String localId)
             throws SQLException {
-        StringBuilder whereClauseBuilder = new StringBuilder();
-        whereClauseBuilder.append(localEntityColumn).append(" = '").append(localEntity).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(peerEntityColumn).append(" = '").append(peerEntity).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(localIdColumn).append(" = '").append(localId).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(deactivationTimeColumn).append(" IS NULL");
+        StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
+        sqlBuilder.append(localEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
 
-        List<PersistentIdEntry> entries = getIdentifierEntries(whereClauseBuilder.toString());
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        statement.setString(1, localEntity);
+        statement.setString(2, peerEntity);
+        statement.setString(3, localId);
+
+        log.debug("Getting active persistent Id entries.");
+        List<PersistentIdEntry> entries = getIdentifierEntries(statement);
 
         if (entries == null || entries.size() == 0) {
             return null;
@@ -231,16 +243,19 @@ public class StoredIDStore {
      */
     public List<PersistentIdEntry> getDeactivatedPersistentIdEntries(String localEntity, String peerEntity,
             String localId) throws SQLException {
-        StringBuilder whereClauseBuilder = new StringBuilder();
-        whereClauseBuilder.append(localEntityColumn).append(" = '").append(localEntity).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(peerEntityColumn).append(" = '").append(peerEntity).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(localIdColumn).append(" = '").append(localId).append("'");
-        whereClauseBuilder.append(" AND ");
-        whereClauseBuilder.append(deactivationTimeColumn).append(" IS NOT NULL");
+        StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
+        sqlBuilder.append(localEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NOT NULL");
 
-        List<PersistentIdEntry> entries = getIdentifierEntries(whereClauseBuilder.toString());
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        statement.setString(1, localEntity);
+        statement.setString(2, peerEntity);
+        statement.setString(3, localId);
+
+        log.debug("Getting deactivated persistent Id entries");
+        List<PersistentIdEntry> entries = getIdentifierEntries(statement);
 
         if (entries == null || entries.size() == 0) {
             return null;
@@ -259,9 +274,7 @@ public class StoredIDStore {
     public void storePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
 
         StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
-        sqlBuilder.append(table);
-
-        sqlBuilder.append(" (");
+        sqlBuilder.append(table).append(" (");
         sqlBuilder.append(localEntityColumn).append(", ");
         sqlBuilder.append(peerEntityColumn).append(", ");
         sqlBuilder.append(principalNameColumn).append(", ");
@@ -315,19 +328,19 @@ public class StoredIDStore {
      * @throws SQLException thrown if there is a problem communication with the database
      */
     public void deactivatePersistentId(String persistentId, Timestamp deactivation) throws SQLException {
-        String deactivationTime;
-        if (deactivation == null) {
-            deactivationTime = new Timestamp(System.currentTimeMillis()).toString();
-        } else {
-            deactivationTime = deactivation.toString();
+        Timestamp deactivationTime = deactivation;
+        if (deactivationTime == null) {
+            deactivationTime = new Timestamp(System.currentTimeMillis());
         }
 
         Connection dbConn = null;
         try {
-            log.debug("Deactivating persistent id {} as of {}", persistentId, deactivationTime);
+            log.debug("Deactivating persistent id {} as of {}", persistentId, deactivationTime.toString());
             dbConn = dataSource.getConnection();
-            Statement stmt = dbConn.createStatement();
-            stmt.execute(String.format(deactivateIdSQL, deactivationTime, persistentId));
+            PreparedStatement statement = dbConn.prepareStatement(deactivateIdSQL);
+            statement.setTimestamp(1, deactivationTime);
+            statement.setString(2, persistentId);
+            int effected = statement.executeUpdate();
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -340,24 +353,21 @@ public class StoredIDStore {
     }
 
     /**
-     * Gets a list of {@link PersistentIdEntry}s based on the given SQL where clause.
+     * Gets a list of {@link PersistentIdEntry}s based on the given prepared statement.
      * 
-     * @param whereClause selection criteria
+     * @param statement SQL prepared statement
      * 
      * @return resultant list of {@link PersistentIdEntry}s
      * 
      * @throws SQLException thrown if there is a problem communicating with the database
      */
-    protected List<PersistentIdEntry> getIdentifierEntries(String whereClause) throws SQLException {
+    protected List<PersistentIdEntry> getIdentifierEntries(PreparedStatement statement) throws SQLException {
         Connection dbConn = null;
         List<PersistentIdEntry> entries;
-        String query = idEntrySelectSQL + whereClause;
 
         try {
-            log.debug("Selecting persistent ID entry based on SQL query: {}", query);
             dbConn = dataSource.getConnection();
-            Statement stmt = dbConn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            ResultSet rs = statement.executeQuery();
 
             entries = buildIdentifierEntries(rs);
             log.debug("{} persitent ID entries retrieved", entries.size());
