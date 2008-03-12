@@ -171,7 +171,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
             idEntry = pidStore.getActivePersistentIdEntry(requestCtx.getLocalEntityId(), requestCtx
                     .getInboundMessageIssuer(), localId);
             if (idEntry == null) {
-                idEntry = createPersisnentId(resolutionContext, localId, salt);
+                idEntry = createPersistentId(resolutionContext, localId, salt);
                 pidStore.storePersistentIdEntry(idEntry);
             }
 
@@ -224,7 +224,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
      * 
      * @throws SQLException thrown if there is a problem communication with the database
      */
-    protected PersistentIdEntry createPersisnentId(ShibbolethResolutionContext resolutionContext, String localId,
+    protected PersistentIdEntry createPersistentId(ShibbolethResolutionContext resolutionContext, String localId,
             byte[] salt) throws SQLException {
         PersistentIdEntry entry = pidStore.new PersistentIdEntry();
         entry.setLocalEntityId(resolutionContext.getAttributeRequestContext().getLocalEntityId());
