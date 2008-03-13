@@ -114,12 +114,15 @@ public class StoredIDStore {
         String sql = sqlBuilder.toString();
         Connection dbConn = null;
         try {
-            log.debug("Selecting number of persistent ID entries based on SQL query: {}", sql);
+            log.debug("Selecting number of persistent ID entries based on prepared sql statement: {}", sql);
             dbConn = dataSource.getConnection();
             PreparedStatement statement = dbConn.prepareStatement(sql);
 
+            log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
             statement.setString(1, localEntity);
+            log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
             statement.setString(2, peerEntity);
+            log.debug("Setting prepared statement parameter {}: {}", 3, localId);
             statement.setString(3, localId);
 
             ResultSet rs = statement.executeQuery();
@@ -153,10 +156,16 @@ public class StoredIDStore {
         sqlBuilder.append(localEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
-
-        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        String sql = sqlBuilder.toString();
+        
+        log.debug("Selecting all persistent ID entries based on prepared sql statement: {}", sql);
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sql);
+        
+        log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
         statement.setString(1, localEntity);
+        log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
         statement.setString(2, peerEntity);
+        log.debug("Setting prepared statement parameter {}: {}", 3, localId);
         statement.setString(3, localId);
 
         return getIdentifierEntries(statement);
@@ -175,8 +184,12 @@ public class StoredIDStore {
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(persistentIdColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
-
-        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        String sql = sqlBuilder.toString();
+        
+        log.debug("Selecting active persistent ID entry based on prepared sql statement: {}", sql);
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sql);
+        
+        log.debug("Setting prepared statement parameter {}: {}", 1, persistentId);
         statement.setString(1, persistentId);
 
         List<PersistentIdEntry> entries = getIdentifierEntries(statement);
@@ -210,10 +223,16 @@ public class StoredIDStore {
         sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
-
-        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        String sql = sqlBuilder.toString();
+        
+        log.debug("Selecting active persistent ID entry based on prepared sql statement: {}", sql);
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sql);
+        
+        log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
         statement.setString(1, localEntity);
+        log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
         statement.setString(2, peerEntity);
+        log.debug("Setting prepared statement parameter {}: {}", 3, localId);
         statement.setString(3, localId);
 
         log.debug("Getting active persistent Id entries.");
@@ -248,10 +267,16 @@ public class StoredIDStore {
         sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NOT NULL");
+        String sql = sqlBuilder.toString();
 
-        PreparedStatement statement = dataSource.getConnection().prepareStatement(sqlBuilder.toString());
+        log.debug("Selecting deactivated persistent ID entries based on prepared sql statement: {}", sql);
+        PreparedStatement statement = dataSource.getConnection().prepareStatement(sql);
+        
+        log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
         statement.setString(1, localEntity);
+        log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
         statement.setString(2, peerEntity);
+        log.debug("Setting prepared statement parameter {}: {}", 3, localId);
         statement.setString(3, localId);
 
         log.debug("Getting deactivated persistent Id entries");
@@ -289,24 +314,31 @@ public class StoredIDStore {
         Connection dbConn = null;
         try {
             dbConn = dataSource.getConnection();
+            log.trace("Storing persistent ID entry based on prepared sql statement: {}", sql);
             PreparedStatement statement = dbConn.prepareStatement(sql);
 
+            log.debug("Setting prepared statement parameter {}: {}", 1, entry.getLocalEntityId());
             statement.setString(1, entry.getLocalEntityId());
+            log.debug("Setting prepared statement parameter {}: {}", 2, entry.getPeerEntityId());
             statement.setString(2, entry.getPeerEntityId());
+            log.debug("Setting prepared statement parameter {}: {}", 3, entry.getPrincipalName());
             statement.setString(3, entry.getPrincipalName());
+            log.debug("Setting prepared statement parameter {}: {}", 4, entry.getLocalId());
             statement.setString(4, entry.getLocalId());
+            log.debug("Setting prepared statement parameter {}: {}", 5, entry.getPersistentId());
             statement.setString(5, entry.getPersistentId());
+            
             if (entry.getPeerProvidedId() == null) {
+                log.debug("Setting prepared statement parameter {}: {}", 6, Types.NULL);
                 statement.setNull(6, Types.NULL);
             } else {
+                log.debug("Setting prepared statement parameter {}: {}", 6, entry.getPeerProvidedId());
                 statement.setString(6, entry.getPeerProvidedId());
             }
-            statement.setTimestamp(7, new Timestamp(System.currentTimeMillis()));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            log.debug("Setting prepared statement parameter {}: {}", 7, timestamp.toString());
+            statement.setTimestamp(7, timestamp);
 
-            log.debug("Inserting newly created persistent id {} for principal {}", entry.getPersistentId(), entry
-                    .getPrincipalName());
-
-            log.trace("Executing SQL statement {}", sql);
             statement.executeUpdate();
         } finally {
             try {
