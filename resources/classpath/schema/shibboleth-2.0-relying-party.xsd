@@ -106,8 +106,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="defaultAuthenticationMethod" type="string"
-            default="urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified">
+        <attribute name="defaultAuthenticationMethod" type="string" >
             <annotation>
                 <documentation>
                     The authentication method to use to authenticate the user, if one is not specificed within the
