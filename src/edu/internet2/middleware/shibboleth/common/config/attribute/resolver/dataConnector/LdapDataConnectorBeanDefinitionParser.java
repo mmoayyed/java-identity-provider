@@ -32,6 +32,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.LdapDataConnector.AUTHENTICATION_TYPE;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.LdapDataConnector.SEARCH_SCOPE;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
@@ -63,6 +64,10 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         String baseDN = pluginConfig.getAttributeNS(null, "baseDN");
         log.debug("Data connector {} base DN: {}", pluginId, baseDN);
         pluginBuilder.addPropertyValue("baseDN", baseDN);
+        
+        String authnType = pluginConfig.getAttributeNS(null, "authenticationType");
+        log.debug("Data connector {} authentication type: {}", pluginId, authnType);
+        pluginBuilder.addPropertyValue("authenticationType", AUTHENTICATION_TYPE.valueOf(authnType));
 
         String principal = pluginConfig.getAttributeNS(null, "principal");
         log.debug("Data connector {} principal: {}", pluginId, principal);

@@ -23,6 +23,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.LdapDataConnector;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.TemplateEngine;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.LdapDataConnector.AUTHENTICATION_TYPE;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.LdapDataConnector.SEARCH_SCOPE;
 
 /**
@@ -44,6 +45,9 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
 
     /** Credential for the binding principal. */
     private String principalCredential;
+    
+    /** LDAP authentication type. */
+    private AUTHENTICATION_TYPE authenticationType;
 
     /** LDAP query filter template. */
     private String filterTemplate;
@@ -87,6 +91,47 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
     /** Whether a search returning no results should be considered an error. */
     private boolean noResultsIsError;
 
+    /** {@inheritDoc} */
+    protected Object createInstance() throws Exception {
+        LdapDataConnector connector = new LdapDataConnector(ldapURL, baseDN, useStartTLS, poolInitialSize, poolMaxIdle);
+        populateDataConnector(connector);
+        connector.setAuthenticationType(authenticationType);
+        connector.setPrincipal(principal);
+        connector.setPrincipalCredential(principalCredential);
+        connector.setLdapProperties(ldapProperties);
+        
+        if(trustCredential != null){
+            connector.setSslTrustManagers(trustCredential);
+        }
+        
+        if(connectionCredential != null){
+            connector.setSslKeyManagers(connectionCredential);
+        }
+        
+        connector.setCacheResults(cacheResults);
+        connector.setFilterTemplate(filterTemplate);
+        connector.setMaxResultSize(maxResultSize);
+        connector.setMergeResults(mergeResults);
+        connector.setNoResultsIsError(noResultsIsError);
+        connector.setReturnAttributes(returnAttributes);
+        connector.setSearchScope(searchScope);
+        connector.setSearchTimeLimit(searchTimeLimit);
+        connector.setTemplateEngine(templateEngine);
+
+        connector.initialize();
+
+        return connector;
+    }
+
+    /**
+     * Gets the authentication type used when connecting to the directory.
+     * 
+     * @return authentication type used when connecting to the directory
+     */
+    public AUTHENTICATION_TYPE getAuthenticationType() {
+        return authenticationType;
+    }
+    
     /**
      * Gets the base search DN.
      * 
@@ -95,7 +140,7 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
     public String getBaseDN() {
         return baseDN;
     }
-
+    
     /**
      * Gets the client authentication material used when connecting to the LDAP via SSL or TLS.
      * 
@@ -264,6 +309,15 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
     }
 
     /**
+     * Sets the authentication type used when connecting to the directory.
+     * 
+     * @param type authentication type used when connecting to the directory
+     */
+    public void setAuthenticationType(AUTHENTICATION_TYPE type) {
+        authenticationType = type;
+    }
+
+    /**
      * Sets the base search DN.
      * 
      * @param dn the base search DN
@@ -424,7 +478,7 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
     public void setTrustCredential(X509Credential credential) {
         trustCredential = credential;
     }
-
+    
     /**
      * Sets whether to use StartTLS when connecting to the LDAP.
      * 
@@ -432,36 +486,5 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
      */
     public void setUseStartTLS(boolean startTLS) {
         useStartTLS = startTLS;
-    }
-    
-    /** {@inheritDoc} */
-    protected Object createInstance() throws Exception {
-        LdapDataConnector connector = new LdapDataConnector(ldapURL, baseDN, useStartTLS, poolInitialSize, poolMaxIdle);
-        populateDataConnector(connector);
-        connector.setPrincipal(principal);
-        connector.setPrincipalCredential(principalCredential);
-        connector.setLdapProperties(ldapProperties);
-        
-        if(trustCredential != null){
-            connector.setSslTrustManagers(trustCredential);
-        }
-        
-        if(connectionCredential != null){
-            connector.setSslKeyManagers(connectionCredential);
-        }
-        
-        connector.setCacheResults(cacheResults);
-        connector.setFilterTemplate(filterTemplate);
-        connector.setMaxResultSize(maxResultSize);
-        connector.setMergeResults(mergeResults);
-        connector.setNoResultsIsError(noResultsIsError);
-        connector.setReturnAttributes(returnAttributes);
-        connector.setSearchScope(searchScope);
-        connector.setSearchTimeLimit(searchTimeLimit);
-        connector.setTemplateEngine(templateEngine);
-
-        connector.initialize();
-
-        return connector;
     }
 }
