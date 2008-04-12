@@ -1,71 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
-	<classpathentry excluding="*|classpath/" including="META-INF/" kind="src" path="resources"/>
-	<classpathentry kind="src" path="resources/classpath"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="maven.type" value="test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="src/main/resources" path="src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="src/test/resources" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="build-lib/servlet-2.4.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://tomcat.apache.org/tomcat-5.0-doc/servletapi/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-commons-logging.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.0.x/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.0-commons-collections.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://static.springframework.org/spring/docs/2.0.x/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="build-lib/junit-3.8.1.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://junit.sourceforge.net/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="build-lib/xmlunit1.0.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://xmlunit.sourceforge.net/doc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/java-opensaml2"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-pool-1.2.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://jakarta.apache.org/commons/pool/api-1.2/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="build-lib/hsqldb-1.8.0.7.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://hsqldb.sourceforge.net/doc/src/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/script-1.0ri-api.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://java.sun.com/javase/6/docs/api/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/rhino-engine.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.mozilla.org/rhino/apidocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/rhino-1.6R5.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="http://www.mozilla.org/rhino/apidocs/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/logback-classic-0.9.8.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback-core-0.9.8.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/vt-ldap-2.8.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/c3p0-0.9.1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.5.1-beans.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.5.1-context.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.5.1-context-support.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.5.1-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.5.1-web.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/spring-2.5.1-webmvc.jar"/>
-	<classpathentry kind="lib" path="lib/jgrapht-0.7.3.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
