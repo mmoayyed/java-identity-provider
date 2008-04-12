@@ -16,27 +16,21 @@
 
 package edu.internet2.middleware.shibboleth.common;
 
-import org.opensaml.common.TestBootstrap;
+import org.opensaml.DefaultBootstrap;
 import org.opensaml.xml.ConfigurationException;
 
 /**
- * Extension to the SAML test bootstrap process which sets up configuration for testing
- * purposes.
+ * Extension to the SAML test bootstrap process which sets up configuration for testing purposes.
  */
-public class ShibTestBootstrap extends TestBootstrap {
-    
+public class ShibTestBootstrap extends DefaultBootstrap {
+
     /** List of XMLTooling configuration files with test configuration. */
-    private static String[] testConfigs = { 
-        "/shibboleth-saml-ext-config.xml", 
-    };
-    
+    private static String[] testConfigs = { "/shibboleth-saml-ext-config.xml", };
+
     /** {@inheritDoc} */
     public static synchronized void bootstrap() throws ConfigurationException {
-        TestBootstrap.bootstrap();
-        
+        DefaultBootstrap.bootstrap();
+
         initializeXMLTooling(testConfigs);
-        
     }
-
-
 }
