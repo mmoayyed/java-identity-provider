@@ -14,16 +14,10 @@
                 <exclude>org.apache.xalan:*</exclude>
                 <exclude>org.apache.ant:*</exclude>
                 <exclude>ant-contrib:*</exclude>
+                <exclude>edu.internet2.middleware:shibboleth-common:*</exclude>
             </excludes>
             <includes>
                 <include>*:jar:*</include>
-            </includes>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>src/installer/lib</outputDirectory>
-            <includes>
-                <include>org.apache.ant:*</include>
-                <include>ant-contrib:*</include>
             </includes>
         </dependencySet>
         <dependencySet>
@@ -36,41 +30,21 @@
     </dependencySets>
     
     <fileSets>
-        <!-- Copy up our installer srcipts into the root of the package -->
         <fileSet>
-            <directory>src/installer/bash</directory>
+            <directory>target</directory>
             <outputDirectory></outputDirectory>
             <includes>
-                <include>*.sh</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>src/installer/bat</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>*.bat</include>
+                <include>*.jar</include>
             </includes>
         </fileSet>
         
-        <!-- Keep our various resource files in the package -->
-        <fileSet>
-            <directory>src/installer/resources</directory>
-            <outputDirectory>/src/installer/resources</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>src/main/webapp</directory>
-            <outputDirectory>/src/main/webapp</outputDirectory>
-        </fileSet>
-        
-        <!-- Docs -->
+        <!-- Documentation -->
         <fileSet>
             <includes>
                 <include>RELEASE-NOTES*</include>
                 <include>LICENSE*</include>
             </includes>
         </fileSet>
-
-        <!-- Documentation -->
         <fileSet>
             <directory>doc/</directory>
             <outputDirectory>/doc</outputDirectory>

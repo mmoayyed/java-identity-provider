@@ -160,6 +160,10 @@
             <version>2.5.3</version>
             <exclusions>
                 <exclusion>
+                    <artifactId>aopalliance</artifactId>
+                    <groupId>aopalliance</groupId>
+                </exclusion>
+                <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
@@ -197,7 +201,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
+            <artifactId>spring-webmvc</artifactId>
             <version>2.5.3</version>
             <exclusions>
                 <exclusion>
@@ -464,7 +468,7 @@
     </profiles>
     
     <!-- Project Metadata -->
-    <url>https://opensaml.org/</url>
+    <url>https://shibboleth.internet2.edu/</url>
     
     <inceptionYear>2006</inceptionYear>
     
@@ -488,22 +492,33 @@
     
     <mailingLists>
         <mailingList>
-            <name>OpenSAML Users</name>
-            <subscribe>https://spaces.internet2.edu/display/OpenSAML/MailingList</subscribe>
-            <unsubscribe>https://spaces.internet2.edu/display/OpenSAML/MailingList</unsubscribe>
-            <post>mace-opensaml-users@internet2.edu</post>
-            <archive>https://mail.internet2.edu/wws/arc/mace-opensaml-users</archive>
-            <otherArchives>
-                <otherArchive>http://groups.google.com/group/opensaml-users</otherArchive>
-            </otherArchives>
+            <name>Shibboleth Announce</name>
+            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
+            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
+            <post>shibboleth-announce@internet2.edu</post>
+            <archive>https://mail.internet2.edu/wws/arc/shibboleth-announce</archive>
+        </mailingList>
+        <mailingList>
+            <name>Shibboleth Users</name>
+            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
+            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
+            <post>shibboleth-users@internet2.edu</post>
+            <archive>https://mail.internet2.edu/wws/arc/shibboleth-users</archive>
+        </mailingList>
+        <mailingList>
+            <name>Shibboleth Development</name>
+            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
+            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
+            <post>shibboleth-dev@internet2.edu</post>
+            <archive>https://mail.internet2.edu/wws/arc/shibboleth-dev</archive>
         </mailingList>
     </mailingLists>
     
     <scm>
-        <connection>scm:svn:https://svn.middleware.georgetown.edu/java-xmltooling/</connection>
-        <developerConnection>scm:svn:https://svn.middleware.georgetown.edu/java-xmltooling/</developerConnection>
+        <connection>scm:svn:https://svn.middleware.georgetown.edu/java-shib-common/</connection>
+        <developerConnection>scm:svn:https://svn.middleware.georgetown.edu/java-shib-common/</developerConnection>
         <tag>HEAD</tag>
-        <url>http://svn.middleware.georgetown.edu/view/?root=java-xmltooling</url>
+        <url>http://svn.middleware.georgetown.edu/view/?root=java-shib-common</url>
     </scm>
     
     <developers>

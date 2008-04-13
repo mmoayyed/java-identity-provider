@@ -14,16 +14,10 @@
                 <exclude>org.apache.xalan:*</exclude>
                 <exclude>org.apache.ant:*</exclude>
                 <exclude>ant-contrib:*</exclude>
+                <exclude>edu.internet2.middleware:shibboleth-common:*</exclude>
             </excludes>
             <includes>
                 <include>*:jar:*</include>
-            </includes>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>src/installer/lib</outputDirectory>
-            <includes>
-                <include>org.apache.ant:*</include>
-                <include>ant-contrib:*</include>
             </includes>
         </dependencySet>
         <dependencySet>
