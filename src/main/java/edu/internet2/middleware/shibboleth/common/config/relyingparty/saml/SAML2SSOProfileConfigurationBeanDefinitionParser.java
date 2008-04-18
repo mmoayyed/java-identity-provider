@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Spring configuration parser for SAML 2 SSO profile configurations.
- */
+/** Spring configuration parser for SAML 2 SSO profile configurations. */
 public class SAML2SSOProfileConfigurationBeanDefinitionParser extends
         AbstractSAML2ProfileConfigurationBeanDefinitionParser {
 
@@ -44,6 +42,11 @@ public class SAML2SSOProfileConfigurationBeanDefinitionParser extends
         if (element.hasAttributeNS(null, "includeAttributeStatement")) {
             builder.addPropertyValue("includeAttributeStatement", XMLHelper.getAttributeValueAsBoolean(element
                     .getAttributeNodeNS(null, "includeAttributeStatement")));
+        }
+
+        if (element.hasAttributeNS(null, "maximumSPSessionLifetime")) {
+            builder.addPropertyValue("maximumSPSessionLifetime", Long.parseLong(element.getAttributeNS(null,
+                    "maximumSPSessionLifetime")));
         }
     }
 }

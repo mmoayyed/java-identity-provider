@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,20 @@ package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2.SSOConfiguration;
 
-/**
- * Spring factory for SAML 2 SSO profile configurations.
- */
+/** Spring factory for SAML 2 SSO profile configurations. */
 public class SAML2SSOProfileConfigurationFactoryBean extends AbstractSAML2ProfileConfigurationFactoryBean {
-    
+
     /** Whether responses to the authentication request should include an attribute statement. */
     private boolean includeAttributeStatement;
+
+    /** The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. */
+    private long maximumSPSessionLifetime;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
         return SSOConfiguration.class;
     }
-    
+
     /**
      * Gets whether responses to the authentication request should include an attribute statement.
      * 
@@ -48,13 +49,34 @@ public class SAML2SSOProfileConfigurationFactoryBean extends AbstractSAML2Profil
     public void setIncludeAttributeStatement(boolean include) {
         includeAttributeStatement = include;
     }
-    
+
+    /**
+     * Gets the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
+     * based on the authentication assertion.
+     * 
+     * @return max lifetime of service provider should maintain a session
+     */
+    public long getMaximumSPSessionLifetime() {
+        return maximumSPSessionLifetime;
+    }
+
+    /**
+     * Sets the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
+     * based on the authentication assertion.
+     * 
+     * @param lifetime max lifetime of service provider should maintain a session
+     */
+    public void setMaximumSPSessionLifetime(long lifetime) {
+        maximumSPSessionLifetime = lifetime;
+    }
+
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
         SSOConfiguration configuration = new SSOConfiguration();
         populateBean(configuration);
         configuration.setIncludeAttributeStatement(includeAttributeStatement());
-        
+        configuration.setMaximumSPSessionLifetime(maximumSPSessionLifetime);
+
         return configuration;
     }
 }
