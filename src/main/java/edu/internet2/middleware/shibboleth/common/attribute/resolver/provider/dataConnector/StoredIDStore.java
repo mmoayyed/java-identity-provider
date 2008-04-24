@@ -307,7 +307,7 @@ public class StoredIDStore {
         sqlBuilder.append(persistentIdColumn).append(", ");
         sqlBuilder.append(peerProvidedIdColumn).append(", ");
         sqlBuilder.append(createTimeColumn);
-        sqlBuilder.append(") VALUES (?, ?, ?, ?, ?, ?, ?);");
+        sqlBuilder.append(") VALUES (?, ?, ?, ?, ?, ?, ?)");
 
         String sql = sqlBuilder.toString();
 
