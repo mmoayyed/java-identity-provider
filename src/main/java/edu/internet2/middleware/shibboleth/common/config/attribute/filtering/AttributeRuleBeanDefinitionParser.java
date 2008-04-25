@@ -16,6 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.filtering;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
@@ -47,16 +50,39 @@ public class AttributeRuleBeanDefinitionParser extends BaseFilterBeanDefinitionP
     protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
-        builder.addConstructorArg(DatatypeHelper
-                .safeTrimOrNullString(configElement.getAttributeNS(null, "attributeID")));
+        builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                "attributeID")));
 
-        Element permitValueRule = XMLHelper.getFirstChildElement(configElement);
-        if (permitValueRule.getLocalName().equals("PermitValueRule")) {
-            builder.addPropertyValue("permitValueRule", SpringConfigurationUtils.parseCustomElement(permitValueRule,
-                    parserContext));
-        } else {
-            String reference = getAbsoluteReference(configElement, "PermitValueRule", permitValueRule.getTextContent());
+        Map<QName, List<Element>> children = XMLHelper.getChildElements(configElement);
+
+        List<Element> permitValueRule = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+                "PermitValueRule"));
+        if (!permitValueRule.isEmpty()) {
+            builder.addPropertyValue("permitValueRule", SpringConfigurationUtils.parseCustomElement(permitValueRule
+                    .get(0), parserContext));
+        }
+
+        List<Element> permitValueRuleRef = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+                "PermitValueRuleReference"));
+        if (!permitValueRuleRef.isEmpty()) {
+            String reference = getAbsoluteReference(configElement, "PermitValueRule", permitValueRuleRef.get(0)
+                    .getTextContent());
             builder.addPropertyReference("permitValueRule", reference);
+        }
+
+        List<Element> denyValueRule = children
+                .get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule"));
+        if (!denyValueRule.isEmpty()) {
+            builder.addPropertyValue("denyValueRule", SpringConfigurationUtils.parseCustomElement(denyValueRule.get(0),
+                    parserContext));
+        }
+
+        List<Element> denyValueRuleRef = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+                "DenyValueRuleReference"));
+        if (!denyValueRuleRef.isEmpty()) {
+            String reference = getAbsoluteReference(configElement, "DenyValueRuleReference", denyValueRuleRef.get(0)
+                    .getTextContent());
+            builder.addPropertyReference("denyValueRule", reference);
         }
     }
 }

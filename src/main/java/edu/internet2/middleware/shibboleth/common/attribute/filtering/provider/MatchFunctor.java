@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ public interface MatchFunctor {
     public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException;
 
     /**
-     * Evaluates this matching criteria. This evaluation is used while the filtering engine is filtering attribute
-     * values.
+     * Evaluates this matching criteria. This evaluation is used while the filtering engine evaluating permit value
+     * rules.
      * 
      * @param filterContext the current filtering context
      * @param attributeId ID of the attribute being evaluated
@@ -47,4 +47,19 @@ public interface MatchFunctor {
      */
     public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException;
+
+    /**
+     * Evaluates this matching criteria. This evaluation is used while the filtering engine is evaluating deny value
+     * rules.
+     * 
+     * @param filterContext the current filtering context
+     * @param attributeId ID of the attribute being evaluated
+     * @param attributeValue value of the attribute being evaluated
+     * 
+     * @return true if the criteria for this matching function are meant
+     * 
+     * @throws FilterProcessingException thrown if the function can not be evaluated
+     */
+    public boolean evluateDenyValue(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
+            throws FilterProcessingException;
 }

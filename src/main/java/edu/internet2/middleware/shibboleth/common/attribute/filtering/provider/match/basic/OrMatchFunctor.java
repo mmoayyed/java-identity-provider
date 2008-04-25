@@ -69,7 +69,7 @@ public class OrMatchFunctor extends AbstractMatchFunctor {
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         if (targetRules == null) {
             return false;

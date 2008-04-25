@@ -56,7 +56,7 @@ public class NotMatchFunctor extends AbstractMatchFunctor {
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         return !targetRule.evaluatePermitValue(filterContext, attributeId, attributeValue);
     }

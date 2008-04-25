@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
-import java.util.SortedSet;
-
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
@@ -51,7 +49,7 @@ public class AttributeValueRegexMatchFunctor extends AbstractAttributeTargetedRe
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
             throws FilterProcessingException {
 
         return isMatch(attributeValue);

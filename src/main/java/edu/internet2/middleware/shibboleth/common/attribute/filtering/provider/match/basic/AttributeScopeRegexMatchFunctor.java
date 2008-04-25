@@ -35,7 +35,7 @@ public class AttributeScopeRegexMatchFunctor extends AbstractAttributeTargetedRe
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         return isMatch(((ScopedAttributeValue) attributeValue).getScope());
     }

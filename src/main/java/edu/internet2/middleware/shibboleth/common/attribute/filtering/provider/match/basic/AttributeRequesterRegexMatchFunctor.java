@@ -31,7 +31,7 @@ public class AttributeRequesterRegexMatchFunctor extends AbstractRegexMatchFunct
     }
 
     /** {@inheritDoc} */
-    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         return isMatch(filterContext.getAttributeRequestContext().getInboundMessageIssuer());
     }

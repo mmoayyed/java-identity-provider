@@ -49,7 +49,7 @@ public class AttributeValueStringMatchFunctor extends AbstractAttributeTargetedS
      * 
      * {@inheritDoc}
      */
-    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String id, Object attributeValue)
             throws FilterProcessingException {
 
         return isMatch(attributeValue);

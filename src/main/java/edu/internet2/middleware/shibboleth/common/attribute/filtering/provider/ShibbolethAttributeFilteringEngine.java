@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,6 +84,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         readLock.lock();
         for (AttributeFilterPolicy filterPolicy : filterPolicies) {
             filterAttributes(filterContext, filterPolicy);
+            runDenyRules(filterContext);
         }
         readLock.unlock();
 
@@ -93,7 +94,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         Collection retainedValues;
         while (attributeEntryItr.hasNext()) {
             attributeEntry = attributeEntryItr.next();
-            attribute = attributeEntry.getValue();            
+            attribute = attributeEntry.getValue();
             retainedValues = filterContext.getRetainedValues(attribute.getId(), false);
             attribute.getValues().retainAll(retainedValues);
             if (attribute.getValues().size() == 0) {
@@ -135,7 +136,10 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
     }
 
     /**
-     * Evaluates the given attribute rules, filtering out attribute values based on the rule's permit value clause.
+     * Evaluates the given attribute rule. If the attribute rule contains a permit value rule then that rule is
+     * evaluated against the unfiltered attributes and those values that meet the rule are moved into the filter
+     * contexts retained value set. If the attribute rule contains a deny value rule that rule is registered with the
+     * filter context so that it may be evaluated after all the permit value rules have run.
      * 
      * @param filterContext current filtering context
      * @param attributeRule current attribute rule
@@ -144,18 +148,65 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
      */
     protected void filterAttributes(ShibbolethFilteringContext filterContext, AttributeRule attributeRule)
             throws FilterProcessingException {
-        Collection attributeValues = filterContext.getRetainedValues(attributeRule.getAttributeId(), true);
-        MatchFunctor permitValue = attributeRule.getPermitValueRule();
+        String attributeId = attributeRule.getAttributeId();
+        Collection attributeValues = filterContext.getRetainedValues(attributeId, false);
 
-        log.debug("Filtering values of attribute {} for principal {}", attributeRule.getAttributeId(), filterContext
-                .getAttributeRequestContext().getPrincipalName());
+        MatchFunctor permitRule = attributeRule.getPermitValueRule();
+        if (permitRule != null) {
+            log.debug("Processing permit value rule for attribute {} for principal {}", attributeId, filterContext
+                    .getAttributeRequestContext().getPrincipalName());
+            Collection unfilteredValues = filterContext.getUnfilteredAttributes().get(attributeId).getValues();
+            for (Object attributeValue : unfilteredValues) {
+                if (permitRule.evaluatePermitValue(filterContext, attributeId, attributeValue)) {
+                    attributeValues.add(attributeValue);
+                }
+            }
+        }
 
-        Iterator<Object> attributeValueItr = attributeValues.iterator();
-        Object attributeValue;
-        while (attributeValueItr.hasNext()) {
-            attributeValue = attributeValueItr.next();
-            if (!permitValue.evaluatePermitValue(filterContext, attributeRule.getAttributeId(), attributeValue)) {
-                attributeValueItr.remove();
+        MatchFunctor denyRule = attributeRule.getDenyValueRule();
+        if (denyRule != null) {
+            log.debug("Registering deny value rule for attribute {} for principal {}", attributeId, filterContext
+                    .getAttributeRequestContext().getPrincipalName());
+            List<MatchFunctor> denyRules = filterContext.getDenyValueRules().get(attributeId);
+
+            if (denyRules == null) {
+                denyRules = new ArrayList<MatchFunctor>();
+                filterContext.getDenyValueRules().put(attributeId, denyRules);
+            }
+
+            denyRules.add(denyRule);
+        }
+    }
+
+    /**
+     * Runs the deny rules registered with the filter context upon the retained value set.
+     * 
+     * @param filterContext current filtering context
+     * 
+     * @throws FilterProcessingException thrown if there is a problem evaluating a deny value rule
+     */
+    protected void runDenyRules(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+        Map<String, List<MatchFunctor>> denyRuleEntries = filterContext.getDenyValueRules();
+        if (denyRuleEntries.isEmpty()) {
+            return;
+        }
+
+        List<MatchFunctor> denyRules;
+        Collection attributeValues;
+        for (Entry<String, List<MatchFunctor>> denyRuleEntry : denyRuleEntries.entrySet()) {
+            denyRules = denyRuleEntry.getValue();
+            attributeValues = filterContext.getRetainedValues(denyRuleEntry.getKey(), false);
+            if (denyRules.isEmpty() || attributeValues.isEmpty()) {
+                continue;
+            }
+
+            Iterator<?> attributeValueItr = attributeValues.iterator();
+            for (MatchFunctor denyRule : denyRules) {
+                while (attributeValueItr.hasNext()) {
+                    if (denyRule.evluateDenyValue(filterContext, denyRuleEntry.getKey(), attributeValueItr.next())) {
+                        attributeValueItr.remove();
+                    }
+                }
             }
         }
     }

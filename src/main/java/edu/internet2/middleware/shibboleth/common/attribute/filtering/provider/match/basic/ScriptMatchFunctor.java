@@ -29,13 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
  * Match function based on a JSR-268 script.
  */
-public class ScriptMatchFunctor implements MatchFunctor {
+public class ScriptMatchFunctor extends AbstractMatchFunctor {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptMatchFunctor.class);
@@ -68,14 +67,15 @@ public class ScriptMatchFunctor implements MatchFunctor {
     }
 
     /** {@inheritDoc} */
-    public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         ScriptContext context = getScriptContext(filterContext, attributeId, attributeValue);
         return executeScript(context);
     }
 
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException {
+    protected boolean doEvaluatePolicyRequirement(ShibbolethFilteringContext filterContext)
+            throws FilterProcessingException {
         ScriptContext context = getScriptContext(filterContext, null, null);
         return executeScript(context);
     }

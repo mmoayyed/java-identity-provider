@@ -31,7 +31,7 @@ public class AttributeIssuerInEntityGroupMatchFunctor extends AbstractEntityGrou
     }
 
     /** {@inheritDoc} */
-    public boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    public boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         return isEntityInGroup(filterContext.getAttributeRequestContext().getLocalEntityMetadata());
     }

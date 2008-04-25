@@ -25,7 +25,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.S
 public class AuthenticationMethodRegexMatchFunctor extends AbstractRegexMatchFunctor {
 
     /** {@inheritDoc} */
-    protected boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    protected boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
         return isMatch(filterContext.getAttributeRequestContext().getPrincipalAuthenticationMethod());
     }

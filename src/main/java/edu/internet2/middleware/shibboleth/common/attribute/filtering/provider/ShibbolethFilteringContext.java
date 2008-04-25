@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -39,6 +40,9 @@ public class ShibbolethFilteringContext {
     /** Retained values for a given attribute. */
     private Map<String, Collection> retainedValues;
 
+    /** Deny value rules that apply to the attribute identified by the map key. */
+    private Map<String, List<MatchFunctor>> denyValueRules;
+
     /**
      * Constructor.
      * 
@@ -49,6 +53,7 @@ public class ShibbolethFilteringContext {
         attributeRequestContext = context;
         unfilteredAttributes = attributes;
         retainedValues = new HashMap<String, Collection>();
+        denyValueRules = new HashMap<String, List<MatchFunctor>>();
     }
 
     /**
@@ -95,10 +100,10 @@ public class ShibbolethFilteringContext {
 
         if (attributeValues == null) {
             Comparator valueComparator = null;
-            if(attribute != null){
+            if (attribute != null) {
                 valueComparator = attribute.getValueComparator();
             }
-            if(valueComparator == null){
+            if (valueComparator == null) {
                 valueComparator = new ObjectStringComparator();
             }
             attributeValues = new TreeSet<Object>(valueComparator);
@@ -106,19 +111,29 @@ public class ShibbolethFilteringContext {
         return attributeValues;
     }
 
+    /**
+     * Gets the deny value rules that apply to the attribute. The map key is the ID of the attribute, the value is a
+     * list of deny rules that apply to that attribute.
+     * 
+     * @return deny value rules that apply to the attribute
+     */
+    public Map<String, List<MatchFunctor>> getDenyValueRules() {
+        return denyValueRules;
+    }
+
     /** Class that compares objects based on their String representation. */
-    private class ObjectStringComparator implements Comparator<Object>{
+    private class ObjectStringComparator implements Comparator<Object> {
 
         /** {@inheritDoc} */
         public int compare(Object o1, Object o2) {
-            if(o1 == null){
+            if (o1 == null) {
                 return -1;
             }
-            
-            if(o2 == null){
+
+            if (o2 == null) {
                 return 1;
             }
-            
+
             return o1.toString().compareTo(o2.toString());
         }
     }

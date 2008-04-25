@@ -35,7 +35,13 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
     /** {@inheritDoc} */
     public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException {
-        return doEvaluatePermitValue(filterContext, attributeId, attributeValue);
+        return doEvaluateValue(filterContext, attributeId, attributeValue);
+    }
+
+    /** {@inheritDoc} */
+    public boolean evluateDenyValue(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
+            throws FilterProcessingException {
+        return evaluatePermitValue(filterContext, attributeId, attributeValue);
     }
 
     /**
@@ -52,8 +58,8 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
             throws FilterProcessingException;
 
     /**
-     * Evaluates this matching criteria. This evaluation is used while the filtering engine is filtering attribute
-     * values.
+     * Evaluates this matching criteria. This evaluation is used while the filtering engine is evaluating either a deny
+     * or permit value rule.
      * 
      * @param filterContext the current filtering context
      * @param attributeId ID of the attribute being evaluated
@@ -63,6 +69,6 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    protected abstract boolean doEvaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
+    protected abstract boolean doEvaluateValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException;
 }

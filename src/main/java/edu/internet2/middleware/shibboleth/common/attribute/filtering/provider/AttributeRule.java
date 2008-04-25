@@ -24,8 +24,11 @@ public class AttributeRule {
     /** Unique ID of the attribute this rule applies to. */
     private String attributeId;
     
-    /** Value filters for this attribute. */
+    /** Filter that permits the release of attribute values. */
     private MatchFunctor permitValueRule;
+    
+    /** Filter that denies the release of attribute values. */
+    private MatchFunctor denyValueRule;
     
     /**
      * Constructor.
@@ -46,20 +49,38 @@ public class AttributeRule {
     }
 
     /**
-     * Gets the value filter for this attribute.
+     * Gets the filter that permits the release of attribute values.
      * 
-     * @return value filter for this attribute
+     * @return filter that permits the release of attribute values
      */
     public MatchFunctor getPermitValueRule(){
         return permitValueRule;
     }
     
     /**
-     * Sets the value filter for this attribute.
+     * Sets the filter that permits the release of attribute values.
      * 
-     * @param filter value filter for this attribute
+     * @param filter filter that permits the release of attribute values
      */
     public void setPermitValueRule(MatchFunctor filter){
         permitValueRule = filter;
+    }
+    
+    /**
+     * Gets the filter that denies the release of attribute values.
+     * 
+     * @return filter that denies the release of attribute values
+     */
+    public MatchFunctor getDenyValueRule() {
+        return denyValueRule;
+    }
+    
+    /**
+     * Sets the filter that denies the release of attribute values.
+     * 
+     * @param filter filter that denies the release of attribute values
+     */
+    public void setDenyValueRule(MatchFunctor filter) {
+        denyValueRule = filter;
     }
 }
