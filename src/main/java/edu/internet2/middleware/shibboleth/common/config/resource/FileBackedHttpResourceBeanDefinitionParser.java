@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,11 @@ import org.opensaml.util.resource.FileBackedHttpResource;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Bean definition parser for {@link FileBackedHttpResource}s.
- */
-public class FileBackedHttpResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+/** Bean definition parser for {@link FileBackedHttpResource}s. */
+public class FileBackedHttpResourceBeanDefinitionParser extends AbstractResourceBeanDefinitionParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "FileBackedHttpResource");
@@ -47,8 +44,9 @@ public class FileBackedHttpResourceBeanDefinitionParser extends AbstractSingleBe
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "url")));
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "file")));
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+        builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "url")));
+        builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "file")));
     }
 }

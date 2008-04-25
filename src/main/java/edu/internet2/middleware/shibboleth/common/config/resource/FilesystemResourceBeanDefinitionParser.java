@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,11 @@ import org.opensaml.util.resource.FilesystemResource;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Bean definition parser for {@link FilesystemResource}s.
- */
-public class FilesystemResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+/** Bean definition parser for {@link FilesystemResource}s. */
+public class FilesystemResourceBeanDefinitionParser extends AbstractResourceBeanDefinitionParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "FilesystemResource");
@@ -38,7 +35,7 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractSingleBeanDe
     protected Class getBeanClass(Element arg0) {
         return FilesystemResource.class;
     }
-    
+
     /** {@inheritDoc} */
     protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
         return FilesystemResource.class.getName() + ":"
@@ -46,7 +43,8 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractSingleBeanDe
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "file")));
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+        builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "file")));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.resource;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseSpringNamespaceHandler;
 
-/**
- * Namespace handler for resources.
- */
+/** Namespace handler for resources. */
 public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace URI. */
@@ -30,12 +28,19 @@ public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
     public void init() {
         registerBeanDefinitionParser(ClasspathResourceBeanDefinitionParser.SCHEMA_TYPE,
                 new ClasspathResourceBeanDefinitionParser());
-        
+
         registerBeanDefinitionParser(FilesystemResourceBeanDefinitionParser.SCHEMA_TYPE,
                 new FilesystemResourceBeanDefinitionParser());
 
         registerBeanDefinitionParser(HttpResourceBeanDefinitionParser.SCHEMA_TYPE,
                 new HttpResourceBeanDefinitionParser());
+
+        registerBeanDefinitionParser(PropertyReplacementResourceFilterBeanDefinitionParser.SCHEMA_TYPE,
+                new PropertyReplacementResourceFilterBeanDefinitionParser());
+
+        registerBeanDefinitionParser(ChainingResourceFilterBeanDefinitionParser.SCHEMA_TYPE,
+                new ChainingResourceFilterBeanDefinitionParser());
+
     }
 
 }
