@@ -66,6 +66,44 @@
         </complexContent>
     </complexType>
     
-    <complexType name="ResourceType" abstract="true" />
+    <complexType name="ResourceType" abstract="true">
+        <sequence>
+            <element ref="res:ResourceFilter" minOccurs="0" />
+        </sequence>
+    </complexType>
+    
+    <complexType name="PropertyReplacement">
+        <annotation>
+            <documentation>
+                A resource filter that replaces ${KEY} macros with the values associated with the KEY in a property 
+                file.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="res:ResourceFilterType">
+                <attribute name="propertyFile" type="string" use="required">
+                    <annotation>
+                        <documentation> Path to the Java property file used during macro expansion.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="Chaining">
+        <annotation>
+            <documentation>A resource filter that executes the child filters in the order they defined.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="res:ResourceFilterType">
+                <sequence>
+                    <element ref="res:ResourceFilter" minOccurs="0" maxOccurs="unbounded" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <element name="ResourceFilter" type="res:ResourceFilterType" />
+    <complexType name="ResourceFilterType" abstract="true" />
     
 </schema>

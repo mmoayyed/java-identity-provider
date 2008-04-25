@@ -1,0 +1,5 @@
+Changes in Release 1.1.0
+=============================================
+[SC-37] - Filtering engine results in intersection of policies; union of policies is desired
+[SC-39] - Add ability to explicitly deny the release attributes
+[SC-40] - Allow macros within configuration resources to be expanded when the resource is loaded
