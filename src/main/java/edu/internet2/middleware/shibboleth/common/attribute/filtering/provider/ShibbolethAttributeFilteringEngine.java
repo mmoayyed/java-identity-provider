@@ -159,6 +159,9 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             for (Object attributeValue : unfilteredValues) {
                 if (permitRule.evaluatePermitValue(filterContext, attributeId, attributeValue)) {
                     attributeValues.add(attributeValue);
+                } else {
+                    log.trace("The following value for attribute {} does not meet permit value rule: {}", attributeId,
+                            attributeValue.toString());
                 }
             }
         }
@@ -193,6 +196,7 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
 
         List<MatchFunctor> denyRules;
         Collection attributeValues;
+        Object attributeValue;
         for (Entry<String, List<MatchFunctor>> denyRuleEntry : denyRuleEntries.entrySet()) {
             denyRules = denyRuleEntry.getValue();
             attributeValues = filterContext.getRetainedValues(denyRuleEntry.getKey(), false);
@@ -203,7 +207,10 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
             Iterator<?> attributeValueItr = attributeValues.iterator();
             for (MatchFunctor denyRule : denyRules) {
                 while (attributeValueItr.hasNext()) {
-                    if (denyRule.evluateDenyValue(filterContext, denyRuleEntry.getKey(), attributeValueItr.next())) {
+                    attributeValue = attributeValueItr.next();
+                    if (denyRule.evaluateDenyRule(filterContext, denyRuleEntry.getKey(), attributeValue)) {
+                        log.trace("Removing the following value of attribute {} per deny rule: {}", denyRuleEntry
+                                .getKey(), attributeValue);
                         attributeValueItr.remove();
                     }
                 }

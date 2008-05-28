@@ -32,7 +32,7 @@ public interface MatchFunctor {
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
     public boolean evaluatePolicyRequirement(ShibbolethFilteringContext filterContext) throws FilterProcessingException;
-
+    
     /**
      * Evaluates this matching criteria. This evaluation is used while the filtering engine evaluating permit value
      * rules.
@@ -47,7 +47,7 @@ public interface MatchFunctor {
      */
     public boolean evaluatePermitValue(ShibbolethFilteringContext filterContext, String attributeId,
             Object attributeValue) throws FilterProcessingException;
-
+    
     /**
      * Evaluates this matching criteria. This evaluation is used while the filtering engine is evaluating deny value
      * rules.
@@ -60,6 +60,6 @@ public interface MatchFunctor {
      * 
      * @throws FilterProcessingException thrown if the function can not be evaluated
      */
-    public boolean evluateDenyValue(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
+    public boolean evaluateDenyRule(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException;
 }

@@ -107,6 +107,7 @@ public class ShibbolethFilteringContext {
                 valueComparator = new ObjectStringComparator();
             }
             attributeValues = new TreeSet<Object>(valueComparator);
+            retainedValues.put(attributeId, attributeValues);
         }
         return attributeValues;
     }

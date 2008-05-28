@@ -26,6 +26,8 @@ import org.opensaml.util.storage.MapBasedStorageService;
  * 
  * @param <KeyType> object type of the keys
  * @param <ValueType> object type of the values
+ * 
+ * @since 1.1
  */
 public class ConcurrentMapBasedStorageService<KeyType, ValueType> extends MapBasedStorageService<KeyType, ValueType> {
 

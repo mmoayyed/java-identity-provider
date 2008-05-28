@@ -21,7 +21,8 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.M
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * Base class for {@link MatchFunctor}s that delegate the evaluation and negate the result if necessary.
+ * Base class for {@link edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor}s that
+ * delegate the evaluation and negate the result if necessary.
  * 
  * This class provides an extension point for functionality across all match functors.
  */
@@ -39,13 +40,13 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
     }
 
     /** {@inheritDoc} */
-    public boolean evluateDenyValue(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
+    public boolean evaluateDenyRule(ShibbolethFilteringContext filterContext, String attributeId, Object attributeValue)
             throws FilterProcessingException {
         return evaluatePermitValue(filterContext, attributeId, attributeValue);
     }
 
     /**
-     * Evaluates this matching criteria. This evaluation is used while the filtering engine determiens policy
+     * Evaluates this matching criteria. This evaluation is used while the filtering engine determines policy
      * applicability.
      * 
      * @param filterContext current filtering context
