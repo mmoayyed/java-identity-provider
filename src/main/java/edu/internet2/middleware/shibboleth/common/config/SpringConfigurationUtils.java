@@ -70,7 +70,8 @@ public final class SpringConfigurationUtils {
         for (int i = 0; i < numOfResources; i++) {
             configurationResource = configurationResources.get(i);
             if (configurationResource != null && configurationResource.exists()) {
-                configSources[i] = new InputStreamResource(configurationResources.get(i).getInputStream());
+                configSources[i] = new InputStreamResource(configurationResources.get(i).getInputStream(),
+                        configurationResource.getLocation());
             } else {
                 log.warn("Configuration resource not loaded because it does not exist: {}", configurationResource
                         .getLocation());

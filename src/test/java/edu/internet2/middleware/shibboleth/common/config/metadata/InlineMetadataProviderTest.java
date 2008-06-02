@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.util.resource.ResourceException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
@@ -63,7 +64,7 @@ public class InlineMetadataProviderTest extends BaseConfigTestCase {
         try{
             createSpringContext(DATA_PATH + "/config/metadata/InlineMetadataProvider3.xml");
             fail("Loaded invalid configuration file.");
-        }catch(BeanDefinitionStoreException e){
+        }catch(ResourceException e){
             // expected
         }
     }

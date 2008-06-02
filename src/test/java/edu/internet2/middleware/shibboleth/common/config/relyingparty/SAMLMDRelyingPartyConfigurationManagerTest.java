@@ -28,7 +28,10 @@ public class SAMLMDRelyingPartyConfigurationManagerTest extends BaseConfigTestCa
 
     /** Test loading the relying party configuration manager. */
     public void testManager() throws Exception {
-        ApplicationContext appContext = createSpringContext(DATA_PATH + "/config/relyingparty/service-config.xml");
+        String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
+                DATA_PATH + "/config/relyingparty/service-config.xml", };
+        
+        ApplicationContext appContext = createSpringContext(configs);
         SAMLMDRelyingPartyConfigurationManager rpConfigMgr = (SAMLMDRelyingPartyConfigurationManager) appContext
                 .getBean("relyingPartyManager");
         

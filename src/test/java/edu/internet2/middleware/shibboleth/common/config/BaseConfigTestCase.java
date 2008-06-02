@@ -37,6 +37,7 @@ public class BaseConfigTestCase extends BaseTestCase {
 
     /** {@inheritDoc} */
     protected void setUp() throws Exception {
+        super.setUp();
         configResources = new ArrayList<Resource>();
     }
 

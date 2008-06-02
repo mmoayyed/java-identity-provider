@@ -12,11 +12,11 @@
     <bean id="resolver"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
-        <constructor-arg>
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="staticConfig" />
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
     <bean id="shibboleth.SAML2AttributeAuthority"

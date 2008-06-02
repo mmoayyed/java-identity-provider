@@ -9,4 +9,4 @@
                          xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                          xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd"
-                         xsi:type="shibmd:URLMetadataProvider" />
+                         xsi:type="shibmd:HTTPMetadataProvider" />

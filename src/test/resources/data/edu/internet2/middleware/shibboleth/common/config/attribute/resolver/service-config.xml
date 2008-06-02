@@ -56,51 +56,51 @@
     <bean id="resolver"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
-        <constructor-arg>
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="staticConfig" />
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
     <bean id="resolver-db"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
-        <constructor-arg>
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="dbConfig" />
             </list>
-        </constructor-arg>
+        </property>
     </bean>
     
     <bean id="resolver-ldap"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
-        <constructor-arg>
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="ldapConfig" />
             </list>
-        </constructor-arg>
+        </property>
     </bean>
     
     <bean id="resolver-mapped"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
-        <constructor-arg>
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="mappedConfig" />
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
     <bean id="resolver-template"
         class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
         init-method="initialize">
-        <constructor-arg>
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="templateConfig" />
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
 </beans>

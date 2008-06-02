@@ -38,6 +38,9 @@ public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(FileBackedHttpResourceBeanDefinitionParser.SCHEMA_TYPE,
                 new FileBackedHttpResourceBeanDefinitionParser());
 
+        registerBeanDefinitionParser(SVNResourceBeanDefinitionParser.SCHEMA_TYPE, 
+                new SVNResourceBeanDefinitionParser());
+
         registerBeanDefinitionParser(PropertyReplacementResourceFilterBeanDefinitionParser.SCHEMA_TYPE,
                 new PropertyReplacementResourceFilterBeanDefinitionParser());
 

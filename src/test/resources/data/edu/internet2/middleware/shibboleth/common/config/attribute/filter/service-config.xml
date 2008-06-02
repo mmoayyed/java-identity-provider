@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
-    default-autowire="byType">
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel">
         <constructor-arg value="true" type="boolean" />
@@ -15,6 +16,26 @@
         <property name="ignoreComments" value="true" />
         <property name="ignoreElementContentWhitespace" value="true" />
         <property name="namespaceAware" value="true" />
+        <property name="builderAttributes">
+            <map>
+                <entry>
+                    <key>
+                        <value>http://apache.org/xml/properties/security-manager</value>
+                    </key>
+                    <bean id="shibboleth.XercesSecurityManager" class="org.apache.xerces.util.SecurityManager" />
+                </entry>
+            </map>
+        </property>
+        <property name="builderFeatures">
+            <map>
+                <entry>
+                    <key>
+                        <value>http://apache.org/xml/features/disallow-doctype-decl</value>
+                    </key>
+                    <util:constant static-field="java.lang.Boolean.TRUE"/>
+                </entry>
+            </map>
+        </property>
     </bean>
 
     <bean id="policy2" class="org.opensaml.util.resource.ClasspathResource">
@@ -28,32 +49,32 @@
     <bean id="engineA"
         class="edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine"
         init-method="initialize">
-        <constructor-arg type="java.util.List">
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="policy3"/>
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
     <bean id="engineB"
         class="edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine"
         init-method="initialize">
-        <constructor-arg type="java.util.List">
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="policy2"/>
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
     <bean id="engineC"
         class="edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethAttributeFilteringEngine"
         init-method="initialize">
-        <constructor-arg type="java.util.List">
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="policy2"/>
                 <ref bean="policy3"/>
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
 </beans>

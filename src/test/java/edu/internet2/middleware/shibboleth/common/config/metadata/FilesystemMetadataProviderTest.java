@@ -34,7 +34,7 @@ public class FilesystemMetadataProviderTest extends BaseConfigTestCase {
      * @throws Exception thrown if there is a problem
      */
     public void testProviderInstantiation() throws Exception {
-        String[] configs = { "/shibboleth-2.0-config-internal.xml",
+        String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
                              DATA_PATH + "/config/metadata/FilesystemMetadataProvider1.xml", };
         ApplicationContext appContext = createSpringContext(configs);
 
@@ -49,7 +49,7 @@ public class FilesystemMetadataProviderTest extends BaseConfigTestCase {
      * @throws Exception thrown if there is a problem
      */
     public void testFailedProviderInstantiation() throws Exception {
-        String[] configs = { "/shibboleth-2.0-config-internal.xml",
+        String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
                 DATA_PATH + "/config/metadata/FilesystemMetadataProvider2.xml", };
         ApplicationContext appContext = createSpringContext(configs);
         

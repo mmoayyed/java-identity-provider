@@ -57,14 +57,14 @@ public class AttributeRuleBeanDefinitionParser extends BaseFilterBeanDefinitionP
 
         List<Element> permitValueRule = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
                 "PermitValueRule"));
-        if (!permitValueRule.isEmpty()) {
+        if (permitValueRule != null && !permitValueRule.isEmpty()) {
             builder.addPropertyValue("permitValueRule", SpringConfigurationUtils.parseCustomElement(permitValueRule
                     .get(0), parserContext));
         }
 
         List<Element> permitValueRuleRef = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
                 "PermitValueRuleReference"));
-        if (!permitValueRuleRef.isEmpty()) {
+        if (permitValueRuleRef != null && !permitValueRuleRef.isEmpty()) {
             String reference = getAbsoluteReference(configElement, "PermitValueRule", permitValueRuleRef.get(0)
                     .getTextContent());
             builder.addPropertyReference("permitValueRule", reference);
@@ -72,14 +72,14 @@ public class AttributeRuleBeanDefinitionParser extends BaseFilterBeanDefinitionP
 
         List<Element> denyValueRule = children
                 .get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule"));
-        if (!denyValueRule.isEmpty()) {
+        if (denyValueRule != null && !denyValueRule.isEmpty()) {
             builder.addPropertyValue("denyValueRule", SpringConfigurationUtils.parseCustomElement(denyValueRule.get(0),
                     parserContext));
         }
 
         List<Element> denyValueRuleRef = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
                 "DenyValueRuleReference"));
-        if (!denyValueRuleRef.isEmpty()) {
+        if (denyValueRuleRef != null && !denyValueRuleRef.isEmpty()) {
             String reference = getAbsoluteReference(configElement, "DenyValueRuleReference", denyValueRuleRef.get(0)
                     .getTextContent());
             builder.addPropertyReference("denyValueRule", reference);

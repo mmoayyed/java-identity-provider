@@ -185,8 +185,8 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
                 rootCause = rootCause.getCause();
             }
             log.error("Configuration was not loaded for " + getId()
-                    + " service, error creating components.  The root cause of this error was: "
-                    + rootCause.getMessage());
+                    + " service, error creating components.  The root cause of this error was: " +
+                    rootCause.getClass().getCanonicalName() + ": " + rootCause.getMessage());
             log.trace("Full stacktrace is: ", e);
             throw new ServiceException("Configuration was not loaded for " + getId()
                     + " service, error creating components.");
@@ -234,7 +234,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
      * @param configurations configuration resources for the service
      * @throws IllegalStateException thrown if the service has already been initialized
      */
-    public void setServiceConfigurations(List<Resource> configurations) throws IllegalStateException{
+    public void setServiceConfigurations(List<Resource> configurations) {
         if(isInitialized){
             throw new IllegalStateException("Service already initialized");
         }

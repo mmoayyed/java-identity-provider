@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Basic configuration used until the IdP can load the real configuration -->
 <configuration>
 
-    <logger name="edu.internet2.middleware.shibboleth.common.attribute.filtering">
-        <level value="trace" />
+    <logger name="edu.internet2.middleware.shibboleth.common">
+        <level value="TRACE" />
+    </logger>
+    
+    <logger name="org.opensaml.util.resource">
+        <level value="DEBUG" />
     </logger>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -14,7 +17,7 @@
     </appender>
 
     <root>
-        <level value="warn" />
+        <level value="WARN" />
         <appender-ref ref="STDOUT" />
     </root>
 

@@ -1,25 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
-	xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
-	xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
-	xsi:schemaLocation="
-    	urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
-      urn:mace:shibboleth:2.0:resolver:dc classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd
-    	urn:mace:shibboleth:2.0:resolver:ad classpath:/schema/shibboleth-2.0-attribute-resolver-ad.xsd">
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pc="urn:mace:shibboleth:2.0:resolver:pc"
+    xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad" xmlns:dc="urn:mace:shibboleth:2.0:resolver:dc"
+    xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" xmlns:sec="urn:mace:shibboleth:2.0:security"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver classpath:/schema/shibboleth-2.0-attribute-resolver.xsd
+                        urn:mace:shibboleth:2.0:resolver:pc classpath:/schema/shibboleth-2.0-attribute-resolver-pc.xsd
+                        urn:mace:shibboleth:2.0:resolver:ad classpath:/schema/shibboleth-2.0-attribute-resolver-ad.xsd
+                        urn:mace:shibboleth:2.0:resolver:dc classpath:/schema/shibboleth-2.0-attribute-resolver-dc.xsd
+                        urn:mace:shibboleth:2.0:attribute:encoder classpath:/schema/shibboleth-2.0-attribute-encoder.xsd
+                        urn:mace:shibboleth:2.0:security classpath:/schema/shibboleth-2.0-security.xsd">
 
-    <resolver:AttributeDefinition xsi:type="ad:PrincipalName" id="principalName" />
+    <resolver:AttributeDefinition xsi:type="ad:PrincipalName" id="principalName">
+        
+        <resolver:AttributeEncoder xsi:type="SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+            name="urn:mace:dir:attribute-def:eduPersonPrincipalName" />
+
+        <resolver:AttributeEncoder xsi:type="SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+            name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6" friendlyName="eduPersonPrincipalName" />
+            
+    </resolver:AttributeDefinition>
 
 	<resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonAffiliation" sourceAttributeID="affiliation">
 		<resolver:Dependency ref="static" />
 		<resolver:Dependency ref="static2" />
+        
+        <resolver:AttributeEncoder xsi:type="SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+            name="urn:mace:dir:attribute-def:eduPersonAffiliation" />
+
+        <resolver:AttributeEncoder xsi:type="SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+            name="urn:oid:1.3.6.1.4.1.5923.1.1.1.1" friendlyName="eduPersonAffiliation" />
+            
 	</resolver:AttributeDefinition>
     
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonEntitlement" sourceAttributeID="entitlement">
         <resolver:Dependency ref="static" />
         <resolver:Dependency ref="static2" />
+        
+        <resolver:AttributeEncoder xsi:type="SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+            name="urn:mace:dir:attribute-def:eduPersonEntitlement" />
+
+        <resolver:AttributeEncoder xsi:type="SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+            name="urn:oid:1.3.6.1.4.1.5923.1.1.1.7" friendlyName="eduPersonEntitlement" />
     </resolver:AttributeDefinition>
 	
 	<resolver:DataConnector xsi:type="dc:Static" id="static">

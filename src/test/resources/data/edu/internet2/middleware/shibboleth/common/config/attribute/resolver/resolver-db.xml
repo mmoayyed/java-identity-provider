@@ -42,8 +42,7 @@
     </resolver:AttributeDefinition>
         
     <resolver:DataConnector xsi:type="dc:RelationalDatabase"
-                                       id="LocalDatabase"
-                                       validationQuery="SELECT * FROM information_schema.system_users">
+                                       id="LocalDatabase">
                                        
         <dc:ApplicationManagedConnection jdbcDriver="org.hsqldb.jdbcDriver"
                                                            jdbcURL="jdbc:hsqldb:res:/data/database/shibdb"
