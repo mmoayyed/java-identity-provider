@@ -29,13 +29,12 @@ import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 import edu.internet2.middleware.shibboleth.common.profile.provider.BaseSAMLProfileRequestContext;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
 
-/**
- * Unit tests for {@link SAML2AttributeAuthority}
- */
+/** Unit tests for {@link SAML2AttributeAuthority}. */
 public class SAML2AttributeAuthorityTest extends BaseConfigTestCase {
 
     public void testResolution() throws Exception {
-        ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/service-config.xml");
+        ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
+                DATA_PATH + "/config/attribute/service-config.xml", });
 
         ParserPool parserPool = new BasicParserPool();
 

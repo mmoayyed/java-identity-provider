@@ -33,9 +33,8 @@ public class URLMetadataProviderTest extends BaseConfigTestCase {
      * @throws Exception thrown if there is a problem
      */
     public void testProviderInstantiation() throws Exception {
-        String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
-                             DATA_PATH + "/config/metadata/URLMetadataProvider1.xml", };
-        ApplicationContext appContext = createSpringContext(configs);
+        ApplicationContext appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
+                DATA_PATH + "//config/metadata/URLMetadataProvider1.xml", });
 
         HTTPMetadataProvider provider = (HTTPMetadataProvider) appContext.getBean("URLMetadata");
         assertNotNull(provider);

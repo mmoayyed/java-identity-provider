@@ -35,7 +35,8 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfi
 public class SAML1AttributeAuthorityTest extends BaseConfigTestCase {
 
     public void testResolution() throws Exception {
-        ApplicationContext ac = createSpringContext(DATA_PATH + "/config/attribute/service-config.xml");
+        ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
+                DATA_PATH + "/config/attribute/service-config.xml", });
 
         ParserPool parserPool = new BasicParserPool();
 
@@ -55,7 +56,7 @@ public class SAML1AttributeAuthorityTest extends BaseConfigTestCase {
         Map<String, BaseAttribute> attributes = aa.getAttributes(context);
 
         assertEquals(3, attributes.size());
-        
+
         assertNotNull(aa.buildAttributeStatement(null, attributes.values()));
     }
 }

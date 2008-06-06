@@ -35,12 +35,12 @@ import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.opensaml.xml.security.x509.PKIXValidationInformation;
 import org.w3c.dom.Document;
 
-import edu.internet2.middleware.shibboleth.common.BaseTestCase;
+import edu.internet2.middleware.shibboleth.common.TestCaseBase;
 
 /**
  * Testing the Shibboleth metadata PKIX validation information resolver.
  */
-public class MetadataPKIXValidationInformationResolverTest extends BaseTestCase {
+public class MetadataPKIXValidationInformationResolverTest extends TestCaseBase {
     
     private String protocolBlue = "PROTOCOL_BLUE";
     

@@ -23,12 +23,12 @@ import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.XMLObjectBuilder;
 import org.w3c.dom.Document;
 
-import edu.internet2.middleware.shibboleth.common.BaseTestCase;
+import edu.internet2.middleware.shibboleth.common.TestCaseBase;
 
 /**
  * Base abstract class for testing object providers.
  */
-public abstract class BaseShibObjectProviderTestCase extends BaseTestCase {
+public abstract class BaseShibObjectProviderTestCase extends TestCaseBase {
 
     /** Base path for data files. */
     public static final String DATA_PATH = "/data/edu/internet2/middleware/shibboleth/common/xmlobject";

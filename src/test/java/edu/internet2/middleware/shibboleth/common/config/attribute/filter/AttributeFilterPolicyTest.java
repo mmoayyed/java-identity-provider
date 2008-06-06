@@ -69,8 +69,8 @@ public class AttributeFilterPolicyTest extends BaseConfigTestCase {
         requestContext.setPrincipalName("jsmith");
         requestContext.setReleasedAttributes(attributes.keySet());
 
-        String[] configs = { DATA_PATH + "/config/attribute/filter/service-config.xml", };
-        appContext = createSpringContext(configs);
+        appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
+                DATA_PATH + "/config/attribute/filter/service-config.xml", });
     }
 
     public void testEngineA() throws ResourceException, AttributeFilteringException {

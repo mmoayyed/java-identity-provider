@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 /**
  * Base class for JUnit test cases.
  */
-public class BaseTestCase extends XMLTestCase {
+public class TestCaseBase extends XMLTestCase {
 
     /** Base path for data files. */
     public static final String DATA_PATH = "/data/edu/internet2/middleware/shibboleth/common";
@@ -56,7 +56,7 @@ public class BaseTestCase extends XMLTestCase {
     protected static UnmarshallerFactory unmarshallerFactory;
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(BaseTestCase.class);
+    private static Logger log = LoggerFactory.getLogger(TestCaseBase.class);
 
     /** {@inheritDoc} */
     protected void setUp() throws Exception {
@@ -124,7 +124,7 @@ public class BaseTestCase extends XMLTestCase {
      */
     protected XMLObject unmarshallElement(String elementFile) {
         try {
-            Document doc = parser.parse(BaseTestCase.class.getResourceAsStream(elementFile));
+            Document doc = parser.parse(TestCaseBase.class.getResourceAsStream(elementFile));
             Element samlElement = doc.getDocumentElement();
 
             Unmarshaller unmarshaller = Configuration.getUnmarshallerFactory().getUnmarshaller(samlElement);

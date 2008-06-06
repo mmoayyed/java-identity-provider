@@ -25,12 +25,12 @@ import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import edu.internet2.middleware.shibboleth.common.BaseTestCase;
+import edu.internet2.middleware.shibboleth.common.TestCaseBase;
 
 /**
  * Base unit test case for Spring configuration tests.
  */
-public class BaseConfigTestCase extends BaseTestCase {
+public class BaseConfigTestCase extends TestCaseBase {
 
     /** Configuration resources to be loaded for all unit tests. */
     protected List<Resource> configResources;

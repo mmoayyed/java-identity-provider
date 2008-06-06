@@ -33,9 +33,8 @@ public class FilesystemMetadataProviderTest extends BaseConfigTestCase {
      * @throws Exception thrown if there is a problem
      */
     public void testProviderInstantiation() throws Exception {
-        String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
-                DATA_PATH + "/config/metadata/FilesystemMetadataProvider1.xml", };
-        ApplicationContext appContext = createSpringContext(configs);
+        ApplicationContext appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
+                DATA_PATH + "/config/metadata/FilesystemMetadataProvider1.xml", });
 
         MetadataProvider provider = (MetadataProvider) appContext.getBean("FilesystemMetadata");
         assertNotNull(provider);
