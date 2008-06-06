@@ -2,13 +2,16 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata"
     xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:res="urn:mace:shibboleth:2.0:resource"
     xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata" elementFormDefault="qualified">
+    
     <annotation>
         <documentation>Schema describing metadata providers and filters.</documentation>
     </annotation>
+    
     <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
         schemaLocation="classpath:/schema/saml-schema-metadata-2.0.xsd" />
-    <import namespace="uurn:mace:shibboleth:2.0:resource"
-        schemaLocation="classpath:/schema/shibboleth-2.0-resource.xsd.xsd" />
+    <import namespace="urn:mace:shibboleth:2.0:resource"
+        schemaLocation="classpath:/schema/shibboleth-2.0-resource.xsd" />
+        
     <element name="MetadataProvider" type="shibmd:MetadataProviderType">
         <annotation>
             <documentation>Defines a provider of SAML 2 metadata information.</documentation>
