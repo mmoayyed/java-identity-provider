@@ -261,7 +261,7 @@
         <annotation>
             <documentation>Base type for validation information.</documentation>
         </annotation>
-        <attribute name="id" type="string">
+        <attribute name="id" type="string" use="required">
             <annotation>
                 <documentation>Unique id for this validation info set.</documentation>
             </annotation>
