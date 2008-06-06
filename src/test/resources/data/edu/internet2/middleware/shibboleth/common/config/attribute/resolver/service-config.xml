@@ -13,7 +13,7 @@
                     org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
                 </prop>
                 <prop key="string.resource.loader.class">
-                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                    edu.internet2.middleware.shibboleth.common.util.StringResourceLoader
                 </prop>
             </props>
         </property>

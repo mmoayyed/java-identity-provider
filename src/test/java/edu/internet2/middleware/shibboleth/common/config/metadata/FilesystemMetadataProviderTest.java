@@ -18,7 +18,6 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
@@ -35,7 +34,7 @@ public class FilesystemMetadataProviderTest extends BaseConfigTestCase {
      */
     public void testProviderInstantiation() throws Exception {
         String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
-                             DATA_PATH + "/config/metadata/FilesystemMetadataProvider1.xml", };
+                DATA_PATH + "/config/metadata/FilesystemMetadataProvider1.xml", };
         ApplicationContext appContext = createSpringContext(configs);
 
         MetadataProvider provider = (MetadataProvider) appContext.getBean("FilesystemMetadata");
@@ -51,12 +50,10 @@ public class FilesystemMetadataProviderTest extends BaseConfigTestCase {
     public void testFailedProviderInstantiation() throws Exception {
         String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
                 DATA_PATH + "/config/metadata/FilesystemMetadataProvider2.xml", };
-        ApplicationContext appContext = createSpringContext(configs);
-        
-        try{
-            appContext.getBean("FilesystemMetadata");
+        try {
+            ApplicationContext appContext = createSpringContext(configs);
             fail("Spring loaded invalid configuration");
-        }catch(BeanCreationException e){
+        } catch (Exception e) {
             // expected
         }
     }

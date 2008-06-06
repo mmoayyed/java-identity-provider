@@ -20,7 +20,8 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.opensaml.xml.util.XMLHelper;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -28,35 +29,32 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for Shibboleth file backed url metadata provider definition.
  */
-public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
+public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProviderBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "HTTPMetadataProvider");
 
+    /** Class logger. */
+    private Logger log = LoggerFactory.getLogger(HTTPMetadataProviderBeanDefinitionParser.class);
+
     /** {@inheritDoc} */
-    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(HTTPMetadataProvider.class);
-        parseCommonConfig(builder, element, parserContext);
-        parseConfig(builder, element, parserContext);
-        return builder.getBeanDefinition();
+    protected Class getBeanClass(Element element) {
+        return HTTPMetadataProvider.class;
     }
 
-    /**
-     * Parses the configuration for this provider.
-     * 
-     * @param builder builder of the bean definition
-     * @param element configuration element
-     * @param context current parsing context
-     */
-    protected void parseConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
+    /** {@inheritDoc} */
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.setInitMethodName("initialize");
+
+        super.doParse(element, parserContext, builder);
+
         builder.addPropertyReference("parserPool", "shibboleth.ParserPool");
 
         String metadataURL = element.getAttributeNS(null, "metadataURL");
-        builder.addConstructorArg(metadataURL);
+        builder.addConstructorArgValue(metadataURL);
 
         int requestTimeout = Integer.parseInt(element.getAttributeNS(null, "requestTimeout"));
-        builder.addConstructorArg(requestTimeout);
+        builder.addConstructorArgValue(requestTimeout);
 
         int cacheDuration = Integer.parseInt(element.getAttributeNS(null, "cacheDuration"));
         builder.addPropertyValue("maxCacheDuration", cacheDuration);
@@ -66,6 +64,7 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
                     .getAttributeNodeNS(null, "maintainExpiredMetadata")));
         }
 
-        // TODO basic auth credentials
+        log
+                .warn("Use of the HTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with the HttpResource");
     }
 }

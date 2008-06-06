@@ -19,39 +19,34 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.FileBackedHTTPMetadataProvider;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Spring bean definition for Shibboleth file backed metadata provider.
- */
+/** Spring bean definition for Shibboleth file backed metadata provider. */
 public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMetadataProviderBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, 
+    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
             "FileBackedHTTPMetadataProvider");
     
+    /** Class logger. */
+    private Logger log = LoggerFactory.getLogger(FileBackedHTTPMetadataProviderBeanDefinitionParser.class);
+
     /** {@inheritDoc} */
-    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FileBackedHTTPMetadataProvider.class);
-        parseCommonConfig(builder, element, parserContext);
-        parseConfig(builder, element, parserContext);
-        return builder.getBeanDefinition();
+    protected Class getBeanClass(Element element) {
+        return FileBackedHTTPMetadataProvider.class;
     }
-    
-    /**
-     * Parses the configuration for this provider.
-     * 
-     * @param builder builder of the bean definition
-     * @param element configuration element
-     * @param context current parsing context
-     */
-    protected void parseConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
-        super.parseConfig(builder, element, context);
-        
+
+    /** {@inheritDoc} */
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+
         String backingFile = element.getAttributeNS(null, "backingFile");
-        builder.addConstructorArg(backingFile);
+        builder.addConstructorArgValue(backingFile);
+        
+        log.warn("Use of the FileBackedHTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with the FileBackedHttpResource");
     }
 }

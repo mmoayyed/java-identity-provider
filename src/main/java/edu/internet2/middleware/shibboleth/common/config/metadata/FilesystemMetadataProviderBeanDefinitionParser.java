@@ -22,7 +22,8 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
 import org.opensaml.xml.util.XMLHelper;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -30,30 +31,35 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for Shibboleth file system based metadata provider definition.
  */
-public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
+public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadataProviderBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "FilesystemMetadataProvider");
-
-    /** Maintain expired metadata configuration option attribute name. */
-    public static final String MAINTAIN_EXPIRED_METADATA_ATTRIBUTE_NAME = "maintainExpiredMetadata";
+    
+    /** Class logger. */
+    private Logger log = LoggerFactory.getLogger(FilesystemMetadataProviderBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
-    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(FilesystemMetadataProvider.class);
-        parseCommonConfig(builder, element, parserContext);
+    protected Class getBeanClass(Element element) {
+        return FilesystemMetadataProvider.class;
+    }
 
+    /** {@inheritDoc} */
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.setInitMethodName("initialize");
+
+        super.doParse(config, parserContext, builder);
+
         builder.addPropertyReference("parserPool", "shibboleth.ParserPool");
 
-        String metadataFile = element.getAttributeNS(null, "metadataFile");
-        builder.addConstructorArg(new File(metadataFile));
+        String metadataFile = config.getAttributeNS(null, "metadataFile");
+        builder.addConstructorArgValue(new File(metadataFile));
 
-        if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
-            builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
+        if (config.hasAttributeNS(null, "maintainExpiredMetadata")) {
+            builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(config
                     .getAttributeNodeNS(null, "maintainExpiredMetadata")));
         }
-
-        return builder.getBeanDefinition();
+        
+        log.warn("Use of the FilesystemMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with the FilesystemResource");
     }
 }

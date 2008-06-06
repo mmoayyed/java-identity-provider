@@ -13,48 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import javax.xml.namespace.QName;
 
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.metadata.provider.DOMMetadataProvider;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Spring bean definition parser for a OpenSAML2 DOMMetadataProvider. 
+ * Spring bean definition parser for a OpenSAML2 DOMMetadataProvider.
  */
-public class InlineMetadataProviderBeanDefinitionParser extends BaseMetadataProviderDefinitionParser {
-    
+public class InlineMetadataProviderBeanDefinitionParser extends BaseMetadataProviderBeanDefinitionParser {
+
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "InlineMetadataProvider");
-    
+
     /** {@inheritDoc} */
-    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(DOMMetadataProvider.class);
-        parseCommonConfig(builder, element, parserContext);
-        parseConfig(builder, element, parserContext);
-        return builder.getBeanDefinition();
+    protected Class getBeanClass(Element element) {
+        return DOMMetadataProvider.class;
     }
-    
-    /**
-     * Parses the configuration for this provider.
-     * 
-     * @param builder builder of the bean definition
-     * @param element configuration element
-     * @param context current parsing context
-     */
-    protected void parseConfig(BeanDefinitionBuilder builder, Element element, ParserContext context) {
+
+    /** {@inheritDoc} */
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.setInitMethodName("initialize");
-        
-        NodeList metadataContent = element.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntitiesDescriptor");
-        if(metadataContent.getLength() < 1){
-            metadataContent = element.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntityDescriptor");
+
+        super.doParse(config, parserContext, builder);
+
+        NodeList metadataContent = config.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntitiesDescriptor");
+        if (metadataContent.getLength() < 1) {
+            metadataContent = config.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntityDescriptor");
         }
-        builder.addConstructorArg((Element)metadataContent.item(0));
+        builder.addConstructorArgValue((Element) metadataContent.item(0));
     }
 }

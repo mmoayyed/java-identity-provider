@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
-    default-autowire="byType">
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
     <bean id="shibboleth.ParserPool" class="org.opensaml.xml.parse.BasicParserPool">
         <property name="maxPoolSize" value="50" />
@@ -11,9 +12,29 @@
         <property name="ignoreComments" value="true" />
         <property name="ignoreElementContentWhitespace" value="true" />
         <property name="namespaceAware" value="true" />
+        <property name="builderAttributes">
+            <map>
+                <entry>
+                    <key>
+                        <value>http://apache.org/xml/properties/security-manager</value>
+                    </key>
+                    <bean id="shibboleth.XercesSecurityManager" class="org.apache.xerces.util.SecurityManager" />
+                </entry>
+            </map>
+        </property>
+        <property name="builderFeatures">
+            <map>
+                <entry>
+                    <key>
+                        <value>http://apache.org/xml/features/disallow-doctype-decl</value>
+                    </key>
+                    <util:constant static-field="java.lang.Boolean.TRUE"/>
+                </entry>
+            </map>
+        </property>
     </bean>
 
-    <bean id="config1" class="org.opensaml.resource.ClasspathResource">
+    <bean id="config1" class="org.opensaml.util.resource.ClasspathResource">
         <constructor-arg
             value="/data/edu/internet2/middleware/shibboleth/common/config/relyingparty/relying-party1.xml" />
     </bean>
@@ -21,11 +42,11 @@
     <bean id="relyingPartyManager"
         class="edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRelyingPartyConfigurationManager"
         init-method="initialize">
-        <constructor-arg type="java.util.List">
+        <property name="serviceConfigurations">
             <list>
                 <ref bean="config1" />
             </list>
-        </constructor-arg>
+        </property>
     </bean>
 
 </beans>

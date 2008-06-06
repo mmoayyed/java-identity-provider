@@ -52,7 +52,7 @@ public class SchemaValidationFilterBeanDefinitionParser extends AbstractSingleBe
             }
         }
         
-        builder.addConstructorArg(extensions);
+        builder.addConstructorArgValue(extensions);
     }
 
     /** {@inheritDoc} */

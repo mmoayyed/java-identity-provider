@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -32,20 +32,13 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 /**
  * Base class for metadata provider configuration parser.
  */
-public abstract class BaseMetadataProviderDefinitionParser extends AbstractBeanDefinitionParser {
+public abstract class BaseMetadataProviderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseMetadataProviderDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(BaseMetadataProviderBeanDefinitionParser.class);
 
-    /**
-     * Parses the metadata provider config element and sets the require validate metadata and metadata filter
-     * properties.
-     * 
-     * @param builder metadata provider definition builder
-     * @param config configuration of the provider
-     * @param context current parsing context
-     */
-    protected void parseCommonConfig(BeanDefinitionBuilder builder, Element config, ParserContext context) {
+    /** {@inheritDoc} */
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String id = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
         log.debug("Parsing configuration for {} metadata provider with ID: {}", XMLHelper.getXSIType(config)
                 .getLocalPart(), id);
@@ -62,7 +55,7 @@ public abstract class BaseMetadataProviderDefinitionParser extends AbstractBeanD
         NodeList childElems = config.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE, "MetadataFilter");
         if (childElems.getLength() > 0) {
             Element filterElem = (Element) childElems.item(0);
-            BeanDefinition filterDef = SpringConfigurationUtils.parseCustomElement(filterElem, context);
+            BeanDefinition filterDef = SpringConfigurationUtils.parseCustomElement(filterElem, parserContext);
             builder.addPropertyValue("metadataFilter", filterDef);
         }
     }
