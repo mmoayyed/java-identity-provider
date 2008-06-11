@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+    default-autowire="byType">
+
+    <!-- Test Resolver Configurations -->
+    <bean id="dbConfig" class="org.opensaml.util.resource.ClasspathResource">
+        <constructor-arg
+            value="/data/edu/internet2/middleware/shibboleth/common/config/attribute/resolver/resolver-db.xml" />
+    </bean>
+
+    
+    <!-- Test resolver instances -->
+    <bean id="resolver-db"
+        class="edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethAttributeResolver"
+        init-method="initialize">
+        <property name="serviceConfigurations">
+            <list>
+                <ref bean="dbConfig" />
+            </list>
+        </property>
+    </bean>
+
+</beans>

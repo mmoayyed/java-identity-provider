@@ -42,7 +42,7 @@ public class TemplateAttributeResolverTest extends BaseConfigTestCase {
     @SuppressWarnings("unchecked")
     public void testTemplateAttributeDefinition() throws ResourceException, AttributeResolutionException {
         ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
-                DATA_PATH + "/config/attribute/resolver/service-config.xml", });
+                DATA_PATH + "/config/attribute/resolver/resolver-template-config.xml", });
         AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver-template");
 
         BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();

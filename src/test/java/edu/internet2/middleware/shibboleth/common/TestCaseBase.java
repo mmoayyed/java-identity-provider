@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 /**
  * Base class for JUnit test cases.
  */
-public class TestCaseBase extends XMLTestCase {
+public abstract class TestCaseBase extends XMLTestCase {
 
     /** Base path for data files. */
     public static final String DATA_PATH = "/data/edu/internet2/middleware/shibboleth/common";

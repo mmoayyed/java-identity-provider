@@ -189,7 +189,7 @@ public abstract class BaseService implements Service, ApplicationContextAware, B
                     rootCause.getClass().getCanonicalName() + ": " + rootCause.getMessage());
             log.trace("Full stacktrace is: ", e);
             throw new ServiceException("Configuration was not loaded for " + getId()
-                    + " service, error creating components.");
+                    + " service, error creating components.", (Exception) rootCause);
         }finally{
             writeLock.unlock();
         }

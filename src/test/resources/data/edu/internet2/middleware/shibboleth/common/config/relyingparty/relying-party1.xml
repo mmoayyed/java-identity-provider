@@ -23,7 +23,7 @@
     <RelyingParty id="urn:mace:incommon"
                   provider="http://example.org/IdP/InC" />
     
-    <MetadataProvider xsi:type="URLMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
+    <MetadataProvider xsi:type="HTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
                       id="incommon-metadata"
                       metadataURL="http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml" />
     

@@ -40,7 +40,7 @@ public class LdapAttributeResolverTest extends BaseConfigTestCase {
     @SuppressWarnings("unchecked")
     public void testResolverInstantiation() throws ResourceException {
         ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
-                DATA_PATH + "/config/attribute/resolver/service-config.xml", });
+                DATA_PATH + "/config/attribute/resolver/resolver-ldap-config.xml", });
         AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver-ldap");
 
         BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();

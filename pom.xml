@@ -101,32 +101,27 @@
         <dependency>
             <groupId>javax.scripting</groupId>
             <artifactId>beanshell-engine</artifactId>
-            <version>20080412</version>
+            <version>20080611</version>
         </dependency>
         <dependency>
             <groupId>javax.scripting</groupId>
             <artifactId>groovy-engine</artifactId>
-            <version>20080412</version>
+            <version>20080611</version>
         </dependency>
         <dependency>
             <groupId>javax.scripting</groupId>
-            <artifactId>java-engine</artifactId>
-            <version>20080412</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.scripting</groupId>
-            <artifactId>javascript-engine</artifactId>
-            <version>20080412</version>
+            <artifactId>js-engine</artifactId>
+            <version>20080611</version>
         </dependency>
         <dependency>
             <groupId>javax.scripting</groupId>
             <artifactId>jruby-engine</artifactId>
-            <version>20080412</version>
+            <version>20080611</version>
         </dependency>
         <dependency>
             <groupId>javax.scripting</groupId>
             <artifactId>jython-engine</artifactId>
-            <version>20080412</version>
+            <version>20080611</version>
         </dependency>
         <dependency>
             <groupId>org.mozilla.javascript</groupId>

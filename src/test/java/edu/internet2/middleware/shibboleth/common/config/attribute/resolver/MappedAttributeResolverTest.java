@@ -41,7 +41,7 @@ public class MappedAttributeResolverTest extends BaseConfigTestCase {
     @SuppressWarnings("unchecked")
     public void testResolverInstantiation() throws ResourceException, AttributeResolutionException {
         ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
-                DATA_PATH + "/config/attribute/resolver/service-config.xml", });
+                DATA_PATH + "/config/attribute/resolver/resolver-mapped-config.xml", });
         AttributeResolver resolver = (AttributeResolver) ac.getBean("resolver-mapped");
 
         BaseSAMLProfileRequestContext context = new BaseSAMLProfileRequestContext();

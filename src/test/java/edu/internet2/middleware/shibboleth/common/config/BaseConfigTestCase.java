@@ -30,7 +30,7 @@ import edu.internet2.middleware.shibboleth.common.TestCaseBase;
 /**
  * Base unit test case for Spring configuration tests.
  */
-public class BaseConfigTestCase extends TestCaseBase {
+public abstract class BaseConfigTestCase extends TestCaseBase {
 
     /** Configuration resources to be loaded for all unit tests. */
     protected List<Resource> configResources;
