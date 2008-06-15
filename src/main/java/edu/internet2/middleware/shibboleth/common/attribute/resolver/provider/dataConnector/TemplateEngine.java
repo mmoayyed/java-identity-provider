@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeRe
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ResolutionPlugIn;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.AttributeDefinition;
+import edu.internet2.middleware.shibboleth.common.util.StringResourceLoader;
 
 /**
  * A velocity based template engine that pulls information from a resolution context for use within the template.

@@ -22,7 +22,6 @@ import java.io.OutputStreamWriter;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.opensaml.ws.transport.InTransport;
 import org.opensaml.ws.transport.OutTransport;
@@ -31,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.common.profile.AbstractErrorHandler;
+import edu.internet2.middleware.shibboleth.common.util.StringResourceLoader;
 
 /**
  * An error handler that render an error page by means of evaluating a Velocity template..

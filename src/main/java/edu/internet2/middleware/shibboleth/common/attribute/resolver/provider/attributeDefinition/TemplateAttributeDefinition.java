@@ -27,7 +27,6 @@ import java.util.Map;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
@@ -37,6 +36,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeResolutionException;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.ShibbolethResolutionContext;
+import edu.internet2.middleware.shibboleth.common.util.StringResourceLoader;
 
 /**
  * An {@link AttributeDefinition} that constructs its values based on the values of its dependencies using the Velocity

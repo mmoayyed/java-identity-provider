@@ -105,7 +105,6 @@ public class TemplateAttributeDefinitionFactoryBean extends BaseAttributeDefinit
      * @param newVelocityEngine velocity engine instance
      */
     public void setVelocityEngine(VelocityEngine newVelocityEngine) {
-        System.out.println("setting velocity engine " + newVelocityEngine);
         velocityEngine = newVelocityEngine;
     }
 
