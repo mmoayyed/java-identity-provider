@@ -16,10 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.config.resource;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.util.resource.FilesystemResource;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -30,6 +36,9 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractResourceBean
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "FilesystemResource");
+    
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(FilesystemResourceBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
@@ -45,6 +54,17 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractResourceBean
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "file")));
+        
+        String file = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "file"));
+        if(file.startsWith("file:")){
+            try{
+                builder.addConstructorArgValue(new URI(file));
+            }catch(URISyntaxException e){
+                log.error("Illegal file: URI syntax", e);
+                throw new BeanCreationException("Illegal file: URI syntax");
+            }
+        }else{
+            builder.addConstructorArgValue(file);
+        }
     }
 }
