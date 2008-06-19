@@ -34,8 +34,11 @@ public abstract class AbstractStringMatchFunctorBeanDefinitionParser extends Bas
 
         builder.addPropertyValue("matchString", DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
                 "value")));
-        
-        builder.addPropertyValue("caseSensitive", XMLHelper.getAttributeValueAsBoolean(configElement
-                .getAttributeNodeNS(null, "ignoreCase")));
+
+        if (configElement.hasAttributeNS(null, "ignoreCase")) {
+            boolean ignoreCase = XMLHelper.getAttributeValueAsBoolean(configElement.getAttributeNodeNS(null,
+                    "ignoreCase"));
+            builder.addPropertyValue("caseSensitive", !ignoreCase);
+        }
     }
 }

@@ -19,7 +19,9 @@ package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
 
 /**
- * test the @link(AnyMatchFunctor}.
+ * test the
+ * 
+ * @link(AnyMatchFunctor}.
  */
 public class AttributeValueStringMatchFunctorTest extends BaseTestCase {
 
@@ -29,15 +31,18 @@ public class AttributeValueStringMatchFunctorTest extends BaseTestCase {
         AttributeValueStringMatchFunctor functor = new AttributeValueStringMatchFunctor();
         matchFunctor = functor;
         functor.setAttributeId(sAttribute.getId());
-        functor.setMatchString(sAttribute.getValues().toArray(new String[]{})[0]);
+        functor.setMatchString(sAttribute.getValues().toArray(new String[] {})[0]);
     }
-    
+
     public void testPermitValue() {
         try {
             assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "one"));
+            assertTrue("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "ONE"));
+            ((AttributeValueStringMatchFunctor) matchFunctor).setCaseSensitive(true);
+            assertFalse("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "ONE"));
             assertFalse("evaluatePermitValue", matchFunctor.evaluatePermitValue(filterContext, null, "two"));
         } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
+            fail(e.getLocalizedMessage());
         }
     }
 
@@ -53,10 +58,9 @@ public class AttributeValueStringMatchFunctorTest extends BaseTestCase {
             assertTrue("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
             functor.setAttributeId("wibble");
             assertFalse("evaluatePolicyRequirement", matchFunctor.evaluatePolicyRequirement(filterContext));
-            
-            
+
         } catch (FilterProcessingException e) {
-           fail(e.getLocalizedMessage());
+            fail(e.getLocalizedMessage());
         }
     }
 }
