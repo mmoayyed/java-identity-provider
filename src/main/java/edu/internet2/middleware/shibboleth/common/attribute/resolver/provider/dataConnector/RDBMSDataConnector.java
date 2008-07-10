@@ -240,8 +240,9 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
         log.debug("Validating RDBMS data connector {} configuration.", getId());
+        Connection connection = null;
         try {
-            Connection connection = dataSource.getConnection();
+            connection = dataSource.getConnection();
             if (connection == null) {
                 log.error("Unable to create connections for RDBMS data connector " + getId());
                 throw new AttributeResolutionException("Unable to create connections for RDBMS data connector "
@@ -261,6 +262,14 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             log.error("Unable to validate RDBMS data connector " + getId() + " configuration", e);
             throw new AttributeResolutionException("Unable to validate RDBMS data connector " + getId()
                     + " configuration", e);
+        } finally {
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                log.error("Error closing database connection", e);
+            }
         }
     }
 
@@ -341,7 +350,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                     queryResult.close();
                 }
 
-                if (connection != null) {
+                if (connection != null && !connection.isClosed()) {
                     connection.close();
                 }
 

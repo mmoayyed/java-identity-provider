@@ -145,8 +145,9 @@ public class StoredIDDataConnectorBeanDefinitionParser extends BaseDataConnector
                         null, "poolBreakAfterAcquireFailure")));
             }
 
-            datasource.setMinPoolSize(Integer
-                    .parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "poolMinSize"))));
+            int minSize = Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "poolMinSize")));
+            datasource.setInitialPoolSize(minSize);
+            datasource.setMinPoolSize(minSize);
             datasource.setMaxPoolSize(Integer
                     .parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "poolMaxSize"))));
             datasource.setMaxIdleTime(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
