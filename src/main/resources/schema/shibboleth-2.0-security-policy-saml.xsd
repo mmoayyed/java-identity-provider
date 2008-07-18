@@ -24,6 +24,19 @@
         </complexContent>
     </complexType>
     
+    <complexType name="SAML2AuthnRequestsSigned">
+        <annotation>
+            <documentation>
+                A rule that requires that an incoming SAML 2 AuthnRequest be signed
+                if this requirement is indicated in metadata via the request issuer's 
+                SPSSODescriptor AuthnRequestsSigned attribute value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="sec:SecurityPolicyRuleType" />
+        </complexContent>
+    </complexType>
+    
     <complexType name="SAML2HTTPPostSimpleSign">
         <annotation>
             <documentation>

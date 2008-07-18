@@ -45,5 +45,8 @@ public class SAMLSecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
         registerBeanDefinitionParser(SAML2HTTPRedirectDeflateSignatureRuleBeanDefinitionParser.SCHEMA_TYPE,
                 new SAML2HTTPRedirectDeflateSignatureRuleBeanDefinitionParser());
+        
+        registerBeanDefinitionParser(SAML2AuthnRequestsSignedRuleBeanDefinitionParser.SCHEMA_TYPE,
+                new SAML2AuthnRequestsSignedRuleBeanDefinitionParser());
     }
 }
