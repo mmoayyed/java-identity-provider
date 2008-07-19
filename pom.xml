@@ -39,21 +39,6 @@
             <version>2.2.0</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl104-over-slf4j</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.8</version>
@@ -98,6 +83,7 @@
             <artifactId>scripting-api</artifactId>
             <version>1.0</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>javax.scripting</groupId>
             <artifactId>beanshell-engine</artifactId>
@@ -106,11 +92,6 @@
         <dependency>
             <groupId>javax.scripting</groupId>
             <artifactId>groovy-engine</artifactId>
-            <version>20080611</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.scripting</groupId>
-            <artifactId>js-engine</artifactId>
             <version>20080611</version>
         </dependency>
         <dependency>
@@ -124,10 +105,16 @@
             <version>20080611</version>
         </dependency>
         <dependency>
+            <groupId>javax.scripting</groupId>
+            <artifactId>js-engine</artifactId>
+            <version>20080611</version>
+        </dependency>
+        <dependency>
             <groupId>org.mozilla.javascript</groupId>
             <artifactId>rhino</artifactId>
             <version>1.7R1</version>
         </dependency>
+     -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
@@ -231,6 +218,11 @@
             <groupId>com.trilead</groupId>
             <artifactId>ssh2</artifactId>
             <version>212</version>
+        </dependency>
+        <dependency>
+            <groupId>jargs</groupId>
+            <artifactId>jargs</artifactId>
+            <version>1.0</version>
         </dependency>
         
         
