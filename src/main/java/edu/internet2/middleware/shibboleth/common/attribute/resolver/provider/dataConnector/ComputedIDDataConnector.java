@@ -109,6 +109,12 @@ public class ComputedIDDataConnector extends BaseDataConnector {
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
+        String inboundMessageIssuer = resolutionContext.getAttributeRequestContext().getInboundMessageIssuer();
+        if (inboundMessageIssuer == null) {
+            log.error("No inbound message issuer identified, unable to compute ID");
+            throw new AttributeResolutionException("No inbound message issuer identified");
+        }
+
         Collection<Object> sourceIdValues = getValuesFromAllDependencies(resolutionContext, getSourceAttributeId());
         if (sourceIdValues == null || sourceIdValues.isEmpty()) {
             log.error("Source attribute {} for connector {} provide no values", getSourceAttributeId(), getId());
@@ -127,7 +133,7 @@ public class ComputedIDDataConnector extends BaseDataConnector {
 
         try {
             MessageDigest md = MessageDigest.getInstance("SHA");
-            md.update(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer().getBytes());
+            md.update(inboundMessageIssuer.getBytes());
             md.update((byte) '!');
             md.update(sourceId.getBytes());
             md.update((byte) '!');
