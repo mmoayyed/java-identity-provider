@@ -43,7 +43,13 @@ public class ComputedIDDataConnectorBeanDefinitionParser extends BaseDataConnect
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        pluginBuilder.addPropertyValue("generatedAttribute", pluginConfig.getAttributeNS(null, "generatedAttributeID"));
+        if (pluginConfig.hasAttributeNS(null, "generatedAttributeID")) {
+            pluginBuilder.addPropertyValue("generatedAttribute", pluginConfig.getAttributeNS(null,
+                    "generatedAttributeID"));
+        } else {
+            pluginBuilder.addPropertyValue("generatedAttribute", "computedId");
+        }
+
         pluginBuilder.addPropertyValue("sourceAttribute", pluginConfig.getAttributeNS(null, "sourceAttributeID"));
         pluginBuilder.addPropertyValue("salt", pluginConfig.getAttributeNS(null, "salt").getBytes());
     }

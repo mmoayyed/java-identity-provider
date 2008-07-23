@@ -81,13 +81,13 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
             }
 
             Element defaultValueElem = defaultValueElems.get(0);
+            boolean passThru = false;
             if (defaultValueElem.hasAttributeNS(null, "passThru")) {
-                boolean passThru = XMLHelper.getAttributeValueAsBoolean(defaultValueElem.getAttributeNodeNS(null,
-                        "passThru"));
-                pluginBuilder.addPropertyValue("passThru", passThru);
-                if (log.isDebugEnabled()) {
-                    log.debug("Attribute definition {} uses default value pass thru: {}", pluginId, passThru);
-                }
+                passThru = XMLHelper.getAttributeValueAsBoolean(defaultValueElem.getAttributeNodeNS(null, "passThru"));
+            }
+            pluginBuilder.addPropertyValue("passThru", passThru);
+            if (log.isDebugEnabled()) {
+                log.debug("Attribute definition {} uses default value pass thru: {}", pluginId, passThru);
             }
         }
 
@@ -126,10 +126,21 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
                 if (children.containsKey(SOURCE_VALUE_ELEMENT_NAME)) {
                     for (Element sourceValueElem : children.get(SOURCE_VALUE_ELEMENT_NAME)) {
                         sourceValue = DatatypeHelper.safeTrim(sourceValueElem.getTextContent());
-                        ignoreCase = XMLHelper.getAttributeValueAsBoolean(sourceValueElem.getAttributeNodeNS(null,
-                                "ignoreCase"));
-                        partialMatch = XMLHelper.getAttributeValueAsBoolean(sourceValueElem.getAttributeNodeNS(null,
-                                "partialMatch"));
+
+                        if (sourceValueElem.hasAttributeNS(null, "ignoreCase")) {
+                            ignoreCase = XMLHelper.getAttributeValueAsBoolean(sourceValueElem.getAttributeNodeNS(null,
+                                    "ignoreCase"));
+                        } else {
+                            ignoreCase = false;
+                        }
+
+                        if (sourceValueElem.hasAttributeNS(null, "partialMatch")) {
+                            partialMatch = XMLHelper.getAttributeValueAsBoolean(sourceValueElem.getAttributeNodeNS(
+                                    null, "partialMatch"));
+                        } else {
+                            partialMatch = false;
+                        }
+
                         valueMap.getSourceValues().add(valueMap.new SourceValue(sourceValue, ignoreCase, partialMatch));
                     }
                 }

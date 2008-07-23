@@ -42,6 +42,8 @@ public class SAML2SSOProfileConfigurationBeanDefinitionParser extends
         if (element.hasAttributeNS(null, "includeAttributeStatement")) {
             builder.addPropertyValue("includeAttributeStatement", XMLHelper.getAttributeValueAsBoolean(element
                     .getAttributeNodeNS(null, "includeAttributeStatement")));
+        }else{
+            builder.addPropertyValue("includeAttributeStatement", true);
         }
 
         if (element.hasAttributeNS(null, "maximumSPSessionLifetime")) {

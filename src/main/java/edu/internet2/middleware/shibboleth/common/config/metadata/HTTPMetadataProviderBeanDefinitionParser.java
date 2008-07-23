@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,18 +54,27 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
         String metadataURL = element.getAttributeNS(null, "metadataURL");
         builder.addConstructorArgValue(metadataURL);
 
-        int requestTimeout = Integer.parseInt(element.getAttributeNS(null, "requestTimeout"));
-        builder.addConstructorArgValue(requestTimeout);
+        if (element.hasAttributeNS(null, "requestTimeout")) {
+            builder.addConstructorArgValue(Integer.parseInt(DatatypeHelper.safeTrim(element.getAttributeNS(null,
+                    "requestTimeout"))));
+        } else {
+            builder.addConstructorArgValue(10000);
+        }
 
-        int cacheDuration = Integer.parseInt(element.getAttributeNS(null, "cacheDuration"));
-        builder.addPropertyValue("maxCacheDuration", cacheDuration);
+        if (element.hasAttributeNS(null, "cacheDuration")) {
+            builder.addPropertyValue("maxCacheDuration", Integer.parseInt(DatatypeHelper.safeTrim(element
+                    .getAttributeNS(null, "cacheDuration"))));
+        } else {
+            builder.addPropertyValue("maxCacheDuration", 2880);
+        }
 
         if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
             builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
                     .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+        } else {
+            builder.addPropertyValue("maintainExpiredMetadata", false);
         }
 
-        log
-                .warn("Use of the HTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with the HttpResource");
+        log.warn("Use of the HTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with a HttpResource");
     }
 }

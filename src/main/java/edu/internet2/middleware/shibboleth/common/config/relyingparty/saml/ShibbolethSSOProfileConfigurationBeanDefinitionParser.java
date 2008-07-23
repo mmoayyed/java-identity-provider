@@ -44,6 +44,8 @@ public class ShibbolethSSOProfileConfigurationBeanDefinitionParser extends
         if (element.hasAttributeNS(null, "includeAttributeStatement")) {
             builder.addPropertyValue("includeAttributeStatement", XMLHelper.getAttributeValueAsBoolean(element
                     .getAttributeNodeNS(null, "includeAttributeStatement")));
+        }else{
+            builder.addPropertyValue("includeAttributeStatement", false);
         }
     }
 }

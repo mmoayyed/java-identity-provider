@@ -38,9 +38,17 @@ public abstract class BaseScopedAttributeEncoderBeanDefinitionParser extends Bas
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("scopeType", element.getAttribute(SCOPE_TYPE_ATTRIBUTE_NAME));
-        builder.addPropertyValue("scopeDelimiter", element.getAttribute(SCOPE_DELIMITER_ATTRIBUTE_NAME));
-        builder.addPropertyValue("scopeAttribute", element.getAttribute(SCOPE_ATTRIBUTE_ATTRIBUTE_NAME));
+        if (element.hasAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME)) {
+            builder.addPropertyValue("scopeDelimiter", element.getAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME));
+        } else {
+            builder.addPropertyValue("scopeDelimiter", "@");
+        }
+
+        if (element.hasAttributeNS(null, SCOPE_ATTRIBUTE_ATTRIBUTE_NAME)) {
+            builder.addPropertyValue("scopeAttribute", element.getAttributeNS(null, SCOPE_ATTRIBUTE_ATTRIBUTE_NAME));
+        } else {
+            builder.addPropertyValue("scopeAttribute", "Scope");
+        }
     }
 
 }

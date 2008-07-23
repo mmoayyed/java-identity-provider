@@ -47,7 +47,7 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseReloadableService.class);
 
-    /** Frequency policy resources are polled for updates. */
+    /** Frequency policy resources are polled for updates.*/
     private long resourcePollingFrequency;
 
     /** Number of policy resource polling retry attempts. */
@@ -58,11 +58,13 @@ public abstract class BaseReloadableService extends BaseService implements Reloa
 
     /**
      * Constructor. Configuration resources are not monitored for changes.
+     * 
+     * Sets polling frequency to 0 and retry attempts to 0.
      */
     public BaseReloadableService() {
         super();
-        resourcePollingFrequency = 0;
-        resourcePollingRetryAttempts = 0;
+        setPollingFrequency(0);
+        setPollingRetryAttempts(0);
     }
     
     /**

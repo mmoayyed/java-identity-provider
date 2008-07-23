@@ -45,7 +45,12 @@ public class VelocityErrorHandlerBeanDefinitionParser extends AbstractSingleBean
         log.info("Parsing configuration for velocity error handler.");
         super.doParse(config, builder);        
         
-        builder.addConstructorArg(config.getAttributeNS(null, "errorTemplatePath"));
+        if(config.hasAttributeNS(null, "errorTemplatePath")){
+            builder.addConstructorArgValue(config.getAttributeNS(null, "errorTemplatePath"));
+        }else{
+            builder.addConstructorArgValue(config.getAttributeNS(null, "/error.vm"));
+        }
+
         builder.addConstructorArgReference(config.getAttributeNS(null, "velocityEngine"));
     }
 

@@ -109,7 +109,7 @@
                         <documentation>The URL from which to retrieve the metadata.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maintainExpiredMetadata" type="boolean" default="false">
+                <attribute name="maintainExpiredMetadata" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether expired metadata should continue to be used until such
@@ -117,7 +117,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cacheDuration" type="unsignedInt" default="2880">
+                <attribute name="cacheDuration" type="unsignedInt">
                     <annotation>
                         <documentation>
                             The maximum length of time, in seconds, to cache metadata. If the metadata specifies a
@@ -126,7 +126,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="requestTimeout" type="unsignedInt" default="10000">
+                <attribute name="requestTimeout" type="unsignedInt">
                     <annotation>
                         <documentation>
                             The maximum length of time, in milliseconds, to wait for the remote server to response.
@@ -162,7 +162,7 @@
                         <documentation>The path to the metadata file.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maintainExpiredMetadata" type="boolean" default="false">
+                <attribute name="maintainExpiredMetadata" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether expired metadata should continue to be used until such
@@ -188,7 +188,7 @@
                 <documentation>A unique identifier that may be used to identify a particular provider</documentation>
             </annotation>
         </attribute>
-        <attribute name="requireValidMetadata" type="boolean" default="false">
+        <attribute name="requireValidMetadata" type="boolean">
             <annotation>
                 <documentation>
                     A boolean flag indicating whether the metadata retrieved must be valid. At a minimum, metadata is
@@ -260,7 +260,7 @@
                         <documentation>The ID of the trust engine used to validate the signature.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="requireSignedMetadata" type="boolean" default="false">
+                <attribute name="requireSignedMetadata" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a signature is required on incoming metadata.
@@ -292,7 +292,7 @@
                         </annotation>
                     </element>
                 </sequence>
-                <attribute name="removeRolelessEntityDescriptors" type="boolean" default="true">
+                <attribute name="removeRolelessEntityDescriptors" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entity descriptors that do not contain at least one role,
@@ -300,7 +300,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="removeEmptyEntitiesDescriptors" type="boolean" default="true">
+                <attribute name="removeEmptyEntitiesDescriptors" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entities descriptors that do not contain at least one entity

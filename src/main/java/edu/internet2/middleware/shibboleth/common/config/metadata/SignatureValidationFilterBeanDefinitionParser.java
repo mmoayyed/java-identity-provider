@@ -46,6 +46,8 @@ public class SignatureValidationFilterBeanDefinitionParser extends AbstractSingl
         if (element.hasAttributeNS(null, "requireSignedMetadata")) {
             builder.addPropertyValue("requireSignature", XMLHelper.getAttributeValueAsBoolean(element
                     .getAttributeNodeNS(null, "requireSignedMetadata")));
+        }else{
+            builder.addPropertyValue("requireSignature", false);
         }
     }
 

@@ -48,7 +48,12 @@ public class MessageReplayRuleBeanDefinitionParser extends AbstractSingleBeanDef
         builder.addConstructorArgReference(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null,
                 "replayCacheRef")));
 
-        builder.addPropertyValue("requiredRule", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
-                "required")));
+        if (element.hasAttributeNS(null, "required")) {
+            builder.addPropertyValue("requiredRule", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                    null, "required")));
+        } else {
+            builder.addPropertyValue("requiredRule", true);
+        }
+        
     }
 }

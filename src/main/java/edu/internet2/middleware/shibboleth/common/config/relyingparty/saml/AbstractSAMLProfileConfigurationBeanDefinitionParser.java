@@ -56,8 +56,12 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             builder.addPropertyReference("signingCredential", secCredRef);
         }
 
-        builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
-                .getAttributeNS(null, "assertionLifetime"))));
+        if (element.hasAttributeNS(null, "assertionLifetime")) {
+            builder.addPropertyValue("assertionLifetime", Long.parseLong(DatatypeHelper.safeTrimOrNullString(element
+                    .getAttributeNS(null, "assertionLifetime"))));
+        } else {
+            builder.addPropertyValue("assertionLifetime", 300000L);
+        }
 
         String artifactType = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "outboundArtifactType"));
         if (artifactType != null) {
@@ -66,13 +70,26 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
             builder.addPropertyValue("outboundArtifactType", trimmedArtifactTypeBytes);
         }
 
-        builder.addPropertyValue("signRequests", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
-                "signRequests")));
+        if (element.hasAttributeNS(null, "signRequests")) {
+            builder.addPropertyValue("signRequests", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(
+                    null, "signRequests")));
+        } else {
+            builder.addPropertyValue("signRequests", CryptoOperationRequirementLevel.conditional);
+        }
+        
+        if (element.hasAttributeNS(null, "signResponses")) {
+            builder.addPropertyValue("signResponses", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(
+                    null, "signResponses")));
+        } else {
+            builder.addPropertyValue("signResponses", CryptoOperationRequirementLevel.conditional);
+        }
 
-        builder.addPropertyValue("signResponses", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
-                "signResponses")));
-        builder.addPropertyValue("signAssertions", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
-                "signAssertions")));
+        if (element.hasAttributeNS(null, "signAssertions")) {
+            builder.addPropertyValue("signAssertions", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(
+                    null, "signAssertions")));
+        } else {
+            builder.addPropertyValue("signAssertions", CryptoOperationRequirementLevel.never);
+        }
 
         String secPolRef = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "securityPolicyRef"));
         if (secPolRef != null) {

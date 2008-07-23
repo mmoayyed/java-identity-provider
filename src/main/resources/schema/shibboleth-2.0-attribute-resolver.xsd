@@ -91,7 +91,7 @@
                     </element>
                     <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
-                <attribute name="dependencyOnly" type="boolean" default="false">
+                <attribute name="dependencyOnly" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag that indicates whether this attribute definition is only defined becaue its

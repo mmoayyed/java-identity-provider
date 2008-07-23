@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.encoding;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -42,7 +43,12 @@ public class SAML1StringNameIdentifierEncoderBeanDefinitionParser extends BaseAt
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("nameFormat", element.getAttributeNS(null, "nameFormat"));
+        String namespace = "urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified";
+        if (element.hasAttributeNS(null, "nameFormat")) {
+            namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "nameFormat"));
+        }
+        builder.addPropertyValue("nameFormat", namespace);
+
         builder.addPropertyValue("nameQualifier", element.getAttributeNS(null, "nameQualifier"));
     }
 }

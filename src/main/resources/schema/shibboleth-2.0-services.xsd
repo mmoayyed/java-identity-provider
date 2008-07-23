@@ -43,7 +43,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="configurationResourcePollingRetryAttempts" type="nonNegativeInteger" default="3">
+                <attribute name="configurationResourcePollingRetryAttempts" type="nonNegativeInteger">
                     <annotation>
                         <documentation>
                             The number of times a particular resource should be retried if an error is encountered

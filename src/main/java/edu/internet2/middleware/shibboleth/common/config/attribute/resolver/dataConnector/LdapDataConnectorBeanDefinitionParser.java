@@ -64,10 +64,13 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         String baseDN = pluginConfig.getAttributeNS(null, "baseDN");
         log.debug("Data connector {} base DN: {}", pluginId, baseDN);
         pluginBuilder.addPropertyValue("baseDN", baseDN);
-        
-        String authnType = pluginConfig.getAttributeNS(null, "authenticationType");
+
+        AUTHENTICATION_TYPE authnType = AUTHENTICATION_TYPE.SIMPLE;
+        if (pluginConfig.hasAttributeNS(null, "authenticationType")) {
+            authnType = AUTHENTICATION_TYPE.valueOf(pluginConfig.getAttributeNS(null, "authenticationType"));
+        }
         log.debug("Data connector {} authentication type: {}", pluginId, authnType);
-        pluginBuilder.addPropertyValue("authenticationType", AUTHENTICATION_TYPE.valueOf(authnType));
+        pluginBuilder.addPropertyValue("authenticationType", authnType);
 
         String principal = pluginConfig.getAttributeNS(null, "principal");
         log.debug("Data connector {} principal: {}", pluginId, principal);
@@ -82,7 +85,10 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         log.debug("Data connector {} LDAP filter template: {}", pluginId, filterTemplate);
         pluginBuilder.addPropertyValue("filterTemplate", filterTemplate);
 
-        SEARCH_SCOPE searchScope = SEARCH_SCOPE.valueOf(pluginConfig.getAttributeNS(null, "searchScope"));
+        SEARCH_SCOPE searchScope = SEARCH_SCOPE.SUBTREE;
+        if (pluginConfig.hasAttributeNS(null, "searchScope")) {
+            searchScope = SEARCH_SCOPE.valueOf(pluginConfig.getAttributeNS(null, "searchScope"));
+        }
         log.debug("Data connector {} search scope: {}", pluginId, searchScope);
         pluginBuilder.addPropertyValue("searchScope", searchScope);
 
@@ -106,50 +112,62 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         log.debug("Data connector {} using provided SSL/TLS client authentication material", pluginId);
         pluginBuilder.addPropertyValue("connectionCredential", connectionCredential);
 
+        boolean useStartTLS = false;
         if (pluginConfig.hasAttributeNS(null, "useStartTLS")) {
-            boolean useStartTLS = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-                    "useStartTLS"));
-            log.debug("Data connector {} use startTLS: {}", pluginId, useStartTLS);
-            pluginBuilder.addPropertyValue("useStartTLS", useStartTLS);
+            useStartTLS = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "useStartTLS"));
         }
+        log.debug("Data connector {} use startTLS: {}", pluginId, useStartTLS);
+        pluginBuilder.addPropertyValue("useStartTLS", useStartTLS);
 
-        int poolInitialSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "poolInitialSize"));
+        int poolInitialSize = 0;
+        if (pluginConfig.hasAttributeNS(null, "poolInitialSize")) {
+            poolInitialSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "poolInitialSize"));
+        }
         log.debug("Data connector {} initial connection pool size: {}", pluginId, poolInitialSize);
         pluginBuilder.addPropertyValue("poolInitialSize", poolInitialSize);
 
-        int poolMaxIdleSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "poolMaxIdleSize"));
+        int poolMaxIdleSize = 3;
+        if (pluginConfig.hasAttributeNS(null, "poolMaxIdleSize")) {
+            Integer.parseInt(pluginConfig.getAttributeNS(null, "poolMaxIdleSize"));
+        }
         log.debug("Data connector {} maximum idle connection pool size: {}", pluginId, poolMaxIdleSize);
         pluginBuilder.addPropertyValue("poolMaxIdleSize", poolMaxIdleSize);
 
-        int searchTimeLimit = Integer.parseInt(pluginConfig.getAttributeNS(null, "searchTimeLimit"));
+        int searchTimeLimit = 3000;
+        if (pluginConfig.hasAttributeNS(null, "searchTimeLimit")) {
+            Integer.parseInt(pluginConfig.getAttributeNS(null, "searchTimeLimit"));
+        }
         log.debug("Data connector {} search timeout: {}ms", pluginId, searchTimeLimit);
         pluginBuilder.addPropertyValue("searchTimeLimit", searchTimeLimit);
 
-        int maxResultSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "maxResultSize"));
+        int maxResultSize = 1;
+        if (pluginConfig.hasAttributeNS(null, "maxResultSize")) {
+            Integer.parseInt(pluginConfig.getAttributeNS(null, "maxResultSize"));
+        }
         log.debug("Data connector {} max search result size: {}", pluginId, maxResultSize);
         pluginBuilder.addPropertyValue("maxResultSize", maxResultSize);
 
         boolean cacheResults = true;
         if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
-             cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-                    "cacheResults"));
+            cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "cacheResults"));
         }
         log.debug("Data connector {} cache results: {}", pluginId, cacheResults);
         pluginBuilder.addPropertyValue("cacheResults", cacheResults);
 
+        boolean mergeResults = false;
         if (pluginConfig.hasAttributeNS(null, "mergeResults")) {
-            boolean mergeResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-                    "mergeResults"));
-            log.debug("Data connector{} merge results: {}", pluginId, mergeResults);
-            pluginBuilder.addPropertyValue("mergeResults", mergeResults);
+            mergeResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "mergeResults"));
         }
+        log.debug("Data connector{} merge results: {}", pluginId, mergeResults);
+        pluginBuilder.addPropertyValue("mergeResults", mergeResults);
 
+        boolean noResultsIsError = false;
         if (pluginConfig.hasAttributeNS(null, "noResultIsError")) {
-            boolean noResultsIsError = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+            noResultsIsError = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
                     "noResultIsError"));
-            log.debug("Data connector {} no results is error: {}", pluginId, noResultsIsError);
-            pluginBuilder.addPropertyValue("noResultsIsError", noResultsIsError);
         }
+        log.debug("Data connector {} no results is error: {}", pluginId, noResultsIsError);
+        pluginBuilder.addPropertyValue("noResultsIsError", noResultsIsError);
 
         String templateEngineRef = pluginConfig.getAttributeNS(null, "templateEngine");
         pluginBuilder.addPropertyReference("templateEngine", templateEngineRef);

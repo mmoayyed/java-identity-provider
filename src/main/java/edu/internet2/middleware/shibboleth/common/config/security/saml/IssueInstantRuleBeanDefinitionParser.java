@@ -44,10 +44,23 @@ public class IssueInstantRuleBeanDefinitionParser extends AbstractSingleBeanDefi
 
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
-        builder.addConstructorArg(element.getAttributeNS(null, "clockSkew"));
-        builder.addConstructorArg(element.getAttributeNS(null, "expirationThreshold"));
+        if (element.hasAttributeNS(null, "clockSkew")) {
+            builder.addConstructorArgValue(element.getAttributeNS(null, "clockSkew"));
+        } else {
+            builder.addConstructorArgValue(180);
+        }
 
-        builder.addPropertyValue("requiredRule", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(null,
-                "required")));
+        if (element.hasAttributeNS(null, "expirationThreshold")) {
+            builder.addConstructorArgValue(element.getAttributeNS(null, "expirationThreshold"));
+        } else {
+            builder.addConstructorArgValue(60);
+        }
+
+        if (element.hasAttributeNS(null, "required")) {
+            builder.addPropertyValue("requiredRule", XMLHelper.getAttributeValueAsBoolean(element.getAttributeNodeNS(
+                    null, "required")));
+        } else {
+            builder.addPropertyValue("requiredRule", true);
+        }
     }
 }

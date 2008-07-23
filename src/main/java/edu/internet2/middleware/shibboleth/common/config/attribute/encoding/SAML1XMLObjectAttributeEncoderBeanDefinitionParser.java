@@ -42,7 +42,10 @@ public class SAML1XMLObjectAttributeEncoderBeanDefinitionParser extends BaseAttr
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        String namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "namespace"));
+        String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
+        if (element.hasAttributeNS(null, "namespace")) {
+            namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "namespace"));
+        }
         builder.addPropertyValue("namespace", namespace);
 
         String attributeName = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "name"));

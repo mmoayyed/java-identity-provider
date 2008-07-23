@@ -57,7 +57,13 @@ public class StoredIDDataConnectorBeanDefinitionParser extends BaseDataConnector
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        pluginBuilder.addPropertyValue("generatedAttribute", pluginConfig.getAttributeNS(null, "generatedAttributeID"));
+        if (pluginConfig.hasAttributeNS(null, "generatedAttributeID")) {
+            pluginBuilder.addPropertyValue("generatedAttribute", pluginConfig.getAttributeNS(null,
+                    "generatedAttributeID"));
+        } else {
+            pluginBuilder.addPropertyValue("generatedAttribute", "storedId");
+        }
+        
         pluginBuilder.addPropertyValue("sourceAttribute", pluginConfig.getAttributeNS(null, "sourceAttributeID"));
         pluginBuilder.addPropertyValue("salt", pluginConfig.getAttributeNS(null, "salt").getBytes());
         

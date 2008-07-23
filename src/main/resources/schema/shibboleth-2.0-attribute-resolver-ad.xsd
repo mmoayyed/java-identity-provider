@@ -73,7 +73,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
-                <attribute name="scopeDelimiter" type="string" default="@">
+                <attribute name="scopeDelimiter" type="string">
                     <annotation>
                         <documentation>Delimiter between the value and scope.</documentation>
                     </annotation>
@@ -93,7 +93,7 @@
                         <documentation>The regular expression used to split a value.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="caseSensitive" type="boolean" default="true">
+                <attribute name="caseSensitive" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating the case sensitivity of the regular expression.
@@ -110,8 +110,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
-                <attribute name="nameIdFormat" type="string"
-                    default="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
+                <attribute name="nameIdFormat" type="string">
                     <annotation>
                         <documentation>The SAML 1 NameFormat of the NameID.</documentation>
                     </annotation>
@@ -131,8 +130,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
-                <attribute name="nameIdFormat" type="string"
-                    default="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">
+                <attribute name="nameIdFormat" type="string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
                     </annotation>
@@ -172,7 +170,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="language" type="string" default="javascript">
+                <attribute name="language" type="string">
                     <annotation>
                         <documentation>
                             The JSR-233 name for the scripting language that will be used. By default "javascript" is
@@ -206,7 +204,7 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="passThru" type="boolean" default="false">
+                                    <attribute name="passThru" type="boolean">
                                         <annotation>
                                             <documentation>
                                                 If true, the source value is passed thru unmodified. If passThru is
@@ -245,12 +243,12 @@
                 <complexType>
                     <simpleContent>
                         <extension base="string">
-                            <attribute name="ignoreCase" type="boolean" default="false">
+                            <attribute name="ignoreCase" type="boolean">
                                 <annotation>
                                     <documentation>If true, value matching will be case-insensitive.</documentation>
                                 </annotation>
                             </attribute>
-                            <attribute name="partialMatch" type="boolean" default="false">
+                            <attribute name="partialMatch" type="boolean">
                                 <annotation>
                                     <documentation>
                                         If true, the SourceValue may match only a substring of the incoming value. By

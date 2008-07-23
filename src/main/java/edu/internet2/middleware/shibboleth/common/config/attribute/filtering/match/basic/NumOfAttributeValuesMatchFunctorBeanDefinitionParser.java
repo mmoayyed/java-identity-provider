@@ -43,11 +43,21 @@ public class NumOfAttributeValuesMatchFunctorBeanDefinitionParser extends BaseFi
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
         super.doParse(configElement, builder);
 
-        builder.addConstructorArg(DatatypeHelper
-                .safeTrimOrNullString(configElement.getAttributeNS(null, "attributeId")));
-        
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "minimum")));
-        
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "maximum")));
+        builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                "attributeId")));
+
+        if (configElement.hasAttributeNS(null, "minimum")) {
+            builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                    "minimum")));
+        } else {
+            builder.addConstructorArgValue(0);
+        }
+
+        if (configElement.hasAttributeNS(null, "maximum")) {
+            builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                    "maximum")));
+        } else {
+            builder.addConstructorArgValue(Integer.MAX_VALUE);
+        }
     }
 }

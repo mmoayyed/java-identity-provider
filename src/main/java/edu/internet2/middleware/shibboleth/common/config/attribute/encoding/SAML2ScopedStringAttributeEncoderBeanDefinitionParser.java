@@ -44,8 +44,19 @@ public class SAML2ScopedStringAttributeEncoderBeanDefinitionParser extends
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
+        
+        if (element.hasAttributeNS(null, "scopeType")) {
+            builder.addPropertyValue("scopeType", element.getAttribute("scopeType"));
+        } else {
+            builder.addPropertyValue("scopeType", "inline");
+        }
 
-        builder.addPropertyValue("nameFormat", element.getAttribute(NAME_FORMAT_ATTRIBUTE_NAME));
+        String namespace = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
+        if (element.hasAttributeNS(null, "nameFormat")) {
+            namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "nameFormat"));
+        }
+        builder.addPropertyValue("nameFormat", namespace);
+        
         builder.addPropertyValue("friendlyName", element.getAttribute(FRIENDLY_NAME_ATTRIBUTE_NAME));
 
         String attributeName = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "name"));

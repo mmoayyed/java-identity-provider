@@ -45,7 +45,11 @@ public class JSPErrorHandlerBeanDefinitionParser extends AbstractSingleBeanDefin
         log.info("Parsing configuration for JSP error handler.");
         super.doParse(config, builder);
 
-        builder.addConstructorArg(config.getAttributeNS(null, "jspPagePath"));
+        if(config.hasAttributeNS(null, "jspPagePath")){
+            builder.addConstructorArgValue(config.getAttributeNS(null, "jspPagePath"));
+        }else{
+            builder.addConstructorArgValue(config.getAttributeNS(null, "/error.jsp"));
+        }
     }
 
     /** {@inheritDoc} */

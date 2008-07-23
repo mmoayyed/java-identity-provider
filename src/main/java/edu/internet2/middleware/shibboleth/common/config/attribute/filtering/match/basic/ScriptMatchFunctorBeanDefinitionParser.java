@@ -45,10 +45,14 @@ public class ScriptMatchFunctorBeanDefinitionParser extends BaseFilterBeanDefini
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
         super.doParse(configElement, builder);
 
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "language")));
+        String scriptLanguage = "javascript";
+        if (configElement.hasAttributeNS(null, "language")) {
+            scriptLanguage = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, "language"));
+        }
+        builder.addConstructorArgValue(scriptLanguage);
 
         List<Element> scripts = XMLHelper.getChildElementsByTagNameNS(configElement,
                 BasicMatchFunctorNamespaceHandler.NAMESPACE, "Script");
-        builder.addConstructorArg(DatatypeHelper.safeTrimOrNullString(scripts.get(0).getTextContent()));
+        builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(scripts.get(0).getTextContent()));
     }
 }

@@ -46,7 +46,10 @@ public class PrescopedAttributeDefinitionBeanDefinitionParser extends BaseAttrib
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        String scopeDelimiter = pluginConfig.getAttributeNS(null, "scopeDelimiter");
+        String scopeDelimiter = "@";
+        if (pluginConfig.hasAttributeNS(null, "scopeDelimiter")) {
+            scopeDelimiter = pluginConfig.getAttributeNS(null, "scopeDelimiter");
+        }
         log.debug("Setting scope delimiter of attribute definition {} to: {}", pluginId, scopeDelimiter);
         pluginBuilder.addPropertyValue("scopeDelimiter", scopeDelimiter);
     }

@@ -7,14 +7,14 @@
     <import namespace="urn:mace:shibboleth:2.0:resolver"
         schemaLocation="classpath:/schema/shibboleth-2.0-attribute-resolver.xsd" />
 
-<!-- Encoders that produce SAML 1 or SAML 2 Attribtues -->
+    <!-- Encoders that produce SAML 1 or SAML 2 Attribtues -->
     <complexType name="SAML1String">
         <annotation>
             <documentation>Defines a SAML 1 string encoder for an attribute.</documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                <attribute name="namespace" type="string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -29,7 +29,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                <attribute name="namespace" type="string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -44,7 +44,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                <attribute name="namespace" type="string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -59,7 +59,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <attribute name="nameFormat" type="string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
@@ -79,7 +79,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <attribute name="nameFormat" type="string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
@@ -99,7 +99,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <attribute name="nameFormat" type="string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
@@ -119,7 +119,15 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="scopeDelimiter" type="string" use="optional" default="@">
+                <attribute name="scopeType" type="encoder:ScopeType" use="optional">
+                    <annotation>
+                        <documentation>
+                            The type of scoping to use for the encoded attribute. Valid values are "inline" or
+                            "attribute".
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="scopeDelimiter" type="string" use="optional">
                     <annotation>
                         <documentation>
                             If scopeType is "inline", this is the delimeter used between the attribute value and
@@ -127,7 +135,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="scopeAttribute" type="string" use="optional" default="Scope">
+                <attribute name="scopeAttribute" type="string" use="optional">
                     <annotation>
                         <documentation>
                             If scopeType is "attribute", this is the name of the name of the attribute used to carry the
@@ -145,15 +153,7 @@
         </annotation>
         <complexContent>
             <extension base="encoder:BaseScopedAttributeEncoderType">
-                <attribute name="scopeType" type="encoder:ScopeType" use="optional" default="attribute">
-                    <annotation>
-                        <documentation>
-                            The type of scoping to use for the encoded attribute. Valid values are "inline" or
-                            "attribute".
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="namespace" type="string" default="urn:mace:shibboleth:1.0:attributeNamespace:uri">
+                <attribute name="namespace" type="string">
                     <annotation>
                         <documentation>The SAML 1 Namespace of the attribute.</documentation>
                     </annotation>
@@ -168,15 +168,7 @@
         </annotation>
         <complexContent>
             <extension base="encoder:BaseScopedAttributeEncoderType">
-                <attribute name="scopeType" type="encoder:ScopeType" use="optional" default="inline">
-                    <annotation>
-                        <documentation>
-                            The type of scoping to use for the encoded attribute. Valid values are "inline" or
-                            "attribute".
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                <attribute name="nameFormat" type="string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the attribute.</documentation>
                     </annotation>
@@ -204,8 +196,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string"
-                    default="urn:oasis:names:tc:SAML:1.0:nameid-format:unspecified">
+                <attribute name="nameFormat" type="string">
                     <annotation>
                         <documentation>The SAML 1 NameFormat of the NameIdentifier.</documentation>
                     </annotation>
@@ -225,8 +216,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeEncoderType">
-                <attribute name="nameFormat" type="string"
-                    default="urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified">
+                <attribute name="nameFormat" type="string">
                     <annotation>
                         <documentation>The SAML 2 NameFormat of the NameID.</documentation>
                     </annotation>

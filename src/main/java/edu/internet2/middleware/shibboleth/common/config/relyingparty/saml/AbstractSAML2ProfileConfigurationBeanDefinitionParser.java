@@ -51,13 +51,25 @@ public abstract class AbstractSAML2ProfileConfigurationBeanDefinitionParser exte
         builder.addPropertyReference("attributeAuthority", DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(
                 null, "attributeAuthority")));
 
-        builder.addPropertyValue("encryptNameIds", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(null,
-                "encryptNameIds")));
+        if (element.hasAttributeNS(null, "encryptNameIds")) {
+            builder.addPropertyValue("encryptNameIds", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(
+                    null, "encryptNameIds")));
+        } else {
+            builder.addPropertyValue("encryptNameIds", CryptoOperationRequirementLevel.never);
+        }
 
-        builder.addPropertyValue("encryptAssertions", CryptoOperationRequirementLevel.valueOf(element.getAttributeNS(
-                null, "encryptAssertions")));
+        if (element.hasAttributeNS(null, "encryptAssertions")) {
+            builder.addPropertyValue("encryptAssertions", CryptoOperationRequirementLevel.valueOf(element
+                    .getAttributeNS(null, "encryptAssertions")));
+        } else {
+            builder.addPropertyValue("encryptAssertions", CryptoOperationRequirementLevel.conditional);
+        }
 
-        builder.addPropertyValue("assertionProxyCount", Integer.parseInt(DatatypeHelper.safeTrimOrNullString(element
-                .getAttributeNS(null, "assertionProxyCount"))));
+        if (element.hasAttributeNS(null, "assertionProxyCount")) {
+            builder.addPropertyValue("assertionProxyCount", Integer.parseInt(DatatypeHelper
+                    .safeTrimOrNullString(element.getAttributeNS(null, "assertionProxyCount"))));
+        } else {
+            builder.addPropertyValue("assertionProxyCount", 0);
+        }
     }
 }

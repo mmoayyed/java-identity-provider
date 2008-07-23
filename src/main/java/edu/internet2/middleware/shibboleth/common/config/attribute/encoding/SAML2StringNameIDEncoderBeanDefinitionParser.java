@@ -41,7 +41,12 @@ public class SAML2StringNameIDEncoderBeanDefinitionParser extends BaseAttributeE
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("nameFormat", element.getAttributeNS(null, "nameFormat"));
+        if(element.hasAttributeNS(null, "nameFormat")){
+            builder.addPropertyValue("nameFormat", element.getAttributeNS(null, "nameFormat"));
+        }else{
+            builder.addPropertyValue("nameFormat", "urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified");
+        }
+        
         builder.addPropertyValue("nameQualifier", element.getAttributeNS(null, "nameQualifier"));
     }
 }

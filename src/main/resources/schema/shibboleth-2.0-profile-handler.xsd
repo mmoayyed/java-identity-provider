@@ -18,7 +18,7 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="ErrorHandlerType">
-                <xsd:attribute name="errorTemplatePath" type="xsd:string" default="/error.vm">
+                <xsd:attribute name="errorTemplatePath" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
                             Classpath path to the velocity template used to render the error page output.
@@ -45,7 +45,7 @@
         </xsd:annotation>
         <xsd:complexContent>
             <xsd:extension base="ErrorHandlerType">
-                <xsd:attribute name="jspPagePath" type="xsd:string" default="/error.jsp">
+                <xsd:attribute name="jspPagePath" type="xsd:string">
                     <xsd:annotation>
                         <xsd:documentation>
                             Path to the JSP page. This path may be absolute (i.e. start with a "/"), in which case the

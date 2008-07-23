@@ -39,12 +39,11 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-
 /**
  * Base class for PKIXValidationInformation beans.
  */
 public abstract class AbstractPKIXValidationInformationBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractX509CredentialBeanDefinitionParser.class);
 
@@ -61,10 +60,14 @@ public abstract class AbstractPKIXValidationInformationBeanDefinitionParser exte
     /** {@inheritDoc} */
     protected void doParse(Element element, BeanDefinitionBuilder builder) {
         log.debug("Parsing PKIX ValidationInfo: {}", element.getAttributeNS(null, "id"));
+
+        int depth = 1;
+        if (element.hasAttributeNS(null, "verifyDepth")) {
+            depth = new Integer(DatatypeHelper.safeTrim(element.getAttributeNS(null, "verifyDepth")));
+        }
         
-        String depth = DatatypeHelper.safeTrim(element.getAttributeNS(null, "VerifyDepth"));
-        builder.addPropertyValue("verifyDepth", new Integer(depth));
-        
+        builder.addPropertyValue("verifyDepth", depth);
+
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(element);
 
         parseCertificates(configChildren, builder);

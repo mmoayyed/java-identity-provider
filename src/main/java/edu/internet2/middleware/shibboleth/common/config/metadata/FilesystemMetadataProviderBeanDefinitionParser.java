@@ -45,21 +45,23 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadata
     }
 
     /** {@inheritDoc} */
-    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.setInitMethodName("initialize");
 
-        super.doParse(config, parserContext, builder);
+        super.doParse(element, parserContext, builder);
 
         builder.addPropertyReference("parserPool", "shibboleth.ParserPool");
 
-        String metadataFile = config.getAttributeNS(null, "metadataFile");
+        String metadataFile = element.getAttributeNS(null, "metadataFile");
         builder.addConstructorArgValue(new File(metadataFile));
 
-        if (config.hasAttributeNS(null, "maintainExpiredMetadata")) {
-            builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(config
+        if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
+            builder.addPropertyValue("maintainExpiredMetadata", XMLHelper.getAttributeValueAsBoolean(element
                     .getAttributeNodeNS(null, "maintainExpiredMetadata")));
+        } else {
+            builder.addPropertyValue("maintainExpiredMetadata", false);
         }
         
-        log.warn("Use of the FilesystemMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with the FilesystemResource");
+        log.warn("Use of the FilesystemMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with a FilesystemResource");
     }
 }

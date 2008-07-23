@@ -37,7 +37,7 @@
                 <documentation>The name of the attribute.</documentation>
             </annotation>
         </attribute>
-        <attribute name="nameFormat" type="string" default="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <attribute name="nameFormat" type="string">
             <annotation>
                 <documentation>The SAML 1 Namespace or SAML 2 NameFormat of the attribute.</documentation>
             </annotation>
@@ -50,7 +50,7 @@
         </annotation>
         <complexContent>
             <extension base="am:AttributeDecoderType">
-                <attribute name="scopeDelimiter" type="string" use="optional" default="@">
+                <attribute name="scopeDelimiter" type="string" use="optional">
                     <annotation>
                         <documentation>
                             The character(s) used delimit the scoped information from the scope.

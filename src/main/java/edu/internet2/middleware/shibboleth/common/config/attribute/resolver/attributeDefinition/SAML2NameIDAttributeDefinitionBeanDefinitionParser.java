@@ -42,8 +42,11 @@ public class SAML2NameIDAttributeDefinitionBeanDefinitionParser extends BaseAttr
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        pluginBuilder.addPropertyValue("nameIdFormat", DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(
-                null, "nameIdFormat")));
+        String nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+        if (pluginConfig.hasAttributeNS(null, "nameIdFormat")) {
+            nameIdFormat = DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null, "nameIdFormat"));
+        }
+        pluginBuilder.addPropertyValue("nameIdFormat", nameIdFormat);
 
         pluginBuilder.addPropertyValue("nameIdQualifier", DatatypeHelper.safeTrimOrNullString(pluginConfig
                 .getAttributeNS(null, "nameIdQualifier")));

@@ -48,7 +48,10 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
         super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        String scriptLanguage = pluginConfig.getAttributeNS(null, "language");
+        String scriptLanguage = "javascript";
+        if (pluginConfig.hasAttributeNS(null, "language")) {
+            scriptLanguage = pluginConfig.getAttributeNS(null, "language");
+        }
         log.debug("Attribute definition {} scripting language: {}", pluginId, scriptLanguage);
         pluginBuilder.addPropertyValue("language", scriptLanguage);
 

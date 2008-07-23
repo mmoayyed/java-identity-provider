@@ -57,7 +57,7 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseDataConnectorType">
-                <attribute name="generatedAttributeID" type="string" default="computedId">
+                <attribute name="generatedAttributeID" type="string">
                     <annotation>
                         <documentation>
                             The name of the attribute which should be used to as input to the computed ID.
@@ -107,7 +107,7 @@
                         </annotation>
                     </element>
                 </choice>
-                <attribute name="generatedAttributeID" type="string" default="storedId">
+                <attribute name="generatedAttributeID" type="string">
                     <annotation>
                         <documentation>
                             The name of the attribute which should be used to as input to the computed ID.
@@ -169,7 +169,7 @@
                     </element>
                     <element ref="dc:Column" minOccurs="0" maxOccurs="unbounded" />
                 </sequence>
-                <attribute name="readOnlyConnection" type="boolean" default="true">
+                <attribute name="readOnlyConnection" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag that determines whether the connection to the database is read-only, if the
@@ -177,7 +177,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="queryUsesStoredProcedure" type="boolean" default="false">
+                <attribute name="queryUsesStoredProcedure" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag that determines whether stored procedures might be used in the SQL queries
@@ -185,7 +185,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cacheResults" type="boolean" default="true">
+                <attribute name="cacheResults" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag that determines whether to cache results. Results using a compound key
@@ -263,21 +263,21 @@
                 <documentation>The password to use while connecting to the database.</documentation>
             </annotation>
         </attribute>
-        <attribute name="poolAcquireIncrement" type="positiveInteger" default="3">
+        <attribute name="poolAcquireIncrement" type="positiveInteger">
             <annotation>
                 <documentation>
                     The number of new connections that will be created when the pool is exhausted.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolAcquireRetryAttempts" type="positiveInteger" default="36">
+        <attribute name="poolAcquireRetryAttempts" type="positiveInteger">
             <annotation>
                 <documentation>
                     The number of times the pool will try to establish a connection to a database.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolAcquireRetryDelay" type="positiveInteger" default="5000">
+        <attribute name="poolAcquireRetryDelay" type="positiveInteger">
             <annotation>
                 <documentation>
                     The amount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
@@ -285,7 +285,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolBreakAfterAcquireFailure" type="boolean" default="true">
+        <attribute name="poolBreakAfterAcquireFailure" type="boolean">
             <annotation>
                 <documentation>
                     A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new
@@ -293,7 +293,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolMinSize" type="positiveInteger" default="2">
+        <attribute name="poolMinSize" type="positiveInteger">
             <annotation>
                 <documentation>
                     The minimum number of connections the pool will establish with the database. A value of zero means
@@ -301,7 +301,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolMaxSize" type="positiveInteger" default="50">
+        <attribute name="poolMaxSize" type="positiveInteger">
             <annotation>
                 <documentation>
                     The maximum number of connections the pool will establish with the database. A value of zero means
@@ -309,14 +309,14 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolMaxIdleTime" type="positiveInteger" default="600">
+        <attribute name="poolMaxIdleTime" type="positiveInteger">
             <annotation>
                 <documentation>
                     The maximum time, in seconds, that an established connection will remain idle before it is closed.
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolIdleTestPeriod" type="positiveInteger" default="180">
+        <attribute name="poolIdleTestPeriod" type="positiveInteger">
             <annotation>
                 <documentation>
                     The interval, in seconds, that the pool will scan idle established connections, using the validation
@@ -355,7 +355,7 @@
                 <documentation>The name of the attribute that data from this column should be added to.</documentation>
             </annotation>
         </attribute>
-        <attribute name="type" type="dc:ColumnDataType" default="String">
+        <attribute name="type" type="dc:ColumnDataType">
             <annotation>
                 <documentation>The Java data type data in the column should be extracted as.</documentation>
             </annotation>
@@ -455,7 +455,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="authenticationType" type="dc:AuthenticationType" default="SIMPLE">
+                <attribute name="authenticationType" type="dc:AuthenticationType">
                     <annotation>
                         <documentation>
                             The LDAP authentication type. Acceptable values are ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI.
@@ -463,7 +463,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="searchScope" type="dc:SearchScopeType" default="SUBTREE">
+                <attribute name="searchScope" type="dc:SearchScopeType">
                     <annotation>
                         <documentation>
                             The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE. If no scope is given
@@ -471,28 +471,28 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="useStartTLS" type="boolean" default="false">
+                <attribute name="useStartTLS" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether startTLS should be used when connecting to the LDAP.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="poolInitialSize" type="nonNegativeInteger" default="0">
+                <attribute name="poolInitialSize" type="nonNegativeInteger">
                     <annotation>
                         <documentation>
                             Initial number of connections established to the directory when this connector starts up.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="poolMaxIdleSize" type="nonNegativeInteger" default="3">
+                <attribute name="poolMaxIdleSize" type="nonNegativeInteger">
                     <annotation>
                         <documentation>
                             The maximum number of idle connections that will remain in the pool.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="searchTimeLimit" type="positiveInteger" default="3000">
+                <attribute name="searchTimeLimit" type="positiveInteger">
                     <annotation>
                         <documentation>
                             The maximum amount of time, in milliseconds, to wait for search results. If this limit is
@@ -500,12 +500,12 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxResultSize" type="positiveInteger" default="1">
+                <attribute name="maxResultSize" type="positiveInteger">
                     <annotation>
                         <documentation>The maximum number of results that may be returned from a query.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cacheResults" type="boolean" default="true">
+                <attribute name="cacheResults" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that search results should be cached for the duration of a user's
@@ -513,7 +513,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="mergeResults" type="boolean" default="false">
+                <attribute name="mergeResults" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating that if multiple results are returned they should be merged into
@@ -522,7 +522,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="noResultIsError" type="boolean" default="false">
+                <attribute name="noResultIsError" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a query returning no results should be considered an error. If

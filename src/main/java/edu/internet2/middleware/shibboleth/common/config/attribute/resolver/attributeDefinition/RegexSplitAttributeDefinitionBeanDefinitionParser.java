@@ -48,7 +48,11 @@ public class RegexSplitAttributeDefinitionBeanDefinitionParser extends BaseAttri
         pluginBuilder.addPropertyValue("regex", DatatypeHelper.safeTrimOrNullString(pluginConfig.getAttributeNS(null,
                 "regex")));
 
-        pluginBuilder.addPropertyValue("caseSensitive", XMLHelper.getAttributeValueAsBoolean(pluginConfig
-                .getAttributeNodeNS(null, "caseSensitive")));
+        boolean caseSensitive = true;
+        if (pluginConfig.hasAttributeNS(null, "caseSensitive")) {
+            caseSensitive = XMLHelper
+                    .getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "caseSensitive"));
+        }
+        pluginBuilder.addPropertyValue("caseSensitive", caseSensitive);
     }
 }

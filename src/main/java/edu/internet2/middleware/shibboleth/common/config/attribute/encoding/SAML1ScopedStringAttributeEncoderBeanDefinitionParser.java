@@ -42,7 +42,17 @@ public class SAML1ScopedStringAttributeEncoderBeanDefinitionParser extends
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        builder.addPropertyValue("namespace", element.getAttribute(NAMESPACE_ATTRIBUTE_NAME));
+        if (element.hasAttributeNS(null, "scopeType")) {
+            builder.addPropertyValue("scopeType", element.getAttribute("scopeType"));
+        } else {
+            builder.addPropertyValue("scopeType", "attribute");
+        }
+
+        String namespace = "urn:mace:shibboleth:1.0:attributeNamespace:uri";
+        if (element.hasAttributeNS(null, "namespace")) {
+            namespace = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "namespace"));
+        }
+        builder.addPropertyValue("namespace", namespace);
 
         String attributeName = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "name"));
         if (attributeName == null) {
