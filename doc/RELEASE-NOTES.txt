@@ -8,5 +8,8 @@ Changes in Release 1.1.0
 [SC-42] - Allow for ResourceBackedMetadataProvider as a metadata provider resource type
 [SC-43] - Create a new Resource type that can read information from a Subversion respository
 [SC-44] - StoredIDStore Connection Resource Leak
+[SC-45] - Upgrade to OpenSAML 2.2.0
+[SC-46] - Upgrade to VT LDAP lib version 2.8.2
+
 [SIDP-200] - attribute-filter.xml AtributeRule ignoreCase logic is backwards
-- Updated to OpenSAML release 2.2
+[SIDP-213] - aacli.sh computedid Exception in thread "main" java.lang.NullPointerException
