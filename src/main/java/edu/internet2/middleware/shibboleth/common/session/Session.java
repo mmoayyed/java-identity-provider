@@ -1,5 +1,5 @@
 /*
- * Copyright [2006] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2006 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package edu.internet2.middleware.shibboleth.common.session;
 
 import java.io.Serializable;
 
+import javax.security.auth.Subject;
+
 import org.joda.time.DateTime;
 
-/**
- * Session information for user currently logged in.
- */
+/** Session information for user currently logged in. */
 public interface Session extends Serializable {
 
     /**
@@ -33,12 +33,26 @@ public interface Session extends Serializable {
     public String getSessionID();
 
     /**
-     * Gets the principal ID of the user.
+     * Gets the subject with which this session is associated.
      * 
-     * @return principal ID of the user
+     * @return subject with which this session is associated
+     */
+    public Subject getSubject();
+    
+    /**
+     * Sets the subject with which this session is associated.
+     * 
+     * @param newSubject the subject with which this session is associated
+     */
+    public void setSubject(Subject newSubject);
+
+    /**
+     * A convenience method that gets the first principal retrieved from the {@link Subject}.
+     * 
+     * @return principal ID of the user, or null
      */
     public String getPrincipalName();
-    
+
     /**
      * Gets the session inactivity timeout in milliseconds.
      * 

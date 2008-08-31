@@ -116,6 +116,7 @@ public abstract class BaseSpringNamespaceHandler implements NamespaceHandler {
         }
 
         if (parser == null) {
+            log.error("Cannot locate BeanDefinitionParser for element: " + parserId);
             throw new IllegalArgumentException("Cannot locate BeanDefinitionParser for element: " + parserId);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright [2006] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2006 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,29 @@ package edu.internet2.middleware.shibboleth.common.session;
 import org.springframework.context.ApplicationEvent;
 
 /**
- * An event representing the destruction of a Shibboleth session that occured 
- * because a user logged out of the system or because the application timed out.
+ * An event representing the destruction of a Shibboleth session that occured because a user logged out of the system or
+ * because the application timed out.
  */
 public class LogoutEvent extends ApplicationEvent {
 
-    /** Serial version UID.  */
+    /** Serial version UID. */
     private static final long serialVersionUID = -1234450648177702760L;
 
     /**
      * Constructor.
-     *
+     * 
      * @param session session of the user being logged out
      */
-    public LogoutEvent(Session session){
+    public LogoutEvent(Session session) {
         super(session);
     }
-    
+
     /**
      * Gets the session for the user logging out.
      * 
      * @return session for the user logging out
      */
-    public Session getUserSession(){
+    public Session getUserSession() {
         return (Session) getSource();
     }
 }

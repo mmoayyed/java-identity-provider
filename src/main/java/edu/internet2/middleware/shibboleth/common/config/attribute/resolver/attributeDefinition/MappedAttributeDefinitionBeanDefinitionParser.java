@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,14 +73,13 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
         pluginBuilder.addPropertyValue("valueMaps", valueMaps);
 
         if (pluginConfigChildren.containsKey(DEFAULT_VALUE_ELEMENT_NAME)) {
-            List<Element> defaultValueElems = pluginConfigChildren.get(DEFAULT_VALUE_ELEMENT_NAME);
-            String defaultValue = DatatypeHelper.safeTrimOrNullString(defaultValueElems.get(0).getTextContent());
+            Element defaultValueElem = pluginConfigChildren.get(DEFAULT_VALUE_ELEMENT_NAME).get(0);
+            String defaultValue = DatatypeHelper.safeTrimOrNullString(defaultValueElem.getTextContent());
             pluginBuilder.addPropertyValue("defaultValue", defaultValue);
             if (log.isDebugEnabled()) {
                 log.debug("Attribute definition {} default value: {}", pluginId, defaultValue);
             }
 
-            Element defaultValueElem = defaultValueElems.get(0);
             boolean passThru = false;
             if (defaultValueElem.hasAttributeNS(null, "passThru")) {
                 passThru = XMLHelper.getAttributeValueAsBoolean(defaultValueElem.getAttributeNodeNS(null, "passThru"));

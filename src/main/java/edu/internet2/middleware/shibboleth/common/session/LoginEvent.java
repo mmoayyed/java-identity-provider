@@ -1,5 +1,5 @@
 /*
- * Copyright [2006] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2006 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,7 @@ package edu.internet2.middleware.shibboleth.common.session;
 
 import org.springframework.context.ApplicationEvent;
 
-/**
- * An event representing the creation of a Shibboleth session that occured 
- * because a user logged into the system.
- */
+/** An event representing the creation of a Shibboleth session that occurred because a user logged into the system. */
 public class LoginEvent extends ApplicationEvent {
 
     /** Serial version UID. */
@@ -29,19 +26,19 @@ public class LoginEvent extends ApplicationEvent {
 
     /**
      * Constructor.
-     *
+     * 
      * @param session session for the user logging in
      */
-    public LoginEvent(Session session){
+    public LoginEvent(Session session) {
         super(session);
     }
-    
+
     /**
      * Gets the session for the user logging in.
      * 
      * @return session for the user logging in
      */
-    public Session getUserSession(){
+    public Session getUserSession() {
         return (Session) getSource();
     }
 }
