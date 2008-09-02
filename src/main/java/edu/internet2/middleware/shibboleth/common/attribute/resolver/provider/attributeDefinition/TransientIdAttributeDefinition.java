@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         partition = "transientId";
         idSize = 16;
         idLifetime = 1000 * 60 * 60 * 4;
-        
+
         // Prime the generator
         idGenerator.generateIdentifier(idSize);
     }
@@ -141,18 +141,16 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
     }
 
-    /**
-     * Storage service entry used to store information associated with a id.
-     */
+    /** Storage service entry used to store information associated with a id. */
     public class IdEntry implements ExpiringObject {
 
         /** Time this entry expires. */
         private DateTime expirationTime;
 
-        /** Relying party the token was issed to. */
+        /** Relying party the token was issued to. */
         private String relyingPartyId;
 
-        /** Principal the token was issused for. */
+        /** Principal for which the token was issued. */
         private String principalName;
 
         /** Random token. */

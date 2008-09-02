@@ -20,7 +20,8 @@ package edu.internet2.middleware.shibboleth.common.session;
  * Session managers are responsible for creating, managing, and destroying Shibboleth sessions.
  * 
  * Session managers produce a {@link LoginEvent} during session creation and a {@link LogoutEvent} during session
- * destruction.
+ * destruction. These events are published in the root application context, that is the highest ancestor, of the
+ * application context presented to a session manager.
  * 
  * @param <SessionType> type of session object managed
  */

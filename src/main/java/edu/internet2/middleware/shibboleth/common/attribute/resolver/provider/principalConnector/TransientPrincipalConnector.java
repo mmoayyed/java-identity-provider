@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class TransientPrincipalConnector extends BasePrincipalConnector {
     /** Store used to map transient identifier tokens to principal names. */
     private StorageService<String, IdEntry> identifierStore;
 
-    /** Storage parition in which IDs are stored. */
+    /** Storage partition in which IDs are stored. */
     private String partition;
 
     /**
