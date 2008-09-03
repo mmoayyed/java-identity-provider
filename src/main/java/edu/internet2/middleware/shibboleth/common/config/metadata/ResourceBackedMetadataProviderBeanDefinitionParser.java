@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.ResourceBackedMetadataProvider;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -41,6 +42,14 @@ public class ResourceBackedMetadataProviderBeanDefinitionParser extends BaseMeta
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
+        
+        builder.setInitMethodName("initialize");
+
+        String parserPoolRef = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "parserPoolRef"));
+        if (parserPoolRef == null) {
+            parserPoolRef = "shibboleth.ParserPool";
+        }
+        builder.addPropertyReference("parserPool", parserPoolRef);
 
         NodeList resourceElems = config.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE, "MetadataResource");
         builder.addConstructorArgValue(SpringConfigurationUtils.parseCustomElement((Element) resourceElems.item(0),
