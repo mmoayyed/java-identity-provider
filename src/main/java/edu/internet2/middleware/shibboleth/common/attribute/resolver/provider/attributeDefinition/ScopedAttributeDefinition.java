@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 
 import java.util.Collection;
 
+import org.opensaml.xml.util.DatatypeHelper;
+
 import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.BasicAttribute;
 import edu.internet2.middleware.shibboleth.common.attribute.provider.ScopedAttributeValue;
@@ -51,8 +53,9 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
         Collection<?> values = getValuesFromAllDependencies(resolutionContext);
         if (values != null && !values.isEmpty()) {
             for (Object value : values) {
-                if (value != null) {
-                    attribute.getValues().add(new ScopedAttributeValue(value.toString(), scope));
+                String strValue = DatatypeHelper.safeTrimOrNullString(value.toString());
+                if (strValue != null) {
+                    attribute.getValues().add(new ScopedAttributeValue(strValue.toString(), scope));
                 }
             }
         }

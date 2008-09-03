@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchResult;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
@@ -37,9 +36,10 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.opensaml.xml.security.x509.X509Credential;
+import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.opensaml.xml.security.x509.X509Credential;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -864,27 +864,39 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
         Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
 
         if (!results.hasNext()) {
-            //
-            // Nothing to add, return the empty set
-            //
             return attributes;
         }
 
-        SearchResult sr = results.next();
-        Map<String, List<String>> attrs = mergeAttributes(new HashMap<String, List<String>>(), sr.getAttributes());
-        // merge additional results if requested
-        while (mergeMultipleResults && results.hasNext()) {
-            SearchResult additionalResult = results.next();
-            attrs = mergeAttributes(attrs, additionalResult.getAttributes());
-        }
-        // populate list of attributes
-        for (Map.Entry<String, List<String>> entry : attrs.entrySet()) {
-            log.debug("Found the following attribute: {}", entry);
-            BasicAttribute<String> attribute = new BasicAttribute<String>();
-            attribute.setId(entry.getKey());
-            attribute.getValues().addAll(entry.getValue());
-            attributes.put(attribute.getId(), attribute);
-        }
+        do{
+            SearchResult sr = results.next();
+            Map<String, List<String>> newAttrsMap = null;
+            try{
+                newAttrsMap = LdapUtil.parseAttributes(sr.getAttributes(), true);
+            } catch (NamingException e) {
+                log.error("Error parsing LDAP attributes", e);
+                throw new AttributeResolutionException("Error parsing LDAP attributes");
+            }
+            
+            for (Map.Entry<String, List<String>> entry : newAttrsMap.entrySet()) {
+                log.debug("Found the following attribute: {}", entry);
+                BaseAttribute<String> attribute = attributes.get(entry.getKey());
+                if(attribute == null){
+                    attribute = new BasicAttribute<String>();
+                    ((BasicAttribute)attribute).setId(entry.getKey());
+                    attributes.put(entry.getKey(), attribute);
+                }
+                
+                List<String> values = entry.getValue();
+                if(values != null && !values.isEmpty()){
+                    for(String value : values){
+                        if(!DatatypeHelper.isEmpty(value)){
+                            attribute.getValues().add(DatatypeHelper.safeTrimOrNullString(value));
+                        }
+                    }
+                }
+            }
+        }while (mergeMultipleResults && results.hasNext());
+        
         return attributes;
     }
 
@@ -927,38 +939,6 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             }
         }
         return attributes;
-    }
-
-    /**
-     * This updates the supplied attribute map with the names and values found in the supplied <code>Attributes</code>
-     * object.
-     * 
-     * @param attrs <code>Map</code> to update
-     * @param newAttrs <code>Attributes</code> to parse
-     * @return <code>Map</code> of attributes
-     * @throws AttributeResolutionException if the supplied attributes cannot be parsed
-     */
-    private Map<String, List<String>> mergeAttributes(Map<String, List<String>> attrs, Attributes newAttrs)
-            throws AttributeResolutionException {
-        // merge the new attributes
-        try {
-            Map<String, List<String>> newAttrsMap = LdapUtil.parseAttributes(newAttrs, true);
-
-            for (Map.Entry<String, List<String>> entry : newAttrsMap.entrySet()) {
-                String attrName = entry.getKey();
-                List<String> attrValues = entry.getValue();
-                if (attrs.containsKey(attrName)) {
-                    List<String> l = attrs.get(attrName);
-                    l.addAll(attrValues);
-                } else {
-                    attrs.put(attrName, attrValues);
-                }
-            }
-        } catch (NamingException e) {
-            log.error("Error parsing LDAP attributes", e);
-            throw new AttributeResolutionException("Error parsing LDAP attributes");
-        }
-        return attrs;
     }
 
     /**
