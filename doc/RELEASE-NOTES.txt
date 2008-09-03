@@ -13,3 +13,4 @@ Changes in Release 1.1.0
 
 [SIDP-200] - attribute-filter.xml AtributeRule ignoreCase logic is backwards
 [SIDP-213] - aacli.sh computedid Exception in thread "main" java.lang.NullPointerException
+[SIDP-220] - creation of mapped attribute in attribute-resolver doesn't seem correct
