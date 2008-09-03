@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector;
 
 import java.beans.PropertyVetoException;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -110,6 +112,10 @@ public class StoredIDDataConnectorBeanDefinitionParser extends BaseDataConnector
         try {
             InitialContext initCtx = new InitialContext(initCtxProps);
             DataSource dataSource = (DataSource) initCtx.lookup(jndiResource);
+            if(dataSource == null){
+                log.error("DataSource " + jndiResource + " did not exist in JNDI directory");
+                throw new BeanCreationException("DataSource " + jndiResource + " did not exist in JNDI directory");
+            }
             if (log.isDebugEnabled()) {
                 log.debug("Retrieved data source for data connector {} from JNDI location {} using properties ",
                         pluginId, initCtxProps);
@@ -134,32 +140,74 @@ public class StoredIDDataConnectorBeanDefinitionParser extends BaseDataConnector
         ComboPooledDataSource datasource = new ComboPooledDataSource();
 
         String driverClass = DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcDriver"));
+        URL classURL = getClass().getResource(driverClass.replace(".", "/"));
+        if(classURL == null){
+            log.error("Unable to create relational database connector, JDBC driver can not be found on the classpath");
+            throw new BeanCreationException("Unable to create relational database connector, JDBC driver can not be found on the classpath");
+        }
+        
         try {
             datasource.setDriverClass(driverClass);
             datasource.setJdbcUrl(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcURL")));
             datasource.setUser(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcUserName")));
             datasource.setPassword(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcPassword")));
 
-            datasource.setAcquireIncrement(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
-                    "poolAcquireIncrement"))));
-            datasource.setAcquireRetryAttempts(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
-                    "poolAcquireRetryAttempts"))));
-            datasource.setAcquireRetryDelay(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
-                    "poolAcquireRetryDelay"))));
+            if (amc.hasAttributeNS(null, "poolAcquireIncrement")) {
+                datasource.setAcquireIncrement(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
+                        "poolAcquireIncrement"))));
+            } else {
+                datasource.setAcquireIncrement(3);
+            }
+
+            if (amc.hasAttributeNS(null, "poolAcquireRetryAttempts")) {
+                datasource.setAcquireRetryAttempts(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
+                        "poolAcquireRetryAttempts"))));
+            } else {
+                datasource.setAcquireRetryAttempts(36);
+            }
+
+            if (amc.hasAttributeNS(null, "poolAcquireRetryDelay")) {
+                datasource.setAcquireRetryDelay(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
+                        "poolAcquireRetryDelay"))));
+            } else {
+                datasource.setAcquireRetryDelay(5000);
+            }
+
             if (amc.hasAttributeNS(null, "poolBreakAfterAcquireFailure")) {
                 datasource.setBreakAfterAcquireFailure(XMLHelper.getAttributeValueAsBoolean(amc.getAttributeNodeNS(
                         null, "poolBreakAfterAcquireFailure")));
+            } else {
+                datasource.setBreakAfterAcquireFailure(true);
             }
 
-            int minSize = Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "poolMinSize")));
-            datasource.setInitialPoolSize(minSize);
-            datasource.setMinPoolSize(minSize);
-            datasource.setMaxPoolSize(Integer
-                    .parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "poolMaxSize"))));
-            datasource.setMaxIdleTime(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
-                    "poolMaxIdleTime"))));
-            datasource.setIdleConnectionTestPeriod(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
-                    "poolIdleTestPeriod"))));
+            if (amc.hasAttributeNS(null, "poolMinSize")) {
+                datasource.setMinPoolSize(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
+                        "poolMinSize"))));
+            } else {
+                datasource.setMinPoolSize(2);
+            }
+
+            if (amc.hasAttributeNS(null, "poolMaxSize")) {
+                datasource.setMaxPoolSize(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
+                        "poolMaxSize"))));
+            } else {
+                datasource.setMaxPoolSize(50);
+            }
+
+            if (amc.hasAttributeNS(null, "poolMaxIdleTime")) {
+                datasource.setMaxIdleTime(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(null,
+                        "poolMaxIdleTime"))));
+            } else {
+                datasource.setMaxIdleTime(600);
+            }
+
+            if (amc.hasAttributeNS(null, "poolIdleTestPeriod")) {
+                datasource.setIdleConnectionTestPeriod(Integer.parseInt(DatatypeHelper.safeTrim(amc.getAttributeNS(
+                        null, "poolIdleTestPeriod"))));
+            } else {
+                datasource.setIdleConnectionTestPeriod(180);
+            }
+
             log.debug("Created application managed data source for data connector {}", pluginId);
             return datasource;
         } catch (PropertyVetoException e) {
