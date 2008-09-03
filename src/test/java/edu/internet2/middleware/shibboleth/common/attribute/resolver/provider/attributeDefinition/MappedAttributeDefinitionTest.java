@@ -62,7 +62,7 @@ public class MappedAttributeDefinitionTest extends TestCase{
         
         ValueMap barValueMap = new ValueMap();
         barValueMap.setReturnValue(bar);
-        barValueMap.getSourceValues().add(barValueMap.new SourceValue("student", false, false));
+        barValueMap.getSourceValues().add(barValueMap.new SourceValue("student.*", false, false));
         
         MappedAttributeDefinition attributeDefinition = new MappedAttributeDefinition();
         attributeDefinition.setId("map1");
