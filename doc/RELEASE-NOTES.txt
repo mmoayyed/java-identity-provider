@@ -10,6 +10,7 @@ Changes in Release 1.1.0
 [SC-44] - StoredIDStore Connection Resource Leak
 [SC-45] - Upgrade to OpenSAML 2.2.0
 [SC-46] - Upgrade to VT LDAP lib version 2.8.2
+[SC-47] - Check to see if the configured JDBC driver is available on the classpath, if not then error out
 
 [SIDP-200] - attribute-filter.xml AtributeRule ignoreCase logic is backwards
 [SIDP-213] - aacli.sh computedid Exception in thread "main" java.lang.NullPointerException

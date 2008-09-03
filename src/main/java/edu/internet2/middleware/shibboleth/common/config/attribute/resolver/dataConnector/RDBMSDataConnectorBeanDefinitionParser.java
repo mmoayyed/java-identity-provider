@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector;
 
 import java.beans.PropertyVetoException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -152,6 +154,10 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         try {
             InitialContext initCtx = new InitialContext(initCtxProps);
             DataSource dataSource = (DataSource) initCtx.lookup(jndiResource);
+            if(dataSource == null){
+                log.error("DataSource " + jndiResource + " did not exist in JNDI directory");
+                throw new BeanCreationException("DataSource " + jndiResource + " did not exist in JNDI directory");
+            }
             if (log.isDebugEnabled()) {
                 log.debug("Retrieved data source for data connector {} from JNDI location {} using properties ",
                         pluginId, initCtxProps);
@@ -176,6 +182,12 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         ComboPooledDataSource datasource = new ComboPooledDataSource();
 
         String driverClass = DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcDriver"));
+        URL classURL = getClass().getResource(driverClass.replace(".", "/"));
+        if(classURL == null){
+            log.error("Unable to create relational database connector, JDBC driver can not be found on the classpath");
+            throw new BeanCreationException("Unable to create relational database connector, JDBC driver can not be found on the classpath");
+        }
+        
         try {
             datasource.setDriverClass(driverClass);
             datasource.setJdbcUrl(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcURL")));
