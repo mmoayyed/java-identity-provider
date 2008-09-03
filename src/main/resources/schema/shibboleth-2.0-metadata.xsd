@@ -54,6 +54,13 @@
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="parserPoolRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to the parser pool.  By default 'shibboleth.ParserPool' is assumed.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
