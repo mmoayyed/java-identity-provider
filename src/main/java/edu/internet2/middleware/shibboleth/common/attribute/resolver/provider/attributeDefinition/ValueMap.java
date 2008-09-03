@@ -23,7 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,20 +83,27 @@ public class ValueMap {
         Set<String> mappedValues = new HashSet<String>();
         Matcher m;
 
+        String newValue;
         for (SourceValue vmv : sourceValues) {
-            int flags = vmv.isIgnoreCase() ? Pattern.CASE_INSENSITIVE : 0;
-
-            try {
-                m = Pattern.compile(vmv.getValue(), flags).matcher(sourceValue);
-
-                if (vmv.isPartialMatch() || m.matches()) {
-                    String newValue = m.replaceAll(returnValue);
-                    if (!DatatypeHelper.isEmpty(newValue)) {
-                        mappedValues.add(newValue);
-                    }
+            newValue = null;
+            if (vmv.isPartialMatch()) {
+                if (sourceValue.contains(vmv.getValue())) {
+                    newValue = returnValue;
                 }
-            } catch (PatternSyntaxException e) {
-                log.debug("MappedAttributeDefinition caught an exception when trying to match value {}.  Skipping this value.", sourceValue);
+            } else {
+                try {
+                    int flags = vmv.isIgnoreCase() ? Pattern.CASE_INSENSITIVE : 0;
+                    m = Pattern.compile(vmv.getValue(), flags).matcher(sourceValue);
+                    if (m.matches()) {
+                        newValue = m.replaceAll(returnValue);
+                    }
+                } catch (PatternSyntaxException e) {
+                    log.debug("Error matching value {}.  Skipping this value.", sourceValue);
+                }
+            }
+
+            if (newValue != null) {
+                mappedValues.add(returnValue);
             }
         }
 
