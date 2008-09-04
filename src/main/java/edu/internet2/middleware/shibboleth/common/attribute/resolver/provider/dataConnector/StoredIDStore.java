@@ -358,7 +358,7 @@ public class StoredIDStore {
 
         Connection dbConn = dataSource.getConnection();
         try {
-            log.trace("Storing persistent ID entry based on prepared sql statement: {}", sql);
+            log.debug("Storing persistent ID entry based on prepared sql statement: {}", sql);
             PreparedStatement statement = dbConn.prepareStatement(sql);
 
             log.debug("Setting prepared statement parameter {}: {}", 1, entry.getLocalEntityId());
@@ -442,7 +442,7 @@ public class StoredIDStore {
         try {
             ResultSet rs = statement.executeQuery();
             entries = buildIdentifierEntries(rs);
-            log.debug("{} persitent ID entries retrieved", entries.size());
+            log.debug("{} persistent ID entries retrieved", entries.size());
             return entries;
         } finally {
             try {
