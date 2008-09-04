@@ -155,7 +155,12 @@ public class ShibbolethAttributeFilteringEngine extends BaseReloadableService im
         if (permitRule != null) {
             log.debug("Processing permit value rule for attribute {} for principal {}", attributeId, filterContext
                     .getAttributeRequestContext().getPrincipalName());
-            Collection unfilteredValues = filterContext.getUnfilteredAttributes().get(attributeId).getValues();
+            BaseAttribute attribute = filterContext.getUnfilteredAttributes().get(attributeId);
+            if(attribute == null){
+                return;
+            }
+            
+            Collection unfilteredValues = attribute.getValues();
             for (Object attributeValue : unfilteredValues) {
                 if (permitRule.evaluatePermitValue(filterContext, attributeId, attributeValue)) {
                     attributeValues.add(attributeValue);
