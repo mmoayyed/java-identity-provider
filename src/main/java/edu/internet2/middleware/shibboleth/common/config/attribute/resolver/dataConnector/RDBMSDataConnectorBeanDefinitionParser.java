@@ -17,7 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.dataConnector;
 
 import java.beans.PropertyVetoException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -182,8 +181,10 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         ComboPooledDataSource datasource = new ComboPooledDataSource();
 
         String driverClass = DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcDriver"));
-        URL classURL = getClass().getResource(driverClass.replace(".", "/"));
-        if(classURL == null){
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        try{
+            classLoader.loadClass(driverClass);
+        }catch(ClassNotFoundException e){
             log.error("Unable to create relational database connector, JDBC driver can not be found on the classpath");
             throw new BeanCreationException("Unable to create relational database connector, JDBC driver can not be found on the classpath");
         }
