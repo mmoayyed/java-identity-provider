@@ -415,7 +415,7 @@ public class StoredIDStore {
             PreparedStatement statement = dbConn.prepareStatement(deactivateIdSQL);
             statement.setTimestamp(1, deactivationTime);
             statement.setString(2, persistentId);
-            int effected = statement.executeUpdate();
+            statement.executeUpdate();
         } finally {
             try {
                 if (dbConn != null && !dbConn.isClosed()) {
@@ -479,6 +479,8 @@ public class StoredIDStore {
             entry.setCreationTime(resultSet.getTimestamp(createTimeColumn));
             entry.setDeactivationTime(resultSet.getTimestamp(deactivationTimeColumn));
             entries.add(entry);
+            
+            log.trace("");
         }
 
         return entries;
@@ -660,6 +662,21 @@ public class StoredIDStore {
          */
         public void setDeactivationTime(Timestamp time) {
             this.deactivationTime = time;
+        }
+        
+        /** {@inheritDoc} */
+        public String toString() {
+            StringBuilder stringForm = new StringBuilder("PersistentIdEntry{");
+            stringForm.append("persistentId:").append(persistentId).append(", ");
+            stringForm.append("localEntityId:").append(localEntityId).append(", ");
+            stringForm.append("peerEntityId:").append(peerEntityId).append(", ");
+            stringForm.append("localId:").append(localId).append(", ");
+            stringForm.append("principalName:").append(principalName).append(", ");
+            stringForm.append("peerProvidedId:").append(peerProvidedId).append(", ");
+            stringForm.append("creationTime:").append(creationTime).append(", ");
+            stringForm.append("deactivationTime:").append(deactivationTime).append(", ");
+            stringForm.append("}");
+            return stringForm.toString();
         }
     }
 }

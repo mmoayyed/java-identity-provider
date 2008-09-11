@@ -173,6 +173,9 @@ public class StoredIDDataConnector extends BaseDataConnector {
             if (idEntry == null) {
                 idEntry = createPersistentId(resolutionContext, localId, salt);
                 pidStore.storePersistentIdEntry(idEntry);
+                log.debug("Created stored ID {}", idEntry);
+            }else{
+                log.debug("Located existing stored ID {}", idEntry);
             }
 
             return idEntry.getPersistentId();
