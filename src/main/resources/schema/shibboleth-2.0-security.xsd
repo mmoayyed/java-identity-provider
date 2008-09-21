@@ -473,6 +473,22 @@
         <complexContent>
             <extension base="sec:TrustEngineType">
                 <sequence>
+                    <element name="TrustedName" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies an optional trusted name against which the target entity 
+                                certificate's public key must be bound for trust processing to be successful.
+                                
+                                Supported trusted name formats are:
+                                1) Subject DN in RFC 2253 or RFC 1779 format
+                                2) CN component of subject DN
+                                3) Subject alt names (DNS and URI types)
+                                
+                                If multiple instances of this element are present, trust processing
+                                is successful if the target entity certificate matches at least one of them.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element ref="sec:ValidationInfo" minOccurs="1" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
@@ -515,6 +531,22 @@
         <complexContent>
             <extension base="sec:TrustEngineType">
                 <sequence>
+                    <element name="TrustedName" type="string" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies an optional trusted name against which the target entity 
+                                certificate's public key must be bound for trust processing to be successful.
+                                
+                                Supported trusted name formats are:
+                                1) Subject DN in RFC 2253 or RFC 1779 format
+                                2) CN component of subject DN
+                                3) Subject alt names (DNS and URI types)
+                                
+                                If multiple instances of this element are present, trust processing
+                                is successful if the target entity certificate matches at least one of them.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element ref="sec:ValidationInfo" minOccurs="1" maxOccurs="unbounded">
                         <annotation>
                             <documentation>

@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.security;
 
+import java.util.HashSet;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
@@ -56,6 +58,19 @@ public class StaticPKIXSignatureTrustEngineBeanDefinitionParser extends Abstract
             ManagedList pkixInfo = 
                 SpringConfigurationUtils.parseCustomElements(childElems, parserContext);        
             builder.addPropertyValue("PKIXInfo", pkixInfo);
+        }
+        
+        childElems = element.getElementsByTagNameNS(SecurityNamespaceHandler.NAMESPACE, "TrustedName");
+        if(childElems != null && childElems.getLength() > 0) {
+            HashSet<String> trustedNames = new HashSet<String>();
+            for (int i=0; i<childElems.getLength(); i++) {
+                Element child = (Element) childElems.item(i);
+                String name = DatatypeHelper.safeTrimOrNullString(child.getTextContent());
+                if (name != null) {
+                    trustedNames.add(name);
+                }
+            }
+            builder.addPropertyValue("trustedNames", trustedNames);
         }
     }
     

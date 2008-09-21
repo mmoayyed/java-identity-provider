@@ -13,6 +13,7 @@ Changes in Release 1.1.0
 [SC-47] - Check to see if the configured JDBC driver is available on the classpath, if not then error out
 [SC-48] - Blank value for edupersonaffiliation in directory causes exception when evaluating eduPersonScopedAffiliation
 [SC-49] - Add version information in library JAR manifest and provide command line tool to view it
+[SC-50] - Provide options to enumerate trusted names for static PKIX trust engines
 
 [SIDP-200] - attribute-filter.xml AtributeRule ignoreCase logic is backwards
 [SIDP-213] - aacli.sh computedid Exception in thread "main" java.lang.NullPointerException

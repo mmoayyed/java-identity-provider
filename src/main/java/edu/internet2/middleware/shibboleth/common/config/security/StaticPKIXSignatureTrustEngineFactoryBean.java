@@ -40,6 +40,9 @@ public class StaticPKIXSignatureTrustEngineFactoryBean extends AbstractFactoryBe
     
     /** List of PKIX validation info. */
     private List<PKIXValidationInformation> pkixInfo;
+    
+    /** Set of trusted names. */
+    private Set<String> trustedNames;
 
     /**
      * Gets the list of PKIX validation info.
@@ -59,6 +62,24 @@ public class StaticPKIXSignatureTrustEngineFactoryBean extends AbstractFactoryBe
         pkixInfo = newPKIXInfo;
     }
 
+    /**
+     * Gets the set of trusted names.
+     * 
+     * @return the set of trusted names
+     */
+    public Set<String> getTrustedNames() {
+        return trustedNames;
+    }
+
+    /**
+     * Sets the set of trusted names.
+     * 
+     * @param newTrustedNames the set of trusted names
+     */
+    public void setTrustedNames(Set<String> newTrustedNames) {
+        trustedNames = newTrustedNames;
+    }
+
     /** {@inheritDoc} */
     public Class getObjectType() {
         return PKIXSignatureTrustEngine.class;
@@ -66,7 +87,10 @@ public class StaticPKIXSignatureTrustEngineFactoryBean extends AbstractFactoryBe
     
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        Set<String> names = Collections.emptySet();
+        Set<String> names = getTrustedNames();
+        if (names == null) {
+            names = Collections.emptySet();
+        }
         StaticPKIXValidationInformationResolver pkixResolver = 
             new StaticPKIXValidationInformationResolver(getPKIXInfo(), names);
         
