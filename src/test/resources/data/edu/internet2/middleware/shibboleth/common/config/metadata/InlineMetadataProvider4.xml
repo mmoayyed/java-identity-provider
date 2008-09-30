@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shibmd:MetadataProvider id="InlineMetadata"
+                         xmlns:samlmd="urn:oasis:names:tc:SAML:2.0:metadata"
+                         xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd urn:oasis:names:tc:SAML:2.0:metadata classpath:/schema/saml-schema-metadata-2.0.xsd "
+                         xsi:type="shibmd:InlineMetadataProvider">
+                         
+    <shibmd:MetadataFilter xsi:type="shibmd:SchemaValidation" />
+                         
+    <samlmd:EntitiesDescriptor Name="urn:mace:incommon">
+    
+        <samlmd:EntityDescriptor entityID="urn:mace:incommon:internet2.edu">
+            <samlmd:IDPSSODescriptor errorURL="https://origin.internet2.edu/error.html"
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
+                <samlmd:NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</samlmd:NameIDFormat>
+                <samlmd:SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest"
+                    Location="https://origin.internet2.edu/shibboleth/HS" />
+            </samlmd:IDPSSODescriptor>
+            <samlmd:Organization>
+                <samlmd:OrganizationName xml:lang="en">Internet2</samlmd:OrganizationName>
+                <samlmd:OrganizationDisplayName xml:lang="en">Internet2</samlmd:OrganizationDisplayName>
+                <samlmd:OrganizationURL xml:lang="en" />
+            </samlmd:Organization>
+            <samlmd:ContactPerson contactType="technical">
+                <samlmd:GivenName>IJ Kim</samlmd:GivenName>
+                <samlmd:EmailAddress>ij@internet2.edu</samlmd:EmailAddress>
+            </samlmd:ContactPerson>
+        </samlmd:EntityDescriptor>
+
+    </samlmd:EntitiesDescriptor>
+    
+</shibmd:MetadataProvider>

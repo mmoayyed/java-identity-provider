@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
+import org.opensaml.saml2.metadata.provider.SchemaValidationFilter;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
@@ -34,7 +35,7 @@ public class URLMetadataProviderTest extends BaseConfigTestCase {
      */
     public void testProviderInstantiation() throws Exception {
         ApplicationContext appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
-                DATA_PATH + "//config/metadata/URLMetadataProvider1.xml", });
+                DATA_PATH + "/config/metadata/URLMetadataProvider1.xml", });
 
         HTTPMetadataProvider provider = (HTTPMetadataProvider) appContext.getBean("URLMetadata");
         assertNotNull(provider);
@@ -44,4 +45,21 @@ public class URLMetadataProviderTest extends BaseConfigTestCase {
         
         assertEquals(((EntitiesDescriptor) provider.getMetadata()).getName(), "urn:mace:incommon");
     }
+    
+    /**
+     * Test configuring an filesystem metadata provider with Spring.
+     * 
+     * @throws Exception thrown if there is a problem
+     */
+    public void testProviderInstantiationWithFilter() throws Exception {
+        ApplicationContext appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
+                DATA_PATH + "/config/metadata/URLMetadataProvider2.xml", });
+
+        HTTPMetadataProvider provider = (HTTPMetadataProvider) appContext.getBean("URLMetadata");
+        assertNotNull(provider);
+        
+        assertNotNull("Missing metadata filter property", provider.getMetadataFilter());
+        assertTrue("Wrong metadata filter property", provider.getMetadataFilter() instanceof SchemaValidationFilter);
+    }
+    
 }

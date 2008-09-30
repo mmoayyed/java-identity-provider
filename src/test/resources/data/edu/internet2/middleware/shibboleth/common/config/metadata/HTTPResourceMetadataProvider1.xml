@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<shibmd:MetadataProvider id="ResourceMetadata"
+                         
+                         xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
+                         xmlns:shibres="urn:mace:shibboleth:2.0:resource"
+                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                         xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata classpath:/schema/shibboleth-2.0-metadata.xsd
+                                             urn:mace:shibboleth:2.0:resource classpath:/schema/shibboleth-2.0-resource.xsd"
+                         xsi:type="shibmd:ResourceBackedMetadataProvider" >
+    
+    <shibmd:MetadataResource xsi:type="shibres:HttpResource" url="http://wayf.incommonfederation.org/InCommon/InCommon-metadata.xml"/>
+    
+</shibmd:MetadataProvider>

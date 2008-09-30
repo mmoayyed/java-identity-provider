@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
+import java.util.List;
+
 import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
@@ -25,7 +27,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
@@ -53,9 +54,10 @@ public abstract class BaseMetadataProviderBeanDefinitionParser extends AbstractS
         }
         builder.addPropertyValue("requireValidMetadata", requireValidMDBool);
 
-        NodeList childElems = config.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE, "MetadataFilter");
-        if (childElems.getLength() > 0) {
-            Element filterElem = (Element) childElems.item(0);
+        List<Element> childElems = 
+            XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE, "MetadataFilter");
+        if (childElems.size() > 0) {
+            Element filterElem = (Element) childElems.get(0);
             BeanDefinition filterDef = SpringConfigurationUtils.parseCustomElement(filterElem, parserContext);
             builder.addPropertyValue("metadataFilter", filterDef);
         }

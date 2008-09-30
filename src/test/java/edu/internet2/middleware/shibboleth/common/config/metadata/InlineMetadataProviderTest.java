@@ -18,6 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.metadata;
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.saml2.metadata.provider.SchemaValidationFilter;
 import org.opensaml.util.resource.ResourceException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationContext;
@@ -53,6 +54,23 @@ public class InlineMetadataProviderTest extends BaseConfigTestCase {
         MetadataProvider provider = (MetadataProvider) appContext.getBean("InlineMetadata");
         assertNotNull(provider);
         assertEquals(((EntityDescriptor)provider.getMetadata()).getEntityID(), "urn:mace:incommon:internet2.edu");
+    }
+    
+    /**
+     * Tests that an Inline provider is properly created when given an {@link EntitiesDescriptor}
+     * with a MetadataFilter.
+     * 
+     * @throws Exception thrown if there is an error using the configuration
+     */
+    public void testProviderInstantiationWithFilter() throws Exception{
+        ApplicationContext appContext = createSpringContext(DATA_PATH + "/config/metadata/InlineMetadataProvider4.xml");
+        
+        MetadataProvider provider = (MetadataProvider) appContext.getBean("InlineMetadata");
+        assertNotNull(provider);
+        assertEquals(((EntitiesDescriptor)provider.getMetadata()).getName(), "urn:mace:incommon");
+        
+        assertNotNull("Missing metadata filter property", provider.getMetadataFilter());
+        assertTrue("Wrong metadata filter property", provider.getMetadataFilter() instanceof SchemaValidationFilter);
     }
     
     /**

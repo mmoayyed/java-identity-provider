@@ -17,61 +17,49 @@
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
+import org.opensaml.saml2.metadata.provider.ResourceBackedMetadataProvider;
 import org.opensaml.saml2.metadata.provider.SchemaValidationFilter;
 import org.springframework.context.ApplicationContext;
 
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
 /**
- * Test that the configuration code for filesytem metadata providers works correctly.
+ * Test that the configuration code for URL metadata providers works correctly.
  */
-public class FilesystemMetadataProviderTest extends BaseConfigTestCase {
+public class ResourceMetadataProviderTest extends BaseConfigTestCase {
 
     /**
-     * Test configuring an filesystem metadata provider with Spring.
+     * Test configuring an resource metadata provider with Spring.
      * 
      * @throws Exception thrown if there is a problem
      */
     public void testProviderInstantiation() throws Exception {
         ApplicationContext appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
-                DATA_PATH + "/config/metadata/FilesystemMetadataProvider1.xml", });
+                DATA_PATH + "/config/metadata/HTTPResourceMetadataProvider1.xml", });
 
-        MetadataProvider provider = (MetadataProvider) appContext.getBean("FilesystemMetadata");
+        ResourceBackedMetadataProvider provider = 
+            (ResourceBackedMetadataProvider) appContext.getBean("ResourceMetadata");
         assertNotNull(provider);
+        
         assertEquals(((EntitiesDescriptor) provider.getMetadata()).getName(), "urn:mace:incommon");
     }
     
     /**
-     * Test configuring an filesystem metadata provider with Spring.
+     * Test configuring an resource metadata provider with Spring.
      * 
      * @throws Exception thrown if there is a problem
      */
     public void testProviderInstantiationWithFilter() throws Exception {
         ApplicationContext appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
-                DATA_PATH + "/config/metadata/FilesystemMetadataProvider3.xml", });
+                DATA_PATH + "/config/metadata/HTTPResourceMetadataProvider2.xml", });
 
-        MetadataProvider provider = (MetadataProvider) appContext.getBean("FilesystemMetadata");
+        ResourceBackedMetadataProvider provider = 
+            (ResourceBackedMetadataProvider) appContext.getBean("ResourceMetadata");
         assertNotNull(provider);
         
         assertNotNull("Missing metadata filter property", provider.getMetadataFilter());
         assertTrue("Wrong metadata filter property", provider.getMetadataFilter() instanceof SchemaValidationFilter);
     }
-
-
-    /**
-     * Test configuring an filesystem metadata provider with an invalid Spring configuration.
-     * 
-     * @throws Exception thrown if there is a problem
-     */
-    public void testFailedProviderInstantiation() throws Exception {
-        String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
-                DATA_PATH + "/config/metadata/FilesystemMetadataProvider2.xml", };
-        try {
-            ApplicationContext appContext = createSpringContext(configs);
-            fail("Spring loaded invalid configuration");
-        } catch (Exception e) {
-            // expected
-        }
-    }
+    
 }
