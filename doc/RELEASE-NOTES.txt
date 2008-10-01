@@ -1,6 +1,9 @@
 
 Changes in Release 1.1.0
 =============================================
+- Attribute caching in LDAP and relational database connectors has been disabled by default until
+  the cache is properly cleared when a user's session expires or is destroyed.
+
 [SC-37] - Filtering engine results in intersection of policies; union of policies is desired
 [SC-38] - StoredIDStore: invalid character in prepared statement (Oracle only)
 [SC-39] - Add ability to explicitly deny the release attributes

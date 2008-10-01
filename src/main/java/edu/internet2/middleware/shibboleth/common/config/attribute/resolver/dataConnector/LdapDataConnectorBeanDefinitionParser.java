@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.da
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.LdapDataConnector.SEARCH_SCOPE;
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
-/**
- * Spring bean definition parser for configuring an LDAP data connector.
- */
+/** Spring bean definition parser for configuring an LDAP data connector. */
 public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** LDAP data connector type name. */
@@ -147,7 +145,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         log.debug("Data connector {} max search result size: {}", pluginId, maxResultSize);
         pluginBuilder.addPropertyValue("maxResultSize", maxResultSize);
 
-        boolean cacheResults = true;
+        boolean cacheResults = false;
         if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
             cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "cacheResults"));
         }

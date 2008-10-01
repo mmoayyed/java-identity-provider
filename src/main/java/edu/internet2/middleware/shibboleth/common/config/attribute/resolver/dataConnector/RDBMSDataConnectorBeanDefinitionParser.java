@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,9 +41,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.RDBMSColumnDescriptor;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.dataConnector.RDBMSDataConnector.DATA_TYPES;
 
-/**
- * Spring bean definition parser for reading relational database data connector.
- */
+/** Spring bean definition parser for reading relational database data connector. */
 public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** Schema type name. */
@@ -89,7 +87,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                 pluginBuilder);
         pluginBuilder.addPropertyValue("columnDescriptors", descriptors);
 
-        boolean cacheResults = true;
+        boolean cacheResults = false;
         if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
             cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "cacheResults"));
         }
@@ -117,7 +115,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
     }
 
     /**
-     * Processes the connection management configuraiton.
+     * Processes the connection management configuration.
      * 
      * @param pluginId ID of this data connector
      * @param pluginConfigChildren configuration elements for this connector
