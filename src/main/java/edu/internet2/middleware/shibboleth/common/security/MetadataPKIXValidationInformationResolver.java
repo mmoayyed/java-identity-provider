@@ -146,6 +146,14 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
         } else {
             usage = UsageType.UNSPECIFIED;
         }
+        
+        // See Jira issue SIDP-229.
+        log.debug("Forcing on-demand metadata provider refresh if necessary");
+        try {
+            metadata.getMetadata();
+        } catch (MetadataProviderException e) {
+            // don't care about errors at this level
+        }
 
         MetadataCacheKey cacheKey = new MetadataCacheKey(entityID, role, protocol, usage);
         List<PKIXValidationInformation> pkixInfoSet = retrievePKIXInfoFromCache(cacheKey);
@@ -174,6 +182,14 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
             usage = usageCriteria.getUsage();
         } else {
             usage = UsageType.UNSPECIFIED;
+        }
+        
+        // See Jira issue SIDP-229.
+        log.debug("Forcing on-demand metadata provider refresh if necessary");
+        try {
+            metadata.getMetadata();
+        } catch (MetadataProviderException e) {
+            // don't care about errors at this level
         }
 
         MetadataCacheKey cacheKey = new MetadataCacheKey(entityID, role, protocol, usage);
