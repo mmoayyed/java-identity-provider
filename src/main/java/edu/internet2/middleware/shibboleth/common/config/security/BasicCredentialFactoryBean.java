@@ -64,15 +64,19 @@ public class BasicCredentialFactoryBean extends AbstractCredentialFactoryBean {
             credential.setPublicKey(SecurityHelper.derivePublicKey(privateKey));
         }
         
+        // Sanity check that public and private key match
         if (credential.getPublicKey() != null && credential.getPrivateKey() != null) {
-           try {
-               if (!SecurityHelper.matchKeyPair(credential.getPublicKey(), credential.getPrivateKey()))  {
-                   log.error("Mismatch detected between credential's public and private key");
-                   throw new SecurityException("Mismatch between credential public and private key");
-               }
-           } catch (SecurityException e) {
-               log.warn("Could not perform sanity check against credential public and private key");
-           }
+            boolean matched = false;
+            try {
+                matched = SecurityHelper.matchKeyPair(credential.getPublicKey(), credential.getPrivateKey());
+            } catch (SecurityException e) {
+                log.warn("Could not perform sanity check against credential public and private key: {}",
+                        e.getMessage());
+            }
+            if (!matched) {
+                log.error("Mismatch detected between credential's public and private key");
+                throw new SecurityException("Mismatch between credential public and private key");
+            }
         }
         
         return credential;

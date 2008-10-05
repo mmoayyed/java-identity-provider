@@ -78,16 +78,20 @@ public class X509CredentialFactoryBean extends AbstractCredentialFactoryBean {
         //TODO may adjust BasicX509Credential to make this unnecessary
         credential.setPublicKey(credential.getEntityCertificate().getPublicKey());
         
+        // Sanity check that public and private key match
         if (credential.getPublicKey() != null && credential.getPrivateKey() != null) {
+            boolean matched = false;
             try {
-                if (!SecurityHelper.matchKeyPair(credential.getPublicKey(), credential.getPrivateKey()))  {
-                    log.error("Mismatch detected between credential's public and private key");
-                    throw new SecurityException("Mismatch between credential public and private key");
-                }
+                matched = SecurityHelper.matchKeyPair(credential.getPublicKey(), credential.getPrivateKey());
             } catch (SecurityException e) {
-                log.warn("Could not perform sanity check against credential public and private key");
+                log.warn("Could not perform sanity check against credential public and private key: {}",
+                        e.getMessage());
             }
-         }
+            if (!matched) {
+                log.error("Mismatch detected between credential's public and private key");
+                throw new SecurityException("Mismatch between credential public and private key");
+            }
+        } 
         
         return credential;
     }
