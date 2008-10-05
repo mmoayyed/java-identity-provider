@@ -22,13 +22,20 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.opensaml.xml.security.SecurityException;
+import org.opensaml.xml.security.SecurityHelper;
 import org.opensaml.xml.security.x509.BasicX509Credential;
 import org.opensaml.xml.security.x509.X509Credential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory bean for building {@link X509Credential}s.
  */
 public class X509CredentialFactoryBean extends AbstractCredentialFactoryBean {
+    
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(X509CredentialFactoryBean.class);
 
     /** Private key respresented by this credential. */
     private PrivateKey privateKey;
@@ -71,6 +78,16 @@ public class X509CredentialFactoryBean extends AbstractCredentialFactoryBean {
         //TODO may adjust BasicX509Credential to make this unnecessary
         credential.setPublicKey(credential.getEntityCertificate().getPublicKey());
         
+        if (credential.getPublicKey() != null && credential.getPrivateKey() != null) {
+            try {
+                if (!SecurityHelper.matchKeyPair(credential.getPublicKey(), credential.getPrivateKey()))  {
+                    log.error("Mismatch detected between credential's public and private key");
+                    throw new SecurityException("Mismatch between credential public and private key");
+                }
+            } catch (SecurityException e) {
+                log.warn("Could not perform sanity check against credential public and private key");
+            }
+         }
         
         return credential;
     }
