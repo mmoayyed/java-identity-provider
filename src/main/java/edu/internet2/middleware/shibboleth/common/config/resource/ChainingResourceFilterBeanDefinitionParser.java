@@ -25,14 +25,14 @@ import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /** Bean definition parser for {@link ChainingResourceFilter}s. */
-public class ChainingResourceFilterBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class ChainingResourceFilterBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(ResourceNamespaceHandler.NAMESPACE, "Chaining");

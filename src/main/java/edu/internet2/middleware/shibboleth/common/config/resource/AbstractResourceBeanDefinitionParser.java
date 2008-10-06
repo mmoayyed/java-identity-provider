@@ -20,14 +20,14 @@ import java.util.List;
 
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /** Base class {@link org.opensaml.util.resource.Resource} for bean definition parsers. */
-public abstract class AbstractResourceBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public abstract class AbstractResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

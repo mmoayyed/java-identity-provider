@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -35,7 +35,7 @@ import edu.internet2.middleware.shibboleth.common.config.security.SecurityNamesp
 /**
  * Spring bean definition parser for relying party group configurations.
  */
-public class RelyingPartyGroupBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class RelyingPartyGroupBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingPartyGroup");

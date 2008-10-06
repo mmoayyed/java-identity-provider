@@ -16,14 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.ChainingMetadataProvider;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
@@ -44,7 +46,8 @@ public class ChainingMetadataProviderBeanDefinitionParser extends BaseMetadataPr
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        NodeList providerElems = config.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider");
+        List<Element> providerElems = XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE,
+                "MetadataProvider");
         if (providerElems != null) {
             ManagedList providers = SpringConfigurationUtils.parseCustomElements(providerElems, parserContext);
             builder.addPropertyValue("providers", providers);

@@ -16,14 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.saml2.metadata.provider.ResourceBackedMetadataProvider;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
@@ -42,7 +44,7 @@ public class ResourceBackedMetadataProviderBeanDefinitionParser extends BaseMeta
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        
+
         builder.setInitMethodName("initialize");
 
         String parserPoolRef = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "parserPoolRef"));
@@ -51,8 +53,21 @@ public class ResourceBackedMetadataProviderBeanDefinitionParser extends BaseMeta
         }
         builder.addPropertyReference("parserPool", parserPoolRef);
 
-        NodeList resourceElems = config.getElementsByTagNameNS(MetadataNamespaceHandler.NAMESPACE, "MetadataResource");
-        builder.addConstructorArgValue(SpringConfigurationUtils.parseCustomElement((Element) resourceElems.item(0),
+        List<Element> resourceElems = XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE,
+                "MetadataResource");
+        builder.addConstructorArgValue(SpringConfigurationUtils.parseCustomElement(resourceElems.get(0), 
                 parserContext));
+
+        String timerRef = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "timeRef"));
+        if (timerRef == null) {
+            timerRef = "shibboleth.TaskTimer";
+        }
+        builder.addConstructorArgReference(timerRef);
+
+        String maxCacheDuration = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "maxCacheDuration"));
+        if (maxCacheDuration == null) {
+            maxCacheDuration = "28800";
+        }
+        builder.addConstructorArgValue(Long.parseLong(maxCacheDuration)*1000);
     }
 }

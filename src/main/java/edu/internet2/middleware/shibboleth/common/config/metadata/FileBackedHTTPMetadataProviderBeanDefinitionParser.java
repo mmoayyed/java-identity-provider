@@ -47,6 +47,6 @@ public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMeta
         String backingFile = element.getAttributeNS(null, "backingFile");
         builder.addConstructorArgValue(backingFile);
         
-        log.warn("Use of the FileBackedHTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with the FileBackedHttpResource");
+        // log.warn("Use of the FileBackedHTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with the FileBackedHttpResource");
     }
 }

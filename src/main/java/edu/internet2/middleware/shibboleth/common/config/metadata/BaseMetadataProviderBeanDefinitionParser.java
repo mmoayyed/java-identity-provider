@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -33,7 +33,7 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 /**
  * Base class for metadata provider configuration parser.
  */
-public abstract class BaseMetadataProviderBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public abstract class BaseMetadataProviderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseMetadataProviderBeanDefinitionParser.class);

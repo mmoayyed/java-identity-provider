@@ -62,6 +62,6 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadata
             builder.addPropertyValue("maintainExpiredMetadata", false);
         }
         
-        log.warn("Use of the FilesystemMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with a FilesystemResource");
+        //log.warn("Use of the FilesystemMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with a FilesystemResource");
     }
 }

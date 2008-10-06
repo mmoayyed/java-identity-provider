@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -36,7 +36,7 @@ import edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRe
 /**
  * Bean definition parser for relying party elements.
  */
-public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSimpleBeanDefinitionParser {
+public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName URP_TYPE_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE,

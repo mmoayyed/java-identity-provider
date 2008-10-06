@@ -41,6 +41,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="ResourceBackedMetadataProvider">
         <annotation>
             <documentation>A metadata provider that reads metadata from a Resource.</documentation>
@@ -61,9 +62,24 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="timerRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to a task timer.  By default 'shibboleth.TaskTimer' is assumed.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxCacheDuration" type="positiveInteger">
+                    <annotation>
+                        <documentation>
+                            Maximum length of time, in seconds, before metadata is re-read for its source.  Default is 28,800 (8 hours).
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="InlineMetadataProvider">
         <annotation>
             <documentation>A metadata provider that allows SAML 2 metadata to be specified inline.</documentation>
@@ -85,6 +101,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="FileBackedHTTPMetadataProvider">
         <annotation>
             <documentation>
@@ -105,6 +122,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="HTTPMetadataProvider">
         <annotation>
             <documentation>A metadata provider that periodically pulls metadata from a given URL.</documentation>
@@ -158,6 +176,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="FilesystemMetadataProvider">
         <annotation>
             <documentation>A metatadata provider that reads SAML2 metadata from the filesystem.</documentation>
@@ -180,6 +199,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="MetadataProviderType" abstract="true">
         <sequence>
             <element ref="shibmd:MetadataFilter" minOccurs="0">
@@ -205,6 +225,7 @@
             </annotation>
         </attribute>
     </complexType>
+    
     <element name="MetadataFilter" type="shibmd:MetadataFilterType">
         <annotation>
             <documentation>
@@ -213,6 +234,7 @@
             </documentation>
         </annotation>
     </element>
+    
     <complexType name="ChainingFilter">
         <annotation>
             <documentation>
@@ -233,6 +255,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="SchemaValidation">
         <annotation>
             <documentation>
@@ -254,6 +277,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="SignatureValidation">
         <annotation>
             <documentation>
@@ -277,6 +301,7 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="EntityRoleWhiteList">
         <annotation>
             <documentation>
@@ -318,5 +343,6 @@
             </extension>
         </complexContent>
     </complexType>
+    
     <complexType name="MetadataFilterType" abstract="true" />
 </schema>

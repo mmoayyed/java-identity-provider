@@ -75,6 +75,6 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
             builder.addPropertyValue("maintainExpiredMetadata", false);
         }
 
-        log.warn("Use of the HTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with a HttpResource");
+        // log.warn("Use of the HTTPMetadataProvider is deprecated.  Please use the ResourceBackedMetadataProvider with a HttpResource");
     }
 }
