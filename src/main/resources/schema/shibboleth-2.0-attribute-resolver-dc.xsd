@@ -293,7 +293,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolMinSize" type="positiveInteger">
+        <attribute name="poolMinSize" type="nonNegativeInteger">
             <annotation>
                 <documentation>
                     The minimum number of connections the pool will establish with the database. A value of zero means
@@ -301,7 +301,7 @@
                 </documentation>
             </annotation>
         </attribute>
-        <attribute name="poolMaxSize" type="positiveInteger">
+        <attribute name="poolMaxSize" type="nonNegativeInteger">
             <annotation>
                 <documentation>
                     The maximum number of connections the pool will establish with the database. A value of zero means

@@ -95,12 +95,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maximumSPSessionLifetime" type="positiveInteger">
+                <attribute name="maximumSPSessionLifetime" type="nonNegativeInteger">
                     <annotation>
                         <documentation>
                             The maximum amount of time, in milliseconds, the service provider should maintain a session
                             for the user based on the authentication assertion.  This attribute is converted into the 
-                            SessionNotOnOrAfter attribute of the AuthnStatement.
+                            SessionNotOnOrAfter attribute of the AuthnStatement. If the value supplied is 0, then the
+                            SessionNotOnOrAfter attribute is not sent within the AuthnStatement.
                         </documentation>
                     </annotation>
                 </attribute>
