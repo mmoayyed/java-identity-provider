@@ -35,7 +35,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.InputStreamResource;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Utilities to help configure Spring beans.
@@ -85,20 +84,80 @@ public final class SpringConfigurationUtils {
         }
     }
 
+    /**
+     * Parses a bean definition using an xsi:type aware version of
+     * {@link BeanDefinitionParserDelegate#parseCustomElement(Element)}.
+     * 
+     * @param element configuration element
+     * @param parserContext current parser context
+     * 
+     * @return bean definition
+     */
+    public static BeanDefinition parseInnerCustomElement(Element element, ParserContext parserContext) {
+        return createBeanDefinition(element, parserContext);
+    }
+
+    /**
+     * Parser a list of bean definitions using an xsi:type aware version of
+     * {@link BeanDefinitionParserDelegate#parseCustomElement(Element)}.
+     * 
+     * @param elements configuration elements
+     * @param parserContext current parser context
+     * 
+     * @return list of bean definition
+     */
+    public static ManagedList parseInnerCustomElements(List<Element> elements, ParserContext parserContext) {
+        ManagedList beans = new ManagedList();
+        if (elements != null) {
+            for (Element element : elements) {
+                beans.add(parseInnerCustomElement(element, parserContext));
+            }
+        }
+
+        return beans;
+    }
+
+    /**
+     * Parses a bean definition using an xsi:type aware version of
+     * BeanDefinitionParserDelegate.parseCustomElement(Element). Assumes the element has an attribute 'id' that provides
+     * a unique identifier for the bean.
+     * 
+     * @param element element to parse
+     * @param parserContext current parser context
+     * 
+     * @return bean definition reference
+     */
     public static RuntimeBeanReference parseCustomElement(Element element, ParserContext parserContext) {
         return parseCustomElement(element, "id", parserContext);
     }
 
     /**
-     * xsi:type aware version of BeanDefinitionParserDelegate.parseCustomElement(Element).
+     * Parses a bean definition using an xsi:type aware version of
+     * BeanDefinitionParserDelegate.parseCustomElement(Element).
      * 
      * @param element element to parse
+     * @param idAttribute attribute that carries the unique ID for the bean
      * @param parserContext current parser context
      * 
-     * @return bean definition
+     * @return bean definition reference
      */
     public static RuntimeBeanReference parseCustomElement(Element element, String idAttribute,
             ParserContext parserContext) {
+        createBeanDefinition(element, parserContext);
+        RuntimeBeanReference beanRef = new RuntimeBeanReference(element.getAttributeNS(null, idAttribute));
+        beanRef.setSource(element);
+        return beanRef;
+    }
+
+    /**
+     * Creates a {@link BeanDefinition} from a custom element.
+     * 
+     * @param element configuration element
+     * @param parserContext currently parser context
+     * 
+     * @return the bean definition
+     */
+    private static BeanDefinition createBeanDefinition(Element element, ParserContext parserContext) {
         BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
         String namespaceUri = element.getNamespaceURI();
 
@@ -111,11 +170,7 @@ public final class SpringConfigurationUtils {
             log.error("Unable to locate NamespaceHandler for namespace [" + namespaceUri + "]");
             return null;
         }
-        handler.parse(element, new ParserContext(delegate.getReaderContext(), delegate, null));
-
-        RuntimeBeanReference beanRef = new RuntimeBeanReference(element.getAttributeNS(null, idAttribute));
-        beanRef.setSource(element);
-        return beanRef;
+        return handler.parse(element, new ParserContext(delegate.getReaderContext(), delegate));
     }
 
     /**
@@ -136,9 +191,17 @@ public final class SpringConfigurationUtils {
 
         return null;
     }
-    
-    public static ManagedList parseCustomElements(List<Element> elements,
-            ParserContext parserContext) {
+
+    /**
+     * Parse list of elements into bean definitions. The list is populated with bean references. Each configuration
+     * element is expected to contain an 'id' attribute that provides a unique ID for each bean.
+     * 
+     * @param elements list of elements to parse
+     * @param parserContext current parsing context
+     * 
+     * @return list of bean references
+     */
+    public static ManagedList parseCustomElements(List<Element> elements, ParserContext parserContext) {
         return parseCustomElements(elements, "id", parserContext);
     }
 
@@ -146,6 +209,7 @@ public final class SpringConfigurationUtils {
      * Parse list of elements into bean definitions.
      * 
      * @param elements list of elements to parse
+     * @param idAttribute attribute that carries the unique ID for the bean
      * @param parserContext current parsing context
      * 
      * @return list of bean references

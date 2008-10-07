@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -58,13 +57,12 @@ public class ShibbolethSecurityPolicyBeanDefinitionParser extends AbstractSingle
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         log.info("Parsing configuration for {} security policy with id: {}", XMLHelper.getXSIType(element)
                 .getLocalPart(), element.getAttributeNS(null, "id"));
-        
+
         String policyId = element.getAttributeNS(null, "id");
         log.debug("Configuring security policy: {}", policyId);
         builder.addPropertyValue("policyId", policyId);
 
-        ManagedList rules = SpringConfigurationUtils.parseCustomElements(XMLHelper.getChildElementsByTagNameNS(element,
-                SecurityNamespaceHandler.NAMESPACE, "Rule"), parserContext);
-        builder.addPropertyValue("policyRules", rules);
+        builder.addPropertyValue("policyRules", SpringConfigurationUtils.parseInnerCustomElements(XMLHelper
+                .getChildElementsByTagNameNS(element, SecurityNamespaceHandler.NAMESPACE, "Rule"), parserContext));
     }
 }

@@ -21,7 +21,6 @@ import java.util.List;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -35,16 +34,14 @@ public abstract class AbstractServiceBeanDefinitionParser extends AbstractSingle
     protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
         List<Element> configurationResources = XMLHelper.getChildElementsByTagNameNS(configElement,
                 ServiceNamespaceHandler.NAMESPACE, "ConfigurationResource");
-        if (configurationResources != null && !configurationResources.isEmpty()) {
-            ManagedList resources = SpringConfigurationUtils.parseCustomElements(configurationResources, parserContext);
-            builder.addPropertyValue("serviceConfigurations", resources);
-        }
+        builder.addPropertyValue("serviceConfigurations", SpringConfigurationUtils.parseInnerCustomElements(
+                configurationResources, parserContext));
 
         for (String dependency : XMLHelper
                 .getAttributeValueAsList(configElement.getAttributeNodeNS(null, "depends-on"))) {
             builder.addDependsOn(dependency);
         }
-        
+
         builder.setInitMethodName("initialize");
     }
 

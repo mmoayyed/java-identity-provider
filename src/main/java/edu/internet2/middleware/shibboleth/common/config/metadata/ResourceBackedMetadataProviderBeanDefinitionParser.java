@@ -55,7 +55,7 @@ public class ResourceBackedMetadataProviderBeanDefinitionParser extends BaseMeta
 
         List<Element> resourceElems = XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE,
                 "MetadataResource");
-        builder.addConstructorArgValue(SpringConfigurationUtils.parseCustomElement(resourceElems.get(0), 
+        builder.addConstructorArgValue(SpringConfigurationUtils.parseInnerCustomElement(resourceElems.get(0),
                 parserContext));
 
         String timerRef = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "timeRef"));
@@ -68,6 +68,6 @@ public class ResourceBackedMetadataProviderBeanDefinitionParser extends BaseMeta
         if (maxCacheDuration == null) {
             maxCacheDuration = "28800";
         }
-        builder.addConstructorArgValue(Long.parseLong(maxCacheDuration)*1000);
+        builder.addConstructorArgValue(Long.parseLong(maxCacheDuration) * 1000);
     }
 }

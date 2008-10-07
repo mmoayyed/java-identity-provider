@@ -67,8 +67,8 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
         if (children != null && children.size() > 0) {
-            builder.addPropertyValue("policyRequirement", SpringConfigurationUtils.parseCustomElement(children.get(0),
-                    parserContext));
+            builder.addPropertyValue("policyRequirement", SpringConfigurationUtils.parseInnerCustomElement(children
+                    .get(0), parserContext));
         } else {
             children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
                     "PolicyRequirementRuleReference"));
@@ -79,7 +79,7 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
         ManagedList attributeRules = new ManagedList();
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule"));
         if (children != null && children.size() > 0) {
-            attributeRules.addAll(SpringConfigurationUtils.parseCustomElements(children, parserContext));
+            attributeRules.addAll(SpringConfigurationUtils.parseInnerCustomElements(children, parserContext));
         }
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRuleReference"));

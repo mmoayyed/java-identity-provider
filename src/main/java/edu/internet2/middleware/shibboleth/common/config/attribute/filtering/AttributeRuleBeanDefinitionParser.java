@@ -58,8 +58,8 @@ public class AttributeRuleBeanDefinitionParser extends BaseFilterBeanDefinitionP
         List<Element> permitValueRule = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
                 "PermitValueRule"));
         if (permitValueRule != null && !permitValueRule.isEmpty()) {
-            builder.addPropertyValue("permitValueRule", SpringConfigurationUtils.parseCustomElement(permitValueRule
-                    .get(0), parserContext));
+            builder.addPropertyValue("permitValueRule", SpringConfigurationUtils.parseInnerCustomElement(
+                    permitValueRule.get(0), parserContext));
         }
 
         List<Element> permitValueRuleRef = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,
@@ -73,8 +73,8 @@ public class AttributeRuleBeanDefinitionParser extends BaseFilterBeanDefinitionP
         List<Element> denyValueRule = children
                 .get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "DenyValueRule"));
         if (denyValueRule != null && !denyValueRule.isEmpty()) {
-            builder.addPropertyValue("denyValueRule", SpringConfigurationUtils.parseCustomElement(denyValueRule.get(0),
-                    parserContext));
+            builder.addPropertyValue("denyValueRule", SpringConfigurationUtils.parseInnerCustomElement(denyValueRule
+                    .get(0), parserContext));
         }
 
         List<Element> denyValueRuleRef = children.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE,

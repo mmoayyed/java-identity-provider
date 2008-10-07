@@ -27,8 +27,6 @@ import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -85,9 +83,8 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         }
         pluginBuilder.addPropertyValue("dependencyOnly", dependencyOnly);
 
-        ManagedList encoders = processAttributeEncoders(pluginConfigChildren.get(ATTRIBUTE_ENCODER_ELEMENT_NAME),
-                parserContext);
-        pluginBuilder.addPropertyValue("attributeEncoders", encoders);
+        pluginBuilder.addPropertyValue("attributeEncoders", SpringConfigurationUtils.parseInnerCustomElements(
+                pluginConfigChildren.get(ATTRIBUTE_ENCODER_ELEMENT_NAME), parserContext));
     }
 
     /**
@@ -104,21 +101,5 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
         }
 
         return localizedString;
-    }
-
-    /**
-     * Processes the attribute encoder configuration elements.
-     * 
-     * @param encoderElems attribute encoder configuration elements
-     * @param parserContext current parsing context
-     * 
-     * @return the attribute encoders
-     */
-    protected ManagedList processAttributeEncoders(List<Element> encoderElems, ParserContext parserContext) {
-        if (encoderElems == null || encoderElems.size() == 0) {
-            return null;
-        }
-
-        return SpringConfigurationUtils.parseCustomElements(encoderElems, parserContext);
     }
 }

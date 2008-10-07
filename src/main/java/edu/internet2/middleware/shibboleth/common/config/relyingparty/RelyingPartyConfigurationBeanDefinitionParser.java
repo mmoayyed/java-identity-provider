@@ -91,7 +91,7 @@ public class RelyingPartyConfigurationBeanDefinitionParser extends AbstractSingl
                 RelyingPartyNamespaceHandler.NAMESPACE, "ProfileConfiguration");
         if (profileConfigs != null && profileConfigs.size() > 0) {
             log.debug("Relying party configuration - {} profile configurations", profileConfigs.size());
-            builder.addPropertyValue("profileConfigurations", SpringConfigurationUtils.parseCustomElements(
+            builder.addPropertyValue("profileConfigurations", SpringConfigurationUtils.parseInnerCustomElements(
                     profileConfigs, parserContext));
         }
     }

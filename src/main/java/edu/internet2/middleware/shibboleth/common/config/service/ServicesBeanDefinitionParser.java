@@ -16,14 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.common.config.service;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.XMLHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -40,16 +35,10 @@ public class ServicesBeanDefinitionParser implements BeanDefinitionParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(ServiceNamespaceHandler.NAMESPACE, "ServicesType");
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ServicesBeanDefinitionParser.class);
-
     /** {@inheritDoc} */
     public BeanDefinition parse(Element config, ParserContext context) {
-        log.info("Beginning to load service configurations");
-        Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
-        List<Element> children = configChildren.get(new QName(ServiceNamespaceHandler.NAMESPACE, "Service"));
-        SpringConfigurationUtils.parseCustomElements(children, context);
-        log.info("Finished loading service configurations");
+        SpringConfigurationUtils.parseCustomElements(XMLHelper.getChildElementsByTagNameNS(config,
+                ServiceNamespaceHandler.NAMESPACE, "Service"), context);
         return null;
     }
 }

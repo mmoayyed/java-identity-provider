@@ -22,10 +22,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.XMLHelper;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -46,7 +44,7 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractSingleBeanDef
     protected Class getBeanClass(Element element) {
         return RelyingPartyGroup.class;
     }
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
@@ -55,7 +53,8 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractSingleBeanDef
         if (mds != null && mds.size() > 0) {
             Element mdConfigElem = mds.get(0);
             SpringConfigurationUtils.parseCustomElement(mdConfigElem, parserContext);
-            builder.addPropertyValue("metadataProvider", new RuntimeBeanReference(mdConfigElem.getAttributeNS(null, "id")));
+            builder.addPropertyValue("metadataProvider", new RuntimeBeanReference(mdConfigElem.getAttributeNS(null,
+                    "id")));
         }
 
         parseRelyingPartyConfiguration(configChildren, builder, parserContext);
@@ -74,23 +73,18 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractSingleBeanDef
             BeanDefinitionBuilder builder, ParserContext parserContext) {
         List<Element> anonRP = configChildren.get(RelyingPartyConfigurationBeanDefinitionParser.ANON_RP_ELEMENT_NAME);
         if (anonRP != null && anonRP.size() > 0) {
-            builder.addPropertyValue("anonymousRP", SpringConfigurationUtils.parseCustomElement(anonRP.get(0),
+            builder.addPropertyValue("anonymousRP", SpringConfigurationUtils.parseInnerCustomElement(anonRP.get(0),
                     parserContext));
         }
 
         List<Element> defaultRP = configChildren
                 .get(RelyingPartyConfigurationBeanDefinitionParser.DEFAULT_RP_ELEMENT_NAME);
-        if (defaultRP != null && defaultRP.size() > 0) {
-            builder.addPropertyValue("defaultRP", SpringConfigurationUtils.parseCustomElement(defaultRP.get(0),
-                    parserContext));
-        }
+        builder.addPropertyValue("defaultRP", SpringConfigurationUtils.parseInnerCustomElement(defaultRP.get(0),
+                parserContext));
 
         List<Element> rps = configChildren.get(RelyingPartyConfigurationBeanDefinitionParser.RP_ELEMENT_NAME);
-        if (rps != null && rps.size() > 0) {
-            ManagedList relyingParties = SpringConfigurationUtils
-            .parseCustomElements(rps, parserContext);
-            builder.addPropertyValue("relyingParties", relyingParties);
-        }
+        builder.addPropertyValue("relyingParties", SpringConfigurationUtils
+                .parseInnerCustomElements(rps, parserContext));
     }
 
     /**
@@ -104,21 +98,16 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractSingleBeanDef
             ParserContext parserContext) {
 
         List<Element> creds = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "Credential"));
-        if (creds != null && creds.size() > 0) {
-            builder.addPropertyValue("credentials", SpringConfigurationUtils.parseCustomElements(creds, parserContext));
-        }
+        builder.addPropertyValue("credentials", SpringConfigurationUtils
+                        .parseInnerCustomElements(creds, parserContext));
 
         List<Element> engines = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "TrustEngine"));
-        if (engines != null && engines.size() > 0) {
-            builder.addPropertyValue("trustEngines", SpringConfigurationUtils.parseCustomElements(engines,
-                    parserContext));
-        }
+        builder.addPropertyValue("trustEngines", SpringConfigurationUtils.parseInnerCustomElements(engines,
+                parserContext));
 
         List<Element> secPols = configChildren.get(new QName(SecurityNamespaceHandler.NAMESPACE, "SecurityPolicy"));
-        if (secPols != null && secPols.size() > 0) {
-            builder.addPropertyValue("securityPolicies", SpringConfigurationUtils.parseCustomElements(secPols,
-                    parserContext));
-        }
+        builder.addPropertyValue("securityPolicies", SpringConfigurationUtils.parseInnerCustomElements(secPols,
+                parserContext));
     }
 
     /** {@inheritDoc} */

@@ -22,11 +22,12 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Bean parser for service servlet attribute exporter service. */
-public class ServletContextAttributeExporterBeanDefinitionParser extends AbstractServiceBeanDefinitionParser {
+/** Bean parser for service Servlet attribute exporter service. */
+public class ServletContextAttributeExporterBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Type name. */
     public static final QName TYPE_NAME = new QName(ServiceNamespaceHandler.NAMESPACE,
@@ -40,13 +41,15 @@ public class ServletContextAttributeExporterBeanDefinitionParser extends Abstrac
     /** {@inheritDoc} */
     protected void doParse(Element configElement, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
+        
+        builder.setInitMethodName("initialize");
 
         ArrayList<String> services = new ArrayList<String>();
         for (String dependency : XMLHelper
                 .getAttributeValueAsList(configElement.getAttributeNodeNS(null, "depends-on"))) {
             services.add(dependency);
         }
-        builder.addConstructorArg(services);
+        builder.addConstructorArgValue(services);
     }
 
     /** {@inheritDoc} */
