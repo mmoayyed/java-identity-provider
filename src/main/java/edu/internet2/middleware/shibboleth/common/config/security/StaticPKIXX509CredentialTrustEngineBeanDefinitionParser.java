@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.config.security;
 
 import java.util.HashSet;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -26,20 +27,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}StaticPKIXX509Credential elements. */
 public class StaticPKIXX509CredentialTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXX509Credential");
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(StaticPKIXX509CredentialTrustEngineBeanDefinitionParser.class);
 
@@ -47,33 +46,24 @@ public class StaticPKIXX509CredentialTrustEngineBeanDefinitionParser extends Abs
     protected Class getBeanClass(Element element) {
         return StaticPKIXX509CredentialTrustEngineFactoryBean.class;
     }
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element)
-                .getLocalPart(), element.getAttributeNS(null, "id"));
-        
-        NodeList childElems = element.getElementsByTagNameNS(SecurityNamespaceHandler.NAMESPACE, "ValidationInfo");
-        if(childElems != null){
-            ManagedList pkixInfo = 
-                SpringConfigurationUtils.parseCustomElements(childElems, parserContext);        
-            builder.addPropertyValue("PKIXInfo", pkixInfo);
+        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element).getLocalPart(),
+                element.getAttributeNS(null, "id"));
+
+        List<Element> childElems = XMLHelper.getChildElementsByTagNameNS(element, SecurityNamespaceHandler.NAMESPACE,
+                "ValidationInfo");
+        builder.addPropertyValue("PKIXInfo", SpringConfigurationUtils.parseCustomElements(childElems, parserContext));
+
+        childElems = XMLHelper.getChildElementsByTagNameNS(element, SecurityNamespaceHandler.NAMESPACE, "TrustedName");
+        HashSet<String> trustedNames = new HashSet<String>();
+        for (Element nameElem : childElems) {
+            trustedNames.add(DatatypeHelper.safeTrimOrNullString(nameElem.getTextContent()));
         }
-        
-        childElems = element.getElementsByTagNameNS(SecurityNamespaceHandler.NAMESPACE, "TrustedName");
-        if(childElems != null && childElems.getLength() > 0) {
-            HashSet<String> trustedNames = new HashSet<String>();
-            for (int i=0; i<childElems.getLength(); i++) {
-                Element child = (Element) childElems.item(i);
-                String name = DatatypeHelper.safeTrimOrNullString(child.getTextContent());
-                if (name != null) {
-                    trustedNames.add(name);
-                }
-            }
-            builder.addPropertyValue("trustedNames", trustedNames);
-        }
+        builder.addPropertyValue("trustedNames", trustedNames);
     }
-    
+
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         return DatatypeHelper.safeTrim(element.getAttributeNS(null, "id"));

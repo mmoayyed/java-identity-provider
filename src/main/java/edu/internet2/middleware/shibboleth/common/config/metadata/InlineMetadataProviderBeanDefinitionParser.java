@@ -16,14 +16,16 @@
 
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.metadata.provider.DOMMetadataProvider;
+import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Spring bean definition parser for a OpenSAML2 DOMMetadataProvider.
@@ -44,10 +46,12 @@ public class InlineMetadataProviderBeanDefinitionParser extends BaseMetadataProv
 
         super.doParse(config, parserContext, builder);
 
-        NodeList metadataContent = config.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntitiesDescriptor");
-        if (metadataContent.getLength() < 1) {
-            metadataContent = config.getElementsByTagNameNS(SAMLConstants.SAML20MD_NS, "EntityDescriptor");
+        List<Element> metadataContent = XMLHelper.getChildElementsByTagNameNS(config, SAMLConstants.SAML20MD_NS,
+                "EntitiesDescriptor");
+        if (metadataContent.size() < 1) {
+            metadataContent = XMLHelper.getChildElementsByTagNameNS(config, SAMLConstants.SAML20MD_NS,
+                    "EntityDescriptor");
         }
-        builder.addConstructorArgValue((Element) metadataContent.item(0));
+        builder.addConstructorArgValue((Element) metadataContent.get(0));
     }
 }

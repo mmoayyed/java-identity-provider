@@ -28,6 +28,7 @@ import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -100,12 +101,12 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         log.debug("Data connector {} LDAP properties: {}", pluginId, ldapProperties);
         pluginBuilder.addPropertyValue("ldapProperties", ldapProperties);
 
-        BeanDefinition trustCredential = processCredential(pluginConfigChildren.get(new QName(
+        RuntimeBeanReference trustCredential = processCredential(pluginConfigChildren.get(new QName(
                 DataConnectorNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")), parserContext);
         log.debug("Data connector {} using provided SSL/TLS trust material", pluginId);
         pluginBuilder.addPropertyValue("trustCredential", trustCredential);
 
-        BeanDefinition connectionCredential = processCredential(pluginConfigChildren.get(new QName(
+        RuntimeBeanReference connectionCredential = processCredential(pluginConfigChildren.get(new QName(
                 DataConnectorNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential")), parserContext);
         log.debug("Data connector {} using provided SSL/TLS client authentication material", pluginId);
         pluginBuilder.addPropertyValue("connectionCredential", connectionCredential);
@@ -223,7 +224,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
      * 
      * @return the bean definition for the credential
      */
-    protected BeanDefinition processCredential(List<Element> credentials, ParserContext parserContext) {
+    protected RuntimeBeanReference processCredential(List<Element> credentials, ParserContext parserContext) {
         if (credentials == null) {
             return null;
         }

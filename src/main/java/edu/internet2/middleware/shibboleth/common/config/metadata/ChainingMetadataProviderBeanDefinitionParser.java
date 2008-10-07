@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import org.opensaml.saml2.metadata.provider.ChainingMetadataProvider;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -48,9 +47,8 @@ public class ChainingMetadataProviderBeanDefinitionParser extends BaseMetadataPr
 
         List<Element> providerElems = XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE,
                 "MetadataProvider");
-        if (providerElems != null) {
-            ManagedList providers = SpringConfigurationUtils.parseCustomElements(providerElems, parserContext);
-            builder.addPropertyValue("providers", providers);
-        }
+        builder.addPropertyValue("providers", SpringConfigurationUtils
+                .parseCustomElements(providerElems, parserContext));
+
     }
 }

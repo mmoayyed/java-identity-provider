@@ -85,6 +85,10 @@ public final class SpringConfigurationUtils {
         }
     }
 
+    public static RuntimeBeanReference parseCustomElement(Element element, ParserContext parserContext) {
+        return parseCustomElement(element, "id", parserContext);
+    }
+
     /**
      * xsi:type aware version of BeanDefinitionParserDelegate.parseCustomElement(Element).
      * 
@@ -93,7 +97,8 @@ public final class SpringConfigurationUtils {
      * 
      * @return bean definition
      */
-    public static BeanDefinition parseCustomElement(Element element, ParserContext parserContext) {
+    public static RuntimeBeanReference parseCustomElement(Element element, String idAttribute,
+            ParserContext parserContext) {
         BeanDefinitionParserDelegate delegate = parserContext.getDelegate();
         String namespaceUri = element.getNamespaceURI();
 
@@ -106,7 +111,11 @@ public final class SpringConfigurationUtils {
             log.error("Unable to locate NamespaceHandler for namespace [" + namespaceUri + "]");
             return null;
         }
-        return handler.parse(element, new ParserContext(delegate.getReaderContext(), delegate, null));
+        handler.parse(element, new ParserContext(delegate.getReaderContext(), delegate, null));
+
+        RuntimeBeanReference beanRef = new RuntimeBeanReference(element.getAttributeNS(null, idAttribute));
+        beanRef.setSource(element);
+        return beanRef;
     }
 
     /**
@@ -127,26 +136,10 @@ public final class SpringConfigurationUtils {
 
         return null;
     }
-
-    /**
-     * Parse list of elements into bean definitions.
-     * 
-     * @param elements list of elements to parse
-     * @param parserContext current parsing context
-     * 
-     * @return list of bean references
-     */
-    public static ManagedList parseCustomElements(NodeList elements, ParserContext parserContext) {
-        int numOfElements = elements.getLength();
-        ManagedList definitions = new ManagedList(numOfElements);
-
-        Element e;
-        for (int i = 0; i < numOfElements; i++) {
-            e = (Element) elements.item(i);
-            definitions.add(parseCustomElement(e, parserContext));
-        }
-
-        return definitions;
+    
+    public static ManagedList parseCustomElements(List<Element> elements,
+            ParserContext parserContext) {
+        return parseCustomElements(elements, "id", parserContext);
     }
 
     /**
@@ -157,14 +150,15 @@ public final class SpringConfigurationUtils {
      * 
      * @return list of bean references
      */
-    public static ManagedList parseCustomElements(List<Element> elements, ParserContext parserContext) {
+    public static ManagedList parseCustomElements(List<Element> elements, String idAttribute,
+            ParserContext parserContext) {
         if (elements == null) {
             return null;
         }
 
         ManagedList definitions = new ManagedList(elements.size());
         for (Element e : elements) {
-            definitions.add(parseCustomElement(e, parserContext));
+            definitions.add(parseCustomElement(e, idAttribute, parserContext));
         }
 
         return definitions;

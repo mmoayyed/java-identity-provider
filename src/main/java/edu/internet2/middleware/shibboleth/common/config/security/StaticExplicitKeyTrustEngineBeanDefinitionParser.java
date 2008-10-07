@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.common.config.security;
 
+import java.util.List;
+
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
@@ -24,20 +26,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
 /** Spring bean definition parser for {urn:mace:shibboleth:2.0:security}StaticExplicitKey elements. */
 public class StaticExplicitKeyTrustEngineBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticExplicitKey");
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(StaticExplicitKeyTrustEngineBeanDefinitionParser.class);
 
@@ -45,20 +45,18 @@ public class StaticExplicitKeyTrustEngineBeanDefinitionParser extends AbstractSi
     protected Class getBeanClass(Element element) {
         return StaticExplicitKeyTrustEngineFactoryBean.class;
     }
-    
+
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element)
-                .getLocalPart(), element.getAttributeNS(null, "id"));
-        
-        NodeList childElems = element.getElementsByTagNameNS(SecurityNamespaceHandler.NAMESPACE, "Credential");
-        if(childElems != null){
-            ManagedList credentials = 
-                SpringConfigurationUtils.parseCustomElements(childElems, parserContext);        
-            builder.addPropertyValue("credentials", credentials);
-        }
+        log.info("Parsing configuration for {} trust engine with id: {}", XMLHelper.getXSIType(element).getLocalPart(),
+                element.getAttributeNS(null, "id"));
+
+        List<Element> childElems = XMLHelper.getChildElementsByTagNameNS(element, SecurityNamespaceHandler.NAMESPACE,
+                "Credential");
+        builder.addPropertyValue("credentials", SpringConfigurationUtils
+                        .parseCustomElements(childElems, parserContext));
     }
-    
+
     /** {@inheritDoc} */
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) {
         return DatatypeHelper.safeTrim(element.getAttributeNS(null, "id"));

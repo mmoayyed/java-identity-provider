@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -30,9 +29,7 @@ import org.w3c.dom.Element;
 
 import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtils;
 
-/**
- * Base class for metadata provider configuration parser.
- */
+/** Base class for metadata provider configuration parser. */
 public abstract class BaseMetadataProviderBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** Class logger. */
@@ -54,12 +51,11 @@ public abstract class BaseMetadataProviderBeanDefinitionParser extends AbstractS
         }
         builder.addPropertyValue("requireValidMetadata", requireValidMDBool);
 
-        List<Element> childElems = 
-            XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE, "MetadataFilter");
+        List<Element> childElems = XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE,
+                "MetadataFilter");
         if (childElems.size() > 0) {
-            Element filterElem = (Element) childElems.get(0);
-            BeanDefinition filterDef = SpringConfigurationUtils.parseCustomElement(filterElem, parserContext);
-            builder.addPropertyValue("metadataFilter", filterDef);
+            builder.addPropertyValue("metadataFilter", SpringConfigurationUtils.parseCustomElement((Element) childElems
+                    .get(0), parserContext));
         }
     }
 }

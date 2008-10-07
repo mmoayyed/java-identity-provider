@@ -22,6 +22,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.XMLHelper;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -51,8 +53,9 @@ public class RelyingPartyGroupBeanDefinitionParser extends AbstractSingleBeanDef
 
         List<Element> mds = configChildren.get(new QName(MetadataNamespaceHandler.NAMESPACE, "MetadataProvider"));
         if (mds != null && mds.size() > 0) {
-            builder.addPropertyValue("metadataProvider", SpringConfigurationUtils.parseCustomElement(mds.get(0),
-                    parserContext));
+            Element mdConfigElem = mds.get(0);
+            SpringConfigurationUtils.parseCustomElement(mdConfigElem, parserContext);
+            builder.addPropertyValue("metadataProvider", new RuntimeBeanReference(mdConfigElem.getAttributeNS(null, "id")));
         }
 
         parseRelyingPartyConfiguration(configChildren, builder, parserContext);
