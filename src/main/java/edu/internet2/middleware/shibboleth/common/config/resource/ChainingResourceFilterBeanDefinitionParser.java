@@ -49,7 +49,7 @@ public class ChainingResourceFilterBeanDefinitionParser extends AbstractSingleBe
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         List<Element> childFilters = XMLHelper.getChildElementsByTagNameNS(element, ResourceNamespaceHandler.NAMESPACE, "Chaining");
         log.debug("Processing {} child filters.", childFilters.size());
-        builder.addConstructorArgValue(SpringConfigurationUtils.parseCustomElements(childFilters, parserContext));
+        builder.addConstructorArgValue(SpringConfigurationUtils.parseInnerCustomElements(childFilters, parserContext));
     }
 
     /** {@inheritDoc} */

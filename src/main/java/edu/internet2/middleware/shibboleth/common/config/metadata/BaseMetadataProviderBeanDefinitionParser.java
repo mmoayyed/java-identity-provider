@@ -54,8 +54,8 @@ public abstract class BaseMetadataProviderBeanDefinitionParser extends AbstractS
         List<Element> childElems = XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE,
                 "MetadataFilter");
         if (childElems.size() > 0) {
-            builder.addPropertyValue("metadataFilter", SpringConfigurationUtils.parseCustomElement((Element) childElems
-                    .get(0), parserContext));
+            builder.addPropertyValue("metadataFilter", SpringConfigurationUtils.parseInnerCustomElement(
+                    (Element) childElems.get(0), parserContext));
         }
     }
 }

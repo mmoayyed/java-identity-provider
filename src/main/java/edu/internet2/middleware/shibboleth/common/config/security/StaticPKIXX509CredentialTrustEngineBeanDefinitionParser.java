@@ -54,7 +54,7 @@ public class StaticPKIXX509CredentialTrustEngineBeanDefinitionParser extends Abs
 
         List<Element> childElems = XMLHelper.getChildElementsByTagNameNS(element, SecurityNamespaceHandler.NAMESPACE,
                 "ValidationInfo");
-        builder.addPropertyValue("PKIXInfo", SpringConfigurationUtils.parseCustomElements(childElems, parserContext));
+        builder.addPropertyValue("PKIXInfo", SpringConfigurationUtils.parseInnerCustomElements(childElems, parserContext));
 
         childElems = XMLHelper.getChildElementsByTagNameNS(element, SecurityNamespaceHandler.NAMESPACE, "TrustedName");
         HashSet<String> trustedNames = new HashSet<String>();

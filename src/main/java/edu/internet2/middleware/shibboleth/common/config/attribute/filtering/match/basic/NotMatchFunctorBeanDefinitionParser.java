@@ -49,7 +49,7 @@ public class NotMatchFunctorBeanDefinitionParser extends BaseFilterBeanDefinitio
         List<Element> ruleElements = XMLHelper.getChildElementsByTagNameNS(configElement,
                 BasicMatchFunctorNamespaceHandler.NAMESPACE, "Rule");
 
-        builder.addConstructorArg(SpringConfigurationUtils.parseCustomElement(ruleElements.get(0),
+        builder.addConstructorArgValue(SpringConfigurationUtils.parseInnerCustomElement(ruleElements.get(0),
                 parserContext));
     }
 }

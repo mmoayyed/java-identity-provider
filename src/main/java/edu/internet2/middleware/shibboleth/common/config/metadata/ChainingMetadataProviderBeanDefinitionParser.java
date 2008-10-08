@@ -47,8 +47,7 @@ public class ChainingMetadataProviderBeanDefinitionParser extends BaseMetadataPr
 
         List<Element> providerElems = XMLHelper.getChildElementsByTagNameNS(config, MetadataNamespaceHandler.NAMESPACE,
                 "MetadataProvider");
-        builder.addPropertyValue("providers", SpringConfigurationUtils
-                .parseCustomElements(providerElems, parserContext));
+        builder.addPropertyValue("providers", SpringConfigurationUtils.parseCustomElements(providerElems, parserContext));
 
     }
 }

@@ -34,8 +34,8 @@ public abstract class AbstractResourceBeanDefinitionParser extends AbstractSingl
         List<Element> resFilter = XMLHelper.getChildElementsByTagNameNS(element, ResourceNamespaceHandler.NAMESPACE,
                 "ResourceFilter");
         if (!resFilter.isEmpty()) {
-            builder.addConstructorArgValue(SpringConfigurationUtils
-                            .parseCustomElement(resFilter.get(0), parserContext));
+            builder.addConstructorArgValue(SpringConfigurationUtils.parseInnerCustomElement(resFilter.get(0),
+                    parserContext));
         }
     }
 }

@@ -46,7 +46,7 @@ public class MetadataFilterChainBeanDefinitionParser extends AbstractSingleBeanD
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         List<Element> filterElems = XMLHelper.getChildElementsByTagNameNS(element, MetadataNamespaceHandler.NAMESPACE,
                 "MetadataFilter");
-        builder.addPropertyValue("filters", SpringConfigurationUtils.parseCustomElements(filterElems, parserContext));
+        builder.addPropertyValue("filters", SpringConfigurationUtils.parseInnerCustomElements(filterElems, parserContext));
     }
 
     /** {@inheritDoc} */
