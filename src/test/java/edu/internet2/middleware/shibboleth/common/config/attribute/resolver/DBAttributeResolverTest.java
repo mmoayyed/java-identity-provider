@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver;
 
-import java.util.Collection;
+import java.util.Map;
 
 import org.opensaml.util.resource.ResourceException;
 import org.springframework.context.ApplicationContext;
@@ -48,11 +48,32 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
         context.setPrincipalName("astone");
 
         try {
-            Collection<BaseAttribute> attributes = resolver.resolveAttributes(context).values();
-
-            for (BaseAttribute attribute : attributes) {
-                System.out.println(attribute.getId() + ":" + attribute.getValues());
-            }
+            Map<String, BaseAttribute> attributes = resolver.resolveAttributes(context);
+            
+            BaseAttribute uid = attributes.get("uid");
+            assertNotNull(uid);
+            assertEquals(1, uid.getValues().size());
+            assertTrue(uid.getValues().contains("astone"));
+            
+            BaseAttribute email = attributes.get("email");
+            assertNotNull(email);
+            assertEquals(1, email.getValues().size());
+            assertTrue(email.getValues().contains("astone@example.edu"));
+            
+            BaseAttribute firstName = attributes.get("FIRSTNAME");
+            assertNotNull(firstName);
+            assertEquals(1, firstName.getValues().size());
+            assertTrue(firstName.getValues().contains("Alexander"));
+            
+            BaseAttribute lastName = attributes.get("LASTNAME");
+            assertNotNull(lastName);
+            assertEquals(1, lastName.getValues().size());
+            assertTrue(lastName.getValues().contains("Stone"));
+            
+            BaseAttribute fullName = attributes.get("fullname");
+            assertNotNull(fullName);
+            assertEquals(1, fullName.getValues().size());
+            assertTrue(fullName.getValues().contains("Alexander Stone"));
 
         } catch (AttributeResolutionException e) {
             fail(e.getMessage());
