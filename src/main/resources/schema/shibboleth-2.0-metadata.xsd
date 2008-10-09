@@ -256,6 +256,28 @@
         </complexContent>
     </complexType>
     
+    <complexType name="RequiredValidUntil">
+        <annotation>
+            <documentation>
+                A filter that requires the presence of a validUntil attribute on the root of the metadata and,
+                optionally, requires that that date not be more than some amount of time in the future.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <attribute name="maxValidityInterval" type="nonNegativeInteger">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time, from now, in seconds which the validUntil attribute may be set.
+                            This provides an upper limit to the lifetime of any metadata.  A value of 0 indicates that
+                            there is no limit.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="SchemaValidation">
         <annotation>
             <documentation>
