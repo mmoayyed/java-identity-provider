@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 public class StoredIDPrincipalConnectorBeanDefinitionParser extends BasePrincipalConnectrBeanDefinitionParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE_URI, "StoredID");
+    public static final QName SCHEMA_TYPE = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE_URI, "StoredId");
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
