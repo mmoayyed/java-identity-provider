@@ -18,6 +18,8 @@ Changes in Release 1.1.0
 [SC-49] - Add version information in library JAR manifest and provide command line tool to view it
 [SC-50] - Provide options to enumerate trusted names for static PKIX trust engines
 [SC-52] - Include SMTPAppender dependencies in base distribution
+[SC-55] - Cleanup StorageService entry classes
+[SC-56] - logback SMTP appender PatterLayout interspersed with stack trace
 
 [SIDP-200] - attribute-filter.xml AtributeRule ignoreCase logic is backwards
 [SIDP-213] - aacli.sh computedid Exception in thread "main" java.lang.NullPointerException

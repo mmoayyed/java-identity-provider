@@ -18,8 +18,8 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.att
 
 import org.opensaml.util.storage.StorageService;
 
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdEntry;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdAttributeDefinition;
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdAttributeDefinition.IdEntry;
 
 /**
  * Spring factory bean producing {@link TransientIdAttributeDefinition}s.
@@ -27,7 +27,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.at
 public class TransientIdAttributeDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
 
     /** Store used to map transient identifier tokens to principal names. */
-    private StorageService<String, IdEntry> identifierStore;
+    private StorageService<String, TransientIdEntry> identifierStore;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
@@ -39,7 +39,7 @@ public class TransientIdAttributeDefinitionFactoryBean extends BaseAttributeDefi
      * 
      * @return store used to map transient identifier tokens to principal names
      */
-    public StorageService<String, IdEntry> getIdentifierStore() {
+    public StorageService<String, TransientIdEntry> getIdentifierStore() {
         return identifierStore;
     }
 
@@ -48,7 +48,7 @@ public class TransientIdAttributeDefinitionFactoryBean extends BaseAttributeDefi
      * 
      * @param store store used to map transient identifier tokens to principal names
      */
-    public void setIdentifierStore(StorageService<String, IdEntry> store) {
+    public void setIdentifierStore(StorageService<String, TransientIdEntry> store) {
         identifierStore = store;
     }
 

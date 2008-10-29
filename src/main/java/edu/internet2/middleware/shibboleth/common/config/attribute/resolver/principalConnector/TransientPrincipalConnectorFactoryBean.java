@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.pri
 
 import org.opensaml.util.storage.StorageService;
 
-import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdAttributeDefinition.IdEntry;
+import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.TransientIdEntry;
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.principalConnector.TransientPrincipalConnector;
 
 /**
@@ -27,7 +27,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.pr
 public class TransientPrincipalConnectorFactoryBean extends BasePrincipalConnectorFactoryBean {
 
     /** Store used to map transient identifier tokens to principal names. */
-    private StorageService<String, IdEntry> identifierStore;
+    private StorageService<String, TransientIdEntry> identifierStore;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
@@ -39,7 +39,7 @@ public class TransientPrincipalConnectorFactoryBean extends BasePrincipalConnect
      * 
      * @return store used to map transient identifier tokens to principal names
      */
-    public StorageService<String, IdEntry> getIdentifierStore() {
+    public StorageService<String, TransientIdEntry> getIdentifierStore() {
         return identifierStore;
     }
 
@@ -48,7 +48,7 @@ public class TransientPrincipalConnectorFactoryBean extends BasePrincipalConnect
      * 
      * @param store store used to map transient identifier tokens to principal names
      */
-    public void setIdentifierStore(StorageService<String, IdEntry> store) {
+    public void setIdentifierStore(StorageService<String, TransientIdEntry> store) {
         identifierStore = store;
     }
 

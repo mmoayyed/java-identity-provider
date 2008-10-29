@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.security.auth.Subject;
 
 import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
 
 import edu.internet2.middleware.shibboleth.common.session.Session;
 
@@ -38,7 +39,7 @@ public abstract class AbstractSession implements Session {
     private long inactivityTimeout;
 
     /** The last activity time of the user. */
-    private DateTime lastActivity;
+    private long lastActivity;
 
     /**
      * Constructor.
@@ -50,26 +51,26 @@ public abstract class AbstractSession implements Session {
         sessionId = id;
         subject = new Subject();
         inactivityTimeout = timeout;
-        lastActivity = new DateTime();
+        lastActivity = new DateTime().toDateTime(ISOChronology.getInstanceUTC()).getMillis();
     }
 
     /** {@inheritDoc} */
-    public String getSessionID() {
+    public synchronized String getSessionID() {
         return sessionId;
     }
 
     /** {@inheritDoc} */
-    public Subject getSubject() {
+    public synchronized Subject getSubject() {
         return subject;
     }
 
     /** {@inheritDoc} */
-    public void setSubject(Subject newSubject) {
+    public synchronized void setSubject(Subject newSubject) {
         subject = newSubject;
     }
 
     /** {@inheritDoc} */
-    public String getPrincipalName() {
+    public synchronized String getPrincipalName() {
         Set<Principal> principals = subject.getPrincipals();
         if (principals != null && !principals.isEmpty()) {
             return principals.iterator().next().getName();
@@ -79,17 +80,17 @@ public abstract class AbstractSession implements Session {
     }
 
     /** {@inheritDoc} */
-    public long getInactivityTimeout() {
+    public synchronized long getInactivityTimeout() {
         return inactivityTimeout;
     }
 
     /** {@inheritDoc} */
-    public DateTime getLastActivityInstant() {
-        return lastActivity;
+    public synchronized DateTime getLastActivityInstant() {
+        return new DateTime(lastActivity, ISOChronology.getInstanceUTC());
     }
 
     /** {@inheritDoc} */
-    public void setLastActivityInstant(DateTime activity) {
-        lastActivity = activity;
+    public synchronized void setLastActivityInstant(DateTime activity) {
+        lastActivity = activity.toDateTime(ISOChronology.getInstanceUTC()).getMillis();
     }
 }
