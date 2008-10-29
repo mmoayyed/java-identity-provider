@@ -50,12 +50,33 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
     /** Whether the SQL query uses stored procedures. */
     private boolean queryUsesStoredProcedures;
 
+    /** Whether an empty result set is an error. */
+    private boolean noResultsIsError;
+
     /** Whether results should be cached. */
     private boolean cacheResults;
 
     /** {@inheritDoc} */
     public Class getObjectType() {
         return RDBMSDataConnector.class;
+    }
+
+    /**
+     * This returns whether this connector will throw an exception if no search results are found. The default is false.
+     * 
+     * @return <code>boolean</code>
+     */
+    public boolean isNoResultsIsError() {
+        return noResultsIsError;
+    }
+
+    /**
+     * This sets whether this connector will throw an exception if no search results are found.
+     * 
+     * @param b <code>boolean</code>
+     */
+    public void setNoResultsIsError(boolean b) {
+        noResultsIsError = b;
     }
 
     /**
@@ -192,6 +213,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
         connector.setQueryTemplate(getQueryTemplate());
         connector.setUsesStoredProcedure(getQueryUsesStoredProcedures());
         connector.setConnectionReadOnly(isReadOnlyConnections());
+        connector.setNoResultsIsError(isNoResultsIsError());
 
         if (getColumnDescriptors() != null) {
             Map<String, RDBMSColumnDescriptor> columnDecriptors = connector.getColumnDescriptor();

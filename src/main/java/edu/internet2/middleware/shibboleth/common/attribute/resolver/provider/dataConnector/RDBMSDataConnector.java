@@ -64,6 +64,9 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** Whether queries might use stored procedures. */
     private boolean usesStoredProcedure;
 
+    /** Whether an empty result set is an error. */
+    private boolean noResultsIsError;
+
     /** Whether to cache query results. */
     private boolean cacheResults;
 
@@ -97,9 +100,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         columnDescriptors = new HashMap<String, RDBMSColumnDescriptor>();
     }
 
-    /**
-     * Intializes the connector and prepares it for use.
-     */
+    /** Initializes the connector and prepares it for use. */
     public void initialize() {
         registerTemplate();
         if (cacheResults) {
@@ -142,6 +143,24 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      */
     public void setUsesStoredProcedure(boolean storedProcedure) {
         usesStoredProcedure = storedProcedure;
+    }
+
+    /**
+     * This returns whether this connector will throw an exception if no search results are found. The default is false.
+     * 
+     * @return <code>boolean</code>
+     */
+    public boolean isNoResultsIsError() {
+        return noResultsIsError;
+    }
+
+    /**
+     * This sets whether this connector will throw an exception if no search results are found.
+     * 
+     * @param b <code>boolean</code>
+     */
+    public void setNoResultsIsError(boolean b) {
+        noResultsIsError = b;
     }
 
     /**
@@ -338,6 +357,11 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             log.debug("RDBMS Data Connector {}: Querying database for attributes with query: {}", getId(), query);
             queryResult = connection.createStatement().executeQuery(query);
             resolvedAttributes = processResultSet(queryResult);
+            if (resolvedAttributes.isEmpty() && noResultsIsError) {
+                log.error("RDBMS Data Connector {}: No attribtues from query", getId());
+                throw new AttributeResolutionException("RDBMS Data Connector " + getId()
+                        + ": No attributes returned from query");
+            }
             log.debug("RDBMS Data Connector {}: Retrieved attributes: {}", getId(), resolvedAttributes.keySet());
             return resolvedAttributes;
         } catch (SQLException e) {

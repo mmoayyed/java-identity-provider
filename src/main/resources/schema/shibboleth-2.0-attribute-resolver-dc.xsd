@@ -185,6 +185,15 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="noResultIsError" type="boolean">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning no results should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="cacheResults" type="boolean">
                     <annotation>
                         <documentation>

@@ -87,6 +87,14 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
                 pluginBuilder);
         pluginBuilder.addPropertyValue("columnDescriptors", descriptors);
 
+        boolean noResultsIsError = false;
+        if (pluginConfig.hasAttributeNS(null, "noResultIsError")) {
+            noResultsIsError = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
+                    "noResultIsError"));
+        }
+        log.debug("Data connector {} no results is error: {}", pluginId, noResultsIsError);
+        pluginBuilder.addPropertyValue("noResultIsError", noResultsIsError);
+
         boolean cacheResults = false;
         if (pluginConfig.hasAttributeNS(null, "cacheResults")) {
             cacheResults = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null, "cacheResults"));
@@ -151,7 +159,7 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
         try {
             InitialContext initCtx = new InitialContext(initCtxProps);
             DataSource dataSource = (DataSource) initCtx.lookup(jndiResource);
-            if(dataSource == null){
+            if (dataSource == null) {
                 log.error("DataSource " + jndiResource + " did not exist in JNDI directory");
                 throw new BeanCreationException("DataSource " + jndiResource + " did not exist in JNDI directory");
             }
@@ -180,13 +188,14 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
 
         String driverClass = DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcDriver"));
         ClassLoader classLoader = this.getClass().getClassLoader();
-        try{
+        try {
             classLoader.loadClass(driverClass);
-        }catch(ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             log.error("Unable to create relational database connector, JDBC driver can not be found on the classpath");
-            throw new BeanCreationException("Unable to create relational database connector, JDBC driver can not be found on the classpath");
+            throw new BeanCreationException(
+                    "Unable to create relational database connector, JDBC driver can not be found on the classpath");
         }
-        
+
         try {
             datasource.setDriverClass(driverClass);
             datasource.setJdbcUrl(DatatypeHelper.safeTrim(amc.getAttributeNS(null, "jdbcURL")));
@@ -296,13 +305,13 @@ public class RDBMSDataConnectorBeanDefinitionParser extends BaseDataConnectorBea
             for (Element columnElem : pluginConfigChildren.get(COLUMN_ELEMENT_NAME)) {
                 columnName = columnElem.getAttributeNS(null, "columnName");
                 attributeId = columnElem.getAttributeNS(null, "attributeID");
-                
-                if(columnElem.hasAttributeNS(null, "type")){
-                dataType = columnElem.getAttributeNS(null, "type");
-                }else{
+
+                if (columnElem.hasAttributeNS(null, "type")) {
+                    dataType = columnElem.getAttributeNS(null, "type");
+                } else {
                     dataType = DATA_TYPES.String.toString();
                 }
-                
+
                 columnDescriptor = new RDBMSColumnDescriptor(columnName, attributeId, DATA_TYPES.valueOf(dataType));
                 columnDescriptors.add(columnDescriptor);
             }
