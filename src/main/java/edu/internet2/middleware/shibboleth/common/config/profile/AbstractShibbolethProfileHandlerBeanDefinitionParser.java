@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,15 @@ package edu.internet2.middleware.shibboleth.common.config.profile;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
-/**
- * Base class for request bound profile handler configuration parsers.
- */
+/** Base class for request bound profile handler configuration parsers. */
 public abstract class AbstractShibbolethProfileHandlerBeanDefinitionParser extends
         AbstractRequestURIMappedProfileHandlerBeanDefinitionParser {
 
     /** {@inheritDoc} */
     protected void doParse(Element config, BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
+
+        builder.addPropertyReference("parserPool", config.getAttributeNS(null, "parserPoolRef"));
 
         builder.addPropertyReference("relyingPartyConfigurationManager", config.getAttributeNS(null,
                 "relyingPartyManagerId"));

@@ -20,6 +20,7 @@ import org.opensaml.Configuration;
 import org.opensaml.ws.transport.http.HTTPInTransport;
 import org.opensaml.ws.transport.http.HTTPOutTransport;
 import org.opensaml.xml.XMLObjectBuilderFactory;
+import org.opensaml.xml.parse.ParserPool;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 import edu.internet2.middleware.shibboleth.common.relyingparty.RelyingPartyConfiguration;
@@ -40,6 +41,9 @@ import edu.internet2.middleware.shibboleth.common.session.SessionManager;
 public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAMLMDRelyingPartyConfigurationManager, SessionType extends Session>
         extends AbstractRequestURIMappedProfileHandler<HTTPInTransport, HTTPOutTransport> {
 
+    /** Pool of XML parsers. */
+    private ParserPool parserPool;
+    
     /** Relying party configuration manager for the profile handler. */
     private RPManagerType rpManager;
 
@@ -61,6 +65,24 @@ public abstract class AbstractShibbolethProfileHandler<RPManagerType extends SAM
      * @return ID of the profile supported by this handler
      */
     public abstract String getProfileId();
+    
+    /**
+     * Gets the pool of XML parsers.
+     * 
+     * @return pool of XML parsers.
+     */
+    public ParserPool getParserPool() {
+        return parserPool;
+    }
+    
+    /**
+     * Sets the pool of XML parsers.
+     * 
+     * @param pool pool of XML parsers
+     */
+    public void setParserPool(ParserPool pool) {
+        parserPool = pool;
+    }
 
     /**
      * Gets the relying party manager for this profile handler.

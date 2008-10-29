@@ -68,6 +68,16 @@
     <xsd:complexType name="ShibbolethProfileHandlerType" abstract="true">
         <xsd:complexContent>
             <xsd:extension base="RequestURIMappedProfileHandlerType">
+                <xsd:attribute name="parserPoolRef" type="xsd:string" default="shibboleth.ParserPool">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The name of the parser pool used by the profile handler.
+                            
+                            This setting should not be changed from its default unless the deployer fully understands
+                            the inter-relationship between IdP components.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
                 <xsd:attribute name="relyingPartyManagerId" type="xsd:string"
                     default="shibboleth.RelyingPartyConfigurationManager">
                     <xsd:annotation>
