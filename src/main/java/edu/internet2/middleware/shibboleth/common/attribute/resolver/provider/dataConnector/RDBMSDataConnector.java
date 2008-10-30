@@ -65,7 +65,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     private boolean usesStoredProcedure;
 
     /** Whether an empty result set is an error. */
-    private boolean noResultsIsError;
+    private boolean noResultIsError;
 
     /** Whether to cache query results. */
     private boolean cacheResults;
@@ -150,8 +150,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @return <code>boolean</code>
      */
-    public boolean isNoResultsIsError() {
-        return noResultsIsError;
+    public boolean isNoResultIsError() {
+        return noResultIsError;
     }
 
     /**
@@ -159,8 +159,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
      * 
      * @param b <code>boolean</code>
      */
-    public void setNoResultsIsError(boolean b) {
-        noResultsIsError = b;
+    public void setNoResultIsError(boolean b) {
+        noResultIsError = b;
     }
 
     /**
@@ -357,7 +357,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             log.debug("RDBMS Data Connector {}: Querying database for attributes with query: {}", getId(), query);
             queryResult = connection.createStatement().executeQuery(query);
             resolvedAttributes = processResultSet(queryResult);
-            if (resolvedAttributes.isEmpty() && noResultsIsError) {
+            if (resolvedAttributes.isEmpty() && noResultIsError) {
                 log.error("RDBMS Data Connector {}: No attribtues from query", getId());
                 throw new AttributeResolutionException("RDBMS Data Connector " + getId()
                         + ": No attributes returned from query");
