@@ -66,7 +66,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
      * 
      * @return <code>boolean</code>
      */
-    public boolean isNoResultsIsError() {
+    public boolean isNoResultIsError() {
         return noResultsIsError;
     }
 
@@ -75,7 +75,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
      * 
      * @param b <code>boolean</code>
      */
-    public void setNoResultsIsError(boolean b) {
+    public void setNoResultIsError(boolean b) {
         noResultsIsError = b;
     }
 
@@ -213,7 +213,7 @@ public class RDBMSDataConnectorFactoryBean extends BaseDataConnectorFactoryBean 
         connector.setQueryTemplate(getQueryTemplate());
         connector.setUsesStoredProcedure(getQueryUsesStoredProcedures());
         connector.setConnectionReadOnly(isReadOnlyConnections());
-        connector.setNoResultsIsError(isNoResultsIsError());
+        connector.setNoResultIsError(isNoResultIsError());
 
         if (getColumnDescriptors() != null) {
             Map<String, RDBMSColumnDescriptor> columnDecriptors = connector.getColumnDescriptor();
