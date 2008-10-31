@@ -26,6 +26,7 @@ import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -53,6 +54,14 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
     protected Class getBeanClass(Element arg0) {
         return AttributeFilterPolicyFactoryBean.class;
     }
+    
+    /** {@inheritDoc} */
+    protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
+        if(!configElement.hasAttributeNS(null, "id")){
+            log.warn("AttributeFilterPolicy elements should include an 'id' attribute.  This is not currently required but may be in future versions.");
+        }
+        return getQualifiedId(configElement, configElement.getLocalName(), configElement.getAttributeNS(null, "id"));
+    }
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -61,7 +70,6 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
         String policyId = DatatypeHelper.safeTrimOrNullString(config.getAttributeNS(null, "id"));
         log.info("Parsing configuration for attribute filter policy {}", policyId);
         builder.addPropertyValue("policyId", policyId);
-
         List<Element> children;
         Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(config);
 

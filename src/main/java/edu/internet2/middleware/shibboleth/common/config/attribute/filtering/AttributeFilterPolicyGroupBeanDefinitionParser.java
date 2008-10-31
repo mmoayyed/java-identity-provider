@@ -66,16 +66,16 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser implements BeanDefin
         Map<QName, List<Element>> childrenMap = XMLHelper.getChildElements(config);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PolicyRequirementRule"));
-        SpringConfigurationUtils.parseCustomElements(children, context);
+        SpringConfigurationUtils.parseInnerCustomElements(children, context);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule"));
-        SpringConfigurationUtils.parseCustomElements(children, context);
+        SpringConfigurationUtils.parseInnerCustomElements(children, context);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "PermitValueRule"));
-        SpringConfigurationUtils.parseCustomElements(children, context);
+        SpringConfigurationUtils.parseInnerCustomElements(children, context);
 
         children = childrenMap.get(new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeFilterPolicy"));
-        SpringConfigurationUtils.parseCustomElements(children, context);
+        SpringConfigurationUtils.parseInnerCustomElements(children, context);
 
         return null;
     }
