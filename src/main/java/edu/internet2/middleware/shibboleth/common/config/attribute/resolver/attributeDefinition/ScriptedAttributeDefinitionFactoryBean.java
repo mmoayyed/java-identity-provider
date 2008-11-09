@@ -28,7 +28,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.at
 /**
  * Scripted attribute factory.
  */
-public class ScriptedAttribtueDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
+public class ScriptedAttributeDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
 
     /** The scripting language used. */
     private String scriptLanguage;

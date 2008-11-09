@@ -127,21 +127,21 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
 
         int poolMaxIdleSize = 3;
         if (pluginConfig.hasAttributeNS(null, "poolMaxIdleSize")) {
-            Integer.parseInt(pluginConfig.getAttributeNS(null, "poolMaxIdleSize"));
+            poolMaxIdleSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "poolMaxIdleSize"));
         }
         log.debug("Data connector {} maximum idle connection pool size: {}", pluginId, poolMaxIdleSize);
         pluginBuilder.addPropertyValue("poolMaxIdleSize", poolMaxIdleSize);
 
         int searchTimeLimit = 3000;
         if (pluginConfig.hasAttributeNS(null, "searchTimeLimit")) {
-            Integer.parseInt(pluginConfig.getAttributeNS(null, "searchTimeLimit"));
+            searchTimeLimit = Integer.parseInt(pluginConfig.getAttributeNS(null, "searchTimeLimit"));
         }
         log.debug("Data connector {} search timeout: {}ms", pluginId, searchTimeLimit);
         pluginBuilder.addPropertyValue("searchTimeLimit", searchTimeLimit);
 
         int maxResultSize = 1;
         if (pluginConfig.hasAttributeNS(null, "maxResultSize")) {
-            Integer.parseInt(pluginConfig.getAttributeNS(null, "maxResultSize"));
+            maxResultSize = Integer.parseInt(pluginConfig.getAttributeNS(null, "maxResultSize"));
         }
         log.debug("Data connector {} max search result size: {}", pluginId, maxResultSize);
         pluginBuilder.addPropertyValue("maxResultSize", maxResultSize);

@@ -40,7 +40,7 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
-        return ScriptedAttribtueDefinitionFactoryBean.class;
+        return ScriptedAttributeDefinitionFactoryBean.class;
     }
 
     /** {@inheritDoc} */
