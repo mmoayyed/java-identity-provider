@@ -278,7 +278,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
             log.debug("Validating RDBMS data connector {} configuration is valid.", getId());
         } catch (SQLException e) {
-            log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
+            if (e.getSQLState() != null)
+                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
             log.error("Unable to validate RDBMS data connector " + getId() + " configuration", e);
             throw new AttributeResolutionException("Unable to validate RDBMS data connector " + getId()
                     + " configuration", e);
@@ -288,7 +289,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                     connection.close();
                 }
             } catch (SQLException e) {
-                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
+                if (e.getSQLState() != null)
+                    log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
                 log.error("Error closing database connection", e);
             }
         }
@@ -367,7 +369,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             log.debug("RDBMS Data Connector {}: Retrieved attributes: {}", getId(), resolvedAttributes.keySet());
             return resolvedAttributes;
         } catch (SQLException e) {
-            log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
+            if (e.getSQLState() != null)
+                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
             log.error("RDBMS Data Connector " + getId() + ": Unable to execute SQL query\n" + query, e);
             throw new AttributeResolutionException("RDBMS Data Connector " + getId() + ": Unable to execute SQL query",
                     e);
@@ -382,7 +385,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                 }
 
             } catch (SQLException e) {
-                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
+                if (e.getSQLState() != null)
+                    log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
                 log.error("RDBMS Data Connector " + getId() + ": Unable to close connection to database", e);
             }
         }
@@ -438,7 +442,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                 }
             } while (resultSet.next());
         } catch (SQLException e) {
-            log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
+            if (e.getSQLState() != null)
+                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
             log.error("RDBMS Data Connector " + getId() + ": Unable to read data from query result set", e);
         }
 
