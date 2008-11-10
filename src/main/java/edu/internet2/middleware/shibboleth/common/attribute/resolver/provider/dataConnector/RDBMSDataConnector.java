@@ -259,11 +259,17 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
         log.debug("RDBMS data connector {} - Validating configuration.", getId());
+        
+        if(dataSource == null){
+            log.error("RDBMS data connector {} - Datasource is null", getId());
+            throw new AttributeResolutionException("Datasource is null");
+        }
+        
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             if (connection == null) {
-                log.error("RDBMS data connector {} - Unable to create connections" + getId());
+                log.error("RDBMS data connector {} - Unable to create connections", getId());
                 throw new AttributeResolutionException("Unable to create connections for RDBMS data connector "
                         + getId());
             }
