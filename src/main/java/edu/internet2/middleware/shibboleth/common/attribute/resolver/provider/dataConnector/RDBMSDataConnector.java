@@ -233,7 +233,7 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
         String query = queryCreator.createStatement(queryTemplateName, resolutionContext, getDependencyIds(), null);
-        log.debug("Search Query: {}", query);
+        log.debug("RDBMS data connector {} - Search Query: {}", getId(), query);
 
         Map<String, BaseAttribute> resolvedAttributes = null;
         resolvedAttributes = retrieveAttributesFromCache(resolutionContext.getAttributeRequestContext()
@@ -258,40 +258,45 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-        log.debug("Validating RDBMS data connector {} configuration.", getId());
+        log.debug("RDBMS data connector {} - Validating configuration.", getId());
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
             if (connection == null) {
-                log.error("Unable to create connections for RDBMS data connector " + getId());
+                log.error("RDBMS data connector {} - Unable to create connections" + getId());
                 throw new AttributeResolutionException("Unable to create connections for RDBMS data connector "
                         + getId());
             }
 
             DatabaseMetaData dbmd = connection.getMetaData();
             if (!dbmd.supportsStoredProcedures() && usesStoredProcedure) {
-                log.error("RDBMS data connector " + getId()
-                        + " is configured to use stored procedures but database does not support them.");
-                throw new AttributeResolutionException("RDBMS data connector " + getId()
-                        + " is configured to use stored procedures but database does not support them.");
+                log.error("RDBMS data connector {} - Database does not support stored procedures.", getId());
+                throw new AttributeResolutionException("Database does not support stored procedures.");
             }
 
-            log.debug("Validating RDBMS data connector {} configuration is valid.", getId());
+            log.debug("RDBMS data connector {} - Connector configuration is valid.", getId());
         } catch (SQLException e) {
-            if (e.getSQLState() != null)
-                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
-            log.error("Unable to validate RDBMS data connector " + getId() + " configuration", e);
-            throw new AttributeResolutionException("Unable to validate RDBMS data connector " + getId()
-                    + " configuration", e);
+            if (e.getSQLState() != null) {
+                log.error("RDBMS data connector {} - Invalid connector configuration; SQL state: {}, SQL Code: {}",
+                        new Object[] { getId(), e.getSQLState(), e.getErrorCode() }, e);
+            } else {
+                log.error("RDBMS data connector {} - Invalid connector configuration", new Object[] { getId() }, e);
+            }
+            throw new AttributeResolutionException("Invalid connector configuration", e);
         } finally {
             try {
                 if (connection != null && !connection.isClosed()) {
                     connection.close();
                 }
             } catch (SQLException e) {
-                if (e.getSQLState() != null)
-                    log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
-                log.error("Error closing database connection", e);
+                if (e.getSQLState() != null) {
+                    log.error(
+                            "RDBMS data connector {} - Error closing database connection; SQL State: {}, SQL Code: {}",
+                            new Object[] { getId(), e.getSQLState(), e.getErrorCode() }, e);
+                } else {
+                    log.error("RDBMS data connector {} - Error closing database connection", new Object[] { getId() },
+                            e);
+                }
             }
         }
     }
@@ -329,7 +334,8 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
         if (queryCache != null) {
             SoftReference<Map<String, BaseAttribute>> cachedAttributes = queryCache.get(query);
             if (cachedAttributes != null) {
-                log.debug("RDBMS Data Connector {}: Fetched attributes from cache for principal {}", getId(), princpal);
+                log.debug("RDBMS data connector {} - Fetched attributes from cache for principal {}", getId(),
+                                princpal);
                 return cachedAttributes.get();
             }
         }
@@ -358,22 +364,24 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
             if (readOnlyConnection) {
                 connection.setReadOnly(true);
             }
-            log.debug("RDBMS Data Connector {}: Querying database for attributes with query: {}", getId(), query);
+            log.debug("RDBMS data connector {} - Querying database for attributes with query {}", getId(), query);
             queryResult = connection.createStatement().executeQuery(query);
             resolvedAttributes = processResultSet(queryResult);
             if (resolvedAttributes.isEmpty() && noResultIsError) {
-                log.error("RDBMS Data Connector {}: No attribtues from query", getId());
-                throw new AttributeResolutionException("RDBMS Data Connector " + getId()
-                        + ": No attributes returned from query");
+                log.error("RDBMS data connector {} - No attribtues from query", getId());
+                throw new AttributeResolutionException("No attributes returned from query");
             }
-            log.debug("RDBMS Data Connector {}: Retrieved attributes: {}", getId(), resolvedAttributes.keySet());
+            log.debug("RDBMS data connector {} - Retrieved attributes: {}", getId(), resolvedAttributes.keySet());
             return resolvedAttributes;
         } catch (SQLException e) {
-            if (e.getSQLState() != null)
-                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
-            log.error("RDBMS Data Connector " + getId() + ": Unable to execute SQL query\n" + query, e);
-            throw new AttributeResolutionException("RDBMS Data Connector " + getId() + ": Unable to execute SQL query",
-                    e);
+            if (e.getSQLState() != null) {
+                log.error("RDBMS data connector {} - Unable to execute SQL query {}; SQL State: {}, SQL Code: {}",
+                        new Object[] { getId(), query, e.getSQLState(), e.getErrorCode(), }, e);
+            } else {
+                log.error("RDBMS data connector {} - Unable to execute SQL query {}", new Object[] { getId(), query },
+                        e);
+            }
+            throw new AttributeResolutionException("Unable to execute SQL query", e);
         } finally {
             try {
                 if (queryResult != null) {
@@ -385,9 +393,14 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                 }
 
             } catch (SQLException e) {
-                if (e.getSQLState() != null)
-                    log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
-                log.error("RDBMS Data Connector " + getId() + ": Unable to close connection to database", e);
+                if (e.getSQLState() != null) {
+                    log.error(
+                            "RDBMS data connector {} - Unable to close connection to database; SQL State: {}, SQL Code: {}",
+                            new Object[] { getId(), e.getSQLState(), e.getErrorCode() }, e);
+                } else {
+                    log.error("RDBMS data connector {} - Unable to close connection to database",
+                            new Object[] { getId() }, e);
+                }
             }
         }
     }
@@ -442,9 +455,14 @@ public class RDBMSDataConnector extends BaseDataConnector implements Application
                 }
             } while (resultSet.next());
         } catch (SQLException e) {
-            if (e.getSQLState() != null)
-                log.error("SQL State: " + e.getSQLState() + ", SQL Code: " + e.getErrorCode());
-            log.error("RDBMS Data Connector " + getId() + ": Unable to read data from query result set", e);
+            if (e.getSQLState() != null) {
+                log.error(
+                        "RDBMS data connector {} - Unable to read data from query result; SQL State: {}, SQL Code: {}",
+                        new Object[] { getId(), e.getSQLState(), e.getErrorCode() }, e);
+            } else {
+                log.error("RDBMS data connector {} - Unable to read data from query result set",
+                        new Object[] { getId() }, e);
+            }
         }
 
         return attributes;
