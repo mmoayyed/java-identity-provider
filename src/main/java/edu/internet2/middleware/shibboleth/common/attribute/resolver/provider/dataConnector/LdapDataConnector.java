@@ -761,6 +761,7 @@ public class LdapDataConnector extends BaseDataConnector implements ApplicationL
             throws AttributeResolutionException {
         String searchFilter = filterCreator.createStatement(filterTemplateName, resolutionContext, getDependencyIds(),
                 escapingStrategy);
+        searchFilter = searchFilter.replace("\\s*", "");
         log.debug("Search filter: {}", searchFilter);
 
         // create Attribute objects to return
