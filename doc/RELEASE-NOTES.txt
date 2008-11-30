@@ -1,6 +1,8 @@
 Changes in Release 1.1.1
 =============================================
 [SC-58] - The maxResultSize attribute in the LDAP DataConnector is being ignored
+[SC-59] - RDBMS data connector throws NullPointerException when data source is null.
+[SC-62] - Normalize LDAP SearchFilter String
 
 Changes in Release 1.1.0
 =============================================

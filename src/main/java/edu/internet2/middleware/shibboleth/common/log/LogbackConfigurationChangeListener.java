@@ -28,9 +28,7 @@ import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.status.InfoStatus;
 import ch.qos.logback.core.status.StatusManager;
 
-/**
- * Callback that may be registered for a watch logback configuration file.
- */
+/** Callback that may be registered for a watch logback configuration file. */
 public class LogbackConfigurationChangeListener implements ResourceChangeListener {
 
     /** {@inheritDoc} */
