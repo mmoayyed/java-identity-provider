@@ -174,7 +174,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
                 idEntry = createPersistentId(resolutionContext, localId, salt);
                 pidStore.storePersistentIdEntry(idEntry);
                 log.debug("Created stored ID {}", idEntry);
-            }else{
+            } else {
                 log.debug("Located existing stored ID {}", idEntry);
             }
 
@@ -235,7 +235,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
         entry.setPrincipalName(resolutionContext.getAttributeRequestContext().getPrincipalName());
         entry.setLocalId(localId);
 
-        String persisentId;
+        String persistentId;
         int numberOfExistingEntries = pidStore.getNumberOfPersistentIdEntries(entry.getLocalEntityId(), entry
                 .getPeerEntityId(), entry.getLocalId());
         if (numberOfExistingEntries == 0) {
@@ -245,15 +245,21 @@ public class StoredIDDataConnector extends BaseDataConnector {
                 md.update((byte) '!');
                 md.update(localId.getBytes());
                 md.update((byte) '!');
-                persisentId = Base64.encodeBytes(md.digest(salt));
+                persistentId = Base64.encodeBytes(md.digest(salt));
             } catch (NoSuchAlgorithmException e) {
                 log.error("JVM error, SHA-1 is not supported, unable to compute ID");
                 throw new SQLException("SHA-1 is not supported, unable to compute ID");
             }
         } else {
-            persisentId = UUID.randomUUID().toString();
+            persistentId = UUID.randomUUID().toString();
         }
-        entry.setPersistentId(persisentId);
+
+        do {
+            log.debug("Generated persistent ID was already assigned to another user, regenerating");
+            persistentId = UUID.randomUUID().toString();
+        } while (pidStore.getPersistentIdEntry(persistentId, false) != null);
+
+        entry.setPersistentId(persistentId);
 
         entry.setCreationTime(new Timestamp(System.currentTimeMillis()));
 

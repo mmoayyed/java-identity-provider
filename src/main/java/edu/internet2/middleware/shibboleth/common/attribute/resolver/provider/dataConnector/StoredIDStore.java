@@ -192,12 +192,28 @@ public class StoredIDStore {
      * @throws SQLException thrown if there is a problem communication with the database
      */
     public PersistentIdEntry getActivePersistentIdEntry(String persistentId) throws SQLException {
+        return getPersistentIdEntry(persistentId, true);
+    }
+
+    /**
+     * Gets the persistent ID entry for the given ID.
+     * 
+     * @param persistentId the persistent ID
+     * @param onlyActiveId true if only an active ID should be returned, false if a deactivated ID may be returned
+     * 
+     * @return the ID entry for the given ID
+     * 
+     * @throws SQLException thrown if there is a problem communication with the database
+     */
+    public PersistentIdEntry getPersistentIdEntry(String persistentId, boolean onlyActiveId) throws SQLException {
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(persistentIdColumn).append(" = ?");
-        sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
+        if (onlyActiveId) {
+            sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
+        }
         String sql = sqlBuilder.toString();
 
-        log.debug("Selecting active persistent ID entry based on prepared sql statement: {}", sql);
+        log.debug("Selecting persistent ID entry based on prepared sql statement: {}", sql);
 
         Connection dbConn = dataSource.getConnection();
         try {
@@ -213,7 +229,7 @@ public class StoredIDStore {
             }
 
             if (entries.size() > 1) {
-                log.warn("More than one active identifier, only the first will be used");
+                log.warn("More than one identifier found, only the first will be used");
             }
 
             return entries.get(0);
@@ -479,7 +495,7 @@ public class StoredIDStore {
             entry.setCreationTime(resultSet.getTimestamp(createTimeColumn));
             entry.setDeactivationTime(resultSet.getTimestamp(deactivationTimeColumn));
             entries.add(entry);
-            
+
             log.trace("");
         }
 
@@ -663,7 +679,7 @@ public class StoredIDStore {
         public void setDeactivationTime(Timestamp time) {
             this.deactivationTime = time;
         }
-        
+
         /** {@inheritDoc} */
         public String toString() {
             StringBuilder stringForm = new StringBuilder("PersistentIdEntry{");
