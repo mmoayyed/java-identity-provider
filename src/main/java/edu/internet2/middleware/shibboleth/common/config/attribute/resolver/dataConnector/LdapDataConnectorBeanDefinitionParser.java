@@ -27,7 +27,6 @@ import org.opensaml.xml.util.DatatypeHelper;
 import org.opensaml.xml.util.XMLHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -201,7 +200,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
      * @return LDAP properties provided in the configuration
      */
     protected Map<String, String> processLDAPProperties(List<Element> propertyElems) {
-        HashMap<String, String> properties = new HashMap<String, String>(propertyElems.size());
+        HashMap<String, String> properties = new HashMap<String, String>(5);
 
         String propName;
         String propValue;
