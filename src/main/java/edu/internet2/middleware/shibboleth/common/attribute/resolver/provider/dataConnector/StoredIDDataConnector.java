@@ -21,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,6 +28,7 @@ import javax.sql.DataSource;
 
 import org.opensaml.xml.util.Base64;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.LazyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,7 +139,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
         attribute.setId(getGeneratedAttributeId());
         attribute.getValues().add(persistentId);
 
-        Map<String, BaseAttribute> attributes = new HashMap<String, BaseAttribute>();
+        Map<String, BaseAttribute> attributes = new LazyMap<String, BaseAttribute>();
         attributes.put(attribute.getId(), attribute);
         return attributes;
     }

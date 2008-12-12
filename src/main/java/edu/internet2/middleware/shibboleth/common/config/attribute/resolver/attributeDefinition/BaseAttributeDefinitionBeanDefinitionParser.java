@@ -95,7 +95,7 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends Abstra
      * @return the localized string indexed by locale
      */
     protected Map<Locale, String> processLocalizedElement(List<Element> elements) {
-        HashMap<Locale, String> localizedString = new HashMap<Locale, String>();
+        HashMap<Locale, String> localizedString = new HashMap<Locale, String>(elements.size());
         for (Element element : elements) {
             localizedString.put(XMLHelper.getLanguage(element), element.getTextContent());
         }

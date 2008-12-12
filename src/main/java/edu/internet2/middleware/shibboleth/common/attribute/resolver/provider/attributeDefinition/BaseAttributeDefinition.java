@@ -18,11 +18,11 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.a
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.opensaml.xml.util.LazyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,9 +59,9 @@ public abstract class BaseAttributeDefinition extends AbstractResolutionPlugIn<B
     /** Constructor. */
     public BaseAttributeDefinition() {
         dependencyOnly = false;
-        encoders = new ArrayList<AttributeEncoder>();
-        displayNames = new HashMap<Locale, String>();
-        displayDescriptions = new HashMap<Locale, String>();
+        encoders = new ArrayList<AttributeEncoder>(3);
+        displayNames = new LazyMap<Locale, String>();
+        displayDescriptions = new LazyMap<Locale, String>();
     }
     
     /**

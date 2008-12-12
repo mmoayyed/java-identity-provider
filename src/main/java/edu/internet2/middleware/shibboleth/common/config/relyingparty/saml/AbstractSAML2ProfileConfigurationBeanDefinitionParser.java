@@ -16,10 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.LazyList;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -40,7 +40,7 @@ public abstract class AbstractSAML2ProfileConfigurationBeanDefinitionParser exte
         List<Element> proxyAudiences = XMLHelper.getChildElementsByTagNameNS(element,
                 SAMLRelyingPartyNamespaceHandler.NAMESPACE, "ProxyAudience");
         if (proxyAudiences != null && proxyAudiences.size() > 0) {
-            ArrayList<String> audiences = new ArrayList<String>();
+            LazyList<String> audiences = new LazyList<String>();
             for (Element proxyAudience : proxyAudiences) {
                 audiences.add(DatatypeHelper.safeTrimOrNullString(proxyAudience.getTextContent()));
             }

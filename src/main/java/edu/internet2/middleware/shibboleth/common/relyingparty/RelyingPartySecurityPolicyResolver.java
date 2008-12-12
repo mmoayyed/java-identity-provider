@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.relyingparty;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.opensaml.ws.message.MessageContext;
 import org.opensaml.ws.security.SecurityPolicy;
@@ -49,9 +50,7 @@ public class RelyingPartySecurityPolicyResolver implements SecurityPolicyResolve
 
     /** {@inheritDoc} */
     public Iterable<SecurityPolicy> resolve(MessageContext messageContext) throws SecurityException {
-        ArrayList<SecurityPolicy> policies = new ArrayList<SecurityPolicy>();
-        policies.add(resolveSingle(messageContext));
-        return policies;
+        return Collections.singletonList(resolveSingle(messageContext));
     }
 
     /** {@inheritDoc} */

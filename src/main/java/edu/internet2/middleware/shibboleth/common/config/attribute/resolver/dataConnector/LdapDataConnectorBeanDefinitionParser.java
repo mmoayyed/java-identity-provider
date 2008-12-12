@@ -201,7 +201,7 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
      * @return LDAP properties provided in the configuration
      */
     protected Map<String, String> processLDAPProperties(List<Element> propertyElems) {
-        HashMap<String, String> properties = new HashMap<String, String>();
+        HashMap<String, String> properties = new HashMap<String, String>(propertyElems.size());
 
         String propName;
         String propValue;

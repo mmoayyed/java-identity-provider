@@ -16,13 +16,13 @@
 
 package edu.internet2.middleware.shibboleth.common.config.relyingparty.saml;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.LazyList;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -43,7 +43,7 @@ public abstract class AbstractSAMLProfileConfigurationBeanDefinitionParser exten
 
         List<Element> audienceElems = children.get(new QName(SAMLRelyingPartyNamespaceHandler.NAMESPACE, "Audience"));
         if (audienceElems != null && audienceElems.size() > 0) {
-            ArrayList<String> audiences = new ArrayList<String>();
+            LazyList<String> audiences = new LazyList<String>();
             for (Element audienceElem : audienceElems) {
                 audiences.add(DatatypeHelper.safeTrimOrNullString(audienceElem.getTextContent()));
             }

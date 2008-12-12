@@ -103,7 +103,7 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
      */
     protected List<ValueMap> processValueMaps(String pluginId, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder) {
-        List<ValueMap> maps = new ArrayList<ValueMap>();
+        List<ValueMap> maps = new ArrayList<ValueMap>(5);
 
         ValueMap valueMap;
         String returnValue;

@@ -31,7 +31,7 @@ public class StaticDataConnector extends BaseDataConnector {
      * @param staticAttributes attributes this data connector will return
      */
     public StaticDataConnector(List<BaseAttribute<String>> staticAttributes) {
-        attributes = new HashMap<String, BaseAttribute>();
+        attributes = new HashMap<String, BaseAttribute>(staticAttributes.size());
         if (staticAttributes != null) {            
             for (BaseAttribute<String> attribute : staticAttributes) {
                 attributes.put(attribute.getId(), attribute);

@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.provider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 
 import org.opensaml.xml.util.DatatypeHelper;
 
@@ -46,8 +47,8 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
 
     /** Constructor. */
     public BasicAttribute() {
-        encoders = new ArrayList<AttributeEncoder>();
-        values = new ArrayList<ValueType>();
+        encoders = new ArrayList<AttributeEncoder>(3);
+        values = new ArrayList<ValueType>(5);
     }
 
     /**
@@ -58,11 +59,11 @@ public class BasicAttribute<ValueType> extends BaseAttribute<ValueType> implemen
     public BasicAttribute(String attributeId) {
         id = DatatypeHelper.safeTrimOrNullString(attributeId);
         encoders = new ArrayList<AttributeEncoder>();
-        values = new ArrayList<ValueType>();
+        values = new ArrayList<ValueType>(5);
     }
 
     /** {@inheritDoc} */
-    public ArrayList<AttributeEncoder> getEncoders() {
+    public List<AttributeEncoder> getEncoders() {
         return encoders;
     }
 

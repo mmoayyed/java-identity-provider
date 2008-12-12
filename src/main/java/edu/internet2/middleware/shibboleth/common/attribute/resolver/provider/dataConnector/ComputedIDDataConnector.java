@@ -19,11 +19,11 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.d
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.opensaml.xml.util.Base64;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.LazyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +140,7 @@ public class ComputedIDDataConnector extends BaseDataConnector {
 
             computedIdAttrib.getValues().add(Base64.encodeBytes(md.digest(salt)));
 
-            HashMap<String, BaseAttribute> attribtues = new HashMap<String, BaseAttribute>();
+            LazyMap<String, BaseAttribute> attribtues = new LazyMap<String, BaseAttribute>();
             attribtues.put(getGeneratedAttributeId(), computedIdAttrib);
             return attribtues;
         } catch (NoSuchAlgorithmException e) {

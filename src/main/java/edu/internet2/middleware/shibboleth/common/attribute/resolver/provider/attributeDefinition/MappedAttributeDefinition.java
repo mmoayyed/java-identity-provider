@@ -50,7 +50,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     
     /** Constructor. */
     public MappedAttributeDefinition() {
-       valueMaps = new ArrayList<ValueMap>(); 
+       valueMaps = new ArrayList<ValueMap>(5); 
     }
     
     /** {@inheritDoc} */
