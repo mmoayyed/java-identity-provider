@@ -24,7 +24,6 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,6 +55,7 @@ import org.opensaml.xml.security.x509.PKIXValidationInformationResolver;
 import org.opensaml.xml.signature.KeyInfo;
 import org.opensaml.xml.signature.KeyName;
 import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.xml.util.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -435,7 +435,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
             UsageType usage) throws SecurityException {
 
         log.debug("Attempting to retrieve trusted names for PKIX validation from metadata for entity: {}", entityID);
-        Set<String> trustedNames = new HashSet<String>();
+        Set<String> trustedNames = new LazySet<String>();
         
         List<RoleDescriptor> roleDescriptors = getRoleDescriptors(entityID, role, protocol);
         if(roleDescriptors == null || roleDescriptors.isEmpty()){
@@ -472,7 +472,7 @@ public class MetadataPKIXValidationInformationResolver implements PKIXValidation
      */
     protected Set<String> getTrustedNames(KeyInfo keyInfo) {
         // TODO return anything if there are things other than names in the KeyInfo ?
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new LazySet<String>();
         names.addAll(KeyInfoHelper.getKeyNames(keyInfo));
         return names;
     }

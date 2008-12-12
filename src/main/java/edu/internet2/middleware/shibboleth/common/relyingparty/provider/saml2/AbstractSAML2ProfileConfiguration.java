@@ -17,7 +17,8 @@
 package edu.internet2.middleware.shibboleth.common.relyingparty.provider.saml2;
 
 import java.util.Collection;
-import java.util.HashSet;
+
+import org.opensaml.xml.util.LazySet;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.SAML2AttributeAuthority;
 import edu.internet2.middleware.shibboleth.common.relyingparty.provider.AbstractSAMLProfileConfiguration;
@@ -45,7 +46,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
 
     /** Constructor. */
     protected AbstractSAML2ProfileConfiguration() {
-        proxyAudiences = new HashSet<String>();
+        proxyAudiences = new LazySet<String>();
     }
 
     /**

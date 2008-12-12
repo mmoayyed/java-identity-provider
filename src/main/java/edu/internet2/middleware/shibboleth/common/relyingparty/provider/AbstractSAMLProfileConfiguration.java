@@ -17,10 +17,10 @@
 package edu.internet2.middleware.shibboleth.common.relyingparty.provider;
 
 import java.util.Collection;
-import java.util.HashSet;
 
 import org.opensaml.ws.security.SecurityPolicy;
 import org.opensaml.xml.security.credential.Credential;
+import org.opensaml.xml.util.LazySet;
 
 import edu.internet2.middleware.shibboleth.common.relyingparty.ProfileConfiguration;
 
@@ -55,7 +55,7 @@ public abstract class AbstractSAMLProfileConfiguration implements ProfileConfigu
 
     /** Constructor. */
     protected AbstractSAMLProfileConfiguration() {
-        assertionAudiences = new HashSet<String>();
+        assertionAudiences = new LazySet<String>();
     }
 
     /**

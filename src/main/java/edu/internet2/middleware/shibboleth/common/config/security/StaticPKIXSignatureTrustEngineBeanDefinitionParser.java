@@ -57,7 +57,7 @@ public class StaticPKIXSignatureTrustEngineBeanDefinitionParser extends Abstract
         builder.addPropertyValue("PKIXInfo", SpringConfigurationUtils.parseInnerCustomElements(childElems, parserContext));
 
         childElems = XMLHelper.getChildElementsByTagNameNS(element, SecurityNamespaceHandler.NAMESPACE, "TrustedName");
-        HashSet<String> trustedNames = new HashSet<String>();
+        HashSet<String> trustedNames = new HashSet<String>(childElems.size());
         for (Element nameElem : childElems) {
             trustedNames.add(DatatypeHelper.safeTrimOrNullString(nameElem.getTextContent()));
         }
