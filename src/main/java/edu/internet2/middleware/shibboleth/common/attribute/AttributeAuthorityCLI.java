@@ -192,7 +192,8 @@ public class AttributeAuthorityCLI {
         StatusManager statusManager = loggerContext.getStatusManager();
         statusManager.add(new InfoStatus("Loading logging configuration file: " + loggingConfig, null));
         try {
-            loggerContext.shutdownAndReset();
+            //loggerContext.stop();
+            loggerContext.reset();
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(loggerContext);
             configurator.doConfigure(new FileInputStream(loggingConfig));

@@ -4,6 +4,8 @@ Changes in Release 1.1.2
     overwrite the information for the previous record associated with that ID
 * Minor memory usage improvements
 * Pick up new lib versions
+[SC-65] - java.lang.NoSuchMethodError: ch.qos.logback.classic.LoggerContext.shutdownAndReset()
+    this was fixed in rebuild of 1.1.2
 
 Changes in Release 1.1.1
 =============================================
