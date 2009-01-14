@@ -102,7 +102,7 @@ public class EventingMapBasedStorageService<KeyType, ValueType> implements Stora
         }
 
         ValueType replacedEntry = partitionMap.put(key, value);
-        appCtx.publishEvent(this.new AddEntryEvent(this, partition, key, value));
+        appCtx.publishEvent(new AddEntryEvent(this, partition, key, value));
         return replacedEntry;
     }
 
@@ -114,7 +114,7 @@ public class EventingMapBasedStorageService<KeyType, ValueType> implements Stora
 
         if (store.containsKey(partition)) {
             ValueType removedEntry = store.get(partition).remove(key);
-            appCtx.publishEvent(this.new RemoveEntryEvent(this, partition, key, removedEntry));
+            appCtx.publishEvent(new RemoveEntryEvent(this, partition, key, removedEntry));
             return removedEntry;
         }
 
@@ -131,7 +131,7 @@ public class EventingMapBasedStorageService<KeyType, ValueType> implements Stora
     }
 
     /** An event indicating an item has been added to an storage service. */
-    public class AddEntryEvent extends ApplicationEvent {
+    public static class AddEntryEvent<KeyType, ValueType> extends ApplicationEvent {
 
         /** Serial version UID. */
         private static final long serialVersionUID = -1939512157260059492L;
@@ -203,7 +203,7 @@ public class EventingMapBasedStorageService<KeyType, ValueType> implements Stora
     }
 
     /** An event indicating an item has been removed from an storage service. */
-    public class RemoveEntryEvent extends ApplicationEvent {
+    public static class RemoveEntryEvent<KeyType, ValueType> extends ApplicationEvent {
 
         /** Serial version UID. */
         private static final long serialVersionUID = 7414605158323325366L;
