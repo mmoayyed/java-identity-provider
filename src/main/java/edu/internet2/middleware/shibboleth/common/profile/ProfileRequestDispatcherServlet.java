@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.common.profile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -90,7 +91,7 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
         } else {
             log.warn("No profile handler configured for request at path: {}", httpRequest.getPathInfo());
             httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, new NoProfileHandlerException(
-                    "No profile handler configured for request at path: " + httpRequest.getPathInfo()));
+                    "No profile handler configured for request at path: " + URLEncoder.encode(httpRequest.getPathInfo(), "UTF-8")));
         }
 
         errorHandler.processRequest(profileReq, profileResp);

@@ -1,3 +1,8 @@
+Changes in Release 1.1.3
+=============================================
+[SC-66] - Cross-site scripting attack possible when incorrect URL is entered
+* Pick up updates to logback library
+
 Changes in Release 1.1.2
 =============================================
 * Address case where, in theory, StoredID data connector could generate the same ID more than once

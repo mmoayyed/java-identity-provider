@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.relyingparty;
 
-import java.util.ArrayList;
 import java.util.Collections;
 
 import org.opensaml.ws.message.MessageContext;

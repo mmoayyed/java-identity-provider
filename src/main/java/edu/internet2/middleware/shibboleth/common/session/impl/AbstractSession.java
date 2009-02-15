@@ -29,6 +29,9 @@ import edu.internet2.middleware.shibboleth.common.session.Session;
 /** Base class for Shibboleth sessions. */
 public abstract class AbstractSession implements Session {
 
+    /** Serial version UID. */
+    private static final long serialVersionUID = 4726780089406295821L;
+
     /** The session ID. */
     private final String sessionId;
 
