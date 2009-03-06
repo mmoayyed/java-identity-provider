@@ -93,7 +93,7 @@ public class LdapDataConnectorFactoryBean extends BaseDataConnectorFactoryBean {
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        LdapDataConnector connector = new LdapDataConnector(ldapURL, baseDN, useStartTLS, poolInitialSize, poolMaxIdle);
+        LdapDataConnector connector = new LdapDataConnector(ldapURL, baseDN, useStartTLS, poolMaxIdle, poolInitialSize);
         populateDataConnector(connector);
         connector.setAuthenticationType(authenticationType);
         connector.setPrincipal(principal);
