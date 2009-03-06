@@ -490,7 +490,10 @@
                 <attribute name="poolInitialSize" type="nonNegativeInteger">
                     <annotation>
                         <documentation>
-                            Initial number of connections established to the directory when this connector starts up.
+                            The initial capacity of the underlying storage used by the connection pool.
+                            
+                            Note that the pool does not pre-create LDAP connections based on this value,
+                            it merely preallocates storage for this number of connection objects.
                         </documentation>
                     </annotation>
                 </attribute>
