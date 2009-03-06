@@ -2,6 +2,7 @@ Changes in Release 1.1.3
 =============================================
 [SC-66] - Cross-site scripting attack possible when incorrect URL is entered
 [SC-67] - Update libs fro 1.1.3 release
+[SC-69] - LDAP data connector factory bean is inverting constructor params for poolInitialSize and poolMaxIdleSize
 
 Changes in Release 1.1.2
 =============================================
