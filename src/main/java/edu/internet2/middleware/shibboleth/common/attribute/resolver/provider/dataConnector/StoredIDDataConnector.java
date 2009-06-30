@@ -134,6 +134,17 @@ public class StoredIDDataConnector extends BaseDataConnector {
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
+        if(resolutionContext.getAttributeRequestContext().getLocalEntityId() == null){
+            throw new AttributeResolutionException("No local entity ID given in resolution context");
+        }
+        if(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer() == null){
+            throw new AttributeResolutionException("No relying party entity ID given in resolution context");
+        }
+        if(resolutionContext.getAttributeRequestContext().getPrincipalName() == null){
+            throw new AttributeResolutionException("No principal name given in resolution context");
+        }
+        
+        
         String persistentId = getStoredId(resolutionContext);
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getGeneratedAttributeId());

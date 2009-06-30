@@ -4,6 +4,8 @@ Changes in Release 1.1.3
 [SC-67] - Update libs for 1.1.3 release
 [SC-69] - LDAP data connector factory bean is inverting constructor params for poolInitialSize and poolMaxIdleSize
 [SC-70] - Upgrade Commons Pool library to 1.3
+[SC-75] - SVNResource does not work at all
+[SC-78] - AACLI fail testing storedId
 
 Changes in Release 1.1.2
 =============================================
