@@ -39,8 +39,14 @@ public abstract class AbstractReloadableServiceBeanDefinitionParser extends Abst
                     "configurationResourcePollingFrequency")));
             builder.addPropertyValue("pollingFrequency", frequency);
 
-            int retryAttempts = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
-                    "configurationResourcePollingRetryAttempts")));
+            int retryAttempts = 0;
+            if(configElement.hasAttributeNS(null, "configurationResourcePollingRetryAttempts")){
+                retryAttempts = Integer.parseInt(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                "configurationResourcePollingRetryAttempts")));
+            }
+            if(retryAttempts < 1){
+                retryAttempts = 3;
+            }
             builder.addPropertyValue("pollingRetryAttempts", retryAttempts);
         }
     }
