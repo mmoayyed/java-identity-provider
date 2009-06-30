@@ -134,17 +134,16 @@ public class StoredIDDataConnector extends BaseDataConnector {
     /** {@inheritDoc} */
     public Map<String, BaseAttribute> resolve(ShibbolethResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        if(resolutionContext.getAttributeRequestContext().getLocalEntityId() == null){
+        if (resolutionContext.getAttributeRequestContext().getLocalEntityId() == null) {
             throw new AttributeResolutionException("No local entity ID given in resolution context");
         }
-        if(resolutionContext.getAttributeRequestContext().getInboundMessageIssuer() == null){
+        if (resolutionContext.getAttributeRequestContext().getInboundMessageIssuer() == null) {
             throw new AttributeResolutionException("No relying party entity ID given in resolution context");
         }
-        if(resolutionContext.getAttributeRequestContext().getPrincipalName() == null){
+        if (resolutionContext.getAttributeRequestContext().getPrincipalName() == null) {
             throw new AttributeResolutionException("No principal name given in resolution context");
         }
-        
-        
+
         String persistentId = getStoredId(resolutionContext);
         BasicAttribute<String> attribute = new BasicAttribute<String>();
         attribute.setId(getGeneratedAttributeId());
@@ -265,10 +264,10 @@ public class StoredIDDataConnector extends BaseDataConnector {
             persistentId = UUID.randomUUID().toString();
         }
 
-        do {
+        while (pidStore.getPersistentIdEntry(persistentId, false) != null) {
             log.debug("Generated persistent ID was already assigned to another user, regenerating");
             persistentId = UUID.randomUUID().toString();
-        } while (pidStore.getPersistentIdEntry(persistentId, false) != null);
+        }
 
         entry.setPersistentId(persistentId);
 
