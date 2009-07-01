@@ -84,13 +84,14 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
                 return;
             } catch (Throwable t) {
                 if (t.getMessage() != null) {
-                    httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY,  URLEncoder.encode(t.getMessage(), "UTF-8"));
+                    httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
                 }
             }
         } else {
             log.warn("No profile handler configured for request at path: {}", httpRequest.getPathInfo());
             httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, new NoProfileHandlerException(
-                    "No profile handler configured for request at path: " + URLEncoder.encode(httpRequest.getPathInfo(), "UTF-8")));
+                    "No profile handler configured for request at path: "
+                            + URLEncoder.encode(httpRequest.getPathInfo(), "UTF-8")));
         }
 
         errorHandler.processRequest(profileReq, profileResp);

@@ -1,5 +1,5 @@
 /*
- * Copyright [2007] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2007 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.M
 import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.ShibbolethFilteringContext;
 
 /**
- * Base class for {@link edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor}s that
- * delegate the evaluation and negate the result if necessary.
+ * Base class for {@link MatchFunctor}s that delegate the evaluation and negate the result if necessary.
  * 
  * This class provides an extension point for functionality across all match functors.
  */
@@ -64,7 +63,7 @@ public abstract class AbstractMatchFunctor implements MatchFunctor {
      * 
      * @param filterContext the current filtering context
      * @param attributeId ID of the attribute being evaluated
-     * @param attributeValue value of the attribute being evalauted
+     * @param attributeValue value of the attribute being evaluated
      * 
      * @return true if the criteria for this matching function are meant
      * 
