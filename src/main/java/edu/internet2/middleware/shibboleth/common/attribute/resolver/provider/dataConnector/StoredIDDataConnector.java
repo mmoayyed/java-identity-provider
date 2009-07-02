@@ -161,6 +161,12 @@ public class StoredIDDataConnector extends BaseDataConnector {
             throw new AttributeResolutionException("Computed ID " + getId()
                     + " data connectore requires exactly one dependency");
         }
+        
+        try{
+            pidStore.getActivePersistentIdEntry("1");
+        }catch(SQLException e){
+            throw new AttributeResolutionException("Unable to connect to persistent ID store.");
+        }
     }
 
     /**
@@ -248,6 +254,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
         String persistentId;
         int numberOfExistingEntries = pidStore.getNumberOfPersistentIdEntries(entry.getLocalEntityId(), entry
                 .getPeerEntityId(), entry.getLocalId());
+        
         if (numberOfExistingEntries == 0) {
             try {
                 MessageDigest md = MessageDigest.getInstance("SHA");

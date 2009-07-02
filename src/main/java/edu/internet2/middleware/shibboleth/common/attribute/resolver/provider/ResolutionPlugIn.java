@@ -1,5 +1,5 @@
 /*
- * Copyright [2006] [University Corporation for Advanced Internet Development, Inc.]
+ * Copyright 2006 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,9 +28,9 @@ import edu.internet2.middleware.shibboleth.common.attribute.resolver.AttributeRe
 public interface ResolutionPlugIn<ResolvedType> {
 
     /**
-     * Returns the unqiue ID of the plugin.
+     * Returns the unique ID of the plugin.
      * 
-     * @return unqiue ID of the plugin
+     * @return unique ID of the plugin
      */
     public String getId();
 
@@ -48,12 +48,12 @@ public interface ResolutionPlugIn<ResolvedType> {
      * 
      * @return the attributes made available by the resolution, never null
      * 
-     * @throws AttributeResolutionException the problem that occured during the resolution
+     * @throws AttributeResolutionException the problem that occurred during the resolution
      */
     public ResolvedType resolve(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException;
     
     /**
-     * Validate the internal state of this plug-in.
+     * Validate the internal state of this plug-in.  This process may not rely on information from any dependency.
      * 
      * @throws AttributeResolutionException if the plug-in has an invalid internal state
      */

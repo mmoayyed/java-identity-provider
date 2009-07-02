@@ -27,9 +27,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml2.core.NameID;
@@ -142,29 +140,22 @@ public class ShibbolethAttributeResolver extends BaseReloadableService implement
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-        DirectedGraph<ResolutionPlugIn, DefaultEdge> dependencyGraph;
-        CycleDetector<ResolutionPlugIn, DefaultEdge> cycleDetector;
-
-        dependencyGraph = new SimpleDirectedGraph<ResolutionPlugIn, DefaultEdge>(DefaultEdge.class);
-        cycleDetector = new CycleDetector<ResolutionPlugIn, DefaultEdge>(dependencyGraph);
-
-        Lock readLock = getReadWriteLock().readLock();
-        readLock.lock();
-        try {
-            for (AttributeDefinition definition : getAttributeDefinitions().values()) {
-                addVertex(dependencyGraph, definition);
+        for(DataConnector plugin : dataConnectors.values()){
+            if(plugin != null){
+                plugin.validate();
             }
-
-            for (DataConnector connector : getDataConnectors().values()) {
-                addVertex(dependencyGraph, connector);
+        }
+        
+        for(AttributeDefinition plugin : definitions.values()){
+            if(plugin != null){
+                plugin.validate();
             }
-
-            if (cycleDetector.detectCycles()) {
-                throw new AttributeResolutionException(getId()
-                        + "configuration contains a resolution plug-in dependency loop.");
+        }
+        
+        for(PrincipalConnector plugin : principalConnectors.values()){
+            if(plugin != null){
+                plugin.validate();
             }
-        } finally {
-            readLock.unlock();
         }
     }
 
