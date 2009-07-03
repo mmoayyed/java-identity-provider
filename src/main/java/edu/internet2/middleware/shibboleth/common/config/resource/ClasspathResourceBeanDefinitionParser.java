@@ -44,7 +44,7 @@ public class ClasspathResourceBeanDefinitionParser extends AbstractResourceBeanD
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
         builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "file")));
+        addResourceFilter(element, parserContext, builder);
     }
 }

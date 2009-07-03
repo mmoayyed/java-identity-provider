@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.config.resource;
 import java.util.List;
 
 import org.opensaml.xml.util.XMLHelper;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -29,13 +30,13 @@ import edu.internet2.middleware.shibboleth.common.config.SpringConfigurationUtil
 /** Base class {@link org.opensaml.util.resource.Resource} for bean definition parsers. */
 public abstract class AbstractResourceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-    /** {@inheritDoc} */
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected BeanDefinition addResourceFilter(Element element, ParserContext parserContext,
+            BeanDefinitionBuilder builder) {
         List<Element> resFilter = XMLHelper.getChildElementsByTagNameNS(element, ResourceNamespaceHandler.NAMESPACE,
                 "ResourceFilter");
         if (!resFilter.isEmpty()) {
-            builder.addConstructorArgValue(SpringConfigurationUtils.parseInnerCustomElement(resFilter.get(0),
-                    parserContext));
+            builder.addPropertyValue("resourceFilter", SpringConfigurationUtils.parseInnerCustomElement(resFilter.get(0), parserContext));
         }
+        return null;
     }
 }

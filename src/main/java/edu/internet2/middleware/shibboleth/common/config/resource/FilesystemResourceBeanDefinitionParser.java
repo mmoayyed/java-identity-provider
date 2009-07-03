@@ -53,8 +53,7 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractResourceBean
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
-        
+
         String file = DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "file"));
         if(file.startsWith("file:")){
             try{
@@ -66,5 +65,7 @@ public class FilesystemResourceBeanDefinitionParser extends AbstractResourceBean
         }else{
             builder.addConstructorArgValue(file);
         }
+        
+        addResourceFilter(element, parserContext, builder);
     }
 }

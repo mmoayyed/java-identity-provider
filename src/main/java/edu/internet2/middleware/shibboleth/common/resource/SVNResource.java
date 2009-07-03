@@ -27,9 +27,12 @@ import org.opensaml.util.resource.ResourceException;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
+import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
+import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
+import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNStatus;
@@ -59,211 +62,202 @@ public class SVNResource extends AbstractFilteredResource {
     private final Logger log = LoggerFactory.getLogger(SVNResource.class);
 
     /** SVN Client manager. */
-    private final SVNClientManager svnClientMgr;
+    private final SVNClientManager clientManager;
 
-    /** URL of the remote repository with no trailing slash. */
-    private String remoteResource;
+    /** URL to the remote repository. */
+    private SVNURL remoteRepository;
 
-    /** Filesystem path for local working copy with no trailing slash. */
-    private File localResource;
+    /** Directory where the working copy will be kept. */
+    private File workingCopy;
 
-    /** Revision of the resource. */
+    /** Revision of the working copy. */
     private SVNRevision revision;
 
+    /** File, within the working copy, represented by this resource. */
+    private String resourceFileName;
+
     /**
      * Constructor.
      * 
-     * @param remote URL of the remote resource
-     * @param local file path to where the local working copy will be kept
+     * @param svnClientMgr manager used to create SVN clients
+     * @param repositoryUrl URL of the remote repository
+     * @param workingCopyDirectory directory that will serve as the root of the local working copy
      * @param revision revision of the resource to retrieve or -1 for HEAD revision
+     * @param resourceFile file, within the working copy, represented by this resource
      */
-    public SVNResource(String remote, String local, long revision) {
-        svnClientMgr = SVNClientManager.newInstance();
-
-        remoteResource = DatatypeHelper.safeTrimOrNullString(remote);
-        if (this.remoteResource == null) {
-            throw new IllegalArgumentException("Remote repository location may not be null or empty");
+    public SVNResource(SVNClientManager svnClientMgr, SVNURL repositoryUrl, File workingCopyDirectory, long revision,
+            String resourceFile) throws ResourceException {
+        DAVRepositoryFactory.setup();
+        SVNRepositoryFactoryImpl.setup();
+        FSRepositoryFactory.setup();
+        if (svnClientMgr == null) {
+            log.error("SVN client manager may not be null");
+            throw new IllegalArgumentException("SVN client manager may not be null");
         }
+        clientManager = svnClientMgr;
 
-        if (DatatypeHelper.isEmpty(local)) {
-            throw new IllegalArgumentException("Local repository location may not be null or empty");
+        if(repositoryUrl == null){
+            throw new IllegalArgumentException("SVN repository URL may not be null");
         }
-        localResource = new File(local);
+        remoteRepository = repositoryUrl;
+        
+        try {
+            checkWorkingCopyDirectory(workingCopyDirectory);
+            workingCopy = workingCopyDirectory;
+        } catch (ResourceException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
 
         if (revision < 0) {
             this.revision = SVNRevision.HEAD;
         } else {
             this.revision = SVNRevision.create(revision);
         }
-    }
 
-    /**
-     * Constructor.
-     * 
-     * @param remote URL of the remote resource
-     * @param local file path to where the local working copy will be kept
-     * @param revision revision of the resource to retrieve or -1 for HEAD revision
-     * @param username username used to authenticate to the remote server
-     * @param password password used to authenticate to the remote server
-     */
-    public SVNResource(String remote, String local, long revision, String username, String password) {
-        svnClientMgr = SVNClientManager.newInstance();
-
-        if (username != null) {
-            if (password != null) {
-                BasicAuthenticationManager authnMgr = new BasicAuthenticationManager(username, password);
-                svnClientMgr.setAuthenticationManager(authnMgr);
-            } else {
-                throw new IllegalArgumentException(
-                        "Unable to initialize subversion resource.  User name was given but no password was provided.");
-            }
+        resourceFileName = DatatypeHelper.safeTrimOrNullString(resourceFile);
+        if (resourceFileName == null) {
+            log.error("SVN working copy resource file name may not be null or empty");
+            throw new IllegalArgumentException("SVN working copy resource file name may not be null or empty");
         }
 
-        remoteResource = DatatypeHelper.safeTrimOrNullString(remote);
-        if (this.remoteResource == null) {
-            throw new IllegalArgumentException("Remote resource location may not be null or empty");
-        }
-
-        if (DatatypeHelper.isEmpty(local)) {
-            throw new IllegalArgumentException("Local repository location may not be null or empty");
-        }
-        localResource = new File(local);
-
-        if (revision < 0) {
-            this.revision = SVNRevision.HEAD;
-        } else {
-            this.revision = SVNRevision.create(revision);
+        checkoutOrUpdateResource();
+        if (!getResourceFile().exists()) {
+            log.error("Resource file " + resourceFile + " does not exist in SVN working copy directory "
+                    + workingCopyDirectory.getAbsolutePath());
+            throw new ResourceException("Resource file " + resourceFile
+                    + " does not exist in SVN working copy directory " + workingCopyDirectory.getAbsolutePath());
         }
     }
 
     /** {@inheritDoc} */
     public boolean exists() throws ResourceException {
-        checkoutOrUpdateResource();
-        return workingCopyExists();
+        return getResourceFile().exists();
     }
 
     /** {@inheritDoc} */
     public InputStream getInputStream() throws ResourceException {
-        checkoutOrUpdateResource();
-
         try {
-            return new FileInputStream(localResource);
+            return applyFilter(new FileInputStream(getResourceFile()));
         } catch (IOException e) {
-            log.error("Unable read local working copy {}", localResource.getAbsolutePath());
-            throw new ResourceException("Unable to read local working copy of configuration file "
-                    + localResource.getAbsolutePath());
+            String erroMsg = "Unable to read resource file " + resourceFileName + " from local working copy "
+                    + workingCopy.getAbsolutePath();
+            log.error(erroMsg, e);
+            throw new ResourceException(erroMsg, e);
         }
     }
 
     /** {@inheritDoc} */
     public DateTime getLastModifiedTime() throws ResourceException {
-        SVNStatus status = getResourceStatus();
-        if (status.getContentsStatus() == SVNStatusType.STATUS_NORMAL) {
-            return new DateTime(status.getWorkingContentsDate());
-        } else {
-            throw new ResourceException("SVN resource is in a state which prevents determining last modified date: "
-                    + status.getContentsStatus().toString());
+        SVNStatusClient client = clientManager.getStatusClient();
+        client.setIgnoreExternals(false);
+
+        try {
+            SVNStatus status = client.doStatus(getResourceFile(), false);
+            if (status.getContentsStatus() == SVNStatusType.STATUS_NORMAL) {
+                return new DateTime(status.getWorkingContentsDate());
+            } else {
+                String errMsg = "Unable to determine last modified time of resource " + resourceFileName
+                        + " within working directory " + workingCopy.getAbsolutePath();
+                log.error(errMsg);
+                throw new ResourceException(errMsg);
+            }
+        } catch (SVNException e) {
+            String errMsg = "Unable to check status of resource " + resourceFileName + " within working directory "
+                    + workingCopy.getAbsolutePath();
+            log.error(errMsg, e);
+            throw new ResourceException(errMsg, e);
         }
     }
 
     /** {@inheritDoc} */
     public String getLocation() {
-        try {
-            return SVNURL.parseURIDecoded(remoteResource).toDecodedString();
-        } catch (SVNException e) {
-            log.error("Unable to represent remote repository URL as a string");
-            return null;
+        return remoteRepository.toDecodedString() + "/" + resourceFileName;
+    }
+
+    /**
+     * Checks that the given file exists, or can be created, is a directory, and is read/writable by this process.
+     * 
+     * @param directory the directory to check
+     * 
+     * @throws ResourceException thrown if the file is invalid
+     */
+    protected void checkWorkingCopyDirectory(File directory) throws ResourceException {
+        if (directory == null) {
+            log.error("SVN working copy directory may not be null");
+            throw new ResourceException("SVN working copy directory may not be null");
+        }
+
+        if (!directory.exists()) {
+            boolean created = directory.mkdirs();
+            if (!created) {
+                log.error("SVN working copy direction " + directory.getAbsolutePath()
+                        + " does not exist and could not be created");
+                throw new ResourceException("SVN working copy direction " + directory.getAbsolutePath()
+                        + " does not exist and could not be created");
+            }
+        }
+
+        if (!directory.isDirectory()) {
+            log.error("SVN working copy location " + directory.getAbsolutePath() + " is not a directory");
+            throw new ResourceException("SVN working copy location " + directory.getAbsolutePath()
+                    + " is not a directory");
+        }
+
+        if (!directory.canRead()) {
+            log.error("SVN working copy directory " + directory.getAbsolutePath() + " can not be read by this process");
+            throw new ResourceException("SVN working copy directory " + directory.getAbsolutePath()
+                    + " can not be read by this process");
+        }
+
+        if (!directory.canWrite()) {
+            log.error("SVN working copy directory " + directory.getAbsolutePath()
+                    + " can not be written to by this process");
+            throw new ResourceException("SVN working copy directory " + directory.getAbsolutePath()
+                    + " can not be written to by this process");
         }
     }
 
     /**
-     * Checks to see if a working copy of the file already exists.
+     * Checks out the resource specified by the {@link #remoteRepository} in to the working copy {@link #workingCopy}.
+     * If the working copy is empty than an SVN checkout is performed if the working copy already exists then an SVN
+     * update is performed.
      * 
-     * @return true if a working copy of the file exists, false if not
-     */
-    protected boolean workingCopyExists() {
-        return localResource.exists();
-    }
-
-    /**
-     * Checks out of updates the local resource. Checkout is used of the local resource does not currently exist. An
-     * update is performed if the local working copy revision does not match the configured revision. If the configured
-     * version is the symbolic version HEAD then an update occurs if the current revision is not the most recent
-     * revision within the remote repository.
-     * 
-     * @throws ResourceException thrown if there is a problem communicating with the remote or local repository
+     * @throws ResourceException thrown if there is a problem communicating with the remote repository, the revision
+     *             does not exist, or the working copy is unusable
      */
     protected void checkoutOrUpdateResource() throws ResourceException {
-        SVNStatus status = getResourceStatus();
+        SVNUpdateClient client = clientManager.getUpdateClient();
+        client.setIgnoreExternals(false);
 
-        if (!workingCopyExists()) {
-            checkoutResource();
-            return;
-        }
-
-        if (revision == SVNRevision.HEAD) {
-            if (!revision.equals(status.getRemoteRevision())) {
-                updateResource();
+        File svnMetadataDir = new File(workingCopy, ".svn");
+        if (!svnMetadataDir.exists()) {
+            try {
+                client.doCheckout(remoteRepository, workingCopy, revision, revision, SVNDepth.INFINITY, true);
+            } catch (SVNException e) {
+                String errMsg = "Unable to check out revsion " + revision.toString() + " from remote repository "
+                        + remoteRepository.toDecodedString() + " to local working directory "
+                        + workingCopy.getAbsolutePath();
+                log.error(errMsg, e);
+                throw new ResourceException(errMsg, e);
             }
         } else {
-            if (!revision.equals(status.getRevision())) {
-                updateResource();
+            try {
+                client.doUpdate(workingCopy, revision, SVNDepth.INFINITY, true, true);
+            } catch (SVNException e) {
+                String errMsg = "Unable to update working copy of resoure " + remoteRepository.toDecodedString()
+                        + " in working copy " + workingCopy.getAbsolutePath() + " to revsion " + revision.toString();
+                log.error(errMsg, e);
+                throw new ResourceException(errMsg, e);
             }
         }
     }
 
     /**
-     * Gets the current status of the resource.
+     * Gets {@link File} for the resource.
      * 
-     * @return current status of the resource
-     * 
-     * @throws ResourceException thrown if there is a problem communicating with the remote or local repository
+     * @return file for the resource
      */
-    protected SVNStatus getResourceStatus() throws ResourceException {
-        SVNStatusClient client = svnClientMgr.getStatusClient();
-
-        try {
-            return client.doStatus(localResource, true);
-        } catch (SVNException e) {
-            log.error("Unable to determine current status of SVN resource {}", new Object[] { localResource
-                    .getAbsolutePath(), }, e);
-            throw new ResourceException("Unable to determine current status of SVN resource");
-        }
-    }
-
-    /**
-     * Checks out the remote resource and stores it locally.
-     * 
-     * @throws ResourceException thrown if there is a problem communicating with the remote or local repository
-     */
-    protected void checkoutResource() throws ResourceException {
-        SVNUpdateClient client = svnClientMgr.getUpdateClient();
-        client.setIgnoreExternals(false);
-
-        try {
-            SVNURL remoteResourceLocation = SVNURL.parseURIDecoded(remoteResource);
-            client.doCheckout(remoteResourceLocation, localResource, revision, revision, false);
-        } catch (SVNException e) {
-            log.error("Unable to check out resource {}", new Object[] { remoteResource }, e);
-            throw new ResourceException("Unable to check out resource from repository");
-        }
-    }
-
-    /**
-     * Updates the current local working copy, replacing it with the revision from the remote repository.
-     * 
-     * @throws ResourceException thrown if there is a problem communicating with the remote or local repository
-     */
-    protected void updateResource() throws ResourceException {
-        SVNUpdateClient client = svnClientMgr.getUpdateClient();
-        client.setIgnoreExternals(false);
-
-        try {
-            client.doUpdate(localResource, revision, false);
-        } catch (SVNException e) {
-            log.error("Unable to update working copy of resource {} to revision {}", new Object[] { remoteResource,
-                    revision.getNumber(), }, e);
-            throw new ResourceException("Unable to update working copy of resource");
-        }
+    protected File getResourceFile() {
+        return new File(workingCopy, resourceFileName);
     }
 }

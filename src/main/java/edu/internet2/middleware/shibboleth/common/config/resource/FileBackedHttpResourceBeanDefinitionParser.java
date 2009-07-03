@@ -68,5 +68,7 @@ public class FileBackedHttpResourceBeanDefinitionParser extends AbstractResource
         } else {
             builder.addConstructorArgValue(file);
         }
+
+        addResourceFilter(element, parserContext, builder);
     }
 }

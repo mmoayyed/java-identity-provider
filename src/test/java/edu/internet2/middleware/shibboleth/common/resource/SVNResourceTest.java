@@ -16,12 +16,46 @@
 
 package edu.internet2.middleware.shibboleth.common.resource;
 
+import java.io.File;
+
 import junit.framework.TestCase;
+
+import org.opensaml.xml.util.DatatypeHelper;
+import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
 
 /** Unit test for {@link SVNResource }. */
 public class SVNResourceTest extends TestCase{
     
-    public void testCheckoutAndUpdate(){
+    private File workingCopyDirectory;
+    
+    /** {@inheritDoc} */
+    protected void setUp() throws Exception {
+        super.setUp();
         
+        workingCopyDirectory = new File(System.getProperty("java.io.tmpdir") + File.separator + "svntest");
+    }
+    
+    /** {@inheritDoc} */
+    protected void tearDown() throws Exception {
+        workingCopyDirectory.delete();
+    }
+    
+    public void test() throws Exception{
+        String url = "https://svn.middleware.georgetown.edu/java-shib-common/branches/REL_1/src/test/resources/data/edu/internet2/middleware/shibboleth/common/attribute/filtering";
+        SVNURL svnurl = SVNURL.parseURIDecoded(url);
+        SVNClientManager manager = SVNClientManager.newInstance();
+        
+        // this will cause a checkout
+        SVNResource resource = new SVNResource(manager, svnurl, workingCopyDirectory, 740, "policy1.xml");
+        assertEquals(5, workingCopyDirectory.list().length);
+        assertEquals(url + "/policy1.xml", resource.getLocation());
+        assertTrue(DatatypeHelper.inputstreamToString(resource.getInputStream(), null).startsWith("<afp:AttributeFilterPolicyGroup id=\"PolicyExample1\""));
+        
+        // this will cause an update
+        resource = new SVNResource(manager, svnurl, workingCopyDirectory, 740, "policy1.xml");
+        assertEquals(5, workingCopyDirectory.list().length);
+        assertEquals(url + "/policy1.xml", resource.getLocation());
+        assertTrue(DatatypeHelper.inputstreamToString(resource.getInputStream(), null).startsWith("<afp:AttributeFilterPolicyGroup id=\"PolicyExample1\""));
     }
 }

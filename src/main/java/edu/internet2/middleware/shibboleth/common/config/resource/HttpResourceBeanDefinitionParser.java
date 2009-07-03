@@ -44,7 +44,7 @@ public class HttpResourceBeanDefinitionParser extends AbstractResourceBeanDefini
 
     /** {@inheritDoc} */
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
         builder.addConstructorArgValue(DatatypeHelper.safeTrimOrNullString(element.getAttributeNS(null, "url")));
+        addResourceFilter(element, parserContext, builder);
     }
 }
