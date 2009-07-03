@@ -109,7 +109,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="clockSkew" type="positiveInteger">
+                <attribute name="clockSkew" type="nonNegativeInteger">
                     <annotation>
                         <documentation>
                             Clock skew time in seconds.
