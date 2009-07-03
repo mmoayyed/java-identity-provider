@@ -51,7 +51,7 @@ public class ClientCertAuthRuleBeanDefinitionParser extends AbstractSingleBeanDe
         nameOptions.getSubjectAltNames().add(X509Util.DNS_ALT_NAME);
         nameOptions.getSubjectAltNames().add(X509Util.URI_ALT_NAME);
         
-        builder.addConstructorArg(nameOptions);
+        builder.addConstructorArgValue(nameOptions);
     }
     
     /** {@inheritDoc} */

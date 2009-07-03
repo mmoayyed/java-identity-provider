@@ -62,6 +62,6 @@ public class SAML2HTTPPostSimpleSignRuleBeanDefinitionParser extends AbstractSin
         keyInfoProviders.add(new RSAKeyValueProvider());
         keyInfoProviders.add(new InlineX509DataProvider());
         KeyInfoCredentialResolver keyInfoCredResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviders);
-        builder.addConstructorArg(keyInfoCredResolver);
+        builder.addConstructorArgValue(keyInfoCredResolver);
     }
 }
