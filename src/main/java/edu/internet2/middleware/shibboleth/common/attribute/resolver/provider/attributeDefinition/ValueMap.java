@@ -76,34 +76,41 @@ public class ValueMap {
     /**
      * Evaluate an incoming attribute value against this value map.
      * 
-     * @param sourceValue incoming attribute value
+     * @param attributeValue incoming attribute value
      * @return set of new values the incoming value mapped to
      */
-    public Set<String> evaluate(String sourceValue) {
+    public Set<String> evaluate(String attributeValue) {
+        log.debug("Attempting to map attribute value '{}'", attributeValue);
         Set<String> mappedValues = new HashSet<String>();
         Matcher m;
 
         String newValue;
-        for (SourceValue vmv : sourceValues) {
+        for (SourceValue sourceValue : sourceValues) {
             newValue = null;
-            if (vmv.isPartialMatch()) {
-                if (sourceValue.contains(vmv.getValue())) {
+            if (sourceValue.isPartialMatch()) {
+                log.debug("Performing partial match comparison.");
+                if (attributeValue.contains(sourceValue.getValue())) {
+                    log.debug("Attribute value '{}' matches source value '{}' it will be mapped to '{}'", new Object[] {
+                            attributeValue, sourceValue.getValue(), newValue });
                     newValue = returnValue;
                 }
             } else {
+                log.debug("Performing regular expression based comparison");
                 try {
-                    int flags = vmv.isIgnoreCase() ? Pattern.CASE_INSENSITIVE : 0;
-                    m = Pattern.compile(vmv.getValue(), flags).matcher(sourceValue);
+                    int flags = sourceValue.isIgnoreCase() ? Pattern.CASE_INSENSITIVE : 0;
+                    m = Pattern.compile(sourceValue.getValue(), flags).matcher(attributeValue);
                     if (m.matches()) {
                         newValue = m.replaceAll(returnValue);
+                        log.debug("Attribute value '{}' matches regular expression it will be mapped to '{}'",
+                                attributeValue, newValue);
                     }
                 } catch (PatternSyntaxException e) {
-                    log.debug("Error matching value {}.  Skipping this value.", sourceValue);
+                    log.debug("Error matching value {}.  Skipping this value.", attributeValue);
                 }
             }
 
             if (newValue != null) {
-                mappedValues.add(returnValue);
+                mappedValues.add(newValue);
             }
         }
 
