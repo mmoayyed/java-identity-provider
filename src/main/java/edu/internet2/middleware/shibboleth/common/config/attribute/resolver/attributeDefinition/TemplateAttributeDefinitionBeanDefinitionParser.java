@@ -46,6 +46,7 @@ public class TemplateAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             "SourceAttribute");
 
     /** Class logger. */
+    @SuppressWarnings("unused")
     private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */

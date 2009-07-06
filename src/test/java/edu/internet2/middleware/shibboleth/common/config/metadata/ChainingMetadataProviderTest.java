@@ -53,7 +53,7 @@ public class ChainingMetadataProviderTest extends BaseConfigTestCase {
      */
     public void testProviderInstantiationWithFilter() throws Exception {
         try {
-            ApplicationContext appContext = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
+            createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
                     DATA_PATH + "/config/metadata/ChainingMetadataProvider2.xml", });
             fail("Chaining metadata provider instantiation should have failed, due to disallowed metadata filter");
         } catch (Exception e) {

@@ -16,10 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.match.basic;
 
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.FilterProcessingException;
-import edu.internet2.middleware.shibboleth.common.attribute.filtering.provider.MatchFunctor;
-import junit.framework.TestCase;
-
 /**
  * test the @link(AnyMatchFunctor}
  */

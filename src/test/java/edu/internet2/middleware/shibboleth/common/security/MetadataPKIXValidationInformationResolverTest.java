@@ -16,7 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.common.security;
 
-import java.io.File;
 import java.util.Iterator;
 import java.util.Set;
 

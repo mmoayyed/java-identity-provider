@@ -68,7 +68,7 @@ public class FilesystemMetadataProviderTest extends BaseConfigTestCase {
         String[] configs = { "/data/conf/shibboleth-2.0-config-internal.xml",
                 DATA_PATH + "/config/metadata/FilesystemMetadataProvider2.xml", };
         try {
-            ApplicationContext appContext = createSpringContext(configs);
+            createSpringContext(configs);
             fail("Spring loaded invalid configuration");
         } catch (Exception e) {
             // expected

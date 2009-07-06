@@ -17,7 +17,6 @@
 package edu.internet2.middleware.shibboleth.common.config.metadata;
 
 import org.opensaml.saml2.metadata.EntitiesDescriptor;
-import org.opensaml.saml2.metadata.provider.HTTPMetadataProvider;
 import org.opensaml.saml2.metadata.provider.ResourceBackedMetadataProvider;
 import org.opensaml.saml2.metadata.provider.SchemaValidationFilter;
 import org.springframework.context.ApplicationContext;

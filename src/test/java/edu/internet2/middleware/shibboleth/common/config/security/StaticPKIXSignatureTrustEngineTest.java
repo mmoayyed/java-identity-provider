@@ -74,7 +74,7 @@ public class StaticPKIXSignatureTrustEngineTest extends BaseConfigTestCase {
         String[] configs = { "/config/base-config.xml",
                 DATA_PATH + "/config/security/StaticPKIXSignatureTrustEngine2.xml", };
         try {
-            ApplicationContext appContext = createSpringContext(configs);
+            createSpringContext(configs);
             fail("Spring loaded invalid configuration");
         } catch (Exception e) {
             // expected

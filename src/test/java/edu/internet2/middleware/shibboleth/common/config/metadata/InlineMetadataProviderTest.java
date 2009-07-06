@@ -20,7 +20,6 @@ import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.SchemaValidationFilter;
 import org.opensaml.util.resource.ResourceException;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ApplicationContext;
 import edu.internet2.middleware.shibboleth.common.config.BaseConfigTestCase;
 
