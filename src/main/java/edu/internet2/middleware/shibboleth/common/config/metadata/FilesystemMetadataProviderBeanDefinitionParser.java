@@ -37,7 +37,6 @@ public class FilesystemMetadataProviderBeanDefinitionParser extends BaseMetadata
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "FilesystemMetadataProvider");
     
     /** Class logger. */
-    @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(FilesystemMetadataProviderBeanDefinitionParser.class);
 
     /** {@inheritDoc} */

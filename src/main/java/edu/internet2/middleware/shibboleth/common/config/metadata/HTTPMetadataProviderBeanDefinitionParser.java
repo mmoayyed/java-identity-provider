@@ -36,7 +36,6 @@ public class HTTPMetadataProviderBeanDefinitionParser extends BaseMetadataProvid
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "HTTPMetadataProvider");
 
     /** Class logger. */
-    @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(HTTPMetadataProviderBeanDefinitionParser.class);
 
     /** {@inheritDoc} */

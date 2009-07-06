@@ -33,7 +33,6 @@ public class FileBackedHTTPMetadataProviderBeanDefinitionParser extends HTTPMeta
             "FileBackedHTTPMetadataProvider");
     
     /** Class logger. */
-    @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(FileBackedHTTPMetadataProviderBeanDefinitionParser.class);
 
     /** {@inheritDoc} */

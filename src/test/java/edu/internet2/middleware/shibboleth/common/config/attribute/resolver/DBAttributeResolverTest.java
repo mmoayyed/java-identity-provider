@@ -38,7 +38,6 @@ public class DBAttributeResolverTest extends BaseConfigTestCase {
      * @throws ResourceException if unable to access resource
      * @throws AttributeResolutionException if unable to resolve attributes
      */
-    @SuppressWarnings("unchecked")
     public void testResolverInstantiation() throws ResourceException, AttributeResolutionException {
         ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
                 DATA_PATH + "/config/attribute/resolver/resolver-db-config.xml", });

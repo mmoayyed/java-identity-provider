@@ -37,7 +37,6 @@ public class LdapAttributeResolverTest extends BaseConfigTestCase {
      * 
      * @throws ResourceException if unable to access resource
      */
-    @SuppressWarnings("unchecked")
     public void testResolverInstantiation() throws ResourceException {
         ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
                 DATA_PATH + "/config/attribute/resolver/resolver-ldap-config.xml", });

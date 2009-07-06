@@ -39,7 +39,6 @@ public class TemplateAttributeResolverTest extends BaseConfigTestCase {
      * @throws ResourceException if unable to access resource
      * @throws AttributeResolutionException if unable to resolve attributes
      */
-    @SuppressWarnings("unchecked")
     public void testTemplateAttributeDefinition() throws ResourceException, AttributeResolutionException {
         ApplicationContext ac = createSpringContext(new String[] { DATA_PATH + "/config/base-config.xml",
                 DATA_PATH + "/config/attribute/resolver/resolver-template-config.xml", });
