@@ -134,7 +134,7 @@ public class SVNResourceBeanDefinitionParser extends AbstractResourceBeanDefinit
         builder.addConstructorArgValue(getRevision(configElement));
 
         builder.addConstructorArgValue(getResourceFile(configElement));
-        
+
         addResourceFilter(configElement, parserContext, builder);
     }
 
@@ -335,18 +335,16 @@ public class SVNResourceBeanDefinitionParser extends AbstractResourceBeanDefinit
      */
     protected long getRevision(Element configElement) throws BeanCreationException {
         if (!configElement.hasAttributeNS(null, REVISION_ATTRIB_NAME)) {
-            log.error("SVN resource definition missing required '" + REVISION_ATTRIB_NAME + "' attribute");
-            throw new BeanCreationException("SVN resource definition missing required '" + REVISION_ATTRIB_NAME
-                    + "' attribute");
-        }
-
-        try {
-            return Long.parseLong(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
-                    WORKING_COPY_DIR_ATTRIB_NAME)));
-        } catch (NumberFormatException e) {
-            log.error("SVN resource definition attribute '" + REVISION_ATTRIB_NAME + "' contains an invalid number");
-            throw new BeanCreationException("SVN resource definition attribute '" + REVISION_ATTRIB_NAME
-                    + "' contains an invalid number");
+            return -1;
+        }else{
+            try {
+                return Long.parseLong(DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                        WORKING_COPY_DIR_ATTRIB_NAME)));
+            } catch (NumberFormatException e) {
+                log.error("SVN resource definition attribute '" + REVISION_ATTRIB_NAME + "' contains an invalid number");
+                throw new BeanCreationException("SVN resource definition attribute '" + REVISION_ATTRIB_NAME
+                        + "' contains an invalid number");
+            }
         }
     }
 
@@ -388,13 +386,20 @@ public class SVNResourceBeanDefinitionParser extends AbstractResourceBeanDefinit
      * @throws BeanCreationException thrown if the attribute is present but contains an empty string
      */
     protected String getUsername(Element configElement) throws BeanCreationException {
-        String username = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, USERNAME_ATTRIB_NAME));
-        if (username == null) {
-            log.error("SVN resource definition attribute '" + USERNAME_ATTRIB_NAME + "' may not be an empty string");
-            throw new BeanCreationException("SVN resource definition attribute '" + USERNAME_ATTRIB_NAME
-                    + "' may not be an empty string");
+        if (configElement.hasAttributeNS(null, USERNAME_ATTRIB_NAME)) {
+            String username = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                    USERNAME_ATTRIB_NAME));
+            if (username == null) {
+                log
+                        .error("SVN resource definition attribute '" + USERNAME_ATTRIB_NAME
+                                + "' may not be an empty string");
+                throw new BeanCreationException("SVN resource definition attribute '" + USERNAME_ATTRIB_NAME
+                        + "' may not be an empty string");
+            }
+            return username;
         }
-        return username;
+
+        return null;
     }
 
     /**
@@ -407,13 +412,18 @@ public class SVNResourceBeanDefinitionParser extends AbstractResourceBeanDefinit
      * @throws BeanCreationException thrown if the attribute is present but contains an empty string
      */
     protected String getPassword(Element configElement) throws BeanCreationException {
-        String password = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, PASSWORD_ATTRIB_NAME));
-        if (password == null) {
-            log.error("SVN resource definition attribute '" + PASSWORD_ATTRIB_NAME + "' may not be an empty string");
-            throw new BeanCreationException("SVN resource definition attribute '" + PASSWORD_ATTRIB_NAME
-                    + "' may not be an empty string");
+        if (configElement.hasAttributeNS(null, PASSWORD_ATTRIB_NAME)) {
+            String password = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                    PASSWORD_ATTRIB_NAME));
+            if (password == null) {
+                log.error("SVN resource definition attribute '" + PASSWORD_ATTRIB_NAME
+                                + "' may not be an empty string");
+                throw new BeanCreationException("SVN resource definition attribute '" + PASSWORD_ATTRIB_NAME
+                        + "' may not be an empty string");
+            }
+            return password;
         }
-        return password;
+        return null;
     }
 
     /**
@@ -426,13 +436,19 @@ public class SVNResourceBeanDefinitionParser extends AbstractResourceBeanDefinit
      * @throws BeanCreationException thrown if the attribute is present but contains an empty string
      */
     protected String getProxyHost(Element configElement) throws BeanCreationException {
-        String host = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null, PROXY_HOST_ATTRIB_NAME));
-        if (host == null) {
-            log.error("SVN resource definition attribute '" + PROXY_HOST_ATTRIB_NAME + "' may not be an empty string");
-            throw new BeanCreationException("SVN resource definition attribute '" + PROXY_HOST_ATTRIB_NAME
-                    + "' may not be an empty string");
+        if (configElement.hasAttributeNS(null, PROXY_HOST_ATTRIB_NAME)) {
+            String host = DatatypeHelper.safeTrimOrNullString(configElement
+                    .getAttributeNS(null, PROXY_HOST_ATTRIB_NAME));
+            if (host == null) {
+                log.error("SVN resource definition attribute '" + PROXY_HOST_ATTRIB_NAME
+                        + "' may not be an empty string");
+                throw new BeanCreationException("SVN resource definition attribute '" + PROXY_HOST_ATTRIB_NAME
+                        + "' may not be an empty string");
+            }
+            return host;
         }
-        return host;
+
+        return null;
     }
 
     /**
@@ -475,15 +491,18 @@ public class SVNResourceBeanDefinitionParser extends AbstractResourceBeanDefinit
      * @throws BeanCreationException thrown if the attribute is present but contains an empty string
      */
     protected String getProxyUsername(Element configElement) throws BeanCreationException {
-        String username = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
-                PROXY_USERNAME_ATTRIB_NAME));
-        if (username == null) {
-            log.error("SVN resource definition attribute '" + PROXY_USERNAME_ATTRIB_NAME
-                    + "' may not be an empty string");
-            throw new BeanCreationException("SVN resource definition attribute '" + PROXY_USERNAME_ATTRIB_NAME
-                    + "' may not be an empty string");
+        if (configElement.hasAttributeNS(null, PROXY_USERNAME_ATTRIB_NAME)) {
+            String username = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                    PROXY_USERNAME_ATTRIB_NAME));
+            if (username == null) {
+                log.error("SVN resource definition attribute '" + PROXY_USERNAME_ATTRIB_NAME
+                        + "' may not be an empty string");
+                throw new BeanCreationException("SVN resource definition attribute '" + PROXY_USERNAME_ATTRIB_NAME
+                        + "' may not be an empty string");
+            }
+            return username;
         }
-        return username;
+        return null;
     }
 
     /**
@@ -496,15 +515,18 @@ public class SVNResourceBeanDefinitionParser extends AbstractResourceBeanDefinit
      * @throws BeanCreationException thrown if the attribute is present but contains an empty string
      */
     protected String getProxyPassword(Element configElement) throws BeanCreationException {
-        String password = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
-                PROXY_PASSWORD_ATTRIB_NAME));
-        if (password == null) {
-            log.error("SVN resource definition attribute '" + PROXY_PASSWORD_ATTRIB_NAME
-                    + "' may not be an empty string");
-            throw new BeanCreationException("SVN resource definition attribute '" + PROXY_PASSWORD_ATTRIB_NAME
-                    + "' may not be an empty string");
+        if (configElement.hasAttributeNS(null, PROXY_PASSWORD_ATTRIB_NAME)) {
+            String password = DatatypeHelper.safeTrimOrNullString(configElement.getAttributeNS(null,
+                    PROXY_PASSWORD_ATTRIB_NAME));
+            if (password == null) {
+                log.error("SVN resource definition attribute '" + PROXY_PASSWORD_ATTRIB_NAME
+                        + "' may not be an empty string");
+                throw new BeanCreationException("SVN resource definition attribute '" + PROXY_PASSWORD_ATTRIB_NAME
+                        + "' may not be an empty string");
+            }
+            return password;
         }
-        return password;
+        return null;
     }
 
 }

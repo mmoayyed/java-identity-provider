@@ -69,41 +69,18 @@
     <complexType name="SVNResource">
         <complexContent>
             <extension base="res:ResourceType">
-                <attribute name="remoteResourceURI" type="anyURI" use="required">
-                    <annotation>
-                        <documentation>
-                            Subversion URI to the resource that will be used.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="workingCopyPath" type="string" use="required">
-                    <annotation>
-                        <documentation>
-                            Filesystem path where the configuration file will be stored.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="revision" type="integer" use="required">
-                    <annotation>
-                        <documentation>
-                            Revision of the resource to check out.  Use -1 to indicate the symbolic version HEAD.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="username" type="string">
-                    <annotation>
-                        <documentation>
-                            Username used to authenticate to the remote Subversion server.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="password" type="string">
-                    <annotation>
-                        <documentation>
-                            Password used to authenticate to the remote Subversion server.
-                        </documentation>
-                    </annotation>
-                </attribute>
+                <attribute name="repositoryURL" type="string" use="required" />
+                <attribute name="connectionTimeout" type="nonNegativeInteger" />
+                <attribute name="readTimeout" type="nonNegativeInteger"/>
+                <attribute name="workingCopyDirectory" type="string" use="required"/>
+                <attribute name="revision" type="positiveInteger"/>
+                <attribute name="resourceFile" type="string" use="required"/>
+                <attribute name="username" type="string" />
+                <attribute name="password" type="string" />
+                <attribute name="proxyHost" type="string"/>
+                <attribute name="proxyPort" type="positiveInteger" />
+                <attribute name="proxyUsername" type="string"/>
+                <attribute name="proxyPassword" type="string"/>
             </extension>
         </complexContent>
     </complexType>
