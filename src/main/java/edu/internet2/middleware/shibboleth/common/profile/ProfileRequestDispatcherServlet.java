@@ -82,10 +82,10 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
             try {
                 handler.processRequest(profileReq, profileResp);
                 return;
+            }catch(ProfileException e){
+                httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, e);
             } catch (Throwable t) {
-                if (t.getMessage() != null) {
-                    httpRequest.setAttribute(AbstractErrorHandler.ERROR_KEY, t);
-                }
+                log.error("Error occured while processing request", t);
             }
         } else {
             log.warn("No profile handler configured for request at path: {}", httpRequest.getPathInfo());
