@@ -16,13 +16,18 @@
 
 package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.attributeDefinition;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.MessageFormatter;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -55,20 +60,29 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
         log.debug("Attribute definition {} scripting language: {}", pluginId, scriptLanguage);
         pluginBuilder.addPropertyValue("language", scriptLanguage);
 
+        String script = null;
         List<Element> scriptElem = pluginConfigChildren.get(new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
                 "Script"));
         if (scriptElem != null && scriptElem.size() > 0) {
-            String script = scriptElem.get(0).getTextContent();
-            log.debug("Attribute definition {} script: {}", pluginId, script);
-            pluginBuilder.addPropertyValue("script", script);
+            script = scriptElem.get(0).getTextContent();
         } else {
             List<Element> scriptFileElem = pluginConfigChildren.get(new QName(
                     AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile"));
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 String scriptFile = scriptFileElem.get(0).getTextContent();
-                log.debug("Attribute definition {} script file: {}", pluginId, scriptFile);
-                pluginBuilder.addPropertyValue("scriptFile", scriptFile);
+                try {
+                    script = DatatypeHelper.inputstreamToString(new FileInputStream(scriptFile), null);
+                } catch (IOException e) {
+                    throw new BeanCreationException(MessageFormatter.format("Unable to read script file '{}'",
+                            scriptFile), e);
+                }
             }
         }
+
+        if (script == null) {
+            throw new BeanCreationException("No script specified for this attribute definition");
+        }
+        log.debug("Attribute definition {} script: {}", pluginId, script);
+        pluginBuilder.addPropertyValue("script", script);
     }
 }
