@@ -19,6 +19,7 @@ package edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.d
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.opensaml.xml.util.Base64;
@@ -117,9 +118,8 @@ public class ComputedIDDataConnector extends BaseDataConnector {
 
         Collection<Object> sourceIdValues = getValuesFromAllDependencies(resolutionContext, getSourceAttributeId());
         if (sourceIdValues == null || sourceIdValues.isEmpty()) {
-            log.error("Source attribute {} for connector {} provide no values", getSourceAttributeId(), getId());
-            throw new AttributeResolutionException("Source attribute " + getSourceAttributeId() + " for connector "
-                    + getId() + " provided no values");
+            log.debug("Source attribute {} for connector {} provide no values", getSourceAttributeId(), getId());
+            return Collections.EMPTY_MAP;
         }
 
         if (sourceIdValues.size() > 1) {

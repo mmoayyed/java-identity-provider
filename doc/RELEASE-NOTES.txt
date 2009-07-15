@@ -12,6 +12,7 @@ Changes in Release 1.1.3
 [SC-79] - Configuration Reloading only works when RetryAttempts are configured
 [SC-80] - positional parameters do not get substituted in Mapped attr defs 
 [SC-81] -  attribute-resolver.xml ScriptFile type causes IdP startup failure
+[SC-82] - empty source attribute for conector computedID causes AttributeResolutionException
 
 Changes in Release 1.1.2
 =============================================
