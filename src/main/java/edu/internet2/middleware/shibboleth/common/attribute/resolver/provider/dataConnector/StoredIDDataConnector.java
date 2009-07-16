@@ -144,13 +144,15 @@ public class StoredIDDataConnector extends BaseDataConnector {
             throw new AttributeResolutionException("No principal name given in resolution context");
         }
 
-        String persistentId = getStoredId(resolutionContext);
-        BasicAttribute<String> attribute = new BasicAttribute<String>();
-        attribute.setId(getGeneratedAttributeId());
-        attribute.getValues().add(persistentId);
-
         Map<String, BaseAttribute> attributes = new LazyMap<String, BaseAttribute>();
-        attributes.put(attribute.getId(), attribute);
+
+        String persistentId = getStoredId(resolutionContext);
+        if (persistentId != null) {
+            BasicAttribute<String> attribute = new BasicAttribute<String>();
+            attribute.setId(getGeneratedAttributeId());
+            attribute.getValues().add(persistentId);
+            attributes.put(attribute.getId(), attribute);
+        }
         return attributes;
     }
 
@@ -161,10 +163,10 @@ public class StoredIDDataConnector extends BaseDataConnector {
             throw new AttributeResolutionException("Computed ID " + getId()
                     + " data connectore requires exactly one dependency");
         }
-        
-        try{
+
+        try {
             pidStore.getActivePersistentIdEntry("1");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             throw new AttributeResolutionException("Unable to connect to persistent ID store.");
         }
     }
@@ -182,6 +184,10 @@ public class StoredIDDataConnector extends BaseDataConnector {
         SAMLProfileRequestContext requestCtx = resolutionContext.getAttributeRequestContext();
 
         String localId = getLocalId(resolutionContext);
+        if (localId == null) {
+            return null;
+        }
+
         PersistentIdEntry idEntry;
         try {
             idEntry = pidStore.getActivePersistentIdEntry(requestCtx.getLocalEntityId(), requestCtx
@@ -213,9 +219,9 @@ public class StoredIDDataConnector extends BaseDataConnector {
     protected String getLocalId(ShibbolethResolutionContext resolutionContext) throws AttributeResolutionException {
         Collection<Object> sourceIdValues = getValuesFromAllDependencies(resolutionContext, getSourceAttributeId());
         if (sourceIdValues == null || sourceIdValues.isEmpty()) {
-            log.error("Source attribute {} for connector {} provide no values", getSourceAttributeId(), getId());
-            throw new AttributeResolutionException("Source attribute " + getSourceAttributeId() + " for connector "
-                    + getId() + " provided no values");
+            log.debug("Source attribute {} for connector {} provide no values.  No identifier will be generated.",
+                    getSourceAttributeId(), getId());
+            return null;
         }
 
         if (sourceIdValues.size() > 1) {
@@ -254,7 +260,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
         String persistentId;
         int numberOfExistingEntries = pidStore.getNumberOfPersistentIdEntries(entry.getLocalEntityId(), entry
                 .getPeerEntityId(), entry.getLocalId());
-        
+
         if (numberOfExistingEntries == 0) {
             try {
                 MessageDigest md = MessageDigest.getInstance("SHA");

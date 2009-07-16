@@ -69,7 +69,11 @@ public class StoredIDPrincipalConnector extends BasePrincipalConnector {
 
         try {
             PersistentIdEntry pidEntry = pidStore.getActivePersistentIdEntry(persistentId);
-            return pidEntry.getPrincipalName();
+            if(pidEntry != null){
+                return pidEntry.getPrincipalName();
+            }else{
+                return null;
+            }
         } catch (SQLException e) {
             log.error("Error retrieving persistent ID from database", e);
             throw new AttributeResolutionException("Error retrieving persistent ID from database", e);
@@ -78,6 +82,14 @@ public class StoredIDPrincipalConnector extends BasePrincipalConnector {
 
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
-
+        if(pidStore == null){
+            throw new AttributeResolutionException("Persistent ID store was null");
+        }
+        
+        try{
+            pidStore.getPersistentIdEntry("test", false);
+        }catch(SQLException e){
+            throw new AttributeResolutionException("Persistent ID store can not perform persistent ID search", e);
+        }
     }
 }
