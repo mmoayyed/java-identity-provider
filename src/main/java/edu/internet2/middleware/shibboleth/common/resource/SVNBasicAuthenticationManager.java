@@ -109,7 +109,7 @@ public class SVNBasicAuthenticationManager implements ISVNAuthenticationManager 
 
     /**
      * Sets the network connection timeout in milliseconds. If a value of zero or less is given than the value
-     * {@value Integer#MAX_VALUE} will be used.
+     * {@link Integer#MAX_VALUE} will be used.
      * 
      * @param timeout network connection timeout in milliseconds
      */
@@ -145,7 +145,7 @@ public class SVNBasicAuthenticationManager implements ISVNAuthenticationManager 
 
     /**
      * Sets the read operation timeout in milliseconds. If a value of zero or less is given than the value
-     * {@value Integer#MAX_VALUE} will be used.
+     * {@link Integer#MAX_VALUE} will be used.
      * 
      * @param timeout network connection timeout in milliseconds
      */

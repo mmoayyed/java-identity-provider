@@ -18,7 +18,7 @@ package edu.internet2.middleware.shibboleth.common.config.attribute.resolver.att
 
 import edu.internet2.middleware.shibboleth.common.attribute.resolver.provider.attributeDefinition.SAML1NameIdentifierAttributeDefinition;
 
-/** Factory bean for creating {@link SAML1NameIdentifierentifierAttributeDefinition}s. */
+/** Factory bean for creating {@link SAML1NameIdentifierAttributeDefinition}s. */
 public class SAML1NameIdentifierAttributeDefinitionFactoryBean extends BaseAttributeDefinitionFactoryBean {
 
     /** Format of the NameIdentifier. */
