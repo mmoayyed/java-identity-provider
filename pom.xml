@@ -394,6 +394,8 @@
                 <configuration>
                     <links>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                        <link>http://joda-time.sourceforge.net/apidocs/index.html</link>
+                        <link>http://static.springsource.org/spring/docs/2.0.x/api/index.html</link> 
                     </links>
                     <quiet>true</quiet>
                     <author>false</author>
