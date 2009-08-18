@@ -29,10 +29,6 @@
             <id>release-repo</id>
             <url>${dist.release.url}</url>
         </repository>
-        <snapshotRepository>
-            <id>snapshot-repo</id>
-            <url>${dist.snapshot.url}</url>
-        </snapshotRepository>
     </distributionManagement>>
 
     <dependencies>
@@ -314,6 +310,13 @@
     
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
