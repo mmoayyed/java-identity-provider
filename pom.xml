@@ -36,7 +36,7 @@
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
-            <version>2.2.4</version>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -368,7 +368,7 @@
                                 <manifestEntries>
                                     <Implementation-Title>${pom.artifactId}</Implementation-Title>
                                     <Implementation-Version>${pom.version}</Implementation-Version>
-                                    <Implementation-Vendor>www.opensaml.org</Implementation-Vendor>
+                                    <Implementation-Vendor>shibboleth.internet2.edu</Implementation-Vendor>
                                 </manifestEntries>
                             </manifestSection>
                         </manifestSections>
