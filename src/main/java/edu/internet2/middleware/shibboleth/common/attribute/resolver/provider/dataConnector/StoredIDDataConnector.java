@@ -159,7 +159,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
     /** {@inheritDoc} */
     public void validate() throws AttributeResolutionException {
         if (getDependencyIds() == null || getDependencyIds().size() != 1) {
-            log.error("Computed ID " + getId() + " data connectore requires exactly one dependency");
+            log.error("Stored ID " + getId() + " data connectore requires exactly one dependency");
             throw new AttributeResolutionException("Computed ID " + getId()
                     + " data connectore requires exactly one dependency");
         }
@@ -202,7 +202,7 @@ public class StoredIDDataConnector extends BaseDataConnector {
 
             return idEntry.getPersistentId();
         } catch (SQLException e) {
-            log.error("Database error retrieving persistent identifier", e);
+            log.warn("Database error retrieving persistent identifier", e);
             throw new AttributeResolutionException("Database error retrieving persistent identifier", e);
         }
     }
