@@ -13,6 +13,26 @@
     <name>Shibboleth IdP :: Public APIs</name>
     <artifactId>idp-api</artifactId>
     <packaging>jar</packaging>
-    
-    
+
+    <dependencies>
+
+        <!-- Compile Dependencies -->
+
+        <!-- Provided Dependencies -->
+
+        <!-- Runtime Dependencies -->
+
+        <!-- Test Dependencies -->
+
+        <!-- Managed Dependencies -->
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <classifier>jdk15</classifier>
+        </dependency>
+    </dependencies>
 </project>

@@ -21,5 +21,19 @@
             <artifactId>idp-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <!-- Provided Dependencies -->
+
+        <!-- Runtime Dependencies -->
+
+        <!-- Test Dependencies -->
+
+        <!-- Managed Dependencies -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <classifier>jdk15</classifier>
+        </dependency>
     </dependencies>
+    
 </project>
