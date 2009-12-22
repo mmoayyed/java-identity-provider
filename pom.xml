@@ -20,7 +20,7 @@
         <logback.groupId>ch.qos.logback</logback.groupId>
         <logback.version>0.9.17</logback.version>
         <spring.groupId>org.springframework</spring.groupId>
-        <spring.version>2.5.6</spring.version>
+        <spring.version>3.0.0.RELEASE</spring.version>
         <xerces.groupId>org.apache.xerces</xerces.groupId>
         <xerces.version>2.9.1</xerces.version>
     </properties>
@@ -30,10 +30,6 @@
             <id>shibboleth.internet2.edu</id>
             <name>Internet2</name>
             <url>http://shibboleth.internet2.edu/downloads/maven2</url>
-        </repository>
-        <repository>
-            <id>Springframework milestone</id>
-            <url>http://maven.springframework.org/milestone</url>
         </repository>
     </repositories>
 
@@ -64,67 +60,6 @@
                 <groupId>janino</groupId>
                 <artifactId>janino</artifactId>
                 <version>2.5.10</version>
-            </dependency>
-            <dependency>
-                <groupId>${spring.groupId}</groupId>
-                <artifactId>spring-context-support</artifactId>
-                <version>${spring.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>aopalliance</artifactId>
-                        <groupId>aopalliance</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-aop</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-jdbc</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-tx</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${spring.groupId}</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>aopalliance</artifactId>
-                        <groupId>aopalliance</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-aop</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-agent</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${spring.groupId}</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>${spring.groupId}</groupId>
@@ -184,6 +119,17 @@
                 <artifactId>testng</artifactId>
                 <version>5.9</version>
                 <classifier>jdk15</classifier>
+            </dependency>
+            <dependency>
+                <groupId>${spring.groupId}</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

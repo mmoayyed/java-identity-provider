@@ -21,7 +21,7 @@
             <artifactId>idp-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
@@ -34,6 +34,10 @@
             <artifactId>testng</artifactId>
             <classifier>jdk15</classifier>
         </dependency>
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
     </dependencies>
-    
+
 </project>
