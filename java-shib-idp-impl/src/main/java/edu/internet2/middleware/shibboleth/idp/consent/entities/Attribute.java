@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -25,7 +26,23 @@ public class Attribute {
 
     private String id;
 
-    private Set<String> values;
+    final private Set<String> values = new HashSet<String>();
+
+    private int valueHash;
+
+    public void addValue(final String value) {
+        this.values.add(value);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Attribute) {
+            return this.id.equals(((Attribute) object).getId())
+                    && this.getValueHash() == ((Attribute) object).getValueHash();
+        }
+        return false;
+    }
 
     /**
      * @return Returns the id.
@@ -35,10 +52,10 @@ public class Attribute {
     }
 
     /**
-     * @param id The id to set.
+     * @return Returns the hash of the values.
      */
-    public void setId(String id) {
-        this.id = id;
+    public int getValueHash() {
+        return valueHash != 0 ? valueHash : values.hashCode();
     }
 
     /**
@@ -49,31 +66,23 @@ public class Attribute {
     }
 
     /**
-     * @param values The values to set.
+     * @param id The id to set.
      */
-    public void setValues(Set<String> values) {
-        this.values = values;
+    public void setId(final String id) {
+        this.id = id;
     }
 
     /**
-     * @return Returns the hash of the values.
+     * @param valueHash The valueHash to set.
      */
-    public int getValueHash() {
-        return values.hashCode();
+    public void setValueHash(final int valueHash) {
+        this.valueHash = valueHash;
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object object) {
-        if (object instanceof Attribute) {
-            return this.id == ((Attribute) object).getId()
-                    && this.getValueHash() == ((Attribute) object).getValueHash();
-        }
-        return false;
-    }
-
-    /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return "Attribute [id=" + id + ", values=" + values + "]";
+        return "Attribute [id=" + id + ", values=" + values + ", valueHash=" + this.getValueHash() + "]";
     }
 
 }

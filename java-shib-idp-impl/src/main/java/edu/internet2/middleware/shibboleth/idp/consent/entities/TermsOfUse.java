@@ -22,36 +22,25 @@ package edu.internet2.middleware.shibboleth.idp.consent.entities;
 public class TermsOfUse {
     private String version;
 
-    private String fingerprint;
+    private int fingerprint;
 
     private String text;
 
-    /**
-     * @return Returns the version.
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * @param version The version to set.
-     */
-    public void setVersion(String version) {
-        this.version = version;
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof TermsOfUse) {
+            return this.version.equals(((TermsOfUse) object).getVersion())
+                    && this.getFingerprint() == ((TermsOfUse) object).getFingerprint();
+        }
+        return false;
     }
 
     /**
      * @return Returns the fingerprint.
      */
-    public String getFingerprint() {
-        return fingerprint;
-    }
-
-    /**
-     * @param fingerprint The fingerprint to set.
-     */
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
+    public int getFingerprint() {
+        return fingerprint != 0 ? fingerprint : this.hashCode();
     }
 
     /**
@@ -62,24 +51,37 @@ public class TermsOfUse {
     }
 
     /**
+     * @return Returns the version.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * @param fingerprint The fingerprint to set.
+     */
+    public void setFingerprint(final int fingerprint) {
+        this.fingerprint = fingerprint;
+    }
+
+    /**
      * @param text The text to set.
      */
-    public void setText(String text) {
+    public void setText(final String text) {
         this.text = text;
     }
 
-    /** {@inheritDoc} */
-    public boolean equals(Object object) {
-        if (object instanceof TermsOfUse) {
-            return this.version == ((TermsOfUse) object).version
-                    && this.fingerprint == ((TermsOfUse) object).fingerprint;
-        }
-        return false;
+    /**
+     * @param version The version to set.
+     */
+    public void setVersion(final String version) {
+        this.version = version;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return "TermsOfUse [fingerprint=" + fingerprint + ", text=" + text + ", version=" + version + "]";
+        return "TermsOfUse [fingerprint=" + this.getFingerprint() + ", text=" + text + ", version=" + version + "]";
     }
 
 }

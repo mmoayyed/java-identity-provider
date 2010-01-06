@@ -22,23 +22,9 @@ import java.util.Date;
  *
  */
 public class AgreedTermsOfUse {
-    TermsOfUse tou;
+    TermsOfUse termsOfUse;
 
     Date agreeDate;
-
-    /**
-     * @return Returns the TermsOfUse.
-     */
-    public TermsOfUse getToU() {
-        return tou;
-    }
-
-    /**
-     * @param tou The TermsOfUse to set.
-     */
-    public void setFingerprint(TermsOfUse tou) {
-        this.tou = tou;
-    }
 
     /**
      * @return Returns the agreeDate.
@@ -48,10 +34,24 @@ public class AgreedTermsOfUse {
     }
 
     /**
+     * @return Returns the TermsOfUse.
+     */
+    public TermsOfUse getTermsOfUse() {
+        return termsOfUse;
+    }
+
+    /**
      * @param agreeDate The agreeDate to set.
      */
-    public void setAgreeDate(Date agreeDate) {
+    public void setAgreeDate(final Date agreeDate) {
         this.agreeDate = agreeDate;
+    }
+
+    /**
+     * @param tou The TermsOfUse to set.
+     */
+    public void setTermsOfUse(final TermsOfUse termsOfUse) {
+        this.termsOfUse = termsOfUse;
     }
 
 }

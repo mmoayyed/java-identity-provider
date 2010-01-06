@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 University Corporation for Advanced Internet Development, Inc.
+ * Copyright 2010 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,13 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.logic;
 
-import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
-
 /**
  *
  */
-public class TermsOfUseCheck {
+public class UserConsentContextBuilder {
 
-    public boolean PrincipalHasAcceptedTermsOfUse(Principal principal, TermsOfUse currentToU) {
-        for (AgreedTermsOfUse agreedToU : principal.getAgreedTermsOfUse()) {
-            if (agreedToU.equals(currentToU)) {
-                return true;
-            }
-        }
-        return false;
+    public UserConsentContext buildUserConsensContext() {
+        return null;
     }
 
 }

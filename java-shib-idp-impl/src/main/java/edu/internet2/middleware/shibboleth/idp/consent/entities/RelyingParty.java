@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 University Corporation for Advanced Internet Development, Inc.
+z * Copyright 2009 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,22 +20,17 @@ package edu.internet2.middleware.shibboleth.idp.consent.entities;
  *
  */
 public class RelyingParty {
-    private int id;
+    private long id;
 
     private String entityId;
 
-    /**
-     * @return Returns the id.
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id The id to set.
-     */
-    public void setId(int id) {
-        this.id = id;
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof RelyingParty) {
+            return this.entityId == ((RelyingParty) object).getEntityId();
+        }
+        return false;
     }
 
     /**
@@ -46,21 +41,28 @@ public class RelyingParty {
     }
 
     /**
+     * @return Returns the id.
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
      * @param entityId The entityId to set.
      */
-    public void setEntityId(String entityId) {
+    public void setEntityId(final String entityId) {
         this.entityId = entityId;
     }
 
-    /** {@inheritDoc} */
-    public boolean equals(Object object) {
-        if (object instanceof RelyingParty) {
-            return this.entityId == ((RelyingParty) object).getEntityId();
-        }
-        return false;
+    /**
+     * @param id The id to set.
+     */
+    public void setId(final long id) {
+        this.id = id;
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return "RelyingParty [id=" + id + ", entityId=" + entityId + "]";
     }

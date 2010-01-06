@@ -22,7 +22,6 @@ import java.util.Date;
  *
  */
 public class AttributeReleaseConsent {
-    private RelyingParty relyingParty;
 
     private Attribute attribute;
 
@@ -36,27 +35,6 @@ public class AttributeReleaseConsent {
     }
 
     /**
-     * @return Returns the relyingParty.
-     */
-    public RelyingParty getRelyingParty() {
-        return relyingParty;
-    }
-
-    /**
-     * @param relyingParty The relyingParty to set.
-     */
-    public void setRelyingParty(RelyingParty relyingParty) {
-        this.relyingParty = relyingParty;
-    }
-
-    /**
-     * @param attribute The attribute to set.
-     */
-    public void setAttribute(Attribute attribute) {
-        this.attribute = attribute;
-    }
-
-    /**
      * @return Returns the releaseDate.
      */
     public Date getReleaseDate() {
@@ -64,9 +42,16 @@ public class AttributeReleaseConsent {
     }
 
     /**
+     * @param attribute The attribute to set.
+     */
+    public void setAttribute(final Attribute attribute) {
+        this.attribute = attribute;
+    }
+
+    /**
      * @param releaseDate The releaseDate to set.
      */
-    public void setReleaseDate(Date releaseDate) {
+    public void setReleaseDate(final Date releaseDate) {
         this.releaseDate = releaseDate;
     }
 }

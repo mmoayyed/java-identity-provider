@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Set;
  */
 public class Principal {
 
-    private int id;
+    private long id;
 
     private String uniqueId;
 
@@ -34,36 +35,26 @@ public class Principal {
 
     private boolean globalConsent;
 
-    Set<AgreedTermsOfUse> agreedTermsOfUse;
+    private Set<AgreedTermsOfUse> agreedTermsOfUse;
 
-    Set<AttributeReleaseConsent> attributeReleaseConsents;
+    private Map<RelyingParty, Set<AttributeReleaseConsent>> attributeReleaseConsents;
 
     /**
-     * @return Returns the id.
+     * @return Returns the agreedTermsOfUse.
      */
-    public int getId() {
-        return id;
+    public Set<AgreedTermsOfUse> getAgreedTermsOfUse() {
+        return agreedTermsOfUse;
     }
 
     /**
-     * @param id The id to set.
+     * @return Returns the attributeReleaseConsents.
      */
-    public void setId(int id) {
-        this.id = id;
+    public Map<RelyingParty, Set<AttributeReleaseConsent>> getAttributeReleaseConsents() {
+        throw new UnsupportedOperationException();
     }
 
-    /**
-     * @return Returns the uniqueId.
-     */
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    /**
-     * @param uniqueId The uniqueId to set.
-     */
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
+    public Set<AttributeReleaseConsent> getAttributeReleaseConsents(final RelyingParty relyingParty) {
+        return attributeReleaseConsents.get(relyingParty);
     }
 
     /**
@@ -74,10 +65,10 @@ public class Principal {
     }
 
     /**
-     * @param firstAccess The firstAccess to set.
+     * @return Returns the id.
      */
-    public void setFirstAccess(Date firstAccess) {
-        this.firstAccess = firstAccess;
+    public long getId() {
+        return id;
     }
 
     /**
@@ -88,10 +79,19 @@ public class Principal {
     }
 
     /**
-     * @param lastAccess The lastAccess to set.
+     * @return Returns the uniqueId.
      */
-    public void setLastAccess(Date lastAccess) {
-        this.lastAccess = lastAccess;
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public boolean hasAcceptedTermsOfUse(final TermsOfUse termsOfUse) {
+        for (AgreedTermsOfUse agreedToU : this.agreedTermsOfUse) {
+            if (agreedToU.equals(termsOfUse)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -102,38 +102,66 @@ public class Principal {
     }
 
     /**
-     * @param globalConsent The globalConsent to set.
-     */
-    public void setGlobalConsent(boolean globalConsent) {
-        this.globalConsent = globalConsent;
-    }
-
-    /**
-     * @return Returns the agreedTermsOfUse.
-     */
-    public Set<AgreedTermsOfUse> getAgreedTermsOfUse() {
-        return agreedTermsOfUse;
-    }
-
-    /**
      * @param agreedTermsOfUse The agreedTermsOfUse to set.
      */
-    public void setAgreedTermsOfUse(Set<AgreedTermsOfUse> agreedTermsOfUse) {
+    public void setAgreedTermsOfUse(final Set<AgreedTermsOfUse> agreedTermsOfUse) {
         this.agreedTermsOfUse = agreedTermsOfUse;
-    }
-
-    /**
-     * @return Returns the attributeReleaseConsents.
-     */
-    public Set<AttributeReleaseConsent> getAttributeReleaseConsents() {
-        return attributeReleaseConsents;
     }
 
     /**
      * @param attributeReleaseConsents The attributeReleaseConsents to set.
      */
-    public void setAttributeReleaseConsents(Set<AttributeReleaseConsent> attributeReleaseConsents) {
-        this.attributeReleaseConsents = attributeReleaseConsents;
+    public void setAttributeReleaseConsents(
+            final Map<RelyingParty, Set<AttributeReleaseConsent>> attributeReleaseConsents) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void setAttributeReleaseConsents(final RelyingParty relyingParty,
+            final Set<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty) {
+        attributeReleaseConsents.put(relyingParty, attributeReleaseConsentsForRelyingParty);
+    }
+
+    /**
+     * @param firstAccess The firstAccess to set.
+     */
+    public void setFirstAccess(final Date firstAccess) {
+        this.firstAccess = firstAccess;
+    }
+
+    /**
+     * @param globalConsent The globalConsent to set.
+     */
+    public void setGlobalConsent(final boolean globalConsent) {
+        this.globalConsent = globalConsent;
+    }
+
+    /**
+     * @param id The id to set.
+     */
+    public void setId(final long id) {
+        this.id = id;
+    }
+
+    /**
+     * @param lastAccess The lastAccess to set.
+     */
+    public void setLastAccess(final Date lastAccess) {
+        this.lastAccess = lastAccess;
+    }
+
+    /**
+     * @param uniqueId The uniqueId to set.
+     */
+    public void setUniqueId(final String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "Principal [id=" + id + ", uniqueId=" + uniqueId + ", firstAccess=" + firstAccess + ", lastAccess="
+                + lastAccess + ", globalConsent=" + globalConsent + ", agreedTermsOfUse=" + agreedTermsOfUse
+                + ", attributeReleaseConsents=" + attributeReleaseConsents + "]";
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 University Corporation for Advanced Internet Development, Inc.
+ * Copyright 2010 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,76 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
+import java.util.Date;
+import java.util.List;
+
+import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
 
 /**
- * Storage interface which defines needed persistence methods.
+ *
  */
 public interface Storage {
 
-    /**
-     * Loads principal from storage.
-     * 
-     * @return Principal from storage, null if not found.
-     */
-    public Principal loadPrincipal(String principalUniqueIdentifier);
+    public abstract int createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse,
+            final Date agreeDate);
 
-    public void storePrincipal(Principal principal);
+    public abstract int createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+            final Attribute attribute, final Date releaseDate);
+
+    public abstract int createPrincipal(final Principal principal);
+
+    public abstract int createRelyingParty(final RelyingParty relyingParty);
+
+    public abstract int deleteAgreedTermsOfUse(final Principal principal, TermsOfUse termsOfUse);
+
+    public abstract int deleteAgreedTermsOfUses(final Principal principal);
+
+    public abstract int deleteAttributeReleaseConsent(final Principal principal);
+
+    public abstract int deleteAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+            final Attribute attribute);
+
+    public abstract int deleteAttributeReleaseConsents(final Principal principal);
+
+    public abstract int deleteAttributeReleaseConsents(final Principal principal, final RelyingParty relyingParty);
+
+    public abstract int deletePrincipal(final Principal principal);
+
+    public abstract int deleteRelyingParty(final RelyingParty relyingParty);
+
+    public abstract long findPrincipalId(final String principalUniqueIdentifier);
+
+    public abstract long findRelyingPartyId(final String entityId);
+
+    public abstract AgreedTermsOfUse readAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
+
+    public abstract List<AgreedTermsOfUse> readAgreedTermsOfUses(final Principal principal);
+
+    public abstract AttributeReleaseConsent readAttributeReleaseConsent(Principal principal, RelyingParty relyingParty,
+            Attribute attribute);
+
+    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(Principal principal);
+
+    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(Principal principal,
+            RelyingParty relyingParty);
+
+    public abstract Principal readPrincipal(final long principalId);
+
+    public abstract RelyingParty readRelyingParty(final long relyingPartyId);
+
+    public abstract int updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse,
+            final Date agreeDate);
+    
+    public abstract int updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+            final Attribute attribute, final Date releaseDate);
+
+    public abstract int updatePrincipal(final Principal principal);
+
+    public abstract int updateRelyingParty(final RelyingParty relyingParty);
 
 }

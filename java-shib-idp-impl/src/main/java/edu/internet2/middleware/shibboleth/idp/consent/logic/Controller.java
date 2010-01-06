@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 University Corporation for Advanced Internet Development, Inc.
+ * Copyright 2010 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,24 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.logic;
 
-import java.util.Set;
-
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 
 /**
  *
  */
-public class AttributeReleaseConsentCheck {
+public class Controller {
 
-    public boolean PrincipalHasAttribuesApprovedForRelyingParty(Principal principal, RelyingParty relyingParty,
-            Set<Attribute> attributes) {
+    public boolean principalHasAttributesApprovedForRelyingParty(final UserConsentContext userConsentContext) {
         int approved = 0;
-        for (Attribute attribute : attributes) {
-            for (AttributeReleaseConsent attributeReleaseConsent : principal.getAttributeReleaseConsents()) {
-                if (attributeReleaseConsent.getRelyingParty().equals(relyingParty)
-                        && attributeReleaseConsent.getAttribute().equals(attribute)) {
+        for (Attribute attribute : userConsentContext.getAttributesToBeReleased()) {
+            for (AttributeReleaseConsent attributeReleaseConsent : userConsentContext.getPrincipal()
+                    .getAttributeReleaseConsents(userConsentContext.getRelyingParty())) {
+                if (attributeReleaseConsent.getAttribute().equals(attribute)) {
                     approved++;
                 }
             }
         }
-        return attributes.size() == approved;
+        return userConsentContext.getAttributesToBeReleased().size() == approved;
     }
 }
