@@ -37,11 +37,11 @@ public interface Storage {
     public abstract int createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             final Attribute attribute, final Date releaseDate);
 
-    public abstract int createPrincipal(final Principal principal);
+    public abstract long createPrincipal(final Principal principal);
 
-    public abstract int createRelyingParty(final RelyingParty relyingParty);
+    public abstract long createRelyingParty(final RelyingParty relyingParty);
 
-    public abstract int deleteAgreedTermsOfUse(final Principal principal, TermsOfUse termsOfUse);
+    public abstract int deleteAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
 
     public abstract int deleteAgreedTermsOfUses(final Principal principal);
 
@@ -58,25 +58,25 @@ public interface Storage {
 
     public abstract int deleteRelyingParty(final RelyingParty relyingParty);
 
-    public abstract long findPrincipalId(final String principalUniqueIdentifier);
+    public abstract long findPrincipal(final Principal principal);
 
-    public abstract long findRelyingPartyId(final String entityId);
+    public abstract long findRelyingParty(final RelyingParty relyingParty);
 
     public abstract AgreedTermsOfUse readAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
 
     public abstract List<AgreedTermsOfUse> readAgreedTermsOfUses(final Principal principal);
 
-    public abstract AttributeReleaseConsent readAttributeReleaseConsent(Principal principal, RelyingParty relyingParty,
+    public abstract AttributeReleaseConsent readAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             Attribute attribute);
 
-    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(Principal principal);
+    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal);
 
-    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(Principal principal,
+    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal,
             RelyingParty relyingParty);
 
-    public abstract Principal readPrincipal(final long principalId);
+    public abstract Principal readPrincipal(final Principal principal);
 
-    public abstract RelyingParty readRelyingParty(final long relyingPartyId);
+    public abstract RelyingParty readRelyingParty(final RelyingParty relyingParty);
 
     public abstract int updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse,
             final Date agreeDate);

@@ -16,22 +16,22 @@ z * Copyright 2009 University Corporation for Advanced Internet Development, Inc
 
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
+import java.util.Locale;
+import java.util.Map;
+
 /**
  *
  */
 public class RelyingParty {
-    private long id;
+    private long id = 0;
 
     private String entityId;
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof RelyingParty) {
-            return this.entityId == ((RelyingParty) object).getEntityId();
-        }
-        return false;
-    }
+    
+    /** Localized human intelligible relying party name. */
+    private Map<Locale, String> displayNames;
+    
+    /** Localized human readable description of relying party. */
+    private Map<Locale, String> displayDescriptions;
 
     /**
      * @return Returns the entityId.
@@ -60,10 +60,46 @@ public class RelyingParty {
     public void setId(final long id) {
         this.id = id;
     }
+    
+    public String getName(final Locale locale) {
+        return this.displayNames.get(locale);
+    }
+    
+    public String getDescription(final Locale locale) {
+        return this.displayDescriptions.get(locale);
+    }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
         return "RelyingParty [id=" + id + ", entityId=" + entityId + "]";
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
+        result = prime * result + (int) (id ^ (id >>> 32));
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RelyingParty other = (RelyingParty) obj;
+        if (entityId == null) {
+            if (other.entityId != null)
+                return false;
+        } else if (!entityId.equals(other.entityId))
+            return false;
+        if (id != other.id)
+            return false;
+        return true;
     }
 }

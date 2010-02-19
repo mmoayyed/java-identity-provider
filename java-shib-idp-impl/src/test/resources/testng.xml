@@ -1,9 +1,18 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-  
-<suite name="UserConsentSuite" verbose="1" >
- 
-  <test name="JDBCStorageTest" >
-    <parameter name="initFile" value="file:src/main/resources/edu/internet2/middleware/shibboleth/idp/consent/hsqldb-init.sql"/>
-  </test>
- 
+
+<suite name="UserConsentTestSuite" verbose="1">
+    <parameter name="jdbcInitFile" value="file:src/main/resources/edu/internet2/middleware/shibboleth/idp/consent/hsqldb-init.sql" />    
+    
+    <test name="persistenceTests" enabled="false">  
+        <classes>       
+            <class name="edu.internet2.middleware.shibboleth.idp.consent.persistence.JDBCStorageTest"/>
+        </classes>
+    </test>
+
+    <test name="logicTests" enabled="true">
+        <packages>
+            <package name="edu.internet2.middleware.shibboleth.idp.consent.logic" />
+        </packages>
+    </test>
+
 </suite>

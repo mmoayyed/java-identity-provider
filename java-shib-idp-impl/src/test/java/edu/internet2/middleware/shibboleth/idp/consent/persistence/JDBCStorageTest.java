@@ -23,11 +23,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
@@ -42,100 +37,112 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
  * Tests JDBC storage using the Spring JDBC framework.
  */
 
-@ContextConfiguration("/edu/internet2/middleware/shibboleth/idp/consent/test-context.xml")
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
-@Test(dataProviderClass = StaticTestDataProvider.class)
-public class JDBCStorageTest extends AbstractTransactionalTestNGSpringContextTests {
+@Test(dependsOnGroups = {"jdbc.initialization"}, dataProviderClass = StaticTestDataProvider.class)
+public class JDBCStorageTest extends BaseJDBCTest {
 
     private final Logger logger = LoggerFactory.getLogger(JDBCStorageTest.class);
 
     @Autowired
     private Storage storage;
-
-    @Test
-    @Rollback(false)
-    @Parameters( { "initFile" })
-    public void initialization(String initFile) {
-        logger.info("initializationTest started");
-        super.executeSqlScript(initFile, false);
-        logger.info("initializationTest stopped");
-    }
      
-    @Test(dependsOnMethods = {"initialization"}, dataProvider = "crudPrincipalTest")
+    @Test(dataProvider = "crudPrincipalTest")
     public void crudPrincipal(final Principal principal) {
-        logger.info("crudPrincipalTest started");
+        logger.info("start");
+        
+        long id;
+        
+        // Find unavailable
+        id = storage.findPrincipal(principal);
+        assertEquals(0, id);
+        
         // Create        
-        assertEquals(1, storage.createPrincipal(principal));
+        id = storage.createPrincipal(principal);
+        assertEquals(principal.getId(), id);
 
         // Find
-        long id = storage.findPrincipalId(principal.getUniqueId());
+        id = storage.findPrincipal(principal);
         assertTrue(id > 0);
         assertEquals(id, principal.getId());
 
         // Read
-        Principal principalFromDB = storage.readPrincipal(id);
-        assertEquals(id, principalFromDB.getId());
-        assertEquals(principal.getUniqueId(), principalFromDB.getUniqueId());
-        assertEquals(principal.getFirstAccess(), principalFromDB.getFirstAccess());
-        assertEquals(principal.getLastAccess(), principalFromDB.getLastAccess());
-        assertEquals(principal.hasGlobalConsent(), principalFromDB.hasGlobalConsent());
-
+        Principal principal2 = new Principal();
+        principal2.setId(id);
+        principal2 = storage.readPrincipal(principal2);
+        assertEquals(principal, principal2);
+        assertEquals(principal.getFirstAccess(), principal2.getFirstAccess());
+        assertEquals(principal.getLastAccess(), principal2.getLastAccess());
+        assertEquals(principal.hasGlobalConsent(), principal2.hasGlobalConsent());
+        
         // Update
-        Date date = new Date(principalFromDB.getLastAccess().getTime() + 60 * 1000);
-        principalFromDB.setLastAccess(date);
-        principalFromDB.setGlobalConsent(!principalFromDB.hasGlobalConsent());
-        assertEquals(1, storage.updatePrincipal(principalFromDB));
-        Principal principalFromDBupdated = storage.readPrincipal(principalFromDB.getId());
-        assertEquals(date, principalFromDBupdated.getLastAccess()) ;
-        assertEquals(principalFromDB.hasGlobalConsent(), principalFromDBupdated.hasGlobalConsent());
+        principal2.setLastAccess(new Date(principal2.getLastAccess().getTime() + 60 * 1000));
+        principal2.setGlobalConsent(!principal2.hasGlobalConsent());
+        assertEquals(1, storage.updatePrincipal(principal2));
+        
+        Principal principal3 = new Principal();
+        principal3.setId(id);       
+        principal3 = storage.readPrincipal(principal3);
+        assertEquals(principal2, principal3);
+        assertEquals(principal2.getFirstAccess(), principal3.getFirstAccess());
+        assertEquals(principal2.getLastAccess(), principal3.getLastAccess());
+        assertEquals(principal2.hasGlobalConsent(), principal3.hasGlobalConsent());
 
         try {
-            assertEquals(1, storage.deletePrincipal(principalFromDBupdated));
+            assertEquals(1, storage.deletePrincipal(principal3));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
         
-        logger.info("crudPrincipalTest stopped");
+        logger.info("stop");
     }
 
-    @Test(dependsOnMethods = {"initialization"}, dataProvider = "crudRelyingPartyTest")
+    @Test(dataProvider = "crudRelyingPartyTest")
     public void crudRelyingParty(final RelyingParty relyingParty) {
-        logger.info("crudRelyingPartyTest started");
+        logger.info("start");
+
+        long id;
+        
+        // Find unavailable
+        id = storage.findRelyingParty(relyingParty);
+        assertEquals(0, id);
         
         // Create
-        assertEquals(1,storage.createRelyingParty(relyingParty));
+        id = storage.createRelyingParty(relyingParty);
+        assertEquals(relyingParty.getId(), id);
 
         // Find
-        long id = storage.findRelyingPartyId(relyingParty.getEntityId());
+        id = storage.findRelyingParty(relyingParty);
         assertTrue(id > 0);
         assertEquals(id, relyingParty.getId());
 
         // Read
-        RelyingParty relyingPartyFromDB = storage.readRelyingParty(id);
-        assertEquals(id, relyingPartyFromDB.getId());
-        assertEquals(relyingParty.getEntityId(), relyingPartyFromDB.getEntityId());
+        RelyingParty relyingParty2 = new RelyingParty();
+        relyingParty2.setId(id);
+        relyingParty2 = storage.readRelyingParty(relyingParty2);
+        assertEquals(relyingParty, relyingParty2);
 
         // Update
         try {
-            storage.updateRelyingParty(relyingPartyFromDB);
+            storage.updateRelyingParty(relyingParty2);
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
 
         // Delete
         try {
-            assertEquals(1, storage.deleteRelyingParty(relyingPartyFromDB));
+            assertEquals(1, storage.deleteRelyingParty(relyingParty2));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
         
-        logger.info("crudRelyingPartyTest stopped");
+        logger.info("stop");
     }
     
-    @Test(dependsOnMethods = {"initialization"}, dataProvider = "crudAgreedTermsOfUseTest")
+    @Test(dataProvider = "crudAgreedTermsOfUseTest")
     public void crudAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final Date agreeDate) {
 
-        logger.info("crudAgreedTermsOfUseTest started");
+        logger.info("start");
         
+        long id;
         // Preparation
-        assertEquals(1, storage.createPrincipal(principal));
+        id = storage.createPrincipal(principal);
+        assertEquals(principal.getId(), id);
         
         // Create
         assertEquals(1, storage.createAgreedTermsOfUse(principal, termsOfUse, agreeDate));
@@ -165,17 +172,20 @@ public class JDBCStorageTest extends AbstractTransactionalTestNGSpringContextTes
             assertEquals(1, storage.deleteAgreedTermsOfUse(principal, termsOfUse));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
-        
-        logger.info("crudAgreedTermsOfUseTest stopped");
+
+        logger.info("stop");
     }
 
-    @Test(dependsOnMethods = {"initialization"}, dataProvider = "crudAttributeReleaseConsentTest")
+    @Test(dataProvider = "crudAttributeReleaseConsentTest")
     public void crudAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty, final Attribute attribute, final Date releaseDate) {
-        logger.info("crudAttributeReleaseConsentTest started");
+        logger.info("start");
         
+        long id;
         // Preparation
-        assertEquals(1, storage.createPrincipal(principal));
-        assertEquals(1, storage.createRelyingParty(relyingParty));
+        id = storage.createPrincipal(principal);
+        assertEquals(principal.getId(), id);
+        id = storage.createRelyingParty(relyingParty);
+        assertEquals(relyingParty.getId(), id);
         
         // Create
         assertEquals(1, storage.createAttributeReleaseConsent(principal, relyingParty, attribute, releaseDate));
@@ -218,7 +228,6 @@ public class JDBCStorageTest extends AbstractTransactionalTestNGSpringContextTes
         attributeReleaseConsents = storage.readAttributeReleaseConsents(principal, relyingParty);
         assertTrue(attributeReleaseConsents.isEmpty());
         
-        // TODO
         assertEquals(0, storage.deleteAttributeReleaseConsents(principal, relyingParty));
         assertEquals(1, storage.createAttributeReleaseConsent(principal, relyingParty, attribute, releaseDate));
         assertEquals(1, storage.deleteAttributeReleaseConsents(principal, relyingParty));
@@ -230,6 +239,6 @@ public class JDBCStorageTest extends AbstractTransactionalTestNGSpringContextTes
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
         
-        logger.info("crudAttributeReleaseConsentTest stopped");
+        logger.info("stop");
     }
 }

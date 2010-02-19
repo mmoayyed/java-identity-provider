@@ -16,8 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  *
@@ -26,22 +28,22 @@ public class Attribute {
 
     private String id;
 
-    final private Set<String> values = new HashSet<String>();
+    final private Collection<String> values = new HashSet<String>();
 
     private int valueHash;
+    
+    /** Localized human intelligible attribute name. */
+    private Map<Locale, String> displayNames;
+    
+    /** Localized human readable description of attribute. */
+    private Map<Locale, String> displayDescriptions;
 
     public void addValue(final String value) {
         this.values.add(value);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof Attribute) {
-            return this.id.equals(((Attribute) object).getId())
-                    && this.getValueHash() == ((Attribute) object).getValueHash();
-        }
-        return false;
+    public boolean equalsValues(Attribute attribute) {
+        return this.equals(attribute) && this.getValueHash() == attribute.getValueHash();
     }
 
     /**
@@ -61,7 +63,7 @@ public class Attribute {
     /**
      * @return Returns the values.
      */
-    public Set<String> getValues() {
+    public Collection<String> getValues() {
         return values;
     }
 
@@ -77,6 +79,39 @@ public class Attribute {
      */
     public void setValueHash(final int valueHash) {
         this.valueHash = valueHash;
+    }
+
+    public String getName(final Locale locale) {
+        return this.displayNames.get(locale);
+    }
+    
+    public String getDescription(final Locale locale) {
+        return this.displayDescriptions.get(locale);
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Attribute other = (Attribute) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
     }
 
     /** {@inheritDoc} */

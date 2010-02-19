@@ -16,44 +16,46 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
 
 /**
  *
  */
 public class Principal {
 
-    private long id;
-
+    private long id = 0;
+    
     private String uniqueId;
 
     private Date firstAccess;
 
     private Date lastAccess;
 
-    private boolean globalConsent;
+    private boolean globalConsent = false;
 
-    private Set<AgreedTermsOfUse> agreedTermsOfUse;
+    private Collection<AgreedTermsOfUse> agreedTermsOfUses;
 
-    private Map<RelyingParty, Set<AttributeReleaseConsent>> attributeReleaseConsents;
+    final private Map<RelyingParty, Collection<AttributeReleaseConsent>> attributeReleaseConsents = new HashMap<RelyingParty, Collection<AttributeReleaseConsent>>();
 
     /**
      * @return Returns the agreedTermsOfUse.
      */
-    public Set<AgreedTermsOfUse> getAgreedTermsOfUse() {
-        return agreedTermsOfUse;
+    public Collection<AgreedTermsOfUse> getAgreedTermsOfUses() {
+        return agreedTermsOfUses;
     }
 
     /**
      * @return Returns the attributeReleaseConsents.
      */
-    public Map<RelyingParty, Set<AttributeReleaseConsent>> getAttributeReleaseConsents() {
+    public Map<RelyingParty, Collection<AttributeReleaseConsent>> getAttributeReleaseConsents() {
         throw new UnsupportedOperationException();
     }
 
-    public Set<AttributeReleaseConsent> getAttributeReleaseConsents(final RelyingParty relyingParty) {
+    public Collection<AttributeReleaseConsent> getAttributeReleaseConsents(final RelyingParty relyingParty) {
         return attributeReleaseConsents.get(relyingParty);
     }
 
@@ -86,8 +88,8 @@ public class Principal {
     }
 
     public boolean hasAcceptedTermsOfUse(final TermsOfUse termsOfUse) {
-        for (AgreedTermsOfUse agreedToU : this.agreedTermsOfUse) {
-            if (agreedToU.equals(termsOfUse)) {
+        for (AgreedTermsOfUse agreedTermsOfUse : this.agreedTermsOfUses) {
+            if (agreedTermsOfUse.equals(termsOfUse)) {
                 return true;
             }
         }
@@ -104,20 +106,20 @@ public class Principal {
     /**
      * @param agreedTermsOfUse The agreedTermsOfUse to set.
      */
-    public void setAgreedTermsOfUse(final Set<AgreedTermsOfUse> agreedTermsOfUse) {
-        this.agreedTermsOfUse = agreedTermsOfUse;
+    public void setAgreedTermsOfUses(final Collection<AgreedTermsOfUse> agreedTermsOfUses) {
+        this.agreedTermsOfUses = agreedTermsOfUses;
     }
 
     /**
      * @param attributeReleaseConsents The attributeReleaseConsents to set.
      */
     public void setAttributeReleaseConsents(
-            final Map<RelyingParty, Set<AttributeReleaseConsent>> attributeReleaseConsents) {
+            final Map<RelyingParty, Collection<AttributeReleaseConsent>> attributeReleaseConsents) {
         throw new UnsupportedOperationException();
     }
 
     public void setAttributeReleaseConsents(final RelyingParty relyingParty,
-            final Set<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty) {
+            final Collection<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty) {
         attributeReleaseConsents.put(relyingParty, attributeReleaseConsentsForRelyingParty);
     }
 
@@ -155,12 +157,40 @@ public class Principal {
     public void setUniqueId(final String uniqueId) {
         this.uniqueId = uniqueId;
     }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Principal other = (Principal) obj;
+        if (id != other.id)
+            return false;
+        if (uniqueId == null) {
+            if (other.uniqueId != null)
+                return false;
+        } else if (!uniqueId.equals(other.uniqueId))
+            return false;
+        return true;
+    }
 
     /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Principal [id=" + id + ", uniqueId=" + uniqueId + ", firstAccess=" + firstAccess + ", lastAccess="
-                + lastAccess + ", globalConsent=" + globalConsent + ", agreedTermsOfUse=" + agreedTermsOfUse
+                + lastAccess + ", globalConsent=" + globalConsent + ", agreedTermsOfUses=" + agreedTermsOfUses
                 + ", attributeReleaseConsents=" + attributeReleaseConsents + "]";
     }
 

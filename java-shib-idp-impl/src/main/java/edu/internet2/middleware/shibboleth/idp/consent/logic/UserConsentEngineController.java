@@ -22,9 +22,25 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeRelease
 /**
  *
  */
-public class Controller {
 
-    public boolean principalHasAttributesApprovedForRelyingParty(final UserConsentContext userConsentContext) {
+// TODO This class implements the UserConsentEngine Controller
+public class UserConsentEngineController {
+    
+    public void init() {
+        
+    }
+    
+    public int service() {
+        
+        return 0;
+    }
+
+    
+    
+    
+    
+    
+    private boolean principalHasAttributesApprovedForRelyingParty(final UserConsentContext userConsentContext) {
         int approved = 0;
         for (Attribute attribute : userConsentContext.getAttributesToBeReleased()) {
             for (AttributeReleaseConsent attributeReleaseConsent : userConsentContext.getPrincipal()

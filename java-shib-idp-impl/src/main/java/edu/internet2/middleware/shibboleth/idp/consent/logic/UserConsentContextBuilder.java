@@ -16,13 +16,144 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.logic;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.ProfileContext;
+import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
+
 /**
  *
  */
 public class UserConsentContextBuilder {
 
-    public UserConsentContext buildUserConsensContext() {
-        return null;
+    private final Logger logger = LoggerFactory.getLogger(UserConsentContextBuilder.class);
+    
+    private Storage storage;
+    
+    private String uniqueIdAttribute;
+    
+    /**
+     * @return Returns the storage.
+     */
+    public Storage getStorage() {
+        return storage;
     }
 
+    /**
+     * @param storage The storage to set.
+     */
+    public void setStorage(Storage storage) {
+        this.storage = storage;
+    }
+
+    /**
+     * @return Returns the uniqueIdAttribute.
+     */
+    public String getUniqueIdAttribute() {
+        return uniqueIdAttribute;
+    }
+
+    /**
+     * @param uniqueIdAttribute The uniqueIdAttribute to set.
+     */
+    public void setUniqueIdAttribute(String uniqueIdAttribute) {
+        this.uniqueIdAttribute = uniqueIdAttribute;
+    }
+
+    public UserConsentContext buildUserConsentContext(ProfileContext profileContext) throws UserConsentException {
+
+        final Collection<Attribute> attributesToBeReleased = getReleasedAttributesFromProfileContext(profileContext);
+        final String uniqueId = findUniqueId(attributesToBeReleased);
+
+        final Principal principal = new Principal();
+        principal.setUniqueId(uniqueId);
+        // TODO may be from ProfileContext?
+        principal.setLastAccess(new Date());
+        setupPrincipal(principal);
+        
+        final RelyingParty relyingParty = getRelyingPartyFromProfileContext(profileContext);
+        setupRelyingParty(relyingParty);
+        
+        final Collection<AttributeReleaseConsent> attributeReleaseConsent = storage.readAttributeReleaseConsents(principal, relyingParty);
+        principal.setAttributeReleaseConsents(relyingParty, attributeReleaseConsent);
+        
+        final UserConsentContext userConsentContext = new UserConsentContext();
+        userConsentContext.setPrincipal(principal);
+        userConsentContext.setRelyingParty(relyingParty);
+        userConsentContext.setAttributesToBeReleased(attributesToBeReleased);
+        
+        logger.debug("User consent context builded {}.", userConsentContext);
+        
+        return userConsentContext;
+    }
+        
+    private Principal setupPrincipal(Principal principal) {
+        storage.findPrincipal(principal);
+        
+        if (principal.getId() == 0) {
+            logger.debug("First access of principal {}. Create entry.", principal);
+            principal.setFirstAccess(principal.getLastAccess());
+            principal.setGlobalConsent(false);
+            storage.createPrincipal(principal);
+        } else {
+            principal = storage.readPrincipal(principal);
+            Collection<AgreedTermsOfUse> agreedTermsOfUses = storage.readAgreedTermsOfUses(principal);
+            principal.setAgreedTermsOfUses(agreedTermsOfUses);
+        }
+        logger.debug("Principal after setup {}", principal);
+        return principal;
+    }
+    
+    private RelyingParty setupRelyingParty(RelyingParty relyingParty) {
+        storage.findRelyingParty(relyingParty);
+        
+        if (relyingParty.getId() == 0) {
+            logger.debug("First access to relying Party {}. Create entry.", relyingParty);
+            storage.createRelyingParty(relyingParty);
+        }
+        return relyingParty;
+    }
+    
+    
+    private Collection<Attribute> getReleasedAttributesFromProfileContext(ProfileContext profileContext) {
+        // TODO Convert the attributes from IdP profile context to user consent attributes
+        // including attributeId, attributeValues, displayNames (localized), displayDescriptions (localized)
+        // For now, the profile context mock returns a user consent formed List ;-)
+        
+        // TODO Sort the Attributes according the attribute order list
+        return profileContext.getReleasedAttributes();    
+    }
+    
+    private RelyingParty getRelyingPartyFromProfileContext(ProfileContext profileContext) {
+        // TODO Retrieve the RelyingParty information from the profile context including entityId.
+        // Retrieve displayNames, displayDescriptions from
+        // MetadataProvider/EntityDescriptor/SPSSODescriptor/AttributeConsumingService
+        // Logic for default one and convert localization.
+        // For now, the profile context mock returns a user consent formed RelyingParty ;-)
+        return profileContext.getRelyingParty();    
+    }
+    
+    private String findUniqueId(Collection<Attribute> attributes) throws UserConsentException {
+       for (Attribute attribute : attributes) {
+           if  (attribute.getId().equals(uniqueIdAttribute)) {
+               if (attribute.getValues().size() == 1) {
+                   return attribute.getValues().iterator().next();
+               }
+               throw new UserConsentException("uniqueId attribute {} has none or more than one values {}.", uniqueIdAttribute, attribute.getValues());
+           }
+       }
+       throw new UserConsentException("uniqueId attribute {} will not be released.", uniqueIdAttribute);     
+    }
 }
+    

@@ -54,4 +54,29 @@ public class AgreedTermsOfUse {
         this.termsOfUse = termsOfUse;
     }
 
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((termsOfUse == null) ? 0 : termsOfUse.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AgreedTermsOfUse other = (AgreedTermsOfUse) obj;
+        if (termsOfUse == null) {
+            if (other.termsOfUse != null)
+                return false;
+        } else if (!termsOfUse.equals(other.termsOfUse))
+            return false;
+        return true;
+    }
+
 }

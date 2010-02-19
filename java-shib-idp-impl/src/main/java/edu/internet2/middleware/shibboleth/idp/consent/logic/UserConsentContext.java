@@ -16,8 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.logic;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
@@ -27,12 +27,15 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
  *
  */
 public class UserConsentContext {
-
+    
+    // TODO
+    // Session?
+    
     private Principal principal;
 
     private RelyingParty relyingParty;
 
-    private Set<Attribute> attributesToBeReleased;
+    private Collection<Attribute> attributesToBeReleased;
 
     private Date accessTime;
 
@@ -46,7 +49,7 @@ public class UserConsentContext {
     /**
      * @return Returns the attributesToBeReleased.
      */
-    public Set<Attribute> getAttributesToBeReleased() {
+    public Collection<Attribute> getAttributesToBeReleased() {
         return attributesToBeReleased;
     }
 
@@ -74,7 +77,7 @@ public class UserConsentContext {
     /**
      * @param attributesToBeReleased The attributesToBeReleased to set.
      */
-    public void setAttributesToBeReleased(final Set<Attribute> attributesToBeReleased) {
+    public void setAttributesToBeReleased(final Collection<Attribute> attributesToBeReleased) {
         this.attributesToBeReleased = attributesToBeReleased;
     }
 
@@ -84,11 +87,18 @@ public class UserConsentContext {
     public void setPrincipal(final Principal principal) {
         this.principal = principal;
     }
+    /** {@inheritDoc} */
+
 
     /**
      * @param relyingParty The relyingParty to set.
      */
     public void setRelyingParty(final RelyingParty relyingParty) {
         this.relyingParty = relyingParty;
+    }
+    
+    public String toString() {
+        return "UserConsentContext [principal=" + principal + ", relyingParty=" + relyingParty + ", accessTime="
+                + accessTime + ", attributesToBeReleased=" + attributesToBeReleased + "]";
     }
 }

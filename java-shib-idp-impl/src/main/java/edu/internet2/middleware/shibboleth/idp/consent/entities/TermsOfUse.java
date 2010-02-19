@@ -26,16 +26,11 @@ public class TermsOfUse {
 
     private String text;
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof TermsOfUse) {
-            return this.version.equals(((TermsOfUse) object).getVersion())
-                    && this.getFingerprint() == ((TermsOfUse) object).getFingerprint();
-        }
-        return false;
+    
+    public boolean equalsFingerprint(TermsOfUse termsOfUse) {
+        return this.equals(termsOfUse) && this.getFingerprint() == termsOfUse.getFingerprint();
     }
-
+    
     /**
      * @return Returns the fingerprint.
      */
@@ -77,6 +72,32 @@ public class TermsOfUse {
     public void setVersion(final String version) {
         this.version = version;
     }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TermsOfUse other = (TermsOfUse) obj;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        } else if (!version.equals(other.version))
+            return false;
+        return true;
+    }
+
 
     /** {@inheritDoc} */
     @Override

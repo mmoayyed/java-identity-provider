@@ -2,11 +2,11 @@
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
-      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+      <Pattern>%d{HH:mm:ss.SSS} %-5level %-48.48(%logger{0}.%M) %3L - %msg%n</Pattern>
     </layout>
   </appender>
 
-  <logger name="org.springframework" level="DEBUG"/>
+  <logger name="org.springframework" level="WARN"/>
 
   <logger name="edu.internet2.middleware.shibboleth.idp.consent" level="DEBUG"/>
 
