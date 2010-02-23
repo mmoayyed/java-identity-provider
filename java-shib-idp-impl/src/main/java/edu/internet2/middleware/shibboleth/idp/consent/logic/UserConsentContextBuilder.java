@@ -18,7 +18,6 @@ package edu.internet2.middleware.shibboleth.idp.consent.logic;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,24 +39,11 @@ public class UserConsentContextBuilder {
 
     private final Logger logger = LoggerFactory.getLogger(UserConsentContextBuilder.class);
     
+    @Autowired
     private Storage storage;
     
     private String uniqueIdAttribute;
     
-    /**
-     * @return Returns the storage.
-     */
-    public Storage getStorage() {
-        return storage;
-    }
-
-    /**
-     * @param storage The storage to set.
-     */
-    public void setStorage(Storage storage) {
-        this.storage = storage;
-    }
-
     /**
      * @return Returns the uniqueIdAttribute.
      */

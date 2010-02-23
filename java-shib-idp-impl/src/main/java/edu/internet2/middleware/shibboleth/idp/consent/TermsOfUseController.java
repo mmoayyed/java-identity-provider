@@ -17,13 +17,17 @@
 package edu.internet2.middleware.shibboleth.idp.consent;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
@@ -34,68 +38,41 @@ import edu.internet2.middleware.shibboleth.idp.consent.logic.RelyingPartyBlackli
 import edu.internet2.middleware.shibboleth.idp.consent.logic.UserConsentContext;
 import edu.internet2.middleware.shibboleth.idp.consent.logic.UserConsentContextBuilder;
 import edu.internet2.middleware.shibboleth.idp.consent.mock.ProfileContext;
+import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 /**
  *
  */
 
 @Controller
-@RequestMapping("/userconsent/")
-public class UserConsentEngineController {
+@RequestMapping("/userconsent/attributerelease")
+@SessionAttributes("userConsentContext")
+public class TermsOfUseController {
 
-    private final Logger logger = LoggerFactory.getLogger(UserConsentEngineController.class);
+    private final Logger logger = LoggerFactory.getLogger(TermsOfUseController.class);
 
     @Autowired
     private TermsOfUse termsOfUse;
-    
+
     @Autowired
-    private RelyingPartyBlacklist relyingPartyBlacklist;
-    
-    @Autowired
-    private AttributeList attributeList;
-    
-    @Autowired
-    private UserConsentContextBuilder userConsentContextBuilder;
-    
+    private Storage storage;
+
     @RequestMapping(method = RequestMethod.GET)
-    public String service(ProfileContext profileContext) throws UserConsentException {        
-        
-        UserConsentContext userConsentContext;
-        try {
-            userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
-        } catch (UserConsentException e) {
-            logger.error("Error building user consent context", e);
-            throw e;
-        }
-        
-        Principal principal = userConsentContext.getPrincipal();
-        RelyingParty relyingParty = userConsentContext.getRelyingParty();
-        
-        if (termsOfUse != null && !principal.hasAcceptedTermsOfUse(termsOfUse)) {
-            logger.info("{} has not accepted {}", principal, termsOfUse);
+    public String getView(Model model) {
+        model.addAttribute("termsOfUse", termsOfUse);
+        return "redirect:/userconsent/tou";
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public String submit(UserConsentContext userConsentContext, BindingResult result) {
+        if (true) {
+            Principal principal = userConsentContext.getPrincipal();
+            Date agreeDate = userConsentContext.getAccessTime();
+            storage.createAgreedTermsOfUse(principal, termsOfUse, agreeDate);
+            // TODO update?
+            return "redirect:/userconsent/";
+        } else {
             return "redirect:/userconsent/tou";
         }
-        
-        if (userConsentContext.isConsentRevocationRequested()) {
-            principal.setGlobalConsent(false);
-            principal.setAttributeReleaseConsents(relyingParty, null);            
-            // TODO: log into audit log
-        }
-        
-        if (principal.hasGlobalConsent()) {
-            return "redirect:/idp";
-        }
-        
-        if (relyingPartyBlacklist.contains(relyingParty)) {
-            return "redirect:/idp";
-        }
-        
-        Collection<Attribute> attributes = userConsentContext.getAttributesToBeReleased();
-        attributes = attributeList.removeBlacklisted(attributes);  
-        if (!principal.hasApproved(attributes, relyingParty)) {
-            return "redirect:/userconsent/attributerelease";
-        }
-        
-        return "redirect:/idp";
     }
 }
