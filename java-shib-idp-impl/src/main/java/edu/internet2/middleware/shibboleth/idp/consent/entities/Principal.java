@@ -87,13 +87,26 @@ public class Principal {
         return uniqueId;
     }
 
-    public boolean hasAcceptedTermsOfUse(final TermsOfUse termsOfUse) {
-        for (AgreedTermsOfUse agreedTermsOfUse : this.agreedTermsOfUses) {
-            if (agreedTermsOfUse.equals(termsOfUse)) {
-                return true;
+    public boolean hasAcceptedTermsOfUse(final TermsOfUse termsOfUse) {               
+        return this.agreedTermsOfUses.contains(termsOfUse);
+    }
+    
+    public boolean hasApproved(Collection<Attribute> attributes, RelyingParty relyingParty) {
+        Collection<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty = getAttributeReleaseConsents(relyingParty);      
+        boolean approved;
+        for (Attribute attribute: attributes) {
+            approved = false;
+            for (AttributeReleaseConsent attributeReleaseConsent: attributeReleaseConsentsForRelyingParty) {
+                if (attributeReleaseConsent.getAttribute().equals(attribute)) {
+                        approved = true;
+                        break;
+                }
             }
-        }
-        return false;
+            if (!approved) {
+                return false;
+            }
+        }     
+        return true;
     }
 
     /**

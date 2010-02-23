@@ -27,4 +27,33 @@
        <property name="uniqueIdAttribute" value="uniqueID" /> 
     </bean>
 
+    
+    <bean id="relyingPartyBlacklist" class="edu.internet2.middleware.shibboleth.idp.consent.logic.RelyingPartyBlacklist">
+         <property name="blacklist">
+            <set>
+                <value>https://sp\.example1\.org/shibboleth</value>
+                <value>https://sp\.example2\.org/shibboleth</value>
+                <value>https://.*\.example3\.org/shibboleth</value>                
+            </set>
+          </property>
+    </bean>
+    
+     <bean id="attributeList" class="edu.internet2.middleware.shibboleth.idp.consent.logic.AttributeList">
+         <property name="orderedAttributeIds">
+            <list>
+                <value>attribute_1</value>
+                <value>attribute_3</value>
+                <value>attribute_4</value>
+                <value>attribute_7</value>   
+                <value>attribute_9</value>           
+            </list>
+          </property>
+         <property name="blacklistedAttributeIds">
+            <set>
+                <value>attribute_2</value>
+                <value>attribute_5</value>               
+            </set>
+          </property>
+    </bean>
+
 </beans>

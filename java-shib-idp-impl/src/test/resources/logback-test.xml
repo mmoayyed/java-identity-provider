@@ -6,7 +6,7 @@
     </layout>
   </appender>
 
-  <logger name="org.springframework" level="WARN"/>
+  <logger name="org.springframework" level="INFO"/>
 
   <logger name="edu.internet2.middleware.shibboleth.idp.consent" level="DEBUG"/>
 

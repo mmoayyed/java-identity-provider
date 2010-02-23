@@ -37,7 +37,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
  * Tests JDBC storage using the Spring JDBC framework.
  */
 
-@Test(dependsOnGroups = {"jdbc.initialization"}, dataProviderClass = StaticTestDataProvider.class)
+@Test(dependsOnGroups = {"jdbc.initialization"})
 public class JDBCStorageTest extends BaseJDBCTest {
 
     private final Logger logger = LoggerFactory.getLogger(JDBCStorageTest.class);

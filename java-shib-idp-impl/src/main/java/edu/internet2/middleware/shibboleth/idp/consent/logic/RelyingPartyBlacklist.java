@@ -16,9 +16,40 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.logic;
 
+import java.util.Collection;
+import java.util.regex.Pattern;
+
+import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
+
 /**
  *
  */
 public class RelyingPartyBlacklist {
+    
+    private Collection<String> blacklist;
+    
+    /**
+     * @return Returns the blacklist.
+     */
+    public Collection<String> getBlacklist() {
+        return blacklist;
+    }
 
+    /**
+     * @param blacklist The blacklist to set.
+     */
+    public void setBlacklist(Collection<String> blacklist) {
+        this.blacklist = blacklist;
+    }
+
+    public boolean contains(final RelyingParty relyingParty) {
+        Pattern pattern;        
+        for (String regex : blacklist) {
+            pattern = Pattern.compile(regex);
+            if (pattern.matcher(relyingParty.getEntityId()).find()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

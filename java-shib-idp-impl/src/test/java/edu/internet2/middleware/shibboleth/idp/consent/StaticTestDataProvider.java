@@ -235,6 +235,21 @@ public class StaticTestDataProvider {
                 new Object[] {profileContext, principal, createAttributeReleaseConsents()}
       };
     }
-
+    
+    @DataProvider(name = "attributeList")
+    public static Object[][] attributeList() {
+        
+        Collection<Attribute> attributes = new HashSet<Attribute>();
+        for (int i = 0; i < random.nextInt(10) + 5; i++) {
+            Attribute attribute = new Attribute();
+            attribute.setId("attribute_"+(random.nextInt(9) + 1));
+            attributes.add(attribute);
+        }
+        
+        return new Object[][] {
+                new Object[] {attributes}
+      };
+    }
+    
   }
    

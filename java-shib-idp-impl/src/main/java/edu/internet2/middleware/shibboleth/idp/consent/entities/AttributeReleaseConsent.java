@@ -65,6 +65,7 @@ public class AttributeReleaseConsent {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((attribute == null) ? 0 : attribute.hashCode());
+        result = prime * result + ((releaseDate == null) ? 0 : releaseDate.hashCode());
         return result;
     }
 
@@ -82,10 +83,12 @@ public class AttributeReleaseConsent {
                 return false;
         } else if (!attribute.equals(other.attribute))
             return false;
+        if (releaseDate == null) {
+            if (other.releaseDate != null)
+                return false;
+        } else if (!releaseDate.equals(other.releaseDate))
+            return false;
         return true;
     }
-
-
-    
 
 }

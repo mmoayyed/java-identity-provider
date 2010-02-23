@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.idp.consent.logic;
+package edu.internet2.middleware.shibboleth.idp.consent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,4 @@ public class UserConsentException extends Throwable {
         super(message);
         logger.error(message, arguments);
     }
-    
-    
-    
 }

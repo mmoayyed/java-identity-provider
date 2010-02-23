@@ -25,12 +25,7 @@ public class TermsOfUse {
     private int fingerprint;
 
     private String text;
-
-    
-    public boolean equalsFingerprint(TermsOfUse termsOfUse) {
-        return this.equals(termsOfUse) && this.getFingerprint() == termsOfUse.getFingerprint();
-    }
-    
+        
     /**
      * @return Returns the fingerprint.
      */
@@ -77,6 +72,7 @@ public class TermsOfUse {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + getFingerprint();
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
     }
@@ -90,6 +86,8 @@ public class TermsOfUse {
         if (getClass() != obj.getClass())
             return false;
         TermsOfUse other = (TermsOfUse) obj;
+        if (getFingerprint() != other.getFingerprint())
+            return false;
         if (version == null) {
             if (other.version != null)
                 return false;
@@ -98,11 +96,10 @@ public class TermsOfUse {
         return true;
     }
 
-
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "TermsOfUse [fingerprint=" + this.getFingerprint() + ", text=" + text + ", version=" + version + "]";
+        return "TermsOfUse [fingerprint=" + getFingerprint() + ", text=" + text + ", version=" + version + "]";
     }
 
 }

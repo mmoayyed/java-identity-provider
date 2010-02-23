@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
@@ -73,27 +74,28 @@ public class UserConsentContextBuilder {
 
     public UserConsentContext buildUserConsentContext(ProfileContext profileContext) throws UserConsentException {
 
-        final Collection<Attribute> attributesToBeReleased = getReleasedAttributesFromProfileContext(profileContext);
-        final String uniqueId = findUniqueId(attributesToBeReleased);
-
-        final Principal principal = new Principal();
-        principal.setUniqueId(uniqueId);
+        final UserConsentContext userConsentContext = new UserConsentContext();
         // TODO may be from ProfileContext?
-        principal.setLastAccess(new Date());
-        setupPrincipal(principal);
-        
+        userConsentContext.setAccessTime(new Date());
+        userConsentContext.setConsentRevocationRequested(profileContext.isConsentRevocationRequested());
+   
         final RelyingParty relyingParty = getRelyingPartyFromProfileContext(profileContext);
         setupRelyingParty(relyingParty);
-        
-        final Collection<AttributeReleaseConsent> attributeReleaseConsent = storage.readAttributeReleaseConsents(principal, relyingParty);
-        principal.setAttributeReleaseConsents(relyingParty, attributeReleaseConsent);
-        
-        final UserConsentContext userConsentContext = new UserConsentContext();
-        userConsentContext.setPrincipal(principal);
         userConsentContext.setRelyingParty(relyingParty);
+        
+        final Collection<Attribute> attributesToBeReleased = getReleasedAttributesFromProfileContext(profileContext);
         userConsentContext.setAttributesToBeReleased(attributesToBeReleased);
         
-        logger.debug("User consent context builded {}.", userConsentContext);
+        final String uniqueId = findUniqueId(attributesToBeReleased);
+        final Principal principal = new Principal();
+        principal.setUniqueId(uniqueId);
+        principal.setLastAccess(userConsentContext.getAccessTime());
+        setupPrincipal(principal);
+        final Collection<AttributeReleaseConsent> attributeReleaseConsent = storage.readAttributeReleaseConsents(principal, relyingParty);
+        principal.setAttributeReleaseConsents(relyingParty, attributeReleaseConsent);
+        userConsentContext.setPrincipal(principal);
+        
+        logger.debug("User consent context builded: {}.", userConsentContext);
         
         return userConsentContext;
     }

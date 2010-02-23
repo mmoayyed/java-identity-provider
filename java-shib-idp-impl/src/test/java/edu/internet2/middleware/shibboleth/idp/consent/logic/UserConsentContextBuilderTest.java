@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 
 import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
+import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
@@ -115,7 +116,6 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
         assertEquals(principal, userConsentContext.getPrincipal());
         
         logger.info("stop");
-        //fail("not finished");
     }   
     
     

@@ -26,8 +26,12 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
  */
 public class ProfileContext {
     
+    public static final String PROFILECONTEXT_KEY = "profileContext";
+    
     private RelyingParty relyingParty;
     private Collection<Attribute> releasedAttributes;
+    private boolean consentRevocationRequested;
+    
     /**
      * @return Returns the relyingParty.
      */
@@ -51,6 +55,18 @@ public class ProfileContext {
      */
     public void setRelyingParty(RelyingParty relyingParty) {
         this.relyingParty = relyingParty;
+    }
+    /**
+     * @param resetApprovalRequested The resetApprovalRequested to set.
+     */
+    public void setConsentRevocationRequested(boolean consentRevocationRequested) {
+        this.consentRevocationRequested = consentRevocationRequested;
+    }
+    /**
+     * @return Returns the resetApprovalRequested.
+     */
+    public boolean isConsentRevocationRequested() {
+        return consentRevocationRequested;
     }
 
     

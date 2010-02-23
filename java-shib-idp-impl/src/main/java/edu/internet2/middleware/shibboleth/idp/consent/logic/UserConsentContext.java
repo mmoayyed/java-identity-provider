@@ -38,6 +38,8 @@ public class UserConsentContext {
     private Collection<Attribute> attributesToBeReleased;
 
     private Date accessTime;
+    
+    private boolean consentRevocationRequested;
 
     /**
      * @return Returns the accessTime.
@@ -100,5 +102,19 @@ public class UserConsentContext {
     public String toString() {
         return "UserConsentContext [principal=" + principal + ", relyingParty=" + relyingParty + ", accessTime="
                 + accessTime + ", attributesToBeReleased=" + attributesToBeReleased + "]";
+    }
+
+    /**
+     * @param consentRevocationRequested The consentRevocationRequested to set.
+     */
+    public void setConsentRevocationRequested(boolean consentRevocationRequested) {
+        this.consentRevocationRequested = consentRevocationRequested;
+    }
+
+    /**
+     * @return Returns the consentRevocationRequested.
+     */
+    public boolean isConsentRevocationRequested() {
+        return consentRevocationRequested;
     }
 }

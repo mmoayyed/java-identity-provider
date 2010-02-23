@@ -14,36 +14,24 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.idp.consent.persistence;
+package edu.internet2.middleware.shibboleth.idp.consent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
-
 /**
- * Tests JDBC storage using the Spring JDBC framework.
+ * Base test
  */
 
 @ContextConfiguration("/edu/internet2/middleware/shibboleth/idp/consent/test-context.xml")
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback=true)
 @Test(dataProviderClass = StaticTestDataProvider.class)
-public class BaseJDBCTest extends AbstractTransactionalTestNGSpringContextTests {
-
-    private final Logger logger = LoggerFactory.getLogger(BaseJDBCTest.class);
-
-    @Test(groups = {"jdbc.initialization"})
-    @Parameters({ "jdbcInitFile" })
-    @Rollback(false)
-    public void initialization(String initFile) {
-        logger.info("start");
-        super.executeSqlScript(initFile, false);
-        logger.info("stop");
-    }
+public class BaseTest extends AbstractTestNGSpringContextTests {
+    private final Logger logger = LoggerFactory.getLogger(BaseTest.class);
 }

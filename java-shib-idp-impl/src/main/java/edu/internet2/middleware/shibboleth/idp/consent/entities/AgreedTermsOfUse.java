@@ -58,6 +58,7 @@ public class AgreedTermsOfUse {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((agreeDate == null) ? 0 : agreeDate.hashCode());
         result = prime * result + ((termsOfUse == null) ? 0 : termsOfUse.hashCode());
         return result;
     }
@@ -71,6 +72,11 @@ public class AgreedTermsOfUse {
         if (getClass() != obj.getClass())
             return false;
         AgreedTermsOfUse other = (AgreedTermsOfUse) obj;
+        if (agreeDate == null) {
+            if (other.agreeDate != null)
+                return false;
+        } else if (!agreeDate.equals(other.agreeDate))
+            return false;
         if (termsOfUse == null) {
             if (other.termsOfUse != null)
                 return false;
