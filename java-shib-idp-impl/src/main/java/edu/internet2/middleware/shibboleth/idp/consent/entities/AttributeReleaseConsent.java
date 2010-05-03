@@ -16,16 +16,22 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+
 
 /**
  *
  */
 public class AttributeReleaseConsent {
 
-    private Attribute attribute;
+    final private Attribute attribute;
 
-    private Date releaseDate;
+    final private DateTime releaseDate;
+    
+    public AttributeReleaseConsent(final Attribute attribute, final DateTime releaseDate) {
+    	this.attribute = attribute;
+    	this.releaseDate = releaseDate;
+    }
 
     /**
      * @return Returns the attribute.
@@ -37,27 +43,8 @@ public class AttributeReleaseConsent {
     /**
      * @return Returns the releaseDate.
      */
-    public Date getReleaseDate() {
+    public DateTime getReleaseDate() {
         return releaseDate;
-    }
-
-    /**
-     * @param attribute The attribute to set.
-     */
-    public void setAttribute(final Attribute attribute) {
-        this.attribute = attribute;
-    }
-
-    /**
-     * @param releaseDate The releaseDate to set.
-     */
-    public void setReleaseDate(final Date releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return "AttributeReleaseConsent [attribute=" + attribute + ", releaseDate=" + releaseDate + "]";
     }
 
     /** {@inheritDoc} */
@@ -89,6 +76,11 @@ public class AttributeReleaseConsent {
         } else if (!releaseDate.equals(other.releaseDate))
             return false;
         return true;
+    }
+    
+    /** {@inheritDoc} */
+    public String toString() {
+        return "AttributeReleaseConsent [attribute=" + attribute + ", releaseDate=" + releaseDate + "]";
     }
 
 }

@@ -22,13 +22,15 @@
        <property name="dataSource" ref="dataSource" /> 
     </bean>
     
-    <bean id="userConsentContextBuilder" class="edu.internet2.middleware.shibboleth.idp.consent.logic.UserConsentContextBuilder">
+    <bean id="userConsentContextBuilder" class="edu.internet2.middleware.shibboleth.idp.consent.components.UserConsentContextBuilder">
+       <!--
        <property name="storage" ref="storage" />
+       -->
        <property name="uniqueIdAttribute" value="uniqueID" /> 
     </bean>
 
     
-    <bean id="relyingPartyBlacklist" class="edu.internet2.middleware.shibboleth.idp.consent.logic.RelyingPartyBlacklist">
+    <bean id="relyingPartyBlacklist" class="edu.internet2.middleware.shibboleth.idp.consent.components.RelyingPartyBlacklist">
          <property name="blacklist">
             <set>
                 <value>https://sp\.example1\.org/shibboleth</value>
@@ -38,7 +40,7 @@
           </property>
     </bean>
     
-     <bean id="attributeList" class="edu.internet2.middleware.shibboleth.idp.consent.logic.AttributeList">
+     <bean id="attributeList" class="edu.internet2.middleware.shibboleth.idp.consent.components.AttributeList">
          <property name="orderedAttributeIds">
             <list>
                 <value>attribute_1</value>
@@ -55,5 +57,32 @@
             </set>
           </property>
     </bean>
+    
+    
+    <!-- Web stuff  -->
+    <!--
+    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath">
+            <value>/</value>
+        </property>
+    </bean>
+    
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="prefix"><value>/WEB-INF/views/</value></property>
+        <property name="suffix"><value>.vm</value></property>
+        <property name="exposeSpringMacroHelpers"><value>true</value></property>
+    </bean>
+    -->
+    
+    <!-- Internationalization -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+              <list>
+                    <value>terms-of-use</value>
+                    <value>attribute-release</value>
+              </list>
+        </property>
+    </bean>
+    
 
 </beans>

@@ -16,20 +16,27 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
-import java.util.Date;
+import org.joda.time.DateTime;
+
+import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 
 /**
  *
  */
 public class AgreedTermsOfUse {
-    TermsOfUse termsOfUse;
+    final TermsOfUse termsOfUse;
 
-    Date agreeDate;
+    final DateTime agreeDate;
+    
+    public AgreedTermsOfUse(final TermsOfUse termsOfUse, final DateTime agreeDate) {
+    	this.termsOfUse = termsOfUse;
+    	this.agreeDate = agreeDate;
+    }
 
     /**
      * @return Returns the agreeDate.
      */
-    public Date getAgreeDate() {
+    public DateTime getAgreeDate() {
         return agreeDate;
     }
 
@@ -40,21 +47,8 @@ public class AgreedTermsOfUse {
         return termsOfUse;
     }
 
-    /**
-     * @param agreeDate The agreeDate to set.
-     */
-    public void setAgreeDate(final Date agreeDate) {
-        this.agreeDate = agreeDate;
-    }
 
-    /**
-     * @param tou The TermsOfUse to set.
-     */
-    public void setTermsOfUse(final TermsOfUse termsOfUse) {
-        this.termsOfUse = termsOfUse;
-    }
-
-    /** {@inheritDoc} */
+	/** {@inheritDoc} */
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -84,5 +78,11 @@ public class AgreedTermsOfUse {
             return false;
         return true;
     }
+    
+    /** {@inheritDoc} */
+	public String toString() {
+		return "AgreedTermsOfUse [termsOfUse=" + termsOfUse + ", agreeDate="
+				+ agreeDate + "]";
+	}
 
 }

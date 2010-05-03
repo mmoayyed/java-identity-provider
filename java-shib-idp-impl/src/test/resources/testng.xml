@@ -3,15 +3,15 @@
 <suite name="UserConsentTestSuite" verbose="1">
     <parameter name="jdbcInitFile" value="file:src/main/resources/edu/internet2/middleware/shibboleth/idp/consent/hsqldb-init.sql" />    
     
-    <test name="persistenceTests" enabled="false">  
+    <test name="persistenceTests" enabled="true">  
         <classes>       
             <class name="edu.internet2.middleware.shibboleth.idp.consent.persistence.JDBCStorageTest"/>
         </classes>
     </test>
 
-    <test name="logicTests" enabled="true">
+    <test name="componentTests" enabled="true">
         <packages>
-            <package name="edu.internet2.middleware.shibboleth.idp.consent.logic" />
+            <package name="edu.internet2.middleware.shibboleth.idp.consent.components" />
         </packages>
     </test>
 

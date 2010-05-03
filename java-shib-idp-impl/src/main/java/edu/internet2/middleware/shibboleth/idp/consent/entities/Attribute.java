@@ -26,11 +26,11 @@ import java.util.Map;
  */
 public class Attribute {
 
-    private String id;
+    final private String id;
 
-    final private Collection<String> values = new HashSet<String>();
+    final private Collection<String> values;
 
-    private int valueHash;
+    final private int valueHash;
     
     /** Localized human intelligible attribute name. */
     private Map<Locale, String> displayNames;
@@ -38,14 +38,19 @@ public class Attribute {
     /** Localized human readable description of attribute. */
     private Map<Locale, String> displayDescriptions;
 
-    public void addValue(final String value) {
-        this.values.add(value);
+    
+    public Attribute(final String id, final int valueHash) {
+    	this.id = id;
+    	this.valueHash = valueHash;
+    	values = null;
     }
-
-    public boolean equalsValues(Attribute attribute) {
-        return this.equals(attribute) && this.getValueHash() == attribute.getValueHash();
+    
+    public Attribute(final String id, final Collection<String> values) {
+    	this.id = id;
+    	this.values = values;
+    	this.valueHash = values.hashCode();    	
     }
-
+    
     /**
      * @return Returns the id.
      */
@@ -57,7 +62,7 @@ public class Attribute {
      * @return Returns the hash of the values.
      */
     public int getValueHash() {
-        return valueHash != 0 ? valueHash : values.hashCode();
+        return valueHash;
     }
 
     /**
@@ -65,20 +70,6 @@ public class Attribute {
      */
     public Collection<String> getValues() {
         return values;
-    }
-
-    /**
-     * @param id The id to set.
-     */
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    /**
-     * @param valueHash The valueHash to set.
-     */
-    public void setValueHash(final int valueHash) {
-        this.valueHash = valueHash;
     }
 
     public String getName(final Locale locale) {
@@ -89,38 +80,40 @@ public class Attribute {
         return this.displayDescriptions.get(locale);
     }
     
-    /** {@inheritDoc} */
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + getValueHash();
-        return result;
-    }
+
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Attribute other = (Attribute) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (getValueHash() != other.getValueHash())
-            return false;
-        return true;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + valueHash;
+		return result;
+	}
 
-    /** {@inheritDoc} */
+	/** {@inheritDoc} */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Attribute other = (Attribute) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (valueHash != other.valueHash)
+			return false;
+		return true;
+	}
+
+	/** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Attribute [id=" + id + ", values=" + values + ", valueHash=" + this.getValueHash() + "]";
+        return "Attribute [id=" + id + ", valueHash=" + valueHash + "]";
     }
 
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.idp.consent.logic;
+package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import java.util.Collection;
 import java.util.regex.Pattern;

@@ -16,22 +16,26 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.smartcardio.ATR;
+
+import org.joda.time.DateTime;
 import org.testng.annotations.DataProvider;
 
+
+import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.ProfileContext;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPMock;
 
 
 public class StaticTestDataProvider {
@@ -57,13 +61,14 @@ public class StaticTestDataProvider {
     }
     
     
-    public static String getRandomString() {
+    private static String getRandomString() {
         return UUID.randomUUID().toString();
     }
-      
-    private static Date getRandomDate() {
+    
+    
+    private static DateTime getRandomDate() {
         // Fri Jan 01 12:00:00 EST 2010 | Tue Feb 02 12:00:00 EST 2010 | Wed Mar 03 12:00:00 EST 2010
-        Date[] dates = {new Date(1262365200000L), new Date(1265130000000L), new Date(1267635600000L)};
+    	DateTime[] dates = {new DateTime(1262365200000L), new DateTime(1265130000000L), new DateTime(1267635600000L)};
         return dates[random.nextInt(dates.length)];
     }
     
@@ -80,35 +85,23 @@ public class StaticTestDataProvider {
         int i2 = random.nextInt(10)+1;
         return i1 + "." + i2;
     }
-     
+    
     private static Principal createPrincipal() {
-        Principal principal = new Principal();
-        principal.setUniqueId(getRandomUniqueId());
-        principal.setFirstAccess(getRandomDate());
-        principal.setLastAccess(getRandomDate());
-        principal.setGlobalConsent(false);      
+        Principal principal = new Principal(-1, getRandomUniqueId(), getRandomDate(), getRandomDate(), false);
         principal.setAgreedTermsOfUses(createAgreedTermsOfUses());
         return principal;
     }
     
     private static RelyingParty createRelyingParty() {
-        RelyingParty relyingParty = new RelyingParty();
-        relyingParty.setEntityId(getRandomEntityId());
-        return relyingParty;
+    	return new RelyingParty(-1, getRandomEntityId());
     }
           
     private static TermsOfUse createTermsOfUse() {
-        TermsOfUse termsOfUse = new TermsOfUse();
-        termsOfUse.setVersion(getRandomVersion());
-        termsOfUse.setText("This an example ToU text");
-        return termsOfUse;
+        return new TermsOfUse(getRandomVersion(), "This an example ToU text");
     }
     
     private static AgreedTermsOfUse createAgreedTermsOfUse() {
-        AgreedTermsOfUse agreedTermsOfUse = new AgreedTermsOfUse();
-        agreedTermsOfUse.setAgreeDate(getRandomDate());
-        agreedTermsOfUse.setTermsOfUse(createTermsOfUse());
-        return agreedTermsOfUse;
+        return new AgreedTermsOfUse(createTermsOfUse(), getRandomDate());
     }
 
     private static Collection<AgreedTermsOfUse> createAgreedTermsOfUses() {
@@ -120,46 +113,44 @@ public class StaticTestDataProvider {
     }
     
     private static AttributeReleaseConsent createAttributeReleaseConsent() {
-        AttributeReleaseConsent attributeReleaseConsent = new AttributeReleaseConsent();    
+        Attribute attribute;
         if (random.nextBoolean()) {
-            attributeReleaseConsent.setAttribute(createAttribute());
+        	attribute = createAttribute();
         } else {
-            attributeReleaseConsent.setAttribute(createMultiValueAttribute());
+            attribute = createMultiValueAttribute();
         }
-        attributeReleaseConsent.setReleaseDate(getRandomDate());
-        return attributeReleaseConsent;
+        return new AttributeReleaseConsent(attribute, getRandomDate());
     }
     
     private static Collection<AttributeReleaseConsent> createAttributeReleaseConsents() {
         Set<AttributeReleaseConsent> attributeReleaseConsents = new HashSet<AttributeReleaseConsent>();
         for (int i = 0; i < random.nextInt(10)+10; i++) {
-            attributeReleaseConsents.add(createAttributeReleaseConsent());
+        	AttributeReleaseConsent consent = createAttributeReleaseConsent();
+        	if (!attributeReleaseConsents.contains(consent))
+        		attributeReleaseConsents.add(consent);
         }
-        return attributeReleaseConsents;
+        return attributeReleaseConsents;     
     }
     
     
     private static Attribute createAttribute() {
-        Attribute attribute = new Attribute();
-        attribute.setId(getRandomAttributeId());
-        attribute.addValue(getRandomString());
-        return attribute;
+        Collection<String> values = new ArrayList<String>();
+        values.add(getRandomString());
+    	return new Attribute(getRandomAttributeId(), values);
     }
     
     private static Attribute createUniqueIdAttribute() {
-        Attribute attribute = new Attribute();
-        attribute.setId("uniqueID");
-        attribute.addValue(getRandomUniqueId());
-        return attribute;
+        Collection<String> values = new ArrayList<String>();
+        values.add(getRandomUniqueId());
+    	return new Attribute("uniqueID", values);
     }
     
     private static Attribute createMultiValueAttribute() {
-        Attribute attribute = new Attribute();
-        attribute.setId(getRandomAttributeId());
+    	Collection<String> values = new ArrayList<String>();   	
         for (int i = 0; i < random.nextInt(5)+5; i++) {
-            attribute.addValue(getRandomString());
+        	values.add(getRandomString());
         }
-        return attribute;
+        return new Attribute(getRandomAttributeId(), values);
     }
     
     private static Collection<Attribute> createAttributes() {
@@ -176,73 +167,70 @@ public class StaticTestDataProvider {
         return attributes;
     }
     
-    private static ProfileContext createProfileContext() {
-        ProfileContext profileContext = new ProfileContext();
-        profileContext.setRelyingParty(createRelyingParty());
-        profileContext.setReleasedAttributes(createAttributes());
-        return profileContext;
+    private static IdPMock createIdPMock() {
+        return new IdPMock(getRandomEntityId(), createAttributes());
     }
     
    
     @DataProvider(name = "crudPrincipalTest")
     public static Object[][] createCrudPrincipalTest() {      
         return new Object[][] {
-        new Object[] {createPrincipal()}
+        new Object[] {getRandomUniqueId()}
       };
     }
     
     @DataProvider(name = "crudRelyingPartyTest")
     public static Object[][] createCrudRelyingPartyTest() {        
         return new Object[][] {
-        new Object[] {createRelyingParty()}
+        new Object[] {getRandomEntityId()}
       };
     }
     
     @DataProvider(name = "crudAgreedTermsOfUseTest")
     public static Object[][] createCrudAgreedTermsOfUseTest() {         
         return new Object[][] {
-        new Object[] {createPrincipal(), createTermsOfUse(), getRandomDate()}
+        new Object[] {getRandomUniqueId(), createTermsOfUse()}
       };
     }
     
     @DataProvider(name = "crudAttributeReleaseConsentTest")
     public static Object[][] crudAttributeReleaseConsentTest() {         
         return new Object[][] {
-                new Object[] {createPrincipal(), createRelyingParty(), createAttribute(), getRandomDate()},
-                new Object[] {createPrincipal(), createRelyingParty(), createMultiValueAttribute(), getRandomDate()}
+                new Object[] {getRandomUniqueId(), getRandomEntityId(), createAttribute()},
+                new Object[] {getRandomUniqueId(), getRandomEntityId(), createMultiValueAttribute()}
       };
     }
     
     
-    @DataProvider(name = "profileContext")
-    public static Object[][] profileContext() {         
+    @DataProvider(name = "dummyIdP")
+    public static Object[][] IdPMock() {         
         return new Object[][] {
-                new Object[] {createProfileContext()}
+                new Object[] {createIdPMock()}
       };
     }
     
-    @DataProvider(name = "profileContextAndPrincipalAndAttributeReleaseConsents")
-    public static Object[][] profileContextAndPrincipalAndAttributeReleaseConsents() {         
-        ProfileContext profileContext = createProfileContext();
-        Principal principal = createPrincipal();
-        for (Attribute attribute: profileContext.getReleasedAttributes()) {
+    @DataProvider(name = "dummyIdPAndUniqueIdAndAttributeReleaseConsents")
+    public static Object[][] idPMockAndPrincipalAndAttributeReleaseConsents() {         
+        IdPMock dummyIdP = createIdPMock();
+        String uniqueId = null;
+        for (Attribute attribute: dummyIdP.getReleasedAttributes()) {
             if (attribute.getId().equals("uniqueID")) {
-                principal.setUniqueId(attribute.getValues().iterator().next());
+            	uniqueId = attribute.getValues().iterator().next();
             }
         }
              
         return new Object[][] {
-                new Object[] {profileContext, principal, createAttributeReleaseConsents()}
+                new Object[] {dummyIdP, uniqueId, createAgreedTermsOfUses(), createAttributeReleaseConsents()}
       };
     }
     
-    @DataProvider(name = "attributeList")
+
+	@DataProvider(name = "attributeList")
     public static Object[][] attributeList() {
         
         Collection<Attribute> attributes = new HashSet<Attribute>();
         for (int i = 0; i < random.nextInt(10) + 5; i++) {
-            Attribute attribute = new Attribute();
-            attribute.setId("attribute_"+(random.nextInt(9) + 1));
+            Attribute attribute = new Attribute("attribute_"+(random.nextInt(9) + 1),-1);
             attributes.add(attribute);
         }
         

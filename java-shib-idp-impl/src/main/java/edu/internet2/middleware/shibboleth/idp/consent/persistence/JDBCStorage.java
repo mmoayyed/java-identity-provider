@@ -18,23 +18,24 @@ package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
+
+import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
 
 /**
  *
@@ -45,46 +46,35 @@ public class JDBCStorage implements Storage {
     
     private final class AgreedTermsOfUseMapper implements RowMapper<AgreedTermsOfUse> {
         public AgreedTermsOfUse mapRow(ResultSet rs, int rowNum) throws SQLException {
-            final AgreedTermsOfUse agreedTermsOfUse = new AgreedTermsOfUse();
-            final TermsOfUse termsOfUse = new TermsOfUse();
-            termsOfUse.setVersion(rs.getString("version"));
-            termsOfUse.setFingerprint(rs.getInt("fingerprint"));
-            agreedTermsOfUse.setTermsOfUse(termsOfUse);
-            agreedTermsOfUse.setAgreeDate(rs.getTimestamp("agreeDate"));
+            final TermsOfUse termsOfUse = new TermsOfUse(rs.getString("version"), rs.getInt("fingerprint"));
+            final AgreedTermsOfUse agreedTermsOfUse = new AgreedTermsOfUse(termsOfUse, new DateTime(rs.getTimestamp("agreeDate")));
             return agreedTermsOfUse;
         }
     }
 
     private final class AttributeReleaseConsentMapper implements RowMapper<AttributeReleaseConsent> {
         public AttributeReleaseConsent mapRow(ResultSet rs, int rowNum) throws SQLException {
-            final AttributeReleaseConsent attributeReleaseConsent = new AttributeReleaseConsent();
-            final Attribute attribute = new Attribute();
-            attribute.setId(rs.getString("attributeId"));
-            attribute.setValueHash(rs.getInt("attributeValueHash"));
-            attributeReleaseConsent.setAttribute(attribute);
-            attributeReleaseConsent.setReleaseDate(rs.getTimestamp("releaseDate"));
+            final Attribute attribute = new Attribute(rs.getString("attributeId"), rs.getInt("attributeValueHash"));
+        	final AttributeReleaseConsent attributeReleaseConsent = new AttributeReleaseConsent(attribute, new DateTime(rs.getTimestamp("releaseDate")));
             return attributeReleaseConsent;
         }
     }
 
     private final class PrincipalMapper implements RowMapper<Principal> {
-        public Principal mapRow(ResultSet rs, int rowNum) throws SQLException {
-            final Principal principal = new Principal();
-            principal.setId(rs.getLong("id"));
-            principal.setUniqueId(rs.getString("uniqueId"));
-            principal.setFirstAccess(rs.getTimestamp("firstAccess"));
-            principal.setLastAccess(rs.getTimestamp("lastAccess"));
-            principal.setGlobalConsent(rs.getBoolean("globalConsent"));
-            return principal;
+        public final Principal mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Principal(
+            		rs.getLong("id"),
+            		rs.getString("uniqueId"),
+            		new DateTime(rs.getTimestamp("firstAccess")),
+            		new DateTime(rs.getTimestamp("lastAccess")),
+            		rs.getBoolean("globalConsent"));
         }
     }
 
     private  final class RelyingPartyMapper implements RowMapper<RelyingParty> {
-        public RelyingParty mapRow(ResultSet rs, int rowNum) throws SQLException {
-            final RelyingParty relyingParty = new RelyingParty();
-            relyingParty.setId(rs.getLong("id"));
-            relyingParty.setEntityId(rs.getString("entityId"));
-            return relyingParty;
+        public final RelyingParty mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new RelyingParty(
+            		rs.getLong("id"), rs.getString("entityId"));
         }
     }
 
@@ -99,39 +89,48 @@ public class JDBCStorage implements Storage {
     private final AgreedTermsOfUseMapper agreedTermsOfUseMapper = new AgreedTermsOfUseMapper();
 
     /** {@inheritDoc} */
-    public int createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final Date agreeDate) {
-        final String sql = " INSERT INTO AgreedTermsOfUse" + " (principalId, version, fingerprint, agreeDate)"
-                + " VALUES (?, ?, ?, ?)";
-        return this.jdbcTemplate.update(sql, principal.getId(), termsOfUse.getVersion(), termsOfUse.getFingerprint(),
-                agreeDate);
+    public AgreedTermsOfUse createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse) {
+        final String sql = " INSERT INTO AgreedTermsOfUse" + " (principalId, version, fingerprint)"
+                + " VALUES (?, ?, ?)";
+        try {
+        	this.jdbcTemplate.update(sql, principal.getId(), termsOfUse.getVersion(), termsOfUse.getFingerprint()); 	
+        } catch (DataAccessException e) {
+        	logger.warn("Storage exception {}", e);
+        }
+        return readAgreedTermsOfUse(principal, termsOfUse);
     }
 
     /** {@inheritDoc} */
-    public int createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute, final Date releaseDate) {
+    public AttributeReleaseConsent createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+            final Attribute attribute) {
         final String sql = " INSERT INTO AttributeReleaseConsent"
-                + " (principalId, relyingPartyId, attributeId, attributeValueHash, releaseDate)"
-                + " VALUES (?, ?, ?, ?, ?)";
-        return this.jdbcTemplate.update(sql, principal.getId(), relyingParty.getId(), attribute.getId(), attribute
-                .getValueHash(), releaseDate);
-    }
-
-    /** {@inheritDoc} */
-    public long createPrincipal(final Principal principal) {
-        final String sql = " INSERT INTO Principal" + " (uniqueId, firstAccess, lastAccess, globalConsent)"
+                + " (principalId, relyingPartyId, attributeId, attributeValueHash)"
                 + " VALUES (?, ?, ?, ?)";
-
-        this.jdbcTemplate.update(sql, principal.getUniqueId(), principal.getFirstAccess(), principal
-                .getLastAccess(), principal.hasGlobalConsent());
-        return findPrincipal(principal);
+        try {
+        	this.jdbcTemplate.update(sql, principal.getId(), relyingParty.getId(), attribute.getId(), attribute
+                .getValueHash());
+	    } catch (DataAccessException e) {
+	    	logger.warn("Storage exception {}", e);
+	    }
+        return readAttributeReleaseConsent(principal, relyingParty, attribute);
     }
 
     /** {@inheritDoc} */
-    public long createRelyingParty(final RelyingParty relyingParty) {
+    public Principal createPrincipal(final String uniqueId) {
+        final String sql = " INSERT INTO Principal" + " (uniqueId) VALUES (?)";
+
+        this.jdbcTemplate.update(sql, uniqueId);
+        long id = findPrincipal(uniqueId);
+        return readPrincipal(id);
+    }
+
+    /** {@inheritDoc} */
+    public RelyingParty createRelyingParty(final String entityId) {
         final String sql = " INSERT INTO RelyingParty" + " (entityId)" + " VALUES (?)";
 
-        this.jdbcTemplate.update(sql, relyingParty.getEntityId());
-        return findRelyingParty(relyingParty);
+        this.jdbcTemplate.update(sql, entityId);
+        long id = findRelyingParty(entityId);
+        return readRelyingParty(id);   
     }
 
     /** {@inheritDoc} */
@@ -145,10 +144,14 @@ public class JDBCStorage implements Storage {
     }
 
     /** {@inheritDoc} */
-    public int deleteAttributeReleaseConsent(final Principal principal) {
-        final String sql = " DELETE FROM AttributeReleaseConsent" + " WHERE principalId = ?";
-
-        return this.jdbcTemplate.update(sql, principal.getId());
+    public int deleteAttributeReleaseConsents(final Principal principal) {
+    	throw new UnsupportedOperationException();
+    }
+    
+    /** {@inheritDoc} */
+    public int deleteAttributeReleaseConsents(final Principal principal, final RelyingParty relyingParty) {
+        final String sql = " DELETE FROM AttributeReleaseConsent WHERE principalId = ? AND relyingPartyId = ?";
+        return this.jdbcTemplate.update(sql, principal.getId(), relyingParty.getId());
     }
 
     /** {@inheritDoc} */
@@ -157,17 +160,6 @@ public class JDBCStorage implements Storage {
         throw new UnsupportedOperationException();
     }
 
-    /** {@inheritDoc} */
-    public int deleteAttributeReleaseConsents(final Principal principal) {
-        final String sql = " DELETE FROM AttributeReleaseConsent" + " WHERE principalId = ?";
-        return this.jdbcTemplate.update(sql, principal.getId());
-    }
-
-    /** {@inheritDoc} */
-    public int deleteAttributeReleaseConsents(final Principal principal, final RelyingParty relyingParty) {
-        final String sql = " DELETE FROM AttributeReleaseConsent" + " WHERE principalId = ? AND relyingPartyId = ?";
-        return this.jdbcTemplate.update(sql, principal.getId(), relyingParty.getId());
-    }
 
     /** {@inheritDoc} */
     public int deletePrincipal(final Principal principal) {
@@ -180,30 +172,28 @@ public class JDBCStorage implements Storage {
     }
 
     /** {@inheritDoc} */
-    public long findPrincipal(final Principal principal) {
+    public long findPrincipal(final String uniqueId) {
         final String sql = " SELECT id FROM Principal WHERE uniqueId = ?";
         long id = 0;
         try {
-            id = jdbcTemplate.queryForLong(sql, principal.getUniqueId());
+            id = jdbcTemplate.queryForLong(sql, uniqueId);
         } catch (DataAccessException e) {}
-        principal.setId(id);
         return id;
     }
 
     /** {@inheritDoc} */
-    public long findRelyingParty(final RelyingParty relyingParty) {
+    public long findRelyingParty(final String entityId) {
         final String sql = " SELECT id FROM RelyingParty WHERE entityId = ?";
         long id = 0;
         try {
-            id = jdbcTemplate.queryForLong(sql, relyingParty.getEntityId());
+            id = jdbcTemplate.queryForLong(sql, entityId);
         } catch (DataAccessException e) {}
-        relyingParty.setId(id);
         return id;
     }
 
     /** {@inheritDoc} */
     public AgreedTermsOfUse readAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse) {
-        final String sql = " SELECT principalId, version, fingerprint, agreeDate" + " FROM AgreedTermsOfUse"
+        final String sql = " SELECT principalId, version, fingerprint, agreeDate FROM AgreedTermsOfUse"
                 + " WHERE principalId = ? AND version = ?";
         return this.jdbcTemplate
                 .queryForObject(sql, agreedTermsOfUseMapper, principal.getId(), termsOfUse.getVersion());
@@ -211,7 +201,7 @@ public class JDBCStorage implements Storage {
 
     /** {@inheritDoc} */
     public List<AgreedTermsOfUse> readAgreedTermsOfUses(final Principal principal) {
-        final String sql = " SELECT principalId, version, fingerprint, agreeDate" + " FROM AgreedTermsOfUse"
+        final String sql = " SELECT principalId, version, fingerprint, agreeDate FROM AgreedTermsOfUse"
                 + " WHERE principalId = ?";
         return this.jdbcTemplate.query(sql, agreedTermsOfUseMapper, principal.getId());
     }
@@ -219,7 +209,9 @@ public class JDBCStorage implements Storage {
     /** {@inheritDoc} */
     public AttributeReleaseConsent readAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             Attribute attribute) {
-        throw new UnsupportedOperationException();
+        final String sql = " SELECT principalId, relyingPartyId, attributeId, attributeValueHash, releaseDate"
+            + " FROM AttributeReleaseConsent" + " WHERE principalId = ? AND relyingPartyId = ? AND attributeId = ?";
+        return this.jdbcTemplate.queryForObject(sql, attributeReleaseConsentMapper, principal.getId(), relyingParty.getId(), attribute.getId());
     }
 
     /** {@inheritDoc} */
@@ -235,16 +227,16 @@ public class JDBCStorage implements Storage {
     }
 
     /** {@inheritDoc} */
-    public Principal readPrincipal(final Principal principal) {
+    public Principal readPrincipal(final long id) {
         final String sql = " SELECT id, uniqueId, firstAccess, lastAccess, globalConsent" + " FROM Principal"
                 + " WHERE id = ?";
-        return this.jdbcTemplate.queryForObject(sql, principalMapper, principal.getId());
+        return this.jdbcTemplate.queryForObject(sql, principalMapper, id);
     }
 
     /** {@inheritDoc} */
-    public RelyingParty readRelyingParty(final RelyingParty relyingParty) {
+    public RelyingParty readRelyingParty(final long id) {
         final String sql = " SELECT id, entityId" + " FROM RelyingParty" + " WHERE id = ?";
-        return this.jdbcTemplate.queryForObject(sql, relyingPartyMapper, relyingParty.getId());
+        return this.jdbcTemplate.queryForObject(sql, relyingPartyMapper, id);
     }
 
     /** {@inheritDoc} */
@@ -253,31 +245,31 @@ public class JDBCStorage implements Storage {
     }
 
     /** {@inheritDoc} */
-    public int updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final Date agreeDate) {
-        final String sql = " UPDATE AgreedTermsOfUse" + " SET fingerprint = ?, agreeDate = ?"
+    public AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse) {
+        final String sql = " UPDATE AgreedTermsOfUse" + " SET fingerprint = ?, agreeDate = NOW"
                 + " WHERE principalId = ? AND version = ?";
-        return this.jdbcTemplate.update(sql, termsOfUse.getFingerprint(), agreeDate, principal.getId(), termsOfUse
-                .getVersion());
+        this.jdbcTemplate.update(sql, termsOfUse.getFingerprint(), principal.getId(), termsOfUse.getVersion());
+        return readAgreedTermsOfUse(principal, termsOfUse);
     }
 
     /** {@inheritDoc} */
-    public int updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute, final Date releaseDate) {
-        final String sql = " UPDATE AttributeReleaseConsent" + " SET attributeValueHash = ?, releaseDate = ?"
+    public AttributeReleaseConsent updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+            final Attribute attribute) {
+        final String sql = " UPDATE AttributeReleaseConsent" + " SET attributeValueHash = ?, releaseDate = NOW"
                 + " WHERE principalId = ? AND relyingPartyId = ? AND attributeId = ?";
-        return this.jdbcTemplate.update(sql, attribute.getValueHash(), releaseDate, principal.getId(), relyingParty
-                .getId(), attribute.getId());
+        this.jdbcTemplate.update(sql, attribute.getValueHash(), principal.getId(), relyingParty.getId(), attribute.getId());
+        return readAttributeReleaseConsent(principal, relyingParty, attribute);
     }
 
     /** {@inheritDoc} */
-    public int updatePrincipal(final Principal principal) {
-        final String sql = " UPDATE Principal" + " SET lastAccess = ?, globalConsent = ?" + " WHERE id = ?";
-        return this.jdbcTemplate
-                .update(sql, principal.getLastAccess(), principal.hasGlobalConsent(), principal.getId());
+    public Principal updatePrincipal(final Principal principal) {
+        final String sql = " UPDATE Principal" + " SET lastAccess = NOW, globalConsent = ?" + " WHERE id = ?";
+        this.jdbcTemplate.update(sql, principal.hasGlobalConsent(), principal.getId());
+        return readPrincipal(principal.getId());
     }
 
     /** {@inheritDoc} */
-    public int updateRelyingParty(final RelyingParty relyingParty) {
+    public RelyingParty updateRelyingParty(final RelyingParty relyingParty) {
         throw new UnsupportedOperationException();
     }
 

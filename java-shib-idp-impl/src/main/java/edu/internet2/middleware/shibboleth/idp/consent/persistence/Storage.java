@@ -19,33 +19,31 @@ package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 import java.util.Date;
 import java.util.List;
 
+
+import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
 
 /**
  *
  */
 public interface Storage {
 
-    public abstract int createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse,
-            final Date agreeDate);
+    public abstract AgreedTermsOfUse createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
 
-    public abstract int createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute, final Date releaseDate);
+    public abstract AttributeReleaseConsent createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+            final Attribute attribute);
 
-    public abstract long createPrincipal(final Principal principal);
+    public abstract Principal createPrincipal(final String uniqueId);
 
-    public abstract long createRelyingParty(final RelyingParty relyingParty);
+    public abstract RelyingParty createRelyingParty(final String entityId);
 
     public abstract int deleteAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
 
     public abstract int deleteAgreedTermsOfUses(final Principal principal);
-
-    public abstract int deleteAttributeReleaseConsent(final Principal principal);
 
     public abstract int deleteAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             final Attribute attribute);
@@ -58,9 +56,9 @@ public interface Storage {
 
     public abstract int deleteRelyingParty(final RelyingParty relyingParty);
 
-    public abstract long findPrincipal(final Principal principal);
+    public abstract long findPrincipal(final String uniqueId);
 
-    public abstract long findRelyingParty(final RelyingParty relyingParty);
+    public abstract long findRelyingParty(final String entityId);
 
     public abstract AgreedTermsOfUse readAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
 
@@ -74,18 +72,17 @@ public interface Storage {
     public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal,
             RelyingParty relyingParty);
 
-    public abstract Principal readPrincipal(final Principal principal);
+    public abstract Principal readPrincipal(final long id);
 
-    public abstract RelyingParty readRelyingParty(final RelyingParty relyingParty);
+    public abstract RelyingParty readRelyingParty(final long id);
 
-    public abstract int updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse,
-            final Date agreeDate);
+    public abstract AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
     
-    public abstract int updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute, final Date releaseDate);
+    public abstract AttributeReleaseConsent updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+            final Attribute attribute);
 
-    public abstract int updatePrincipal(final Principal principal);
+    public abstract Principal updatePrincipal(final Principal principal);
 
-    public abstract int updateRelyingParty(final RelyingParty relyingParty);
+    public abstract RelyingParty updateRelyingParty(final RelyingParty relyingParty);
 
 }

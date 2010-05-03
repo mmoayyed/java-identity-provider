@@ -17,21 +17,25 @@
 package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
 import static org.testng.AssertJUnit.*;
-import java.util.Date;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
-import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
+
+
+import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
 
 /**
  * Tests JDBC storage using the Spring JDBC framework.
@@ -46,44 +50,40 @@ public class JDBCStorageTest extends BaseJDBCTest {
     private Storage storage;
      
     @Test(dataProvider = "crudPrincipalTest")
-    public void crudPrincipal(final Principal principal) {
+    public void crudPrincipal(final String uniqueId) {
         logger.info("start");
         
         long id;
         
         // Find unavailable
-        id = storage.findPrincipal(principal);
+        id = storage.findPrincipal(uniqueId);
         assertEquals(0, id);
         
         // Create        
-        id = storage.createPrincipal(principal);
-        assertEquals(principal.getId(), id);
+        Principal principal = storage.createPrincipal(uniqueId);
+        assertEquals(principal.getUniqueId(), uniqueId);
 
         // Find
-        id = storage.findPrincipal(principal);
+        id = storage.findPrincipal(uniqueId);
         assertTrue(id > 0);
         assertEquals(id, principal.getId());
 
         // Read
-        Principal principal2 = new Principal();
-        principal2.setId(id);
-        principal2 = storage.readPrincipal(principal2);
+        Principal principal2 = storage.readPrincipal(id);
         assertEquals(principal, principal2);
         assertEquals(principal.getFirstAccess(), principal2.getFirstAccess());
         assertEquals(principal.getLastAccess(), principal2.getLastAccess());
         assertEquals(principal.hasGlobalConsent(), principal2.hasGlobalConsent());
         
         // Update
-        principal2.setLastAccess(new Date(principal2.getLastAccess().getTime() + 60 * 1000));
         principal2.setGlobalConsent(!principal2.hasGlobalConsent());
-        assertEquals(1, storage.updatePrincipal(principal2));
-        
-        Principal principal3 = new Principal();
-        principal3.setId(id);       
-        principal3 = storage.readPrincipal(principal3);
+        assertEquals(principal2, storage.updatePrincipal(principal2));
+        assertFalse(principal2.hasGlobalConsent() && principal.hasGlobalConsent());
+          
+        Principal principal3 = storage.readPrincipal(id);
         assertEquals(principal2, principal3);
         assertEquals(principal2.getFirstAccess(), principal3.getFirstAccess());
-        assertEquals(principal2.getLastAccess(), principal3.getLastAccess());
+        assertTrue(new DateTime().minus(principal3.getLastAccess().getMillis()).getMillis() < 5000);
         assertEquals(principal2.hasGlobalConsent(), principal3.hasGlobalConsent());
 
         try {
@@ -95,28 +95,26 @@ public class JDBCStorageTest extends BaseJDBCTest {
     }
 
     @Test(dataProvider = "crudRelyingPartyTest")
-    public void crudRelyingParty(final RelyingParty relyingParty) {
+    public void crudRelyingParty(final String entityId) {
         logger.info("start");
 
         long id;
         
         // Find unavailable
-        id = storage.findRelyingParty(relyingParty);
+        id = storage.findRelyingParty(entityId);
         assertEquals(0, id);
         
         // Create
-        id = storage.createRelyingParty(relyingParty);
-        assertEquals(relyingParty.getId(), id);
+        RelyingParty relyingParty = storage.createRelyingParty(entityId);
+        assertEquals(relyingParty.getEntityId(), entityId);
 
         // Find
-        id = storage.findRelyingParty(relyingParty);
+        id = storage.findRelyingParty(entityId);
         assertTrue(id > 0);
         assertEquals(id, relyingParty.getId());
 
         // Read
-        RelyingParty relyingParty2 = new RelyingParty();
-        relyingParty2.setId(id);
-        relyingParty2 = storage.readRelyingParty(relyingParty2);
+        RelyingParty relyingParty2 = storage.readRelyingParty(id);
         assertEquals(relyingParty, relyingParty2);
 
         // Update
@@ -135,17 +133,16 @@ public class JDBCStorageTest extends BaseJDBCTest {
     }
     
     @Test(dataProvider = "crudAgreedTermsOfUseTest")
-    public void crudAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final Date agreeDate) {
+    public void crudAgreedTermsOfUse(final String uniqueId, final TermsOfUse termsOfUse) {
 
         logger.info("start");
-        
-        long id;
+       
         // Preparation
-        id = storage.createPrincipal(principal);
-        assertEquals(principal.getId(), id);
+        Principal principal = storage.createPrincipal(uniqueId);
+        assertEquals(principal.getUniqueId(), uniqueId);
         
         // Create
-        assertEquals(1, storage.createAgreedTermsOfUse(principal, termsOfUse, agreeDate));
+        assertNotNull(storage.createAgreedTermsOfUse(principal, termsOfUse));
         
         // Read
         List<AgreedTermsOfUse> agreedTermsOfUses = storage.readAgreedTermsOfUses(principal);
@@ -154,14 +151,13 @@ public class JDBCStorageTest extends BaseJDBCTest {
         AgreedTermsOfUse agreedTermsOfUse;
         agreedTermsOfUse = storage.readAgreedTermsOfUse(principal, termsOfUse);     
         assertEquals(termsOfUse, agreedTermsOfUse.getTermsOfUse());
-        assertEquals(agreeDate, agreedTermsOfUse.getAgreeDate());
+        assertTrue(new DateTime().minus(agreedTermsOfUse.getAgreeDate().getMillis()).getMillis() < 5000);
         
         // Update
-        Date date = new Date(agreedTermsOfUse.getAgreeDate().getTime() + 60 * 1000);
-        assertEquals(1, storage.updateAgreedTermsOfUse(principal, termsOfUse, date));
+        assertNotNull(storage.updateAgreedTermsOfUse(principal, termsOfUse));
         agreedTermsOfUse = storage.readAgreedTermsOfUse(principal, termsOfUse);
         assertEquals(termsOfUse, agreedTermsOfUse.getTermsOfUse());
-        assertEquals(date, agreedTermsOfUse.getAgreeDate());
+        assertTrue(new DateTime().minus(agreedTermsOfUse.getAgreeDate().getMillis()).getMillis() < 5000);
           
         // Delete
         try {
@@ -177,18 +173,17 @@ public class JDBCStorageTest extends BaseJDBCTest {
     }
 
     @Test(dataProvider = "crudAttributeReleaseConsentTest")
-    public void crudAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty, final Attribute attribute, final Date releaseDate) {
+    public void crudAttributeReleaseConsent(final String uniqueId, final String entityId, final Attribute attribute) {
         logger.info("start");
         
-        long id;
         // Preparation
-        id = storage.createPrincipal(principal);
-        assertEquals(principal.getId(), id);
-        id = storage.createRelyingParty(relyingParty);
-        assertEquals(relyingParty.getId(), id);
+        Principal principal = storage.createPrincipal(uniqueId);
+        assertEquals(principal.getUniqueId(), uniqueId);
+        RelyingParty relyingParty = storage.createRelyingParty(entityId);
+        assertEquals(relyingParty.getEntityId(), entityId);
         
         // Create
-        assertEquals(1, storage.createAttributeReleaseConsent(principal, relyingParty, attribute, releaseDate));
+        assertNotNull(storage.createAttributeReleaseConsent(principal, relyingParty, attribute));
         
         // Read
         List<AttributeReleaseConsent> attributeReleaseConsents;
@@ -203,37 +198,32 @@ public class JDBCStorageTest extends BaseJDBCTest {
         attributeReleaseConsent = attributeReleaseConsents.get(0);
         
         assertEquals(attribute, attributeReleaseConsent.getAttribute());
-        assertEquals(releaseDate, attributeReleaseConsent.getReleaseDate());
+        assertTrue(new DateTime().minus(attributeReleaseConsent.getReleaseDate().getMillis()).getMillis() < 5000);
         
-        try {
-            attributeReleaseConsent = storage.readAttributeReleaseConsent(principal, relyingParty, attribute);
-            fail("UnsupportedOperation is supported");
-        } catch (UnsupportedOperationException e) {}
+        assertNotNull(storage.readAttributeReleaseConsent(principal, relyingParty, attribute));
         
         // Update
-        Date date = new Date(attributeReleaseConsent.getReleaseDate().getTime() + 60 * 1000);
-        Attribute attributeChanged = new Attribute();
-        attributeChanged.setId(attributeReleaseConsent.getAttribute().getId());
-        attributeChanged.addValue("New value");  
-        assertEquals(1, storage.updateAttributeReleaseConsent(principal, relyingParty, attributeChanged, date));
+        Collection<String> values = new ArrayList<String>();
+        values.add("New value");
+        Attribute attributeChanged = new Attribute(attributeReleaseConsent.getAttribute().getId(), values);
+        assertNotNull(storage.updateAttributeReleaseConsent(principal, relyingParty, attributeChanged));
         attributeReleaseConsents = storage.readAttributeReleaseConsents(principal, relyingParty);
         assertEquals(1, attributeReleaseConsents.size());
         attributeReleaseConsent = attributeReleaseConsents.get(0);
         
         assertEquals(attributeChanged, attributeReleaseConsent.getAttribute());
-        assertEquals(date, attributeReleaseConsent.getReleaseDate());
+        assertTrue(new DateTime().minus(attributeReleaseConsent.getReleaseDate().getMillis()).getMillis() < 5000);
                 
         // Delete
-        assertEquals(1, storage.deleteAttributeReleaseConsents(principal));
-        attributeReleaseConsents = storage.readAttributeReleaseConsents(principal, relyingParty);
-        assertTrue(attributeReleaseConsents.isEmpty());
-        
-        assertEquals(0, storage.deleteAttributeReleaseConsents(principal, relyingParty));
-        assertEquals(1, storage.createAttributeReleaseConsent(principal, relyingParty, attribute, releaseDate));
+        try {
+            assertEquals(1, storage.deleteAttributeReleaseConsents(principal));
+            fail("UnsupportedOperation is supported");
+        } catch (UnsupportedOperationException e) {}
+              
         assertEquals(1, storage.deleteAttributeReleaseConsents(principal, relyingParty));
         attributeReleaseConsents = storage.readAttributeReleaseConsents(principal, relyingParty);
         assertTrue(attributeReleaseConsents.isEmpty());
-        
+           
         try {
             assertEquals(1, storage.deleteAttributeReleaseConsent(principal, relyingParty, attribute));
             fail("UnsupportedOperation is supported");

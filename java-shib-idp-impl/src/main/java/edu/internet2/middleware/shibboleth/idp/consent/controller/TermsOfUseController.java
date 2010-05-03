@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.idp.consent;
-
-import java.util.Collection;
-import java.util.Date;
+package edu.internet2.middleware.shibboleth.idp.consent.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +24,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
-import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
+
+import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
+import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.TermsOfUse;
-import edu.internet2.middleware.shibboleth.idp.consent.logic.AttributeList;
-import edu.internet2.middleware.shibboleth.idp.consent.logic.RelyingPartyBlacklist;
-import edu.internet2.middleware.shibboleth.idp.consent.logic.UserConsentContext;
-import edu.internet2.middleware.shibboleth.idp.consent.logic.UserConsentContextBuilder;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.ProfileContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 /**
@@ -45,7 +39,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
  */
 
 @Controller
-@RequestMapping("/userconsent/attributerelease")
+@RequestMapping("/userconsent/terms-of-use")
 @SessionAttributes("userConsentContext")
 public class TermsOfUseController {
 
@@ -59,20 +53,23 @@ public class TermsOfUseController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String getView(Model model) {
-        model.addAttribute("termsOfUse", termsOfUse);
-        return "redirect:/userconsent/tou";
+        model.addAttribute("terms-of-use", termsOfUse);
+        return "redirect:/userconsent/terms-of-use";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submit(UserConsentContext userConsentContext, BindingResult result) {
-        if (true) {
-            Principal principal = userConsentContext.getPrincipal();
-            Date agreeDate = userConsentContext.getAccessTime();
-            storage.createAgreedTermsOfUse(principal, termsOfUse, agreeDate);
-            // TODO update?
+    public String submit(@RequestParam("accept") boolean accepted, UserConsentContext userConsentContext, BindingResult result, SessionStatus status) {
+    	Principal principal = userConsentContext.getPrincipal();
+    	if (accepted) {
+    		logger.debug("Principal {} accepted terms of use {}", principal, termsOfUse);
+            storage.createAgreedTermsOfUse(principal, termsOfUse);
+            // TODO update?           
+            status.setComplete();
             return "redirect:/userconsent/";
         } else {
-            return "redirect:/userconsent/tou";
+        	logger.debug("Principal {} did not accepted terms of use {}", principal, termsOfUse);
+        	result.reject("terms-of-use.not-accepted");
+            return "terms-of-use";
         }
     }
 }

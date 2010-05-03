@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>#springMessage("attribute-release.title")</title>
+</head>
+<body>
+    <h1>#springMessage("attribute-release.title")</h1>
+    <form name="attribute-release" action="#springUrl("/userconsent/attribute-release")" method="post">
+    	<p>
+            #springMessage("attribute-release.attributes-send-to")
+    		<strong>${relyingParty}</strong>:
+        </p>
+        
+    	<table>
+            <tr>
+                <th colspan="2">#springMessage("attribute-release.table.head")</th>
+            </tr>
+            #foreach ($attribute in ${attributes})
+            <tr>
+                <td>${attribute.name}</td>
+                <td>${attribute.value}</td>
+            </tr>
+            #end
+        </table>
+		
+		<input type="checkbox" name="global-consent"> value="#springMessage("attribute-release.global-consent")" />
+
+        <p>
+            #springMessage("attribute-release.accept")
+        </p>
+        <input type="submit" name="submit" value="#springMessage("attribute-release.submit")" />
+	</form>
+</body>
+</html>

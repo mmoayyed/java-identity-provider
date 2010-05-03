@@ -16,26 +16,31 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.mock;
 
-import org.testng.annotations.Test;
+import java.util.Collection;
+
+import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
+import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
+
 
 /**
- *
+ * Only a mock for testing
  */
-public class VariaTest {
+public class IdPMock {
+   
+	private String entityId;
+	private Collection<Attribute> attributes;
+	
+	public IdPMock(String entityId, Collection<Attribute> attributes) {
+		this.entityId = entityId;
+		this.attributes = attributes;
+	}
+	
+	public String getEntityID() {
+			return entityId;
+	}
 
-    @Test
-    public void testPointer() {
-        Bean a = new Bean();
-        foo(a);
-        a.setY("World");
+	public Collection<Attribute> getReleasedAttributes() {
+		return attributes;
+	}
 
-        assert a.getX().equals("Hello");
-        assert a.getY().equals("World");
-    }
-
-    private void foo(Bean a) {
-        Bean b = new Bean();
-        b.setX("Hello");
-        a = b;
-    }
 }

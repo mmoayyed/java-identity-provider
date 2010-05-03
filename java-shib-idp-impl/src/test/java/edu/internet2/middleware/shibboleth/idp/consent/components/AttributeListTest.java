@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.idp.consent.logic;
+package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import static org.testng.AssertJUnit.*;
 
@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
+import edu.internet2.middleware.shibboleth.idp.consent.components.AttributeList;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 
 /**

@@ -17,9 +17,12 @@
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.joda.time.DateTime;
+
+import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 
 
 /**
@@ -27,20 +30,28 @@ import java.util.Map;
  */
 public class Principal {
 
-    private long id = 0;
+    final private long id;
     
-    private String uniqueId;
+    final private String uniqueId;
 
-    private Date firstAccess;
+    final private DateTime firstAccess;
 
-    private Date lastAccess;
+    final private DateTime lastAccess;
 
-    private boolean globalConsent = false;
+    private boolean globalConsent;
 
     private Collection<AgreedTermsOfUse> agreedTermsOfUses;
 
     final private Map<RelyingParty, Collection<AttributeReleaseConsent>> attributeReleaseConsents = new HashMap<RelyingParty, Collection<AttributeReleaseConsent>>();
 
+    public Principal(final long id, final String uniqueId, final DateTime firstAccess, final DateTime lastAccess, final boolean globalConsent) {
+    	this.id = id;
+    	this.uniqueId = uniqueId;
+    	this.firstAccess = firstAccess;
+    	this.lastAccess = lastAccess;
+    	this.globalConsent = globalConsent;
+    }
+    
     /**
      * @return Returns the agreedTermsOfUse.
      */
@@ -62,7 +73,7 @@ public class Principal {
     /**
      * @return Returns the firstAccess.
      */
-    public Date getFirstAccess() {
+    public DateTime getFirstAccess() {
         return firstAccess;
     }
 
@@ -76,7 +87,7 @@ public class Principal {
     /**
      * @return Returns the lastAccess.
      */
-    public Date getLastAccess() {
+    public DateTime getLastAccess() {
         return lastAccess;
     }
 
@@ -91,7 +102,7 @@ public class Principal {
         return this.agreedTermsOfUses.contains(termsOfUse);
     }
     
-    public boolean hasApproved(Collection<Attribute> attributes, RelyingParty relyingParty) {
+    public boolean hasApproved(final Collection<Attribute> attributes, final RelyingParty relyingParty) {
         Collection<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty = getAttributeReleaseConsents(relyingParty);      
         boolean approved;
         for (Attribute attribute: attributes) {
@@ -115,10 +126,11 @@ public class Principal {
     public boolean hasGlobalConsent() {
         return globalConsent;
     }
-
+     
     /**
      * @param agreedTermsOfUse The agreedTermsOfUse to set.
      */
+     
     public void setAgreedTermsOfUses(final Collection<AgreedTermsOfUse> agreedTermsOfUses) {
         this.agreedTermsOfUses = agreedTermsOfUses;
     }
@@ -137,39 +149,11 @@ public class Principal {
     }
 
     /**
-     * @param firstAccess The firstAccess to set.
-     */
-    public void setFirstAccess(final Date firstAccess) {
-        this.firstAccess = firstAccess;
-    }
-
-    /**
      * @param globalConsent The globalConsent to set.
      */
     public void setGlobalConsent(final boolean globalConsent) {
         this.globalConsent = globalConsent;
-    }
-
-    /**
-     * @param id The id to set.
-     */
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    /**
-     * @param lastAccess The lastAccess to set.
-     */
-    public void setLastAccess(final Date lastAccess) {
-        this.lastAccess = lastAccess;
-    }
-
-    /**
-     * @param uniqueId The uniqueId to set.
-     */
-    public void setUniqueId(final String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
+    }    
     
     /** {@inheritDoc} */
     public int hashCode() {
@@ -202,9 +186,7 @@ public class Principal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Principal [id=" + id + ", uniqueId=" + uniqueId + ", firstAccess=" + firstAccess + ", lastAccess="
-                + lastAccess + ", globalConsent=" + globalConsent + ", agreedTermsOfUses=" + agreedTermsOfUses
-                + ", attributeReleaseConsents=" + attributeReleaseConsents + "]";
+        return "Principal [uniqueId=" + uniqueId + "]";
     }
 
 }

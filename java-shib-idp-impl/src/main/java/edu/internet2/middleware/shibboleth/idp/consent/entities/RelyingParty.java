@@ -23,9 +23,9 @@ import java.util.Map;
  *
  */
 public class RelyingParty {
-    private long id = 0;
+	final private long id;
 
-    private String entityId;
+    final private String entityId;
     
     /** Localized human intelligible relying party name. */
     private Map<Locale, String> displayNames;
@@ -33,6 +33,11 @@ public class RelyingParty {
     /** Localized human readable description of relying party. */
     private Map<Locale, String> displayDescriptions;
 
+    public RelyingParty(final long id, final String entityId) {
+    	this.id = id;
+    	this.entityId = entityId;
+    }
+    
     /**
      * @return Returns the entityId.
      */
@@ -45,20 +50,6 @@ public class RelyingParty {
      */
     public long getId() {
         return id;
-    }
-
-    /**
-     * @param entityId The entityId to set.
-     */
-    public void setEntityId(final String entityId) {
-        this.entityId = entityId;
-    }
-
-    /**
-     * @param id The id to set.
-     */
-    public void setId(final long id) {
-        this.id = id;
     }
     
     public String getName(final Locale locale) {

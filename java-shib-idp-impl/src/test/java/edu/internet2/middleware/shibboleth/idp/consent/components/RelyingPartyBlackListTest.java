@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.internet2.middleware.shibboleth.idp.consent.logic;
+package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
@@ -26,10 +26,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
+import edu.internet2.middleware.shibboleth.idp.consent.components.RelyingPartyBlacklist;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 
 /**
- * Tests UserConsentContextBuilder.
+ * Tests RelyingPartyBlackList.
  */
 
 @Test
@@ -43,24 +44,22 @@ public class RelyingPartyBlackListTest extends BaseTest {
     
     @Test()
     public void relyingPartyInBlacklist() {
-        RelyingParty relyingParty = new RelyingParty();
-        relyingParty.setEntityId("https://sp.example1.org/shibboleth");
-        assertTrue(relyingPartyBlacklist.contains(relyingParty));
-        relyingParty.setEntityId("https://sp.example2.org/shibboleth");
-        assertTrue(relyingPartyBlacklist.contains(relyingParty));
-        relyingParty.setEntityId("https://sp.example3.org/shibboleth");
-        assertTrue(relyingPartyBlacklist.contains(relyingParty));
-        relyingParty.setEntityId("https://xx.example3.org/shibboleth");
-        assertTrue(relyingPartyBlacklist.contains(relyingParty));
+        RelyingParty relyingParty1 = new RelyingParty(-1, "https://sp.example1.org/shibboleth");
+        assertTrue(relyingPartyBlacklist.contains(relyingParty1));
+        RelyingParty relyingParty2 = new RelyingParty(-1, "https://sp.example2.org/shibboleth");
+        assertTrue(relyingPartyBlacklist.contains(relyingParty2));
+        RelyingParty relyingParty3 = new RelyingParty(-1, "https://sp.example3.org/shibboleth");
+        assertTrue(relyingPartyBlacklist.contains(relyingParty3));
+        RelyingParty relyingParty4 = new RelyingParty(-1, "https://xx.example3.org/shibboleth");
+        assertTrue(relyingPartyBlacklist.contains(relyingParty4));
     }
     
     @Test()
     public void relyingPartyNotInBlacklist() {
-        RelyingParty relyingParty = new RelyingParty();
-        relyingParty.setEntityId("https://xx.example1.org/shibboleth");
-        assertFalse(relyingPartyBlacklist.contains(relyingParty));
-        relyingParty.setEntityId("https://sp.example4.org/shibboleth");
-        assertFalse(relyingPartyBlacklist.contains(relyingParty));
+        RelyingParty relyingParty1 = new RelyingParty(-1, "https://xx.example1.org/shibboleth");
+        assertFalse(relyingPartyBlacklist.contains(relyingParty1));
+        RelyingParty relyingParty2 = new RelyingParty(-1, "https://sp.example4.org/shibboleth");
+        assertFalse(relyingPartyBlacklist.contains(relyingParty2));
     }
     
 }
