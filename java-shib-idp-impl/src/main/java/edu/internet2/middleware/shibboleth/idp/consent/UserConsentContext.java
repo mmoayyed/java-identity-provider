@@ -17,6 +17,9 @@
 package edu.internet2.middleware.shibboleth.idp.consent;
 
 import java.util.Collection;
+import java.util.Locale;
+
+import org.joda.time.DateTime;
 
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
@@ -36,10 +39,16 @@ public class UserConsentContext {
 
     final private Collection<Attribute> attributes;
     
-    public UserConsentContext(Principal principal, RelyingParty relyingParty, Collection<Attribute> attributes) {
+    final private DateTime accessDate;
+    
+    final private Locale locale;
+    
+    public UserConsentContext(Principal principal, RelyingParty relyingParty, Collection<Attribute> attributes, DateTime accessDate, Locale locale) {
     	this.principal = principal;
     	this.relyingParty = relyingParty;
     	this.attributes = attributes;
+    	this.accessDate = accessDate;
+    	this.locale = locale;
     }
     
     /**
@@ -61,6 +70,20 @@ public class UserConsentContext {
      */
     public RelyingParty getRelyingParty() {
         return relyingParty;
+    }
+    
+    /**
+     * @return Returns the accessDate.
+     */
+    public DateTime getAccessDate() {
+        return accessDate;
+    }
+    
+    /**
+     * @return Returns the locale.
+     */
+    public Locale getLocale() {
+        return locale;
     }
     
     public String toString() {

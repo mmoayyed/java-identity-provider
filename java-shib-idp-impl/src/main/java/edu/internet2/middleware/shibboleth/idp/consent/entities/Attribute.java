@@ -17,9 +17,11 @@
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+
+import edu.vt.middleware.crypt.digest.SHA256;
+import edu.vt.middleware.crypt.util.HexConverter;
 
 /**
  *
@@ -30,25 +32,23 @@ public class Attribute {
 
     final private Collection<String> values;
 
-    final private int valueHash;
+    final private String valuesHash;
+
+    private String displayName;
     
-    /** Localized human intelligible attribute name. */
-    private Map<Locale, String> displayNames;
-    
-    /** Localized human readable description of attribute. */
-    private Map<Locale, String> displayDescriptions;
+    private String displayDescription;
 
     
-    public Attribute(final String id, final int valueHash) {
+    public Attribute(final String id, final String valuesHash) {
     	this.id = id;
-    	this.valueHash = valueHash;
+    	this.valuesHash = valuesHash;
     	values = null;
     }
     
     public Attribute(final String id, final Collection<String> values) {
     	this.id = id;
-    	this.values = values;
-    	this.valueHash = values.hashCode();    	
+    	this.values = values;  	
+    	this.valuesHash = new SHA256().digest(values.toString().getBytes(), new HexConverter());
     }
     
     /**
@@ -59,35 +59,54 @@ public class Attribute {
     }
 
     /**
-     * @return Returns the hash of the values.
-     */
-    public int getValueHash() {
-        return valueHash;
-    }
-
-    /**
      * @return Returns the values.
      */
     public Collection<String> getValues() {
         return values;
     }
-
-    public String getName(final Locale locale) {
-        return this.displayNames.get(locale);
+    
+    /**
+     * @return Returns the valuesHash.
+     */
+    public String getValuesHash() {
+        return valuesHash;
     }
     
-    public String getDescription(final Locale locale) {
-        return this.displayDescriptions.get(locale);
-    }
-    
+    /**
+	 * @return Returns the displayName.
+	 */
+	public String getDisplayName() {
+		return displayName;
+	}
 
+	/**
+	 * @param displayName The displayName to set.
+	 */
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
-    /** {@inheritDoc} */
+	/**
+	 * @return Returns the displayDescription.
+	 */
+	public String getDisplayDescription() {
+		return displayDescription;
+	}
+
+	/**
+	 * @param displayDescription The displayDescription to set.
+	 */
+	public void setDisplayDescription(String displayDescription) {
+		this.displayDescription = displayDescription;
+	}
+
+	/** {@inheritDoc} */
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + valueHash;
+		result = prime * result
+				+ ((valuesHash == null) ? 0 : valuesHash.hashCode());
 		return result;
 	}
 
@@ -105,7 +124,10 @@ public class Attribute {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
-		if (valueHash != other.valueHash)
+		if (valuesHash == null) {
+			if (other.valuesHash != null)
+				return false;
+		} else if (!valuesHash.equals(other.valuesHash))
 			return false;
 		return true;
 	}
@@ -113,7 +135,7 @@ public class Attribute {
 	/** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Attribute [id=" + id + ", valueHash=" + valueHash + "]";
+        return "Attribute [id=" + id + ", valuesHash=" + valuesHash + "]";
     }
 
 }

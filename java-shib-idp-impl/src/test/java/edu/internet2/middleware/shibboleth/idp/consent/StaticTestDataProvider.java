@@ -23,8 +23,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.smartcardio.ATR;
-
 import org.joda.time.DateTime;
 import org.testng.annotations.DataProvider;
 
@@ -106,8 +104,14 @@ public class StaticTestDataProvider {
 
     private static Collection<AgreedTermsOfUse> createAgreedTermsOfUses() {
         Set<AgreedTermsOfUse> agreedTermsOfUses = new HashSet<AgreedTermsOfUse>();
-        for (int i = 0; i < random.nextInt(5)+5; i++) {
-            agreedTermsOfUses.add(createAgreedTermsOfUse());
+        
+        //for (int i = 0; i < random.nextInt(5)+5; i++) {
+
+        for (int i = 0; i <2; i++) {
+        	
+        	AgreedTermsOfUse agreed = createAgreedTermsOfUse();
+        	if (!agreedTermsOfUses.contains(agreed))
+        		agreedTermsOfUses.add(agreed);
         }        
         return agreedTermsOfUses;
     }
@@ -175,7 +179,7 @@ public class StaticTestDataProvider {
     @DataProvider(name = "crudPrincipalTest")
     public static Object[][] createCrudPrincipalTest() {      
         return new Object[][] {
-        new Object[] {getRandomUniqueId()}
+        new Object[] {getRandomUniqueId(), getRandomDate(), getRandomDate()}
       };
     }
     
@@ -189,15 +193,15 @@ public class StaticTestDataProvider {
     @DataProvider(name = "crudAgreedTermsOfUseTest")
     public static Object[][] createCrudAgreedTermsOfUseTest() {         
         return new Object[][] {
-        new Object[] {getRandomUniqueId(), createTermsOfUse()}
+        new Object[] {getRandomUniqueId(), getRandomDate(), createTermsOfUse(), getRandomDate()}
       };
     }
     
     @DataProvider(name = "crudAttributeReleaseConsentTest")
     public static Object[][] crudAttributeReleaseConsentTest() {         
         return new Object[][] {
-                new Object[] {getRandomUniqueId(), getRandomEntityId(), createAttribute()},
-                new Object[] {getRandomUniqueId(), getRandomEntityId(), createMultiValueAttribute()}
+                new Object[] {getRandomUniqueId(), getRandomDate(), getRandomEntityId(), createAttribute(), getRandomDate()},
+                new Object[] {getRandomUniqueId(), getRandomDate(), getRandomEntityId(), createMultiValueAttribute(), getRandomDate()}
       };
     }
     
@@ -213,14 +217,14 @@ public class StaticTestDataProvider {
     public static Object[][] idPMockAndPrincipalAndAttributeReleaseConsents() {         
         IdPMock dummyIdP = createIdPMock();
         String uniqueId = null;
-        for (Attribute attribute: dummyIdP.getReleasedAttributes()) {
+        for (Attribute attribute : createAttributes()) {
             if (attribute.getId().equals("uniqueID")) {
             	uniqueId = attribute.getValues().iterator().next();
             }
         }
              
         return new Object[][] {
-                new Object[] {dummyIdP, uniqueId, createAgreedTermsOfUses(), createAttributeReleaseConsents()}
+                new Object[] {dummyIdP, uniqueId, getRandomDate(), createAgreedTermsOfUses(), createAttributeReleaseConsents()}
       };
     }
     
@@ -230,7 +234,7 @@ public class StaticTestDataProvider {
         
         Collection<Attribute> attributes = new HashSet<Attribute>();
         for (int i = 0; i < random.nextInt(10) + 5; i++) {
-            Attribute attribute = new Attribute("attribute_"+(random.nextInt(9) + 1),-1);
+            Attribute attribute = new Attribute("attribute_"+(random.nextInt(9) + 1), "someValueHash");
             attributes.add(attribute);
         }
         

@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
+import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
+import edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBuilder;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
@@ -49,10 +51,22 @@ public class AttributeReleaseController {
     
     @Autowired
     private Storage storage;
+    
+    @Autowired
+    private DescriptionBuilder descriptionBuilder;
+    
+    // TODO set by configuration
+    private boolean globalConsentEnabled;
+    
         
     @RequestMapping(method = RequestMethod.GET)
-    public String getView(UserConsentContext userConsentContext, Model model) {
+    public String getView(UserConsentContext userConsentContext, Model model) throws UserConsentException {
         Collection<Attribute> attributes = userConsentContext.getAttributes();
+        RelyingParty relyingParty = userConsentContext.getRelyingParty();
+        
+        descriptionBuilder.attachDescription(attributes, userConsentContext.getLocale());
+        descriptionBuilder.attachDescription(relyingParty, userConsentContext.getLocale());
+        
         model.addAttribute("relyingParty", userConsentContext.getRelyingParty());
         model.addAttribute("attributes", attributes);
         return "redirect:/userconsent/attribute-release";
@@ -66,11 +80,14 @@ public class AttributeReleaseController {
 		logger.debug("Principal {} accepted attribute release for relying party {}", principal, relyingParty);
 		for (Attribute attribute : attributes) {
 			logger.trace("Attribute release for attribute {}", attribute);
-			storage.createAttributeReleaseConsent(principal, relyingParty, attribute);
-			// TODO update?
+			if (storage.readAttributeReleaseConsent(principal, relyingParty, attribute) == null) {
+				storage.createAttributeReleaseConsent(principal, relyingParty, attribute, userConsentContext.getAccessDate());
+			} else {
+				storage.updateAttributeReleaseConsent(principal, relyingParty, attribute, userConsentContext.getAccessDate());
+			}
 		}
 		
-		if (globalConsent) {
+		if (globalConsentEnabled && globalConsent) {
 			logger.debug("Principal {} has given global consent", principal);
 			principal.setGlobalConsent(true);
 			storage.updatePrincipal(principal);

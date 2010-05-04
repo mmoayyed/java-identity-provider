@@ -64,6 +64,10 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
+        <dependency>
+            <groupId>edu.vt.middleware</groupId>
+            <artifactId>vt-crypt</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

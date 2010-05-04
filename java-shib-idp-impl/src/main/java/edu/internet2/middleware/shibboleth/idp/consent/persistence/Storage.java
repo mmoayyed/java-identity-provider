@@ -16,9 +16,9 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
-import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 
 import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
@@ -32,13 +32,13 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
  */
 public interface Storage {
 
-    public abstract AgreedTermsOfUse createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
-
+    public abstract AgreedTermsOfUse createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate);
+    
     public abstract AttributeReleaseConsent createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute);
-
-    public abstract Principal createPrincipal(final String uniqueId);
-
+            final Attribute attribute, final DateTime releaseDate);
+    
+    public abstract Principal createPrincipal(final String uniqueId, final DateTime accessDate);
+    
     public abstract RelyingParty createRelyingParty(final String entityId);
 
     public abstract int deleteAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
@@ -76,10 +76,10 @@ public interface Storage {
 
     public abstract RelyingParty readRelyingParty(final long id);
 
-    public abstract AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
+    public abstract AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate);
     
     public abstract AttributeReleaseConsent updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute);
+            final Attribute attribute, final DateTime relaseDate);
 
     public abstract Principal updatePrincipal(final Principal principal);
 

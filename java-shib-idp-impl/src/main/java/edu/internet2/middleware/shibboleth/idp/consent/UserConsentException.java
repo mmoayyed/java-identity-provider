@@ -31,9 +31,9 @@ public class UserConsentException extends Throwable {
      * @param message
      * @param cause
      */
-    public UserConsentException(String message, Throwable cause) {
-        super(message, cause);
-        
+    public UserConsentException(String message, Throwable cause) {    
+    	super(message, cause);
+    	logger.error(message, cause);
     }
 
     /**

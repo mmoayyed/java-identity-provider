@@ -16,35 +16,52 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.components;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import org.springframework.core.io.Resource;
+
+import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
+import edu.vt.middleware.crypt.digest.SHA256;
+import edu.vt.middleware.crypt.util.HexConverter;
+
 /**
  *
  */
 public class TermsOfUse {
     final private String version;
 
-    final private int fingerprint;
+    final private String fingerprint;
 
     final private String text;
     
-    public TermsOfUse(final String version, final String text) {
+    public TermsOfUse(final String version, final Resource resource) throws UserConsentException {
     	this.version = version;
-    	this.text = text;
-    	this.fingerprint = hashCode();
+    	
+    	StringBuilder stringBuilder = new StringBuilder();
+    	try {
+	    	BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream()));    	
+	    	String line = null;
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuilder.append(line + "\n");
+			}
+			bufferedReader.close();
+		} catch (IOException e) {
+			throw new UserConsentException("Error while initializing terms of use", e);
+		}
+
+    	this.text = stringBuilder.toString();
+    	String fingerprintInput = version+"|"+text;
+    	this.fingerprint = new SHA256().digest(fingerprintInput.getBytes(), new HexConverter(true));
     }
     
-    public TermsOfUse(final String version, final int fingerprint) {
+    public TermsOfUse(final String version, final String fingerprint) {
     	this.version = version;
     	this.fingerprint = fingerprint;
     	text = null;
     }
         
-    /**
-     * @return Returns the fingerprint.
-     */
-    public int getFingerprint() {
-        return fingerprint;
-    }
-
     /**
      * @return Returns the text.
      */
@@ -59,12 +76,19 @@ public class TermsOfUse {
         return version;
     }
     
+    /**
+     * @return Returns the fingerprint.
+     */
+    public String getFingerprint() {
+        return fingerprint;
+    }
+    
     /** {@inheritDoc} */
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		result = prime * result
+				+ ((fingerprint == null) ? 0 : fingerprint.hashCode());
 		return result;
 	}
 
@@ -77,7 +101,10 @@ public class TermsOfUse {
 		if (getClass() != obj.getClass())
 			return false;
 		TermsOfUse other = (TermsOfUse) obj;
-		if (fingerprint != other.fingerprint)
+		if (fingerprint == null) {
+			if (other.fingerprint != null)
+				return false;
+		} else if (!fingerprint.equals(other.fingerprint))
 			return false;
 		return true;
 	}
@@ -85,7 +112,7 @@ public class TermsOfUse {
 	/** {@inheritDoc} */
     @Override
     public String toString() {
-        return "TermsOfUse [version=" + version + "]";
+        return "TermsOfUse [version=" + version + ", fingerprint=" + fingerprint + "]";
     }
 
 }

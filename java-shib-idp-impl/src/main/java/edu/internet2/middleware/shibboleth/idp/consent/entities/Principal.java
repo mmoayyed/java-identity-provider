@@ -36,7 +36,7 @@ public class Principal {
 
     final private DateTime firstAccess;
 
-    final private DateTime lastAccess;
+    private DateTime lastAccess;
 
     private boolean globalConsent;
 
@@ -147,6 +147,13 @@ public class Principal {
             final Collection<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty) {
         attributeReleaseConsents.put(relyingParty, attributeReleaseConsentsForRelyingParty);
     }
+    
+    /**
+     * @param lastAccess The lastAccess to set.
+     */
+    public void setLastAccess(final DateTime lastAccess) {
+        this.lastAccess = lastAccess;
+    }    
 
     /**
      * @param globalConsent The globalConsent to set.

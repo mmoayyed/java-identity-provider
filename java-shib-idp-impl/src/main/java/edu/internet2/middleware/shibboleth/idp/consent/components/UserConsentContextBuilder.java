@@ -17,7 +17,11 @@
 package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +33,11 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
 import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPMock;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
-/**
- *
- */
+
 
 public class UserConsentContextBuilder {
 
@@ -70,63 +73,58 @@ public class UserConsentContextBuilder {
         this.uniqueIdAttribute = uniqueIdAttribute;
     }
 
+    // TODO synchronized
     public UserConsentContext buildUserConsentContext() throws UserConsentException {
-   
+    	
+    	final DateTime now = new DateTime();
+    	
         final RelyingParty relyingParty = setupRelyingParty(dummyIdP.getEntityID());
-        attachDescription(relyingParty);
         
-        final Collection<Attribute> attributesToBeReleasedFromIdP = dummyIdP.getReleasedAttributes();
-        final Collection<Attribute> attributesToBeReleased = setupAttributes(attributesToBeReleasedFromIdP);
+        final Collection<Attribute> attributesToBeReleased = setupAttributes(dummyIdP.getReleasedAttributes());
         final Collection<Attribute> attributesToBeReleasedWithoutBlacklisted = attributeList.removeBlacklisted(attributesToBeReleased);
         final Collection<Attribute> attributes = attributeList.sortAttributes(attributesToBeReleasedWithoutBlacklisted);
-        
-        attachDescription(attributes);
-        
+             
         final String uniqueId = findUniqueId(attributes);
-        final Principal principal = setupPrincipal(uniqueId);
+        final Principal principal = setupPrincipal(uniqueId, now);
 
         final Collection<AttributeReleaseConsent> attributeReleaseConsent = storage.readAttributeReleaseConsents(principal, relyingParty);
         principal.setAttributeReleaseConsents(relyingParty, attributeReleaseConsent);
         
-        return new UserConsentContext(principal, relyingParty, attributes);
+        // TODO get locale from HTTPRequest
+        return new UserConsentContext(principal, relyingParty, attributes, now, Locale.ENGLISH);
     }
     
     /**
 	 * @param attributes
 	 */
-    private Collection<Attribute> setupAttributes(Collection<Attribute> attributes) {
-        // TODO: Convert the attributes from IdP to user consent attributes
-    	// including attributeId, attributeValues
+    private Collection<Attribute> setupAttributes(Map<String, BaseAttribute> baseAttributes) {
+        Collection<Attribute> attributes = new HashSet<Attribute>();
+        for (BaseAttribute baseAttribute : baseAttributes.values()) {
+        	Collection<String> attributeValues = new HashSet<String>();
+        	
+        	for (Object value : baseAttribute.getValues()) {
+        		if (value != null && !value.toString().trim().equals("")) {
+        	 		attributeValues.add(value.toString());
+        		}
+        	}
+        	
+        	attributes.add(new Attribute(baseAttribute.getId(), attributeValues));
+        }
     	return attributes;
     }
-        
-    /**
-	 * @param attributes
-	 */
-	private void attachDescription(Collection<Attribute> attributes) {
-        // TODO attach displayNames (localized), displayDescriptions (localized)	
-	}
 
-	/**
-	 * @param relyingParty
-	 */
-	private void attachDescription(RelyingParty relyingParty) {
-        // TODO: Retrieve displayNames, displayDescriptions from
-        // MetadataProvider/EntityDescriptor/SPSSODescriptor/AttributeConsumingService
-        // Convert localization.
-	}
-
-	private Principal setupPrincipal(String uniqueId) {
+	private Principal setupPrincipal(String uniqueId, DateTime accessDate) {
         Principal principal;
         
     	long id = storage.findPrincipal(uniqueId);
         if (id == 0) {
-        	principal = storage.createPrincipal(uniqueId);
+        	principal = storage.createPrincipal(uniqueId, accessDate);
             logger.debug("First access of principal {}. Create entry.", principal);
         } else {
             principal = storage.readPrincipal(id);
             Collection<AgreedTermsOfUse> agreedTermsOfUses = storage.readAgreedTermsOfUses(principal);
             principal.setAgreedTermsOfUses(agreedTermsOfUses);
+            principal.setLastAccess(accessDate);
             logger.debug("Further access of principal {}. Entry loaded.", principal);
         }
         return principal;

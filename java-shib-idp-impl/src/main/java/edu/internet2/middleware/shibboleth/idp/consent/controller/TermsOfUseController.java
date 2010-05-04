@@ -62,8 +62,13 @@ public class TermsOfUseController {
     	Principal principal = userConsentContext.getPrincipal();
     	if (accepted) {
     		logger.debug("Principal {} accepted terms of use {}", principal, termsOfUse);
-            storage.createAgreedTermsOfUse(principal, termsOfUse);
-            // TODO update?           
+            
+    		if (storage.readAgreedTermsOfUse(principal, termsOfUse) == null) {
+        		storage.createAgreedTermsOfUse(principal, termsOfUse, userConsentContext.getAccessDate());
+    		} else {
+        		storage.updateAgreedTermsOfUse(principal, termsOfUse, userConsentContext.getAccessDate());
+    		}
+    		    
             status.setComplete();
             return "redirect:/userconsent/";
         } else {

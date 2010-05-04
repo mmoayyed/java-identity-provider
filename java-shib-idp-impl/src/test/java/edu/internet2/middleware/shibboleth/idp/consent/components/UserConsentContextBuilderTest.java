@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import static org.testng.AssertJUnit.*;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,10 +111,13 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
     }
     
     @Test(dataProvider = "dummyIdPAndUniqueIdAndAttributeReleaseConsents")
-    public void furtherAccessFromPrincipal(IdPMock dummyIdP, String uniqueId, Collection<AgreedTermsOfUse> agreedTermsOfUses, Collection<AttributeReleaseConsent> attributeReleaseConsents) {
+    public void furtherAccessFromPrincipal(IdPMock dummyIdP, String uniqueId, DateTime date, Collection<AgreedTermsOfUse> agreedTermsOfUses, Collection<AttributeReleaseConsent> attributeReleaseConsents) {
         logger.info("start");
-        Principal principal = persistData(uniqueId, dummyIdP.getEntityID(), agreedTermsOfUses, attributeReleaseConsents);
-  
+        Principal principal = persistPrincipal(uniqueId, date);
+        RelyingParty relyingParty = persistRelyingParty(dummyIdP.getEntityID());
+        persistTermsOfUses(principal, agreedTermsOfUses);
+        //persistAttributeReleaseConsents(principal, relyingParty, attributeReleaseConsents);
+        
         UserConsentContext userConsentContext = null;
         try {
         	userConsentContextBuilder.setIdPMock(dummyIdP);
@@ -121,14 +126,17 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
             fail(e.getMessage());
         }
         
-        logger.debug("Principal stored {}", principal);
-        logger.debug("Principal retrieved {}", userConsentContext.getPrincipal());
-        
         assertEquals(principal, userConsentContext.getPrincipal());
+        assertEquals(relyingParty, userConsentContext.getRelyingParty());
         
+        logger.debug("{}", agreedTermsOfUses);
+        logger.debug("{}",userConsentContext.getPrincipal().getAgreedTermsOfUses());
+        
+        assertTrue(CollectionUtils.isEqualCollection(agreedTermsOfUses, userConsentContext.getPrincipal().getAgreedTermsOfUses()));
+        //assertTrue(CollectionUtils.isEqualCollection(attributeReleaseConsents, userConsentContext.getPrincipal().getAttributeReleaseConsents(relyingParty)));
+
         logger.info("stop");
     }   
-    
     
     @Test(dataProvider = "dummyIdP")
     public void furtherAccessToRelyingParty(IdPMock dummyIdP) {
@@ -144,24 +152,5 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
         assertEquals(relyingParty.getId(), userConsentContext.getRelyingParty().getId());
         logger.info("stop");
     }    
-    
-    private Principal persistData(String uniqueId, String relyingPartyId, Collection<AgreedTermsOfUse> agreedTermsOfUses, Collection<AttributeReleaseConsent> attributeReleaseConsents) {
-        Principal principal = storage.createPrincipal(uniqueId);
-        RelyingParty relyingParty = storage.createRelyingParty(relyingPartyId);
-    	assertTrue(0 < relyingParty.getId());
-        assertTrue(0 < principal.getId());
-        
-        for (AgreedTermsOfUse agreedTermsOfUse : agreedTermsOfUses) {
-            assertNotNull(storage.createAgreedTermsOfUse(principal, agreedTermsOfUse.getTermsOfUse()));
-        }
-        
-        for (AttributeReleaseConsent attributeReleaseConsent: attributeReleaseConsents) {
-        	logger.debug("{}", attributeReleaseConsent.getAttribute());
-        	//assertNotNull(storage.createAttributeReleaseConsent(principal, relyingParty, attributeReleaseConsent.getAttribute()));
-        }
-        
-        return principal;
-     }
-    
-    
+      
 }

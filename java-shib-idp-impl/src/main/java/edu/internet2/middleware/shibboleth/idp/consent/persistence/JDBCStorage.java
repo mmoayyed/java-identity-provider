@@ -46,7 +46,7 @@ public class JDBCStorage implements Storage {
     
     private final class AgreedTermsOfUseMapper implements RowMapper<AgreedTermsOfUse> {
         public AgreedTermsOfUse mapRow(ResultSet rs, int rowNum) throws SQLException {
-            final TermsOfUse termsOfUse = new TermsOfUse(rs.getString("version"), rs.getInt("fingerprint"));
+            final TermsOfUse termsOfUse = new TermsOfUse(rs.getString("version"), rs.getString("fingerprint"));
             final AgreedTermsOfUse agreedTermsOfUse = new AgreedTermsOfUse(termsOfUse, new DateTime(rs.getTimestamp("agreeDate")));
             return agreedTermsOfUse;
         }
@@ -54,7 +54,7 @@ public class JDBCStorage implements Storage {
 
     private final class AttributeReleaseConsentMapper implements RowMapper<AttributeReleaseConsent> {
         public AttributeReleaseConsent mapRow(ResultSet rs, int rowNum) throws SQLException {
-            final Attribute attribute = new Attribute(rs.getString("attributeId"), rs.getInt("attributeValueHash"));
+            final Attribute attribute = new Attribute(rs.getString("attributeId"), rs.getString("attributeValuesHash"));
         	final AttributeReleaseConsent attributeReleaseConsent = new AttributeReleaseConsent(attribute, new DateTime(rs.getTimestamp("releaseDate")));
             return attributeReleaseConsent;
         }
@@ -89,11 +89,11 @@ public class JDBCStorage implements Storage {
     private final AgreedTermsOfUseMapper agreedTermsOfUseMapper = new AgreedTermsOfUseMapper();
 
     /** {@inheritDoc} */
-    public AgreedTermsOfUse createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse) {
-        final String sql = " INSERT INTO AgreedTermsOfUse" + " (principalId, version, fingerprint)"
-                + " VALUES (?, ?, ?)";
+    public AgreedTermsOfUse createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate) {
+        final String sql = " INSERT INTO AgreedTermsOfUse (principalId, version, fingerprint, agreeDate)"
+                + " VALUES (?, ?, ?, ?)";
         try {
-        	this.jdbcTemplate.update(sql, principal.getId(), termsOfUse.getVersion(), termsOfUse.getFingerprint()); 	
+        	this.jdbcTemplate.update(sql, principal.getId(), termsOfUse.getVersion(), termsOfUse.getFingerprint(), agreeDate.toDate()); 	
         } catch (DataAccessException e) {
         	logger.warn("Storage exception {}", e);
         }
@@ -102,13 +102,13 @@ public class JDBCStorage implements Storage {
 
     /** {@inheritDoc} */
     public AttributeReleaseConsent createAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute) {
+            final Attribute attribute, final DateTime releaseDate) {
         final String sql = " INSERT INTO AttributeReleaseConsent"
-                + " (principalId, relyingPartyId, attributeId, attributeValueHash)"
-                + " VALUES (?, ?, ?, ?)";
+                + " (principalId, relyingPartyId, attributeId, attributeValuesHash, releaseDate)"
+                + " VALUES (?, ?, ?, ?, ?)";
         try {
         	this.jdbcTemplate.update(sql, principal.getId(), relyingParty.getId(), attribute.getId(), attribute
-                .getValueHash());
+                .getValuesHash(), releaseDate.toDate());
 	    } catch (DataAccessException e) {
 	    	logger.warn("Storage exception {}", e);
 	    }
@@ -116,17 +116,17 @@ public class JDBCStorage implements Storage {
     }
 
     /** {@inheritDoc} */
-    public Principal createPrincipal(final String uniqueId) {
-        final String sql = " INSERT INTO Principal" + " (uniqueId) VALUES (?)";
+    public Principal createPrincipal(final String uniqueId, final DateTime accessDate) {
+        final String sql = " INSERT INTO Principal (uniqueId, firstAccess, lastAccess, globalConsent) VALUES (?, ?, ?, ?)";
 
-        this.jdbcTemplate.update(sql, uniqueId);
+        this.jdbcTemplate.update(sql, uniqueId, accessDate.toDate(), accessDate.toDate(), false);
         long id = findPrincipal(uniqueId);
         return readPrincipal(id);
     }
 
     /** {@inheritDoc} */
     public RelyingParty createRelyingParty(final String entityId) {
-        final String sql = " INSERT INTO RelyingParty" + " (entityId)" + " VALUES (?)";
+        final String sql = " INSERT INTO RelyingParty (entityId) VALUES (?)";
 
         this.jdbcTemplate.update(sql, entityId);
         long id = findRelyingParty(entityId);
@@ -209,7 +209,7 @@ public class JDBCStorage implements Storage {
     /** {@inheritDoc} */
     public AttributeReleaseConsent readAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             Attribute attribute) {
-        final String sql = " SELECT principalId, relyingPartyId, attributeId, attributeValueHash, releaseDate"
+        final String sql = " SELECT principalId, relyingPartyId, attributeId, attributeValuesHash, releaseDate"
             + " FROM AttributeReleaseConsent" + " WHERE principalId = ? AND relyingPartyId = ? AND attributeId = ?";
         return this.jdbcTemplate.queryForObject(sql, attributeReleaseConsentMapper, principal.getId(), relyingParty.getId(), attribute.getId());
     }
@@ -221,7 +221,7 @@ public class JDBCStorage implements Storage {
 
     /** {@inheritDoc} */
     public List<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal, final RelyingParty relyingParty) {
-        final String sql = " SELECT principalId, relyingPartyId, attributeId, attributeValueHash, releaseDate"
+        final String sql = " SELECT principalId, relyingPartyId, attributeId, attributeValuesHash, releaseDate"
                 + " FROM AttributeReleaseConsent" + " WHERE principalId = ? AND relyingPartyId = ?";
         return this.jdbcTemplate.query(sql, attributeReleaseConsentMapper, principal.getId(), relyingParty.getId());
     }
@@ -245,26 +245,26 @@ public class JDBCStorage implements Storage {
     }
 
     /** {@inheritDoc} */
-    public AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse) {
-        final String sql = " UPDATE AgreedTermsOfUse" + " SET fingerprint = ?, agreeDate = NOW"
+    public AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate) {
+        final String sql = " UPDATE AgreedTermsOfUse SET fingerprint = ?, agreeDate = ?"
                 + " WHERE principalId = ? AND version = ?";
-        this.jdbcTemplate.update(sql, termsOfUse.getFingerprint(), principal.getId(), termsOfUse.getVersion());
+        this.jdbcTemplate.update(sql, termsOfUse.getFingerprint(), agreeDate.toDate(), principal.getId(), termsOfUse.getVersion());
         return readAgreedTermsOfUse(principal, termsOfUse);
     }
 
     /** {@inheritDoc} */
     public AttributeReleaseConsent updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
-            final Attribute attribute) {
-        final String sql = " UPDATE AttributeReleaseConsent" + " SET attributeValueHash = ?, releaseDate = NOW"
+            final Attribute attribute, final DateTime releaseDate) {
+        final String sql = " UPDATE AttributeReleaseConsent SET attributeValuesHash = ?, releaseDate = ?"
                 + " WHERE principalId = ? AND relyingPartyId = ? AND attributeId = ?";
-        this.jdbcTemplate.update(sql, attribute.getValueHash(), principal.getId(), relyingParty.getId(), attribute.getId());
+        this.jdbcTemplate.update(sql, attribute.getValuesHash(), releaseDate.toDate(), principal.getId(), relyingParty.getId(), attribute.getId());
         return readAttributeReleaseConsent(principal, relyingParty, attribute);
     }
 
     /** {@inheritDoc} */
     public Principal updatePrincipal(final Principal principal) {
-        final String sql = " UPDATE Principal" + " SET lastAccess = NOW, globalConsent = ?" + " WHERE id = ?";
-        this.jdbcTemplate.update(sql, principal.hasGlobalConsent(), principal.getId());
+        final String sql = " UPDATE Principal SET lastAccess = ?, globalConsent = ? WHERE id = ?";
+        this.jdbcTemplate.update(sql, principal.getLastAccess().toDate(), principal.hasGlobalConsent(), principal.getId());
         return readPrincipal(principal.getId());
     }
 

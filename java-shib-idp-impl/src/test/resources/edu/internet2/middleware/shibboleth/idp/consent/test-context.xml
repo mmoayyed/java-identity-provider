@@ -40,6 +40,12 @@
           </property>
     </bean>
     
+    <bean id="termsOfUse" class="edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse">
+      <constructor-arg type="java.lang.String" value="1.0"/>
+      <constructor-arg type="org.springframework.core.io.Resource"
+                       value="/edu/internet2/middleware/shibboleth/idp/consent/terms-of-use-example.txt"/>
+    </bean>
+    
      <bean id="attributeList" class="edu.internet2.middleware.shibboleth.idp.consent.components.AttributeList">
          <property name="orderedAttributeIds">
             <list>

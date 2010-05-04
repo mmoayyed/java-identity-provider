@@ -27,11 +27,9 @@ public class RelyingParty {
 
     final private String entityId;
     
-    /** Localized human intelligible relying party name. */
-    private Map<Locale, String> displayNames;
+	private String displayName;
     
-    /** Localized human readable description of relying party. */
-    private Map<Locale, String> displayDescriptions;
+    private String displayDescription;
 
     public RelyingParty(final long id, final String entityId) {
     	this.id = id;
@@ -51,15 +49,35 @@ public class RelyingParty {
     public long getId() {
         return id;
     }
-    
-    public String getName(final Locale locale) {
-        return this.displayNames.get(locale);
-    }
-    
-    public String getDescription(final Locale locale) {
-        return this.displayDescriptions.get(locale);
-    }
 
+    /**
+	 * @return Returns the displayName.
+	 */
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	/**
+	 * @param displayName The displayName to set.
+	 */
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	/**
+	 * @return Returns the displayDescription.
+	 */
+	public String getDisplayDescription() {
+		return displayDescription;
+	}
+
+	/**
+	 * @param displayDescription The displayDescription to set.
+	 */
+	public void setDisplayDescription(String displayDescription) {
+		this.displayDescription = displayDescription;
+	}
+    
     /** {@inheritDoc} */
     @Override
     public String toString() {

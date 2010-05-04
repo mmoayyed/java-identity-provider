@@ -76,9 +76,11 @@ public class UserConsentEngineController {
         Principal principal = userConsentContext.getPrincipal();
         RelyingParty relyingParty = userConsentContext.getRelyingParty();
         
-        if (termsOfUse != null && !principal.hasAcceptedTermsOfUse(termsOfUse)) {
-            logger.info("{} has not accepted {}", principal, termsOfUse);
-            return "redirect:/userconsent/tou";
+        if (termsOfUse == null) {
+        	logger.debug("Terms of use are not configured");
+        } else if (!principal.hasAcceptedTermsOfUse(termsOfUse)) {
+        	logger.info("{} has not accepted {}", principal, termsOfUse);
+        	return "redirect:/userconsent/tou";
         }
         
         if (consentRevocationRequested) {
