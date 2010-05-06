@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>java-shib-idp-impl</name>
+	<name>shib-idp-impl</name>
 	<comment></comment>
 	<projects>
 		<project>java-shib-idp-api</project>

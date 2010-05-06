@@ -11,8 +11,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>java-shib-idp-api</module>
-        <module>java-shib-idp-impl</module>
+        <module>../shib-idp-api</module>
+        <module>../shib-idp-impl</module>
     </modules>
 
     <properties>
