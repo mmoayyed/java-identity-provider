@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-web</artifactId>
+            <artifactId>spring-test</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>

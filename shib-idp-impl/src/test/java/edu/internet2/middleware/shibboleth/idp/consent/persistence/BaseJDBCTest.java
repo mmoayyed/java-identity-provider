@@ -17,8 +17,6 @@
 package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
 import static org.testng.AssertJUnit.assertNotNull;
-import static org.testng.AssertJUnit.assertTrue;
-
 import java.util.Collection;
 
 import org.joda.time.DateTime;
@@ -42,7 +40,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
  * Tests JDBC storage using the Spring JDBC framework.
  */
 
-@ContextConfiguration("/edu/internet2/middleware/shibboleth/idp/consent/test-context.xml")
+@ContextConfiguration("/test-context.xml")
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback=true)
 @Test(dataProviderClass = StaticTestDataProvider.class)
 public class BaseJDBCTest extends AbstractTransactionalTestNGSpringContextTests {

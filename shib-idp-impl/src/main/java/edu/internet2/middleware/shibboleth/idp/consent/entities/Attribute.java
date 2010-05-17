@@ -17,9 +17,6 @@
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
 import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
-
 import edu.vt.middleware.crypt.digest.SHA256;
 import edu.vt.middleware.crypt.util.HexConverter;
 
@@ -135,7 +132,7 @@ public class Attribute {
 	/** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Attribute [id=" + id + ", valuesHash=" + valuesHash + "]";
+        return id;
     }
 
 }

@@ -193,7 +193,7 @@ public class Principal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "Principal [uniqueId=" + uniqueId + "]";
+        return uniqueId;
     }
 
 }

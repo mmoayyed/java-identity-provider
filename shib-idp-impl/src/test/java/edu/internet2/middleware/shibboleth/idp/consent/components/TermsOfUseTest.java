@@ -18,9 +18,6 @@ package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import static org.testng.AssertJUnit.*;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +27,6 @@ import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
-import edu.internet2.middleware.shibboleth.idp.consent.components.AttributeList;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.vt.middleware.crypt.digest.SHA256;
 import edu.vt.middleware.crypt.util.HexConverter;
 
@@ -54,11 +49,6 @@ public class TermsOfUseTest extends BaseTest {
     	
     	String fingerprintInput = version+"|"+text;
     	String fingerprint = new SHA256().digest(fingerprintInput.getBytes(), new HexConverter(true));
-    	
-    	logger.debug("Terms of use version {}", version);
-    	logger.debug("Terms of use text {}", text);
-    	logger.debug("Terms of use fingerprint {}", fingerprint);
-    	
     	assertEquals(fingerprint, termsOfUse.getFingerprint());	
     }
     

@@ -23,6 +23,10 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class UserConsentException extends Throwable {    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3905215080482737756L;
     private final Logger logger = LoggerFactory.getLogger(UserConsentException.class);
 
     /**
@@ -33,7 +37,8 @@ public class UserConsentException extends Throwable {
      */
     public UserConsentException(String message, Throwable cause) {    
     	super(message, cause);
-    	logger.error(message, cause);
+    	//TODO
+    	//logger.error(message, cause);
     }
 
     /**

@@ -105,7 +105,7 @@ public class JDBCStorage implements Storage {
             final Attribute attribute, final DateTime releaseDate) {
         final String sql = " INSERT INTO AttributeReleaseConsent"
                 + " (principalId, relyingPartyId, attributeId, attributeValuesHash, releaseDate)"
-                + " VALUES (?, ?, ?, ?, ?)";
+                + " VALUES (?, ?, ?, ?, ?)";        
         try {
         	this.jdbcTemplate.update(sql, principal.getId(), relyingParty.getId(), attribute.getId(), attribute
                 .getValuesHash(), releaseDate.toDate());
@@ -118,8 +118,11 @@ public class JDBCStorage implements Storage {
     /** {@inheritDoc} */
     public Principal createPrincipal(final String uniqueId, final DateTime accessDate) {
         final String sql = " INSERT INTO Principal (uniqueId, firstAccess, lastAccess, globalConsent) VALUES (?, ?, ?, ?)";
-
-        this.jdbcTemplate.update(sql, uniqueId, accessDate.toDate(), accessDate.toDate(), false);
+        try {
+            this.jdbcTemplate.update(sql, uniqueId, accessDate.toDate(), accessDate.toDate(), false);
+        } catch (DataAccessException e) {
+            logger.warn("Storage exception {}", e);
+        }
         long id = findPrincipal(uniqueId);
         return readPrincipal(id);
     }
@@ -127,8 +130,11 @@ public class JDBCStorage implements Storage {
     /** {@inheritDoc} */
     public RelyingParty createRelyingParty(final String entityId) {
         final String sql = " INSERT INTO RelyingParty (entityId) VALUES (?)";
-
-        this.jdbcTemplate.update(sql, entityId);
+        try {
+            this.jdbcTemplate.update(sql, entityId);
+        } catch (DataAccessException e) {
+            logger.warn("Storage exception {}", e);
+        } 
         long id = findRelyingParty(entityId);
         return readRelyingParty(id);   
     }
@@ -248,7 +254,11 @@ public class JDBCStorage implements Storage {
     public AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate) {
         final String sql = " UPDATE AgreedTermsOfUse SET fingerprint = ?, agreeDate = ?"
                 + " WHERE principalId = ? AND version = ?";
-        this.jdbcTemplate.update(sql, termsOfUse.getFingerprint(), agreeDate.toDate(), principal.getId(), termsOfUse.getVersion());
+        try {
+            this.jdbcTemplate.update(sql, termsOfUse.getFingerprint(), agreeDate.toDate(), principal.getId(), termsOfUse.getVersion());
+        } catch (DataAccessException e) {
+            logger.warn("Storage exception {}", e);
+        }
         return readAgreedTermsOfUse(principal, termsOfUse);
     }
 
@@ -257,14 +267,22 @@ public class JDBCStorage implements Storage {
             final Attribute attribute, final DateTime releaseDate) {
         final String sql = " UPDATE AttributeReleaseConsent SET attributeValuesHash = ?, releaseDate = ?"
                 + " WHERE principalId = ? AND relyingPartyId = ? AND attributeId = ?";
-        this.jdbcTemplate.update(sql, attribute.getValuesHash(), releaseDate.toDate(), principal.getId(), relyingParty.getId(), attribute.getId());
+        try {
+            this.jdbcTemplate.update(sql, attribute.getValuesHash(), releaseDate.toDate(), principal.getId(), relyingParty.getId(), attribute.getId());
+        } catch (DataAccessException e) {
+            logger.warn("Storage exception {}", e);
+        }        
         return readAttributeReleaseConsent(principal, relyingParty, attribute);
     }
 
     /** {@inheritDoc} */
     public Principal updatePrincipal(final Principal principal) {
         final String sql = " UPDATE Principal SET lastAccess = ?, globalConsent = ? WHERE id = ?";
-        this.jdbcTemplate.update(sql, principal.getLastAccess().toDate(), principal.hasGlobalConsent(), principal.getId());
+        try {
+            this.jdbcTemplate.update(sql, principal.getLastAccess().toDate(), principal.hasGlobalConsent(), principal.getId());
+        } catch (DataAccessException e) {
+            logger.warn("Storage exception {}", e);
+        }
         return readPrincipal(principal.getId());
     }
 

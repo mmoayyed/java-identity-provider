@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.idp.consent.controller;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +38,8 @@ import edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBui
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 /**
@@ -44,7 +48,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 @Controller
 @RequestMapping("/userconsent/attribute-release")
-@SessionAttributes("userConsentContext")
+@SessionAttributes("idpContext, userConsentContext")
 public class AttributeReleaseController {
 
     private final Logger logger = LoggerFactory.getLogger(AttributeReleaseController.class);
@@ -60,11 +64,12 @@ public class AttributeReleaseController {
     
         
     @RequestMapping(method = RequestMethod.GET)
-    public String getView(UserConsentContext userConsentContext, Model model) throws UserConsentException {
+    public String getView(@ModelAttribute("idpContext") IdPContext idpContext, @ModelAttribute("userConsentContext")UserConsentContext userConsentContext, Model model) throws UserConsentException {
         Collection<Attribute> attributes = userConsentContext.getAttributes();
         RelyingParty relyingParty = userConsentContext.getRelyingParty();
         
-        descriptionBuilder.attachDescription(attributes, userConsentContext.getLocale());
+        //TODO: get Map<String, BaseAttribute>
+        descriptionBuilder.attachDescription(idpContext.getReleasedAttributes(), attributes, userConsentContext.getLocale());
         descriptionBuilder.attachDescription(relyingParty, userConsentContext.getLocale());
         
         model.addAttribute("relyingParty", userConsentContext.getRelyingParty());

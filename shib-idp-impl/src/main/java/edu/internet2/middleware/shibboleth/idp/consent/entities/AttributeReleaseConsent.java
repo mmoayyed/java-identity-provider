@@ -78,9 +78,4 @@ public class AttributeReleaseConsent {
         return true;
     }
     
-    /** {@inheritDoc} */
-    public String toString() {
-        return "AttributeReleaseConsent [attribute=" + attribute + ", releaseDate=" + releaseDate + "]";
-    }
-
 }

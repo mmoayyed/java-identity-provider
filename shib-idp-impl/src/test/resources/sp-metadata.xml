@@ -1,0 +1,11 @@
+
+<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://sp.example.org/shibboleth">
+  <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+    <AttributeConsumingService index="1">
+            <ServiceName xml:lang="de">german-name</ServiceName>
+            <ServiceName xml:lang="en">english-name</ServiceName>
+            <ServiceDescription xml:lang="de">german-description</ServiceDescription>
+            <ServiceDescription xml:lang="en">english-description</ServiceDescription>
+    </AttributeConsumingService>
+  </SPSSODescriptor>
+</EntityDescriptor>

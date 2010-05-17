@@ -17,6 +17,7 @@
 package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +30,8 @@ import org.opensaml.saml2.metadata.ServiceDescription;
 import org.opensaml.saml2.metadata.ServiceName;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
@@ -40,66 +43,48 @@ import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
  */
 public class DescriptionBuilder {
 	
-	private UILocale uiLocale;
+    private final Logger logger = LoggerFactory.getLogger(DescriptionBuilder.class);
+    
+	private final LocaleSelection localeSelection;
 	
 	private MetadataProvider metadataProvider;
 
-
 	public DescriptionBuilder(Locale preferedLocale, boolean enforced) {
-		this.uiLocale = new UILocale(preferedLocale, enforced);
+		this.localeSelection = new LocaleSelection(preferedLocale, enforced);
+	}
+	
+	public void setMetadataProvider(MetadataProvider metadataProvider) {
+	    this.metadataProvider = metadataProvider;
 	}
 
     /**
 	 * @param attributes
+     * @throws UserConsentException 
 	 */
-	public void attachDescription(Collection<Attribute> attributes, Locale userLocale) {
-		Map<String, BaseAttribute> baseAttributes = null;
-		
+	public void attachDescription(Map<String, BaseAttribute<String>> baseAttributes, Collection<Attribute> attributes, Locale userLocale) throws UserConsentException {		
 		for (Attribute attribute : attributes) {
+			
+			String displayName = attribute.getId();
 			BaseAttribute baseAttribute = baseAttributes.get(attribute.getId());
 			
-			String displayName = null;
-			for (Object object : baseAttribute.getDisplayNames().keySet()) {
-				Locale locale = (Locale) object;
-				
-				if (uiLocale.isEnforced() && uiLocale.getLocale().equals(locale)) {
-					displayName = (String) baseAttribute.getDisplayNames().get(locale);
-	    			break;
-	    		}
-	    		
-	    		if (userLocale.equals(locale)) {
-	    			displayName = (String) baseAttribute.getDisplayNames().get(locale);
-	    			break;
-	    		}
-	    		   		
-	    		if (uiLocale.getLocale().equals(locale)) {
-	    			displayName = (String) baseAttribute.getDisplayNames().get(locale);
-	    			break;
-	    		}
+			if (baseAttribute == null) {
+			    throw new UserConsentException("Description attachment requested for the non released attribute {}", attribute);
+			}
+			
+			Collection<Locale> availableNameLocales = (Collection<Locale>) baseAttribute.getDisplayNames().keySet();
+			Locale usingNameLocale = selectLocale(availableNameLocales, userLocale);
+			if (usingNameLocale != null) {
+			    displayName = (String) baseAttribute.getDisplayNames().get(usingNameLocale);
 			}
 			attribute.setDisplayName(displayName);
 			
-			
-			String displayDescription = null;
-			for (Object object : baseAttribute.getDisplayDescriptions().keySet()) {
-				Locale locale = (Locale) object;
-				
-				if (uiLocale.isEnforced() && uiLocale.getLocale().equals(locale)) {
-					displayDescription = (String) baseAttribute.getDisplayDescriptions().get(locale);
-	    			break;
-	    		}
-	    		
-	    		if (userLocale.equals(locale)) {
-	    			displayDescription = (String) baseAttribute.getDisplayDescriptions().get(locale);
-	    			break;
-	    		}
-	    		   		
-	    		if (uiLocale.getLocale().equals(locale)) {
-	    			displayDescription = (String) baseAttribute.getDisplayDescriptions().get(locale);
-	    			break;
-	    		}
-			}
-			attribute.setDisplayDescription(displayDescription);
+	        String displayDescription = "";
+            Collection<Locale> availableDescriptionLocales = (Collection<Locale>) baseAttribute.getDisplayDescriptions().keySet();
+            Locale usingDescriptionLocale = selectLocale(availableDescriptionLocales, userLocale);
+            if (usingDescriptionLocale != null) {
+                displayDescription = (String) baseAttribute.getDisplayDescriptions().get(usingDescriptionLocale);
+            }
+            attribute.setDisplayDescription(displayDescription);
 		}
 	}
 
@@ -112,55 +97,65 @@ public class DescriptionBuilder {
         try {
                 entityDescriptor = metadataProvider.getEntityDescriptor(relyingParty.getEntityId());
         } catch (MetadataProviderException e) {
-                throw new UserConsentException("Error retrieving entity descriptor", e);
+                throw new UserConsentException("Error retrieving entity descriptor from metadata", e);
         }
         
+        String name = relyingParty.getEntityId();
+        String description = "";
+        
         AttributeConsumingService attrService = getAttributeConsumingService(entityDescriptor);
-
         if (attrService != null) {
-        	String name = null;
-        	for (ServiceName serviceName: attrService.getNames()) {
-        		Locale locale = new Locale(serviceName.getName().getLanguage());
-        		if (uiLocale.isEnforced() && uiLocale.getLocale().equals(locale)) {
-        			name = serviceName.getName().getLocalString();
-        			break;
-        		}
-        		
-        		if (userLocale.equals(locale)) {
-        			name = serviceName.getName().getLocalString();
-        			break;
-        		}
-        		   		
-        		if (uiLocale.getLocale().equals(locale)) {
-        			name = serviceName.getName().getLocalString();
-        			break;
-        		}
-        	}
-        	relyingParty.setDisplayName(name);
         	
-        	String description = null;
-        	for (ServiceDescription serviceDescription: attrService.getDescriptions()) {
-        		Locale locale = new Locale(serviceDescription.getDescription().getLanguage());
-        		if (uiLocale.isEnforced() && uiLocale.getLocale().equals(locale)) {
-        			description = serviceDescription.getDescription().getLocalString();
-        			break;
-        		}
-        		
-        		if (userLocale.equals(locale)) {
-        			description = serviceDescription.getDescription().getLocalString();
-        			break;
-        		}
-        		   		
-        		if (uiLocale.getLocale().equals(locale)) {
-        			description = serviceDescription.getDescription().getLocalString();
-        			break;
-        		}
+            Collection<Locale> availableNameLocales = new HashSet<Locale>();
+        	for (ServiceName serviceName: attrService.getNames()) {
+        	    availableNameLocales.add(new Locale(serviceName.getName().getLanguage()));
+        	}        	
+        	
+        	Locale usingNameLocale = selectLocale(availableNameLocales, userLocale);
+        	if (usingNameLocale != null) {
+                for (ServiceName serviceName: attrService.getNames()) {
+                    if (serviceName.getName().getLanguage().equals(usingNameLocale.getLanguage())) {
+                        name = serviceName.getName().getLocalString();
+                    }
+                }      
         	}
-        	relyingParty.setDisplayDescription(description);	
+        	
+            Collection<Locale> availableDescriptionLocales = new HashSet<Locale>();
+            for (ServiceDescription serviceDescription: attrService.getDescriptions()) {
+                availableDescriptionLocales.add(new Locale(serviceDescription.getDescription().getLanguage()));
+            }           
+            
+            Locale usingDescriptionLocale = selectLocale(availableDescriptionLocales, userLocale);
+            if (usingDescriptionLocale != null) {
+                for (ServiceDescription serviceDescription: attrService.getDescriptions()) {
+                    if (serviceDescription.getDescription().getLanguage().equals(usingDescriptionLocale.getLanguage())) {
+                        description = serviceDescription.getDescription().getLocalString();
+                    }
+                }      
+            }
+	
         }
+        relyingParty.setDisplayName(name);
+        relyingParty.setDisplayDescription(description);
 	}
 	
 
+	private Locale selectLocale(Collection<Locale> availableLocales, Locale userLocale) {
+	    	    
+        if (localeSelection.enforced && availableLocales.contains(localeSelection.locale)) {
+            return localeSelection.locale;
+        }
+        
+        if (availableLocales.contains(userLocale)) {
+            return userLocale;
+        }
+                
+        if (availableLocales.contains(localeSelection.locale)) {
+            return localeSelection.locale;
+        }
+        
+        return null;
+	}
 		
 	/**
 	 * @param entityDescriptor
@@ -168,42 +163,34 @@ public class DescriptionBuilder {
 	 */
 	private AttributeConsumingService getAttributeConsumingService(EntityDescriptor entityDescriptor) {
         String[] protocols = {SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, SAMLConstants.SAML10P_NS};
-        AttributeConsumingService result = null;
-        List<AttributeConsumingService> list;
         for (String protocol: protocols) {
-                SPSSODescriptor spSSODescriptor = entityDescriptor.getSPSSODescriptor(protocol);                
-                if (spSSODescriptor == null) {
-                        continue;
-                }                
-                result = spSSODescriptor.getDefaultAttributeConsumingService();
-                if (result != null) {
-                        return result;
-                } 
-                list = spSSODescriptor.getAttributeConsumingServices();
-                if (list != null && !list.isEmpty()) {
-                        return list.get(0);
-                }     
+            logger.debug("Protocol {}", protocol);
+            SPSSODescriptor spSSODescriptor = entityDescriptor.getSPSSODescriptor(protocol);                
+            logger.debug("SPSSODescriptor {}", spSSODescriptor);
+            if (spSSODescriptor == null) {
+                    continue;
+            }
+            AttributeConsumingService defaultAttributeConsumingService = spSSODescriptor.getDefaultAttributeConsumingService();
+            logger.debug("DefaultAttributeConsumingService {}", defaultAttributeConsumingService);
+            if (defaultAttributeConsumingService != null) {
+                    return defaultAttributeConsumingService;
+            } 
+            List<AttributeConsumingService> list = spSSODescriptor.getAttributeConsumingServices();
+            logger.debug("AttributeConsumingServices {}", list);
+            if (list != null && !list.isEmpty()) {
+                    return list.get(0);
+            }
         }
-        return result;
+        return null;
 	}
 
-
-
-	private class UILocale {
-		private final Locale locale;
-		private final boolean enforced;
+	private class LocaleSelection {
+		public final Locale locale;
+		public final boolean enforced;
 		
-		private UILocale(Locale locale, boolean enforced) {
+		private LocaleSelection(Locale locale, boolean enforced) {
 			this.locale = locale;
 			this.enforced = enforced;
-		}
-		
-		private Locale getLocale() {
-			return locale;
-		}
-		
-		private boolean isEnforced() {
-			return enforced;
 		}
 	}
 }

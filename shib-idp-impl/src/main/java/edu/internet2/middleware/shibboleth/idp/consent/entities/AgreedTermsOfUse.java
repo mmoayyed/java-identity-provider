@@ -79,10 +79,4 @@ public class AgreedTermsOfUse {
         return true;
     }
     
-    /** {@inheritDoc} */
-	public String toString() {
-		return "AgreedTermsOfUse [termsOfUse=" + termsOfUse + ", agreeDate="
-				+ agreeDate + "]";
-	}
-
 }

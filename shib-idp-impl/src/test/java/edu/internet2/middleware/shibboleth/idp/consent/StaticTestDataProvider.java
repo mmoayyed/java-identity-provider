@@ -16,24 +16,37 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent;
 
+import static org.testng.AssertJUnit.fail;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
 import org.joda.time.DateTime;
+import org.opensaml.DefaultBootstrap;
+import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
+import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.saml2.metadata.provider.MetadataProviderException;
+import org.opensaml.xml.ConfigurationException;
+import org.opensaml.xml.parse.BasicParserPool;
 import org.testng.annotations.DataProvider;
 
-
+import edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBuilder;
 import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPMock;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 
 
 public class StaticTestDataProvider {
@@ -62,12 +75,16 @@ public class StaticTestDataProvider {
     private static String getRandomString() {
         return UUID.randomUUID().toString();
     }
-    
-    
+      
     private static DateTime getRandomDate() {
         // Fri Jan 01 12:00:00 EST 2010 | Tue Feb 02 12:00:00 EST 2010 | Wed Mar 03 12:00:00 EST 2010
     	DateTime[] dates = {new DateTime(1262365200000L), new DateTime(1265130000000L), new DateTime(1267635600000L)};
         return dates[random.nextInt(dates.length)];
+    }
+
+    private static Locale getRandomLocale() {
+        Locale[] locales = {Locale.ENGLISH, Locale.GERMAN, Locale.FRENCH};
+        return locales[random.nextInt(locales.length)];
     }
     
     private static Boolean getRandomBoolean() {
@@ -127,16 +144,16 @@ public class StaticTestDataProvider {
     }
     
     private static Collection<AttributeReleaseConsent> createAttributeReleaseConsents() {
-        Set<AttributeReleaseConsent> attributeReleaseConsents = new HashSet<AttributeReleaseConsent>();
+        Map<String,AttributeReleaseConsent> attributeReleaseConsents = new HashMap<String,AttributeReleaseConsent>();
         for (int i = 0; i < random.nextInt(10)+10; i++) {
         	AttributeReleaseConsent consent = createAttributeReleaseConsent();
-        	if (!attributeReleaseConsents.contains(consent))
-        		attributeReleaseConsents.add(consent);
+        	
+        	if (!attributeReleaseConsents.containsKey(consent.getAttribute().getId()))
+        		attributeReleaseConsents.put(consent.getAttribute().getId(),consent);
         }
-        return attributeReleaseConsents;     
+        return attributeReleaseConsents.values();     
     }
-    
-    
+      
     private static Attribute createAttribute() {
         Collection<String> values = new ArrayList<String>();
         values.add(getRandomString());
@@ -171,11 +188,70 @@ public class StaticTestDataProvider {
         return attributes;
     }
     
-    private static IdPMock createIdPMock() {
-        return new IdPMock(getRandomEntityId(), createAttributes());
+    private static Map<String, BaseAttribute<String>> createBaseAttributes(Collection<Attribute> attributes) {
+        
+        Map<String, BaseAttribute<String>> baseAttributes = new HashMap<String, BaseAttribute<String>>();     
+        for (Attribute attribute : attributes) {
+            BaseAttribute<String> baseAttribute = new BaseAttribute<String>(attribute.getId(), attribute.getValues());
+            baseAttributes.put(attribute.getId(), baseAttribute);
+        }
+        Attribute uniqueIdAttribute = createUniqueIdAttribute();
+        BaseAttribute<String> baseAttribute = new BaseAttribute<String>(uniqueIdAttribute.getId(), uniqueIdAttribute.getValues());
+        baseAttributes.put(uniqueIdAttribute.getId(), baseAttribute);        
+        return baseAttributes;
     }
     
-   
+    private static Map<String, BaseAttribute<String>> createBaseAttributesWithInfo(Collection<Attribute> attributes, Locale[] locales) {
+        Map<String, BaseAttribute<String>> baseAttributes = createBaseAttributes(attributes);
+        for(BaseAttribute<String> baseAttribute : baseAttributes.values()) {
+            for (Locale locale : locales) {
+                //if(getRandomBoolean()) {
+                baseAttribute.setDisplayName(locale, baseAttribute.getId()+"-"+locale.getLanguage()+"-name");
+                //}
+                //if(getRandomBoolean()) {
+                baseAttribute.setDisplayDescription(locale, baseAttribute.getId()+"-"+locale.getLanguage()+"-description");
+                //}
+            }
+        }
+        return baseAttributes;
+    }
+    
+    private static IdPContext createIdPContext() {
+        return new IdPContext(getRandomEntityId(), createBaseAttributes(createAttributes()));
+    }
+    
+    private static String extractUniqueId(Map<String, BaseAttribute<String>> attributes) {
+        for (String id : attributes.keySet()) {
+            if (id.equals("uniqueID")) {
+                return attributes.get(id).getValues().iterator().next();
+            }
+        }
+        return null;
+    }
+    
+    private static MetadataProvider createMetadataProvider(String xml) {
+        try {
+            DefaultBootstrap.bootstrap();
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
+        } 
+        
+        FilesystemMetadataProvider metadataProvider = null;
+        try {
+            metadataProvider = new FilesystemMetadataProvider(new File(xml));
+            metadataProvider.setParserPool(new BasicParserPool());
+            metadataProvider.initialize();
+        } catch (MetadataProviderException e) {
+            e.printStackTrace();
+        }
+        
+        return metadataProvider; 
+    }
+    
+    private static DescriptionBuilder createDefautDescriptionBuilder(boolean enforced) {
+        return new DescriptionBuilder(Locale.ENGLISH, enforced);
+    }
+    
     @DataProvider(name = "crudPrincipalTest")
     public static Object[][] createCrudPrincipalTest() {      
         return new Object[][] {
@@ -206,25 +282,29 @@ public class StaticTestDataProvider {
     }
     
     
-    @DataProvider(name = "dummyIdP")
-    public static Object[][] IdPMock() {         
+    @DataProvider(name = "idpContext")
+    public static Object[][] idpContext() {         
         return new Object[][] {
-                new Object[] {createIdPMock()}
+                new Object[] {createIdPContext()}
       };
     }
     
-    @DataProvider(name = "dummyIdPAndUniqueIdAndAttributeReleaseConsents")
-    public static Object[][] idPMockAndPrincipalAndAttributeReleaseConsents() {         
-        IdPMock dummyIdP = createIdPMock();
-        String uniqueId = null;
-        for (Attribute attribute : createAttributes()) {
-            if (attribute.getId().equals("uniqueID")) {
-            	uniqueId = attribute.getValues().iterator().next();
-            }
-        }
+    @DataProvider(name = "idpContextAndUniqueIdAndAgreedTermsOfUses")
+    public static Object[][] idpContextAndUniqueIdAndAgreedTermsOfUses() {         
+        IdPContext idpContext = createIdPContext();
+        String uniqueId = extractUniqueId(idpContext.getReleasedAttributes());           
+        return new Object[][] {
+                new Object[] {idpContext, uniqueId, getRandomDate(), createAgreedTermsOfUses()}
+      };
+    }
+    
+    @DataProvider(name = "idpContextAndUniqueIdAndAttributeReleaseConsents")
+    public static Object[][] idpContextAndUniqueIdAndAttributeReleaseConsents() {         
+        IdPContext idpContext = createIdPContext();
+        String uniqueId = extractUniqueId(idpContext.getReleasedAttributes());  
              
         return new Object[][] {
-                new Object[] {dummyIdP, uniqueId, getRandomDate(), createAgreedTermsOfUses(), createAttributeReleaseConsents()}
+                new Object[] {idpContext, uniqueId, getRandomDate(), createAttributeReleaseConsents()}
       };
     }
     
@@ -243,5 +323,43 @@ public class StaticTestDataProvider {
       };
     }
     
+    @DataProvider(name = "attachRelyingPartyInfoEnforced")
+    public static Object[][] attachRelyingPartyInfoEnforced() {
+        DescriptionBuilder descriptionBuilder = createDefautDescriptionBuilder(true);
+        MetadataProvider metadataProvider = createMetadataProvider("src/test/resources/sp-metadata.xml");
+        descriptionBuilder.setMetadataProvider(metadataProvider);
+        RelyingParty relyingParty = new RelyingParty(-1, "https://sp.example.org/shibboleth");
+        return new Object[][] {
+                new Object[] {descriptionBuilder, relyingParty}
+      };
+    }
+    
+    @DataProvider(name = "attachRelyingPartyInfoNotEnforced")
+    public static Object[][] attachRelyingPartyInfoNotEnforced() {
+        DescriptionBuilder descriptionBuilder = createDefautDescriptionBuilder(false);
+        MetadataProvider metadataProvider = createMetadataProvider("src/test/resources/sp-metadata.xml");
+        descriptionBuilder.setMetadataProvider(metadataProvider);
+        RelyingParty relyingParty = new RelyingParty(-1, "https://sp.example.org/shibboleth");
+        return new Object[][] {
+                new Object[] {descriptionBuilder, relyingParty}
+      };
+    }
+    
+    @DataProvider(name = "attachAttributeInfoEnforced")
+    public static Object[][] attachAttributeInfoEnforced() {
+        Collection <Attribute> attributes = createAttributes();
+        return new Object[][] {
+                new Object[] {createDefautDescriptionBuilder(true), createBaseAttributesWithInfo(attributes, new Locale[] {Locale.ENGLISH, Locale.GERMAN}), attributes}
+      };
+    }
+    
+    @DataProvider(name = "attachAttributeInfoNotEnforced")
+    public static Object[][] attachAttributeInfoNotEnforced() {
+        Collection <Attribute> attributes = createAttributes();
+        return new Object[][] {
+                new Object[] {createDefautDescriptionBuilder(false), createBaseAttributesWithInfo(attributes, new Locale[] {Locale.ENGLISH, Locale.GERMAN}), attributes}
+      };
+    }
+
   }
    

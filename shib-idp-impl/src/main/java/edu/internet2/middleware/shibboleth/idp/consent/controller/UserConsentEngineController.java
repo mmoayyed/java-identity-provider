@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,7 +37,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.components.UserConsentCon
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPMock;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 /**
@@ -45,7 +46,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 @Controller
 @RequestMapping("/userconsent")
-@SessionAttributes("userConsentContext")
+@SessionAttributes("idpContext, userConsentContext")
 public class UserConsentEngineController {
 
     private final Logger logger = LoggerFactory.getLogger(UserConsentEngineController.class);
@@ -63,15 +64,9 @@ public class UserConsentEngineController {
     private UserConsentContextBuilder userConsentContextBuilder;
     
     @RequestMapping(method = RequestMethod.GET)
-    public String service(@RequestParam("consent-revocation") boolean consentRevocationRequested) throws UserConsentException {        
+    public String service(@ModelAttribute("idpContext") IdPContext idpContext, @RequestParam("consent-revocation") boolean consentRevocationRequested) {        
         
-        UserConsentContext userConsentContext;
-        try {
-            userConsentContext = userConsentContextBuilder.buildUserConsentContext();
-        } catch (UserConsentException e) {
-            logger.error("Error building user consent context", e);
-            throw e;
-        }
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
         
         Principal principal = userConsentContext.getPrincipal();
         RelyingParty relyingParty = userConsentContext.getRelyingParty();

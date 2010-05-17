@@ -16,7 +16,12 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.components;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.fail;
+
+import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
@@ -25,21 +30,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
-
-import java.util.Collection;
-import java.util.List;
-
 import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
-import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
-import edu.internet2.middleware.shibboleth.idp.consent.components.UserConsentContextBuilder;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPMock;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.BaseJDBCTest;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
@@ -57,98 +56,84 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
     @Autowired
     private Storage storage;
     
-    @Test(dataProvider = "dummyIdP")
-    public void uniqueIdNotInAtrributeSet(IdPMock dummyIdP) {
+    @Test(dataProvider = "idpContext")
+    public void uniqueIdNotInAtrributeSet(IdPContext idpContext) {
         logger.info("start");
-        Attribute uniqueIdAttribute  = null;
-        Collection<Attribute> attributes = dummyIdP.getReleasedAttributes();
-        for (Attribute attribute: attributes) {
-        	if (attribute.getId().equals(userConsentContextBuilder.getUniqueIdAttribute())) {
-        		uniqueIdAttribute = attribute;
+        String uniqueIdAttributeId  = null;
+        Map<String, BaseAttribute<String>> attributes = idpContext.getReleasedAttributes();
+        for (String id: attributes.keySet()) {
+            if (id.equals(userConsentContextBuilder.getUniqueIdAttribute())) {          
+                uniqueIdAttributeId = id;
         	}
         }
         
-        attributes.remove(uniqueIdAttribute);
-        
-        try {
-        	userConsentContextBuilder.setIdPMock(dummyIdP);
-            userConsentContextBuilder.buildUserConsentContext();
-            fail("UserConsentException expected");
-        } catch (UserConsentException e) {}
+        attributes.remove(uniqueIdAttributeId);
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+        assertEquals(idpContext.getPrincipalName(), userConsentContext.getPrincipal().getUniqueId());
         logger.info("stop");
     }
     
     
-    @Test(dataProvider = "dummyIdP")
-    public void firstAccessOfPrincipal(IdPMock dummyIdP) {
+    @Test(dataProvider = "idpContext")
+    public void firstAccessOfPrincipal(IdPContext idpContext) {
         logger.info("start");
-        UserConsentContext userConsentContext = null;
-        try {
-        	userConsentContextBuilder.setIdPMock(dummyIdP);
-            userConsentContext = userConsentContextBuilder.buildUserConsentContext();
-        } catch (UserConsentException e) {
-            fail(e.getMessage());
-        }
-        
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+
         Principal principal = storage.readPrincipal(userConsentContext.getPrincipal().getId());
         assertEquals(userConsentContext.getPrincipal(), principal);
     }
     
-    @Test(dataProvider = "dummyIdP")
-    public void firstAccessToRelyingParty(IdPMock dummyIdP) {
+    @Test(dataProvider = "idpContext")
+    public void firstAccessToRelyingParty(IdPContext idpContext) {
         logger.info("start");
-        UserConsentContext userConsentContext = null;
-        try {
-        	userConsentContextBuilder.setIdPMock(dummyIdP);
-            userConsentContext = userConsentContextBuilder.buildUserConsentContext();
-        } catch (UserConsentException e) {
-            fail(e.getMessage());
-        }
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
         
         RelyingParty relyingParty = storage.readRelyingParty(userConsentContext.getRelyingParty().getId());
         assertEquals(userConsentContext.getRelyingParty(), relyingParty);
         logger.info("stop");
     }
     
-    @Test(dataProvider = "dummyIdPAndUniqueIdAndAttributeReleaseConsents")
-    public void furtherAccessFromPrincipal(IdPMock dummyIdP, String uniqueId, DateTime date, Collection<AgreedTermsOfUse> agreedTermsOfUses, Collection<AttributeReleaseConsent> attributeReleaseConsents) {
+    @Test(dataProvider = "idpContextAndUniqueIdAndAgreedTermsOfUses")
+    public void furtherAccessFromPrincipalCheckTermsOfUse(IdPContext idpContext, String uniqueId, DateTime date, Collection<AgreedTermsOfUse> agreedTermsOfUses) {
         logger.info("start");
         Principal principal = persistPrincipal(uniqueId, date);
-        RelyingParty relyingParty = persistRelyingParty(dummyIdP.getEntityID());
+        RelyingParty relyingParty = persistRelyingParty(idpContext.getEntityID());
         persistTermsOfUses(principal, agreedTermsOfUses);
-        //persistAttributeReleaseConsents(principal, relyingParty, attributeReleaseConsents);
-        
-        UserConsentContext userConsentContext = null;
-        try {
-        	userConsentContextBuilder.setIdPMock(dummyIdP);
-            userConsentContext = userConsentContextBuilder.buildUserConsentContext();
-        } catch (UserConsentException e) {
-            fail(e.getMessage());
-        }
+
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
         
         assertEquals(principal, userConsentContext.getPrincipal());
         assertEquals(relyingParty, userConsentContext.getRelyingParty());
         
-        logger.debug("{}", agreedTermsOfUses);
-        logger.debug("{}",userConsentContext.getPrincipal().getAgreedTermsOfUses());
-        
         assertTrue(CollectionUtils.isEqualCollection(agreedTermsOfUses, userConsentContext.getPrincipal().getAgreedTermsOfUses()));
-        //assertTrue(CollectionUtils.isEqualCollection(attributeReleaseConsents, userConsentContext.getPrincipal().getAttributeReleaseConsents(relyingParty)));
 
         logger.info("stop");
-    }   
+    }
     
-    @Test(dataProvider = "dummyIdP")
-    public void furtherAccessToRelyingParty(IdPMock dummyIdP) {
+    @Test(dataProvider = "idpContextAndUniqueIdAndAttributeReleaseConsents")
+    public void furtherAccessFromPrincipalCheckAttributeReleaseConsent(IdPContext idpContext, String uniqueId, DateTime date, Collection<AttributeReleaseConsent> attributeReleaseConsents) {
         logger.info("start");
-        RelyingParty relyingParty = storage.createRelyingParty(dummyIdP.getEntityID());      
-        UserConsentContext userConsentContext = null;
-        try {
-        	userConsentContextBuilder.setIdPMock(dummyIdP);
-            userConsentContext = userConsentContextBuilder.buildUserConsentContext();
-        } catch (UserConsentException e) {
-            fail(e.getMessage());
-        }      
+        Principal principal = persistPrincipal(uniqueId, date);
+        RelyingParty relyingParty = persistRelyingParty(idpContext.getEntityID());
+        persistAttributeReleaseConsents(principal, relyingParty, attributeReleaseConsents);
+        
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+        
+        assertEquals(principal, userConsentContext.getPrincipal());
+        assertEquals(relyingParty, userConsentContext.getRelyingParty());
+
+        assertTrue(CollectionUtils.isEqualCollection(attributeReleaseConsents, userConsentContext.getPrincipal().getAttributeReleaseConsents(relyingParty)));
+
+        logger.info("stop");
+    }  
+    
+    @Test(dataProvider = "idpContext")
+    public void furtherAccessToRelyingParty(IdPContext idpContext) {
+        logger.info("start");
+        RelyingParty relyingParty = storage.createRelyingParty(idpContext.getEntityID());      
+        
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+     
         assertEquals(relyingParty.getId(), userConsentContext.getRelyingParty().getId());
         logger.info("stop");
     }    

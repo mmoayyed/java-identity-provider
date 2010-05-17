@@ -112,7 +112,7 @@ public class TermsOfUse {
 	/** {@inheritDoc} */
     @Override
     public String toString() {
-        return "TermsOfUse [version=" + version + ", fingerprint=" + fingerprint + "]";
+        return "Terms of use version=" + version + ", fingerprint=" + fingerprint;
     }
 
 }

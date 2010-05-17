@@ -7,6 +7,7 @@
   </appender>
 
   <logger name="org.springframework" level="INFO"/>
+  <logger name="org.opensaml" level="WARN"/>
 
   <logger name="edu.internet2.middleware.shibboleth.idp.consent" level="DEBUG"/>
 

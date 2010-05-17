@@ -18,7 +18,6 @@ package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 
 import org.joda.time.DateTime;
@@ -27,14 +26,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
-import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPMock;
+import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 
@@ -51,14 +49,6 @@ public class UserConsentContextBuilder {
     
     private String uniqueIdAttribute;
     
-    // TODO remove (only testing)
-    private IdPMock dummyIdP;
-    
-    // TODO remove (only testing)
-    public void setIdPMock(IdPMock dummyIdP) {
-    	this.dummyIdP = dummyIdP;
-    }
-    
     /**
      * @return Returns the uniqueIdAttribute.
      */
@@ -73,41 +63,44 @@ public class UserConsentContextBuilder {
         this.uniqueIdAttribute = uniqueIdAttribute;
     }
 
-    // TODO synchronized
-    public UserConsentContext buildUserConsentContext() throws UserConsentException {
+    // TODO synchronized?
+    public UserConsentContext buildUserConsentContext(IdPContext idpContext) {
     	
-    	final DateTime now = new DateTime();
+    	final DateTime accessDate = new DateTime();
     	
-        final RelyingParty relyingParty = setupRelyingParty(dummyIdP.getEntityID());
+        final RelyingParty relyingParty = setupRelyingParty(idpContext.getEntityID());
         
-        final Collection<Attribute> attributesToBeReleased = setupAttributes(dummyIdP.getReleasedAttributes());
-        final Collection<Attribute> attributesToBeReleasedWithoutBlacklisted = attributeList.removeBlacklisted(attributesToBeReleased);
-        final Collection<Attribute> attributes = attributeList.sortAttributes(attributesToBeReleasedWithoutBlacklisted);
+        Collection<Attribute> attributes = setupAttributes(idpContext.getReleasedAttributes());
+
              
-        final String uniqueId = findUniqueId(attributes);
-        final Principal principal = setupPrincipal(uniqueId, now);
+        String uniqueId = findUniqueId(attributes);
+        if (uniqueId == null) {
+            uniqueId = idpContext.getPrincipalName();
+            logger.warn("Using principalName {} as uniqueId", uniqueId);
+        }
+        
+        final Principal principal = setupPrincipal(uniqueId, accessDate);
 
         final Collection<AttributeReleaseConsent> attributeReleaseConsent = storage.readAttributeReleaseConsents(principal, relyingParty);
         principal.setAttributeReleaseConsents(relyingParty, attributeReleaseConsent);
         
-        // TODO get locale from HTTPRequest
-        return new UserConsentContext(principal, relyingParty, attributes, now, Locale.ENGLISH);
+        // remove blacklisted attributes
+        attributes = attributeList.removeBlacklisted(attributes);
+        
+        // sort attributes
+        attributes = attributeList.sortAttributes(attributes);
+        
+        return new UserConsentContext(principal, relyingParty, attributes, accessDate, idpContext.getRequest().getLocale());
     }
     
     /**
 	 * @param attributes
 	 */
-    private Collection<Attribute> setupAttributes(Map<String, BaseAttribute> baseAttributes) {
+    private Collection<Attribute> setupAttributes(Map<String, BaseAttribute<String>> baseAttributes) {
         Collection<Attribute> attributes = new HashSet<Attribute>();
-        for (BaseAttribute baseAttribute : baseAttributes.values()) {
+        for (BaseAttribute<String> baseAttribute : baseAttributes.values()) {
         	Collection<String> attributeValues = new HashSet<String>();
-        	
-        	for (Object value : baseAttribute.getValues()) {
-        		if (value != null && !value.toString().trim().equals("")) {
-        	 		attributeValues.add(value.toString());
-        		}
-        	}
-        	
+        	attributeValues.addAll(baseAttribute.getValues());
         	attributes.add(new Attribute(baseAttribute.getId(), attributeValues));
         }
     	return attributes;
@@ -144,16 +137,22 @@ public class UserConsentContextBuilder {
         return relyingParty;
     }
     
-    private String findUniqueId(Collection<Attribute> attributes) throws UserConsentException {
+    private String findUniqueId(Collection<Attribute> attributes) {
        for (Attribute attribute : attributes) {
            if  (attribute.getId().equals(uniqueIdAttribute)) {
+               if (attribute.getValues().size() == 0) { 
+                   logger.warn("uniqueId attribute {} contains no values.", uniqueIdAttribute);
+                   return null;
+               }
                if (attribute.getValues().size() == 1) {
                    return attribute.getValues().iterator().next();
                }
-               throw new UserConsentException("uniqueId attribute {} has none or more than one values {}.", uniqueIdAttribute, attribute.getValues());
+               logger.warn("uniqueId attribute {} has more than one values {}.", uniqueIdAttribute, attribute.getValues());
+               return attribute.getValues().iterator().next();
            }
        }
-       throw new UserConsentException("uniqueId attribute {} will not be released.", uniqueIdAttribute);     
+       logger.warn("uniqueId attribute {} will not be released", uniqueIdAttribute);
+       return null;
     }
 }
     

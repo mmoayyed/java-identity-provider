@@ -85,10 +85,4 @@ public class UserConsentContext {
     public Locale getLocale() {
         return locale;
     }
-    
-    public String toString() {
-        return "UserConsentContext [principal=" + principal + ", relyingParty=" + relyingParty + "]";
-    }
-
-
 }

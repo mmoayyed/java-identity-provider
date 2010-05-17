@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
@@ -28,8 +32,14 @@
        -->
        <property name="uniqueIdAttribute" value="uniqueID" /> 
     </bean>
-
     
+    <bean id="descriptionBuilder" class="edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBuilder">
+        <constructor-arg type="java.util.Locale">
+            <util:constant static-field="java.util.Locale.ENGLISH"/>
+        </constructor-arg>
+        <constructor-arg type="boolean" value="true"/>
+    </bean>
+  
     <bean id="relyingPartyBlacklist" class="edu.internet2.middleware.shibboleth.idp.consent.components.RelyingPartyBlacklist">
          <property name="blacklist">
             <set>
@@ -46,7 +56,7 @@
                        value="/edu/internet2/middleware/shibboleth/idp/consent/terms-of-use-example.txt"/>
     </bean>
     
-     <bean id="attributeList" class="edu.internet2.middleware.shibboleth.idp.consent.components.AttributeList">
+    <bean id="attributeList" class="edu.internet2.middleware.shibboleth.idp.consent.components.AttributeList">
          <property name="orderedAttributeIds">
             <list>
                 <value>attribute_1</value>
@@ -90,5 +100,4 @@
         </property>
     </bean>
     
-
 </beans>

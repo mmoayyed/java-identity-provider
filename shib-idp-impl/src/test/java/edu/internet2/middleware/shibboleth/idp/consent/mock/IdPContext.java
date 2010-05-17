@@ -16,31 +16,40 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.mock;
 
-import java.util.Collection;
+import java.util.Map;
 
-import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
-import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
+import javax.servlet.http.HttpServletRequest;
 
-
+import org.springframework.mock.web.MockHttpServletRequest;
 /**
  * Only a mock for testing
  */
-public class IdPMock {
+public class IdPContext {
    
-	private String entityId;
-	private Collection<Attribute> attributes;
+	private String entityId = null;
+	private Map<String, BaseAttribute<String>> attributes = null;
 	
-	public IdPMock(String entityId, Collection<Attribute> attributes) {
+	public IdPContext() {}
+	
+	public IdPContext(String entityId, Map<String, BaseAttribute<String>> attributes) {
 		this.entityId = entityId;
 		this.attributes = attributes;
 	}
 	
 	public String getEntityID() {
-			return entityId;
+		return entityId;
 	}
 
-	public Collection<Attribute> getReleasedAttributes() {
+	public Map<String, BaseAttribute<String>> getReleasedAttributes() {
 		return attributes;
+	}
+	
+	public String getPrincipalName() {
+	    return "demouser";
+	}
+	
+	public HttpServletRequest getRequest() {
+	    return new MockHttpServletRequest();
 	}
 
 }

@@ -57,32 +57,9 @@ public class AttributeListTest extends BaseTest {
     }
     
     @Test(dataProvider = "attributeList")
-    public void sortAttributes(Collection<Attribute> attributes) {
-        
-        logger.debug("Before blacklisted attributes:");
-        for (Attribute attribute : attributes) {
-            logger.debug("{}", attribute.getId());
-        }
-        
-        attributes = attributeList.removeBlacklisted(attributes);
-        
-        logger.debug("After blacklisted attributes:");
-        for (Attribute attribute : attributes) {
-            logger.debug("{}", attribute.getId());
-        }
-        
-        logger.debug("Before sorting:");
-        for (Attribute attribute : attributes) {
-            logger.debug("{}", attribute.getId());
-        }
-        
+    public void sortAttributes(Collection<Attribute> attributes) {     
+        attributes = attributeList.removeBlacklisted(attributes);                  
         Collection<Attribute> attributesSorted = attributeList.sortAttributes(attributes);
-        
-        logger.debug("After sorting:");
-        for (Attribute attribute : attributesSorted) {
-            logger.debug("{}", attribute.getId());
-        }
-               
         List<String> orderedAttributeIds = attributeList.getOrderedAttributeIds();
         int pos = 0;
         boolean onlyUnlisted = false;
@@ -96,6 +73,5 @@ public class AttributeListTest extends BaseTest {
             }
         }
     }
-    
-    
+      
 }

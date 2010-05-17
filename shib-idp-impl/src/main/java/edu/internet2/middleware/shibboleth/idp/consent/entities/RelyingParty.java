@@ -16,9 +16,6 @@ z * Copyright 2009 University Corporation for Advanced Internet Development, Inc
 
 package edu.internet2.middleware.shibboleth.idp.consent.entities;
 
-import java.util.Locale;
-import java.util.Map;
-
 /**
  *
  */
@@ -81,7 +78,7 @@ public class RelyingParty {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "RelyingParty [id=" + id + ", entityId=" + entityId + "]";
+        return entityId;
     }
 
     /** {@inheritDoc} */
