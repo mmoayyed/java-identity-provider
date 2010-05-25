@@ -36,7 +36,7 @@ public class AttributeList implements Comparator<Attribute> {
     /**
      * @return Returns the ordererdAttributeIds.
      */
-    public List<String> getOrderedAttributeIds() {
+    public final List<String> getOrderedAttributeIds() {
         return orderedAttributeIds;
     }
 
@@ -50,7 +50,7 @@ public class AttributeList implements Comparator<Attribute> {
     /**
      * @return Returns the blacklistedAttributeIds.
      */
-    public Collection<String> getBlacklistedAttributeIds() {
+    public final Collection<String> getBlacklistedAttributeIds() {
         return blacklistedAttributeIds;
     }
 
@@ -78,7 +78,7 @@ public class AttributeList implements Comparator<Attribute> {
         return blacklistedAttributeIds.contains(attribute.getId());
     }
     
-    public Collection<Attribute> removeBlacklisted(final Collection<Attribute> attributes) {
+    public final Collection<Attribute> removeBlacklisted(final Collection<Attribute> attributes) {
         final Collection<Attribute> attributesNotBlacklisted = new HashSet<Attribute>();
         
         for (Attribute attribute : attributes) {
@@ -90,7 +90,7 @@ public class AttributeList implements Comparator<Attribute> {
         return attributesNotBlacklisted;
     }
     
-    public Collection<Attribute> sortAttributes(final Collection<Attribute> attributes) {
+    public final Collection<Attribute> sortAttributes(final Collection<Attribute> attributes) {
         final SortedSet<Attribute> sortedAttributes = new TreeSet<Attribute>(this);
         sortedAttributes.addAll(attributes);
         return sortedAttributes;

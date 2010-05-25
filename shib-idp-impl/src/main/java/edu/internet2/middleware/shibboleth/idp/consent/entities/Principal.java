@@ -29,12 +29,10 @@ import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
  *
  */
 public class Principal {
-
-    final private long id;
     
-    final private String uniqueId;
+    private final  String uniqueId;
 
-    final private DateTime firstAccess;
+    private final  DateTime firstAccess;
 
     private DateTime lastAccess;
 
@@ -44,8 +42,7 @@ public class Principal {
 
     final private Map<RelyingParty, Collection<AttributeReleaseConsent>> attributeReleaseConsents = new HashMap<RelyingParty, Collection<AttributeReleaseConsent>>();
 
-    public Principal(final long id, final String uniqueId, final DateTime firstAccess, final DateTime lastAccess, final boolean globalConsent) {
-    	this.id = id;
+    public Principal(final String uniqueId, final DateTime firstAccess, final DateTime lastAccess, final boolean globalConsent) {
     	this.uniqueId = uniqueId;
     	this.firstAccess = firstAccess;
     	this.lastAccess = lastAccess;
@@ -55,54 +52,53 @@ public class Principal {
     /**
      * @return Returns the agreedTermsOfUse.
      */
-    public Collection<AgreedTermsOfUse> getAgreedTermsOfUses() {
+    public final Collection<AgreedTermsOfUse> getAgreedTermsOfUses() {
         return agreedTermsOfUses;
     }
 
     /**
      * @return Returns the attributeReleaseConsents.
      */
-    public Map<RelyingParty, Collection<AttributeReleaseConsent>> getAttributeReleaseConsents() {
+    public final Map<RelyingParty, Collection<AttributeReleaseConsent>> getAttributeReleaseConsents() {
         throw new UnsupportedOperationException();
     }
 
-    public Collection<AttributeReleaseConsent> getAttributeReleaseConsents(final RelyingParty relyingParty) {
+    public final Collection<AttributeReleaseConsent> getAttributeReleaseConsents(final RelyingParty relyingParty) {
         return attributeReleaseConsents.get(relyingParty);
     }
 
     /**
      * @return Returns the firstAccess.
      */
-    public DateTime getFirstAccess() {
+    public final DateTime getFirstAccess() {
         return firstAccess;
-    }
-
-    /**
-     * @return Returns the id.
-     */
-    public long getId() {
-        return id;
     }
 
     /**
      * @return Returns the lastAccess.
      */
-    public DateTime getLastAccess() {
+    public final DateTime getLastAccess() {
         return lastAccess;
     }
 
     /**
      * @return Returns the uniqueId.
      */
-    public String getUniqueId() {
+    public final String getUniqueId() {
         return uniqueId;
     }
 
     public boolean hasAcceptedTermsOfUse(final TermsOfUse termsOfUse) {               
-        return this.agreedTermsOfUses.contains(termsOfUse);
+        // TODO write test for this logic
+        for (AgreedTermsOfUse agreedTermsOfUse : agreedTermsOfUses) {
+            if (agreedTermsOfUse.getTermsOfUse().equals(termsOfUse))
+                return true;
+        }
+        return false;
     }
     
     public boolean hasApproved(final Collection<Attribute> attributes, final RelyingParty relyingParty) {
+        // TODO write test for this logic
         Collection<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty = getAttributeReleaseConsents(relyingParty);      
         boolean approved;
         for (Attribute attribute: attributes) {
@@ -166,7 +162,6 @@ public class Principal {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
         result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
         return result;
     }
@@ -180,8 +175,6 @@ public class Principal {
         if (getClass() != obj.getClass())
             return false;
         Principal other = (Principal) obj;
-        if (id != other.id)
-            return false;
         if (uniqueId == null) {
             if (other.uniqueId != null)
                 return false;

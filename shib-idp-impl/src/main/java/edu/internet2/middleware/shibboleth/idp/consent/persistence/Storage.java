@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.joda.time.DateTime;
 
@@ -41,48 +41,48 @@ public interface Storage {
     
     public abstract RelyingParty createRelyingParty(final String entityId);
 
-    public abstract int deleteAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
+    public abstract boolean deleteAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
 
     public abstract int deleteAgreedTermsOfUses(final Principal principal);
 
-    public abstract int deleteAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+    public abstract boolean deleteAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             final Attribute attribute);
 
     public abstract int deleteAttributeReleaseConsents(final Principal principal);
 
     public abstract int deleteAttributeReleaseConsents(final Principal principal, final RelyingParty relyingParty);
 
-    public abstract int deletePrincipal(final Principal principal);
+    public abstract boolean deletePrincipal(final Principal principal);
 
-    public abstract int deleteRelyingParty(final RelyingParty relyingParty);
+    public abstract boolean deleteRelyingParty(final RelyingParty relyingParty);
 
-    public abstract long findPrincipal(final String uniqueId);
+    public abstract boolean containsPrincipal(final String uniqueId);
 
-    public abstract long findRelyingParty(final String entityId);
+    public abstract boolean containsRelyingParty(final String entityId);
 
     public abstract AgreedTermsOfUse readAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse);
 
-    public abstract List<AgreedTermsOfUse> readAgreedTermsOfUses(final Principal principal);
+    public abstract Collection<AgreedTermsOfUse> readAgreedTermsOfUses(final Principal principal);
 
     public abstract AttributeReleaseConsent readAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             Attribute attribute);
 
-    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal);
+    public abstract Collection<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal);
 
-    public abstract List<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal,
+    public abstract Collection<AttributeReleaseConsent> readAttributeReleaseConsents(final Principal principal,
             RelyingParty relyingParty);
 
-    public abstract Principal readPrincipal(final long id);
+    public abstract Principal readPrincipal(final String uniqueId);
 
-    public abstract RelyingParty readRelyingParty(final long id);
+    public abstract RelyingParty readRelyingParty(final String entityId);
 
-    public abstract AgreedTermsOfUse updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate);
+    public abstract boolean updateAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate);
     
-    public abstract AttributeReleaseConsent updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
+    public abstract boolean updateAttributeReleaseConsent(final Principal principal, final RelyingParty relyingParty,
             final Attribute attribute, final DateTime relaseDate);
 
-    public abstract Principal updatePrincipal(final Principal principal);
+    public abstract boolean updatePrincipal(final Principal principal);
 
-    public abstract RelyingParty updateRelyingParty(final RelyingParty relyingParty);
+    public abstract boolean updateRelyingParty(final RelyingParty relyingParty);
 
 }

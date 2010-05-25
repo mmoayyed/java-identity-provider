@@ -43,21 +43,21 @@ public class RelyingPartyBlackListTest extends BaseTest {
     
     @Test()
     public void relyingPartyInBlacklist() {
-        RelyingParty relyingParty1 = new RelyingParty(-1, "https://sp.example1.org/shibboleth");
+        RelyingParty relyingParty1 = new RelyingParty("https://sp.example1.org/shibboleth");
         assertTrue(relyingPartyBlacklist.contains(relyingParty1));
-        RelyingParty relyingParty2 = new RelyingParty(-1, "https://sp.example2.org/shibboleth");
+        RelyingParty relyingParty2 = new RelyingParty("https://sp.example2.org/shibboleth");
         assertTrue(relyingPartyBlacklist.contains(relyingParty2));
-        RelyingParty relyingParty3 = new RelyingParty(-1, "https://sp.example3.org/shibboleth");
+        RelyingParty relyingParty3 = new RelyingParty("https://sp.example3.org/shibboleth");
         assertTrue(relyingPartyBlacklist.contains(relyingParty3));
-        RelyingParty relyingParty4 = new RelyingParty(-1, "https://xx.example3.org/shibboleth");
+        RelyingParty relyingParty4 = new RelyingParty("https://xx.example3.org/shibboleth");
         assertTrue(relyingPartyBlacklist.contains(relyingParty4));
     }
     
     @Test()
     public void relyingPartyNotInBlacklist() {
-        RelyingParty relyingParty1 = new RelyingParty(-1, "https://xx.example1.org/shibboleth");
+        RelyingParty relyingParty1 = new RelyingParty("https://xx.example1.org/shibboleth");
         assertFalse(relyingPartyBlacklist.contains(relyingParty1));
-        RelyingParty relyingParty2 = new RelyingParty(-1, "https://sp.example4.org/shibboleth");
+        RelyingParty relyingParty2 = new RelyingParty("https://sp.example4.org/shibboleth");
         assertFalse(relyingPartyBlacklist.contains(relyingParty2));
     }
     

@@ -16,13 +16,15 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent;
 
+import javax.servlet.ServletException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  */
-public class UserConsentException extends Throwable {    
+public class UserConsentException extends ServletException {    
     /**
      * 
      */

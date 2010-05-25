@@ -20,37 +20,27 @@ package edu.internet2.middleware.shibboleth.idp.consent.entities;
  *
  */
 public class RelyingParty {
-	final private long id;
-
     final private String entityId;
     
 	private String displayName;
     
     private String displayDescription;
 
-    public RelyingParty(final long id, final String entityId) {
-    	this.id = id;
+    public RelyingParty(final String entityId) {
     	this.entityId = entityId;
     }
     
     /**
      * @return Returns the entityId.
      */
-    public String getEntityId() {
+    public final String getEntityId() {
         return entityId;
-    }
-
-    /**
-     * @return Returns the id.
-     */
-    public long getId() {
-        return id;
     }
 
     /**
 	 * @return Returns the displayName.
 	 */
-	public String getDisplayName() {
+	public final String getDisplayName() {
 		return displayName;
 	}
 
@@ -64,7 +54,7 @@ public class RelyingParty {
 	/**
 	 * @return Returns the displayDescription.
 	 */
-	public String getDisplayDescription() {
+	public final String getDisplayDescription() {
 		return displayDescription;
 	}
 
@@ -86,7 +76,6 @@ public class RelyingParty {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((entityId == null) ? 0 : entityId.hashCode());
-        result = prime * result + (int) (id ^ (id >>> 32));
         return result;
     }
 
@@ -103,8 +92,6 @@ public class RelyingParty {
             if (other.entityId != null)
                 return false;
         } else if (!entityId.equals(other.entityId))
-            return false;
-        if (id != other.id)
             return false;
         return true;
     }

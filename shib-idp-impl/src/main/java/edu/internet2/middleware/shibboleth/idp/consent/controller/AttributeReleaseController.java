@@ -51,7 +51,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 @SessionAttributes("idpContext, userConsentContext")
 public class AttributeReleaseController {
 
-    private final Logger logger = LoggerFactory.getLogger(AttributeReleaseController.class);
+    private final Logger logger = LoggerFactory.getLogger(AttributeReleaseControllerTest.class);
     
     @Autowired
     private Storage storage;

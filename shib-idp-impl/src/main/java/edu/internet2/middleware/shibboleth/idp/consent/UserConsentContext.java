@@ -33,15 +33,15 @@ public class UserConsentContext {
     // TODO
     // Session?
     
-    final private Principal principal;
+    private final Principal principal;
 
-    final private RelyingParty relyingParty;
+    private final RelyingParty relyingParty;
 
-    final private Collection<Attribute> attributes;
+    private final Collection<Attribute> attributes;
     
-    final private DateTime accessDate;
+    private final DateTime accessDate;
     
-    final private Locale locale;
+    private final Locale locale;
     
     public UserConsentContext(Principal principal, RelyingParty relyingParty, Collection<Attribute> attributes, DateTime accessDate, Locale locale) {
     	this.principal = principal;
@@ -54,35 +54,35 @@ public class UserConsentContext {
     /**
      * @return Returns the attributes.
      */
-    public Collection<Attribute> getAttributes() {
+    public final Collection<Attribute> getAttributes() {
         return attributes;
     }
 
     /**
      * @return Returns the principal.
      */
-    public Principal getPrincipal() {
+    public final Principal getPrincipal() {
         return principal;
     }
 
     /**
      * @return Returns the relyingParty.
      */
-    public RelyingParty getRelyingParty() {
+    public final RelyingParty getRelyingParty() {
         return relyingParty;
     }
     
     /**
      * @return Returns the accessDate.
      */
-    public DateTime getAccessDate() {
+    public final DateTime getAccessDate() {
         return accessDate;
     }
     
     /**
      * @return Returns the locale.
      */
-    public Locale getLocale() {
+    public final Locale getLocale() {
         return locale;
     }
 }

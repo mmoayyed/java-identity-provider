@@ -49,7 +49,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 @SessionAttributes("idpContext, userConsentContext")
 public class UserConsentEngineController {
 
-    private final Logger logger = LoggerFactory.getLogger(UserConsentEngineController.class);
+    private final Logger logger = LoggerFactory.getLogger(UserConsentEngineControllerTest.class);
 
     @Autowired
     private Storage storage;
@@ -80,7 +80,7 @@ public class UserConsentEngineController {
         
         if (consentRevocationRequested) {
             principal.setGlobalConsent(false);
-            principal = storage.updatePrincipal(principal);
+            storage.updatePrincipal(principal);
          
             principal.setAttributeReleaseConsents(relyingParty, null);
             storage.deleteAttributeReleaseConsents(principal, relyingParty);

@@ -24,9 +24,9 @@ import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
  *
  */
 public class AgreedTermsOfUse {
-    final TermsOfUse termsOfUse;
+    private final TermsOfUse termsOfUse;
 
-    final DateTime agreeDate;
+    private final DateTime agreeDate;
     
     public AgreedTermsOfUse(final TermsOfUse termsOfUse, final DateTime agreeDate) {
     	this.termsOfUse = termsOfUse;
@@ -36,14 +36,14 @@ public class AgreedTermsOfUse {
     /**
      * @return Returns the agreeDate.
      */
-    public DateTime getAgreeDate() {
+    public final DateTime getAgreeDate() {
         return agreeDate;
     }
 
     /**
      * @return Returns the TermsOfUse.
      */
-    public TermsOfUse getTermsOfUse() {
+    public final TermsOfUse getTermsOfUse() {
         return termsOfUse;
     }
 
@@ -52,7 +52,6 @@ public class AgreedTermsOfUse {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((agreeDate == null) ? 0 : agreeDate.hashCode());
         result = prime * result + ((termsOfUse == null) ? 0 : termsOfUse.hashCode());
         return result;
     }

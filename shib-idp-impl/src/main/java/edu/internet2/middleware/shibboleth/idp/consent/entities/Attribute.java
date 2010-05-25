@@ -25,11 +25,11 @@ import edu.vt.middleware.crypt.util.HexConverter;
  */
 public class Attribute {
 
-    final private String id;
+    private final String id;
 
-    final private Collection<String> values;
+    private final Collection<String> values;
 
-    final private String valuesHash;
+    private final String valuesHash;
 
     private String displayName;
     
@@ -51,28 +51,28 @@ public class Attribute {
     /**
      * @return Returns the id.
      */
-    public String getId() {
+    public final String getId() {
         return id;
     }
 
     /**
      * @return Returns the values.
      */
-    public Collection<String> getValues() {
+    public final Collection<String> getValues() {
         return values;
     }
     
     /**
      * @return Returns the valuesHash.
      */
-    public String getValuesHash() {
+    public final String getValuesHash() {
         return valuesHash;
     }
     
     /**
 	 * @return Returns the displayName.
 	 */
-	public String getDisplayName() {
+	public final String getDisplayName() {
 		return displayName;
 	}
 
@@ -86,7 +86,7 @@ public class Attribute {
 	/**
 	 * @return Returns the displayDescription.
 	 */
-	public String getDisplayDescription() {
+	public final String getDisplayDescription() {
 		return displayDescription;
 	}
 
@@ -102,8 +102,6 @@ public class Attribute {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((valuesHash == null) ? 0 : valuesHash.hashCode());
 		return result;
 	}
 

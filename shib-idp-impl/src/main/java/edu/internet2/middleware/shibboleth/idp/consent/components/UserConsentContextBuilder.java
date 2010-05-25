@@ -52,7 +52,7 @@ public class UserConsentContextBuilder {
     /**
      * @return Returns the uniqueIdAttribute.
      */
-    public String getUniqueIdAttribute() {
+    public final String getUniqueIdAttribute() {
         return uniqueIdAttribute;
     }
 
@@ -64,7 +64,7 @@ public class UserConsentContextBuilder {
     }
 
     // TODO synchronized?
-    public UserConsentContext buildUserConsentContext(IdPContext idpContext) {
+    public final UserConsentContext buildUserConsentContext(IdPContext idpContext) {
     	
     	final DateTime accessDate = new DateTime();
     	
@@ -96,7 +96,7 @@ public class UserConsentContextBuilder {
     /**
 	 * @param attributes
 	 */
-    private Collection<Attribute> setupAttributes(Map<String, BaseAttribute<String>> baseAttributes) {
+    private final Collection<Attribute> setupAttributes(Map<String, BaseAttribute<String>> baseAttributes) {
         Collection<Attribute> attributes = new HashSet<Attribute>();
         for (BaseAttribute<String> baseAttribute : baseAttributes.values()) {
         	Collection<String> attributeValues = new HashSet<String>();
@@ -106,15 +106,14 @@ public class UserConsentContextBuilder {
     	return attributes;
     }
 
-	private Principal setupPrincipal(String uniqueId, DateTime accessDate) {
+	private final Principal setupPrincipal(String uniqueId, DateTime accessDate) {
         Principal principal;
         
-    	long id = storage.findPrincipal(uniqueId);
-        if (id == 0) {
+        if (!storage.containsPrincipal(uniqueId)) {
         	principal = storage.createPrincipal(uniqueId, accessDate);
             logger.debug("First access of principal {}. Create entry.", principal);
         } else {
-            principal = storage.readPrincipal(id);
+            principal = storage.readPrincipal(uniqueId);
             Collection<AgreedTermsOfUse> agreedTermsOfUses = storage.readAgreedTermsOfUses(principal);
             principal.setAgreedTermsOfUses(agreedTermsOfUses);
             principal.setLastAccess(accessDate);
@@ -123,21 +122,20 @@ public class UserConsentContextBuilder {
         return principal;
     }
     
-    private RelyingParty setupRelyingParty(String entityId) {
-        long id = storage.findRelyingParty(entityId);
-        
+    private final RelyingParty setupRelyingParty(String entityId) {
         RelyingParty relyingParty;
-        if (id == 0) {
+        
+        if (!storage.containsRelyingParty(entityId)) {
         	relyingParty = storage.createRelyingParty(entityId);
         	logger.debug("First access to relyingParty {}. Create entry.", relyingParty);
         } else {
-        	relyingParty = storage.readRelyingParty(id);
+        	relyingParty = storage.readRelyingParty(entityId);
         	logger.debug("Further access to relyingParty {}. Entry loaded.", relyingParty);
         }
         return relyingParty;
     }
     
-    private String findUniqueId(Collection<Attribute> attributes) {
+    private final String findUniqueId(Collection<Attribute> attributes) {
        for (Attribute attribute : attributes) {
            if  (attribute.getId().equals(uniqueIdAttribute)) {
                if (attribute.getValues().size() == 0) { 

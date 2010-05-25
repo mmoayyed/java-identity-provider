@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
-import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.*;
 import java.util.Collection;
 
 import org.joda.time.DateTime;
@@ -70,8 +70,7 @@ public class BaseJDBCTest extends AbstractTransactionalTestNGSpringContextTests 
     	assertNotNull(principal);
     	principal.setLastAccess(lastAccess);
     	principal.setGlobalConsent(globalConsent);
-    	principal = storage.updatePrincipal(principal);
-    	assertNotNull(principal);
+    	assertTrue(storage.updatePrincipal(principal));
     	return principal;
     }
     

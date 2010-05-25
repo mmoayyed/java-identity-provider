@@ -48,20 +48,16 @@ public class JDBCStorageTest extends BaseJDBCTest {
         logger.info("start");
                 
         // Find unavailable
-        long id = storage.findPrincipal(uniqueId);
-        assertEquals(0, id);
+        assertFalse(storage.containsPrincipal(uniqueId));
         
         // Create        
-        Principal principal = storage.createPrincipal(uniqueId, firstAccess);
-        assertTrue(principal.getId() > 0);
+        assertNotNull(storage.createPrincipal(uniqueId, firstAccess));
  
         // Find
-        id = storage.findPrincipal(uniqueId);
-        assertTrue(id > 0);
+        assertTrue(storage.containsPrincipal(uniqueId));
         
         // Read
-        principal = storage.readPrincipal(id);
-        assertEquals(id, principal.getId());  
+        Principal principal = storage.readPrincipal(uniqueId); 
         assertEquals(uniqueId, principal.getUniqueId());
         assertEquals(firstAccess, principal.getFirstAccess());
         assertEquals(firstAccess, principal.getLastAccess());
@@ -70,14 +66,15 @@ public class JDBCStorageTest extends BaseJDBCTest {
         // Update
         principal.setGlobalConsent(true);
         principal.setLastAccess(lastAccess);
-        Principal updatedPrincipal = storage.updatePrincipal(principal);
+        assertTrue(storage.updatePrincipal(principal));
         
+        Principal updatedPrincipal = storage.readPrincipal(uniqueId); 
         assertEquals(principal, updatedPrincipal);
         assertEquals(principal.getLastAccess(), updatedPrincipal.getLastAccess());
         assertTrue(updatedPrincipal.hasGlobalConsent());
         
         try {
-            assertEquals(1, storage.deletePrincipal(principal));
+            assertTrue(storage.deletePrincipal(principal));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
         
@@ -89,31 +86,27 @@ public class JDBCStorageTest extends BaseJDBCTest {
         logger.info("start");
         
         // Find unavailable
-        long id = storage.findRelyingParty(entityId);
-        assertEquals(0, id);
+        assertFalse(storage.containsRelyingParty(entityId));
         
         // Create
-        RelyingParty relyingParty = storage.createRelyingParty(entityId);
-        assertTrue(relyingParty.getId() > 0);
+        assertNotNull(storage.createRelyingParty(entityId));
 
         // Find
-        id = storage.findRelyingParty(entityId);
-        assertTrue(id > 0);
+        assertTrue(storage.containsRelyingParty(entityId));
 
         // Read
-        relyingParty = storage.readRelyingParty(id);
-        assertEquals(id, relyingParty.getId());  
+        RelyingParty relyingParty = storage.readRelyingParty(entityId);
         assertEquals(entityId, relyingParty.getEntityId());
 
         // Update
         try {
-            storage.updateRelyingParty(relyingParty);
+            assertTrue(storage.updateRelyingParty(relyingParty));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
 
         // Delete
         try {
-            assertEquals(1, storage.deleteRelyingParty(relyingParty));
+            assertTrue(storage.deleteRelyingParty(relyingParty));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
         
@@ -132,7 +125,7 @@ public class JDBCStorageTest extends BaseJDBCTest {
         assertNotNull(storage.createAgreedTermsOfUse(principal, termsOfUse, agreeDate));
         
         // Read
-        List<AgreedTermsOfUse> agreedTermsOfUses = storage.readAgreedTermsOfUses(principal);
+        Collection<AgreedTermsOfUse> agreedTermsOfUses = storage.readAgreedTermsOfUses(principal);
         assertEquals(1, agreedTermsOfUses.size());
        
         AgreedTermsOfUse agreedTermsOfUse = storage.readAgreedTermsOfUse(principal, termsOfUse);     
@@ -141,17 +134,19 @@ public class JDBCStorageTest extends BaseJDBCTest {
         
         // Update
         DateTime updatedAgreeDate = agreeDate.plusDays(1);
-        agreedTermsOfUse = storage.updateAgreedTermsOfUse(principal, termsOfUse, updatedAgreeDate);
-        assertEquals(termsOfUse, agreedTermsOfUse.getTermsOfUse());
-        assertEquals(updatedAgreeDate, agreedTermsOfUse.getAgreeDate());
+        assertTrue(storage.updateAgreedTermsOfUse(principal, termsOfUse, updatedAgreeDate));
+        
+        AgreedTermsOfUse updatedAgreedTermsOfUse = storage.readAgreedTermsOfUse(principal, termsOfUse);  
+        assertEquals(termsOfUse, updatedAgreedTermsOfUse.getTermsOfUse());
+        assertEquals(updatedAgreeDate, updatedAgreedTermsOfUse.getAgreeDate());
           
         // Delete
         try {
-            assertEquals(1, storage.deleteAgreedTermsOfUses(principal));
+            assertEquals(1,storage.deleteAgreedTermsOfUses(principal));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
         try {
-            assertEquals(1, storage.deleteAgreedTermsOfUse(principal, termsOfUse));
+            assertTrue(storage.deleteAgreedTermsOfUse(principal, termsOfUse));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
 
@@ -170,7 +165,7 @@ public class JDBCStorageTest extends BaseJDBCTest {
         assertNotNull(storage.createAttributeReleaseConsent(principal, relyingParty, attribute, releaseDate));
         
         // Read
-        List<AttributeReleaseConsent> attributeReleaseConsents;
+        Collection<AttributeReleaseConsent> attributeReleaseConsents;
         try {
             attributeReleaseConsents = storage.readAttributeReleaseConsents(principal);
             fail("UnsupportedOperation is supported");
@@ -189,9 +184,11 @@ public class JDBCStorageTest extends BaseJDBCTest {
         Attribute updatedAttribute = new Attribute(attributeReleaseConsent.getAttribute().getId(), values);
         DateTime updatedReleaseDate = releaseDate.plusDays(1);
         
-        attributeReleaseConsent = storage.updateAttributeReleaseConsent(principal, relyingParty, updatedAttribute, updatedReleaseDate);
-        assertEquals(updatedAttribute, attributeReleaseConsent.getAttribute());
-        assertEquals(updatedReleaseDate, attributeReleaseConsent.getReleaseDate());
+        assertTrue(storage.updateAttributeReleaseConsent(principal, relyingParty, updatedAttribute, updatedReleaseDate));
+        
+        AttributeReleaseConsent updatedAttributeReleaseConsent = storage.readAttributeReleaseConsent(principal, relyingParty, attribute);
+        assertEquals(updatedAttribute, updatedAttributeReleaseConsent.getAttribute());
+        assertEquals(updatedReleaseDate, updatedAttributeReleaseConsent.getReleaseDate());
                         
         // Delete
         try {
@@ -204,7 +201,7 @@ public class JDBCStorageTest extends BaseJDBCTest {
         assertTrue(attributeReleaseConsents.isEmpty());
            
         try {
-            assertEquals(1, storage.deleteAttributeReleaseConsent(principal, relyingParty, attribute));
+            assertTrue(storage.deleteAttributeReleaseConsent(principal, relyingParty, attribute));
             fail("UnsupportedOperation is supported");
         } catch (UnsupportedOperationException e) {}
         

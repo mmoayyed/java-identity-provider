@@ -79,7 +79,7 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
         logger.info("start");
         UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
 
-        Principal principal = storage.readPrincipal(userConsentContext.getPrincipal().getId());
+        Principal principal = storage.readPrincipal(userConsentContext.getPrincipal().getUniqueId());
         assertEquals(userConsentContext.getPrincipal(), principal);
     }
     
@@ -88,7 +88,7 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
         logger.info("start");
         UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
         
-        RelyingParty relyingParty = storage.readRelyingParty(userConsentContext.getRelyingParty().getId());
+        RelyingParty relyingParty = storage.readRelyingParty(userConsentContext.getRelyingParty().getEntityId());
         assertEquals(userConsentContext.getRelyingParty(), relyingParty);
         logger.info("stop");
     }
@@ -130,12 +130,11 @@ public class UserConsentContextBuilderTest extends BaseJDBCTest {
     @Test(dataProvider = "idpContext")
     public void furtherAccessToRelyingParty(IdPContext idpContext) {
         logger.info("start");
-        RelyingParty relyingParty = storage.createRelyingParty(idpContext.getEntityID());      
-        
+        RelyingParty relyingParty = persistRelyingParty(idpContext.getEntityID()); 
         UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
      
-        assertEquals(relyingParty.getId(), userConsentContext.getRelyingParty().getId());
+        assertEquals(relyingParty.getEntityId(), userConsentContext.getRelyingParty().getEntityId());
         logger.info("stop");
-    }    
+    }
       
 }

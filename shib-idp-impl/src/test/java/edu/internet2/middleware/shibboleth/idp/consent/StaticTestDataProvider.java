@@ -102,13 +102,13 @@ public class StaticTestDataProvider {
     }
     
     private static Principal createPrincipal() {
-        Principal principal = new Principal(-1, getRandomUniqueId(), getRandomDate(), getRandomDate(), false);
+        Principal principal = new Principal(getRandomUniqueId(), getRandomDate(), getRandomDate(), false);
         principal.setAgreedTermsOfUses(createAgreedTermsOfUses());
         return principal;
     }
     
     private static RelyingParty createRelyingParty() {
-    	return new RelyingParty(-1, getRandomEntityId());
+    	return new RelyingParty(getRandomEntityId());
     }
           
     private static TermsOfUse createTermsOfUse() {
@@ -221,9 +221,9 @@ public class StaticTestDataProvider {
     }
     
     private static String extractUniqueId(Map<String, BaseAttribute<String>> attributes) {
-        for (String id : attributes.keySet()) {
-            if (id.equals("uniqueID")) {
-                return attributes.get(id).getValues().iterator().next();
+        for (BaseAttribute<String> baseAttribute : attributes.values()) {
+            if (baseAttribute.getId().equals("uniqueID")) {
+                return baseAttribute.getValues().iterator().next();
             }
         }
         return null;
@@ -328,7 +328,7 @@ public class StaticTestDataProvider {
         DescriptionBuilder descriptionBuilder = createDefautDescriptionBuilder(true);
         MetadataProvider metadataProvider = createMetadataProvider("src/test/resources/sp-metadata.xml");
         descriptionBuilder.setMetadataProvider(metadataProvider);
-        RelyingParty relyingParty = new RelyingParty(-1, "https://sp.example.org/shibboleth");
+        RelyingParty relyingParty = new RelyingParty("https://sp.example.org/shibboleth");
         return new Object[][] {
                 new Object[] {descriptionBuilder, relyingParty}
       };
@@ -339,7 +339,7 @@ public class StaticTestDataProvider {
         DescriptionBuilder descriptionBuilder = createDefautDescriptionBuilder(false);
         MetadataProvider metadataProvider = createMetadataProvider("src/test/resources/sp-metadata.xml");
         descriptionBuilder.setMetadataProvider(metadataProvider);
-        RelyingParty relyingParty = new RelyingParty(-1, "https://sp.example.org/shibboleth");
+        RelyingParty relyingParty = new RelyingParty("https://sp.example.org/shibboleth");
         return new Object[][] {
                 new Object[] {descriptionBuilder, relyingParty}
       };

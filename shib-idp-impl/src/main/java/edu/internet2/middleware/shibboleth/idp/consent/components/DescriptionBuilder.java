@@ -140,7 +140,7 @@ public class DescriptionBuilder {
 	}
 	
 
-	private Locale selectLocale(Collection<Locale> availableLocales, Locale userLocale) {
+	private final Locale selectLocale(Collection<Locale> availableLocales, Locale userLocale) {
 	    	    
         if (localeSelection.enforced && availableLocales.contains(localeSelection.locale)) {
             return localeSelection.locale;
@@ -161,7 +161,7 @@ public class DescriptionBuilder {
 	 * @param entityDescriptor
 	 * @return
 	 */
-	private AttributeConsumingService getAttributeConsumingService(EntityDescriptor entityDescriptor) {
+	private final AttributeConsumingService getAttributeConsumingService(EntityDescriptor entityDescriptor) {
         String[] protocols = {SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, SAMLConstants.SAML10P_NS};
         for (String protocol: protocols) {
             logger.debug("Protocol {}", protocol);
@@ -184,7 +184,7 @@ public class DescriptionBuilder {
         return null;
 	}
 
-	private class LocaleSelection {
+	private static class LocaleSelection {
 		public final Locale locale;
 		public final boolean enforced;
 		

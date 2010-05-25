@@ -43,7 +43,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 @SessionAttributes("userConsentContext")
 public class TermsOfUseController {
 
-    private final Logger logger = LoggerFactory.getLogger(TermsOfUseController.class);
+    private final Logger logger = LoggerFactory.getLogger(TermsOfUseControllerTest.class);
 
     @Autowired
     private TermsOfUse termsOfUse;

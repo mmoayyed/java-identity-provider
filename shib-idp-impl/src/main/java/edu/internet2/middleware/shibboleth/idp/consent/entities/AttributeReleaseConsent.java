@@ -24,9 +24,9 @@ import org.joda.time.DateTime;
  */
 public class AttributeReleaseConsent {
 
-    final private Attribute attribute;
+    private final Attribute attribute;
 
-    final private DateTime releaseDate;
+    private final DateTime releaseDate;
     
     public AttributeReleaseConsent(final Attribute attribute, final DateTime releaseDate) {
     	this.attribute = attribute;
@@ -36,14 +36,14 @@ public class AttributeReleaseConsent {
     /**
      * @return Returns the attribute.
      */
-    public Attribute getAttribute() {
+    public final Attribute getAttribute() {
         return attribute;
     }
 
     /**
      * @return Returns the releaseDate.
      */
-    public DateTime getReleaseDate() {
+    public final DateTime getReleaseDate() {
         return releaseDate;
     }
 
@@ -52,7 +52,6 @@ public class AttributeReleaseConsent {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((attribute == null) ? 0 : attribute.hashCode());
-        result = prime * result + ((releaseDate == null) ? 0 : releaseDate.hashCode());
         return result;
     }
 

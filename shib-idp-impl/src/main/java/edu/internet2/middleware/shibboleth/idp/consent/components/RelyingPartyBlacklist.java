@@ -29,16 +29,9 @@ public class RelyingPartyBlacklist {
     private Collection<String> blacklist;
     
     /**
-     * @return Returns the blacklist.
-     */
-    public Collection<String> getBlacklist() {
-        return blacklist;
-    }
-
-    /**
      * @param blacklist The blacklist to set.
      */
-    public void setBlacklist(Collection<String> blacklist) {
+    public void setBlacklist(final Collection<String> blacklist) {
         this.blacklist = blacklist;
     }
 

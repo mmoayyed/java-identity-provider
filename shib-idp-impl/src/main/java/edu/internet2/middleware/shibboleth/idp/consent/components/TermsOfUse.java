@@ -30,11 +30,11 @@ import edu.vt.middleware.crypt.util.HexConverter;
  *
  */
 public class TermsOfUse {
-    final private String version;
+    private final String version;
 
-    final private String fingerprint;
+    private final String fingerprint;
 
-    final private String text;
+    private final String text;
     
     public TermsOfUse(final String version, final Resource resource) throws UserConsentException {
     	this.version = version;
@@ -65,21 +65,21 @@ public class TermsOfUse {
     /**
      * @return Returns the text.
      */
-    public String getText() {
+    public final String getText() {
         return text;
     }
 
     /**
      * @return Returns the version.
      */
-    public String getVersion() {
+    public final String getVersion() {
         return version;
     }
     
     /**
      * @return Returns the fingerprint.
      */
-    public String getFingerprint() {
+    public final String getFingerprint() {
         return fingerprint;
     }
     
