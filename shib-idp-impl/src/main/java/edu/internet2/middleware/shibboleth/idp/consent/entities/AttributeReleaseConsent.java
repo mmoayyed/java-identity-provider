@@ -69,12 +69,12 @@ public class AttributeReleaseConsent {
                 return false;
         } else if (!attribute.equals(other.attribute))
             return false;
-        if (releaseDate == null) {
-            if (other.releaseDate != null)
-                return false;
-        } else if (!releaseDate.equals(other.releaseDate))
-            return false;
         return true;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "AttributeReleaseConsent [attribute=" + attribute + "]";
     }
     
 }

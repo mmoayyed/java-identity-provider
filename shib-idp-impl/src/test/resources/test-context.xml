@@ -22,9 +22,13 @@
         <property name="password" value="" />
     </bean>
     
-    <bean id="storage" class="edu.internet2.middleware.shibboleth.idp.consent.persistence.JDBCStorage">
+    <bean id="jdbcStorage" class="edu.internet2.middleware.shibboleth.idp.consent.persistence.JDBCStorage">
        <property name="dataSource" ref="dataSource" /> 
     </bean>
+    
+    <bean id="mapStorage" class="edu.internet2.middleware.shibboleth.idp.consent.persistence.MapStorage" init-method="initialize"/>
+    
+    <bean id="cache" class="java.util.concurrent.ConcurrentHashMap"/>
     
     <bean id="userConsentContextBuilder" class="edu.internet2.middleware.shibboleth.idp.consent.components.UserConsentContextBuilder">
        <!--

@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent;
 
-import static org.testng.AssertJUnit.fail;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -281,6 +279,12 @@ public class StaticTestDataProvider {
       };
     }
     
+    @DataProvider(name = "relyingParty")
+    public static Object[][] relyingParty() {         
+        return new Object[][] {
+                new Object[] {createRelyingParty()}
+      };
+    }
     
     @DataProvider(name = "idpContext")
     public static Object[][] idpContext() {         

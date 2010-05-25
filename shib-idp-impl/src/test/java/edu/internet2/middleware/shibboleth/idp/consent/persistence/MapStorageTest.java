@@ -16,33 +16,36 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.persistence;
 
+import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.Resource;
 
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.testng.annotations.Parameters;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * Tests JDBC storage using the Spring JDBC framework.
+ * Tests the map storage.
  */
-
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback=true)
-public class JDBCStorageTest extends AbstractStorageTest {
+public class MapStorageTest extends AbstractStorageTest {
     
-    @Resource(name="jdbcStorage")
-    private Storage jdbcStorage;
+    @Resource(name="mapStorage")
+    private MapStorage mapStorage;
+    @Resource(name="cache")
+    private ConcurrentMap<String, ConcurrentMap> cache;
     
-    @Parameters({ "jdbcInitFile" })
-    @Rollback(false)
-    public void setup(final String initFile) {
-        super.executeSqlScript(initFile, false);
+    public void setup() {
     }
-   
+    
+    @BeforeMethod
+    public void clear() {
+        cache.clear();
+        mapStorage.initialize();
+    }
+    
     /** {@inheritDoc} */
     @Test(dependsOnMethods={"setup"})
     public void initialization() {
-        setStorage(jdbcStorage);
+        setStorage(mapStorage);
     }
     
 }

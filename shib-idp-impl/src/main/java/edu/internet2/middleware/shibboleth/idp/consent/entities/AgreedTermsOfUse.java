@@ -47,8 +47,7 @@ public class AgreedTermsOfUse {
         return termsOfUse;
     }
 
-
-	/** {@inheritDoc} */
+    /** {@inheritDoc} */
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -65,17 +64,17 @@ public class AgreedTermsOfUse {
         if (getClass() != obj.getClass())
             return false;
         AgreedTermsOfUse other = (AgreedTermsOfUse) obj;
-        if (agreeDate == null) {
-            if (other.agreeDate != null)
-                return false;
-        } else if (!agreeDate.equals(other.agreeDate))
-            return false;
         if (termsOfUse == null) {
             if (other.termsOfUse != null)
                 return false;
         } else if (!termsOfUse.equals(other.termsOfUse))
             return false;
         return true;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "AgreedTermsOfUse [termsOfUse=" + termsOfUse + "]";
     }
     
 }

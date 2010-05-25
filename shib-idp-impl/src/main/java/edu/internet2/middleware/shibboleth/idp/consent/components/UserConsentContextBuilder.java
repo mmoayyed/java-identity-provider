@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,7 @@ public class UserConsentContextBuilder {
 
     private final Logger logger = LoggerFactory.getLogger(UserConsentContextBuilder.class);
     
-    @Autowired
+    @Resource(name="mapStorage")
     private Storage storage;
     
     @Autowired

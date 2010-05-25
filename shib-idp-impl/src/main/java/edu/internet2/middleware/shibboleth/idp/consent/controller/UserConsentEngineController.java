@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
-import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.components.RelyingPartyBlacklist;
 import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.components.UserConsentContextBuilder;

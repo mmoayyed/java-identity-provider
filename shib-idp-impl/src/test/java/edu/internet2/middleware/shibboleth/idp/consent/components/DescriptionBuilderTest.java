@@ -20,12 +20,11 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 import static org.testng.AssertJUnit.fail;
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
@@ -39,10 +38,13 @@ import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
 @Test
 public class DescriptionBuilderTest extends BaseTest {
 
-    private final Logger logger = LoggerFactory.getLogger(DescriptionBuilderTest.class);
-
     @Autowired
-    private DescriptionBuilder defaultDescriptionBuilder;
+    private DescriptionBuilder configuredDescriptionBuilder;
+    
+    @Test
+    public void configuredDescriptionBuilder() {
+        assertNotNull(configuredDescriptionBuilder);
+    }
     
     @Test(dataProvider="attachRelyingPartyInfoEnforced")
     public void attachRelyingPartyInfoEnforcedLocale(DescriptionBuilder descriptionBuilder, RelyingParty relyingParty) {

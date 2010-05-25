@@ -6,10 +6,13 @@
     </layout>
   </appender>
 
-  <logger name="org.springframework" level="INFO"/>
+  <logger name="org.springframework" level="WARN"/>
+  <logger name="org.testng" level="DEBUG"/>
+  
   <logger name="org.opensaml" level="WARN"/>
 
   <logger name="edu.internet2.middleware.shibboleth.idp.consent" level="DEBUG"/>
+  <logger name="Test" level="DEBUG"/>
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />

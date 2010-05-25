@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.annotation.Resource;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,29 +41,30 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
  */
 public class MapStorage implements Storage {
     
-    private final Logger logger = LoggerFactory.getLogger(JDBCStorage.class);
+    private final Logger logger = LoggerFactory.getLogger(MapStorage.class);
     
-    private final ConcurrentMap<String, ConcurrentMap> cache;
+    @Resource(name="cache")
+    private ConcurrentMap<String, ConcurrentMap> cache;
     
-    private final ConcurrentMap<String, Principal> principalPartition;
-    private final ConcurrentMap<String, RelyingParty> relyingPartyPartition;
-    private final ConcurrentMap<Principal, ConcurrentMap<TermsOfUse, AgreedTermsOfUse>> agreedTermsOfUsePartition;
-    private final ConcurrentMap<Principal, ConcurrentMap<RelyingParty, ConcurrentMap<Attribute, AttributeReleaseConsent>>> attributeReleaseConsentPartition;
-     
-    public MapStorage() {        
-        // TODO: check how to (re-)initialize the cache.        
-        cache = new ConcurrentHashMap<String, ConcurrentMap>();
-        
-        principalPartition = cache.putIfAbsent("principalPartition",
-                new ConcurrentHashMap<String, Principal>());
-        relyingPartyPartition = cache.putIfAbsent("relyingPartyPartition",
-                new ConcurrentHashMap<String, RelyingParty>());
-        agreedTermsOfUsePartition = cache.putIfAbsent("agreedTermsOfUsePartition",
+    private ConcurrentMap<String, Principal> principalPartition;
+    private ConcurrentMap<String, RelyingParty> relyingPartyPartition;
+    private ConcurrentMap<Principal, ConcurrentMap<TermsOfUse, AgreedTermsOfUse>> agreedTermsOfUsePartition;
+    private ConcurrentMap<Principal, ConcurrentMap<RelyingParty, ConcurrentMap<Attribute, AttributeReleaseConsent>>> attributeReleaseConsentPartition;
+    
+    public void initialize() {
+        cache.putIfAbsent("principalPartition", new ConcurrentHashMap<String, Principal>());
+        cache.putIfAbsent("relyingPartyPartition", new ConcurrentHashMap<String, RelyingParty>());
+        cache.putIfAbsent("agreedTermsOfUsePartition",
                 new ConcurrentHashMap<Principal, ConcurrentMap<TermsOfUse, AgreedTermsOfUse>>());
-        attributeReleaseConsentPartition = cache.putIfAbsent("attributeReleaseConsentPartition",
+        cache.putIfAbsent("attributeReleaseConsentPartition",
                 new ConcurrentHashMap<Principal, ConcurrentMap<RelyingParty, ConcurrentMap<Attribute, AttributeReleaseConsent>>>());   
+        
+        principalPartition = cache.get("principalPartition");
+        relyingPartyPartition = cache.get("relyingPartyPartition");
+        agreedTermsOfUsePartition = cache.get("agreedTermsOfUsePartition");
+        attributeReleaseConsentPartition = cache.get("attributeReleaseConsentPartition");    
     }
-
+    
     /** {@inheritDoc} */
     public final AgreedTermsOfUse createAgreedTermsOfUse(final Principal principal, final TermsOfUse termsOfUse, final DateTime agreeDate) {
         agreedTermsOfUsePartition.putIfAbsent(principal, new ConcurrentHashMap<TermsOfUse, AgreedTermsOfUse>());

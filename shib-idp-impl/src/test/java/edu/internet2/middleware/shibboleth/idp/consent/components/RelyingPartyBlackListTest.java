@@ -19,13 +19,10 @@ package edu.internet2.middleware.shibboleth.idp.consent.components;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
-import edu.internet2.middleware.shibboleth.idp.consent.components.RelyingPartyBlacklist;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 
 /**
@@ -35,12 +32,9 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 @Test
 public class RelyingPartyBlackListTest extends BaseTest {
 
-    private final Logger logger = LoggerFactory.getLogger(RelyingPartyBlackListTest.class);
-
     @Autowired
     private RelyingPartyBlacklist relyingPartyBlacklist;
-    
-    
+       
     @Test()
     public void relyingPartyInBlacklist() {
         RelyingParty relyingParty1 = new RelyingParty("https://sp.example1.org/shibboleth");

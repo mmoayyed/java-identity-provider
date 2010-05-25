@@ -29,5 +29,5 @@ import org.testng.annotations.Test;
 @ContextConfiguration("/test-context.xml")
 @Test(dataProviderClass = StaticTestDataProvider.class)
 public class BaseTest extends AbstractTestNGSpringContextTests {
-    private final Logger logger = LoggerFactory.getLogger(BaseTest.class);
+    protected final Logger logger = LoggerFactory.getLogger("Test");
 }

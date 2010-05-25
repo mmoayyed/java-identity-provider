@@ -164,19 +164,15 @@ public class DescriptionBuilder {
 	private final AttributeConsumingService getAttributeConsumingService(EntityDescriptor entityDescriptor) {
         String[] protocols = {SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, SAMLConstants.SAML10P_NS};
         for (String protocol: protocols) {
-            logger.debug("Protocol {}", protocol);
             SPSSODescriptor spSSODescriptor = entityDescriptor.getSPSSODescriptor(protocol);                
-            logger.debug("SPSSODescriptor {}", spSSODescriptor);
             if (spSSODescriptor == null) {
                     continue;
             }
             AttributeConsumingService defaultAttributeConsumingService = spSSODescriptor.getDefaultAttributeConsumingService();
-            logger.debug("DefaultAttributeConsumingService {}", defaultAttributeConsumingService);
             if (defaultAttributeConsumingService != null) {
                     return defaultAttributeConsumingService;
             } 
             List<AttributeConsumingService> list = spSSODescriptor.getAttributeConsumingServices();
-            logger.debug("AttributeConsumingServices {}", list);
             if (list != null && !list.isEmpty()) {
                     return list.get(0);
             }

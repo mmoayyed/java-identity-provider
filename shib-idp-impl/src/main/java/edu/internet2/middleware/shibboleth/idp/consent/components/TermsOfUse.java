@@ -83,36 +83,40 @@ public class TermsOfUse {
         return fingerprint;
     }
     
-    /** {@inheritDoc} */
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((fingerprint == null) ? 0 : fingerprint.hashCode());
-		return result;
-	}
-
-	/** {@inheritDoc} */
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TermsOfUse other = (TermsOfUse) obj;
-		if (fingerprint == null) {
-			if (other.fingerprint != null)
-				return false;
-		} else if (!fingerprint.equals(other.fingerprint))
-			return false;
-		return true;
-	}
-
-	/** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "Terms of use version=" + version + ", fingerprint=" + fingerprint;
+    public boolean equalsFingerprint(TermsOfUse termsOfUse) {
+        return equals(termsOfUse) && fingerprint.equals(termsOfUse.fingerprint);
     }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TermsOfUse other = (TermsOfUse) obj;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        } else if (!version.equals(other.version))
+            return false;
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "TermsOfUse [version=" + version + "]";
+    }
+    
+
 
 }

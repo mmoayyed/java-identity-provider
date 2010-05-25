@@ -17,8 +17,6 @@
 package edu.internet2.middleware.shibboleth.idp.consent.controller;
 
 import java.util.Collection;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,6 @@ import edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBui
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
 import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 

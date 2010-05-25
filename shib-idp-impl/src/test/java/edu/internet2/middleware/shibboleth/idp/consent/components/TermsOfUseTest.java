@@ -16,10 +16,11 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.components;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.fail;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -37,12 +38,9 @@ import edu.vt.middleware.crypt.util.HexConverter;
 @Test
 public class TermsOfUseTest extends BaseTest {
 
-    private final Logger logger = LoggerFactory.getLogger(TermsOfUseTest.class);
-
     @Autowired
     private TermsOfUse termsOfUse;
         
-    @Test()
     public void checkFingerprint() {
     	String version = termsOfUse.getVersion();
     	String text =  termsOfUse.getText();
@@ -52,13 +50,27 @@ public class TermsOfUseTest extends BaseTest {
     	assertEquals(fingerprint, termsOfUse.getFingerprint());	
     }
     
-    @Test()
     public void loadWrongFile() {
     	Resource resource = new FileSystemResource("not-existent.txt");
     	try {
 			TermsOfUse invalidTermsOfUse = new TermsOfUse("1.1", resource);
 			fail("Exception expected");
 		} catch (UserConsentException e) {}
+    }
+    
+    public void equals() {
+        TermsOfUse termsOfUse = new TermsOfUse("version", "fingerprint");
+        TermsOfUse termsOfUseT1 = new TermsOfUse("version", "fingerprint");
+        TermsOfUse termsOfUseT2 = new TermsOfUse("other-version", "fingerprint");
+        TermsOfUse termsOfUseT3 = new TermsOfUse("version", "other-fingerprint");
+        
+        assertEquals(termsOfUse, termsOfUseT1);
+        assertFalse(termsOfUse.equals(termsOfUseT2));
+        assertEquals(termsOfUse, termsOfUseT3);
+        
+        assertTrue(termsOfUse.equalsFingerprint(termsOfUseT1));
+        assertFalse(termsOfUse.equalsFingerprint(termsOfUseT2));
+        assertFalse(termsOfUse.equalsFingerprint(termsOfUseT3));        
     }
     
 }

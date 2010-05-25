@@ -64,12 +64,6 @@ public class RelyingParty {
 	public void setDisplayDescription(String displayDescription) {
 		this.displayDescription = displayDescription;
 	}
-    
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return entityId;
-    }
 
     /** {@inheritDoc} */
     public int hashCode() {
@@ -95,4 +89,10 @@ public class RelyingParty {
             return false;
         return true;
     }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return "RelyingParty [entityId=" + entityId + "]";
+    }
+    
 }

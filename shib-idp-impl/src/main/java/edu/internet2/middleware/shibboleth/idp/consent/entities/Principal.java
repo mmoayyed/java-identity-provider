@@ -88,23 +88,33 @@ public class Principal {
         return uniqueId;
     }
 
-    public boolean hasAcceptedTermsOfUse(final TermsOfUse termsOfUse) {               
-        // TODO write test for this logic
+    public boolean hasAcceptedTermsOfUse(final TermsOfUse termsOfUse) {       
+        if (agreedTermsOfUses == null) {
+            return false;
+        }
+        
         for (AgreedTermsOfUse agreedTermsOfUse : agreedTermsOfUses) {
-            if (agreedTermsOfUse.getTermsOfUse().equals(termsOfUse))
+            if (agreedTermsOfUse.getTermsOfUse().equalsFingerprint(termsOfUse))
                 return true;
         }
         return false;
     }
     
     public boolean hasApproved(final Collection<Attribute> attributes, final RelyingParty relyingParty) {
-        // TODO write test for this logic
+        if (attributeReleaseConsents == null) {
+            return false;
+        }        
+
         Collection<AttributeReleaseConsent> attributeReleaseConsentsForRelyingParty = getAttributeReleaseConsents(relyingParty);      
+        if (attributeReleaseConsentsForRelyingParty == null) {
+            return false;
+        }
+
         boolean approved;
         for (Attribute attribute: attributes) {
             approved = false;
             for (AttributeReleaseConsent attributeReleaseConsent: attributeReleaseConsentsForRelyingParty) {
-                if (attributeReleaseConsent.getAttribute().equals(attribute)) {
+                if (attributeReleaseConsent.getAttribute().equalsValuesHash(attribute)) {
                         approved = true;
                         break;
                 }
@@ -156,8 +166,8 @@ public class Principal {
      */
     public void setGlobalConsent(final boolean globalConsent) {
         this.globalConsent = globalConsent;
-    }    
-    
+    }
+
     /** {@inheritDoc} */
     public int hashCode() {
         final int prime = 31;
@@ -184,9 +194,7 @@ public class Principal {
     }
 
     /** {@inheritDoc} */
-    @Override
     public String toString() {
-        return uniqueId;
+        return "Principal [uniqueId=" + uniqueId + "]";
     }
-
 }

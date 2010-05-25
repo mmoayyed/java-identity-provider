@@ -16,8 +16,6 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
@@ -28,7 +26,5 @@ import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
 
 @Test
 public class AttributeReleaseControllerTest extends BaseTest {
-
-    private final Logger logger = LoggerFactory.getLogger(AttributeReleaseController.class);
     
 }
