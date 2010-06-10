@@ -42,6 +42,16 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-util</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>0.9.18</version>

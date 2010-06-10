@@ -14,17 +14,19 @@ module.
    - src/test/java
    - src/test/resources
 
-3. Copy the java-shib-idp/shib-idp-parent/module-settings/pom-template.xml in to 
-   your module directory and edit the following lines:
+3. Copy the java-shib-idp/shib-idp-parent/module-settings/pom-template.xml in 
+   to your module directory and edit the following lines:
    - line 14, replace "DESCRIPTIVE NAME" with a decently descriptive name
    - line 15, replace "MODULE_NAME"
 
-4. Add (svn add java-shib-idp/shib-idp-MODULE_NAME) your module to SVN.
+4. From the java-shib-idp directory, add your module to SVN with the command:
+   svn add shib-idp-MODULE_NAME
    
 5. From the java-shib-idp directory, run the following SVN command:
    svn propset svn:externals -F shib-idp-parent/module-settings/externals.svn shib-idp-MODULE_NAME
    
-6. Commit (svn commit shib-idp-MODULE_NAME -m "LOG MESSAGE") your module to SVN
+6. Commit your module to SVN with the following command:
+   svn commit shib-idp-MODULE_NAME -m "LOG MESSAGE" 
 
 7. Perform an svn update to pull in the externalized files (set up via step 5)
 
@@ -38,7 +40,9 @@ Now, from Eclipse
 
 4. Import the module
 
-At this point you should be good to go.
+At this point you should be good to go.  If the module doesn't show up in your
+Package Explorer view, and you're using workbench working sets, be sure to 
+add the new module to your working set.
 
 Some notes:
 * The .checkstyle file or .settings directory are maintained centrally for all
