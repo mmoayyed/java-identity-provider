@@ -11,8 +11,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>../shib-idp-common</module>
         <module>../shib-idp-api</module>
         <module>../shib-idp-impl</module>
+        <module>../shib-idp-attribute</module>
     </modules>
 
     <properties>
