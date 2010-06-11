@@ -16,8 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.idp.attribute.resolver;
 
+import edu.internet2.middleware.shibboleth.idp.service.Service;
+
 /** A service that resolves the attributes for a particular subject. */
-public interface AttributeResolver {
+public interface AttributeResolver extends Service{
 
     /**
      * Gets all the attributes for a given subject.
@@ -28,11 +30,4 @@ public interface AttributeResolver {
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
     public void resolveAttributes(AttributeResolutionContext requestContext) throws AttributeResolutionException;
-
-    /**
-     * Check that the Attribute Resolver is in a valid state and ready to begin receiving resolution requests.
-     * 
-     * @throws AttributeResolutionException if resolver is in an invalid state
-     */
-    public void validate() throws AttributeResolutionException;
 }

@@ -16,8 +16,10 @@
 
 package edu.internet2.middleware.shibboleth.idp.attribute.filtering;
 
+import edu.internet2.middleware.shibboleth.idp.service.Service;
+
 /** Services that filters out attributes and values based upon loaded policies. */
-public interface AttributeFilteringEngine {
+public interface AttributeFilteringEngine extends Service{
 
     /**
      * Filters attributes and values. This filtering process may remove attributes and values but must never add them.
