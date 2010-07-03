@@ -19,7 +19,7 @@
         <!-- Compile Dependencies-->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>shib-idp-api</artifactId>
+            <artifactId>shib-idp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

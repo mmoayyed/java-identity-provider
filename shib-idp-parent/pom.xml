@@ -11,10 +11,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>../shib-idp-common</module>
-        <module>../shib-idp-api</module>
+        <module>../shib-idp-core</module>
         <module>../shib-idp-impl</module>
         <module>../shib-idp-attribute</module>
+        <module>../shib-idp-profile</module>
     </modules>
 
     <properties>
@@ -44,6 +44,16 @@
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>0.9.22</version>
+        </dependency>
+        <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-util</artifactId>
             <version>3.0.0-SNAPSHOT</version>
@@ -52,11 +62,6 @@
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-messaging-api</artifactId>
             <version>3.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>0.9.18</version>
         </dependency>
         <dependency>
             <!-- needed for logback SMTP appender -->
@@ -76,6 +81,12 @@
             <groupId>net.jcip</groupId>
             <artifactId>jcip-annotations</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -153,12 +164,6 @@
             </dependency>
 
             <!-- Provided Dependencies -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.4</version>
-                <scope>provided</scope>
-            </dependency>
 
             <!-- Runtime Dependencies -->
             <dependency>
