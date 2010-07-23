@@ -20,8 +20,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.vt.middleware.crypt.digest.SHA256;
 import edu.vt.middleware.crypt.util.HexConverter;
@@ -30,32 +31,49 @@ import edu.vt.middleware.crypt.util.HexConverter;
  *
  */
 public class TermsOfUse {
-    private final String version;
 
-    private final String fingerprint;
-
-    private final String text;
+    private final Logger logger = LoggerFactory.getLogger(DescriptionBuilder.class);
     
-    public TermsOfUse(final String version, final Resource resource) throws UserConsentException {
-    	this.version = version;
-    	
-    	StringBuilder stringBuilder = new StringBuilder();
-    	try {
-	    	BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream()));    	
-	    	String line = null;
-			while ((line = bufferedReader.readLine()) != null) {
-				stringBuilder.append(line + "\n");
-			}
-			bufferedReader.close();
-		} catch (IOException e) {
-			throw new UserConsentException("Error while initializing terms of use", e);
-		}
+    private String version;
 
-    	this.text = stringBuilder.toString();
-    	String fingerprintInput = version+"|"+text;
-    	this.fingerprint = new SHA256().digest(fingerprintInput.getBytes(), new HexConverter(true));
+    private String fingerprint;
+
+    private String text;
+    
+    private Resource resource;
+    
+    public TermsOfUse() {}
+   
+    public void initialize() throws UserConsentException {
+        if (resource == null || version == null) {
+            throw new UserConsentException("Resource and/or version are not set");
+        }
+               
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream()));       
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line + "\n");
+            }
+            bufferedReader.close();
+        } catch (IOException e) {
+            throw new UserConsentException("Error while initializing terms of use", e);
+        }
+        
+        this.text = stringBuilder.toString();
+        String fingerprintInput = version+"|"+text;
+        this.fingerprint = new SHA256().digest(fingerprintInput.getBytes(), new HexConverter(true));
     }
     
+    public final void setVersion(final String version) {
+        this.version = version;
+    }
+    
+    public final void setResource(final Resource resource) {
+        this.resource = resource;
+    }
+        
     public TermsOfUse(final String version, final String fingerprint) {
     	this.version = version;
     	this.fingerprint = fingerprint;

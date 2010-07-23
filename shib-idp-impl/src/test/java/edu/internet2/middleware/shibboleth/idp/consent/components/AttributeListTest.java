@@ -23,6 +23,8 @@ import static org.testng.AssertJUnit.fail;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
@@ -36,32 +38,32 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 @Test
 public class AttributeListTest extends BaseTest {
 
-    @Autowired
-    private AttributeList attributeList;
+    @Resource(name="attributeListConfiguration")
+    private AttributeListConfiguration attributeListConfiguration;
         
     @Test(dataProvider = "attributeList")
-    public void removeBlacklisted(Collection<Attribute> attributes) {
-        attributes = attributeList.removeBlacklisted(attributes);
+    public void removeBlacklisted(Collection<Attribute> rawAttributes) {
+        
+        Collection<Attribute> attributes = new AttributeList(attributeListConfiguration, rawAttributes);
                 
-        for (Attribute attribute : attributes) {
-            for (String blacklistedAttributeId : attributeList.getBlacklistedAttributeIds()) {
-                if (attribute.getId().equals(blacklistedAttributeId)) {
-                    fail("Blacklisted attribute found");
-                }
+        for (Attribute rawAttribute : rawAttributes) {
+            if (attributeListConfiguration.isBlacklisted(rawAttribute)
+                    && attributes.contains(rawAttribute)) {
+                fail("Blacklisted attribute found"); 
             }
         }
         
     }
-    
+
     @Test(dataProvider = "attributeList")
-    public void sortAttributes(Collection<Attribute> attributes) {     
-        attributes = attributeList.removeBlacklisted(attributes);                  
-        Collection<Attribute> attributesSorted = attributeList.sortAttributes(attributes);
-        List<String> orderedAttributeIds = attributeList.getOrderedAttributeIds();
+    public void sortAttributes(Collection<Attribute> rawAttributes) {     
+        Collection<Attribute> attributes = new AttributeList(attributeListConfiguration, rawAttributes);
+        
+        List<String> sortedAttributeIds = attributeListConfiguration.getSortedAttributeIds();
         int pos = 0;
         boolean onlyUnlisted = false;
-        for (Attribute attribute : attributesSorted) {
-            int index = orderedAttributeIds.indexOf(attribute.getId());
+        for (Attribute attribute : attributes) {
+            int index = sortedAttributeIds.indexOf(attribute.getId());
             if (index >= 0) {
                 assertFalse(onlyUnlisted);
                 assertTrue(index >= pos++);
@@ -69,6 +71,7 @@ public class AttributeListTest extends BaseTest {
                 onlyUnlisted = true;
             }
         }
+       
     }
       
 }

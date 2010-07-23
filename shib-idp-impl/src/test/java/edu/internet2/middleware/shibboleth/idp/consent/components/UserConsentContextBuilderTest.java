@@ -27,18 +27,17 @@ import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
 
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
+import edu.internet2.middleware.shibboleth.idp.consent.ProfileContext;
 import edu.internet2.middleware.shibboleth.idp.consent.StaticTestDataProvider;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 /**
@@ -48,16 +47,16 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 @Test(dataProviderClass = StaticTestDataProvider.class)
 public class UserConsentContextBuilderTest extends BaseTest {
 
-    @Autowired
+    @Resource(name="userConsentContextBuilder")
     private UserConsentContextBuilder userConsentContextBuilder; 
     
-    @Resource(name="mapStorage")
+    @Resource(name="storage")
     private Storage storage;
     
-    @Test(dataProvider = "idpContext")
-    public void uniqueIdNotInAtrributeSet(IdPContext idpContext) {
+    @Test(dataProvider = "profileContext")
+    public void uniqueIdNotInAtrributeSet(ProfileContext profileContext) {
         String uniqueIdAttributeId  = null;
-        Map<String, BaseAttribute<String>> attributes = idpContext.getReleasedAttributes();
+        Map<String, BaseAttribute> attributes = profileContext.getReleasedAttributes();
         for (String id: attributes.keySet()) {
             if (id.equals(userConsentContextBuilder.getUniqueIdAttribute())) {          
                 uniqueIdAttributeId = id;
@@ -65,34 +64,34 @@ public class UserConsentContextBuilderTest extends BaseTest {
         }
         
         attributes.remove(uniqueIdAttributeId);
-        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
-        assertEquals(idpContext.getPrincipalName(), userConsentContext.getPrincipal().getUniqueId());
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
+        assertEquals(profileContext.getPrincipalName(), userConsentContext.getPrincipal().getUniqueId());
     }
     
     
-    @Test(dataProvider = "idpContext")
-    public void firstAccessOfPrincipal(IdPContext idpContext) {
-        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+    @Test(dataProvider = "profileContext")
+    public void firstAccessOfPrincipal(ProfileContext profileContext) {
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
 
         Principal principal = storage.readPrincipal(userConsentContext.getPrincipal().getUniqueId());
         assertEquals(userConsentContext.getPrincipal(), principal);
     }
     
-    @Test(dataProvider = "idpContext")
-    public void firstAccessToRelyingParty(IdPContext idpContext) {
-        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+    @Test(dataProvider = "profileContext")
+    public void firstAccessToRelyingParty(ProfileContext profileContext) {
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
         
         RelyingParty relyingParty = storage.readRelyingParty(userConsentContext.getRelyingParty().getEntityId());
         assertEquals(userConsentContext.getRelyingParty(), relyingParty);
     }
     
-    @Test(dataProvider = "idpContextAndUniqueIdAndAgreedTermsOfUses")
-    public void furtherAccessFromPrincipalCheckTermsOfUse(IdPContext idpContext, String uniqueId, DateTime date, Collection<AgreedTermsOfUse> agreedTermsOfUses) {
+    @Test(dataProvider = "profileContextAndUniqueIdAndAgreedTermsOfUses")
+    public void furtherAccessFromPrincipalCheckTermsOfUse(ProfileContext profileContext, String uniqueId, DateTime date, Collection<AgreedTermsOfUse> agreedTermsOfUses) {
         Principal principal = storage.createPrincipal(uniqueId, date);
-        RelyingParty relyingParty = storage.createRelyingParty(idpContext.getEntityID());
+        RelyingParty relyingParty = storage.createRelyingParty(profileContext.getEntityID());
         persistTermsOfUses(principal, agreedTermsOfUses);
 
-        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
         
         assertEquals(principal, userConsentContext.getPrincipal());
         assertEquals(relyingParty, userConsentContext.getRelyingParty());
@@ -100,13 +99,13 @@ public class UserConsentContextBuilderTest extends BaseTest {
         assertTrue(CollectionUtils.isEqualCollection(agreedTermsOfUses, userConsentContext.getPrincipal().getAgreedTermsOfUses()));
     }
     
-    @Test(dataProvider = "idpContextAndUniqueIdAndAttributeReleaseConsents")
-    public void furtherAccessFromPrincipalCheckAttributeReleaseConsent(IdPContext idpContext, String uniqueId, DateTime date, Collection<AttributeReleaseConsent> attributeReleaseConsents) {
+    @Test(dataProvider = "profileContextAndUniqueIdAndAttributeReleaseConsents")
+    public void furtherAccessFromPrincipalCheckAttributeReleaseConsent(ProfileContext profileContext, String uniqueId, DateTime date, Collection<AttributeReleaseConsent> attributeReleaseConsents) {
         Principal principal = storage.createPrincipal(uniqueId, date);
-        RelyingParty relyingParty = storage.createRelyingParty(idpContext.getEntityID());
+        RelyingParty relyingParty = storage.createRelyingParty(profileContext.getEntityID());
         persistAttributeReleaseConsents(principal, relyingParty, attributeReleaseConsents);
         
-        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
         
         assertEquals(principal, userConsentContext.getPrincipal());
         assertEquals(relyingParty, userConsentContext.getRelyingParty());
@@ -114,10 +113,10 @@ public class UserConsentContextBuilderTest extends BaseTest {
         assertTrue(CollectionUtils.isEqualCollection(attributeReleaseConsents, userConsentContext.getPrincipal().getAttributeReleaseConsents(relyingParty)));
     }  
     
-    @Test(dataProvider = "idpContext")
-    public void furtherAccessToRelyingParty(IdPContext idpContext) {
-        RelyingParty relyingParty = storage.createRelyingParty(idpContext.getEntityID()); 
-        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+    @Test(dataProvider = "profileContext")
+    public void furtherAccessToRelyingParty(ProfileContext profileContext) {
+        RelyingParty relyingParty = storage.createRelyingParty(profileContext.getEntityID()); 
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
      
         assertEquals(relyingParty.getEntityId(), userConsentContext.getRelyingParty().getEntityId());
     }

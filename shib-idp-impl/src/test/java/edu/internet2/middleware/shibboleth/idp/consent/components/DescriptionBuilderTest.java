@@ -20,16 +20,19 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.Test;
+
 import static org.testng.AssertJUnit.fail;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
 
 /**
  * Tests AttributeList.
@@ -38,7 +41,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
 @Test
 public class DescriptionBuilderTest extends BaseTest {
 
-    @Autowired
+    @Resource(name="descriptionBuilder")
     private DescriptionBuilder configuredDescriptionBuilder;
     
     @Test
@@ -85,7 +88,7 @@ public class DescriptionBuilderTest extends BaseTest {
     }
     
     @Test(dataProvider="attachAttributeInfoEnforced")
-    public void attachAttributeInfoEnforcedLocale(DescriptionBuilder descriptionBuilder, Map<String, BaseAttribute<String>> baseAttributes, Collection<Attribute> attributes) {         
+    public void attachAttributeInfoEnforcedLocale(DescriptionBuilder descriptionBuilder, Map<String, BaseAttribute> baseAttributes, Collection<Attribute> attributes) {         
         try {
             descriptionBuilder.attachDescription(baseAttributes, attributes, Locale.GERMAN);
         } catch (UserConsentException e) {
@@ -99,7 +102,7 @@ public class DescriptionBuilderTest extends BaseTest {
     }
     
     @Test(dataProvider="attachAttributeInfoNotEnforced")
-    public void attachAttributeInfoUserLocale(DescriptionBuilder descriptionBuilder, Map<String, BaseAttribute<String>> baseAttributes, Collection<Attribute> attributes) {
+    public void attachAttributeInfoUserLocale(DescriptionBuilder descriptionBuilder, Map<String, BaseAttribute> baseAttributes, Collection<Attribute> attributes) {
         try {
             descriptionBuilder.attachDescription(baseAttributes, attributes, Locale.GERMAN);
         } catch (UserConsentException e) {
@@ -113,7 +116,7 @@ public class DescriptionBuilderTest extends BaseTest {
     }
     
     @Test(dataProvider="attachAttributeInfoNotEnforced")
-    public void attachAttributeInfoPreferredLocale(DescriptionBuilder descriptionBuilder, Map<String, BaseAttribute<String>> baseAttributes, Collection<Attribute> attributes) {
+    public void attachAttributeInfoPreferredLocale(DescriptionBuilder descriptionBuilder, Map<String, BaseAttribute> baseAttributes, Collection<Attribute> attributes) {
         try {
             descriptionBuilder.attachDescription(baseAttributes, attributes, Locale.FRENCH);
         } catch (UserConsentException e) {

@@ -17,9 +17,11 @@
 package edu.internet2.middleware.shibboleth.idp.consent.controller;
 
 import java.util.Collection;
+
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,7 +38,6 @@ import edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBui
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 /**
@@ -44,34 +45,41 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
  */
 
 @Controller
-@RequestMapping("/userconsent/attribute-release")
-@SessionAttributes("idpContext, userConsentContext")
+@RequestMapping("/idp/userconsent/attribute-release")
+@SessionAttributes("userConsentContext")
 public class AttributeReleaseController {
 
     private final Logger logger = LoggerFactory.getLogger(AttributeReleaseControllerTest.class);
     
-    @Autowired
+    @Resource(name="storage")
     private Storage storage;
     
-    @Autowired
+    @Resource(name="descriptionBuilder")
     private DescriptionBuilder descriptionBuilder;
     
-    // TODO set by configuration
-    private boolean globalConsentEnabled;
+    private boolean globalConsentEnabled = false;
     
+    public void setGlobalConsentEnabled(boolean globalConsentEnabled) {
+        this.globalConsentEnabled = globalConsentEnabled;
+    }
         
     @RequestMapping(method = RequestMethod.GET)
-    public String getView(@ModelAttribute("idpContext") IdPContext idpContext, @ModelAttribute("userConsentContext")UserConsentContext userConsentContext, Model model) throws UserConsentException {
+    public String getView(@ModelAttribute("userConsentContext") UserConsentContext userConsentContext, Model model) throws UserConsentException {
+        
+        if (userConsentContext == null) {
+            throw new UserConsentException("No user consent context found");
+        }
+        
         Collection<Attribute> attributes = userConsentContext.getAttributes();
         RelyingParty relyingParty = userConsentContext.getRelyingParty();
         
         //TODO: get Map<String, BaseAttribute>
-        descriptionBuilder.attachDescription(idpContext.getReleasedAttributes(), attributes, userConsentContext.getLocale());
+        descriptionBuilder.attachDescription(userConsentContext.getProfileContext().getReleasedAttributes(), attributes, userConsentContext.getLocale());
         descriptionBuilder.attachDescription(relyingParty, userConsentContext.getLocale());
         
         model.addAttribute("relyingParty", userConsentContext.getRelyingParty());
         model.addAttribute("attributes", attributes);
-        return "redirect:/userconsent/attribute-release";
+        return "redirect:/idp/userconsent/attribute-release/view";
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -96,7 +104,7 @@ public class AttributeReleaseController {
 		}
 		
 		status.setComplete();
-		return "redirect:/userconsent/";
+		return "redirect:/idp/userconsent/";
     }
     
 }

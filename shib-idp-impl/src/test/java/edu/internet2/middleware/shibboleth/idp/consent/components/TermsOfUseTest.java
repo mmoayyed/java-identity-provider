@@ -21,7 +21,6 @@ import static org.testng.AssertJUnit.assertTrue;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.fail;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.testng.annotations.Test;
@@ -38,7 +37,7 @@ import edu.vt.middleware.crypt.util.HexConverter;
 @Test
 public class TermsOfUseTest extends BaseTest {
 
-    @Autowired
+    @javax.annotation.Resource(name="termsOfUse")
     private TermsOfUse termsOfUse;
         
     public void checkFingerprint() {
@@ -53,7 +52,10 @@ public class TermsOfUseTest extends BaseTest {
     public void loadWrongFile() {
     	Resource resource = new FileSystemResource("not-existent.txt");
     	try {
-			TermsOfUse invalidTermsOfUse = new TermsOfUse("1.1", resource);
+			TermsOfUse invalidTermsOfUse = new TermsOfUse();
+			invalidTermsOfUse.setVersion("1.1");
+			invalidTermsOfUse.setResource(resource);
+			invalidTermsOfUse.initialize();
 			fail("Exception expected");
 		} catch (UserConsentException e) {}
     }

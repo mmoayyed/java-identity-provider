@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * Base test
  */
 
-@ContextConfiguration("/test-context.xml")
+@ContextConfiguration("/userconsent-test.xml")
 @Test(dataProviderClass = StaticTestDataProvider.class)
 public class BaseTest extends AbstractTestNGSpringContextTests {
     protected final Logger logger = LoggerFactory.getLogger("Test");

@@ -18,9 +18,6 @@ package edu.internet2.middleware.shibboleth.idp.consent.components;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
@@ -28,71 +25,37 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 /**
  *
  */
-
-public class AttributeList implements Comparator<Attribute> {
-    private List<String> orderedAttributeIds;
-    private Collection<String> blacklistedAttributeIds;
+public class AttributeList extends TreeSet<Attribute> {
 
     /**
-     * @return Returns the ordererdAttributeIds.
+     * 
      */
-    public final List<String> getOrderedAttributeIds() {
-        return orderedAttributeIds;
-    }
+    private static final long serialVersionUID = -2930469891722360921L;
+    
+    private final AttributeListConfiguration configuration;
+    
+    public AttributeList(final AttributeListConfiguration configuration, final Collection<Attribute> attributes) {        
+        super(new Comparator<Attribute>() {
+            public int compare(Attribute o1, Attribute o2) {
+                int last = configuration.size();
+                
+                int rank1 = configuration.indexOf(o1);
+                int rank2 = configuration.indexOf(o2);
+                
+                if (rank2 < 0) rank2 = last++;
+                if (rank1 < 0) rank1 = last++;
+                
+                return rank1 - rank2;
+            }});
 
-    /**
-     * @param ordererdAttributeIds The ordererdAttributeIds to set.
-     */
-    public void setOrderedAttributeIds(List<String> orderedAttributeIds) {
-        this.orderedAttributeIds = orderedAttributeIds;
-    }
-
-    /**
-     * @return Returns the blacklistedAttributeIds.
-     */
-    public final Collection<String> getBlacklistedAttributeIds() {
-        return blacklistedAttributeIds;
-    }
-
-    /**
-     * @param blacklistedAttributeIds The blacklistedAttributeIds to set.
-     */
-    public void setBlacklistedAttributeIds(Collection<String> blacklistedAttributeIds) {
-        this.blacklistedAttributeIds = blacklistedAttributeIds;
-    }
-
-    /** {@inheritDoc} */
-    public int compare(final Attribute attribute1, final Attribute attribute2) {
-        int last = orderedAttributeIds.size();
-        
-        int rank1 = orderedAttributeIds.indexOf(attribute1.getId());
-        int rank2 = orderedAttributeIds.indexOf(attribute2.getId());
-        
-        if (rank2 < 0) rank2 = last++;
-        if (rank1 < 0) rank1 = last++;
-        
-        return rank1 - rank2;
+        this.configuration = configuration;    
+        addAll(attributes);
     }
     
-    private boolean isBlacklisted(final Attribute attribute) {
-        return blacklistedAttributeIds.contains(attribute.getId());
-    }
-    
-    public final Collection<Attribute> removeBlacklisted(final Collection<Attribute> attributes) {
-        final Collection<Attribute> attributesNotBlacklisted = new HashSet<Attribute>();
-        
-        for (Attribute attribute : attributes) {
-            if (!isBlacklisted(attribute)) {
-                attributesNotBlacklisted.add(attribute);
-            }
+    public boolean add(Attribute e) {
+        if (!configuration.isBlacklisted(e)) {
+            return super.add(e);
         }
-        
-        return attributesNotBlacklisted;
-    }
-    
-    public final Collection<Attribute> sortAttributes(final Collection<Attribute> attributes) {
-        final SortedSet<Attribute> sortedAttributes = new TreeSet<Attribute>(this);
-        sortedAttributes.addAll(attributes);
-        return sortedAttributes;
+        return false;
     }
 }

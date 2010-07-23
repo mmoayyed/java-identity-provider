@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="edu.internet2.middleware.shibboleth.idp.consent" />
+
+    <!-- Persistence -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource" />
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+        p:driverClassName="org.hsqldb.jdbcDriver"
+        p:url="jdbc:hsqldb:mem:userconsent"
+        p:username="SA"
+        p:password="" />
+
+    <bean id="storage" class="edu.internet2.middleware.shibboleth.idp.consent.persistence.JDBCStorage" p:dataSource-ref="dataSource" />
+
+    <bean id="mapStorage" class="edu.internet2.middleware.shibboleth.idp.consent.persistence.MapStorage" init-method="initialize"/>
+    <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"/>
+
+    <!-- Configuration -->
+    <bean id="userConsentContextBuilder" class="edu.internet2.middleware.shibboleth.idp.consent.components.UserConsentContextBuilder"
+        p:uniqueIdAttribute="uniqueID" />
+
+    <bean id="termsOfUse" class="edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse" init-method="initialize"
+        p:version="1.0"
+        p:resource="terms-of-use-example.txt" />
+         
+    <bean id="attributeReleaseController" class="edu.internet2.middleware.shibboleth.idp.consent.controller.AttributeReleaseController"
+        p:globalConsentEnabled="false" />
+        
+    <bean id="descriptionBuilder" class="edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBuilder"
+        p:preferredLocale="en-US"
+        p:localeEnforcement="false"/>
+
+    <bean id="relyingPartyBlacklist" class="edu.internet2.middleware.shibboleth.idp.consent.components.RelyingPartyBlacklist">
+         <property name="blacklist">
+            <set>
+                <value>https://sp\.example1\.org/shibboleth</value>
+                <value>https://sp\.example2\.org/shibboleth</value>
+                <value>https://.*\.example3\.org/shibboleth</value>                
+            </set>
+          </property>
+    </bean>
+      
+    <bean id="attributeListConfiguration" class="edu.internet2.middleware.shibboleth.idp.consent.components.AttributeListConfiguration">
+         <property name="sortedAttributeIds">
+            <list>
+                <value>attribute_1</value>
+                <value>attribute_3</value>
+                <value>attribute_4</value>
+                <value>attribute_7</value>   
+                <value>attribute_9</value>           
+            </list>
+          </property>
+         <property name="blacklistedAttributeIds">
+            <set>
+                <value>attribute_2</value>
+                <value>attribute_5</value>               
+            </set>
+          </property>
+    </bean>
+
+</beans>

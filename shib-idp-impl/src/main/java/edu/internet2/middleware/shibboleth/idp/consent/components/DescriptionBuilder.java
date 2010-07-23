@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml2.metadata.EntityDescriptor;
@@ -33,10 +35,11 @@ import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRelyingPartyConfigurationManager;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
 
 /**
  *
@@ -44,24 +47,29 @@ import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
 public class DescriptionBuilder {
 	
     private final Logger logger = LoggerFactory.getLogger(DescriptionBuilder.class);
-    
-	private final LocaleSelection localeSelection;
+   
+	private SAMLMDRelyingPartyConfigurationManager relyingPartyConfigurationManager;
 	
-	private MetadataProvider metadataProvider;
-
-	public DescriptionBuilder(Locale preferedLocale, boolean enforced) {
-		this.localeSelection = new LocaleSelection(preferedLocale, enforced);
+	public void  setSAMLMDRelyingPartyConfigurationManager(SAMLMDRelyingPartyConfigurationManager relyingPartyConfigurationManager) {
+	    this.relyingPartyConfigurationManager = relyingPartyConfigurationManager;
 	}
 	
-	public void setMetadataProvider(MetadataProvider metadataProvider) {
-	    this.metadataProvider = metadataProvider;
+	private Locale preferredLocale = Locale.ENGLISH;
+	private boolean localeEnforcement = false;
+		
+	public void setPreferredLocale(Locale preferredLocale) {
+	    this.preferredLocale = preferredLocale;
 	}
-
+	
+    public void setLocaleEnforcement(boolean localeEnforcement) {
+        this.localeEnforcement = localeEnforcement;
+	}
+	
     /**
 	 * @param attributes
      * @throws UserConsentException 
 	 */
-	public void attachDescription(Map<String, BaseAttribute<String>> baseAttributes, Collection<Attribute> attributes, Locale userLocale) throws UserConsentException {		
+	public void attachDescription(Map<String, BaseAttribute> baseAttributes, Collection<Attribute> attributes, Locale userLocale) throws UserConsentException {		
 		for (Attribute attribute : attributes) {
 			
 			String displayName = attribute.getId();
@@ -93,7 +101,8 @@ public class DescriptionBuilder {
 	 * @throws UserConsentException 
 	 */
 	public void attachDescription(RelyingParty relyingParty, Locale userLocale) throws UserConsentException {
-		EntityDescriptor entityDescriptor = null;
+	    MetadataProvider metadataProvider = relyingPartyConfigurationManager.getMetadataProvider();
+	    EntityDescriptor entityDescriptor = null;
         try {
                 entityDescriptor = metadataProvider.getEntityDescriptor(relyingParty.getEntityId());
         } catch (MetadataProviderException e) {
@@ -142,16 +151,16 @@ public class DescriptionBuilder {
 
 	private final Locale selectLocale(Collection<Locale> availableLocales, Locale userLocale) {
 	    	    
-        if (localeSelection.enforced && availableLocales.contains(localeSelection.locale)) {
-            return localeSelection.locale;
+        if (localeEnforcement && availableLocales.contains(preferredLocale)) {
+            return preferredLocale;
         }
         
         if (availableLocales.contains(userLocale)) {
             return userLocale;
         }
                 
-        if (availableLocales.contains(localeSelection.locale)) {
-            return localeSelection.locale;
+        if (availableLocales.contains(preferredLocale)) {
+            return preferredLocale;
         }
         
         return null;
@@ -178,15 +187,5 @@ public class DescriptionBuilder {
             }
         }
         return null;
-	}
-
-	private static class LocaleSelection {
-		public final Locale locale;
-		public final boolean enforced;
-		
-		private LocaleSelection(Locale locale, boolean enforced) {
-			this.locale = locale;
-			this.enforced = enforced;
-		}
 	}
 }

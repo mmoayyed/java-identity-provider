@@ -20,25 +20,32 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
+import org.infinispan.Cache;
+import org.infinispan.manager.CacheManager;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
  * Tests the map storage.
  */
-public class MapStorageTest extends AbstractStorageTest {
+public class CacheStorageTest extends AbstractStorageTest {
     
     @Resource(name="mapStorage")
-    private MapStorage mapStorage;
-    @Resource(name="cache")
-    private ConcurrentMap<String, ConcurrentMap> cache;
+    private CacheStorage mapStorage;
+    @Resource(name="cacheManager")
+    private CacheManager cacheManager;
+    
+    private Cache<String, ConcurrentMap> cache;
     
     public void setup() {
+       cache = cacheManager.getCache("userconsent");
     }
     
     @BeforeMethod
     public void clear() {
-        cache.clear();
+        if (cache != null) {
+            cache.clear();
+        }
         mapStorage.initialize();
     }
     

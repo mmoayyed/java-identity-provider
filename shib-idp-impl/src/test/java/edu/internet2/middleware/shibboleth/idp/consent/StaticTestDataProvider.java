@@ -36,6 +36,8 @@ import org.opensaml.xml.ConfigurationException;
 import org.opensaml.xml.parse.BasicParserPool;
 import org.testng.annotations.DataProvider;
 
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.common.relyingparty.provider.SAMLMDRelyingPartyConfigurationManager;
 import edu.internet2.middleware.shibboleth.idp.consent.components.DescriptionBuilder;
 import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
@@ -43,9 +45,6 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
-
 
 public class StaticTestDataProvider {
     
@@ -186,39 +185,39 @@ public class StaticTestDataProvider {
         return attributes;
     }
     
-    private static Map<String, BaseAttribute<String>> createBaseAttributes(Collection<Attribute> attributes) {
+    private static Map<String, BaseAttribute> createBaseAttributes(Collection<Attribute> attributes) {
         
-        Map<String, BaseAttribute<String>> baseAttributes = new HashMap<String, BaseAttribute<String>>();     
+        Map<String, BaseAttribute> baseAttributes = new HashMap<String, BaseAttribute>();     
         for (Attribute attribute : attributes) {
-            BaseAttribute<String> baseAttribute = new BaseAttribute<String>(attribute.getId(), attribute.getValues());
+            BaseAttribute baseAttribute = new TestBaseAttribute<String>(attribute.getId(), attribute.getValues());
             baseAttributes.put(attribute.getId(), baseAttribute);
         }
         Attribute uniqueIdAttribute = createUniqueIdAttribute();
-        BaseAttribute<String> baseAttribute = new BaseAttribute<String>(uniqueIdAttribute.getId(), uniqueIdAttribute.getValues());
+        BaseAttribute baseAttribute = new TestBaseAttribute(uniqueIdAttribute.getId(), uniqueIdAttribute.getValues());
         baseAttributes.put(uniqueIdAttribute.getId(), baseAttribute);        
         return baseAttributes;
     }
     
-    private static Map<String, BaseAttribute<String>> createBaseAttributesWithInfo(Collection<Attribute> attributes, Locale[] locales) {
-        Map<String, BaseAttribute<String>> baseAttributes = createBaseAttributes(attributes);
-        for(BaseAttribute<String> baseAttribute : baseAttributes.values()) {
+    private static Map<String, BaseAttribute> createBaseAttributesWithInfo(Collection<Attribute> attributes, Locale[] locales) {
+        Map<String, BaseAttribute> baseAttributes = createBaseAttributes(attributes);
+        for(BaseAttribute baseAttribute : baseAttributes.values()) {
             for (Locale locale : locales) {
                 //if(getRandomBoolean()) {
-                baseAttribute.setDisplayName(locale, baseAttribute.getId()+"-"+locale.getLanguage()+"-name");
+                ((TestBaseAttribute)baseAttribute).setDisplayName(locale, baseAttribute.getId()+"-"+locale.getLanguage()+"-name");
                 //}
                 //if(getRandomBoolean()) {
-                baseAttribute.setDisplayDescription(locale, baseAttribute.getId()+"-"+locale.getLanguage()+"-description");
+                ((TestBaseAttribute)baseAttribute).setDisplayDescription(locale, baseAttribute.getId()+"-"+locale.getLanguage()+"-description");
                 //}
             }
         }
         return baseAttributes;
     }
     
-    private static IdPContext createIdPContext() {
-        return new IdPContext(getRandomEntityId(), createBaseAttributes(createAttributes()));
+    private static ProfileContext createProfileContext() {
+        return new ProfileContext(getRandomString(), getRandomEntityId(), createBaseAttributes(createAttributes()), getRandomDate(), getRandomLocale());
     }
     
-    private static String extractUniqueId(Map<String, BaseAttribute<String>> attributes) {
+    private static String extractUniqueId(Map<String, BaseAttribute> attributes) {
         for (BaseAttribute<String> baseAttribute : attributes.values()) {
             if (baseAttribute.getId().equals("uniqueID")) {
                 return baseAttribute.getValues().iterator().next();
@@ -247,7 +246,15 @@ public class StaticTestDataProvider {
     }
     
     private static DescriptionBuilder createDefautDescriptionBuilder(boolean enforced) {
-        return new DescriptionBuilder(Locale.ENGLISH, enforced);
+        DescriptionBuilder descriptionBuilder = new DescriptionBuilder();
+        descriptionBuilder.setLocaleEnforcement(enforced);
+        return descriptionBuilder;
+    }
+    
+    private static SAMLMDRelyingPartyConfigurationManager createSAMLMDRelyingPartyConfigurationManager(MetadataProvider metadataProvider) {
+        SAMLMDRelyingPartyConfigurationManager relyingPartyConfigurationManager = new SAMLMDRelyingPartyConfigurationManager();
+        relyingPartyConfigurationManager.setMetadataProvider(metadataProvider);
+        return relyingPartyConfigurationManager;
     }
     
     @DataProvider(name = "crudPrincipalTest")
@@ -286,29 +293,29 @@ public class StaticTestDataProvider {
       };
     }
     
-    @DataProvider(name = "idpContext")
-    public static Object[][] idpContext() {         
+    @DataProvider(name = "profileContext")
+    public static Object[][] iprofileContextt() {         
         return new Object[][] {
-                new Object[] {createIdPContext()}
+                new Object[] {createProfileContext()}
       };
     }
     
-    @DataProvider(name = "idpContextAndUniqueIdAndAgreedTermsOfUses")
-    public static Object[][] idpContextAndUniqueIdAndAgreedTermsOfUses() {         
-        IdPContext idpContext = createIdPContext();
-        String uniqueId = extractUniqueId(idpContext.getReleasedAttributes());           
+    @DataProvider(name = "profileContextAndUniqueIdAndAgreedTermsOfUses")
+    public static Object[][] profileContextAndUniqueIdAndAgreedTermsOfUses() {         
+        ProfileContext profileContext = createProfileContext();
+        String uniqueId = extractUniqueId(profileContext.getReleasedAttributes());           
         return new Object[][] {
-                new Object[] {idpContext, uniqueId, getRandomDate(), createAgreedTermsOfUses()}
+                new Object[] {profileContext, uniqueId, getRandomDate(), createAgreedTermsOfUses()}
       };
     }
     
-    @DataProvider(name = "idpContextAndUniqueIdAndAttributeReleaseConsents")
-    public static Object[][] idpContextAndUniqueIdAndAttributeReleaseConsents() {         
-        IdPContext idpContext = createIdPContext();
-        String uniqueId = extractUniqueId(idpContext.getReleasedAttributes());  
+    @DataProvider(name = "profileContextAndUniqueIdAndAttributeReleaseConsents")
+    public static Object[][] profileContextAndUniqueIdAndAttributeReleaseConsents() {         
+        ProfileContext profileContext = createProfileContext();
+        String uniqueId = extractUniqueId(profileContext.getReleasedAttributes());  
              
         return new Object[][] {
-                new Object[] {idpContext, uniqueId, getRandomDate(), createAttributeReleaseConsents()}
+                new Object[] {profileContext, uniqueId, getRandomDate(), createAttributeReleaseConsents()}
       };
     }
     
@@ -331,7 +338,7 @@ public class StaticTestDataProvider {
     public static Object[][] attachRelyingPartyInfoEnforced() {
         DescriptionBuilder descriptionBuilder = createDefautDescriptionBuilder(true);
         MetadataProvider metadataProvider = createMetadataProvider("src/test/resources/sp-metadata.xml");
-        descriptionBuilder.setMetadataProvider(metadataProvider);
+        descriptionBuilder.setSAMLMDRelyingPartyConfigurationManager(createSAMLMDRelyingPartyConfigurationManager(metadataProvider));
         RelyingParty relyingParty = new RelyingParty("https://sp.example.org/shibboleth");
         return new Object[][] {
                 new Object[] {descriptionBuilder, relyingParty}
@@ -342,7 +349,7 @@ public class StaticTestDataProvider {
     public static Object[][] attachRelyingPartyInfoNotEnforced() {
         DescriptionBuilder descriptionBuilder = createDefautDescriptionBuilder(false);
         MetadataProvider metadataProvider = createMetadataProvider("src/test/resources/sp-metadata.xml");
-        descriptionBuilder.setMetadataProvider(metadataProvider);
+        descriptionBuilder.setSAMLMDRelyingPartyConfigurationManager(createSAMLMDRelyingPartyConfigurationManager(metadataProvider));
         RelyingParty relyingParty = new RelyingParty("https://sp.example.org/shibboleth");
         return new Object[][] {
                 new Object[] {descriptionBuilder, relyingParty}

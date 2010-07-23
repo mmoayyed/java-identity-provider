@@ -24,6 +24,9 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
+import org.infinispan.Cache;
+import org.infinispan.config.Configuration;
+import org.infinispan.manager.CacheManager;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,19 +42,26 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 /**
  *
  */
-public class MapStorage implements Storage {
+public class CacheStorage implements Storage {
     
-    private final Logger logger = LoggerFactory.getLogger(MapStorage.class);
+    private final Logger logger = LoggerFactory.getLogger(CacheStorage.class);
     
-    @Resource(name="cache")
-    private ConcurrentMap<String, ConcurrentMap> cache;
+    @Resource(name="cacheManager")
+    private CacheManager cacheManager;
     
     private ConcurrentMap<String, Principal> principalPartition;
     private ConcurrentMap<String, RelyingParty> relyingPartyPartition;
     private ConcurrentMap<Principal, ConcurrentMap<TermsOfUse, AgreedTermsOfUse>> agreedTermsOfUsePartition;
     private ConcurrentMap<Principal, ConcurrentMap<RelyingParty, ConcurrentMap<Attribute, AttributeReleaseConsent>>> attributeReleaseConsentPartition;
     
-    public void initialize() {
+    public void initialize() {      
+        Cache<String, ConcurrentMap> cache = cacheManager.getCache("userconsent");
+        
+        if (cache == null) {
+            cacheManager.defineConfiguration("userconsent", new Configuration());
+            cache = cacheManager.getCache("userconsent");
+        }
+        
         cache.putIfAbsent("principalPartition", new ConcurrentHashMap<String, Principal>());
         cache.putIfAbsent("relyingPartyPartition", new ConcurrentHashMap<String, RelyingParty>());
         cache.putIfAbsent("agreedTermsOfUsePartition",
@@ -59,10 +69,10 @@ public class MapStorage implements Storage {
         cache.putIfAbsent("attributeReleaseConsentPartition",
                 new ConcurrentHashMap<Principal, ConcurrentMap<RelyingParty, ConcurrentMap<Attribute, AttributeReleaseConsent>>>());   
         
-        principalPartition = cache.get("principalPartition");
-        relyingPartyPartition = cache.get("relyingPartyPartition");
-        agreedTermsOfUsePartition = cache.get("agreedTermsOfUsePartition");
-        attributeReleaseConsentPartition = cache.get("attributeReleaseConsentPartition");    
+        principalPartition = (ConcurrentMap<String, Principal>) cache.get("principalPartition");
+        relyingPartyPartition = (ConcurrentMap<String, RelyingParty>) cache.get("relyingPartyPartition");
+        agreedTermsOfUsePartition = (ConcurrentMap<Principal, ConcurrentMap<TermsOfUse, AgreedTermsOfUse>>) cache.get("agreedTermsOfUsePartition");
+        attributeReleaseConsentPartition = (ConcurrentMap<Principal, ConcurrentMap<RelyingParty, ConcurrentMap<Attribute, AttributeReleaseConsent>>>) cache.get("attributeReleaseConsentPartition");    
     }
     
     /** {@inheritDoc} */

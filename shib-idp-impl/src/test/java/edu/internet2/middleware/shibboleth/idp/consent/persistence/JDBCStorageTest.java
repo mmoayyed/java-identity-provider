@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback=true)
 public class JDBCStorageTest extends AbstractStorageTest {
     
-    @Resource(name="jdbcStorage")
+    @Resource(name="storage")
     private Storage jdbcStorage;
     
     @Parameters({ "jdbcInitFile" })

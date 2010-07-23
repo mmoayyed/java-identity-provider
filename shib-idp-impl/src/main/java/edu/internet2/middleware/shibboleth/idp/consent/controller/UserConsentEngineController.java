@@ -18,6 +18,8 @@ package edu.internet2.middleware.shibboleth.idp.consent.controller;
 
 import java.util.Collection;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +31,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 
+
+import edu.internet2.middleware.shibboleth.idp.consent.ProfileContext;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
+import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.components.RelyingPartyBlacklist;
 import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.components.UserConsentContextBuilder;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 /**
@@ -45,27 +49,31 @@ import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 @Controller
 @RequestMapping("/userconsent")
-@SessionAttributes("idpContext, userConsentContext")
+@SessionAttributes("userConsentContext")
 public class UserConsentEngineController {
 
     private final Logger logger = LoggerFactory.getLogger(UserConsentEngineControllerTest.class);
 
-    @Autowired
+    @Resource(name="storage")
     private Storage storage;
     
-    @Autowired
+    @Resource(name="termsOfUse")
     private TermsOfUse termsOfUse;
     
-    @Autowired
+    @Resource(name="relyingPartyBlacklist")
     private RelyingPartyBlacklist relyingPartyBlacklist;
     
-    @Autowired
+    @Resource(name="userConsentContextBuilder")
     private UserConsentContextBuilder userConsentContextBuilder;
     
     @RequestMapping(method = RequestMethod.GET)
-    public String service(@ModelAttribute("idpContext") IdPContext idpContext, @RequestParam("consent-revocation") boolean consentRevocationRequested) {        
+    public String service(@ModelAttribute("profileContext") ProfileContext profileContext, @RequestParam("consent-revocation") boolean consentRevocationRequested) throws UserConsentException {        
         
-        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(idpContext);
+        if (profileContext == null) {
+            throw new UserConsentException("No profile context found");
+        }
+        
+        UserConsentContext userConsentContext = userConsentContextBuilder.buildUserConsentContext(profileContext);
         
         Principal principal = userConsentContext.getPrincipal();
         RelyingParty relyingParty = userConsentContext.getRelyingParty();
@@ -74,7 +82,7 @@ public class UserConsentEngineController {
         	logger.debug("Terms of use are not configured");
         } else if (!principal.hasAcceptedTermsOfUse(termsOfUse)) {
         	logger.info("{} has not accepted {}", principal, termsOfUse);
-        	return "redirect:/userconsent/tou";
+        	return "redirect:/idp/userconsent/terms-of-use";
         }
         
         if (consentRevocationRequested) {
@@ -104,7 +112,7 @@ public class UserConsentEngineController {
         }
         
     	logger.debug("Redirect to attribute release view");
-        return "redirect:/userconsent/attribute-release";
+        return "redirect:/idp/userconsent/attribute-release";
         
     }
 }

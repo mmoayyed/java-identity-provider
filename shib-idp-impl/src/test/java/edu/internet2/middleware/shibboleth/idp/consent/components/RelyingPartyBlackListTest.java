@@ -19,7 +19,8 @@ package edu.internet2.middleware.shibboleth.idp.consent.components;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
+
 import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.consent.BaseTest;
@@ -32,7 +33,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 @Test
 public class RelyingPartyBlackListTest extends BaseTest {
 
-    @Autowired
+    @Resource(name="relyingPartyBlacklist")
     private RelyingPartyBlacklist relyingPartyBlacklist;
        
     @Test()

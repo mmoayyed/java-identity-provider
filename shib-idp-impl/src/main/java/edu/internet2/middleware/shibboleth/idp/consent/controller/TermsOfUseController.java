@@ -16,6 +16,8 @@
 
 package edu.internet2.middleware.shibboleth.idp.consent.controller;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.support.SessionStatus;
 
 
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
+import edu.internet2.middleware.shibboleth.idp.consent.UserConsentException;
 import edu.internet2.middleware.shibboleth.idp.consent.components.TermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
@@ -45,21 +48,26 @@ public class TermsOfUseController {
 
     private final Logger logger = LoggerFactory.getLogger(TermsOfUseControllerTest.class);
 
-    @Autowired
+    @Resource(name="termsOfUse")
     private TermsOfUse termsOfUse;
 
-    @Autowired
+    @Resource(name="storage")
     private Storage storage;
 
     @RequestMapping(method = RequestMethod.GET)
     public String getView(Model model) {
         model.addAttribute("terms-of-use", termsOfUse);
-        return "redirect:/userconsent/terms-of-use";
+        return "redirect:/idp/userconsent/terms-of-use/view";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public String submit(@RequestParam("accept") boolean accepted, UserConsentContext userConsentContext, BindingResult result, SessionStatus status) {
-    	Principal principal = userConsentContext.getPrincipal();
+    public String submit(@RequestParam("accept") boolean accepted, UserConsentContext userConsentContext, BindingResult result, SessionStatus status) throws UserConsentException {
+    	
+        if (userConsentContext == null) {
+            throw new UserConsentException("No user consent context found");
+        }
+        
+        Principal principal = userConsentContext.getPrincipal();
     	if (accepted) {
     		logger.debug("Principal {} accepted terms of use {}", principal, termsOfUse);
             
@@ -70,11 +78,11 @@ public class TermsOfUseController {
     		}
     		    
             status.setComplete();
-            return "redirect:/userconsent/";
+            return "redirect:/idp/userconsent/";
         } else {
         	logger.debug("Principal {} did not accepted terms of use {}", principal, termsOfUse);
         	result.reject("terms-of-use.not-accepted");
-            return "terms-of-use";
+            return "redirect:/idp/userconsent/terms-of-use/view";
         }
     }
 }

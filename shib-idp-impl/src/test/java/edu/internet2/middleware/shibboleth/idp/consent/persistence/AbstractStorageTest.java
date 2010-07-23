@@ -42,7 +42,7 @@ import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
 
 
-@ContextConfiguration("/test-context.xml")
+@ContextConfiguration("/userconsent-test.xml")
 @Test(dataProviderClass = StaticTestDataProvider.class)
 public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpringContextTests {
     

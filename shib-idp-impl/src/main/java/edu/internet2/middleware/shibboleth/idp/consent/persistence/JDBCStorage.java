@@ -119,7 +119,8 @@ public class JDBCStorage implements Storage {
         try {
             jdbcTemplate.update(sql, uniqueId, accessDate.toDate(), accessDate.toDate(), false);
         } catch (DataAccessException e) {
-            logger.warn("Principal already exists {}", uniqueId, e);        }
+            logger.warn("Principal already exists {}", uniqueId, e);
+        }
         return readPrincipal(uniqueId);
     }
 

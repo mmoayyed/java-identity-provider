@@ -27,14 +27,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import edu.internet2.middleware.shibboleth.common.attribute.BaseAttribute;
+import edu.internet2.middleware.shibboleth.idp.consent.ProfileContext;
 import edu.internet2.middleware.shibboleth.idp.consent.UserConsentContext;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AgreedTermsOfUse;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Attribute;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.AttributeReleaseConsent;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.Principal;
 import edu.internet2.middleware.shibboleth.idp.consent.entities.RelyingParty;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.BaseAttribute;
-import edu.internet2.middleware.shibboleth.idp.consent.mock.IdPContext;
 import edu.internet2.middleware.shibboleth.idp.consent.persistence.Storage;
 
 
@@ -43,11 +43,11 @@ public class UserConsentContextBuilder {
 
     private final Logger logger = LoggerFactory.getLogger(UserConsentContextBuilder.class);
     
-    @Resource(name="mapStorage")
+    @Resource(name="storage")
     private Storage storage;
     
-    @Autowired
-    private AttributeList attributeList;
+    @Resource(name="attributeListConfiguration")
+    private AttributeListConfiguration attributeListConfiguration;
     
     private String uniqueIdAttribute;
     
@@ -66,39 +66,33 @@ public class UserConsentContextBuilder {
     }
 
     // TODO synchronized?
-    public final UserConsentContext buildUserConsentContext(IdPContext idpContext) {
+    public final UserConsentContext buildUserConsentContext(ProfileContext profileContext) {
     	
-    	final DateTime accessDate = new DateTime();
     	
-        final RelyingParty relyingParty = setupRelyingParty(idpContext.getEntityID());
+        final RelyingParty relyingParty = setupRelyingParty(profileContext.getEntityID()); 
+        Collection<Attribute> rawAttributes = setupAttributes(profileContext.getReleasedAttributes());
         
-        Collection<Attribute> attributes = setupAttributes(idpContext.getReleasedAttributes());
-
-             
-        String uniqueId = findUniqueId(attributes);
+        String uniqueId = findUniqueId(rawAttributes);
         if (uniqueId == null) {
-            uniqueId = idpContext.getPrincipalName();
+            uniqueId = profileContext.getPrincipalName();
             logger.warn("Using principalName {} as uniqueId", uniqueId);
         }
-        
+        final DateTime accessDate = profileContext.getAccessDate();
         final Principal principal = setupPrincipal(uniqueId, accessDate);
 
         final Collection<AttributeReleaseConsent> attributeReleaseConsent = storage.readAttributeReleaseConsents(principal, relyingParty);
         principal.setAttributeReleaseConsents(relyingParty, attributeReleaseConsent);
         
-        // remove blacklisted attributes
-        attributes = attributeList.removeBlacklisted(attributes);
+        // Use AttributeList (blacklist aware, sorted)
+        Collection<Attribute> attributes = new AttributeList(attributeListConfiguration, rawAttributes);
         
-        // sort attributes
-        attributes = attributeList.sortAttributes(attributes);
-        
-        return new UserConsentContext(principal, relyingParty, attributes, accessDate, idpContext.getRequest().getLocale());
+        return new UserConsentContext(profileContext, principal, relyingParty, attributes, accessDate, profileContext.getLocale());
     }
     
     /**
 	 * @param attributes
 	 */
-    private final Collection<Attribute> setupAttributes(Map<String, BaseAttribute<String>> baseAttributes) {
+    private final Collection<Attribute> setupAttributes(Map<String, BaseAttribute> baseAttributes) {
         Collection<Attribute> attributes = new HashSet<Attribute>();
         for (BaseAttribute<String> baseAttribute : baseAttributes.values()) {
         	Collection<String> attributeValues = new HashSet<String>();

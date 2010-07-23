@@ -1,7 +1,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
 <suite name="UserConsentTestSuite" verbose="1">
-    <parameter name="jdbcInitFile" value="file:src/main/resources/edu/internet2/middleware/shibboleth/idp/consent/hsqldb-init.sql" />    
+    <parameter name="jdbcInitFile" value="file:src/installer/resources/userconsent-hsqldb-init.sql" />    
     
     <test name="persistenceTests" enabled="true">  
         <packages>       
