@@ -31,14 +31,23 @@ import org.slf4j.LoggerFactory;
 /** Servlet responsible for dispatching incoming requests to the appropriate {@link ProfileHandler}. */
 public class ProfileRequestDispatcherServlet extends HttpServlet {
 
+    /**
+     * Name of the Servlet initialization parameter that contains the name of the context attribute that contains the
+     * {@link ProfileHandlerManager} used by this dispatcher. Default value: {@value} .
+     */
+    public static final String HANDLER_MANAGER_INIT_PARAM = "handlerManagerId";
+
+    /**
+     * Default name of the context attribute that contains the the {@link ProfileHandlerManager} used by this
+     * dispatcher. Default value: {@value}
+     */
+    public static final String DEFAULT_HANDLER_MANAGER_ID = "shibboleth.HandlerManager";
+
     /** Serial version UID. */
     // TODO private static final long serialVersionUID = 3750548606378986211L;
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ProfileRequestDispatcherServlet.class);
-
-    /** Access logger. */
-    // TODO private final Logger accessLog;
 
     /** Profile handler manager. */
     private ProfileHandlerManager handlerManager;
@@ -47,9 +56,9 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        String handlerManagerId = config.getInitParameter("handlerManagerId");
-        if (Strings.isNullOrEmpty(handlerManagerId)) {
-            handlerManagerId = "shibboleth.HandlerManager";
+        String handlerManagerId = Strings.trimOrNull(config.getInitParameter(HANDLER_MANAGER_INIT_PARAM));
+        if (handlerManager == null) {
+            handlerManagerId = DEFAULT_HANDLER_MANAGER_ID;
         }
 
         handlerManager = (ProfileHandlerManager) getServletContext().getAttribute(handlerManagerId);

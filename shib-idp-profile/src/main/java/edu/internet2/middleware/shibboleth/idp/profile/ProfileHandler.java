@@ -36,7 +36,7 @@ public interface ProfileHandler {
      * path component '/profiles' will not show up in this string).
      * 
      * 
-     * @return path to which the profile is bound
+     * @return path to which the profile is bound, never null
      */
     public String getProfilePath();
     
