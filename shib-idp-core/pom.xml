@@ -30,13 +30,5 @@
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-test</artifactId>
-        </dependency>
     </dependencies>
 </project>
