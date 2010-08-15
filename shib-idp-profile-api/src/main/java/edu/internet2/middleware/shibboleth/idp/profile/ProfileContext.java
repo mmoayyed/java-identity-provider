@@ -23,7 +23,10 @@ import org.opensaml.messaging.context.impl.BasicInOutOperationContext;
 
 /** Context that holds the ongoing state of a profile conversation. */
 public class ProfileContext<InboundMessageType, OutboundMessageType> extends BasicInOutOperationContext<InboundMessageType, OutboundMessageType> {
-        
+    
+    /** Indicates whether the current profile is passive, that is, not capable of showing a UI to a user, or not. */
+    private boolean passiveProfile;
+    
     /** Current HTTP request. */
     private transient HttpServletRequest httpRequest;
     
@@ -33,6 +36,24 @@ public class ProfileContext<InboundMessageType, OutboundMessageType> extends Bas
     /** Constructor. */
     public ProfileContext() {
         super();
+    }
+    
+    /**
+     * Gets whether the current profile is passive, that is, not capable of showing a UI to a user, or not.
+     * 
+     * @return whether the current profile is passive, that is, not capable of showing a UI to a user, or not
+     */
+    public boolean isPassiveProfile() {
+        return passiveProfile;
+    }
+    
+    /**
+     * Sets whether the current profile is passive, that is, not capable of showing a UI to a user, or not.
+     * 
+     * @param isPassive whether the current profile is passive, that is, not capable of showing a UI to a user, or not
+     */
+    public void setPassiveProfile(boolean isPassive) {
+        passiveProfile = isPassive;
     }
     
     /**

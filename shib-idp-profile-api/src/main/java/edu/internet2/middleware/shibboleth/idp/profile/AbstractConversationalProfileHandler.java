@@ -46,6 +46,9 @@ public abstract class AbstractConversationalProfileHandler<InboundMessageType, O
      * this profile.
      */
     private final String profilePath;
+    
+    /** Whether this profile is passive or active.*/
+    private boolean passiveProfile;
 
     /**
      * Constructor.
@@ -66,6 +69,20 @@ public abstract class AbstractConversationalProfileHandler<InboundMessageType, O
     /** {@inheritDoc} */
     public String getProfilePath() {
         return profilePath;
+    }
+    
+    /** {@inheritDoc} */
+    public boolean isPassiveProfile() {
+        return passiveProfile;
+    }
+    
+    /**
+     * Sets whether this profile is passive.
+     * 
+     * @param isPassive whether this profile is passive
+     */
+    public void setPassiveProfile(boolean isPassive) {
+        passiveProfile = isPassive;
     }
 
     /** {@inheritDoc} */
