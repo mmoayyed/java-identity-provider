@@ -11,7 +11,7 @@
         <relativePath>../shib-idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: SAML 1 & 2 Profile Implementation</name>
+    <name>Shibboleth IdP :: SAML 1 and 2 Profile Implementation</name>
     <artifactId>shib-idp-profile-saml-impl</artifactId>
     <packaging>jar</packaging>
 

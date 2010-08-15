@@ -12,9 +12,13 @@
 
     <modules>
         <module>../shib-idp-core</module>
-        <module>../shib-idp-impl</module>
-        <module>../shib-idp-attribute</module>
-        <module>../shib-idp-profile</module>
+        <module>../shib-idp-authn-api</module>
+        <module>../shib-idp-attribute-api</module>
+        <module>../shib-idp-attribute-impl</module>
+        <module>../shib-idp-consent-api</module>
+        <module>../shib-idp-consent-impl</module>
+        <module>../shib-idp-profile-api</module>
+        <module>../shib-idp-profile-saml-impl</module>
     </modules>
 
     <properties>

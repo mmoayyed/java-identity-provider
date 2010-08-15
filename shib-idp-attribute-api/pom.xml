@@ -11,8 +11,8 @@
         <relativePath>../shib-idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: Profiles</name>
-    <artifactId>shib-idp-profile</artifactId>
+    <name>Shibboleth IdP :: Attribute API</name>
+    <artifactId>shib-idp-attribute-api</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -31,5 +31,4 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-
 </project>
