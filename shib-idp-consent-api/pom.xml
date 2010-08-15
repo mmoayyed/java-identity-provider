@@ -19,7 +19,7 @@
         <!-- Compile Dependencies -->
         <dependency>
             <groupId>edu.internet2.middleware.shibboleth.idp</groupId>
-            <artifactId>shib-idp-core</artifactId>
+            <artifactId>shib-idp-attribute-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
