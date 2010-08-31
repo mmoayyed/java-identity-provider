@@ -30,13 +30,16 @@ import edu.internet2.middleware.shibboleth.idp.attribute.Attribute;
 
 /** A context which carries and collects information through an attribute resolution. */
 @NotThreadSafe
-public final class AttributeResolutionContext implements Subcontext {
+public class AttributeResolutionContext implements Subcontext {
 
     /** Context which acts as the owner or parent of this context. */
     private final SubcontextContainer parentContext;
 
     /** IDs of attributes that have been requested to be resolved. */
     private Set<String> requestAttributes;
+
+    /** Plugins that be resolved. */
+    private Map<String, BaseResolverPlugin<?>> resolvedPlugins;
 
     /** Attributes which have been resolved. */
     private Map<String, Attribute<?>> resolvedAttributes;
@@ -51,6 +54,7 @@ public final class AttributeResolutionContext implements Subcontext {
         parent.addSubcontext(this);
 
         requestAttributes = new LazySet<String>();
+        resolvedPlugins = new LazyMap<String, BaseResolverPlugin<?>>();
         resolvedAttributes = new LazyMap<String, Attribute<?>>();
     }
 
@@ -66,6 +70,31 @@ public final class AttributeResolutionContext implements Subcontext {
      */
     public Set<String> getRequestAttributes() {
         return requestAttributes;
+    }
+
+    /**
+     * Sets the set of attributes requested to be resolved.
+     * 
+     * @param attributeIds attributes requested to be resolved
+     */
+    public void setRequestAttributes(final Set<String> attributeIds) {
+        LazySet<String> newIds = new LazySet<String>();
+        if (attributeIds != null && !attributeIds.isEmpty()) {
+            newIds.addAll(attributeIds);
+        }
+
+        requestAttributes = newIds;
+    }
+
+    /**
+     * Gets the resolver plugins that have been resolved. Each plugin is wrapped in proxy that caches the plugin's
+     * response so subsequent {@link BaseResolverPlugin#resolve(AttributeResolutionContext)} calls return the same
+     * results as the initial request.
+     * 
+     * @return resolver plugins that have been resolved
+     */
+    public Map<String, BaseResolverPlugin<?>> getResolvedPlugins() {
+        return resolvedPlugins;
     }
 
     /**

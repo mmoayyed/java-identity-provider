@@ -16,12 +16,37 @@
 
 package edu.internet2.middleware.shibboleth.idp.attribute.resolver;
 
+import java.util.List;
+import java.util.Timer;
+
 import net.jcip.annotations.ThreadSafe;
-import edu.internet2.middleware.shibboleth.idp.service.Service;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
+
+import edu.internet2.middleware.shibboleth.idp.service.AbstractSpringReloadableService;
+import edu.internet2.middleware.shibboleth.idp.service.ServiceException;
+
+//TODO perf metrics
 
 /** A service that resolves the attributes for a particular subject. */
 @ThreadSafe
-public interface AttributeResolver extends Service{
+public class AttributeResolver extends AbstractSpringReloadableService {
+
+    /**
+     * Constructor.
+     * 
+     * @param id the unique ID for this service
+     * @param parent the parent application context for this context, may be null if there is no parent
+     * @param configs configuration resources for the service
+     * @param backgroundTaskTimer timer used to schedule background processes
+     * @param pollingFrequency frequency, in milliseconds, that the configuration resources are polled for changes
+     */
+    public AttributeResolver(String id, ApplicationContext parent, List<Resource> configs, Timer backgroundTaskTimer,
+            long pollingFrequency) {
+        super(id, parent, configs, backgroundTaskTimer, pollingFrequency);
+        // TODO Auto-generated constructor stub
+    }
 
     /**
      * Gets all the attributes for a given subject.
@@ -31,5 +56,13 @@ public interface AttributeResolver extends Service{
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public void resolveAttributes(final AttributeResolutionContext requestContext) throws AttributeResolutionException;
+    public void resolveAttributes(final AttributeResolutionContext requestContext) throws AttributeResolutionException {
+        // TODO Auto-generated method stub
+    }
+
+    /** {@inheritDoc} */
+    public void validate() throws ServiceException {
+        // TODO Auto-generated method stub
+
+    }
 }
