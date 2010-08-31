@@ -34,7 +34,7 @@ public class AttributeResolutionException extends AttributeException {
      * 
      * @param message exception message
      */
-    public AttributeResolutionException(String message) {
+    public AttributeResolutionException(final String message) {
         super(message);
     }
 
@@ -43,7 +43,7 @@ public class AttributeResolutionException extends AttributeException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(Exception wrappedException) {
+    public AttributeResolutionException(final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -53,7 +53,7 @@ public class AttributeResolutionException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(String message, Exception wrappedException) {
+    public AttributeResolutionException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

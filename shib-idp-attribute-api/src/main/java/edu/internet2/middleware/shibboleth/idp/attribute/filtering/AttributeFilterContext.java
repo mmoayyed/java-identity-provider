@@ -17,11 +17,9 @@
 package edu.internet2.middleware.shibboleth.idp.attribute.filtering;
 
 import java.util.Map;
-import java.util.UUID;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
-import org.opensaml.messaging.context.Context;
+import net.jcip.annotations.NotThreadSafe;
+
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.util.collections.LazyMap;
@@ -29,16 +27,11 @@ import org.opensaml.util.collections.LazyMap;
 import edu.internet2.middleware.shibboleth.idp.attribute.Attribute;
 
 /** Context used to collect data as attributes are filtered. */
-public final class AttributeFilterContext implements Context, Subcontext {
+@NotThreadSafe
+public final class AttributeFilterContext implements Subcontext {
 
     /** Context which acts as the owner or parent of this context. */
-    private SubcontextContainer parentContext;
-
-    /** Unique identifier of the context. */
-    private String id;
-
-    /** Instant this context was created. */
-    private DateTime creationInstant;
+    private final SubcontextContainer parentContext;
 
     /** Attributes which have been resolved. */
     private Map<String, Attribute<?>> resolvedAttributes;
@@ -49,13 +42,9 @@ public final class AttributeFilterContext implements Context, Subcontext {
     /**
      * Constructor.
      * 
-     * @param subject the subject for whom attributes will be resolved
-     * @param additionalData additional data about the context in which the resolution is taking place
+     * @param parent the parent of this context
      */
-    public AttributeFilterContext(SubcontextContainer parent) {
-        id = UUID.randomUUID().toString();
-        creationInstant = new DateTime(ISOChronology.getInstanceUTC());
-
+    public AttributeFilterContext(final SubcontextContainer parent) {
         parentContext = parent;
         parent.addSubcontext(this);
 
@@ -66,16 +55,6 @@ public final class AttributeFilterContext implements Context, Subcontext {
     /** {@inheritDoc} */
     public SubcontextContainer getOwner() {
         return parentContext;
-    }
-
-    /** {@inheritDoc} */
-    public String getId() {
-        return id;
-    }
-
-    /** {@inheritDoc} */
-    public DateTime getCreationTime() {
-        return creationInstant;
     }
 
     /**

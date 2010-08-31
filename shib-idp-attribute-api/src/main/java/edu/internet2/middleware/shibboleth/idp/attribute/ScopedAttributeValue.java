@@ -16,20 +16,21 @@
 
 package edu.internet2.middleware.shibboleth.idp.attribute;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.opensaml.util.Assert;
 import org.opensaml.util.Objects;
 import org.opensaml.util.Strings;
 
-/**
- * An attribute value with an associated scope.
- */
+/** An attribute value with an associated scope. */
+@ThreadSafe
 public class ScopedAttributeValue {
 
     /** Value of the attribute. */
-    private String value;
+    private final String value;
 
     /** Scope of the attribute value. */
-    private String scope;
+    private final String scope;
 
     /**
      * Constructor.
@@ -37,7 +38,7 @@ public class ScopedAttributeValue {
      * @param attributeValue value of the attribute, never null
      * @param valueScope scope of the value, never null
      */
-    public ScopedAttributeValue(String attributeValue, String valueScope) {
+    public ScopedAttributeValue(final String attributeValue, final String valueScope) {
         value = Strings.trimOrNull(attributeValue);
         Assert.isNotNull(value, "Attribute value may not be null or empty");
 

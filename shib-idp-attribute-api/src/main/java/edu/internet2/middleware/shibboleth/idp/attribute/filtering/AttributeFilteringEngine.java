@@ -16,9 +16,11 @@
 
 package edu.internet2.middleware.shibboleth.idp.attribute.filtering;
 
+import net.jcip.annotations.ThreadSafe;
 import edu.internet2.middleware.shibboleth.idp.service.Service;
 
 /** Services that filters out attributes and values based upon loaded policies. */
+@ThreadSafe
 public interface AttributeFilteringEngine extends Service{
 
     /**
@@ -30,5 +32,5 @@ public interface AttributeFilteringEngine extends Service{
      * @throws AttributeFilteringException thrown if there is a problem retrieving or applying the attribute filter
      *             policy
      */
-    public void filterAttributes(AttributeFilterContext filterContext) throws AttributeFilteringException;
+    public void filterAttributes(final AttributeFilterContext filterContext) throws AttributeFilteringException;
 }

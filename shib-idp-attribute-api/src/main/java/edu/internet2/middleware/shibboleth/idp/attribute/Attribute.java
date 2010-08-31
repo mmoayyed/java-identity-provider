@@ -21,22 +21,27 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.jcip.annotations.ThreadSafe;
+
+import org.opensaml.util.Assert;
+import org.opensaml.util.Strings;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
 
 /**
- * A Shibboleth attribute. Each attribute represents one piece of information about a user and has associated encoders
- * used to turn that information in to protocol-specific formats.
+ * Each attribute represents one piece of information about a user and has associated encoders used to turn that
+ * information in to protocol-specific formats.
  * 
  * Instances of {@link Attribute} are compared using their IDs. That is, two attributes are considered the same if they
  * have the same ID, regardless of whether their display names, descriptions, values, or encoders are the same.
  * 
  * @param <ValueType> the object type of the values for this attribute
  */
+@ThreadSafe
 public class Attribute<ValueType> implements Comparable<Attribute> {
 
     /** ID of this attribute. */
-    private String id;
+    private final String id;
 
     /** Localized human intelligible attribute names. */
     private Map<Locale, String> displayNames;
@@ -50,8 +55,16 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
     /** Encoders that may be used to encode this attribute. */
     private List<AttributeEncoder<?>> encoders;
 
-    /** Constructor. */
-    public Attribute(String attributeId) {
+    /**
+     * Constructor.
+     * 
+     * @param attributeId unique identifier of the attribute
+     */
+    public Attribute(final String attributeId) {
+        id = Strings.trimOrNull(attributeId);
+        Assert.isNotNull(id, "Attribute ID may not be null");
+
+        values = new LazyList<ValueType>();
         displayNames = new LazyMap<Locale, String>();
         displayDescriptions = new LazyMap<Locale, String>();
         encoders = new LazyList<AttributeEncoder<?>>();

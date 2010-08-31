@@ -16,9 +16,11 @@
 
 package edu.internet2.middleware.shibboleth.idp.attribute.resolver;
 
+import net.jcip.annotations.ThreadSafe;
 import edu.internet2.middleware.shibboleth.idp.service.Service;
 
 /** A service that resolves the attributes for a particular subject. */
+@ThreadSafe
 public interface AttributeResolver extends Service{
 
     /**
@@ -29,5 +31,5 @@ public interface AttributeResolver extends Service{
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public void resolveAttributes(AttributeResolutionContext requestContext) throws AttributeResolutionException;
+    public void resolveAttributes(final AttributeResolutionContext requestContext) throws AttributeResolutionException;
 }

@@ -34,7 +34,7 @@ public class AttributeFilteringException extends AttributeException {
      * 
      * @param message exception message
      */
-    public AttributeFilteringException(String message) {
+    public AttributeFilteringException(final String message) {
         super(message);
     }
 
@@ -43,7 +43,7 @@ public class AttributeFilteringException extends AttributeException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeFilteringException(Exception wrappedException) {
+    public AttributeFilteringException(final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -53,7 +53,7 @@ public class AttributeFilteringException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeFilteringException(String message, Exception wrappedException) {
+    public AttributeFilteringException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

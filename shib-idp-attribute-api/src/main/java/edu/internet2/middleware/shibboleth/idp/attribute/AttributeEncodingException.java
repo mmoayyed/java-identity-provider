@@ -32,7 +32,7 @@ public class AttributeEncodingException extends AttributeException {
      * 
      * @param message exception message
      */
-    public AttributeEncodingException(String message) {
+    public AttributeEncodingException(final String message) {
         super(message);
     }
 
@@ -41,7 +41,7 @@ public class AttributeEncodingException extends AttributeException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeEncodingException(Exception wrappedException) {
+    public AttributeEncodingException(final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -51,7 +51,7 @@ public class AttributeEncodingException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeEncodingException(String message, Exception wrappedException) {
+    public AttributeEncodingException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

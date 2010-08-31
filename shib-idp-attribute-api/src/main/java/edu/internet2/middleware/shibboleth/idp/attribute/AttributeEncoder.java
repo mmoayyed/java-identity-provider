@@ -37,5 +37,5 @@ public interface AttributeEncoder<EncodedType> {
      * 
      * @throws AttributeEncodingException if unable to successfully encode attribute
      */
-    public EncodedType encode(Attribute attribute) throws AttributeEncodingException;
+    public EncodedType encode(final Attribute<?> attribute) throws AttributeEncodingException;
 }

@@ -32,7 +32,7 @@ public class AttributeException extends Exception{
      * 
      * @param message exception message
      */
-    public AttributeException(String message) {
+    public AttributeException(final String message) {
         super(message);
     }
 
@@ -41,7 +41,7 @@ public class AttributeException extends Exception{
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeException(Exception wrappedException) {
+    public AttributeException(final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -51,7 +51,7 @@ public class AttributeException extends Exception{
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeException(String message, Exception wrappedException) {
+    public AttributeException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }
