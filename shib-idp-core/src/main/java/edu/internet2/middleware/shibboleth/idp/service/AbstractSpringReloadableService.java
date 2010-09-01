@@ -51,6 +51,7 @@ import edu.internet2.middleware.shibboleth.idp.spring.SpringSupport;
  */
 @ThreadSafe
 // TODO should add pre/post reload hooks
+// TODO load time perf metrics
 public abstract class AbstractSpringReloadableService extends AbstractSpringService implements ReloadableService {
 
     /** Class logger. */

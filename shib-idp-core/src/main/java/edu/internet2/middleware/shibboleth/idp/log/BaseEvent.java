@@ -25,7 +25,7 @@ import org.opensaml.util.Strings;
  * that most events will result in a character separated list of name/value pairs fit for subsequent
  * processing by scripts or analysis software.  This is NOT requirement, just a general observation. 
  */
-public abstract class Event {
+public abstract class BaseEvent {
     
     /** A human readable message associated with the event. This message should always come last in the event string. */
     private String message;

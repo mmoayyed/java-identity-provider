@@ -29,13 +29,13 @@ import org.opensaml.util.Strings;
  * milliseconds, start and stop times are milliseconds since the epoch, and operation success is a 1 or 0.
  */
 @NotThreadSafe
-public class PerformanceEvent extends Event {
+public class PerformanceEvent extends BaseEvent {
 
     /** Type for a performance event. */
     public static final String EVENT_TYPE = "performance";
 
     /** Character used to separate the fields of the event. */
-    private final static String FIELD_SEPERATOR = "|";
+    private static final String FIELD_SEPERATOR = "|";
 
     /** Identifier of the operation being timed. */
     private String operation;
@@ -44,13 +44,13 @@ public class PerformanceEvent extends Event {
     private boolean successfulOperation;
 
     /** System local time in milliseconds when the performance measurement started. */
-    private long startTime = 0;
+    private long startTime;
 
     /** System local time in milliseconds when the performance measurement stopped. */
     private long stopTime;
 
     /** Total elapsed time, in milliseconds, of the operation. */
-    private long elapsedTime = 0;
+    private long elapsedTime;
 
     /**
      * Constructor.
@@ -148,8 +148,17 @@ public class PerformanceEvent extends Event {
         entry.append(getStartTime()).append(FIELD_SEPERATOR);
         entry.append(getStopTime()).append(FIELD_SEPERATOR);
         entry.append(getElapsedTime()).append(FIELD_SEPERATOR);
-        entry.append(isOperationSuccessful() ? 1 : 0).append(FIELD_SEPERATOR);
-        entry.append(Strings.nullToEmpty(getMessage()));
+        
+        if(isOperationSuccessful()){
+            entry.append(1).append(FIELD_SEPERATOR);
+        }else{
+            entry.append(0).append(FIELD_SEPERATOR);
+        }
+        
+        if(getMessage() != null){
+            entry.append(getMessage());
+        }
+        
         return entry.toString();
     }
 }

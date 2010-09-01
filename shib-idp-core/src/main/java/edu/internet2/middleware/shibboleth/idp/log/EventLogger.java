@@ -22,24 +22,29 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple logging mechanism used to log events such as performance measurements and audit data.
  * 
- * Each event is logged to a logger named <code>idp.event.</code> + {@link Event#getType()}. So, for example,
+ * Each event is logged to a logger named <code>idp.event.</code> + {@link BaseEvent#getType()}. So, for example,
  * {@link PerformanceEvent} events are logged to <code>idp.event.performance</code>. All events are logged at the INFO
  * level.
  */
 public class EventLogger {
 
-    private final static String BASE_LOGGER_NAME = "idp.event";
+    /**
+     * Base name of the logger to which events are logged. The full logger name is this base, {@value} + "." +
+     * {@link BaseEvent#getType()}
+     */
+    private static final String BASE_LOGGER_NAME = "idp.event";
 
     /**
      * Logs the event.
      * 
-     * @param event
+     * @param event the event to be logged
      */
-    public void log(Event event) {
-        // TODO consider whether this method should be asynchronous and the actual logging done by a background thread in order to eliminate possible slowdowns caused by this logging
+    public void log(BaseEvent event) {
+        // TODO consider whether this method should be asynchronous and the actual logging done by a background thread
+        // in order to eliminate possible slowdowns caused by this logging
         // TODO figure out if keeping a cache of these loggers is possible of if logger config reloading poses a problem
         Logger eventLog = LoggerFactory.getLogger(BASE_LOGGER_NAME + "." + event.getType());
-        if(eventLog.isInfoEnabled()){
+        if (eventLog.isInfoEnabled()) {
             eventLog.info(event.toString());
         }
     }

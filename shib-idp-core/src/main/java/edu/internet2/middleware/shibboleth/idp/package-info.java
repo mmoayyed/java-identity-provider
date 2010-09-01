@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * 
- */
+/** Root package for IdP, contains a couple base/utility classes. */
+
 package edu.internet2.middleware.shibboleth.idp;
