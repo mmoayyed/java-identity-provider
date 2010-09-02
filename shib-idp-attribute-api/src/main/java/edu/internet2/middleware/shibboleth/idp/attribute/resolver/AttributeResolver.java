@@ -21,8 +21,8 @@ import java.util.Timer;
 
 import net.jcip.annotations.ThreadSafe;
 
+import org.opensaml.util.resource.Resource;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 
 import edu.internet2.middleware.shibboleth.idp.service.AbstractSpringReloadableService;
 import edu.internet2.middleware.shibboleth.idp.service.ServiceException;
@@ -32,6 +32,8 @@ import edu.internet2.middleware.shibboleth.idp.service.ServiceException;
 /** A service that resolves the attributes for a particular subject. */
 @ThreadSafe
 public class AttributeResolver extends AbstractSpringReloadableService {
+    
+    
 
     /**
      * Constructor.
