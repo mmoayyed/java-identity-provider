@@ -17,22 +17,22 @@
 package edu.internet2.middleware.shibboleth.idp.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.locks.Lock;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.util.Assert;
+import org.opensaml.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.Resource;
 
 import edu.internet2.middleware.shibboleth.idp.spring.SpringSupport;
 
@@ -50,30 +50,19 @@ import edu.internet2.middleware.shibboleth.idp.spring.SpringSupport;
  * @see AbstractSpringService
  */
 @ThreadSafe
-// TODO should add pre/post reload hooks
-// TODO load time perf metrics
-public abstract class AbstractSpringReloadableService extends AbstractSpringService implements ReloadableService {
+public abstract class AbstractSpringReloadableService extends AbstractReloadableService {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractSpringReloadableService.class);
 
-    /** Timer used to schedule resource polling tasks. */
-    private final Timer resourcePollingTimer;
+    /** List of configuration resources for this service. */
+    private final List<Resource> serviceConfigurations;
 
-    /** Frequency, in milliseconds, that the configuration resources are polled for changes. */
-    private final long resourcePollingFrequency;
+    /** Application context owning this engine. */
+    private final ApplicationContext parentContext;
 
-    /** Watcher that monitors the set of configuration resources for this service for changes. */
-    private ServiceConfigSetChangeWatcher resourceWatcher;
-
-    /** The last time time the service was reloaded, whether successful or not. */
-    private DateTime lastReloadInstant;
-
-    /** The last time the service was reloaded successfully. */
-    private DateTime lastSuccessfulReleaseIntant;
-
-    /** The cause of the last reload failure, if the last reload failed. */
-    private Throwable reloadFailureCause;
+    /** Context containing loaded with service content. */
+    private GenericApplicationContext serviceContext;
 
     /**
      * Constructor.
@@ -81,193 +70,157 @@ public abstract class AbstractSpringReloadableService extends AbstractSpringServ
      * @param id the unique ID for this service
      * @param parent the parent application context for this context, may be null if there is no parent
      * @param configs configuration resources for the service
-     * @param backgroundTaskTimer timer used to schedule background processes
-     * @param pollingFrequency frequency, in milliseconds, that the configuration resources are polled for changes
+     * @param reloadTaskTimer timer used to schedule service reloading background task
+     * @param reloadDelay milliseconds between one reload check and another
      */
-    public AbstractSpringReloadableService(String id, ApplicationContext parent, List<Resource> configs,
-            Timer backgroundTaskTimer, long pollingFrequency) {
-        super(id, parent, configs);
+    public AbstractSpringReloadableService(final String id, final ApplicationContext parent,
+            final List<Resource> configs, final Timer reloadTaskTimer, final long reloadDelay) {
+        super(id, reloadTaskTimer, reloadDelay);
 
-        if (pollingFrequency > 0) {
-            Assert.isNotNull(backgroundTaskTimer, "Resource polling timer may not be null");
-            resourcePollingTimer = backgroundTaskTimer;
+        parentContext = parent;
 
-            Assert.isGreaterThan(0, pollingFrequency, "Resource polling frequency must be greater than 0");
-            resourcePollingFrequency = pollingFrequency;
-        } else {
-            resourcePollingTimer = null;
-            resourcePollingFrequency = 0;
-        }
+        Assert.isNotEmpty(configs, "Service configuration set may not be null or empty");
+        serviceConfigurations = Collections.unmodifiableList(new ArrayList<Resource>(configs));
     }
 
     /**
-     * Gets the frequency, in milliseconds, that the configuration resources are polled for changes.
+     * Gets an unmodifiable list of configurations for this service.
      * 
-     * @return frequency, in milliseconds, that the configuration resources are polled for changes
+     * @return unmodifiable list of configurations for this service
      */
-    public long getPollingFrequency() {
-        return resourcePollingFrequency;
+    public List<Resource> getServiceConfigurations() {
+        return serviceConfigurations;
+    }
+
+    /**
+     * Gets the application context that is the parent to this service's context.
+     * 
+     * @return application context that is the parent to this service's context
+     */
+    protected ApplicationContext getParentContext() {
+        return parentContext;
+    }
+
+    /**
+     * Gets this service's context.
+     * 
+     * Note, any modifications done to the retrieved service context must be within the bounds of the service write lock
+     * retrieved via {@link #getServiceLock()}.
+     * 
+     * @return this service's context
+     */
+    protected GenericApplicationContext getServiceContext() {
+        return serviceContext;
     }
 
     /** {@inheritDoc} */
-    public DateTime getLastReloadAttemptInstant() {
-        return lastReloadInstant;
+    protected boolean shouldReload() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
     /** {@inheritDoc} */
-    public DateTime getLastSuccessfulReloadInstant() {
-        return lastSuccessfulReleaseIntant;
-    }
+    protected void doPreReload(final HashMap context) throws ServiceException {
+        log.info("Configuration change detected, reloading configuration for service '{}'", getId());
 
-    /** {@inheritDoc} */
-    public Throwable getReloadFailureCause() {
-        return reloadFailureCause;
-    }
-
-    /** {@inheritDoc} */
-    public void reload() {
-        log.info("Configuration change detected, reloading service {}", getId());
-
-        Lock serviceWriteLock = getServiceLock().writeLock();
-        GenericApplicationContext newServiceContext = null;
         try {
-            newServiceContext = SpringSupport.newContext(getDisplayName(), getServiceConfigurations(),
-                    getParentContext());
-
-            serviceWriteLock.lock();
-            setServiceContext(newServiceContext);
-            serviceWriteLock.unlock();
-            recordSuccessfulReload();
-            log.debug("{} service configuration reloaded", getId());
-        } catch (Throwable t) {
-            recordUnsuccessfulReload(t);
-
+            log.debug("Creating new ApplicationContext for service '{}'", getId());
+            GenericApplicationContext appContext = SpringSupport.newContext(getDisplayName(),
+                    getServiceConfigurations(), getParentContext());
+            log.debug("New Application Context created for service '{}'", getId());
+            context.put(AbstractSpringService.APP_CTX_CTX_KEY, appContext);
+        } catch (BeansException e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
-            if (t instanceof BeansException) {
-                Throwable cause = ((BeansException) t).getMostSpecificCause();
-                log
-                        .error("Updated configuration was not loadable for serivce "
-                                + getId()
-                                + ", the current good configuration will continue to be used.  The root cause of this error was: "
-                                + cause.getClass().getCanonicalName() + ": " + cause.getMessage());
-            }
-            log.trace("Full stacktrace is: ", t);
-            return;
-        } finally {
-            serviceWriteLock.unlock();
-        }
-    }
-
-    /** 
-     * Records a successful reload by setting the last reload and last successful reload instant to the current time.
-     */
-    protected void recordSuccessfulReload() {
-        DateTime now = new DateTime(ISOChronology.getInstanceUTC());
-        lastReloadInstant = now;
-        lastSuccessfulReleaseIntant = now;
-    }
-
-    /**
-     * Records an unsuccessful reload by setting the last reload instant to the current time and recording the failure
-     * cause.
-     * 
-     * @param cause the error that caused the reload failure
-     */
-    protected void recordUnsuccessfulReload(Throwable cause) {
-        lastReloadInstant = new DateTime(ISOChronology.getInstanceUTC());
-        reloadFailureCause = cause;
-    }
-
-    /** {@inheritDoc} */
-    protected void doPostStart() throws ServiceException {
-        super.doPostStart();
-        if (resourcePollingFrequency > 0) {
-            resourceWatcher = new ServiceConfigSetChangeWatcher();
-            resourcePollingTimer.schedule(resourceWatcher, resourcePollingFrequency, resourcePollingFrequency);
+            Throwable cause = e.getMostSpecificCause();
+            log.error("Error creating new application context for service '{}'.  Cause: {}", getId(), cause
+                    .getMessage());
+            log.debug("Full stacktrace is: ", e);
+            throw new ServiceException("Error creating new application context for service " + getId());
         }
     }
 
     /** {@inheritDoc} */
-    protected void doPreStop() throws ServiceException {
-        resourceWatcher.cancel();
-        super.doPreStop();
+    protected void doPostRelaod(final HashMap context) throws ServiceException {
+        GenericApplicationContext appCtx = (GenericApplicationContext) context
+                .get(AbstractSpringService.APP_CTX_CTX_KEY);
+        serviceContext = appCtx;
     }
 
     /**
      * A watcher that determines if one or more of configuration files for a service has been created, changed, or
      * deleted.
      */
-    class ServiceConfigSetChangeWatcher extends TimerTask {
-
-        /** Number of configuration resources. */
-        private final int numOfResources;
-
-        /**
-         * Time, in milliseconds, when the service configuration for the given index was last observed to have changed.
-         * -1 indicates the configuration resource did not exist.
-         */
-        private long[] resourceLastModifiedTimes = new long[getServiceConfigurations().size()];
-
-        /** Constructor. */
-        public ServiceConfigSetChangeWatcher() {
-            List<Resource> serviceConfigs = getServiceConfigurations();
-            numOfResources = serviceConfigs.size();
-            Resource serviceConfig;
-            for (int i = 0; i < numOfResources; i++) {
-                serviceConfig = serviceConfigs.get(i);
-                if (serviceConfig.exists()) {
-                    try {
-                        resourceLastModifiedTimes[i] = serviceConfigs.get(i).lastModified();
-                    } catch (IOException e) {
-                        log.debug("Configuration resource '{}' last modification date could not be determined", e);
-                        resourceLastModifiedTimes[i] = -1;
-                    }
-                } else {
-                    resourceLastModifiedTimes[i] = -1;
-                }
-            }
-        }
-
-        /** {@inheritDoc} */
-        public void run() {
-            boolean configResourceChanged = false;
-
-            List<Resource> serviceConfigs = getServiceConfigurations();
-            Resource serviceConfig;
-            long serviceConfigLastModified;
-            for (int i = 0; i < numOfResources; i++) {
-                serviceConfig = serviceConfigs.get(i);
-
-                // check if resource did not exist and still does not exist
-                if (resourceLastModifiedTimes[i] == -1 && !serviceConfig.exists()) {
-                    continue;
-                }
-
-                try {
-                    // check to see if the resource did not exist, but does now
-                    // or if the resource did exist but does not now
-                    if ((resourceLastModifiedTimes[i] == -1 && serviceConfig.exists())
-                            || (resourceLastModifiedTimes[i] > -1 && !serviceConfig.exists())) {
-                        configResourceChanged = true;
-                        resourceLastModifiedTimes[i] = serviceConfig.lastModified();
-                        continue;
-                    }
-
-                    // check to see if an existing resource, that still exists, has been modified since the last run
-                    serviceConfigLastModified = serviceConfigs.get(i).lastModified();
-                    if (serviceConfigLastModified != resourceLastModifiedTimes[i]) {
-                        configResourceChanged = true;
-                        resourceLastModifiedTimes[i] = serviceConfigLastModified;
-                    }
-                } catch (IOException e) {
-                    log.debug("Configuration resource '{}' last modification date could not be determined", e);
-                    configResourceChanged = true;
-                }
-            }
-
-            if (configResourceChanged) {
-                reload();
-            }
-        }
-    }
+//    protected class ServiceConfigSetChangeWatcher extends TimerTask {
+//
+//        /** Number of configuration resources. */
+//        private final int numOfResources;
+//
+//        /**
+//         * Time, in milliseconds, when the service configuration for the given index was last observed to have changed.
+//         * -1 indicates the configuration resource did not exist.
+//         */
+//        private long[] resourceLastModifiedTimes = new long[getServiceConfigurations().size()];
+//
+//        /** Constructor. */
+//        public ServiceConfigSetChangeWatcher() {
+//            List<Resource> serviceConfigs = getServiceConfigurations();
+//            numOfResources = serviceConfigs.size();
+//            Resource serviceConfig;
+//            for (int i = 0; i < numOfResources; i++) {
+//                serviceConfig = serviceConfigs.get(i);
+//                if (serviceConfig.exists()) {
+//                    try {
+//                        resourceLastModifiedTimes[i] = serviceConfigs.get(i).lastModified();
+//                    } catch (IOException e) {
+//                        log.debug("Configuration resource '{}' last modification date could not be determined", e);
+//                        resourceLastModifiedTimes[i] = -1;
+//                    }
+//                } else {
+//                    resourceLastModifiedTimes[i] = -1;
+//                }
+//            }
+//        }
+//
+//        /** {@inheritDoc} */
+//        public void run() {
+//            boolean configResourceChanged = false;
+//
+//            List<Resource> serviceConfigs = getServiceConfigurations();
+//            Resource serviceConfig;
+//            long serviceConfigLastModified;
+//            for (int i = 0; i < numOfResources; i++) {
+//                serviceConfig = serviceConfigs.get(i);
+//
+//                // check if resource did not exist and still does not exist
+//                if (resourceLastModifiedTimes[i] == -1 && !serviceConfig.exists()) {
+//                    continue;
+//                }
+//
+//                try {
+//                    // check to see if the resource did not exist, but does now
+//                    // or if the resource did exist but does not now
+//                    if ((resourceLastModifiedTimes[i] == -1 && serviceConfig.exists())
+//                            || (resourceLastModifiedTimes[i] > -1 && !serviceConfig.exists())) {
+//                        configResourceChanged = true;
+//                        resourceLastModifiedTimes[i] = serviceConfig.lastModified();
+//                        continue;
+//                    }
+//
+//                    // check to see if an existing resource, that still exists, has been modified since the last run
+//                    serviceConfigLastModified = serviceConfigs.get(i).lastModified();
+//                    if (serviceConfigLastModified != resourceLastModifiedTimes[i]) {
+//                        configResourceChanged = true;
+//                        resourceLastModifiedTimes[i] = serviceConfigLastModified;
+//                    }
+//                } catch (IOException e) {
+//                    log.debug("Configuration resource '{}' last modification date could not be determined", e);
+//                    configResourceChanged = true;
+//                }
+//            }
+//
+//            if (configResourceChanged) {
+//                reload();
+//            }
+//        }
+//    }
 }

@@ -21,24 +21,20 @@ package edu.internet2.middleware.shibboleth.idp.service;
  */
 public interface Service {
 
-    /** Lifecycle state of the service. */
-    public enum State {
+    /** Indicates the service object has been created but not yet started. */
+    public static final String STATE_NEW = "new";
 
-        /** Indicates the service object has been created but not yet started. */
-        NEW,
+    /** Indicates the service is in the process of being started but is not yet ready for use. */
+    public static final String STATE_STARTING = "starting";
 
-        /** Indicates the service is in the process of being started but is not yet ready for use. */
-        STARTING,
+    /** Indicates that the service is ready for use. */
+    public static final String STATE_RUNNING = "running";
 
-        /** Indicates that the service has been started and is ready for use. */
-        STARTED,
+    /** Indicates that the service is stopping and is not available for use. */
+    public static final String STATE_STOPPING = "stopping";
 
-        /** Indicates that the service is stopping and is not available for use. */
-        STOPPING,
-
-        /** Indicates that the service is stopped and is not available for use. */
-        STOPPED
-    };
+    /** Indicates that the service is stopped and is not available for use. */
+    public static final String STATE_STOPPED = "stopped";
 
     /**
      * Gets the ID of this service.
@@ -55,11 +51,11 @@ public interface Service {
     public String getDisplayName();
 
     /**
-     * Gets the current {@link State} of the service.
+     * Gets the current state of the service.
      * 
      * @return current state of the service
      */
-    public State getCurrentState();
+    public String getCurrentState();
 
     /**
      * Starts this service. Calling this on an started service should return immediately without affecting the service.
@@ -75,7 +71,7 @@ public interface Service {
      * @throws ServiceException thrown if there is a problem destroying the service
      */
     public void stop() throws ServiceException;
-    
+
     /**
      * Validates that a service is operational and function properly (with the limits that such things can be checked).
      * 

@@ -19,15 +19,14 @@ package edu.internet2.middleware.shibboleth.idp.log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Timer;
-import java.util.TimerTask;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.util.Assert;
 import org.opensaml.util.Closeables;
+import org.opensaml.util.resource.Resource;
+import org.opensaml.util.resource.ResourceException;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -35,141 +34,97 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.status.InfoStatus;
 import ch.qos.logback.core.status.StatusManager;
-import edu.internet2.middleware.shibboleth.idp.service.AbstractService;
-import edu.internet2.middleware.shibboleth.idp.service.ReloadableService;
+import edu.internet2.middleware.shibboleth.idp.service.AbstractReloadableService;
 import edu.internet2.middleware.shibboleth.idp.service.ServiceException;
 
 /**
  * Simple logging service that watches for logback configuration file changes and reloads the file when a change occurs.
  */
-public class LogbackLoggingService extends AbstractService implements ReloadableService {
+public class LogbackLoggingService extends AbstractReloadableService {
+
+    /** Logback logger context. */
+    private final LoggerContext loggerContext;
+
+    /** Logger used to log messages without relying on the logging system to be full initialized. */
+    private final StatusManager statusManager;
 
     /** URL to the fallback logback configuration found in the IdP jar. */
-    private URL fallbackConfiguraiton;
+    private final URL fallbackConfiguraiton;
 
     /** Logging configuration resource. */
-    private Resource configurationResource;
-
-    /** Timer used to schedule resource polling tasks. */
-    private final Timer resourcePollingTimer;
-
-    /** Frequency policy resources are polled for updates. */
-    private final long resourcePollingFrequency;
-
-    /** Watcher that monitors the configuration resource for this service for changes. */
-    private ServiceConfigChangeWatcher resourceWatcher;
-
-    /** The last time time the service was reloaded, whether successful or not. */
-    private DateTime lastReloadInstant;
-
-    /** The last time the service was reloaded successfully. */
-    private DateTime lastSuccessfulReleaseIntant;
-
-    /** The cause of the last reload failure, if the last reload failed. */
-    private Throwable reloadFailureCause;
+    private final Resource configurationResource;
 
     /**
      * Constructor.
      * 
      * @param id unique ID of this service
      * @param loggingConfiguration logback configuration resource
-     * @param backgroundTaskTimer background timer used to schedule resource change polling task
-     * @param pollingFrequency frequency, in millisecond, of resource change polling
+     * @param reloadTaskTimer timer used to schedule service reloading background task
+     * @param reloadDelay milliseconds between one reload check and another
      */
-    public LogbackLoggingService(String id, Resource loggingConfiguration, Timer backgroundTaskTimer,
-            long pollingFrequency) {
-        super(id);
+    public LogbackLoggingService(String id, Resource loggingConfiguration, Timer reloadTaskTimer, long reloadDelay) {
+        super(id, reloadTaskTimer, reloadDelay);
 
+        Assert.isNotNull(loggingConfiguration, "Logging configuration resource may not be null");
+        configurationResource = loggingConfiguration;
         fallbackConfiguraiton = LogbackLoggingService.class.getResource("/logback.xml");
 
-        if (pollingFrequency > 0) {
-            Assert.isNotNull(backgroundTaskTimer, "Resource polling timer may not be null");
-            resourcePollingTimer = backgroundTaskTimer;
-
-            Assert.isGreaterThan(0, pollingFrequency, "Resource polling frequency must be greater than 0");
-            resourcePollingFrequency = pollingFrequency;
-        } else {
-            resourcePollingTimer = null;
-            resourcePollingFrequency = 0;
-        }
+        loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        statusManager = loggerContext.getStatusManager();
     }
 
     /** {@inheritDoc} */
     public void validate() throws ServiceException {
-        if (!configurationResource.exists()) {
-            throw new ServiceException("Logging service configuration file " + configurationResource.getFilename()
-                    + " does not exist.");
-        }
-    }
-
-    /** {@inheritDoc} */
-    public DateTime getLastReloadAttemptInstant() {
-        return lastReloadInstant;
-    }
-
-    /** {@inheritDoc} */
-    public DateTime getLastSuccessfulReloadInstant() {
-        return lastSuccessfulReleaseIntant;
-    }
-
-    /** {@inheritDoc} */
-    public Throwable getReloadFailureCause() {
-        return reloadFailureCause;
-    }
-
-    /** {@inheritDoc} */
-    public void reload() {
         try {
-            loadLoggingConfiguration();
-        } catch (ServiceException e) {
-            // TODO
+            if (!configurationResource.exists()) {
+                throw new ServiceException("Logging service configuration resource "
+                        + configurationResource.getLocation() + " does not exist.");
+            }
+        } catch (ResourceException e) {
+            throw new ServiceException("Unable to determing if logging service configuration resource "
+                    + configurationResource.getLocation(), e);
         }
     }
 
     /** {@inheritDoc} */
-    protected void doStart() throws ServiceException {
-        super.doStart();
+    protected boolean shouldReload() {
+        try {
+            return configurationResource.getLastModifiedTime() > getLastSuccessfulReloadInstant().getMillis();
+        } catch (ResourceException e) {
+            statusManager.add(new ErrorStatus(
+                    "Error checking last modified time of logging service configuration resource "
+                            + configurationResource.getLocation(), this, e));
+            return false;
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void doReload(HashMap context) throws ServiceException {
+        super.doReload(context);
+
         loadLoggingConfiguration();
     }
 
-    /** {@inheritDoc} */
-    protected void doPostStart() throws ServiceException {
-        super.doPostStart();
-        if (resourcePollingFrequency > 0) {
-            resourceWatcher = new ServiceConfigChangeWatcher();
-            resourcePollingTimer.schedule(resourceWatcher, resourcePollingFrequency, resourcePollingFrequency);
-        }
-    }
-
-    /** 
-     * Reads and loads in a new logging configuration. 
+    /**
+     * Reads and loads in a new logging configuration.
      * 
      * @throws ServiceException thrown if there is a problem loading the logging configuration
      */
     protected void loadLoggingConfiguration() throws ServiceException {
-        lastReloadInstant = new DateTime(ISOChronology.getInstanceUTC());
-
-        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        StatusManager statusManager = loggerContext.getStatusManager();
-
         InputStream ins = null;
         try {
-            statusManager.add(new InfoStatus("Loading new logging configuration file: "
-                    + configurationResource.getFilename(), this));
+            statusManager.add(new InfoStatus("Loading new logging configuration resource: "
+                    + configurationResource.getLocation(), this));
             ins = configurationResource.getInputStream();
-            loadLoggingConfiguration(statusManager, loggerContext, ins);
-            reloadFailureCause = null;
-            lastSuccessfulReleaseIntant = lastReloadInstant;
+            loadLoggingConfiguration(ins);
         } catch (Exception e) {
             Closeables.closeQuiety(ins);
             statusManager.add(new ErrorStatus("Error loading logging configuration file: "
-                    + configurationResource.getFilename(), this, e));
-            reloadFailureCause = e.getCause();
-
+                    + configurationResource.getLocation(), this, e));
             try {
                 statusManager.add(new InfoStatus("Loading fallback logging configuration", this));
                 ins = fallbackConfiguraiton.openStream();
-                loadLoggingConfiguration(statusManager, loggerContext, ins);
+                loadLoggingConfiguration(ins);
             } catch (IOException ioe) {
                 Closeables.closeQuiety(ins);
                 statusManager.add(new ErrorStatus("Error loading fallback logging configuration", this, e));
@@ -184,14 +139,11 @@ public class LogbackLoggingService extends AbstractService implements Reloadable
      * Loads a logging configuration in to the active logger context. Error messages are printed out to the status
      * manager.
      * 
-     * @param statusManager status manager that will receive the error messages
-     * @param loggerContext active, to-be-configured, logger context
      * @param loggingConfig logging configuration file
      * 
      * @throws ServiceException thrown is there is a problem loading the logging configuration
      */
-    protected void loadLoggingConfiguration(StatusManager statusManager, LoggerContext loggerContext,
-            InputStream loggingConfig) throws ServiceException {
+    protected void loadLoggingConfiguration(InputStream loggingConfig) throws ServiceException {
         try {
             loggerContext.reset();
             JoranConfigurator configurator = new JoranConfigurator();
@@ -200,15 +152,6 @@ public class LogbackLoggingService extends AbstractService implements Reloadable
             loggerContext.start();
         } catch (JoranException e) {
             throw new ServiceException(e);
-        }
-    }
-
-    /** A watcher that determines if the configuration for a service has been changed. */
-    class ServiceConfigChangeWatcher extends TimerTask {
-
-        /** {@inheritDoc} */
-        public void run() {
-            reload();
         }
     }
 }

@@ -18,11 +18,11 @@ package edu.internet2.middleware.shibboleth.idp.spring;
 
 import java.util.List;
 
+import org.opensaml.util.resource.Resource;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
 /**
@@ -50,7 +50,8 @@ public final class SpringSupport {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(
                 context);
-        beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));
+        //TODO change opensaml resources in to Spring resource
+        // beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));
 
         context.refresh();
         return context;

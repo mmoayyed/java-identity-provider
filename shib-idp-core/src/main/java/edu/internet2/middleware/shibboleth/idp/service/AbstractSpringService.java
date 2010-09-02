@@ -18,17 +18,18 @@ package edu.internet2.middleware.shibboleth.idp.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.Resource;
 
 import edu.internet2.middleware.shibboleth.idp.spring.SpringSupport;
 
@@ -48,17 +49,30 @@ import edu.internet2.middleware.shibboleth.idp.spring.SpringSupport;
 @ThreadSafe
 public abstract class AbstractSpringService extends AbstractService {
 
+    /** Key under which the Spring Application Context is stored in the start/stop context. */
+    public static final String APP_CTX_CTX_KEY = "appContext";
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractSpringService.class);
 
+    /** List of configuration resources for this service. */
+    private final List<Resource> serviceConfigurations;
+
     /** Application context owning this engine. */
-    private ApplicationContext parentContext;
+    private final ApplicationContext parentContext;
 
     /** Context containing loaded with service content. */
     private GenericApplicationContext serviceContext;
 
-    /** List of configuration resources for this service. */
-    private ArrayList<Resource> serviceConfigurations;
+    /**
+     * Constructor.
+     * 
+     * @param id the unique ID for this service
+     * @param configs the configuration files to be loaded by the service
+     */
+    public AbstractSpringService(final String id, final List<Resource> configs) {
+        this(id, null, configs);
+    }
 
     /**
      * Constructor.
@@ -67,13 +81,13 @@ public abstract class AbstractSpringService extends AbstractService {
      * @param parent the parent application context for this context, may be null if there is no parent
      * @param configs the configuration files to be loaded by the service
      */
-    public AbstractSpringService(String id, ApplicationContext parent, List<Resource> configs) {
+    public AbstractSpringService(final String id, final ApplicationContext parent, final List<Resource> configs) {
         super(id);
+
         parentContext = parent;
 
-        Assert.isNotNull(configs, "Service configuration set may not be null");
-        Assert.isNotEmpty(configs, "Service configuration set may not be empty");
-        serviceConfigurations = new ArrayList<Resource>(configs);
+        Assert.isNotEmpty(configs, "Service configuration set may not be null or empty");
+        serviceConfigurations = Collections.unmodifiableList(new ArrayList<Resource>(configs));
     }
 
     /**
@@ -82,7 +96,7 @@ public abstract class AbstractSpringService extends AbstractService {
      * @return unmodifiable list of configurations for this service
      */
     public List<Resource> getServiceConfigurations() {
-        return Collections.unmodifiableList(serviceConfigurations);
+        return serviceConfigurations;
     }
 
     /**
@@ -107,48 +121,47 @@ public abstract class AbstractSpringService extends AbstractService {
     }
 
     /**
-     * Sets this service's context.
+     * {@inheritDoc}
      * 
-     * @param context this service's context
+     * This method creates a new {@link GenericApplicationContext} from the service's configuration and stores it in the
+     * context under the key {@link #APP_CTX_CTX_KEY}.
      */
-    protected void setServiceContext(GenericApplicationContext context) {
-        serviceContext = context;
-    }
-
-    /** {@inheritDoc} */
-    protected void doStart() throws ServiceException {
-        super.doStart();
-
-        log.info("Loading configuration for service: {}", getId());
+    protected void doPreStart(HashMap context) throws ServiceException {
+        super.doPreStart(context);
 
         try {
             log.debug("Creating new ApplicationContext for service '{}'", getId());
-            GenericApplicationContext newServiceContext = SpringSupport.newContext(getDisplayName(),
+            GenericApplicationContext appContext = SpringSupport.newContext(getDisplayName(),
                     getServiceConfigurations(), getParentContext());
-            setServiceContext(newServiceContext);
-            log.info("{} service configuration loaded", getId());
+            log.debug("New Application Context created for service '{}'", getId());
+            context.put(APP_CTX_CTX_KEY, appContext);
         } catch (BeansException e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
             Throwable cause = e.getMostSpecificCause();
-            log.error("Configuration was not loaded for " + getId()
-                    + " service, error creating components.  The root cause of this error was: "
-                    + cause.getClass().getCanonicalName() + ": " + cause.getMessage());
-            log.trace("Full stacktrace is: ", e);
-            throw new ServiceException("Configuration was not loaded for " + getId()
-                    + " service, error creating components.", (Exception) cause);
+            log.error("Error creating new application context for service '{}'.  Cause: {}", getId(), cause
+                    .getMessage());
+            log.debug("Full stacktrace is: ", e);
+            throw new ServiceException("Error creating new application context for service " + getId());
         }
     }
 
     /** {@inheritDoc} */
-    protected void doStop() throws ServiceException {
-        serviceContext.close();
-        super.doStop();
+    protected void doPostStart(HashMap context) throws ServiceException {
+        super.doPostStart(context);
+        GenericApplicationContext appCtx = (GenericApplicationContext) context.get(APP_CTX_CTX_KEY);
+        serviceContext = appCtx;
     }
 
     /** {@inheritDoc} */
-    protected void doPostStop() throws ServiceException {
+    protected void doStop(final HashMap context) throws ServiceException {
+        serviceContext.close();
+        super.doStop(context);
+    }
+
+    /** {@inheritDoc} */
+    protected void doPostStop(final HashMap context) throws ServiceException {
         serviceContext = null;
         serviceConfigurations.clear();
-        super.doStop();
+        super.doStop(context);
     }
 }

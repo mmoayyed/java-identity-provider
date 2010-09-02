@@ -26,23 +26,26 @@ import org.slf4j.LoggerFactory;
  * {@link PerformanceEvent} events are logged to <code>idp.event.performance</code>. All events are logged at the INFO
  * level.
  */
-public class EventLogger {
+public final class EventLogger {
 
     /**
      * Base name of the logger to which events are logged. The full logger name is this base, {@value} + "." +
      * {@link BaseEvent#getType()}
      */
     private static final String BASE_LOGGER_NAME = "idp.event";
+    
+    /** Constructor. */
+    private EventLogger(){}
 
     /**
      * Logs the event.
      * 
      * @param event the event to be logged
      */
-    public void log(BaseEvent event) {
+    public static void log(BaseEvent event) {
         // TODO consider whether this method should be asynchronous and the actual logging done by a background thread
         // in order to eliminate possible slowdowns caused by this logging
-        // TODO figure out if keeping a cache of these loggers is possible of if logger config reloading poses a problem
+        
         Logger eventLog = LoggerFactory.getLogger(BASE_LOGGER_NAME + "." + event.getType());
         if (eventLog.isInfoEnabled()) {
             eventLog.info(event.toString());
