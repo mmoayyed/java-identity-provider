@@ -22,7 +22,7 @@ import java.util.List;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ public abstract class BaseResolverPlugin<ResolvedType> {
      * @param pluginId unique identifier for the plugin, never null or empty
      */
     public BaseResolverPlugin(final String pluginId) {
-        id = Strings.trimOrNull(pluginId);
+        id = StringSupport.trimOrNull(pluginId);
         Assert.isNotNull(id, "Resolver plugin ID may not be null or empty");
 
         propagateEvaluationConditionExceptions = false;

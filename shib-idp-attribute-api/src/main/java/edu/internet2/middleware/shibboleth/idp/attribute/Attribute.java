@@ -24,7 +24,7 @@ import java.util.Map;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
 
@@ -61,7 +61,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * @param attributeId unique identifier of the attribute
      */
     public Attribute(final String attributeId) {
-        id = Strings.trimOrNull(attributeId);
+        id = StringSupport.trimOrNull(attributeId);
         Assert.isNotNull(id, "Attribute ID may not be null");
 
         values = new LazyList<ValueType>();

@@ -21,7 +21,7 @@ import java.util.List;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class AttributeValueFilterPolicy {
      * @param matcher matcher used to matching attribute values filtered by this rule
      */
     public AttributeValueFilterPolicy(final String id, final AttributeValueMatcher matcher) {
-        attributeId = Strings.trimOrNull(id);
+        attributeId = StringSupport.trimOrNull(id);
         Assert.isNotNull(id, "Attribute rule ID may not be null or empty");
 
         matchingPermittedValues = true;

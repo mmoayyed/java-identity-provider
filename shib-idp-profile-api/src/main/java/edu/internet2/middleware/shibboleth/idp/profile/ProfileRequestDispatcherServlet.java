@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class ProfileRequestDispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        String handlerManagerId = Strings.trimOrNull(config.getInitParameter(HANDLER_MANAGER_INIT_PARAM));
+        String handlerManagerId = StringSupport.trimOrNull(config.getInitParameter(HANDLER_MANAGER_INIT_PARAM));
         if (handlerManager == null) {
             handlerManagerId = DEFAULT_HANDLER_MANAGER_ID;
         }

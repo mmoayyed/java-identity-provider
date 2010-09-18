@@ -23,7 +23,7 @@ import java.util.List;
 import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.messaging.context.impl.BaseSubcontext;
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 
 import edu.internet2.middleware.shibboleth.idp.profile.AbstractConversationalProfileHandler;
 import edu.internet2.middleware.shibboleth.idp.profile.ProfileContext;
@@ -140,7 +140,7 @@ public abstract class AbstractPipelineProfileHandler<InboundMessageType, Outboun
          * @param stageId ID of the current stage being processed
          */
         public void setCurrentStage(String stageId) {
-            currentStageId = Strings.trimOrNull(stageId);
+            currentStageId = StringSupport.trimOrNull(stageId);
         }
     }
 }

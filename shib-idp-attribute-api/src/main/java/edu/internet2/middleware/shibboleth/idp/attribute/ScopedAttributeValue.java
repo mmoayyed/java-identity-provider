@@ -19,8 +19,8 @@ package edu.internet2.middleware.shibboleth.idp.attribute;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Objects;
-import org.opensaml.util.Strings;
+import org.opensaml.util.ObjectSupport;
+import org.opensaml.util.StringSupport;
 
 /** An attribute value with an associated scope. */
 @ThreadSafe
@@ -39,10 +39,10 @@ public class ScopedAttributeValue {
      * @param valueScope scope of the value, never null
      */
     public ScopedAttributeValue(final String attributeValue, final String valueScope) {
-        value = Strings.trimOrNull(attributeValue);
+        value = StringSupport.trimOrNull(attributeValue);
         Assert.isNotNull(value, "Attribute value may not be null or empty");
 
-        scope = Strings.trimOrNull(valueScope);
+        scope = StringSupport.trimOrNull(valueScope);
         Assert.isNotNull(scope, "Attribute value scope may not be null or empty");
     }
 
@@ -89,6 +89,6 @@ public class ScopedAttributeValue {
         }
 
         ScopedAttributeValue otherValue = (ScopedAttributeValue) obj;
-        return Objects.equals(getValue(), otherValue.getValue()) && Objects.equals(getScope(), otherValue.getScope());
+        return ObjectSupport.equals(getValue(), otherValue.getValue()) && ObjectSupport.equals(getScope(), otherValue.getScope());
     }
 }

@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.idp.attribute.resolver;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 
 import edu.internet2.middleware.shibboleth.idp.attribute.Attribute;
 
@@ -41,10 +41,10 @@ public class ResolverPluginDependency {
      *            dependent plugin
      */
     public ResolverPluginDependency(final String pluginId, final String attributeId) {
-        dependencyPluginId = Strings.trimOrNull(pluginId);
+        dependencyPluginId = StringSupport.trimOrNull(pluginId);
         Assert.isNotNull(dependencyPluginId, "Dependency plugin ID may not be null or empty");
 
-        dependencyAttributeId = Strings.trimOrNull(attributeId);
+        dependencyAttributeId = StringSupport.trimOrNull(attributeId);
     }
 
     /**

@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Timer;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Closeables;
+import org.opensaml.util.CloseableSupport;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
 import org.slf4j.LoggerFactory;
@@ -118,7 +118,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
             ins = configurationResource.getInputStream();
             loadLoggingConfiguration(ins);
         } catch (Exception e) {
-            Closeables.closeQuiety(ins);
+            CloseableSupport.closeQuietly(ins);
             statusManager.add(new ErrorStatus("Error loading logging configuration file: "
                     + configurationResource.getLocation(), this, e));
             try {
@@ -126,12 +126,12 @@ public class LogbackLoggingService extends AbstractReloadableService {
                 ins = fallbackConfiguraiton.openStream();
                 loadLoggingConfiguration(ins);
             } catch (IOException ioe) {
-                Closeables.closeQuiety(ins);
+                CloseableSupport.closeQuietly(ins);
                 statusManager.add(new ErrorStatus("Error loading fallback logging configuration", this, e));
                 throw new ServiceException("Unable to load fallback logging configuration");
             }
         } finally {
-            Closeables.closeQuiety(ins);
+            CloseableSupport.closeQuietly(ins);
         }
     }
 

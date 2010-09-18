@@ -16,7 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.idp.log;
 
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 
 /** 
  * An event to be logged. 
@@ -52,6 +52,6 @@ public abstract class BaseEvent {
      * @param msg message associated with the event
      */
     public void setMessage(String msg){
-        message = Strings.trimOrNull(msg);
+        message = StringSupport.trimOrNull(msg);
     }
 }

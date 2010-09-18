@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.messaging.context.impl.BaseSubcontext;
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 
 /**
  * A {@link ProfileHandler} based on the idea of a conversation. Such a conversation may span multiple request/response
@@ -56,7 +56,7 @@ public abstract class AbstractConversationalProfileHandler<InboundMessageType, O
      * @param path path used to identify this profile handler
      */
     protected AbstractConversationalProfileHandler(String path) {
-        String trimmedPath = Strings.trimOrNull(path);
+        String trimmedPath = StringSupport.trimOrNull(path);
         Assert.isNotNull(trimmedPath, "Profile path may not be null or empty");
         if (!trimmedPath.startsWith("/")) {
             profilePath = "/" + trimmedPath;
@@ -220,7 +220,7 @@ public abstract class AbstractConversationalProfileHandler<InboundMessageType, O
         public ConversationContext(String returnUrl, SubcontextContainer owner) {
             super(owner);
 
-            profileHandlerUrl = Strings.trimOrNull(returnUrl);
+            profileHandlerUrl = StringSupport.trimOrNull(returnUrl);
             Assert.isNotNull(profileHandlerUrl, "Profile handler URL may not be null or empty");
         }
 

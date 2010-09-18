@@ -24,8 +24,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Objects;
-import org.opensaml.util.Strings;
+import org.opensaml.util.ObjectSupport;
+import org.opensaml.util.StringSupport;
 import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,7 +117,7 @@ public abstract class AbstractService implements Service {
         try {
             serviceWriteLock.lock();
 
-            if (Objects.equalsAny(getCurrentState(), STATE_STARTING, STATE_RUNNING)) {
+            if (ObjectSupport.equalsAny(getCurrentState(), STATE_STARTING, STATE_RUNNING)) {
                 return;
             }
             setCurrentState(STATE_STARTING);
@@ -157,7 +157,7 @@ public abstract class AbstractService implements Service {
         try {
             serviceWriteLock.lock();
 
-            if (Objects.equalsAny(getCurrentState(), STATE_STOPPING, STATE_STOPPED)) {
+            if (ObjectSupport.equalsAny(getCurrentState(), STATE_STOPPING, STATE_STOPPED)) {
                 return;
             }
             setCurrentState(STATE_STOPPING);
@@ -191,7 +191,7 @@ public abstract class AbstractService implements Service {
      * @param state current state of the service
      */
     protected final void setCurrentState(final String state) {
-        currentState = Strings.trimOrNull(state);
+        currentState = StringSupport.trimOrNull(state);
         Assert.isNotNull(currentState, "State indicator may not be null or empty");
     }
 
@@ -210,7 +210,7 @@ public abstract class AbstractService implements Service {
      * @throws ServiceException thrown if the service is stopped or stopping
      */
     protected void doPreStart(final HashMap context) throws ServiceException {
-        if (Objects.equalsAny(getCurrentState(), STATE_STOPPING, STATE_STOPPED)) {
+        if (ObjectSupport.equalsAny(getCurrentState(), STATE_STOPPING, STATE_STOPPED)) {
             throw new ServiceException(getId() + " service has been stopped, it may not be started again.");
         }
         log.debug("Loading configuration for service '{}'", getId());

@@ -24,7 +24,7 @@ import java.util.Map;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public class AttributeFilterPolicy {
      */
     public AttributeFilterPolicy(final String id, final AttributeFilterPolicyRequirementRule policyRequirementRule,
             final List<AttributeValueFilterPolicy> attributeValuePolicies) {
-        policyId = Strings.trimOrNull(id);
+        policyId = StringSupport.trimOrNull(id);
         Assert.isNotNull(policyId, "Attribute filter policy ID may not be null or empty");
 
         Assert.isNotNull(policyRequirementRule, "Attribute filter policy requirement rule may not be null");

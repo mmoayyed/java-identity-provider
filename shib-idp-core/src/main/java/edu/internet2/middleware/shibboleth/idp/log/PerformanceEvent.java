@@ -19,7 +19,7 @@ package edu.internet2.middleware.shibboleth.idp.log;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 
 /**
  * An event recording the performance of some operation.
@@ -58,7 +58,7 @@ public class PerformanceEvent extends BaseEvent {
      * @param operationId unique ID of the operation, must never be null or empty
      */
     public PerformanceEvent(String operationId) {
-        operation = Strings.trimOrNull(operationId);
+        operation = StringSupport.trimOrNull(operationId);
         Assert.isNotNull(operation, "Operation identifier may not be null or empty");
 
         successfulOperation = false;

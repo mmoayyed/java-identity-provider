@@ -20,7 +20,7 @@ import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.opensaml.util.Strings;
+import org.opensaml.util.StringSupport;
 
 import edu.internet2.middleware.shibboleth.idp.attribute.Attribute;
 
@@ -61,7 +61,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      *            experiences an error
      */
     public void setFailoverDependencyIds(final String id) {
-        failoverDependencyId = Strings.trimOrNull(id);
+        failoverDependencyId = StringSupport.trimOrNull(id);
     }
 
     /**
