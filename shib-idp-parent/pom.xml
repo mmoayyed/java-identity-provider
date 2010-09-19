@@ -18,13 +18,12 @@
         <module>../shib-idp-consent-api</module>
         <module>../shib-idp-consent-impl</module>
         <module>../shib-idp-profile-api</module>
-        <module>../shib-idp-profile-saml-impl</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.groupId>org.springframework</spring.groupId>
-        <spring.version>3.0.3.RELEASE</spring.version>
+        <spring.version>3.0.4.RELEASE</spring.version>
         <xerces.groupId>org.apache.xerces</xerces.groupId>
         <xerces.version>2.10.0</xerces.version>
     </properties>
@@ -67,6 +66,11 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
