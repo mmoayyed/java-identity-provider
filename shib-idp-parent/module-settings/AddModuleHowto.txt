@@ -38,6 +38,8 @@ put stuff in -api unless you're really sure it needs to be there.
 
 7. Perform an svn update to pull in the externalized files (set up via step 5)
 
+8. Add module to the shib-idp-parent/pom.xml and commit change to this POM.
+
 Now, from Eclipse
 
 1. Within the package explore, right-click and select "Import"
