@@ -18,6 +18,8 @@
         <module>../shib-idp-consent-api</module>
         <module>../shib-idp-consent-impl</module>
         <module>../shib-idp-profile-api</module>
+        <module>../shib-idp-tou-api</module>
+        <module>../shib-idp-tou-impl</module>
     </modules>
 
     <properties>
@@ -38,6 +40,10 @@
             <id>vt-middleware.repo</id>
             <url>http://vt-middleware.googlecode.com/svn/maven2</url>
         </repository>
+        <repository>
+            <id>repository.jboss.org</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public</url>
+        </repository>      
     </repositories>
 
     <!--
@@ -176,7 +182,7 @@
             <dependency>
                 <groupId>edu.vt.middleware</groupId>
                 <artifactId>vt-crypt</artifactId>
-                <version>2.0.1</version>
+                <version>2.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -188,7 +194,12 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>4.0.0.FINAL</version>
+            </dependency>
+            
             <!-- Provided Dependencies -->
 
             <!-- Runtime Dependencies -->
