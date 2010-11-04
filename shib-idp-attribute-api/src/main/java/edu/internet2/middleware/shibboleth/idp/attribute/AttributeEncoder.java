@@ -29,6 +29,16 @@ import net.jcip.annotations.ThreadSafe;
 public interface AttributeEncoder<EncodedType> {
     
     /**
+     * Gets the identifier of the protocol targeted by this encounter.  Note, some protocols
+     * may have different types of encoders that are used to encode attributes in to different
+     * parts of the protocol message.  This identifier should not be used to distinguish between
+     * the different message structure, it should only identify the protocol itself.
+     * 
+     * @return identifier of the protocol targeted by this encounter
+     */
+    public String getProtocol();
+    
+    /**
      * Encodes the attribute into a protocol specific representations.
      * 
      * @param attribute the attribute to encode

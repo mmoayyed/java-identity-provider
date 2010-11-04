@@ -35,8 +35,8 @@ public class AttributeResolutionContext implements Subcontext {
     /** Context which acts as the owner or parent of this context. */
     private final SubcontextContainer parentContext;
 
-    /** IDs of attributes that have been requested to be resolved. */
-    private Set<String> requestAttributes;
+    /** Attributes that have been requested to be resolved. */
+    private Set<Attribute<?>> requestAttributes;
 
     /** Plugins that be resolved. */
     private Map<String, BaseResolverPlugin<?>> resolvedPlugins;
@@ -53,7 +53,7 @@ public class AttributeResolutionContext implements Subcontext {
         parentContext = parent;
         parent.addSubcontext(this);
 
-        requestAttributes = new LazySet<String>();
+        requestAttributes = new LazySet<Attribute<?>>();
         resolvedPlugins = new LazyMap<String, BaseResolverPlugin<?>>();
         resolvedAttributes = new LazyMap<String, Attribute<?>>();
     }
@@ -68,22 +68,22 @@ public class AttributeResolutionContext implements Subcontext {
      * 
      * @return set of attributes requested to be resolved, never null
      */
-    public Set<String> getRequestAttributes() {
+    public Set<Attribute<?>> getRequestAttributes() {
         return requestAttributes;
     }
 
     /**
      * Sets the set of attributes requested to be resolved.
      * 
-     * @param attributeIds attributes requested to be resolved
+     * @param attributes attributes requested to be resolved
      */
-    public void setRequestAttributes(final Set<String> attributeIds) {
-        LazySet<String> newIds = new LazySet<String>();
-        if (attributeIds != null && !attributeIds.isEmpty()) {
-            newIds.addAll(attributeIds);
+    public void setRequestAttributes(final Set<Attribute<?>> attributes) {
+        LazySet<Attribute<?>> newAttributes = new LazySet<Attribute<?>>();
+        if (attributes != null && !attributes.isEmpty()) {
+            newAttributes.addAll(attributes);
         }
 
-        requestAttributes = newIds;
+        requestAttributes = newAttributes;
     }
 
     /**

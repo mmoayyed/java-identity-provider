@@ -24,6 +24,7 @@ import java.util.Map;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
@@ -118,20 +119,29 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
 
     /** {@inheritDoc} */
     public int hashCode() {
-        return getId().hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ObjectSupport.hashCode(id);
+        result = prime * result + ObjectSupport.hashCode(values);
+        return result;
     }
 
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
-        if (obj == this) {
+        if (this == obj) {
             return true;
         }
 
-        if (obj instanceof Attribute) {
-            return obj.hashCode() == hashCode();
+        if (obj == null) {
+            return false;
         }
 
-        return false;
+        if (!(obj instanceof Attribute)) {
+            return false;
+        }
+
+        Attribute other = (Attribute) obj;
+        return ObjectSupport.equals(id, other.getId()) && values.equals(other.getValues());
     }
 
     /** {@inheritDoc} */
