@@ -63,10 +63,15 @@ public class ToUServlet extends HttpServlet {
       
         String userId = null;  // TODO get userId from context     
         
-        boolean accepted = request.getParameter("accept-tou") != null && request.getParameter("accept-tou").equals("yes");
+        boolean accepted = request.getParameter("tou.accept") != null && request.getParameter("tou.accept").equals("yes");
         if (accepted) {
+            DateTime acceptanceDate = new DateTime();
             logger.info("User {} has accepted ToU version {}", userId, tou.getVersion());
-            storage.createAcceptedToU(userId, tou, new DateTime());
+            if (storage.containsToUAcceptance(userId, tou.getVersion())) {
+                storage.updateToUAcceptance(userId, ToUAcceptance.createToUAcceptance(tou, acceptanceDate));
+            } else {
+                storage.createToUAcceptance(userId, ToUAcceptance.createToUAcceptance(tou, acceptanceDate));
+            }
             // TODO
             // set the decision to ACCEPTED in the ToU context
         } else {

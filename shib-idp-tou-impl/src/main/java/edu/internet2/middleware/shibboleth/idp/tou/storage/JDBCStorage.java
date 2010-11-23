@@ -16,51 +16,72 @@
 
 package edu.internet2.middleware.shibboleth.idp.tou.storage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
-import edu.internet2.middleware.shibboleth.idp.tou.ToU;
+import edu.internet2.middleware.shibboleth.idp.tou.ToUAcceptance;
 
 /**
  *
  */
 public class JDBCStorage implements Storage {
 
-    private final Logger logger = LoggerFactory.getLogger(JDBCStorage.class);
     private SimpleJdbcTemplate jdbcTemplate;
- 
+    private String acceptanceTable = "ToUAcceptance";
+    
+    private static final class ToUAcceptanceMapper implements RowMapper<ToUAcceptance> {
+        public ToUAcceptance mapRow(ResultSet rs, int rowNum) throws SQLException {
+            final ToUAcceptance touAcceptance = new ToUAcceptance(rs.getString("version"), rs.getString("fingerprint"), new DateTime(rs.getTimestamp("acceptanceDate")));
+            return touAcceptance;
+        }
+    }
+    private final ToUAcceptanceMapper touAcceptanceMapper = new ToUAcceptanceMapper();
+
     /** {@inheritDoc} */
     public void setDataSource(final DataSource dataSource) {
         jdbcTemplate = new SimpleJdbcTemplate(dataSource);
     }
 
     /** {@inheritDoc} */
-    public void createAcceptedToU(final String userId, final ToU tou, final DateTime acceptanceDate) {
-        String sql = "INSERT INTO AcceptedToU " +
-        		"(userId, version, fingerprint, acceptanceDate) " +
-        		"VALUES (?, ?, ?, ?)";
-        try {
-            jdbcTemplate.update(sql, userId, tou.getVersion(), tou.getFingerprint(), acceptanceDate.toDate());    
-        } catch (DuplicateKeyException e) {
-            logger.warn("AcceptedToU already exists, update with new ToU");
-            sql = "UPDATE AcceptedToU " +
-                "SET fingerprint = ?, acceptanceDate = ? " +
-                "WHERE userId = ? AND version = ?";
-            jdbcTemplate.update(sql, tou.getFingerprint(), acceptanceDate.toDate(), userId, tou.getVersion());
-        }
+    public void createToUAcceptance(String userId, ToUAcceptance touAcceptance) {
+        String sql = "INSERT INTO " + acceptanceTable +
+            " (userId, version, fingerprint, acceptanceDate)" +
+            " VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, userId, touAcceptance.getVersion(), touAcceptance.getFingerprint(), touAcceptance.getAcceptanceDate().toDate());    
     }
 
     /** {@inheritDoc} */
-    public boolean containsAcceptedToU(final String userId, final ToU tou) {
-        final String sql = "SELECT COUNT(*) " +
-                "FROM AcceptedToU " +
-                "WHERE userId = ? AND version = ? AND fingerprint = ?";
-        int result = jdbcTemplate.queryForInt(sql, userId, tou.getVersion(), tou.getFingerprint());
-        return result > 0;
+    public void updateToUAcceptance(String userId, ToUAcceptance touAcceptance) {
+        String sql = "UPDATE " + acceptanceTable +
+            " SET fingerprint = ?, acceptanceDate = ?" +
+            " WHERE userId = ? AND version = ?";
+        jdbcTemplate.update(sql, touAcceptance.getFingerprint(), touAcceptance.getAcceptanceDate().toDate(), userId, touAcceptance.getVersion());    
+    }
+
+    /** {@inheritDoc} */
+    public ToUAcceptance readToUAcceptance(String userId, String version) {
+        final String sql = "SELECT version, fingerprint, acceptanceDate" +
+            " FROM " + acceptanceTable +
+            " WHERE userId = ? AND version = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, touAcceptanceMapper, userId, version);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+    
+    /** {@inheritDoc} */
+    public boolean containsToUAcceptance(String userId, String version) {
+        final String sql = "SELECT COUNT(*)" +
+            " FROM " + acceptanceTable +
+            " WHERE userId = ? AND version = ?";
+        return jdbcTemplate.queryForInt(sql, userId, version) > 0;
     }
 }

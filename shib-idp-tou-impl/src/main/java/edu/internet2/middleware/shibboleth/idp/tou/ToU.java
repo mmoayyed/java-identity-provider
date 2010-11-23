@@ -24,9 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.HexConverter;
-
 /**
  *
  */
@@ -35,17 +32,8 @@ public class ToU {
     private final Logger logger = LoggerFactory.getLogger(ToU.class);
     
     private final String version;
-
-    private final String fingerprint;
-
     private final String text;
-        
-    public ToU(String version, String fingerprint) {
-        this.version = version;
-        this.fingerprint = fingerprint;
-        this.text = null;
-    }
-    
+
     public ToU(String version, Resource resource) throws TermsOfUseException {
         this.version = version;
         
@@ -61,7 +49,6 @@ public class ToU {
             throw new TermsOfUseException("Error while initializing terms of use", e);
         }  
         this.text = stringBuilder.toString();        
-        this.fingerprint = new SHA256().digest(this.text.getBytes(), new HexConverter(true));
         logger.info("ToU version {} initialized from file {}", version, resource);
     }
    
@@ -77,48 +64,5 @@ public class ToU {
      */
     public final String getVersion() {
         return version;
-    }
-    
-    /**
-     * @return Returns the fingerprint.
-     */
-    public final String getFingerprint() {
-        return fingerprint;
-    }
-    
-    /** {@inheritDoc} */
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((fingerprint == null) ? 0 : fingerprint.hashCode());
-        result = prime * result + ((version == null) ? 0 : version.hashCode());
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        ToU other = (ToU) obj;
-        if (fingerprint == null) {
-            if (other.fingerprint != null)
-                return false;
-        } else if (!fingerprint.equals(other.fingerprint))
-            return false;
-        if (version == null) {
-            if (other.version != null)
-                return false;
-        } else if (!version.equals(other.version))
-            return false;
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return "ToU [version=" + version + "]";
     }
 }

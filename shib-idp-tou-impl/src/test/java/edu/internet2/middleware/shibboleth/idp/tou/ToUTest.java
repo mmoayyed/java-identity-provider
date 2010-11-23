@@ -16,9 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.idp.tou;
 
-import static org.testng.AssertJUnit.assertEquals;
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.fail;
+import static org.testng.AssertJUnit.*;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -26,8 +24,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.HexConverter;
 
 /**
  * Tests ToU.
@@ -39,10 +35,10 @@ public class ToUTest extends AbstractTestNGSpringContextTests {
 
     @javax.annotation.Resource(name="tou")
     private ToU tou;
-        
-    public void checkFingerprint() {
-    	final String fingerprint = new SHA256().digest(tou.getText().getBytes(), new HexConverter(true));
-    	assertEquals(fingerprint, tou.getFingerprint());	
+    
+    public void instantiation() {
+        assertEquals("1.0", tou.getVersion());
+        assertNotNull(tou.getText());
     }
     
     public void loadWrongFile() {
@@ -53,17 +49,4 @@ public class ToUTest extends AbstractTestNGSpringContextTests {
 			fail("Exception expected");
 		} catch (TermsOfUseException e) {}
     }
-    
-    public void equals() {
-        final ToU tou = new ToU("version", "fingerprint");
-        
-        final ToU touT1 = new ToU("version", "fingerprint");
-        final ToU touT2 = new ToU("other-version", "fingerprint");
-        final ToU touT3 = new ToU("version", "other-fingerprint");
-        
-        assertEquals(tou, touT1);
-        assertFalse(tou.equals(touT2));
-        assertFalse(tou.equals(touT3));
-    }
-    
 }

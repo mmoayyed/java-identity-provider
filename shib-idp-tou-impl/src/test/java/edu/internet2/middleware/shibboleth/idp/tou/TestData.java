@@ -46,27 +46,33 @@ public class TestData {
     }
     
     private static DateTime getRandomDate() {
-        // Fri Jan 01 12:00:00 EST 2010 | Tue Feb 02 12:00:00 EST 2010 | Wed Mar 03 12:00:00 EST 2010
-    	DateTime[] dates = {new DateTime(1262365200000L), new DateTime(1265130000000L), new DateTime(1267635600000L)};
+        // Fri, Jan 01 2010 12:00:00 UTC | Tue, Feb 02 2010 12:00:00 UTC | Wed, Mar 03 2010 12:00:00 UTC
+    	DateTime[] dates = {new DateTime(1262347200000L), new DateTime(1265112000000L), new DateTime(1267617600000L)};
         return dates[random.nextInt(dates.length)];
     }
         
-    private static ToU createToU() {
-        return new ToU(getRandomVersion(), getRandomFingerprint());
+    private static ToUAcceptance getRandomToUAcceptance() {
+        return new ToUAcceptance(getRandomVersion(), getRandomFingerprint(), getRandomDate());
     }
     
-    @DataProvider(name = "createAcceptedToU")
-    public static Object[][] createAcceptedToU() {      
+    @DataProvider(name = "date")
+    public static Object[][] date() {      
         return new Object[][] {
-        new Object[] {getRandomUserId(), createToU(), getRandomDate(), getRandomDate()}
+        new Object[] {getRandomDate()}
+      };
+    }
+      
+    @DataProvider(name = "touAcceptance")
+    public static Object[][] touAcceptance() {      
+        return new Object[][] {
+        new Object[] {getRandomToUAcceptance()}
       };
     }
     
-    @DataProvider(name = "containsAcceptedToU")
-    public static Object[][] containsAcceptedToU() {      
+    @DataProvider(name = "userIdVersionFingerprintDate")
+    public static Object[][] userIdVersionFingerprintDate() {      
         return new Object[][] {
-        new Object[] {getRandomUserId(), createToU(), getRandomDate()}
+        new Object[] {getRandomUserId(), getRandomVersion(), getRandomFingerprint(), getRandomDate()}
       };
     }
-    
 }   

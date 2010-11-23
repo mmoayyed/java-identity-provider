@@ -42,7 +42,14 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
         
         final String userId = null; // TODO get userId from touContext
         
-        if (storage.containsAcceptedToU(userId, tou)) {
+        ToUAcceptance touAcceptance;
+        if (storage.containsToUAcceptance(userId, tou.getVersion())) {
+            touAcceptance = storage.readToUAcceptance(userId, tou.getVersion());
+        } else {
+            touAcceptance = ToUAcceptance.emptyToUAcceptance();
+        }
+        
+        if (touAcceptance.contains(tou)) {
             touContext.setTermsOfUseDecision(Decision.PRIOR);
             logger.info("User {} has already accepted ToU {}", userId, tou);
             return;

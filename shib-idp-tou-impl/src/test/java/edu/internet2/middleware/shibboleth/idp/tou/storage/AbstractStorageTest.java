@@ -17,10 +17,7 @@
 package edu.internet2.middleware.shibboleth.idp.tou.storage;
 
 
-import static org.testng.AssertJUnit.assertFalse;
-import static org.testng.AssertJUnit.assertTrue;
-
-import javax.annotation.Resource;
+import static org.testng.AssertJUnit.*;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -31,7 +28,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import edu.internet2.middleware.shibboleth.idp.tou.TestData;
-import edu.internet2.middleware.shibboleth.idp.tou.ToU;
+import edu.internet2.middleware.shibboleth.idp.tou.ToUAcceptance;
 
 
 @ContextConfiguration("classpath:/tou-test-context.xml")
@@ -40,9 +37,6 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
     
     protected final Logger logger = LoggerFactory.getLogger("Test");
  
-    @Resource(name="tou")
-    private ToU tou;
-    
     protected Storage storage;
     
     protected void setStorage(Storage storage) {
@@ -52,28 +46,27 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
     @BeforeTest
     public abstract void initialization();
        
-    @Test(dataProvider = "createAcceptedToU")
-    public void createAcceptedToU(final String userId, final ToU otherToU, final DateTime acceptanceDate, final DateTime otherAcceptanceDate) {
-        assertFalse(storage.containsAcceptedToU(userId, tou));
-        assertFalse(storage.containsAcceptedToU(userId, otherToU));
+    @Test(dataProvider = "userIdVersionFingerprintDate")
+    public void crudToUAcceptance(final String userId, String version, String fingerprint, DateTime date) {
+        assertFalse(storage.containsToUAcceptance(userId, version));
+        assertNull(storage.readToUAcceptance(userId, version));
         
-        storage.createAcceptedToU(userId, tou, acceptanceDate);
-        storage.createAcceptedToU(userId, otherToU, acceptanceDate);
-        assertTrue(storage.containsAcceptedToU(userId, tou));
-        assertTrue(storage.containsAcceptedToU(userId, otherToU));
+        ToUAcceptance touAcceptance = new ToUAcceptance(version, fingerprint, date);
+        storage.createToUAcceptance(userId, touAcceptance);
+        assertTrue(storage.containsToUAcceptance(userId, version));
 
-        storage.createAcceptedToU(userId, tou, otherAcceptanceDate);
-        assertTrue(storage.containsAcceptedToU(userId, tou));
+        touAcceptance = storage.readToUAcceptance(userId, version);
+        
+        assertEquals(version, touAcceptance.getVersion());
+        assertEquals(fingerprint, touAcceptance.getFingerprint());
+        assertEquals(date, touAcceptance.getAcceptanceDate());
+        
+        touAcceptance = new ToUAcceptance(version, fingerprint.substring(1), date.plusMonths(1));
+        storage.updateToUAcceptance(userId, touAcceptance);
+        
+        touAcceptance = storage.readToUAcceptance(userId, version);        
+        assertEquals(version, touAcceptance.getVersion());
+        assertEquals(fingerprint.substring(1), touAcceptance.getFingerprint());
+        assertEquals(date.plusMonths(1), touAcceptance.getAcceptanceDate());       
     }
-    
-    @Test(dataProvider = "containsAcceptedToU")
-    public void containsAcceptedToU(final String userId, final ToU otherToU, final DateTime acceptanceDate) {    
-        assertFalse(storage.containsAcceptedToU(userId, otherToU));
-        
-        storage.createAcceptedToU(userId, otherToU, acceptanceDate);
-        assertTrue(storage.containsAcceptedToU(userId, otherToU));
-        assertFalse(storage.containsAcceptedToU("unknown-user", otherToU));
-        
-        assertFalse(storage.containsAcceptedToU(userId, tou));
-    }  
 }

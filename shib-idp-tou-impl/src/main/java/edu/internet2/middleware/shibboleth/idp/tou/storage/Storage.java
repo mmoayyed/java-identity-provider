@@ -16,16 +16,18 @@
 
 package edu.internet2.middleware.shibboleth.idp.tou.storage;
 
-import org.joda.time.DateTime;
-
-import edu.internet2.middleware.shibboleth.idp.tou.ToU;
+import edu.internet2.middleware.shibboleth.idp.tou.ToUAcceptance;
 
 /**
  *
  */
 public interface Storage {
 
-    public void createAcceptedToU(final String userId, final ToU tou, final DateTime acceptanceDate);        
+    public void createToUAcceptance(final String userId, final ToUAcceptance touAcceptance);        
     
-    public boolean containsAcceptedToU(final String userId, final ToU tou);
+    public void updateToUAcceptance(final String userId, final ToUAcceptance touAcceptance);        
+
+    public ToUAcceptance readToUAcceptance(final String userId, final String version);        
+    
+    public boolean containsToUAcceptance(final String userId, final String version);
 }

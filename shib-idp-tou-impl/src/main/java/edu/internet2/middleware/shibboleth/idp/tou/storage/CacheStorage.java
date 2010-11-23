@@ -24,23 +24,21 @@ import javax.annotation.Resource;
 import org.infinispan.Cache;
 import org.infinispan.config.Configuration;
 import org.infinispan.manager.CacheManager;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
-import edu.internet2.middleware.shibboleth.idp.tou.ToU;
+import edu.internet2.middleware.shibboleth.idp.tou.ToUAcceptance;
 
 /**
  *
  */
 public class CacheStorage implements Storage {
     
-    private final Logger logger = LoggerFactory.getLogger(CacheStorage.class);
     
     @Resource(name="cacheManager")
     private CacheManager cacheManager;
     
-    private ConcurrentMap<String, ConcurrentMap<ToU, DateTime>> acceptedToUPartition;
+    // userId: version: touAcceptance
+    private ConcurrentMap<String, ConcurrentMap<String, ToUAcceptance>> touAcceptancePartition;
     
     public void initialize() {      
         Cache<String, ConcurrentMap> cache = cacheManager.getCache("tou");
@@ -50,26 +48,35 @@ public class CacheStorage implements Storage {
             cache = cacheManager.getCache("tou");
         }
         
-        cache.putIfAbsent("AcceptedToUPartition", new ConcurrentHashMap<String, ConcurrentMap<ToU, DateTime>>());
-        acceptedToUPartition = (ConcurrentMap<String, ConcurrentMap<ToU, DateTime>>) cache.get("AcceptedToUPartition");
+        cache.putIfAbsent("touAcceptancePartition", new ConcurrentHashMap<String, ConcurrentMap<String, ToUAcceptance>>());
+        touAcceptancePartition = (ConcurrentMap<String, ConcurrentMap<String, ToUAcceptance>>) cache.get("touAcceptancePartition");
     }
     
     /** {@inheritDoc} */
-    public void createAcceptedToU(String userId, ToU tou, DateTime acceptanceDate) {
-        acceptedToUPartition.putIfAbsent(userId, new ConcurrentHashMap<ToU, DateTime>());
-        
-        if (acceptedToUPartition.get(userId).containsKey(tou)) {
-            logger.warn("AcceptedToU already exists, update with new ToU");
-        } 
-        acceptedToUPartition.get(userId).put(tou, acceptanceDate);        
+    public void createToUAcceptance(String userId, ToUAcceptance touAcceptance) {
+        touAcceptancePartition.putIfAbsent(userId, new ConcurrentHashMap<String, ToUAcceptance>());        
+        touAcceptancePartition.get(userId).put(touAcceptance.getVersion(), touAcceptance);
     }
 
     /** {@inheritDoc} */
-    public boolean containsAcceptedToU(String userId, ToU tou) {
-        if (!acceptedToUPartition.containsKey(userId)) {
-            return false;
-        }
-        return acceptedToUPartition.get(userId).containsKey(tou);
+    public void updateToUAcceptance(String userId, ToUAcceptance touAcceptance) {
+        Assert.state(touAcceptancePartition.containsKey(userId));
+        touAcceptancePartition.get(userId).replace(touAcceptance.getVersion(), touAcceptance);
     }
 
+    /** {@inheritDoc} */
+    public ToUAcceptance readToUAcceptance(String userId, String version) {
+        if (!touAcceptancePartition.containsKey(userId)) {
+            return null;
+        }
+        return touAcceptancePartition.get(userId).get(version);
+    }
+
+    /** {@inheritDoc} */
+    public boolean containsToUAcceptance(String userId, String version) {
+        if (!touAcceptancePartition.containsKey(userId)) {
+            return false;
+        }
+        return touAcceptancePartition.get(userId).containsKey(version);
+    }
 }
