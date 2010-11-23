@@ -1,29 +1,17 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="UserConsentTestSuite" verbose="1">
-    <parameter name="jdbcInitFile" value="file:src/installer/resources/userconsent-hsqldb-init.sql" />    
+<suite name="suite.consent" verbose="2">
+    <parameter name="consent.schema" value="classpath:/schema.sql" />    
     
-    <test name="persistenceTests" enabled="true">  
+    <test name="consent" enabled="true">  
         <packages>       
-            <package name="edu.internet2.middleware.shibboleth.idp.consent.persistence"/>
-        </packages>
-    </test>
-
-    <test name="componentTests" enabled="true">
-        <packages>
-            <package name="edu.internet2.middleware.shibboleth.idp.consent.components" />
+            <package name="edu.internet2.middleware.shibboleth.idp.consent"/>
         </packages>
     </test>
     
-    <test name="controllerTests" enabled="true">
-        <packages>
-            <package name="edu.internet2.middleware.shibboleth.idp.consent.controller" />
-        </packages>
-    </test>
-    
-    <test name="entityTests" enabled="true">
-        <packages>
-            <package name="edu.internet2.middleware.shibboleth.idp.consent.entities" />
+    <test name="consent.storage">  
+        <packages>       
+            <package name="edu.internet2.middleware.shibboleth.idp.consent.storage"/>
         </packages>
     </test>
 

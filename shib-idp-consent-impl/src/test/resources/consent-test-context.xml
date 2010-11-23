@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <context:component-scan base-package="edu.internet2.middleware.shibboleth.idp.consent" />
+
+    <!-- Storage -->
+    <bean id="consent.storage.jdbc" class="edu.internet2.middleware.shibboleth.idp.consent.storage.JDBCStorage" p:dataSource-ref="dataSource" />
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource" />
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+        p:driverClassName="org.hsqldb.jdbcDriver"
+        p:url="jdbc:hsqldb:mem:consent"
+        p:username="SA"
+        p:password="" />
+
+    <bean id="consent.storage.cache" class="edu.internet2.middleware.shibboleth.idp.consent.storage.CacheStorage" init-method="initialize"/>
+    <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"/>
+
+    <!-- Configuration -->
+    <bean id="consent.config.userIdAttribute" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="userId"/>
+    </bean>
+    
+    <bean id="consent.config.globalConsentEnabled" class="java.lang.Boolean">
+        <constructor-arg type="java.lang.String" value="false"/>
+    </bean>
+    
+    <bean id="consent.config.localizationHelper" class="edu.internet2.middleware.shibboleth.idp.consent.LocalizationHelper"
+        p:preferredLocale="en"
+        p:localeEnforcement="false"/>
+    
+    <bean id="consent.config.relyingPartyBlacklist" class="java.util.HashSet">
+        <constructor-arg type="java.util.Collection">
+            <set>
+                <value>https://sp\.example1\.org/shibboleth</value>
+                <value>https://sp\.example2\.org/shibboleth</value>
+                <value>https://.*\.example3\.org/shibboleth</value>                
+            </set>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="consent.config.attributeSortOrder" class="java.util.ArrayList">
+        <constructor-arg type="java.util.Collection">
+            <set>
+                <value>https://sp\.example1\.org/shibboleth</value>
+                <value>https://sp\.example2\.org/shibboleth</value>
+                <value>https://.*\.example3\.org/shibboleth</value>                
+            </set>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="consent.config.attributeBlacklist" class="java.util.HashSet">
+        <constructor-arg type="java.util.Collection">
+            <set>
+                <value>attribute_2</value>
+                <value>attribute_5</value>               
+            </set>
+        </constructor-arg>
+    </bean>
+
+</beans>

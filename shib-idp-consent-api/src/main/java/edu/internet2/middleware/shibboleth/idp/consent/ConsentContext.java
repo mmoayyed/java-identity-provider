@@ -78,6 +78,8 @@ public final class ConsentContext implements Subcontext {
 
         userAttributes = Collections.unmodifiableMap(new HashMap<String, Attribute<?>>(attributes));
         consentedAttributes = new HashMap<String, Attribute<?>>();
+        
+        consentDecision = Consent.UNSPECIFIED;
     }
 
     /** {@inheritDoc} */
