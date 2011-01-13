@@ -16,6 +16,7 @@
 
 package edu.internet2.middleware.shibboleth.idp.attribute.resolver;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +24,8 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
+import org.opensaml.util.ObjectSupport;
+import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
 
@@ -36,7 +39,7 @@ public class AttributeResolutionContext implements Subcontext {
     private final SubcontextContainer parentContext;
 
     /** Attributes that have been requested to be resolved. */
-    private Set<Attribute<?>> requestAttributes;
+    private Set<Attribute<?>> requestedAttributes;
 
     /** Plugins that be resolved. */
     private Map<String, BaseResolverPlugin<?>> resolvedPlugins;
@@ -53,7 +56,7 @@ public class AttributeResolutionContext implements Subcontext {
         parentContext = parent;
         parent.addSubcontext(this);
 
-        requestAttributes = new LazySet<Attribute<?>>();
+        requestedAttributes = new LazySet<Attribute<?>>();
         resolvedPlugins = new LazyMap<String, BaseResolverPlugin<?>>();
         resolvedAttributes = new LazyMap<String, Attribute<?>>();
     }
@@ -68,8 +71,8 @@ public class AttributeResolutionContext implements Subcontext {
      * 
      * @return set of attributes requested to be resolved, never null
      */
-    public Set<Attribute<?>> getRequestAttributes() {
-        return requestAttributes;
+    public Set<Attribute<?>> getRequestedAttributes() {
+        return requestedAttributes;
     }
 
     /**
@@ -77,13 +80,13 @@ public class AttributeResolutionContext implements Subcontext {
      * 
      * @param attributes attributes requested to be resolved
      */
-    public void setRequestAttributes(final Set<Attribute<?>> attributes) {
+    public void setRequestedAttributes(final Set<Attribute<?>> attributes) {
         LazySet<Attribute<?>> newAttributes = new LazySet<Attribute<?>>();
         if (attributes != null && !attributes.isEmpty()) {
             newAttributes.addAll(attributes);
         }
 
-        requestAttributes = newAttributes;
+        requestedAttributes = newAttributes;
     }
 
     /**
@@ -98,11 +101,75 @@ public class AttributeResolutionContext implements Subcontext {
     }
 
     /**
+     * Gets the resolved plugin with the given ID.
+     * 
+     * @param <T> type of the plugin
+     * @param pluginId ID of the plugin
+     * 
+     * @return the plugin or null if the plugin ID was null/empty or the plugin has not yet been resolved
+     */
+    public <T extends BaseResolverPlugin<?>> T getResolvedPlugin(String pluginId) {
+        String trimmedId = StringSupport.trimOrNull(pluginId);
+        if (trimmedId == null) {
+            return null;
+        }
+
+        return (T) resolvedPlugins.get(trimmedId);
+    }
+
+    /**
      * Gets the attributes that have been resolved, indexed by attribute ID.
      * 
      * @return attributes that have been resolved, never null
      */
     public Map<String, Attribute<?>> getResolvedAttributes() {
         return resolvedAttributes;
+    }
+
+    /**
+     * Gets a resolved attribute.
+     * 
+     * @param attributeId the ID of the attribute
+     * 
+     * @return the attribute or null if the ID is null/empty or the attribute has not be resolved
+     */
+    public Attribute getResolvedAttribute(String attributeId) {
+        String trimmedId = StringSupport.trimOrNull(attributeId);
+        if (trimmedId == null) {
+            return null;
+        }
+
+        return resolvedAttributes.get(trimmedId);
+    }
+
+    public void addResolvedAttribute(final Attribute<?> attribute) throws AttributeResolutionException {
+        final String attributeId = attribute.getId();
+
+        if (!resolvedAttributes.containsKey(attributeId)) {
+            resolvedAttributes.put(attributeId, attribute);
+        }
+
+        Attribute<?> existingAttribute = resolvedAttributes.get(attributeId);
+
+        if (attribute.getDisplayDescriptions() != null
+                && ObjectSupport.equals(attribute.getDisplayDescriptions(), existingAttribute.getDisplayDescriptions())) {
+            throw new AttributeResolutionException("Two " + attributeId
+                    + " attributes were resolved with different display descriptions");
+        }
+
+        if (attribute.getDisplayNames() != null
+                && ObjectSupport.equals(attribute.getDisplayNames(), existingAttribute.getDisplayNames())) {
+            throw new AttributeResolutionException("Two " + attributeId
+                    + " attributes were resolved with different display names");
+        }
+
+        if (attribute.getEncoders() != null
+                && ObjectSupport.equals(attribute.getEncoders(), existingAttribute.getEncoders())) {
+            throw new AttributeResolutionException("Two " + attributeId
+                    + " attributes were resolved with different encoders");
+        }
+
+        Collection existingValues = existingAttribute.getValues();
+        existingValues.addAll(attribute.getValues());
     }
 }

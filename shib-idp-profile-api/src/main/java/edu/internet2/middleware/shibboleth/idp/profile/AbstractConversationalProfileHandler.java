@@ -172,6 +172,8 @@ public abstract class AbstractConversationalProfileHandler<InboundMessageType, O
     protected abstract void resumeConversation(
             final ProfileContext<InboundMessageType, OutboundMessageType> profileContext);
 
+    // TODO add ability to save state without redirecting to a different location
+    
     /**
      * Redirects the user to the given URL or path. If a path is given it is assumed to be the complete path and may
      * also include query parameters or fragments. Whether a fully forms URL is given or a path, an HTTP 302 is used to
