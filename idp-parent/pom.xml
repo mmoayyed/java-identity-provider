@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Shibboleth IdP</name>
+    <groupId>net.shibboleth.idp</groupId>
+    <artifactId>idp-project</artifactId>
+    <version>3.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>../idp-core</module>
+        <module>../idp-authn-api</module>
+        <module>../idp-attribute-api</module>
+        <module>../idp-attribute-impl</module>
+        <module>../idp-consent-api</module>
+        <module>../idp-consent-impl</module>
+        <module>../idp-profile-api</module>
+        <module>../idp-tou-api</module>
+        <module>../idp-tou-impl</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.groupId>org.springframework</spring.groupId>
+        <spring.version>3.0.4.RELEASE</spring.version>
+        <xerces.groupId>org.apache.xerces</xerces.groupId>
+        <xerces.version>2.10.0</xerces.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>shibboleth.internet2.edu</id>
+            <name>Internet2</name>
+            <url>http://shibboleth.internet2.edu/downloads/maven2</url>
+        </repository>
+        <repository>
+            <id>vt-middleware.repo</id>
+            <url>http://vt-middleware.googlecode.com/svn/maven2</url>
+        </repository>
+        <repository>
+            <id>repository.jboss.org</id>
+            <url>https://repository.jboss.org/nexus/content/groups/public</url>
+        </repository>      
+    </repositories>
+
+    <!--
+        Dependencies which are required by every single project module should go here and will be inherited by all
+        modules.
+    -->
+    <dependencies>
+        <!-- Compile Dependencies -->
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-util</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-messaging-api</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>0.9.24</version>
+        </dependency>
+        <dependency>
+            <!-- needed for logback SMTP appender -->
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        <dependency>
+            <!-- needed for logback SMTP appender -->
+            <groupId>janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>2.5.10</version>
+        </dependency>
+
+        <!-- Provided Dependencies -->
+        <dependency>
+            <groupId>net.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Runtime Dependencies -->
+
+        <!--  Test Dependencies -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>5.9</version>
+            <classifier>jdk15</classifier>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <!--
+        Dependencies which are not required by every project module but for which every module should use the same
+        version of the dependency should go here. That is to say, placing a dependency here allows one to "peg" the
+        version of the artifact used by all project modules.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Compile Dependencies -->
+            <dependency>
+                <groupId>org.opensaml</groupId>
+                <artifactId>opensaml</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+            <dependency>
+                <groupId>${spring.groupId}</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>1.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>edu.vt.middleware</groupId>
+                <artifactId>vt-crypt</artifactId>
+                <version>2.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>4.0.0.FINAL</version>
+            </dependency>
+            
+            <!-- Provided Dependencies -->
+
+            <!-- Runtime Dependencies -->
+            <dependency>
+                <groupId>${xerces.groupId}</groupId>
+                <artifactId>xml-apis</artifactId>
+                <version>${xerces.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>${xerces.groupId}</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xerces.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>${xerces.groupId}</groupId>
+                <artifactId>resolver</artifactId>
+                <version>${xerces.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>${xerces.groupId}</groupId>
+                <artifactId>serializer</artifactId>
+                <version>${xerces.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>2.7.1</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!--  Test Dependencies -->
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>2.0.0</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>release-repo</id>
+            <url>${dist.release.url}</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.5</source>
+                        <target>1.5</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>-Xmx256m</argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <!-- Project Metadata -->
+    <url>http://shibboleth.internet2.edu/</url>
+
+    <inceptionYear>2006</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>Internet2</name>
+        <url>http://www.internet2.edu/</url>
+    </organization>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>http://bugs.internet2.edu/</url>
+    </issueManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Shibboleth Announce</name>
+            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
+            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
+            <post>shibboleth-announce@internet2.edu</post>
+            <archive>https://mail.internet2.edu/wws/arc/shibboleth-announce</archive>
+        </mailingList>
+        <mailingList>
+            <name>Shibboleth Users</name>
+            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
+            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
+            <post>shibboleth-users@internet2.edu</post>
+            <archive>https://mail.internet2.edu/wws/arc/shibboleth-users</archive>
+        </mailingList>
+        <mailingList>
+            <name>Shibboleth Development</name>
+            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
+            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
+            <post>shibboleth-dev@internet2.edu</post>
+            <archive>https://mail.internet2.edu/wws/arc/shibboleth-dev</archive>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <connection>scm:svn:https://svn.middleware.georgetown.edu/java-shib-idp/</connection>
+        <developerConnection>scm:svn:https://svn.middleware.georgetown.edu/java-shib-idp/</developerConnection>
+        <tag>HEAD</tag>
+        <url>http://svn.middleware.georgetown.edu/view/?root=java-shib-idp</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>cantor</id>
+            <name>Scott Cantor</name>
+            <organization>The Ohio State University</organization>
+            <organizationUrl>http://www.ohio-state.edu/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>ndk</id>
+            <name>Nate Klingenstein</name>
+            <organization>Internet2</organization>
+            <organizationUrl>http://www.internet2.edu/</organizationUrl>
+            <roles>
+                <role>documentation</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
+        <developer>
+            <id>lajoie</id>
+            <name>Chad La Joie</name>
+            <organization>SWITCH</organization>
+            <organizationUrl>http://www.switch.ch/</organizationUrl>
+            <roles>
+                <role>developer</role>
+                <role>documentation</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>reusser</id>
+            <name>Halm Reusser</name>
+            <organization>SWITCH</organization>
+            <organizationUrl>http://www.switch.ch/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>rdw</id>
+            <name>Rod Widdowson</name>
+            <organization>University of Edinburgh</organization>
+            <organizationUrl>http://www.ed.ac.uk/</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+    </developers>
+
+</project>
