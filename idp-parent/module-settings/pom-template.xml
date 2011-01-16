@@ -5,21 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>edu.internet2.middleware.shibboleth.idp</groupId>
+        <groupId>net.shibboleth.idp</groupId>
         <artifactId>idp-project</artifactId>
         <version>3.0-SNAPSHOT</version>
-        <relativePath>../shib-idp-parent</relativePath>
+        <relativePath>../idp-parent</relativePath>
     </parent>
 
     <name>Shibboleth IdP :: DESCRIPTIVE NAME</name>
-    <artifactId>shib-idp-MODULE_NAME</artifactId>
+    <artifactId>idp-MODULE_NAME</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
-            <groupId>edu.internet2.middleware.shibboleth.idp</groupId>
-            <artifactId>shib-idp-core</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 

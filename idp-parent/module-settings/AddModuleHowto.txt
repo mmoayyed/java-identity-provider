@@ -13,8 +13,8 @@ modules.  Code within -impl modules can be torn up and changed at any point with
 having to worry about breaking compatibility.  So, to put it another away, don't 
 put stuff in -api unless you're really sure it needs to be there.
 
-1. Create a directory called shib-idp-MODULE_NAME as a child of the 
-   java-shib-idp project
+1. Create a directory called idp-MODULE_NAME as a child of the 
+   java-identity-provider project
 
 2. With in the module directory create the directories:
    - src/main/java
@@ -22,23 +22,23 @@ put stuff in -api unless you're really sure it needs to be there.
    - src/test/java
    - src/test/resources
 
-3. Copy the java-shib-idp/shib-idp-parent/module-settings/pom-template.xml in 
+3. Copy the java-identity-provider/idp-parent/module-settings/pom-template.xml in 
    to your module directory and edit the following lines:
    - line 14, replace "DESCRIPTIVE NAME" with a decently descriptive name
    - line 15, replace "MODULE_NAME"
 
-4. From the java-shib-idp directory, add your module to SVN with the command:
-   svn add shib-idp-MODULE_NAME
+4. From the java-identity-provider directory, add your module to SVN with the command:
+   svn add idp-MODULE_NAME
    
-5. From the java-shib-idp directory, run the following SVN command:
-   svn propset svn:externals -F shib-idp-parent/module-settings/externals.svn shib-idp-MODULE_NAME
+5. From the java-identity-provider directory, run the following SVN command:
+   svn propset svn:externals -F idp-parent/module-settings/externals.svn idp-MODULE_NAME
    
 6. Commit your module to SVN with the following command:
-   svn commit shib-idp-MODULE_NAME -m "LOG MESSAGE" 
+   svn commit idp-MODULE_NAME -m "LOG MESSAGE" 
 
 7. Perform an svn update to pull in the externalized files (set up via step 5)
 
-8. Add module to the shib-idp-parent/pom.xml and commit change to this POM.
+8. Add module to the idp-parent/pom.xml and commit change to this POM.
 
 Now, from Eclipse
 
@@ -59,7 +59,7 @@ Some notes:
 modules.  So don't commit changes to them unless you really mean to change the
 setting for all modules.
 
-* The shib-idp-parent/pom.xml declares both inherited and managed dependencies.
+* The idp-parent/pom.xml declares both inherited and managed dependencies.
 Inherited dependencies are inherited by, available to, all project modules. You
 don't have to do anything in your pom to get them. Managed dependencies are 
 managed (version, scope, exclusions, etc.) by the parent pom but are not 
