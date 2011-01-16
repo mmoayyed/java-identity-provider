@@ -6,7 +6,7 @@
 
     <name>Shibboleth IdP</name>
     <groupId>net.shibboleth.idp</groupId>
-    <artifactId>idp-project</artifactId>
+    <artifactId>idp-parent</artifactId>
     <version>3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -15,6 +15,10 @@
         <module>../idp-authn-api</module>
         <module>../idp-attribute-api</module>
         <module>../idp-attribute-impl</module>
+        <module>../idp-attribute-resolver-api</module>
+        <module>../idp-attribute-resolver-impl</module>
+        <module>../idp-attribute-filter-api</module>
+        <module>../idp-attribute-filter-impl</module>
         <module>../idp-consent-api</module>
         <module>../idp-consent-impl</module>
         <module>../idp-profile-api</module>
