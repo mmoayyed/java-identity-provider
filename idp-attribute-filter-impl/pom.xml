@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>net.shibboleth.idp</groupId>
+        <artifactId>idp-project</artifactId>
+        <version>3.0-SNAPSHOT</version>
+        <relativePath>../idp-parent</relativePath>
+    </parent>
+
+    <name>Shibboleth IdP :: Attribute Filter Engine Plugin Impl</name>
+    <artifactId>idp-attribute-filter-impl</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <!-- Compile Dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-filter-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Provided Dependencies -->
+
+        <!-- Runtime Dependencies -->
+
+        <!-- Test Dependencies -->
+
+        <!-- Managed Dependencies -->
+    </dependencies>
+</project>
