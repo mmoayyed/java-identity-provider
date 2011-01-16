@@ -90,7 +90,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
     /** {@inheritDoc} */
     protected boolean shouldReload() {
         try {
-            return configurationResource.getLastModifiedTime() > getLastSuccessfulReloadInstant().getMillis();
+            return configurationResource.getLastModifiedTime().isAfter(getLastSuccessfulReloadInstant());
         } catch (ResourceException e) {
             statusManager.add(new ErrorStatus(
                     "Error checking last modified time of logging service configuration resource "
