@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Timer;
 
+import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 
@@ -75,14 +76,14 @@ public class LogbackLoggingService extends AbstractReloadableService {
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ServiceException {
+    public void validate() throws ComponentValidationException {
         try {
             if (!configurationResource.exists()) {
-                throw new ServiceException("Logging service configuration resource "
+                throw new ComponentValidationException("Logging service configuration resource "
                         + configurationResource.getLocation() + " does not exist.");
             }
         } catch (ResourceException e) {
-            throw new ServiceException("Unable to determing if logging service configuration resource "
+            throw new ComponentValidationException("Unable to determing if logging service configuration resource "
                     + configurationResource.getLocation(), e);
         }
     }

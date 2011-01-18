@@ -16,10 +16,10 @@
 
 package net.shibboleth.idp.service;
 
-/**
- * A simple interface that represents coarse grained services, or components, within the software.
- */
-public interface Service {
+import net.shibboleth.idp.Component;
+
+/** A service extends the notion of a component with the concept of a lifecycle. */
+public interface Service extends Component {
 
     /** Indicates the service object has been created but not yet started. */
     public static final String STATE_NEW = "new";
@@ -35,20 +35,6 @@ public interface Service {
 
     /** Indicates that the service is stopped and is not available for use. */
     public static final String STATE_STOPPED = "stopped";
-
-    /**
-     * Gets the ID of this service.
-     * 
-     * @return ID of this service
-     */
-    public String getId();
-
-    /**
-     * Gets a human-readable display name for this service.
-     * 
-     * @return human-readable display name for this service
-     */
-    public String getDisplayName();
 
     /**
      * Gets the current state of the service.
@@ -72,10 +58,4 @@ public interface Service {
      */
     public void stop() throws ServiceException;
 
-    /**
-     * Validates that a service is operational and function properly (with the limits that such things can be checked).
-     * 
-     * @throws ServiceException thrown if there is a problem with the service
-     */
-    public void validate() throws ServiceException;
 }

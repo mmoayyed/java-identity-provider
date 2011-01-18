@@ -22,35 +22,28 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /** Base class for {@link Service} implementations. */
 @ThreadSafe
-public abstract class AbstractService implements Service {
+public abstract class AbstractService extends AbstractComponent implements Service {
 
-    /** Suffix appended to service ID to form the starting performance event ID.  Value: {@value} */
+    /** Suffix appended to service ID to form the starting performance event ID. Value: {@value} */
     public static final String START_PERF_EVENT_ID_SUFFIX = ".start";
-    
-    /** Suffix appended to service ID to form the stopping performance event ID.  Value: {@value} */
+
+    /** Suffix appended to service ID to form the stopping performance event ID. Value: {@value} */
     public static final String STOP_PERF_EVENT_ID_SUFFIX = ".stop";
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractService.class);
-
-    /** Unique name of this service. */
-    private final String id;
-
-    /** Human readable display name for this service. */
-    private String displayName;
 
     /** The current state of the service. */
     private String currentState;
@@ -64,33 +57,10 @@ public abstract class AbstractService implements Service {
      * @param serviceId the unique ID of this service
      */
     public AbstractService(final String serviceId) {
-        this.id = DatatypeHelper.safeTrimOrNullString(serviceId);
-        Assert.isNotNull(this.id, "Service ID may not be null of empty");
+        super(serviceId);
 
         currentState = STATE_NEW;
         serviceLock = new ReentrantReadWriteLock(true);
-    }
-
-    /** {@inheritDoc} */
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    /**
-     * Sets the display name of this service.
-     * 
-     * @param name display name of this service, may not be null or empty
-     */
-    public void setDisplayName(final String name) {
-        String temp = DatatypeHelper.safeTrimOrNullString(name);
-        Assert.isNotNull(temp, "Service display name may not be null or empty");
-
-        displayName = temp;
-    }
-
-    /** {@inheritDoc} */
-    public String getId() {
-        return id;
     }
 
     /** {@inheritDoc} */

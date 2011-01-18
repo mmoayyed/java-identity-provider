@@ -29,6 +29,8 @@ import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
 
+//TODO consider making collections immutable and adding add/remove methods in order to do things like check for null values
+
 /**
  * Each attribute represents one piece of information about a user and has associated encoders used to turn that
  * information in to protocol-specific formats.

@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.AbstractComponent;
+import net.shibboleth.idp.ComponentValidationException;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +35,10 @@ import org.springframework.expression.Expression;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class BaseResolverPlugin<ResolvedType> {
+public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
-
-    /** The identifier for this plug-in. */
-    private final String id;
 
     /**
      * Whether an {@link EvaluationException} that occurred when checking this plugins evaluation condition is re-thrown
@@ -64,22 +61,12 @@ public abstract class BaseResolverPlugin<ResolvedType> {
      * @param pluginId unique identifier for the plugin, never null or empty
      */
     public BaseResolverPlugin(final String pluginId) {
-        id = StringSupport.trimOrNull(pluginId);
-        Assert.isNotNull(id, "Resolver plugin ID may not be null or empty");
+        super(pluginId);
 
         propagateEvaluationConditionExceptions = false;
         propagateResolutionExceptions = false;
         evaluationCondition = null;
         dependencies = Collections.emptyList();
-    }
-
-    /**
-     * Gets the unique identifier of this plugin.
-     * 
-     * @return unique identifier of this plugin, never null or empty
-     */
-    public String getId() {
-        return id;
     }
 
     /**
@@ -170,9 +157,9 @@ public abstract class BaseResolverPlugin<ResolvedType> {
      * 
      * The default implementation of this method is a no-op. Subclasses should override this method as appropriate.
      * 
-     * @throws AttributeResolutionException if the plug-in has an invalid internal state
+     * @throws ComponentValidationException if the plug-in has an invalid internal state
      */
-    public void validate() throws AttributeResolutionException {
+    public void validate() throws ComponentValidationException {
 
     }
 
@@ -188,8 +175,7 @@ public abstract class BaseResolverPlugin<ResolvedType> {
      * 
      * @throws AttributeResolutionException thrown if there is a problem evaluating the condition
      */
-    public boolean isApplicable(final AttributeResolutionContext resolutionContext) 
-            throws AttributeResolutionException {
+    public boolean isApplicable(final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         if (evaluationCondition == null) {
             return true;
         }
