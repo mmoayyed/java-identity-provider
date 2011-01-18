@@ -29,31 +29,20 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.groupId>org.springframework</spring.groupId>
-        <spring.version>3.0.4.RELEASE</spring.version>
+        <spring.version>3.0.5.RELEASE</spring.version>
         <xerces.groupId>org.apache.xerces</xerces.groupId>
         <xerces.version>2.10.0</xerces.version>
     </properties>
 
     <repositories>
         <repository>
-            <id>shibboleth.internet2.edu</id>
-            <name>Internet2</name>
-            <url>http://shibboleth.internet2.edu/downloads/maven2</url>
+            <id>shibboleth</id>
+            <name>Shibboleth.net</name>
+            <url>http://shibboleth.net/nexus/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>vt-middleware.repo</id>
-            <url>http://vt-middleware.googlecode.com/svn/maven2</url>
-        </repository>
-        <repository>
-            <id>repository.jboss.org</id>
-            <url>https://repository.jboss.org/nexus/content/groups/public</url>
-        </repository>      
     </repositories>
 
-    <!--
-        Dependencies which are required by every single project module should go here and will be inherited by all
-        modules.
-    -->
+    <!-- Dependencies which are required by every single project module should go here and will be inherited by all modules. -->
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
@@ -85,7 +74,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>1.6</version>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -95,7 +84,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.24</version>
+            <version>0.9.27</version>
         </dependency>
         <dependency>
             <!-- needed for logback SMTP appender -->
@@ -126,12 +115,11 @@
 
         <!-- Runtime Dependencies -->
 
-        <!--  Test Dependencies -->
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>5.9</version>
-            <classifier>jdk15</classifier>
+            <version>5.14.6</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -154,14 +142,13 @@
         </dependency>
     </dependencies>
 
-    <!--
-        Dependencies which are not required by every project module but for which every module should use the same
-        version of the dependency should go here. That is to say, placing a dependency here allows one to "peg" the
-        version of the artifact used by all project modules.
-    -->
+    <!-- Dependencies which are not required by every project module but for which every module should use the same version 
+        of the dependency should go here. That is to say, placing a dependency here allows one to "peg" the version of the artifact 
+        used by all project modules. -->
     <dependencyManagement>
         <dependencies>
             <!-- Compile Dependencies -->
+            <!-- OpenSAML 2 dependency will go away once OpenSAML3 is further along -->
             <dependency>
                 <groupId>org.opensaml</groupId>
                 <artifactId>opensaml</artifactId>
@@ -203,7 +190,7 @@
                 <artifactId>infinispan-core</artifactId>
                 <version>4.0.0.FINAL</version>
             </dependency>
-            
+
             <!-- Provided Dependencies -->
 
             <!-- Runtime Dependencies -->
@@ -238,7 +225,7 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <!--  Test Dependencies -->
+            <!-- Test Dependencies -->
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
@@ -257,29 +244,88 @@
 
     <build>
         <defaultGoal>install</defaultGoal>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <argLine>-Xmx256m</argLine>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Xmx256m</argLine>
+                    <parallel>methods</parallel>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifestEntries>
+                            <Main-Class>net.shibboleth.idp.Version</Main-Class>
+                        </manifestEntries>
+                        <manifestSections>
+                            <manifestSection>
+                                <name>net/shibboleth/idp</name>
+                                <manifestEntries>
+                                    <Implementation-Title>${project.artifactId}</Implementation-Title>
+                                    <Implementation-Version>${project.version}</Implementation-Version>
+                                    <Implementation-Vendor>shibboleth.net</Implementation-Vendor>
+                                </manifestEntries>
+                            </manifestSection>
+                        </manifestSections>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+    
+    <reporting>
+        <!-- TODO: configure reporting plugins: javadoc, jxr, checkstyle report, surefire report -->
+        
+    </reporting>
+    
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.1</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <!-- Project Metadata -->
-    <url>http://shibboleth.internet2.edu/</url>
+    <url>http://www.shibboleth.net/</url>
 
     <inceptionYear>2006</inceptionYear>
 
@@ -298,7 +344,7 @@
 
     <issueManagement>
         <system>JIRA</system>
-        <url>http://bugs.internet2.edu/</url>
+        <url>https://issues.shibboleth.net/jira</url>
     </issueManagement>
 
     <mailingLists>
@@ -326,10 +372,10 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:svn:https://svn.middleware.georgetown.edu/java-shib-idp/</connection>
-        <developerConnection>scm:svn:https://svn.middleware.georgetown.edu/java-shib-idp/</developerConnection>
+        <connection>scm:svn:https://svn.shibboleth.net/java-identity-provider/</connection>
+        <developerConnection>scm:svn:https://svn.shibboleth.net/java-identity-provider/</developerConnection>
         <tag>HEAD</tag>
-        <url>http://svn.middleware.georgetown.edu/view/?root=java-shib-idp</url>
+        <url>http://svn.shibboleth.net/view/java-identity-provider</url>
     </scm>
 
     <developers>
