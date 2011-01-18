@@ -1,0 +1,57 @@
+/*
+ * Copyright 2011 University Corporation for Advanced Internet Development, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.attribute;
+
+/**
+ * Mock implementation of {@link AttributeEncoder}.
+ * 
+ * @param <ValueType> type of value produced by this encoder
+ */
+public class MockEncoder<ValueType> implements AttributeEncoder<ValueType> {
+
+    /** Static protocol string for this encoder. */
+    private String proto;
+
+    /** Static encoded attribute value for this encoder. */
+    private ValueType encodedValue;
+
+    /** Constructor. */
+    public MockEncoder() {
+
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param protocol static value to bereturned from {@link #getProtocol()}
+     * @param encodedAttributeValue static value to be returned from {@link #encode(Attribute)}
+     */
+    public MockEncoder(String protocol, ValueType encodedAttributeValue) {
+        proto = protocol;
+        encodedValue = encodedAttributeValue;
+    }
+
+    /** {@inheritDoc} */
+    public String getProtocol() {
+        return proto;
+    }
+
+    /** {@inheritDoc} */
+    public ValueType encode(Attribute<?> attribute) throws AttributeEncodingException {
+        return encodedValue;
+    }
+}

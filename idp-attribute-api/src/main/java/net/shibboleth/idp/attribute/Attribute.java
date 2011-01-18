@@ -17,19 +17,19 @@
 package net.shibboleth.idp.attribute;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import net.jcip.annotations.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
-
-//TODO consider making collections immutable and adding add/remove methods in order to do things like check for null values
 
 /**
  * Each attribute represents one piece of information about a user and has associated encoders used to turn that
@@ -40,7 +40,7 @@ import org.opensaml.util.collections.LazyMap;
  * 
  * @param <ValueType> the object type of the values for this attribute
  */
-@ThreadSafe
+@NotThreadSafe
 public class Attribute<ValueType> implements Comparable<Attribute> {
 
     /** ID of this attribute. */
@@ -74,35 +74,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
     }
 
     /**
-     * Gets the localized human readable description of attribute.
-     * 
-     * @return human readable description of attribute, never null
-     */
-    public Map<Locale, String> getDisplayDescriptions() {
-        return displayDescriptions;
-    }
-
-    /**
-     * Gets the localized human readable name of the attribute.
-     * 
-     * @return human readable name of the attribute, never null
-     */
-    public Map<Locale, String> getDisplayNames() {
-        return displayNames;
-    }
-
-    /**
-     * Gets the list of attribute encoders usable with this attribute.
-     * 
-     * @return attribute encoders usable with this attribute, never null
-     */
-    public List<AttributeEncoder<?>> getEncoders() {
-        return encoders;
-    }
-
-    /**
-     * Gets the unique ID of the attribute. This ID need not be at all related to any protocol-specific attribute
-     * identifiers.
+     * Gets the unique ID of the attribute. This ID need not be related to any protocol-specific attribute identifiers.
      * 
      * @return unique ID of the attribute
      */
@@ -111,12 +83,244 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
     }
 
     /**
-     * Gets the unordered list of values of the attribute.
+     * Gets the unmodifiable collection of localized human readable name of the attribute. This collection never
+     * contains entries whose key or value are null.
+     * 
+     * @return human readable name of the attribute, never null
+     */
+    public Map<Locale, String> getDisplayNames() {
+        return Collections.unmodifiableMap(displayNames);
+    }
+
+    /**
+     * Replaces the existing display names for this attribute with the given ones. If the given collection is null the
+     * existing display names are cleared and no new ones are added.
+     * 
+     * @param newNames the new names for this attribute, may be null
+     */
+    public void setDisplayNames(Map<Locale, String> newNames) {
+        displayNames.clear();
+
+        if (newNames == null) {
+            return;
+        }
+
+        for (Entry<Locale, String> entry : newNames.entrySet()) {
+            addDisplayName(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Adds a display name to this attribute.
+     * 
+     * @param locale local of the display name, never null
+     * @param name the display name, never null or empty
+     * 
+     * @return the value that was replaced for the given locale or null if no value was replaced
+     */
+    public String addDisplayName(Locale locale, String name) {
+        Assert.isNotNull(locale, "Display name locale can not be null");
+
+        final String trimmedName = StringSupport.trimOrNull(name);
+        Assert.isNotNull(trimmedName, "Display name can not be null or empty");
+
+        return displayNames.put(locale, trimmedName);
+    }
+
+    /**
+     * Removes the display name for the given locale.
+     * 
+     * @param locale locale whose display name will be removed, may be null
+     * 
+     * @return the removed value or null if no value existed for the given locale
+     */
+    public String removeDisplayName(Locale locale) {
+        if (locale == null) {
+            return null;
+        }
+
+        return displayNames.remove(locale);
+    }
+
+    /**
+     * Gets the unmodifiable localized human readable description of attribute. This collection never contains entries
+     * whose key or value are null.
+     * 
+     * @return human readable description of attribute, never null
+     */
+    public Map<Locale, String> getDisplayDescriptions() {
+        return Collections.unmodifiableMap(displayDescriptions);
+    }
+
+    /**
+     * Replaces the existing display descriptions for this attribute with the given ones. If the given collection is
+     * null the existing display descriptions are cleared and no new ones are added.
+     * 
+     * @param newDescriptions the new descriptions for this attribute, may be null
+     */
+    public void setDisplayDescriptions(Map<Locale, String> newDescriptions) {
+        displayDescriptions.clear();
+
+        if (newDescriptions == null) {
+            return;
+        }
+
+        for (Entry<Locale, String> entry : newDescriptions.entrySet()) {
+            addDisplayDescription(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * Adds a display description to this attribute.
+     * 
+     * @param locale local of the display name, never null
+     * @param description the display description, never null or empty
+     * 
+     * @return the value that was replaced for the given locale or null if no value was replaced
+     */
+    public String addDisplayDescription(Locale locale, String description) {
+        Assert.isNotNull(locale, "Display description locale can not be null");
+
+        final String trimmedDescription = StringSupport.trimOrNull(description);
+        Assert.isNotNull(trimmedDescription, "Display description can not be null or empty");
+
+        return displayDescriptions.put(locale, trimmedDescription);
+    }
+
+    /**
+     * Removes the display description for the given locale.
+     * 
+     * @param locale locale whose display description will be removed, may be null
+     * 
+     * @return the removed value or null if no value existed for the given locale
+     */
+    public String removeDisplayDescription(Locale locale) {
+        if (locale == null) {
+            return null;
+        }
+
+        return displayDescriptions.remove(locale);
+    }
+
+    /**
+     * Gets the unordered, unmodifiable collection of values of the attribute. This collection never contains null
+     * values.
      * 
      * @return values of the attribute, never null
      */
     public Collection<ValueType> getValues() {
-        return values;
+        return Collections.unmodifiableCollection(values);
+    }
+
+    /**
+     * Replaces the existing values for this attribute with the given values. If the given collection is null the
+     * existing values are cleared and no new values are added.
+     * 
+     * @param newValues the new values for this attribute, may be null
+     */
+    public void setValues(Collection<ValueType> newValues) {
+        values.clear();
+
+        if (newValues == null) {
+            return;
+        }
+
+        for (ValueType value : newValues) {
+            addValue(value);
+        }
+    }
+
+    /**
+     * Adds a value to this attribute.
+     * 
+     * @param value value to be added, may be null but null values are discarded
+     * 
+     * @return true if a value was added, false otherwise
+     */
+    public boolean addValue(ValueType value) {
+        if (value == null) {
+            return false;
+        }
+
+        return values.add(value);
+    }
+
+    /**
+     * Removes a value from this attribute.
+     * 
+     * @param value value to be removed, may be null
+     * 
+     * @return true if a value was removed, false otherwise
+     */
+    public boolean removeValue(ValueType value) {
+        if (value == null) {
+            return false;
+        }
+
+        return values.remove(value);
+    }
+
+    /**
+     * Gets the unmodifiable list of attribute encoders usable with this attribute. This collection never contains null
+     * values.
+     * 
+     * @return attribute encoders usable with this attribute, never null
+     */
+    public List<AttributeEncoder<?>> getEncoders() {
+        return Collections.unmodifiableList(encoders);
+    }
+
+    /**
+     * Replaces the existing encoders for this attribute with the given encoders. If the given collection is null the
+     * existing encoders are cleared and no new ones are added.
+     * 
+     * @param newEncoders the new encoders for this attribute, may be null
+     */
+    public void setEncoders(List<AttributeEncoder<?>> newEncoders) {
+        encoders.clear();
+
+        if (newEncoders == null) {
+            return;
+        }
+
+        for (AttributeEncoder<?> encoder : newEncoders) {
+            addEncoder(encoder);
+        }
+    }
+
+    /**
+     * Adds an encoder for this attribute.
+     * 
+     * @param encoder the encode to be added, may be null but null values will be discarded
+     * 
+     * @return true if an encoder was added, false otherwise
+     */
+    public boolean addEncoder(AttributeEncoder<?> encoder) {
+        if (encoder == null || encoders.contains(encoder)) {
+            return false;
+        }
+
+        return encoders.add(encoder);
+    }
+
+    /**
+     * Removes an encoder from this attribute.
+     * 
+     * @param encoder encoder to be removed, may be null
+     * 
+     * @return true if an encoder was removed, false otherwise
+     */
+    public boolean removeEncoder(AttributeEncoder<?> encoder) {
+        if (encoder == null) {
+            return false;
+        }
+
+        return encoders.remove(encoder);
+    }
+
+    /** {@inheritDoc} */
+    public int compareTo(Attribute other) {
+        return getId().compareTo(other.getId());
     }
 
     /** {@inheritDoc} */
@@ -143,12 +347,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
         }
 
         Attribute other = (Attribute) obj;
-        return ObjectSupport.equals(id, other.getId()) && values.equals(other.getValues());
-    }
-
-    /** {@inheritDoc} */
-    public int compareTo(Attribute other) {
-        return getId().compareTo(other.getId());
+        return ObjectSupport.equals(id, other.getId());
     }
 
     /** {@inheritDoc} */
