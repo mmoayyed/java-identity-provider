@@ -33,12 +33,15 @@ put stuff in -api unless you're really sure it needs to be there.
 5. From the java-identity-provider directory, run the following SVN command:
    svn propset svn:externals -F idp-parent/module-settings/externals.svn idp-MODULE_NAME
    
-6. Commit your module to SVN with the following command:
+6. From the java-identity-provider directory, run the following SVN command:
+   svn propset svn:ignore -F idp-parent/module-settings/ignore.svn idp-MODULE_NAME
+   
+7. Commit your module to SVN with the following command:
    svn commit idp-MODULE_NAME -m "LOG MESSAGE" 
 
-7. Perform an svn update to pull in the externalized files (set up via step 5)
+8. Perform an svn update to pull in the externalized files (set up via step 5)
 
-8. Add module to the idp-parent/pom.xml and commit change to this POM.
+9. Add module to the idp-parent/pom.xml and commit change to this POM.
 
 Now, from Eclipse
 
