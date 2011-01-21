@@ -16,6 +16,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Map;
+
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
@@ -76,7 +78,7 @@ public class ResolverPluginDependency {
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attribute
      */
-    public Attribute<?> getDependantAttribute(final AttributeResolutionContext resolutionContext)
+    public Attribute<?> getDependentAttribute(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
         final ResolvedAttributeDefinition attributeDefinition =
@@ -87,7 +89,10 @@ public class ResolverPluginDependency {
 
         final ResolvedDataConnector dataConnector = resolutionContext.getResolvedDataConnector(dependencyPluginId);
         if (dataConnector != null) {
-            return dataConnector.resolve(resolutionContext).get(dependencyAttributeId);
+            Map<String, Attribute<?>> connectorValues = dataConnector.resolve(resolutionContext);
+            if (connectorValues != null) {
+                return connectorValues.get(dependencyAttributeId);
+            }
         }
 
         return null;

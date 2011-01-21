@@ -187,7 +187,7 @@ public class AttributeResolver extends AbstractComponent {
         try {
             resolvedAttributes = dataConnector.resolve(resolutionContext);
         } catch (AttributeResolutionException e) {
-            String failoverDataConnectorId = dataConnector.getFailoverDependencyId();
+            String failoverDataConnectorId = dataConnector.getFailoverDataConnectorId();
 
             if (StringSupport.isNullOrEmpty(failoverDataConnectorId)) {
                 log.error("Received the following error from data connector " + dataConnector.getId()
@@ -217,7 +217,7 @@ public class AttributeResolver extends AbstractComponent {
             final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
 
         for (ResolverPluginDependency dependency : plugin.getDependencies()) {
-            dependency.getDependantAttribute(resolutionContext);
+            dependency.getDependentAttribute(resolutionContext);
             // TODO store in context
         }
     }

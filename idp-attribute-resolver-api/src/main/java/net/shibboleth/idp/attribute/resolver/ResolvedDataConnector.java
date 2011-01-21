@@ -80,8 +80,8 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public String getFailoverDependencyId() {
-        return resolvedConnector.getFailoverDependencyId();
+    public String getFailoverDataConnectorId() {
+        return resolvedConnector.getFailoverDataConnectorId();
     }
 
     /** {@inheritDoc} */
@@ -120,7 +120,7 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public void setFailoverDependencyId(String id) {
+    public void setFailoverDataConnectorId(String id) {
         return;
     }
 

@@ -23,15 +23,12 @@ import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.StringSupport;
 
-
-//TODO failover support
-
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
 public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, Attribute<?>>> {
 
     /** ID of the data connector to use if this one fails. */
-    private String failoverDependencyId;
+    private String failoverDataConnectorId;
 
     /**
      * Constructor.
@@ -49,8 +46,8 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @return ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    public String getFailoverDependencyId() {
-        return failoverDependencyId;
+    public String getFailoverDataConnectorId() {
+        return failoverDataConnectorId;
     }
 
     /**
@@ -60,8 +57,8 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @param id ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
-    public void setFailoverDependencyId(final String id) {
-        failoverDependencyId = StringSupport.trimOrNull(id);
+    public void setFailoverDataConnectorId(final String id) {
+        failoverDataConnectorId = StringSupport.trimOrNull(id);
     }
 
     /**

@@ -118,6 +118,13 @@ public class BaseResolverPluginTest {
         plugin.setDependencies(depdencies);
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().size() == 2);
+
+        try {
+            plugin.getDependencies().add(dep1);
+            Assert.fail("able to add entry to supossedly unmodifiable collection");
+        } catch (UnsupportedOperationException e) {
+            // expected this
+        }
     }
 
     /** Test {@link BaseResolverPlugin#resolve(AttributeResolutionContext)}. */
