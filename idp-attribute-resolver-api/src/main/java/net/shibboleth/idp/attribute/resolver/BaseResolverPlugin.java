@@ -21,7 +21,6 @@ import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.AbstractComponent;
-import net.shibboleth.idp.ComponentValidationException;
 
 import org.opensaml.util.collections.LazyList;
 import org.slf4j.Logger;
@@ -145,22 +144,15 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      */
     public void setDependencies(final List<ResolverPluginDependency> pluginDependencies) {
         LazyList<ResolverPluginDependency> newDependencies = new LazyList<ResolverPluginDependency>();
-        if (pluginDependencies != null && !pluginDependencies.isEmpty()) {
-            newDependencies.addAll(dependencies);
+        if (pluginDependencies != null) {
+            for (ResolverPluginDependency dependency : pluginDependencies) {
+                if (dependency != null && !newDependencies.contains(dependency)) {
+                    newDependencies.add(dependency);
+                }
+            }
         }
 
-        dependencies = newDependencies;
-    }
-
-    /**
-     * Validate the internal state of this plug-in. This process may not rely on information from any dependency.
-     * 
-     * The default implementation of this method is a no-op. Subclasses should override this method as appropriate.
-     * 
-     * @throws ComponentValidationException if the plug-in has an invalid internal state
-     */
-    public void validate() throws ComponentValidationException {
-
+        dependencies = Collections.unmodifiableList(newDependencies);
     }
 
     /**
@@ -224,7 +216,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
     }
 
     /**
-     * Perform the actual resolution.
+     * Perform the actual resolution. The resolved attribute(s) should not be recorded in the resolution context.
      * 
      * @param resolutionContext current resolution context
      * 

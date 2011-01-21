@@ -91,7 +91,7 @@ public class AttributeResolver extends AbstractComponent {
 
         final Collection<String> attributeIds = getToBeResolvedAttributes(resolutionContext);
         for (String attributeId : attributeIds) {
-            resolveAttribute(attributeId, resolutionContext);
+            resolveAttributeDefinition(attributeId, resolutionContext);
         }
         cleanResolvedAttributes(resolutionContext);
 
@@ -131,11 +131,11 @@ public class AttributeResolver extends AbstractComponent {
      * 
      * @throws AttributeResolutionException if unable to resolve the requested attribute definition
      */
-    protected void resolveAttribute(final String attributeId, final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+    protected void resolveAttributeDefinition(final String attributeId,
+            final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
 
         // check to see if the attribute has already been resolved
-        if (resolutionContext.getResolvedPlugins().containsKey(attributeId)) {
+        if (resolutionContext.getResolvedAttributeDefinitions().containsKey(attributeId)) {
             return;
         }
 
@@ -149,18 +149,10 @@ public class AttributeResolver extends AbstractComponent {
         resolveDependencies(definition, resolutionContext);
 
         // return the actual resolution of the definition
-        final Attribute attribute = definition.resolve(resolutionContext);
+        final Attribute resolvedAttribute = definition.resolve(resolutionContext);
 
-        // create a static attribute definition to serve as a cached copy of the results of this attribute resolution
-        final StaticAttributeDefinition cachedAttributeDefinition = new StaticAttributeDefinition(attributeId,
-                attribute);
-        cachedAttributeDefinition.getAttributeEncoders().addAll(attribute.getEncoders());
-        cachedAttributeDefinition.getDisplayDescriptions().putAll(attribute.getDisplayDescriptions());
-        cachedAttributeDefinition.getDisplayNames().putAll(attribute.getDisplayNames());
-
-        // put data in to resolution context
-        resolutionContext.getResolvedPlugins().put(attributeId, cachedAttributeDefinition);
-        resolutionContext.getResolvedAttributes().put(attributeId, attribute);
+        // now store the result
+        resolutionContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
     }
 
     /**
@@ -177,7 +169,7 @@ public class AttributeResolver extends AbstractComponent {
             throws AttributeResolutionException {
 
         // check to see if the data connector has already been resolved
-        if (resolutionContext.getResolvedPlugins().containsKey(connectorId)) {
+        if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
             return;
         }
 
@@ -190,6 +182,7 @@ public class AttributeResolver extends AbstractComponent {
         // resolve all the connectors dependencies
         resolveDependencies(dataConnector, resolutionContext);
 
+        // Resolves attributes and if we encounter an error try to use a failover connector
         Map<String, Attribute<?>> resolvedAttributes = null;
         try {
             resolvedAttributes = dataConnector.resolve(resolutionContext);
@@ -208,9 +201,8 @@ public class AttributeResolver extends AbstractComponent {
             resolveDataConnector(failoverDataConnectorId, resolutionContext);
         }
 
-        final StaticDataConnector cachedDataConnector = new StaticDataConnector(connectorId, resolvedAttributes);
-        resolutionContext.getResolvedPlugins().put(connectorId, cachedDataConnector);
-        // TODO properly add resolved attributes, have to ensure values are properly merged
+        // new store the result
+        resolutionContext.recordDataConnectorResolution(dataConnector, resolvedAttributes);
     }
 
     /**
@@ -296,8 +288,8 @@ public class AttributeResolver extends AbstractComponent {
                     plugin.validate();
                     log.debug("Attribute resolver {}: data connector {} is valid", this.getId(), plugin.getId());
                 } catch (ComponentValidationException e) {
-                    log.warn("Attribute resolver {}: data connector {} is not valid", new Object[] { this.getId(),
-                            plugin.getId(), e, });
+                    log.warn("Attribute resolver {}: data connector {} is not valid", new Object[] {this.getId(),
+                            plugin.getId(), e,});
                     invalidPluginIds.add(plugin.getId());
                 }
             }
@@ -311,8 +303,8 @@ public class AttributeResolver extends AbstractComponent {
                     plugin.validate();
                     log.debug("Attribute resolver {}: attribute definition {} is valid", this.getId(), plugin.getId());
                 } catch (ComponentValidationException e) {
-                    log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {
-                            this.getId(), plugin.getId(), e, });
+                    log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {this.getId(),
+                            plugin.getId(), e,});
                     invalidPluginIds.add(plugin.getId());
                 }
             }

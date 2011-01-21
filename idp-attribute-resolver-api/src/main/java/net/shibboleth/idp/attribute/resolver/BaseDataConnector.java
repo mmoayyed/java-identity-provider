@@ -60,7 +60,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @param id ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
-    public void setFailoverDependencyIds(final String id) {
+    public void setFailoverDependencyId(final String id) {
         failoverDependencyId = StringSupport.trimOrNull(id);
     }
 

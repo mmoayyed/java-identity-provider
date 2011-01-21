@@ -16,7 +16,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,11 +25,10 @@ import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.ObjectSupport;
+import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
-
 
 /** A context which carries and collects information through an attribute resolution. */
 @NotThreadSafe
@@ -41,11 +40,11 @@ public class AttributeResolutionContext implements Subcontext {
     /** Attributes that have been requested to be resolved. */
     private Set<Attribute<?>> requestedAttributes;
 
-    /** Plugins that be resolved. */
-    private Map<String, BaseResolverPlugin<?>> resolvedPlugins;
+    /** Attribute definitions that have been resolved and the resultant attribute. */
+    private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;
 
-    /** Attributes which have been resolved. */
-    private Map<String, Attribute<?>> resolvedAttributes;
+    /** Data connectors that have been resolved and the resultant attributes. */
+    private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
 
     /**
      * Constructor.
@@ -54,11 +53,14 @@ public class AttributeResolutionContext implements Subcontext {
      */
     public AttributeResolutionContext(final SubcontextContainer parent) {
         parentContext = parent;
-        parent.addSubcontext(this);
+
+        if (parent != null) {
+            parent.addSubcontext(this);
+        }
 
         requestedAttributes = new LazySet<Attribute<?>>();
-        resolvedPlugins = new LazyMap<String, BaseResolverPlugin<?>>();
-        resolvedAttributes = new LazyMap<String, Attribute<?>>();
+        resolvedAttributeDefinitions = new LazyMap<String, ResolvedAttributeDefinition>();
+        resolvedDataConnectors = new LazyMap<String, ResolvedDataConnector>();
     }
 
     /** {@inheritDoc} */
@@ -67,12 +69,12 @@ public class AttributeResolutionContext implements Subcontext {
     }
 
     /**
-     * Gets the set of attributes requested to be resolved.
+     * Gets the unmodifiable set of attributes requested to be resolved.
      * 
-     * @return set of attributes requested to be resolved, never null
+     * @return set of attributes requested to be resolved, never null nor containing null elements
      */
     public Set<Attribute<?>> getRequestedAttributes() {
-        return requestedAttributes;
+        return Collections.unmodifiableSet(requestedAttributes);
     }
 
     /**
@@ -81,95 +83,142 @@ public class AttributeResolutionContext implements Subcontext {
      * @param attributes attributes requested to be resolved
      */
     public void setRequestedAttributes(final Set<Attribute<?>> attributes) {
-        LazySet<Attribute<?>> newAttributes = new LazySet<Attribute<?>>();
-        if (attributes != null && !attributes.isEmpty()) {
-            newAttributes.addAll(attributes);
+        requestedAttributes.clear();
+
+        if (attributes != null) {
+            for (Attribute<?> attribute : attributes) {
+                addRequestedAttribute(attribute);
+            }
+        }
+    }
+
+    /**
+     * Adds an attribute that is requested to be resolved.
+     * 
+     * @param attribute attribute to be added to the requested list, may be null
+     * 
+     * @return true if attribute was added, false otherwise (because the attribute was null or already existed in the
+     *         requested attribute set)
+     */
+    public boolean addRequestedAttribute(final Attribute<?> attribute) {
+        if (attribute == null) {
+            return false;
         }
 
-        requestedAttributes = newAttributes;
+        return requestedAttributes.add(attribute);
     }
 
     /**
-     * Gets the resolver plugins that have been resolved. Each plugin is wrapped in proxy that caches the plugin's
-     * response so subsequent {@link BaseResolverPlugin#resolve(AttributeResolutionContext)} calls return the same
-     * results as the initial request.
+     * Removes an attribute that is requested to be resolved.
      * 
-     * @return resolver plugins that have been resolved
+     * @param attribute attribute to be removed from the requested list, may be null
+     * 
+     * @return true if attribute was removed, false otherwise (because the attribute was null or did not exist in the
+     *         requested attribute set)
      */
-    public Map<String, BaseResolverPlugin<?>> getResolvedPlugins() {
-        return resolvedPlugins;
+    public boolean removeRequestedAttribute(final Attribute<?> attribute) {
+        if (attribute == null) {
+            return false;
+        }
+
+        return requestedAttributes.remove(attribute);
     }
 
     /**
-     * Gets the resolved plugin with the given ID.
+     * Gets the resolved attribute definitions that been recorded. The returned collection is never null nor does it
+     * contain any null keys or values.
      * 
-     * @param <T> type of the plugin
-     * @param pluginId ID of the plugin
-     * 
-     * @return the plugin or null if the plugin ID was null/empty or the plugin has not yet been resolved
+     * @return resolved attribute definitions that been recorded
      */
-    public <T extends BaseResolverPlugin<?>> T getResolvedPlugin(String pluginId) {
-        String trimmedId = StringSupport.trimOrNull(pluginId);
+    public Map<String, ResolvedAttributeDefinition> getResolvedAttributeDefinitions() {
+        return Collections.unmodifiableMap(resolvedAttributeDefinitions);
+    }
+
+    /**
+     * Gets the resolved attribute definition.
+     * 
+     * @param definitionId the ID of the attribute definition, may be null/empty
+     * 
+     * @return the resolved attribute definition, may be null if the given ID was null/empty or the attribute definition
+     *         has not yet be resolved
+     */
+    public ResolvedAttributeDefinition getResolvedAttributeDefinition(final String definitionId) {
+        final String trimmedId = StringSupport.trimOrNull(definitionId);
         if (trimmedId == null) {
             return null;
         }
 
-        return (T) resolvedPlugins.get(trimmedId);
+        return resolvedAttributeDefinitions.get(trimmedId);
     }
 
     /**
-     * Gets the attributes that have been resolved, indexed by attribute ID.
+     * Records the results of an attribute definition resolution.
      * 
-     * @return attributes that have been resolved, never null
+     * @param definition the resolved attribute definition, must not be null
+     * @param attribute the attribute produced by the given attribute definition, may be null
+     * 
+     * @throws AttributeResolutionException thrown if a result of a resolution for the given attribute definition have
+     *             already been recorded
      */
-    public Map<String, Attribute<?>> getResolvedAttributes() {
-        return resolvedAttributes;
+    public void recordAttributeDefinitionResolution(final BaseAttributeDefinition definition,
+            final Attribute<?> attribute) throws AttributeResolutionException {
+        Assert.isNotNull(definition, "Resolved attribute definition may not be null");
+
+        if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
+            throw new AttributeResolutionException("The resolution of attribute definition " + definition.getId()
+                    + " has already been recorded");
+        }
+
+        final ResolvedAttributeDefinition wrapper = new ResolvedAttributeDefinition(definition, attribute);
+        resolvedAttributeDefinitions.put(definition.getId(), wrapper);
     }
 
     /**
-     * Gets a resolved attribute.
+     * Gets the resolved data connectors that been recorded. The returned collection is never null nor does it contain
+     * any null keys or values.
      * 
-     * @param attributeId the ID of the attribute
-     * 
-     * @return the attribute or null if the ID is null/empty or the attribute has not be resolved
+     * @return resolved data connectors that been recorded
      */
-    public Attribute getResolvedAttribute(String attributeId) {
-        String trimmedId = StringSupport.trimOrNull(attributeId);
+    public Map<String, ResolvedDataConnector> getResolvedDataConnectors() {
+        return Collections.unmodifiableMap(resolvedDataConnectors);
+    }
+
+    /**
+     * Gets the resolved data connector.
+     * 
+     * @param connectorId the ID of the data connector, may be null/empty
+     * 
+     * @return the resolved data connector, may be null if the given ID was null/empty or the data connector has not yet
+     *         be resolved
+     */
+    public ResolvedDataConnector getResolvedDataConnector(final String connectorId) {
+        final String trimmedId = StringSupport.trimOrNull(connectorId);
         if (trimmedId == null) {
             return null;
         }
 
-        return resolvedAttributes.get(trimmedId);
+        return resolvedDataConnectors.get(trimmedId);
     }
 
-    public void addResolvedAttribute(final Attribute<?> attribute) throws AttributeResolutionException {
-        final String attributeId = attribute.getId();
+    /**
+     * Records the results of an data connector resolution.
+     * 
+     * @param connector the resolved data connector, must not be null
+     * @param attributes the attribute produced by the given data connector, may be null
+     * 
+     * @throws AttributeResolutionException thrown if a result of a resolution for the given data connector has already
+     *             been recorded
+     */
+    public void recordDataConnectorResolution(final BaseDataConnector connector,
+            final Map<String, Attribute<?>> attributes) throws AttributeResolutionException {
+        Assert.isNotNull(connector, "Resolved data connector may not be null");
 
-        if (!resolvedAttributes.containsKey(attributeId)) {
-            resolvedAttributes.put(attributeId, attribute);
+        if (resolvedDataConnectors.containsKey(connector.getId())) {
+            throw new AttributeResolutionException("The resolution of data connector " + connector.getId()
+                    + " has already been recorded");
         }
 
-        Attribute<?> existingAttribute = resolvedAttributes.get(attributeId);
-
-        if (attribute.getDisplayDescriptions() != null
-                && ObjectSupport.equals(attribute.getDisplayDescriptions(), existingAttribute.getDisplayDescriptions())) {
-            throw new AttributeResolutionException("Two " + attributeId
-                    + " attributes were resolved with different display descriptions");
-        }
-
-        if (attribute.getDisplayNames() != null
-                && ObjectSupport.equals(attribute.getDisplayNames(), existingAttribute.getDisplayNames())) {
-            throw new AttributeResolutionException("Two " + attributeId
-                    + " attributes were resolved with different display names");
-        }
-
-        if (attribute.getEncoders() != null
-                && ObjectSupport.equals(attribute.getEncoders(), existingAttribute.getEncoders())) {
-            throw new AttributeResolutionException("Two " + attributeId
-                    + " attributes were resolved with different encoders");
-        }
-
-        Collection existingValues = existingAttribute.getValues();
-        existingValues.addAll(attribute.getValues());
+        final ResolvedDataConnector wrapper = new ResolvedDataConnector(connector, attributes);
+        resolvedDataConnectors.put(connector.getId(), wrapper);
     }
 }

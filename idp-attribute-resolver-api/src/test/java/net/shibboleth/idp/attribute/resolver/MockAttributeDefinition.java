@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 University Corporation for Advanced Internet Development, Inc.
+ * Copyright 2011 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import net.shibboleth.idp.attribute.Attribute;
 
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
-public class StaticAttributeDefinition extends BaseAttributeDefinition {
+public class MockAttributeDefinition extends BaseAttributeDefinition {
 
     /** Static value returned by this definition. */
     private final Attribute<?> value;
@@ -32,7 +32,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
      * @param id unique ID of this attribute definition
      * @param definitionValue static value returned by this definition
      */
-    public StaticAttributeDefinition(final String id, final Attribute<?> definitionValue) {
+    public MockAttributeDefinition(final String id, final Attribute<?> definitionValue) {
         super(id);
         value = definitionValue;
     }

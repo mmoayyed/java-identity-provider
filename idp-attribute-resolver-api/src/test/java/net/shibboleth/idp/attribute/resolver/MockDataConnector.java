@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 University Corporation for Advanced Internet Development, Inc.
+ * Copyright 2011 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,30 +16,33 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Map;
+
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
-/** An attribute definition that simply returns a static value. */
-@ThreadSafe
-public class StaticAttributeDefinition extends BaseAttributeDefinition {
 
-    /** Static value returned by this definition. */
-    private final Attribute<?> value;
+/** A data connector that just returns a static collection of attributes. */
+@ThreadSafe
+public class MockDataConnector extends BaseDataConnector {
+
+    /** Static collection of values returned by this connector. */
+    private final Map<String, Attribute<?>> values;
 
     /**
      * Constructor.
      * 
-     * @param id unique ID of this attribute definition
-     * @param definitionValue static value returned by this definition
+     * @param id unique ID for this data connector
+     * @param connectorValues static collection of values returned by this connector
      */
-    public StaticAttributeDefinition(final String id, final Attribute<?> definitionValue) {
+    public MockDataConnector(String id, Map<String, Attribute<?>> connectorValues) {
         super(id);
-        value = definitionValue;
+        values = connectorValues;
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Map<String, Attribute<?>> doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        return value;
+        return values;
     }
 }

@@ -22,7 +22,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 
-
 /** Represents the dependency of one {@link BaseResolverPlugin} upon the attribute values produced by another plugin. */
 @ThreadSafe
 public class ResolverPluginDependency {
@@ -78,12 +77,16 @@ public class ResolverPluginDependency {
      */
     public Attribute<?> getDependantAttribute(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        BaseResolverPlugin<?> resolvedPlugin = resolutionContext.getResolvedPlugins().get(dependencyPluginId);
 
-        if (resolvedPlugin instanceof BaseDataConnector) {
-            return ((BaseDataConnector) resolvedPlugin).resolve(resolutionContext).get(dependencyAttributeId);
-        } else if (resolvedPlugin instanceof BaseAttributeDefinition) {
-            return ((BaseAttributeDefinition) resolvedPlugin).resolve(resolutionContext);
+        final ResolvedAttributeDefinition attributeDefinition =
+                resolutionContext.getResolvedAttributeDefinition(dependencyPluginId);
+        if (attributeDefinition != null) {
+            return attributeDefinition.resolve(resolutionContext);
+        }
+
+        final ResolvedDataConnector dataConnector = resolutionContext.getResolvedDataConnector(dependencyPluginId);
+        if (dataConnector != null) {
+            return dataConnector.resolve(resolutionContext).get(dependencyAttributeId);
         }
 
         return null;

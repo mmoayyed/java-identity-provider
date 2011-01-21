@@ -29,7 +29,6 @@ import org.opensaml.util.collections.LazyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
 public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribute<?>> {
@@ -159,9 +158,9 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * {@link #doResolve(AttributeResolutionContext)} method. Afterwards this method will attach the registered display
      * names, descriptions, and encoders to the resultant attribute.
      */
-    protected final Attribute<?> doResolve(final AttributeResolutionContext resolutionContext)
+    protected Attribute<?> doResolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Attribute resolvedAttribute = doResolve(resolutionContext);
+        Attribute resolvedAttribute = doAttributeResolution(resolutionContext);
 
         if (resolvedAttribute == null) {
             log.error("{} produced a null attribute, this is not allowed", getId());
@@ -172,15 +171,13 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         resolvedAttribute.getDisplayDescriptions().putAll(getDisplayDescriptions());
         resolvedAttribute.getEncoders().addAll(getAttributeEncoders());
 
-        StaticAttributeDefinition requestCacheDefinition = new StaticAttributeDefinition(getId(), resolvedAttribute);
-        resolutionContext.getResolvedPlugins().put(getId(), requestCacheDefinition);
-
         return resolvedAttribute;
     }
 
     /**
      * Creates and populates the values for the resolved attribute. Implementations should *not* set, or otherwise
-     * manage, the attribute encoders for the resolved attribute.
+     * manage, the resolved attribute's display name, description or encoders. Nor should the resultant attribute be
+     * recorded in the given resolution context.
      * 
      * @param resolutionContext current attribute resolution context
      * 
@@ -188,6 +185,6 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving and creating the attribute
      */
-    protected abstract Attribute<?> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
+    protected abstract Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException;
 }
