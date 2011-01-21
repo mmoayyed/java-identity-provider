@@ -98,7 +98,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @param newNames the new names for this attribute, may be null
      */
-    public void setDisplayNames(Map<Locale, String> newNames) {
+    public void setDisplayNames(final Map<Locale, String> newNames) {
         displayNames.clear();
 
         if (newNames == null) {
@@ -118,7 +118,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return the value that was replaced for the given locale or null if no value was replaced
      */
-    public String addDisplayName(Locale locale, String name) {
+    public String addDisplayName(final Locale locale, final String name) {
         Assert.isNotNull(locale, "Display name locale can not be null");
 
         final String trimmedName = StringSupport.trimOrNull(name);
@@ -134,7 +134,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return the removed value or null if no value existed for the given locale
      */
-    public String removeDisplayName(Locale locale) {
+    public String removeDisplayName(final Locale locale) {
         if (locale == null) {
             return null;
         }
@@ -158,7 +158,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @param newDescriptions the new descriptions for this attribute, may be null
      */
-    public void setDisplayDescriptions(Map<Locale, String> newDescriptions) {
+    public void setDisplayDescriptions(final Map<Locale, String> newDescriptions) {
         displayDescriptions.clear();
 
         if (newDescriptions == null) {
@@ -178,7 +178,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return the value that was replaced for the given locale or null if no value was replaced
      */
-    public String addDisplayDescription(Locale locale, String description) {
+    public String addDisplayDescription(final Locale locale, final String description) {
         Assert.isNotNull(locale, "Display description locale can not be null");
 
         final String trimmedDescription = StringSupport.trimOrNull(description);
@@ -194,7 +194,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return the removed value or null if no value existed for the given locale
      */
-    public String removeDisplayDescription(Locale locale) {
+    public String removeDisplayDescription(final Locale locale) {
         if (locale == null) {
             return null;
         }
@@ -218,7 +218,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @param newValues the new values for this attribute, may be null
      */
-    public void setValues(Collection<ValueType> newValues) {
+    public void setValues(final Collection<ValueType> newValues) {
         values.clear();
 
         if (newValues == null) {
@@ -237,7 +237,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return true if a value was added, false otherwise
      */
-    public boolean addValue(ValueType value) {
+    public boolean addValue(final ValueType value) {
         if (value == null) {
             return false;
         }
@@ -252,7 +252,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return true if a value was removed, false otherwise
      */
-    public boolean removeValue(ValueType value) {
+    public boolean removeValue(final ValueType value) {
         if (value == null) {
             return false;
         }
@@ -276,7 +276,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @param newEncoders the new encoders for this attribute, may be null
      */
-    public void setEncoders(List<AttributeEncoder<?>> newEncoders) {
+    public void setEncoders(final List<AttributeEncoder<?>> newEncoders) {
         encoders.clear();
 
         if (newEncoders == null) {
@@ -295,7 +295,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return true if an encoder was added, false otherwise
      */
-    public boolean addEncoder(AttributeEncoder<?> encoder) {
+    public boolean addEncoder(final AttributeEncoder<?> encoder) {
         if (encoder == null || encoders.contains(encoder)) {
             return false;
         }
@@ -310,7 +310,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return true if an encoder was removed, false otherwise
      */
-    public boolean removeEncoder(AttributeEncoder<?> encoder) {
+    public boolean removeEncoder(final AttributeEncoder<?> encoder) {
         if (encoder == null) {
             return false;
         }
@@ -319,7 +319,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
     }
 
     /** {@inheritDoc} */
-    public int compareTo(Attribute other) {
+    public int compareTo(final Attribute other) {
         return getId().compareTo(other.getId());
     }
 
@@ -333,7 +333,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
