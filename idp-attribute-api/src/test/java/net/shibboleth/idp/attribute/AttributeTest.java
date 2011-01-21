@@ -19,10 +19,11 @@ package net.shibboleth.idp.attribute;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
+import org.opensaml.util.collections.LazySet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -98,7 +99,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getDisplayNames().isEmpty());
         Assert.assertEquals(attrib.getDisplayNames().size(), 2);
         Assert.assertTrue(attrib.getDisplayNames().containsKey(enbr));
-        Assert.assertEquals( attrib.getDisplayNames().get(enbr), "british");
+        Assert.assertEquals(attrib.getDisplayNames().get(enbr), "british");
 
         // test replacing an entry
         String replacedName = attrib.addDisplayName(en, "english ");
@@ -114,7 +115,7 @@ public class AttributeTest {
         Assert.assertEquals(attrib.getDisplayNames().size(), 1);
         Assert.assertFalse(attrib.getDisplayNames().containsKey(en));
         Assert.assertTrue(attrib.getDisplayNames().containsKey(enbr));
-        Assert.assertEquals( attrib.getDisplayNames().get(enbr), "british");
+        Assert.assertEquals(attrib.getDisplayNames().get(enbr), "british");
 
         // test removing the same entry
         attrib.removeDisplayName(en);
@@ -122,7 +123,7 @@ public class AttributeTest {
         Assert.assertEquals(attrib.getDisplayNames().size(), 1);
         Assert.assertFalse(attrib.getDisplayNames().containsKey(en));
         Assert.assertTrue(attrib.getDisplayNames().containsKey(enbr));
-        Assert.assertEquals( attrib.getDisplayNames().get(enbr), "british");
+        Assert.assertEquals(attrib.getDisplayNames().get(enbr), "british");
 
         // test removing null
         attrib.removeDisplayName(null);
@@ -130,7 +131,7 @@ public class AttributeTest {
         Assert.assertEquals(attrib.getDisplayNames().size(), 1);
         Assert.assertFalse(attrib.getDisplayNames().containsKey(en));
         Assert.assertTrue(attrib.getDisplayNames().containsKey(enbr));
-        Assert.assertEquals( attrib.getDisplayNames().get(enbr), "british");
+        Assert.assertEquals(attrib.getDisplayNames().get(enbr), "british");
 
         // test removing the second entry
         attrib.removeDisplayName(enbr);
@@ -154,7 +155,7 @@ public class AttributeTest {
         Assert.assertEquals(attrib.getDisplayNames().size(), 1);
         Assert.assertFalse(attrib.getDisplayNames().containsKey(en));
         Assert.assertTrue(attrib.getDisplayNames().containsKey(enbr));
-        Assert.assertEquals( attrib.getDisplayNames().get(enbr), "british");
+        Assert.assertEquals(attrib.getDisplayNames().get(enbr), "british");
 
         try {
             attrib.addDisplayName(null, "foo");
@@ -252,7 +253,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getDisplayDescriptions().isEmpty());
         Assert.assertEquals(attrib.getDisplayDescriptions().size(), 1);
         Assert.assertTrue(attrib.getDisplayDescriptions().containsKey(en));
-        Assert.assertEquals("english",attrib.getDisplayDescriptions().get(en));
+        Assert.assertEquals("english", attrib.getDisplayDescriptions().get(en));
 
         // test replacing all entries
         Map<Locale, String> descriptions = new HashMap<Locale, String>();
@@ -356,7 +357,7 @@ public class AttributeTest {
         Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
-        
+
         // test removing the second entry (second value2 entry)
         Assert.assertTrue(attrib.removeValue(value2));
         Assert.assertTrue(attrib.getValues().isEmpty());
@@ -460,7 +461,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getEncoders().contains(enc2));
 
         // test replacing all entries
-        List<AttributeEncoder<?>> encoders = new ArrayList<AttributeEncoder<?>>();
+        Set<AttributeEncoder<?>> encoders = new LazySet<AttributeEncoder<?>>();
         encoders.add(enc2);
         attrib.setEncoders(encoders);
         Assert.assertFalse(attrib.getEncoders().isEmpty());

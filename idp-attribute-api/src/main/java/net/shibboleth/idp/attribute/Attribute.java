@@ -18,10 +18,10 @@ package net.shibboleth.idp.attribute;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 
@@ -30,6 +30,7 @@ import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
+import org.opensaml.util.collections.LazySet;
 
 /**
  * Each attribute represents one piece of information about a user and has associated encoders used to turn that
@@ -56,7 +57,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
     private Collection<ValueType> values;
 
     /** Encoders that may be used to encode this attribute. */
-    private List<AttributeEncoder<?>> encoders;
+    private Set<AttributeEncoder<?>> encoders;
 
     /**
      * Constructor.
@@ -70,7 +71,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
         values = new LazyList<ValueType>();
         displayNames = new LazyMap<Locale, String>();
         displayDescriptions = new LazyMap<Locale, String>();
-        encoders = new LazyList<AttributeEncoder<?>>();
+        encoders = new LazySet<AttributeEncoder<?>>();
     }
 
     /**
@@ -266,8 +267,8 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return attribute encoders usable with this attribute, never null
      */
-    public List<AttributeEncoder<?>> getEncoders() {
-        return Collections.unmodifiableList(encoders);
+    public Set<AttributeEncoder<?>> getEncoders() {
+        return Collections.unmodifiableSet(encoders);
     }
 
     /**
@@ -276,7 +277,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @param newEncoders the new encoders for this attribute, may be null
      */
-    public void setEncoders(final List<AttributeEncoder<?>> newEncoders) {
+    public void setEncoders(final Set<AttributeEncoder<?>> newEncoders) {
         encoders.clear();
 
         if (newEncoders == null) {
@@ -296,7 +297,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * @return true if an encoder was added, false otherwise
      */
     public boolean addEncoder(final AttributeEncoder<?> encoder) {
-        if (encoder == null || encoders.contains(encoder)) {
+        if (encoder == null) {
             return false;
         }
 
