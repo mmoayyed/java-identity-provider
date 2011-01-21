@@ -27,13 +27,7 @@ public abstract class AbstractComponent implements Component {
 
     /** Identifier for this component. */
     private String id;
-
-    /** Human readable display name for this component. */
-    private String displayName;
-
-    /** Human readable description for this component. */
-    private String description;
-
+    
     /**
      * Constructor.
      * 
@@ -47,34 +41,6 @@ public abstract class AbstractComponent implements Component {
     /** {@inheritDoc} */
     public String getId() {
         return id;
-    }
-
-    /** {@inheritDoc} */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets a human-readable description name for this component.
-     * 
-     * @param componentDescription a human-readable description name for this component
-     */
-    public void setDescription(String componentDescription) {
-        description = StringSupport.trimOrNull(componentDescription);
-    }
-
-    /** {@inheritDoc} */
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    /**
-     * Sets a human-readable display name for this component.
-     * 
-     * @param componentDisplayName a human-readable display name for this component
-     */
-    public void setDisplayName(String componentDisplayName) {
-        displayName = StringSupport.trimOrNull(componentDisplayName);
     }
 
     /**

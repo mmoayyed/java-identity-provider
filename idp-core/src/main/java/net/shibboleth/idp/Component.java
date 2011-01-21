@@ -17,8 +17,8 @@
 package net.shibboleth.idp;
 
 /**
- * A discrete component that provides a specific function to the system. Components carry a unique identifier, some
- * human readable descriptive information, and may be validated to ensure they are operating properly.
+ * A discrete component that provides a specific function to the system. Components carry a unique identifier and may be
+ * validated to ensure they are operating properly.
  */
 public interface Component {
 
@@ -28,20 +28,6 @@ public interface Component {
      * @return ID of this component, never null
      */
     public String getId();
-
-    /**
-     * Gets a human-readable display name for this component.
-     * 
-     * @return human-readable display name for this component, may be null
-     */
-    public String getDisplayName();
-
-    /**
-     * Gets a human-readable description of this component.
-     * 
-     * @return human-readable description of this component, may be null
-     */
-    public String getDescription();
 
     /**
      * Validates that this component is operational and function properly (with the limits that such things can be

@@ -128,7 +128,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
 
         try {
             log.debug("Creating new ApplicationContext for service '{}'", getId());
-            GenericApplicationContext appContext = SpringSupport.newContext(getDisplayName(),
+            GenericApplicationContext appContext = SpringSupport.newContext(getId(),
                     getServiceConfigurations(), getParentContext());
             log.debug("New Application Context created for service '{}'", getId());
             context.put(AbstractSpringService.APP_CTX_CTX_KEY, appContext);
