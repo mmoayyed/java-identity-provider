@@ -20,6 +20,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 
 /** Represents the dependency of one {@link BaseResolverPlugin} upon the attribute values produced by another plugin. */
@@ -90,5 +91,37 @@ public class ResolverPluginDependency {
         }
 
         return null;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((dependencyAttributeId == null) ? 0 : dependencyAttributeId.hashCode());
+        result = prime * result + ((dependencyPluginId == null) ? 0 : dependencyPluginId.hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        ResolverPluginDependency other = (ResolverPluginDependency) obj;
+        if (ObjectSupport.equals(getDependencyPluginId(), other.getDependencyPluginId())
+                && ObjectSupport.equals(getDependencyAttributeId(), other.getDependencyAttributeId())) {
+            return true;
+        }
+
+        return false;
     }
 }

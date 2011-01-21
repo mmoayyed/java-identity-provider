@@ -16,13 +16,14 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.AbstractComponent;
 
-import org.opensaml.util.collections.LazyList;
+import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.expression.EvaluationException;
@@ -52,7 +53,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
     private Expression evaluationCondition;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
-    private List<ResolverPluginDependency> dependencies;
+    private Set<ResolverPluginDependency> dependencies;
 
     /**
      * Constructor.
@@ -65,7 +66,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
         propagateEvaluationConditionExceptions = false;
         propagateResolutionExceptions = false;
         evaluationCondition = null;
-        dependencies = Collections.emptyList();
+        dependencies = new LazySet<ResolverPluginDependency>();
     }
 
     /**
@@ -133,8 +134,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
-    public List<ResolverPluginDependency> getDependencies() {
-        return dependencies;
+    public Set<ResolverPluginDependency> getDependencies() {
+        return Collections.unmodifiableSet(dependencies);
     }
 
     /**
@@ -142,17 +143,44 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @param pluginDependencies unmodifiable list of dependencies for this plugin
      */
-    public void setDependencies(final List<ResolverPluginDependency> pluginDependencies) {
-        LazyList<ResolverPluginDependency> newDependencies = new LazyList<ResolverPluginDependency>();
+    public void setDependencies(final Collection<ResolverPluginDependency> pluginDependencies) {
+        dependencies.clear();
+
         if (pluginDependencies != null) {
             for (ResolverPluginDependency dependency : pluginDependencies) {
-                if (dependency != null && !newDependencies.contains(dependency)) {
-                    newDependencies.add(dependency);
-                }
+                addDependency(dependency);
             }
         }
+    }
 
-        dependencies = Collections.unmodifiableList(newDependencies);
+    /**
+     * Adds a dependency to this plugin.
+     * 
+     * @param dependency dependency to added, may be null
+     * 
+     * @return true if the addition changed the dependencies for this plugin, false otherwise
+     */
+    public boolean addDependency(final ResolverPluginDependency dependency) {
+        if (dependency == null) {
+            return false;
+        }
+
+        return dependencies.add(dependency);
+    }
+
+    /**
+     * Removes a dependency from this plugin.
+     * 
+     * @param dependency dependency to removed, may be null
+     * 
+     * @return true if the removal changed the dependencies for this plugin, false otherwise
+     */
+    public boolean removeDependency(final ResolverPluginDependency dependency) {
+        if (dependency == null) {
+            return false;
+        }
+
+        return dependencies.remove(dependency);
     }
 
     /**

@@ -18,6 +18,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.ComponentValidationException;
@@ -69,7 +70,7 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public List<ResolverPluginDependency> getDependencies() {
+    public Set<ResolverPluginDependency> getDependencies() {
         return resolvedConnector.getDependencies();
     }
 

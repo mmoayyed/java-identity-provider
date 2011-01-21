@@ -16,16 +16,19 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 
-import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
+import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +43,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     private boolean dependencyOnly;
 
     /** Attribute encoders associated with this definition. */
-    private LazyList<AttributeEncoder> encoders;
+    private LazySet<AttributeEncoder> encoders;
 
     /** Localized human intelligible attribute name. */
     private Map<Locale, String> displayNames;
@@ -57,7 +60,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         super(definitionId);
 
         dependencyOnly = false;
-        encoders = new LazyList<AttributeEncoder>();
+        encoders = new LazySet<AttributeEncoder>();
         displayNames = new LazyMap<Locale, String>();
         displayDescriptions = new LazyMap<Locale, String>();
     }
@@ -97,9 +100,14 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param descriptions localized human readable descriptions of attribute
      */
     public void setDisplayDescriptions(final Map<Locale, String> descriptions) {
-        LazyMap<Locale, String> newDescriptions = new LazyMap<Locale, String>();
-        if (descriptions != null && !descriptions.isEmpty()) {
-            newDescriptions.putAll(descriptions);
+        final LazyMap<Locale, String> newDescriptions = new LazyMap<Locale, String>();
+
+        if (descriptions != null) {
+            for (Entry<Locale, String> description : descriptions.entrySet()) {
+                if (description.getKey() != null || description.getValue() != null) {
+                    newDescriptions.put(description.getKey(), description.getValue());
+                }
+            }
         }
 
         displayDescriptions = newDescriptions;
@@ -120,7 +128,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param names localized human readable names of the attribute
      */
     public void setDisplayNames(final Map<Locale, String> names) {
-        LazyMap<Locale, String> newNames = new LazyMap<Locale, String>();
+        final LazyMap<Locale, String> newNames = new LazyMap<Locale, String>();
         if (names != null && !names.isEmpty()) {
             newNames.putAll(names);
         }
@@ -129,12 +137,13 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     }
 
     /**
-     * Gets the encoders used to encode the values of this attribute in to protocol specific formats.
+     * Gets the unmodifiable encoders used to encode the values of this attribute in to protocol specific formats. The
+     * returned collection is never null nor contains any null.
      * 
      * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
      */
-    public List<AttributeEncoder> getAttributeEncoders() {
-        return encoders;
+    public Set<AttributeEncoder> getAttributeEncoders() {
+        return Collections.unmodifiableSet(encoders);
     }
 
     /**
@@ -142,13 +151,44 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
      */
-    public void setAttributeEncoders(final LazyList<AttributeEncoder> attributeEncoders) {
-        LazyList<AttributeEncoder> newEncoders = new LazyList<AttributeEncoder>();
-        if (attributeEncoders != null && !attributeEncoders.isEmpty()) {
-            newEncoders.addAll(attributeEncoders);
+    public void setAttributeEncoders(final List<AttributeEncoder> attributeEncoders) {
+        encoders.clear();
+
+        if (attributeEncoders != null) {
+            for (AttributeEncoder<?> encoder : attributeEncoders) {
+                addAttributeEncoder(encoder);
+            }
+        }
+    }
+
+    /**
+     * Adds an attribute encoder to this definition.
+     * 
+     * @param attributeEncoder encoder to be added, may be null
+     * 
+     * @return true if the addition changed the encoders for this definition, false otherwise
+     */
+    public boolean addAttributeEncoder(final AttributeEncoder<?> attributeEncoder) {
+        if (attributeEncoder == null || encoders.contains(attributeEncoder)) {
+            return false;
         }
 
-        encoders = newEncoders;
+        return encoders.add(attributeEncoder);
+    }
+
+    /**
+     * Removes an attribute encoder from this definition.
+     * 
+     * @param attributeEncoder encoder to be removed, may be null
+     * 
+     * @return true if the removal changed the encoders for this definition, false otherwise
+     */
+    public boolean removeAttributeEndoer(final AttributeEncoder<?> attributeEncoder) {
+        if (attributeEncoder == null) {
+            return false;
+        }
+
+        return encoders.remove(attributeEncoder);
     }
 
     /**
@@ -160,7 +200,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      */
     protected Attribute<?> doResolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Attribute resolvedAttribute = doAttributeResolution(resolutionContext);
+        final Attribute resolvedAttribute = doAttributeResolution(resolutionContext);
 
         if (resolvedAttribute == null) {
             log.error("{} produced a null attribute, this is not allowed", getId());

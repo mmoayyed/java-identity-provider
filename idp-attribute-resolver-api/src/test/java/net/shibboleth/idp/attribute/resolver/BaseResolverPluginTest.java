@@ -89,9 +89,9 @@ public class BaseResolverPluginTest {
         Assert.assertTrue(plugin.isApplicable(context));
     }
 
-    /** Test {@link BaseResolverPlugin#setDependencies(java.util.List)}. */
+    /** Test add, removing, setting dependencies. */
     @Test
-    public void testSetDependencies() {
+    public void testDependencies() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
 
         plugin.setDependencies(null);
