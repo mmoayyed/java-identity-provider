@@ -17,8 +17,8 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +29,8 @@ import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
+import org.opensaml.util.collections.LazyMap;
+import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,10 +44,10 @@ public class AttributeResolver extends AbstractComponent {
     private final Logger log = LoggerFactory.getLogger(AttributeResolver.class);
 
     /** Attribute definitions defined for this resolver. */
-    private Map<String, BaseAttributeDefinition> attributeDefinitions;
+    private LazyMap<String, BaseAttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
-    private Map<String, BaseDataConnector> dataConnectors;
+    private LazyMap<String, BaseDataConnector> dataConnectors;
 
     /**
      * Constructor.
@@ -54,28 +56,73 @@ public class AttributeResolver extends AbstractComponent {
      */
     public AttributeResolver(final String id) {
         super(id);
+        attributeDefinitions = new LazyMap<String, BaseAttributeDefinition>();
+        dataConnectors = new LazyMap<String, BaseDataConnector>();
     }
 
     /**
-     * Gets the attribute definitions loaded in to this resolver.
+     * Gets the unmodifiable collection of attribute definitions for this resolver. This collection is never null nor
+     * contains any null elements.
      * 
-     * @return attribute definitions loaded in to this resolver, never null
+     * @return attribute definitions loaded in to this resolver
      */
     public Map<String, BaseAttributeDefinition> getAttributeDefinitions() {
-        return attributeDefinitions;
+        return Collections.unmodifiableMap(attributeDefinitions);
     }
 
     /**
-     * Gets the data connectors loaded in to this resolver.
+     * Sets the collection of attribute definitions for this resolver.
      * 
-     * @return data connectors loaded in to this resolver, never null
+     * @param definitions definition to set, may be null or contain null elements
+     */
+    public void setAttributeDefinition(final Collection<BaseAttributeDefinition> definitions) {
+        final LazyMap<String, BaseAttributeDefinition> newDefinitions = new LazyMap<String, BaseAttributeDefinition>();
+
+        if (definitions != null) {
+            for (BaseAttributeDefinition definition : definitions) {
+                if (definition != null) {
+                    newDefinitions.put(definition.getId(), definition);
+                }
+            }
+        }
+
+        attributeDefinitions = newDefinitions;
+    }
+
+    /**
+     * Gets the unmodifiable collection of data connectors for this resolver. This collection is never null nor contains
+     * any null elements.
+     * 
+     * @return data connectors loaded in to this resolver
      */
     public Map<String, BaseDataConnector> getDataConnectors() {
-        return dataConnectors;
+        return Collections.unmodifiableMap(dataConnectors);
     }
 
     /**
-     * Gets all the attributes for a given subject.
+     * Sets the collection of data connectors for this resolver.
+     * 
+     * @param connectors connectors to set, may be null or contain null elements
+     */
+    public void setDataConnectors(final Collection<BaseDataConnector> connectors) {
+        final LazyMap<String, BaseDataConnector> newConnectors = new LazyMap<String, BaseDataConnector>();
+
+        if (connectors != null) {
+            for (BaseDataConnector connector : connectors) {
+                if (connector != null) {
+                    newConnectors.put(connector.getId(), connector);
+                }
+            }
+        }
+
+        dataConnectors = newConnectors;
+    }
+
+    /**
+     * Resolves the attribute for the give request. Note, if attributes are requested,
+     * {@link AttributeResolutionContext#getRequestedAttributes()}, the resolver will <strong>not</strong> fail if they
+     * can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
+     * resolution of attributes.
      * 
      * @param resolutionContext the attribute resolution context that identifies the request subject and accumulates the
      *            resolved attributes
@@ -84,17 +131,26 @@ public class AttributeResolver extends AbstractComponent {
      */
     public void resolveAttributes(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
+        log.debug("Attribute Resolver {}: initiating attribute resolution", getId());
 
         if (attributeDefinitions.size() == 0) {
+            log.debug("Attribute Resolver {}: no attribute definition available, no attributes were resolved", getId());
             return;
         }
 
         final Collection<String> attributeIds = getToBeResolvedAttributes(resolutionContext);
+        log.debug("Attribute Resolver {}: attempting to resolve the following attribute definitions {}", getId(),
+                attributeIds);
+
         for (String attributeId : attributeIds) {
             resolveAttributeDefinition(attributeId, resolutionContext);
         }
-        cleanResolvedAttributes(resolutionContext);
 
+        log.debug("Attribute Resolver {}: finalizing resolved attributes", getId());
+        finalizeResolvedAttributes(resolutionContext);
+
+        log.debug("Attribute Resolver {}: final resolved attribute collection: {}", getId(), resolutionContext
+                .getResolvedAttributes().keySet());
         return;
     }
 
@@ -109,12 +165,13 @@ public class AttributeResolver extends AbstractComponent {
      */
     protected Collection<String> getToBeResolvedAttributes(final AttributeResolutionContext resolutionContext) {
         final Collection<String> attributeIds = new LazyList<String>();
+
         for (Attribute<?> requestedAttribute : resolutionContext.getRequestedAttributes()) {
             attributeIds.add(requestedAttribute.getId());
         }
 
         // if no attributes requested, then resolve everything
-        if (attributeIds == null || attributeIds.isEmpty()) {
+        if (attributeIds.isEmpty()) {
             attributeIds.addAll(attributeDefinitions.keySet());
         }
 
@@ -133,25 +190,44 @@ public class AttributeResolver extends AbstractComponent {
      */
     protected void resolveAttributeDefinition(final String attributeId,
             final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        log.debug("Attribute Resolver {}: beginning to resolve attribute definition {}", getId(), attributeId);
 
-        // check to see if the attribute has already been resolved
         if (resolutionContext.getResolvedAttributeDefinitions().containsKey(attributeId)) {
+            log.debug("Attribute Resolver {}: attribute definition {} was already resolved, nothing to do", getId(),
+                    attributeId);
             return;
         }
 
-        // attribute not yet resolved, so do it
         final BaseAttributeDefinition definition = attributeDefinitions.get(attributeId);
+        if (definition == null) {
+            log.debug("Attribute Resolver {}: no attribute definition was registered with ID {}, nothing to do",
+                    getId(), attributeId);
+            return;
+        }
 
-        // check if attribute definition is applicable for this request
-        definition.isApplicable(resolutionContext);
-
-        // resolve all the definitions dependencies
         resolveDependencies(definition, resolutionContext);
 
-        // return the actual resolution of the definition
-        final Attribute resolvedAttribute = definition.resolve(resolutionContext);
+        Attribute resolvedAttribute = null;
 
-        // now store the result
+        try {
+            log.debug("Attribute Resolver {}: resolving attribute definition {}", getId(), attributeId);
+            resolvedAttribute = definition.resolve(resolutionContext);
+        } catch (AttributeResolutionException e) {
+            if (definition.isPropagateResolutionExceptions()) {
+                log.debug(
+                        "Attribute Resolver {}: attribute definition {} produced the following error but was configured not to propogate it.",
+                        new Object[] {getId(), attributeId, e,});
+            } else {
+                throw e;
+            }
+        }
+
+        if (resolvedAttribute == null) {
+            log.debug("Attribute Resolver {}: attribute definition {} produced no attribute", getId(), attributeId);
+        } else {
+            log.debug("Attribute Resolver {}: attribute definition {} produced an attribute with {} values",
+                    new Object[] {getId(), attributeId, resolvedAttribute.getValues().size()});
+        }
         resolutionContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
     }
 
@@ -167,42 +243,49 @@ public class AttributeResolver extends AbstractComponent {
      */
     protected void resolveDataConnector(final String connectorId, final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
+        log.debug("Attribute Resolver {}: beginning to resolve data connector {}", getId(), connectorId);
 
-        // check to see if the data connector has already been resolved
         if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
+            log.debug("Attribute Resolver {}: data connector {} was already resolved, nothing to do", getId(),
+                    connectorId);
             return;
         }
 
-        // data connector not yet resolved, so do it
-        final BaseDataConnector dataConnector = dataConnectors.get(connectorId);
-
-        // check if data connector is applicable for this request
-        dataConnector.isApplicable(resolutionContext);
-
-        // resolve all the connectors dependencies
-        resolveDependencies(dataConnector, resolutionContext);
-
-        // Resolves attributes and if we encounter an error try to use a failover connector
-        Map<String, Attribute<?>> resolvedAttributes = null;
-        try {
-            resolvedAttributes = dataConnector.resolve(resolutionContext);
-        } catch (AttributeResolutionException e) {
-            String failoverDataConnectorId = dataConnector.getFailoverDataConnectorId();
-
-            if (StringSupport.isNullOrEmpty(failoverDataConnectorId)) {
-                log.error("Received the following error from data connector " + dataConnector.getId()
-                        + ", no failover data connector available", e);
-                throw e;
-            }
-
-            log.warn("Received the following error from data connector " + dataConnector.getId()
-                    + ", trying its failover connector " + failoverDataConnectorId, e.getMessage());
-            log.debug("Error recieved from data connector " + dataConnector.getId(), e);
-            resolveDataConnector(failoverDataConnectorId, resolutionContext);
+        final BaseDataConnector connector = dataConnectors.get(connectorId);
+        if (connector == null) {
+            log.debug("Attribute Resolver {}: no data connector was registered with ID {}, nothing to do", getId(),
+                    connectorId);
+            return;
         }
 
-        // new store the result
-        resolutionContext.recordDataConnectorResolution(dataConnector, resolvedAttributes);
+        resolveDependencies(connector, resolutionContext);
+
+        Map<String, Attribute<?>> resolvedAttributes = null;
+        try {
+            log.debug("Attribute Resolver {}: resolving data connector {}", getId(), connectorId);
+            resolvedAttributes = connector.resolve(resolutionContext);
+        } catch (AttributeResolutionException e) {
+            final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
+            if (failoverDataConnectorId != null) {
+                resolveDataConnector(failoverDataConnectorId, resolutionContext);
+            } else {
+                if (connector.isPropagateResolutionExceptions()) {
+                    log.debug(
+                            "Attribute Resolver {}: data connector {} produced the following error but was configured not to propogate it.",
+                            new Object[] {getId(), connectorId, e});
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        if (resolvedAttributes == null) {
+            log.debug("Attribute Resolver {}: data connector {} produced no attributes", getId(), connectorId);
+        } else {
+            log.debug("Attribute Resolver {}: data connector {} resolved the following attributes {}", new Object[] {
+                    getId(), connectorId, resolvedAttributes.keySet(),});
+        }
+        resolutionContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
 
     /**
@@ -216,58 +299,93 @@ public class AttributeResolver extends AbstractComponent {
     protected void resolveDependencies(final BaseResolverPlugin<?> plugin,
             final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
 
-        for (ResolverPluginDependency dependency : plugin.getDependencies()) {
-            dependency.getDependentAttribute(resolutionContext);
-            // TODO store in context
+        if (plugin.getDependencies().isEmpty()) {
+            return;
         }
+
+        log.debug("Attribute Resolver {}: resolving dependencies for {}", getId(), plugin.getId());
+
+        String pluginId;
+        for (ResolverPluginDependency dependency : plugin.getDependencies()) {
+            pluginId = dependency.getDependencyPluginId();
+            if (attributeDefinitions.containsKey(pluginId)) {
+                resolveAttributeDefinition(pluginId, resolutionContext);
+            } else if (dataConnectors.containsKey(pluginId)) {
+                resolveDataConnector(pluginId, resolutionContext);
+            } else {
+                throw new AttributeResolutionException("Plugin " + plugin.getId() + " contains a depedency on plugin "
+                        + pluginId + " and that plugin does not exist.");
+            }
+        }
+
+        log.debug("Attribute Resolver {}: finished resolving dependencies for {}", getId(), plugin.getId());
     }
 
     /**
-     * Removes attributes that contain no values or those which are dependency only.
+     * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
+     * each {@link BaseAttributeDefinition} resolution is inspected. If the result is not null, a dependency-only
+     * attribute, or an attribute that contains no values then it becomes part of the final set of resolved attributes.
      * 
      * @param resolutionContext current resolution context
      */
-    protected void cleanResolvedAttributes(final AttributeResolutionContext resolutionContext) {
+    protected void finalizeResolvedAttributes(final AttributeResolutionContext resolutionContext) {
+        final LazySet<Attribute<?>> resolvedAttributes = new LazySet<Attribute<?>>();
 
-        BaseAttributeDefinition attributeDefinition;
-
-        final Iterator<Attribute<?>> attributeItr = resolutionContext.getRequestedAttributes().iterator();
         Attribute<?> resolvedAttribute;
-        Set<Object> values;
-        while (attributeItr.hasNext()) {
-            resolvedAttribute = attributeItr.next();
+        for (ResolvedAttributeDefinition definition : resolutionContext.getResolvedAttributeDefinitions().values()) {
+            resolvedAttribute = definition.getResolvedAttribute();
 
             // remove nulls
             if (resolvedAttribute == null) {
-                attributeItr.remove();
+                log.debug("Attribute Resolver {}: removing result of attribute definition {}, it's null", getId(),
+                        definition.getId());
                 continue;
             }
 
             // remove dependency-only attributes
-            attributeDefinition = attributeDefinitions.get(resolvedAttribute.getId());
-            if (attributeDefinition.isDependencyOnly()) {
-                attributeItr.remove();
+            if (definition.isDependencyOnly()) {
+                log.debug(
+                        "Attribute Resolver {}: removing result of attribute definition {}, it's marked as depdency only",
+                        getId(), definition.getId());
                 continue;
             }
+
+            // remove any nulls or duplicate attribute values
+            cleanResolvedAttributeValues(resolvedAttribute);
 
             // remove value-less attributes
             if (resolvedAttribute.getValues().size() == 0) {
-                attributeItr.remove();
+                log.debug(
+                        "Attribute Resolver {}: removing result of attribute definition {}, it's attribute contains no values",
+                        getId(), definition.getId());
                 continue;
             }
 
-            // remove duplicate attribute values
-            Iterator<?> valueItr = resolvedAttribute.getValues().iterator();
-            values = new HashSet<Object>();
-            while (valueItr.hasNext()) {
-                Object value = valueItr.next();
-                if (!values.add(value)) {
-                    log.debug("Removing duplicate value {} of attribute {} from resolution result", value,
-                            resolvedAttribute.getId());
-                    valueItr.remove();
-                }
+            resolvedAttributes.add(resolvedAttribute);
+        }
+
+        resolutionContext.setResolvedAttributes(resolvedAttributes);
+    }
+
+    /**
+     * Cleans the values of the given attribute. Currently this entails removal of any nulls or duplicate values.
+     * 
+     * @param attribute attribute whose values will be cleaned
+     */
+    protected void cleanResolvedAttributeValues(final Attribute<?> attribute) {
+        final Collection<?> values = attribute.getValues();
+        if (values.isEmpty()) {
+            return;
+        }
+
+        final LazySet cleanedValues = new LazySet<Object>();
+        for (Object value : values) {
+            if (value != null) {
+                cleanedValues.add(value);
             }
         }
+
+        attribute.setValues(cleanedValues);
     }
 
     /**
@@ -278,35 +396,33 @@ public class AttributeResolver extends AbstractComponent {
      * registered plugins.
      */
     public void validate() throws ComponentValidationException {
+        HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
         final LazyList<String> invalidPluginIds = new LazyList<String>();
 
         for (BaseDataConnector plugin : dataConnectors.values()) {
-            if (plugin != null) {
-                try {
-                    log.debug("Attribute resolver {}: checking if data connector {} is valid", this.getId(),
-                            plugin.getId());
-                    plugin.validate();
-                    log.debug("Attribute resolver {}: data connector {} is valid", this.getId(), plugin.getId());
-                } catch (ComponentValidationException e) {
-                    log.warn("Attribute resolver {}: data connector {} is not valid", new Object[] {this.getId(),
-                            plugin.getId(), e,});
-                    invalidPluginIds.add(plugin.getId());
-                }
+            log.debug("Attribute resolver {}: checking if data connector {} is valid", getId(), plugin.getId());
+            checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
+            try {
+                plugin.validate();
+                log.debug("Attribute resolver {}: data connector {} is valid", this.getId(), plugin.getId());
+            } catch (ComponentValidationException e) {
+                log.warn("Attribute resolver {}: data connector {} is not valid",
+                        new Object[] {this.getId(), plugin.getId(), e,});
+                invalidPluginIds.add(plugin.getId());
             }
         }
 
         for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
-            if (plugin != null) {
-                try {
-                    log.debug("Attribute resolver {}: checking if attribute definition {} is valid", this.getId(),
-                            plugin.getId());
-                    plugin.validate();
-                    log.debug("Attribute resolver {}: attribute definition {} is valid", this.getId(), plugin.getId());
-                } catch (ComponentValidationException e) {
-                    log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {this.getId(),
-                            plugin.getId(), e,});
-                    invalidPluginIds.add(plugin.getId());
-                }
+            log.debug("Attribute resolver {}: checking if attribute definition {} is valid", this.getId(),
+                    plugin.getId());
+            checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
+            try {
+                plugin.validate();
+                log.debug("Attribute resolver {}: attribute definition {} is valid", this.getId(), plugin.getId());
+            } catch (ComponentValidationException e) {
+                log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {this.getId(),
+                        plugin.getId(), e,});
+                invalidPluginIds.add(plugin.getId());
             }
         }
 
@@ -314,17 +430,43 @@ public class AttributeResolver extends AbstractComponent {
             throw new ComponentValidationException("The following attribute resolver plugins were invalid: "
                     + StringSupport.listToStringValue(invalidPluginIds, ", "));
         }
-
-        log.debug("Attribute resolver {}: checking for dependency loops amongst plugins", this.getId());
-        checkForCircularPlugInDependencies();
     }
 
     /**
-     * Checks to ensure that there is no dependency loops amongst the resolver plugins.
+     * Checks to ensure that there are no circular dependencies or dependencies on non-existent plugins.
+     * 
+     * @param circularCheckPluginId the ID of the plugin currently being checked for circular dependencies
+     * @param plugin current plugin, in the dependency tree of the plugin being checked, that we're currently looking at
+     * @param checkedPlugins IDs of plugins that have already been checked and known to be good
      * 
      * @throws ComponentValidationException thrown if there is a dependency loop
      */
-    private void checkForCircularPlugInDependencies() throws ComponentValidationException {
-        // TODO
+    protected void checkPlugInDependencies(final String circularCheckPluginId, final BaseResolverPlugin<?> plugin,
+            final Set<String> checkedPlugins) throws ComponentValidationException {
+        final String pluginId = plugin.getId();
+
+        BaseResolverPlugin<?> dependencyPlugin;
+        for (ResolverPluginDependency dependency : plugin.getDependencies()) {
+            if (checkedPlugins.contains(pluginId)) {
+                continue;
+            }
+
+            if (circularCheckPluginId.equals(dependency.getDependencyPluginId())) {
+                throw new ComponentValidationException("Plugin " + circularCheckPluginId
+                        + " has a dependency on plugin " + dependency.getDependencyPluginId());
+            }
+
+            dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
+            if (dependencyPlugin == null) {
+                dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
+            }
+            if (dependencyPlugin == null) {
+                throw new ComponentValidationException("Plugin " + plugin.getId() + " has a dependency on plugin "
+                        + dependency.getDependencyPluginId() + " which does not exist");
+            }
+
+            checkPlugInDependencies(circularCheckPluginId, dependencyPlugin, checkedPlugins);
+            checkedPlugins.add(pluginId);
+        }
     }
 }

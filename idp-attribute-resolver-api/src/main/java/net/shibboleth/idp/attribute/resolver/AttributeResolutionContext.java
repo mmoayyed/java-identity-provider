@@ -16,6 +16,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,9 @@ public class AttributeResolutionContext implements Subcontext {
     /** Attributes that have been requested to be resolved. */
     private Set<Attribute<?>> requestedAttributes;
 
+    /** Attributes which were resolved and released by the attribute resolver. */
+    private Map<String, Attribute<?>> resolvedAttributes;
+
     /** Attribute definitions that have been resolved and the resultant attribute. */
     private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;
 
@@ -59,6 +63,7 @@ public class AttributeResolutionContext implements Subcontext {
         }
 
         requestedAttributes = new LazySet<Attribute<?>>();
+        resolvedAttributes = new LazyMap<String, Attribute<?>>();
         resolvedAttributeDefinitions = new LazyMap<String, ResolvedAttributeDefinition>();
         resolvedDataConnectors = new LazyMap<String, ResolvedDataConnector>();
     }
@@ -122,6 +127,61 @@ public class AttributeResolutionContext implements Subcontext {
         }
 
         return requestedAttributes.remove(attribute);
+    }
+
+    /**
+     * Gets the unmodifiable collection of resolved attributes. The returned collection is never null nor does it
+     * contain any null keys or values.
+     * 
+     * @return unmodifiable set of resolved attributes
+     */
+    public Map<String, Attribute<?>> getResolvedAttributes() {
+        return Collections.unmodifiableMap(resolvedAttributes);
+    }
+
+    /**
+     * Sets the set of resolved attributes.
+     * 
+     * @param attributes set of resolved attributes, may be null, empty or contain null values
+     */
+    public void setResolvedAttributes(final Collection<Attribute<?>> attributes) {
+        resolvedAttributes.clear();
+
+        if (attributes != null) {
+            for (Attribute<?> attribute : attributes) {
+                addResolvedAttribute(attribute);
+            }
+        }
+    }
+
+    /**
+     * Adds a resolved attribute.
+     * 
+     * @param attribute attribute to be added, may be null
+     * 
+     * @return that {@link Attribute} that was replaced with the given attribute, null otherwise
+     */
+    public Attribute<?> addResolvedAttribute(final Attribute<?> attribute) {
+        if (attribute == null) {
+            return null;
+        }
+
+        return resolvedAttributes.put(attribute.getId(), attribute);
+    }
+
+    /**
+     * Removes a resolved attribute.
+     * 
+     * @param attributeId ID of the attribute to be removed, may be null
+     * 
+     * @return the {@link Attribute} that was removed, null otherwise
+     */
+    public Attribute<?> removeResolvedAttribute(final String attributeId) {
+        if (attributeId == null) {
+            return null;
+        }
+
+        return resolvedAttributes.remove(attributeId);
     }
 
     /**

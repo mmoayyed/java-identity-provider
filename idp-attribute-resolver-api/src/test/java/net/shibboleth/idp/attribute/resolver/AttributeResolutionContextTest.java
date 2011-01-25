@@ -85,6 +85,39 @@ public class AttributeResolutionContextTest {
         Assert.assertEquals(context.getRequestedAttributes().size(), 1);
     }
     
+    /** Test {@link AttributeResolutionContext#setRequestedAttributes(java.util.Set)}. */
+    @Test
+    public void testSetResolvedAttributes(){
+        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        
+        context.setResolvedAttributes(null);
+        Assert.assertNotNull(context.getResolvedAttributes());
+        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        
+        HashSet<Attribute<?>> attributes = new HashSet<Attribute<?>>();
+        context.setResolvedAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedAttributes());
+        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        
+        attributes.add(null);
+        context.setResolvedAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedAttributes());
+        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        
+        attributes.add(new Attribute<String>("foo"));
+        attributes.add(null);
+        attributes.add(new Attribute<String>("bar"));
+        context.setResolvedAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedAttributes());
+        Assert.assertEquals(context.getResolvedAttributes().size(), 2);
+        
+        attributes.clear();
+        attributes.add(new Attribute<String>("baz"));
+        context.setResolvedAttributes(attributes);
+        Assert.assertNotNull(context.getResolvedAttributes());
+        Assert.assertEquals(context.getResolvedAttributes().size(), 1);
+    }
+    
     /** Test adding and retrieving attribute definitions. */
     @Test
     public void testResolvedAttributeDefinitions() throws Exception {

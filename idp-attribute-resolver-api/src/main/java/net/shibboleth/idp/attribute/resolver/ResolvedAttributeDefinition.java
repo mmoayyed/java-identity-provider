@@ -62,13 +62,13 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doResolve(AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+    protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
+            throws AttributeResolutionException {
         return resolvedAttribute;
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+    protected Attribute<?> doResolve(AttributeResolutionContext resolutionContext) {
         return resolvedAttribute;
     }
 
@@ -105,6 +105,15 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     public String getId() {
         return resolvedDefinition.getId();
+    }
+
+    /**
+     * Gets the resolved attribute.
+     * 
+     * @return resolved attribute, or null
+     */
+    public Attribute<?> getResolvedAttribute() {
+        return resolvedAttribute;
     }
 
     /** {@inheritDoc} */
