@@ -26,14 +26,14 @@ import org.opensaml.util.StringSupport;
 public abstract class AbstractComponent implements Component {
 
     /** Identifier for this component. */
-    private String id;
+    private final String id;
     
     /**
      * Constructor.
      * 
      * @param componentId identifier for the component, never null or empty
      */
-    public AbstractComponent(String componentId) {
+    public AbstractComponent(final String componentId) {
         id = StringSupport.trimOrNull(componentId);
         Assert.isNotNull(id, "Component ID may not be null or empty");
     }

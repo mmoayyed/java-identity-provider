@@ -32,7 +32,7 @@ public class ShibbolethException extends Exception {
      * 
      * @param message exception message
      */
-    public ShibbolethException(String message) {
+    public ShibbolethException(final String message) {
         super(message);
     }
 
@@ -41,7 +41,7 @@ public class ShibbolethException extends Exception {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public ShibbolethException(Exception wrappedException) {
+    public ShibbolethException(final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -51,7 +51,7 @@ public class ShibbolethException extends Exception {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public ShibbolethException(String message, Exception wrappedException) {
+    public ShibbolethException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

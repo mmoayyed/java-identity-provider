@@ -34,7 +34,7 @@ public class ComponentValidationException extends ShibbolethException {
      * 
      * @param message exception message
      */
-    public ComponentValidationException(String message) {
+    public ComponentValidationException(final String message) {
         super(message);
     }
 
@@ -43,7 +43,7 @@ public class ComponentValidationException extends ShibbolethException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public ComponentValidationException(Exception wrappedException) {
+    public ComponentValidationException(final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -53,7 +53,7 @@ public class ComponentValidationException extends ShibbolethException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public ComponentValidationException(String message, Exception wrappedException) {
+    public ComponentValidationException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }
