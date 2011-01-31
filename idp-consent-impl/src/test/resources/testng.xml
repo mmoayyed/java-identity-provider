@@ -5,13 +5,13 @@
     
     <test name="consent" enabled="true">  
         <packages>       
-            <package name="edu.internet2.middleware.shibboleth.idp.consent"/>
+            <package name="net.shibboleth.idp.attribute.consent"/>
         </packages>
     </test>
     
     <test name="consent.storage">  
         <packages>       
-            <package name="edu.internet2.middleware.shibboleth.idp.consent.storage"/>
+            <package name="net.shibboleth.idp.attribute.consent.storage"/>
         </packages>
     </test>
 

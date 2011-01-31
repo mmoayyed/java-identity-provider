@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.consent.storage.Storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 
 
@@ -44,31 +45,34 @@ public class ConsentEngineImpl implements ConsentEngine {
     @Resource(name="consent.storage")
     private Storage storage;
     
-    @Resource(name="consent.relyingPartyBlacklist")
+    @Resource(name="consent.config.relyingPartyBlacklist")
     private Collection<String> relyingPartyBlacklist;
     
-    @Resource(name="consent.attributeBlacklist")
+    @Resource(name="consent.config.attributeBlacklist")
     private Collection<String> attributeBlacklist;
     
-    @Resource(name="consent.userIdAttribute")
+    @Resource(name="consent.config.userIdAttribute")
     private String userIdAttribute;
+    
+    @Resource(name="consent.config.alwaysRequireConsent")
+    private boolean alwaysRequireConsent;  
     
     /** {@inheritDoc} */
     public void determineConsent(final ConsentContext consentContext) throws ConsentException {
         
-        // TODO Replace null checks with asserts
-        // TODO Check if ProfileContext is owner
-        if (consentContext == null) {
-            throw new ConsentException("No consent context found");
-        }
+        Assert.notNull(consentContext, "No consent context found");
+        Assert.state(consentContext.getOwner().getClass().equals(null/* TODO ProfileContext.class*/), "Owner of a consent context must be a profile context");
         
-        String relyingPartyId = ConsentHelper.getRelyingParty(consentContext);
+        final String relyingPartyId = ConsentHelper.getRelyingParty(consentContext);
         Collection<Attribute<?>> attributes = consentContext.getUserAttributes().values();
-        String userId = ConsentHelper.findUserId(userIdAttribute, attributes);
-        User user = createUser(userId, relyingPartyId);
-
-        boolean consentRevocationRequested = ConsentHelper.isConsentRevocationRequested(consentContext);
         
+        final String userId = ConsentHelper.findUserId(userIdAttribute, attributes);
+        Assert.notNull(userId, "No userId found");
+        logger.debug("Using {}({}) as userId attribute", userIdAttribute, userId);
+        
+        final User user = createUser(userId, relyingPartyId);
+
+        boolean consentRevocationRequested = ConsentHelper.isConsentRevocationRequested(consentContext);      
         if (consentRevocationRequested) {
             user.setGlobalConsent(false);
             user.setAttributeReleases(relyingPartyId, Collections.EMPTY_SET);
@@ -92,24 +96,38 @@ public class ConsentEngineImpl implements ConsentEngine {
         
         if (attributes.isEmpty()) {
             logger.info("No attributes of user {} for relying party {} are released", user, relyingPartyId);
-            consentContext.setConsentDecision(Consent.INAPPLICABLE);
+            consentContext.setConsentDecision(Consent.INAPPLICABLE); // TODO INAPPLICABLE?
             return;
         }
         
-        if (user.hasApprovedAttributes(relyingPartyId, attributes)) {
-            logger.info("user {} has appoved set of attributes for relying party {}", user, relyingPartyId);
+        if (alwaysRequireConsent) {
+            logger.debug("Always require consent is enabled");
+            showAttributeReleaseView(user, relyingPartyId, attributes);
+            return;
+        }
+        
+        if (user.hasGlobalConsent()) {
+            logger.info("User {} has given global consent", user);
             consentContext.setConsentDecision(Consent.PRIOR);
             return;
         }
         
+        if (user.hasApprovedAttributes(relyingPartyId, attributes)) {
+            logger.info("User {} has appoved set of attributes for relying party {}", user, relyingPartyId);
+            consentContext.setConsentDecision(Consent.PRIOR);
+            return;
+        }
         
+        showAttributeReleaseView(user, relyingPartyId, attributes);
+    }
+    
+    private void showAttributeReleaseView(final User user, final String relyingPartyId, final Collection<Attribute<?>> attributes) {
         // TODO
-        // request.setAttribute(USER_KEY, user);
-        // request.setAttribute(RELYINGPARTYID_KEY, relyingPartyId);
-        // request.setAttribute(ATTRIBUTES_KEY, releasedAttributes);        
-        // request.forward("");
+        // request.setAttribute(ConsentServlet.USER_KEY, user);
+        // request.setAttribute(ConsentServlet.RELYINGPARTYID_KEY, relyingPartyId);
+        // request.setAttribute(ConsentServlet.ATTRIBUTES_KEY, attributes);        
         logger.debug("Dispatch to attribute release view");
-        return;
+        // request.forward("");
     }
     
     

@@ -8,7 +8,7 @@
     <context:component-scan base-package="edu.internet2.middleware.shibboleth.idp.consent" />
 
     <!-- Storage -->
-    <bean id="consent.storage.jdbc" class="edu.internet2.middleware.shibboleth.idp.consent.storage.JDBCStorage" p:dataSource-ref="dataSource" />
+    <bean id="consent.storage.jdbc" class="net.shibboleth.idp.attribute.consent.storage.JDBCStorage" p:dataSource-ref="dataSource" />
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource" />
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
         p:driverClassName="org.hsqldb.jdbcDriver"
@@ -16,7 +16,7 @@
         p:username="SA"
         p:password="" />
 
-    <bean id="consent.storage.cache" class="edu.internet2.middleware.shibboleth.idp.consent.storage.CacheStorage" init-method="initialize"/>
+    <bean id="consent.storage.cache" class="net.shibboleth.idp.attribute.consent.storage.CacheStorage" init-method="initialize"/>
     <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"/>
 
     <!-- Configuration -->
@@ -28,7 +28,11 @@
         <constructor-arg type="java.lang.String" value="false"/>
     </bean>
     
-    <bean id="consent.config.localizationHelper" class="edu.internet2.middleware.shibboleth.idp.consent.LocalizationHelper"
+    <bean id="consent.config.alwaysRequireConsent" class="java.lang.Boolean">
+        <constructor-arg type="java.lang.String" value="false"/>
+    </bean>
+    
+    <bean id="consent.config.localizationHelper" class="net.shibboleth.idp.attribute.consent.LocalizationHelper"
         p:preferredLocale="en"
         p:localeEnforcement="false"/>
     

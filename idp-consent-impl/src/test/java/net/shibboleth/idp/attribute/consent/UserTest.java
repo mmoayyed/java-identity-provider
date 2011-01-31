@@ -21,9 +21,6 @@ import static org.testng.AssertJUnit.*;
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.consent.AttributeRelease;
-import net.shibboleth.idp.attribute.consent.User;
-
 import org.joda.time.DateTime;
 
 import org.testng.annotations.Test;

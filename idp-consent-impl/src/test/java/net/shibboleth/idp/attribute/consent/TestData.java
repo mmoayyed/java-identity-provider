@@ -17,6 +17,7 @@
 package net.shibboleth.idp.attribute.consent;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -123,9 +124,9 @@ public class TestData {
     
     private static Attribute<?> getRandomAttribute() {
         Attribute<String> attribute = new Attribute<String>(getRandomAttributeId());
-        attribute.getValues().addAll(getRandomAttributeValues());        
-        attribute.getDisplayNames().putAll(getRandomDisplayNames());
-        attribute.getDisplayDescriptions().putAll(getRandomDisplayDescriptions());
+        attribute.setValues(getRandomAttributeValues());
+        attribute.setDisplayNames(getRandomDisplayNames());
+        attribute.setDisplayDescriptions(getRandomDisplayDescriptions());
         return attribute;
     }
     
@@ -156,7 +157,7 @@ public class TestData {
     private static Collection<Attribute<?>> getRandomAttributesWithUserIdAttribute() {
         Collection<Attribute<?>> attributes = new HashSet<Attribute<?>>(getRandomNumberedAttributes());
         Attribute<String> userIdAttribute = new Attribute<String>("userId");
-        userIdAttribute.getValues().add("userId-value");        
+        userIdAttribute.setValues(Arrays.asList(new String[] {"userId-value"}));
         attributes.add(userIdAttribute);
         return attributes;
     }
@@ -166,8 +167,15 @@ public class TestData {
         // 1-10
         for (int i = 0; i < random.nextInt(10)+1; i++) {
             Attribute<?> attribute = getRandomAttribute();
-            attribute.getDisplayNames().put(locale, attribute.getId()+"-"+locale.getLanguage()+"-name");
-            attribute.getDisplayDescriptions().put(locale, attribute.getId()+"-"+locale.getLanguage()+"-description");
+            
+            Map<Locale, String> displayNames = new HashMap<Locale, String>();
+            displayNames.put(locale, attribute.getId()+"-"+locale.getLanguage()+"-name");
+            attribute.setDisplayNames(displayNames);
+            
+            Map<Locale, String> displayDescriptions = new HashMap<Locale, String>();
+            displayDescriptions.put(locale, attribute.getId()+"-"+locale.getLanguage()+"-description");
+            attribute.setDisplayDescriptions(displayDescriptions);
+            
             attributes.put(attribute.getId(), attribute);
         }
         return attributes.values();

@@ -37,7 +37,7 @@ public class AttributeReleaseTest {
     
     @Test(dataProvider = "attributesDate")
     public void createAttributeReleases(Collection<Attribute<?>> attributes, DateTime date) {
-        Collection<AttributeRelease> attributeReleases =AttributeRelease.createAttributeReleases(attributes, date);
+        Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(attributes, date);
     
         assertEquals(attributes.size(), attributeReleases.size());
         
