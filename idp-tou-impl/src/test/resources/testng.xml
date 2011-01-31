@@ -5,13 +5,13 @@
     
     <test name="tou" enabled="true">  
         <packages>       
-            <package name="edu.internet2.middleware.shibboleth.idp.tou"/>
+            <package name="net.shibboleth.idp.tou"/>
         </packages>
     </test>
     
     <test name="tou.storage" enabled="true">  
         <packages>       
-            <package name="edu.internet2.middleware.shibboleth.idp.tou.storage"/>
+            <package name="net.shibboleth.idp.tou.storage"/>
         </packages>
     </test>
 

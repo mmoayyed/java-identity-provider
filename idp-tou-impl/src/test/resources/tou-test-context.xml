@@ -12,7 +12,7 @@
 
     <!-- Storage -->
 
-    <bean id="tou.storage.jdbc" class="edu.internet2.middleware.shibboleth.idp.tou.storage.JDBCStorage" p:dataSource-ref="dataSource" />
+    <bean id="tou.storage.jdbc" class="net.shibboleth.idp.tou.storage.JDBCStorage" p:dataSource-ref="dataSource" />
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource" />
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
         p:driverClassName="org.hsqldb.jdbcDriver"
@@ -20,13 +20,33 @@
         p:username="SA"
         p:password="" />
 
-    <bean id="tou.storage.cache" class="edu.internet2.middleware.shibboleth.idp.tou.storage.CacheStorage" init-method="initialize"/>
+    <bean id="tou.storage.cache" class="net.shibboleth.idp.tou.storage.CacheStorage" init-method="initialize"/>
     <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"/>
 
+    <!-- Configuration -->
+    <bean id="tou.config.userIdAttribute" class="java.lang.String">
+        <constructor-arg type="java.lang.String" value="userId"/>
+    </bean>
+ 
+    <bean id="tou.config.touMap" class="java.util.TreeMap">
+        <constructor-arg type="java.util.SortedMap">
+            <map>
+                <entry key="https://.*\.example\.org/shibboleth">
+                    <bean id="specificToU" class="net.shibboleth.idp.tou.ToU">
+                        <constructor-arg type="java.lang.String" value="2.0" />
+                        <constructor-arg type="org.springframework.core.io.Resource" value="classpath:/terms-of-use-example.txt" />
+                    </bean>                
+                </entry>
+                <entry key=".*">
+                    <ref bean="tou"/>
+                </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+    
     <!-- Terms of Use -->
-    <bean id="tou" class="edu.internet2.middleware.shibboleth.idp.tou.ToU">
+    <bean id="tou" class="net.shibboleth.idp.tou.ToU">
         <constructor-arg type="java.lang.String" value="1.0" />
         <constructor-arg type="org.springframework.core.io.Resource" value="classpath:/terms-of-use-example.txt" />
     </bean>
-
 </beans>

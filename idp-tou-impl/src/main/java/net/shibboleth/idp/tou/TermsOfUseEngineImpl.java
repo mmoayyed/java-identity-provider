@@ -16,6 +16,8 @@
 
 package net.shibboleth.idp.tou;
 
+import java.util.SortedMap;
+
 import javax.annotation.Resource;
 
 import net.shibboleth.idp.tou.TermsOfUseContext;
@@ -26,6 +28,7 @@ import net.shibboleth.idp.tou.storage.Storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 
 /**
@@ -35,18 +38,34 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
 
     private final Logger logger = LoggerFactory.getLogger(TermsOfUseEngineImpl.class);
     
-    @Resource(name="tou")
-    private ToU tou;
-
     @Resource(name="tou.storage")
     private Storage storage;
+    
+    @Resource(name="tou.config.touMap")
+    private SortedMap<String, ToU> touMap;
+    
+    @Resource(name="tou.config.userIdAttribute")
+    private String userIdAttribute;
         
     /** {@inheritDoc} */
     public void determineAcceptance(TermsOfUseContext touContext) throws TermsOfUseException {
         
-        final String userId = null; // TODO get userId from touContext
+        final String relyingPartyId = ToUHelper.getRelyingParty(touContext);
+        final ToU tou = ToUHelper.getToUForRelyingParty(touMap, relyingPartyId);
         
-        ToUAcceptance touAcceptance;
+        if (tou == null) {
+            touContext.setTermsOfUseDecision(Decision.INAPPLICABLE);
+            logger.info("No ToU found for relying party {}", relyingPartyId);
+            return;
+        }
+        
+        logger.debug("Using ToU {} for relying party {}", tou, relyingPartyId);
+        
+        final String userId = ToUHelper.findUserId(userIdAttribute, ToUHelper.getUserAttributes(touContext));
+        Assert.notNull(userId, "No userId found");
+        logger.debug("Using {}({}) as userId attribute", userIdAttribute, userId);
+        
+        final ToUAcceptance touAcceptance;
         if (storage.containsToUAcceptance(userId, tou.getVersion())) {
             touAcceptance = storage.readToUAcceptance(userId, tou.getVersion());
         } else {
