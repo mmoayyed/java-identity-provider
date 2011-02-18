@@ -16,12 +16,12 @@
 
 package net.shibboleth.idp.tou.storage;
 
-
-import static org.testng.AssertJUnit.*;
-
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 import net.shibboleth.idp.tou.TestData;
 import net.shibboleth.idp.tou.ToUAcceptance;
-import net.shibboleth.idp.tou.storage.Storage;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -31,44 +31,42 @@ import org.springframework.test.context.testng.AbstractTransactionalTestNGSpring
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-
-
 @ContextConfiguration("classpath:/tou-test-context.xml")
 @Test(dataProviderClass = TestData.class)
 public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpringContextTests {
-    
+
     protected final Logger logger = LoggerFactory.getLogger("Test");
- 
+
     protected Storage storage;
-    
+
     protected void setStorage(Storage storage) {
         this.storage = storage;
     }
-    
+
     @BeforeTest
     public abstract void initialization();
-       
+
     @Test(dataProvider = "userIdVersionFingerprintDate")
     public void crudToUAcceptance(final String userId, String version, String fingerprint, DateTime date) {
         assertFalse(storage.containsToUAcceptance(userId, version));
         assertNull(storage.readToUAcceptance(userId, version));
-        
+
         ToUAcceptance touAcceptance = new ToUAcceptance(version, fingerprint, date);
         storage.createToUAcceptance(userId, touAcceptance);
         assertTrue(storage.containsToUAcceptance(userId, version));
 
         touAcceptance = storage.readToUAcceptance(userId, version);
-        
+
         assertEquals(version, touAcceptance.getVersion());
         assertEquals(fingerprint, touAcceptance.getFingerprint());
         assertEquals(date, touAcceptance.getAcceptanceDate());
-        
+
         touAcceptance = new ToUAcceptance(version, fingerprint.substring(1), date.plusMonths(1));
         storage.updateToUAcceptance(userId, touAcceptance);
-        
-        touAcceptance = storage.readToUAcceptance(userId, version);        
+
+        touAcceptance = storage.readToUAcceptance(userId, version);
         assertEquals(version, touAcceptance.getVersion());
         assertEquals(fingerprint.substring(1), touAcceptance.getFingerprint());
-        assertEquals(date.plusMonths(1), touAcceptance.getAcceptanceDate());       
+        assertEquals(date.plusMonths(1), touAcceptance.getAcceptanceDate());
     }
 }

@@ -28,45 +28,51 @@ import org.infinispan.config.Configuration;
 import org.infinispan.manager.CacheManager;
 import org.springframework.util.Assert;
 
-
-/**
- *
- */
+/** Cache implementation. */
 public class CacheStorage implements Storage {
-    
-    
-    @Resource(name="cacheManager")
+
+    /** The cache manager. */
+    @Resource(name = "cacheManager")
     private CacheManager cacheManager;
-    
-    // userId: version: touAcceptance
+
+    /**
+     * The terms of use acceptance partition.
+     * 
+     * Key: userId. Value: Map Key: version. Value: {@see ToUAcceptance}.
+     */
     private ConcurrentMap<String, ConcurrentMap<String, ToUAcceptance>> touAcceptancePartition;
-    
-    public void initialize() {      
+
+    /** Initializes the cache storage. */
+    public void initialize() {
         Cache<String, ConcurrentMap> cache = cacheManager.getCache("tou");
-        
+
         if (cache == null) {
             cacheManager.defineConfiguration("tou", new Configuration());
             cache = cacheManager.getCache("tou");
         }
-        
-        cache.putIfAbsent("touAcceptancePartition", new ConcurrentHashMap<String, ConcurrentMap<String, ToUAcceptance>>());
-        touAcceptancePartition = (ConcurrentMap<String, ConcurrentMap<String, ToUAcceptance>>) cache.get("touAcceptancePartition");
+
+        cache.putIfAbsent("touAcceptancePartition",
+                new ConcurrentHashMap<String, ConcurrentMap<String, ToUAcceptance>>());
+        touAcceptancePartition = cache.get("touAcceptancePartition");
     }
-    
+
     /** {@inheritDoc} */
-    public void createToUAcceptance(String userId, ToUAcceptance touAcceptance) {
-        touAcceptancePartition.putIfAbsent(userId, new ConcurrentHashMap<String, ToUAcceptance>());        
+    @Override
+    public void createToUAcceptance(final String userId, final ToUAcceptance touAcceptance) {
+        touAcceptancePartition.putIfAbsent(userId, new ConcurrentHashMap<String, ToUAcceptance>());
         touAcceptancePartition.get(userId).put(touAcceptance.getVersion(), touAcceptance);
     }
 
     /** {@inheritDoc} */
-    public void updateToUAcceptance(String userId, ToUAcceptance touAcceptance) {
+    @Override
+    public void updateToUAcceptance(final String userId, final ToUAcceptance touAcceptance) {
         Assert.state(touAcceptancePartition.containsKey(userId));
         touAcceptancePartition.get(userId).replace(touAcceptance.getVersion(), touAcceptance);
     }
 
     /** {@inheritDoc} */
-    public ToUAcceptance readToUAcceptance(String userId, String version) {
+    @Override
+    public ToUAcceptance readToUAcceptance(final String userId, final String version) {
         if (!touAcceptancePartition.containsKey(userId)) {
             return null;
         }
@@ -74,7 +80,8 @@ public class CacheStorage implements Storage {
     }
 
     /** {@inheritDoc} */
-    public boolean containsToUAcceptance(String userId, String version) {
+    @Override
+    public boolean containsToUAcceptance(final String userId, final String version) {
         if (!touAcceptancePartition.containsKey(userId)) {
             return false;
         }

@@ -21,17 +21,13 @@ import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 
-import java.util.Collection;
-import java.util.SortedMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
-
-import net.shibboleth.idp.attribute.Attribute;
 
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
-
 
 /**
  * Tests ToUHelper.
@@ -40,23 +36,25 @@ import org.testng.annotations.Test;
 @ContextConfiguration("classpath:/tou-test-context.xml")
 @Test(dataProviderClass = TestData.class)
 public class ToUHelperTest extends AbstractTestNGSpringContextTests {
-    
-    @Resource(name="tou.config.touMap")
-    private SortedMap<String, ToU> touMap;
-    
-    @javax.annotation.Resource(name="tou")
-    private ToU tou;
+
+    @Resource(name = "tou.config.touMap")
+    private Map<String, ToU> touMap;
+
+    @javax.annotation.Resource(name = "tou")
+    private ToU defaultToU;
 
     public void getToUForRelyingParty() {
-        assertNotNull(ToUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth"));
-        System.out.println(tou.getVersion());
-        System.out.println(ToUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth").getVersion());
+        ToU specificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth");
+        assertNotNull(specificToU);
+        assertFalse(specificToU.getVersion().equals(defaultToU.getVersion()));
 
-        //assertFalse(tou.getVersion().equals(ToUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth").getVersion()));
-        assertEquals(tou.getVersion(), ToUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth").getVersion());
-        
+        ToU nonSpecificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth");
+        assertNotNull(nonSpecificToU);
+        assertEquals(defaultToU.getVersion(), nonSpecificToU.getVersion());
+
         touMap.remove(".*");
-        assertNull(ToUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth"));        
+        nonSpecificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.other-example.org/shibboleth");
+        assertNull(nonSpecificToU);
     }
-    
+
 }

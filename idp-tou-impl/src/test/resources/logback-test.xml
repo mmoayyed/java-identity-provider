@@ -14,7 +14,7 @@
     <logger name="org.springframework" level="WARN" />
     <logger name="org.testng" level="WARN" />
     
-    <logger name="edu.internet2.middleware.shibboleth.idp.tou" level="DEBUG" />
+    <logger name="net.shibboleth.idp.tou" level="TRACE" />
     <logger name="Test" level="DEBUG" />
 
     <root level="INFO">

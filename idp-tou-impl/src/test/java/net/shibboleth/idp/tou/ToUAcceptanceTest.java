@@ -16,10 +16,10 @@
 
 package net.shibboleth.idp.tou;
 
-import static org.testng.AssertJUnit.*;
-
-import net.shibboleth.idp.tou.ToU;
-import net.shibboleth.idp.tou.ToUAcceptance;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import org.joda.time.DateTime;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,33 +34,33 @@ import org.testng.annotations.Test;
 @Test(dataProviderClass = TestData.class)
 public class ToUAcceptanceTest extends AbstractTestNGSpringContextTests {
 
-    @javax.annotation.Resource(name="tou")
+    @javax.annotation.Resource(name = "tou")
     private ToU tou;
-    
+
     @Test(dataProvider = "date")
     public void createToUAcceptance(final DateTime date) {
-    	final ToUAcceptance touAcceptance = ToUAcceptance.createToUAcceptance(tou, date);
+        final ToUAcceptance touAcceptance = ToUAcceptance.createToUAcceptance(tou, date);
         assertEquals(tou.getVersion(), touAcceptance.getVersion());
-    	final String fingerprint = ToUAcceptance.fingerprint(tou.getText());
-    	assertEquals(fingerprint, touAcceptance.getFingerprint());
-    	assertEquals(date, touAcceptance.getAcceptanceDate());
+        final String fingerprint = ToUHelper.getToUFingerprint(tou);
+        assertEquals(fingerprint, touAcceptance.getFingerprint());
+        assertEquals(date, touAcceptance.getAcceptanceDate());
     }
-    
+
     public void emptyToUAcceptance() {
         final ToUAcceptance touAcceptance = ToUAcceptance.emptyToUAcceptance();
         assertEquals("", touAcceptance.getVersion());
         assertEquals("", touAcceptance.getFingerprint());
         assertNull(touAcceptance.getAcceptanceDate());
     }
-    
+
     @Test(dataProvider = "touAcceptance")
     public void contains(final ToUAcceptance otherToUAcceptance) {
         final ToUAcceptance touAcceptance = ToUAcceptance.createToUAcceptance(tou, new DateTime());
         final ToUAcceptance emptyToUAcceptance = ToUAcceptance.emptyToUAcceptance();
-        
+
         assertTrue(touAcceptance.contains(tou));
         assertFalse(otherToUAcceptance.contains(tou));
         assertFalse(emptyToUAcceptance.contains(tou));
     }
-    
+
 }

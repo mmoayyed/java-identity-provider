@@ -16,17 +16,15 @@
 
 package net.shibboleth.idp.tou;
 
-import static org.testng.AssertJUnit.*;
-
-import net.shibboleth.idp.tou.TermsOfUseException;
-import net.shibboleth.idp.tou.ToU;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.fail;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
-
 
 /**
  * Tests ToU.
@@ -36,20 +34,21 @@ import org.testng.annotations.Test;
 @ContextConfiguration("classpath:/tou-test-context.xml")
 public class ToUTest extends AbstractTestNGSpringContextTests {
 
-    @javax.annotation.Resource(name="tou")
+    @javax.annotation.Resource(name = "tou")
     private ToU tou;
-    
+
     public void instantiation() {
         assertEquals("1.0", tou.getVersion());
         assertNotNull(tou.getText());
     }
-    
+
     public void loadWrongFile() {
-    	Resource resource = new FileSystemResource("not-existent.txt");
-    	try {
-			@SuppressWarnings("unused")
+        Resource resource = new FileSystemResource("not-existent.txt");
+        try {
+            @SuppressWarnings("unused")
             final ToU invalidTermsOfUse = new ToU("1.0", resource);
-			fail("Exception expected");
-		} catch (TermsOfUseException e) {}
+            fail("Exception expected");
+        } catch (TermsOfUseException e) {
+        }
     }
 }

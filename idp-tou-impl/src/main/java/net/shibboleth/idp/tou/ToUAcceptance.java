@@ -15,57 +15,103 @@
  */
 
 package net.shibboleth.idp.tou;
+
+import net.jcip.annotations.ThreadSafe;
+
 import org.joda.time.DateTime;
 
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.HexConverter;
-
-/**
- *
- */
+/** Represents a terms of use acceptance. */
+@ThreadSafe
 public class ToUAcceptance {
+
+    /** The terms of use version. */
     private final String version;
+
+    /** The terms of use fingerpint. */
     private final String fingerprint;
+
+    /** The terms of use acceptance date. */
     private final DateTime acceptanceDate;
-    
+
+    /**
+     * Constructs a terms of use acceptance using version, fingerprint and an acceptance date.
+     * 
+     * @param version The version.
+     * @param fingerprint The fingerprint.
+     * @param acceptanceDate The acceptance date.
+     */
     public ToUAcceptance(final String version, final String fingerprint, final DateTime acceptanceDate) {
         this.version = version;
         this.fingerprint = fingerprint;
         this.acceptanceDate = acceptanceDate;
     }
-    
+
+    /**
+     * Constructs a terms of use acceptance using a terms of use and an acceptance date.
+     * 
+     * @param tou The {@see Tou}.
+     * @param acceptanceDate The acceptance date.
+     */
     private ToUAcceptance(final ToU tou, final DateTime acceptanceDate) {
         this.version = tou.getVersion();
-        this.fingerprint = fingerprint(tou.getText());
+        this.fingerprint = ToUHelper.getToUFingerprint(tou);
         this.acceptanceDate = acceptanceDate;
     }
-    
+
+    /**
+     * Gets the version.
+     * 
+     * @return Returns the version.
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * Gets the fingerprint.
+     * 
+     * @return Returns the fingerprint.
+     */
     public String getFingerprint() {
         return fingerprint;
     }
 
+    /**
+     * Gets the acceptance date.
+     * 
+     * @return Returns the acceptance date.
+     */
     public DateTime getAcceptanceDate() {
         return acceptanceDate;
     }
 
+    /**
+     * Creates a terms of use acceptance.
+     * 
+     * @param tou The {@see Tou}.
+     * @param acceptanceDate The acceptance date.
+     * @return Returns a terms of use acceptance.
+     */
     public static ToUAcceptance createToUAcceptance(final ToU tou, final DateTime acceptanceDate) {
         return new ToUAcceptance(tou, acceptanceDate);
     }
-    
+
+    /**
+     * Creates an empty terms of use acceptance.
+     * 
+     * @return Returns an empty terms of use acceptance.
+     */
     public static ToUAcceptance emptyToUAcceptance() {
         return new ToUAcceptance("", "", null);
     }
 
+    /**
+     * Checks if this terms of acceptance contains a specific terms of use.
+     * 
+     * @param tou The {@see Tou}.
+     * @return Returns true if version and fingerprint equals, false otherwise.
+     */
     public boolean contains(final ToU tou) {
-        return version.equals(tou.getVersion()) && 
-            fingerprint.equals(fingerprint(tou.getText()));
-    }
-    
-    static String fingerprint(String text) {
-        return new SHA256().digest(text.getBytes(), new HexConverter(true));
+        return version.equals(tou.getVersion()) && fingerprint.equals(ToUHelper.getToUFingerprint(tou));
     }
 }

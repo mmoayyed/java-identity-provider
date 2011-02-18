@@ -20,28 +20,40 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import net.shibboleth.idp.tou.TermsOfUseException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-/**
- *
- */
+/** Represents the terms of use. */
+@ThreadSafe
 public class ToU {
-    
+
+    // TODO: Needs probably an ID too (persisted, compared). For disjunction between different ToUs of relying parties.
+
+    /** Class logger. */
     private final Logger logger = LoggerFactory.getLogger(ToU.class);
-    
+
+    /** The version of the terms of use. */
     private final String version;
+
+    /** The text of the terms of use. */
     private final String text;
 
-    public ToU(String version, Resource resource) throws TermsOfUseException {
-        this.version = version;
-        
-        StringBuilder stringBuilder = new StringBuilder();
+    /**
+     * Constructs terms of use.
+     * 
+     * @param touVersion The version of the terms of use.
+     * @param resource The resource from where the terms of use text is loaded.
+     * @throws TermsOfUseException In case of an initialization error.
+     */
+    public ToU(final String touVersion, final Resource resource) throws TermsOfUseException {
+        version = touVersion;
+
+        final StringBuilder stringBuilder = new StringBuilder();
         try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream()));       
+            final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuilder.append(line + "\n");
@@ -49,12 +61,14 @@ public class ToU {
             bufferedReader.close();
         } catch (IOException e) {
             throw new TermsOfUseException("Error while initializing terms of use", e);
-        }  
-        this.text = stringBuilder.toString();        
+        }
+        text = stringBuilder.toString();
         logger.info("ToU version {} initialized from file {}", version, resource);
     }
-   
+
     /**
+     * Gets the text of the terms of use.
+     * 
      * @return Returns the text.
      */
     public final String getText() {
@@ -62,6 +76,8 @@ public class ToU {
     }
 
     /**
+     * Gets the version of the terms of use.
+     * 
      * @return Returns the version.
      */
     public final String getVersion() {

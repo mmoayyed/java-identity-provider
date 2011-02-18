@@ -16,7 +16,6 @@
 
 package net.shibboleth.idp.tou;
 
-
 import java.io.IOException;
 
 import javax.annotation.Resource;
@@ -25,61 +24,82 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.tou.TermsOfUseContext.Decision;
 import net.shibboleth.idp.tou.storage.Storage;
 
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.context.Context;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
- *
+ * Terms of use servlet controls UI interactions.
  */
-
 public class ToUServlet extends HttpServlet {
 
-    /**
-     * 
-     */
+    /** Key used for the user id. */
+    public static final String USERID_KEY = "tou.key.userid";
+
+    /** Serial version UID. */
     private static final long serialVersionUID = 5697887762728622595L;
 
+    /** Class logger. */
     private final Logger logger = LoggerFactory.getLogger(ToUServlet.class);
 
-    @Resource(name="tou")
+    /** Configured terms of use. */
+    @Resource(name = "tou")
     private ToU tou;
 
-    @Resource(name="tou.storage")
+    /** Configured storage. */
+    @Resource(name = "tou.storage")
     private Storage storage;
-    
-    
+
+    /** Configured velocity engine. */
+    @Resource(name = "velocityEngine")
+    private VelocityEngine velocityEngine;
+
     /** {@inheritDoc} */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // TODO
-        // show velocity template terms-of-use including the model attribute ToU
+    @Override
+    protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException,
+            IOException {
+
+        // TODO: Initialize it once?
+        final Context context = new VelocityContext();
+        context.put("tou", tou);
+
+        try {
+            velocityEngine.mergeTemplate("terms-of-use.vm", "UTF-8", context, response.getWriter());
+        } catch (Exception e) {
+            throw new ServletException("Unable to call velocity engine", e);
+        }
     }
 
     /** {@inheritDoc} */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-      
-        String userId = null;  // TODO get userId from context     
-        
-        boolean accepted = request.getParameter("tou.accept") != null && request.getParameter("tou.accept").equals("yes");
+    @Override
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Probably we need to go via session or other storage
+        final String userId = (String) request.getAttribute(USERID_KEY);
+
+        final TermsOfUseContext touContext = ToUHelper.getTermsOfUseContext(request);
+
+        final boolean accepted =
+                request.getParameter("tou.accept") != null && request.getParameter("tou.accept").equals("yes");
         if (accepted) {
-            DateTime acceptanceDate = new DateTime();
+            final DateTime acceptanceDate = new DateTime();
             logger.info("User {} has accepted ToU version {}", userId, tou.getVersion());
             if (storage.containsToUAcceptance(userId, tou.getVersion())) {
                 storage.updateToUAcceptance(userId, ToUAcceptance.createToUAcceptance(tou, acceptanceDate));
             } else {
                 storage.createToUAcceptance(userId, ToUAcceptance.createToUAcceptance(tou, acceptanceDate));
             }
-            // TODO
-            // set the decision to ACCEPTED in the ToU context
+            touContext.setTermsOfUseDecision(Decision.ACCEPTED);
         } else {
             logger.info("User {} has declined ToU version {}", userId, tou.getVersion());
-            // TODO
-            // set the decision to DECLINED in the ToU context
-            // show page again with warning message?
+            touContext.setTermsOfUseDecision(Decision.DECLINED);
         }
     }
 }

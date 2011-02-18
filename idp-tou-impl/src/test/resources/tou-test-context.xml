@@ -28,8 +28,8 @@
         <constructor-arg type="java.lang.String" value="userId"/>
     </bean>
  
-    <bean id="tou.config.touMap" class="java.util.TreeMap">
-        <constructor-arg type="java.util.SortedMap">
+    <bean id="tou.config.touMap" class="org.apache.commons.collections.SequencedHashMap">
+        <constructor-arg type="java.util.Map">
             <map>
                 <entry key="https://.*\.example\.org/shibboleth">
                     <bean id="specificToU" class="net.shibboleth.idp.tou.ToU">
