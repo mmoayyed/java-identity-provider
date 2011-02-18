@@ -31,71 +31,85 @@ import org.infinispan.config.Configuration;
 import org.infinispan.manager.CacheManager;
 import org.springframework.util.Assert;
 
-
-
-/**
- *
- */
+/** Cache implementation. */
 public class CacheStorage implements Storage {
-        
-    @Resource(name="cacheManager")
+
+    /** The cache manager. */
+    @Resource(name = "cacheManager")
     private CacheManager cacheManager;
-    
-    // userId: user
+
+    /**
+     * The user partition.
+     * 
+     * Key: userId. Value: {@see User}.
+     */
     private ConcurrentMap<String, User> userPartition;
-    // userId: relyingPartyId: attributeId: attributeRelease
+
+    /**
+     * The attribute release partition.
+     * 
+     * Key: userId Value: Map Key: relyingPartyId Value: Map Key: attributeId Value: {@see AttributeRelease}.
+     * 
+     */
     private ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<String, AttributeRelease>>> attributeReleasePartition;
-    
-    public void initialize() {      
+
+    /** Initializes the cache storage. */
+    public void initialize() {
         Cache<String, ConcurrentMap> cache = cacheManager.getCache("consent");
-        
+
         if (cache == null) {
             cacheManager.defineConfiguration("consent", new Configuration());
             cache = cacheManager.getCache("consent");
         }
-        
+
         cache.putIfAbsent("userPartition", new ConcurrentHashMap<String, User>());
         cache.putIfAbsent("attributeReleasePartition",
-                new ConcurrentHashMap<String, ConcurrentMap<String, ConcurrentMap<String, AttributeRelease>>>());   
-        
-        userPartition = (ConcurrentMap<String, User>) cache.get("userPartition");
-        attributeReleasePartition = (ConcurrentMap<String, ConcurrentMap<String, ConcurrentMap<String, AttributeRelease>>>) cache.get("attributeReleasePartition");    
+                new ConcurrentHashMap<String, ConcurrentMap<String, ConcurrentMap<String, AttributeRelease>>>());
+
+        userPartition = cache.get("userPartition");
+        attributeReleasePartition = cache.get("attributeReleasePartition");
     }
-    
+
     /** {@inheritDoc} */
+    @Override
     public boolean containsUser(String userId) {
         return userPartition.containsKey(userId);
     }
 
     /** {@inheritDoc} */
+    @Override
     public User readUser(String userId) {
         return userPartition.get(userId);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void updateUser(User user) {
         userPartition.replace(user.getId(), user);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void createUser(User user) {
         userPartition.put(user.getId(), user);
     }
 
     /** {@inheritDoc} */
+    @Override
     public Collection<AttributeRelease> readAttributeReleases(String userId, String relyingPartyId) {
         if (!attributeReleasePartition.containsKey(userId)) {
             return Collections.EMPTY_SET;
         }
-        
+
         if (!attributeReleasePartition.get(userId).containsKey(relyingPartyId)) {
             return Collections.EMPTY_SET;
         }
-        
+
         return attributeReleasePartition.get(userId).get(relyingPartyId).values();
     }
 
     /** {@inheritDoc} */
+    @Override
     public void deleteAttributeReleases(String userId, String relyingPartyId) {
         if (attributeReleasePartition.containsKey(userId)) {
             attributeReleasePartition.get(userId).remove(relyingPartyId);
@@ -103,30 +117,37 @@ public class CacheStorage implements Storage {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean containsAttributeRelease(String userId, String relyingPartyId, String attributeId) {
         if (!attributeReleasePartition.containsKey(userId)) {
             return false;
         }
-        
+
         if (!attributeReleasePartition.get(userId).containsKey(relyingPartyId)) {
             return false;
         }
-        
+
         return attributeReleasePartition.get(userId).get(relyingPartyId).containsKey(attributeId);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void updateAttributeRelease(String userId, String relyingPartyId, AttributeRelease attributeRelease) {
         Assert.state(attributeReleasePartition.containsKey(userId));
         Assert.state(attributeReleasePartition.get(userId).containsKey(relyingPartyId));
-        attributeReleasePartition.get(userId).get(relyingPartyId).replace(attributeRelease.getAttributeId(), attributeRelease);      
+        attributeReleasePartition.get(userId).get(relyingPartyId)
+                .replace(attributeRelease.getAttributeId(), attributeRelease);
     }
 
     /** {@inheritDoc} */
+    @Override
     public void createAttributeRelease(String userId, String relyingPartyId, AttributeRelease attributeRelease) {
-        attributeReleasePartition.putIfAbsent(userId, new ConcurrentHashMap<String, ConcurrentMap<String, AttributeRelease>>());        
-        attributeReleasePartition.get(userId).putIfAbsent(relyingPartyId, new ConcurrentHashMap<String, AttributeRelease>());        
-        attributeReleasePartition.get(userId).get(relyingPartyId).put(attributeRelease.getAttributeId(), attributeRelease);
+        attributeReleasePartition.putIfAbsent(userId,
+                new ConcurrentHashMap<String, ConcurrentMap<String, AttributeRelease>>());
+        attributeReleasePartition.get(userId).putIfAbsent(relyingPartyId,
+                new ConcurrentHashMap<String, AttributeRelease>());
+        attributeReleasePartition.get(userId).get(relyingPartyId)
+                .put(attributeRelease.getAttributeId(), attributeRelease);
     }
 
 }

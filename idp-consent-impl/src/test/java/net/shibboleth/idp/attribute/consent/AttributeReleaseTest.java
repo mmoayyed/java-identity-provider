@@ -16,17 +16,17 @@
 
 package net.shibboleth.idp.attribute.consent;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.AssertJUnit.fail;
 
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.consent.AttributeRelease;
 
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
-
-
 
 /**
  *
@@ -34,36 +34,36 @@ import org.testng.annotations.Test;
 
 @Test(dataProviderClass = TestData.class)
 public class AttributeReleaseTest {
-    
+
     @Test(dataProvider = "attributesDate")
     public void createAttributeReleases(Collection<Attribute<?>> attributes, DateTime date) {
         Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(attributes, date);
-    
+
         assertEquals(attributes.size(), attributeReleases.size());
-        
-        for (AttributeRelease attributeRelease: attributeReleases) {
+
+        for (AttributeRelease attributeRelease : attributeReleases) {
             Attribute<?> attribute = checkAttribute(attributes, attributeRelease.getAttributeId());
             assertEquals(attribute.getId(), attributeRelease.getAttributeId());
-            String valueHash = AttributeRelease.hashValues(attribute.getValues());
+            String valueHash = ConsentHelper.hashAttributeValues(attribute);
             assertEquals(valueHash, attributeRelease.getValuesHash());
             assertEquals(date, attributeRelease.getDate());
         }
     }
-    
+
     @Test(dataProvider = "attributesDateAttribute")
     public void contains(Collection<Attribute<?>> attributes, DateTime date, Attribute otherAttribute) {
-        Collection<AttributeRelease> attributeReleases =AttributeRelease.createAttributeReleases(attributes, date);
-        
-        for (AttributeRelease attributeRelease: attributeReleases) {
+        Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(attributes, date);
+
+        for (AttributeRelease attributeRelease : attributeReleases) {
             Attribute<?> attribute = checkAttribute(attributes, attributeRelease.getAttributeId());
             assertTrue(attributeRelease.contains(attribute));
             assertFalse(attributeRelease.contains(otherAttribute));
         }
     }
-    
+
     private static Attribute<?> checkAttribute(Collection<Attribute<?>> attributes, String attributeId) {
         assertTrue(!attributes.isEmpty());
-        for (Attribute<?> attribute: attributes) {
+        for (Attribute<?> attribute : attributes) {
             if (attribute.getId().equals(attributeId)) {
                 attributes.remove(attribute);
                 return attribute;

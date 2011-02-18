@@ -17,76 +17,115 @@
 package net.shibboleth.idp.attribute.consent;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
-
-
 /**
- *
+ * Represents the current user.
  */
+@NotThreadSafe
 public class User {
-    
+
+    /** The users id. */
     private final String id;
+
+    /** Whether the user has given global consent or not. */
     private boolean globalConsent;
+
+    /**
+     * A map of attribute releases. The key represents the entityId for which the attribute releases approval was given.
+     * The value contains a collection of @see AttributeRelease.
+     * */
     private final Map<String, Collection<AttributeRelease>> releases;
 
-    public User(final String id, final boolean globalConsent) {
-    	this.id = id;
-    	this.globalConsent = globalConsent;
-    	this.releases = new HashMap<String, Collection<AttributeRelease>>();    	
+    /**
+     * Constructs a @see User.
+     * 
+     * @param userId The id of the user.
+     * @param globalConsentGiven If user has given global consent or not.
+     */
+    public User(final String userId, final boolean globalConsentGiven) {
+        id = userId;
+        globalConsent = globalConsentGiven;
+        releases = new HashMap<String, Collection<AttributeRelease>>();
     }
 
     /**
-     * @return Returns the globalConsent.
+     * Gets the global consent flag.
+     * 
+     * @return Returns the global consent flag.
      */
     public boolean hasGlobalConsent() {
         return globalConsent;
     }
 
     /**
-     * @param globalConsent The globalConsent to set.
+     * Sets the global consent flag.
+     * 
+     * @param globalConsentGiven The global consent flag to set.
      */
-    public void setGlobalConsent(boolean globalConsent) {
-        this.globalConsent = globalConsent;
+    public void setGlobalConsent(boolean globalConsentGiven) {
+        globalConsent = globalConsentGiven;
     }
 
     /**
-     * @return Returns the userId.
+     * Gets the userId.
+     * 
+     * @return The id of the user.
      */
     public String getId() {
         return id;
     }
-    
+
+    /**
+     * Sets the attribute releases for a specific relying party.
+     * 
+     * @param relyingPartyId The id of the relying party for which the attribute releases should be set
+     * @param attributeReleases Collection of @see AttributeRelease to set
+     */
     public void setAttributeReleases(final String relyingPartyId, final Collection<AttributeRelease> attributeReleases) {
         releases.put(relyingPartyId, attributeReleases);
     }
 
+    /**
+     * Gets the attribute releases for a specific relying party.
+     * 
+     * @param relyingPartyId The id of the relying party for which the attribute releases should be returned
+     * @return Collection of @see AttributeRelease
+     */
     public Collection<AttributeRelease> getAttributeReleases(final String relyingPartyId) {
+        if (!releases.containsKey(relyingPartyId)) {
+            return Collections.EMPTY_SET;
+        }
         return releases.get(relyingPartyId);
     }
 
-    public boolean hasApprovedAttributes(final String relyingPartyId,  Collection<Attribute<?>> attributes) {
+    /**
+     * Checks if the user has given (in past) attribute release consent to all released attributes.
+     * 
+     * @param relyingPartyId The id of the relying party for which the attribute releases should be checked
+     * @param attributes Collection of @see Attribute, the attributes which are going to be released
+     * @return true if the user has given attribute release consent to all attributes.
+     */
+    public boolean hasApprovedAttributes(final String relyingPartyId, final Collection<Attribute<?>> attributes) {
         Collection<AttributeRelease> attributeReleases = getAttributeReleases(relyingPartyId);
-        if (attributeReleases == null) {
-            return false;
-        }
 
-        boolean approved;
-        for (Attribute<?> attribute: attributes) {
-            approved = false;
-            for (AttributeRelease attributeRelease: attributeReleases) {
+        for (Attribute<?> attribute : attributes) {
+            boolean approved = false;
+            for (AttributeRelease attributeRelease : attributeReleases) {
                 if (attributeRelease.contains(attribute)) {
-                        approved = true;
-                        break;
+                    approved = true;
+                    break;
                 }
             }
             if (!approved) {
                 return false;
             }
-        }     
+        }
         return true;
     }
 

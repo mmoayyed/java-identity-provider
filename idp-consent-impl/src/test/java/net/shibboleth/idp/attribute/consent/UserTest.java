@@ -16,30 +16,31 @@
 
 package net.shibboleth.idp.attribute.consent;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.Attribute;
+
 import org.joda.time.DateTime;
-
 import org.testng.annotations.Test;
-
-
 
 /**
  *
  */
-
 @Test(dataProviderClass = TestData.class)
 public class UserTest {
-    
+
     @Test(dataProvider = "userRelyingPartyIdAttributesDateAttributes")
-    public void hasApprovedAttributes(final User user, final String relyingPartyId, final Collection<Attribute<?>> approvedAttributes, final DateTime date, final Collection<Attribute<?>> notApprovedAttributes) {
-        Collection<AttributeRelease> attributeReleases = AttributeRelease.createAttributeReleases(approvedAttributes, date);
+    public void hasApprovedAttributes(final User user, final String relyingPartyId,
+            final Collection<Attribute<?>> approvedAttributes, final DateTime date,
+            final Collection<Attribute<?>> notApprovedAttributes) {
+        Collection<AttributeRelease> attributeReleases =
+                AttributeRelease.createAttributeReleases(approvedAttributes, date);
         user.setAttributeReleases(relyingPartyId, attributeReleases);
-        
-        assertTrue(user.hasApprovedAttributes(relyingPartyId, approvedAttributes));        
+
+        assertTrue(user.hasApprovedAttributes(relyingPartyId, approvedAttributes));
         assertFalse(user.hasApprovedAttributes(relyingPartyId, notApprovedAttributes));
         assertFalse(user.hasApprovedAttributes("otherRelyingPartyId", approvedAttributes));
     }

@@ -1,4 +1,6 @@
+
 package net.shibboleth.idp.attribute.consent.storage;
+
 /*
  * Copyright 2009 University Corporation for Advanced Internet Development, Inc.
  *
@@ -15,13 +17,9 @@ package net.shibboleth.idp.attribute.consent.storage;
  * limitations under the License.
  */
 
-
-
 import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
-
-import net.shibboleth.idp.attribute.consent.storage.CacheStorage;
 
 import org.infinispan.Cache;
 import org.infinispan.manager.CacheManager;
@@ -32,19 +30,19 @@ import org.testng.annotations.Test;
  * Tests the cache storage.
  */
 public class CacheStorageTest extends AbstractStorageTest {
-    
-    @Resource(name="consent.storage.cache")
+
+    @Resource(name = "consent.storage.cache")
     private CacheStorage cacheStorage;
-    
-    @Resource(name="cacheManager")
+
+    @Resource(name = "cacheManager")
     private CacheManager cacheManager;
-    
+
     private Cache<String, ConcurrentMap> cache;
-    
+
     public void setup() {
-       cache = cacheManager.getCache("consent");
+        cache = cacheManager.getCache("consent");
     }
-    
+
     @BeforeMethod
     public void clear() {
         if (cache != null) {
@@ -52,11 +50,12 @@ public class CacheStorageTest extends AbstractStorageTest {
         }
         cacheStorage.initialize();
     }
-    
+
     /** {@inheritDoc} */
-    @Test(dependsOnMethods={"setup"})
+    @Override
+    @Test(dependsOnMethods = {"setup"})
     public void initialization() {
         setStorage(cacheStorage);
     }
-    
+
 }

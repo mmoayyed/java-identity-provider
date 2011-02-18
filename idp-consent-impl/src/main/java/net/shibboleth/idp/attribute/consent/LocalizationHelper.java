@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.common.xml.SAMLConstants;
@@ -36,78 +37,130 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-
 /**
- *
+ * Localization helper class.
+ * 
+ * Provides utility methods for getting localized names and descriptions.
  */
+@NotThreadSafe
 public class LocalizationHelper {
-    
+
+    /** Class logger. */
     private final Logger logger = LoggerFactory.getLogger(LocalizationHelper.class);
+
+    /** Preferred locale. */
     private Locale preferredLocale;
+
+    /** Whether the preferred is enforced or not. */
     private boolean localeEnforcement;
-    
+
+    /** The {@see MetadataProvider} used for resolving localized information. */
     private MetadataProvider metadataProvider;
-    
+
     /**
-     * @param preferredLocale The preferredLocale to set.
+     * Sets the preferred locale.
+     * 
+     * @param newPreferredLocale The preferred locale to set.
      */
-    public void setPreferredLocale(Locale preferredLocale) {
-        this.preferredLocale = preferredLocale;
+    public void setPreferredLocale(final Locale newPreferredLocale) {
+        preferredLocale = newPreferredLocale;
     }
 
     /**
-     * @param localeEnforcement The localeEnforcement to set.
+     * Sets or unsets locale enforcement.
+     * 
+     * @param localeEnforced The locale enforced to set.
      */
-    public void setLocaleEnforcement(boolean localeEnforcement) {
-        this.localeEnforcement = localeEnforcement;
+    public void setLocaleEnforcement(final boolean localeEnforced) {
+        localeEnforcement = localeEnforced;
     }
 
     /**
-     * @param metadataProvider The metadataProvider to set.
+     * Sets the metadata provider.
+     * 
+     * @param newMetadataProvider The metadata provider to set.
      */
-    public void setMetadataProvider(MetadataProvider metadataProvider) {
-        this.metadataProvider = metadataProvider;
+    public void setMetadataProvider(final MetadataProvider newMetadataProvider) {
+        metadataProvider = newMetadataProvider;
     }
 
-    public String getRelyingPartyName(String relyingPartyId, Locale userLocale) {
-        List<ServiceName> serviceNames = getServiceNames(metadataProvider, relyingPartyId);
-        Locale locale = selectLocale(getAvailableNameLocales(serviceNames), userLocale);
+    /**
+     * Gets the localized name of a relying party.
+     * 
+     * @param relyingPartyId The entityId of the relying party.
+     * @param userLocale The user's preferred locale.
+     * @return Returns the localized name of a relying party.
+     */
+    public String getRelyingPartyName(final String relyingPartyId, final Locale userLocale) {
+        final List<ServiceName> serviceNames = getServiceNames(relyingPartyId);
+        final Locale locale = selectLocale(getAvailableNameLocales(serviceNames), userLocale);
         if (locale == null) {
             return relyingPartyId;
         }
         return getRelyingPartyName(serviceNames, locale);
     }
-    
-    public String getRelyingPartyDescription(String relyingPartyId, Locale userLocale) {
-        List<ServiceDescription> serviceDescription = getServiceDescriptions(metadataProvider, relyingPartyId);
-        Locale locale = selectLocale(getAvailableDescriptionLocales(serviceDescription), userLocale);
+
+    /**
+     * Gets the localized description of a relying party.
+     * 
+     * @param relyingPartyId The entityId of the relying party.
+     * @param userLocale The user's preferred locale.
+     * @return Returns the localized description of a relying party.
+     */
+    public String getRelyingPartyDescription(final String relyingPartyId, final Locale userLocale) {
+        final List<ServiceDescription> serviceDescription = getServiceDescriptions(relyingPartyId);
+        final Locale locale = selectLocale(getAvailableDescriptionLocales(serviceDescription), userLocale);
         if (locale == null) {
             return "";
         }
-        return getRelyingPartyDescription(serviceDescription, locale);        
+        return getRelyingPartyDescription(serviceDescription, locale);
     }
-    
-    public String getAttributeName(Attribute<?> attribute, Locale userLocale) {
-        Locale locale = selectLocale(attribute.getDisplayNames().keySet(), userLocale);
+
+    /**
+     * Gets the localized name of an attribute.
+     * 
+     * @param attribute The attribute
+     * @param userLocale The user's preferred locale.
+     * @return Returns the localized name of an attribute.
+     */
+    public String getAttributeName(final Attribute<?> attribute, final Locale userLocale) {
+        final Locale locale = selectLocale(attribute.getDisplayNames().keySet(), userLocale);
         logger.debug("Locale {} choosen for attribute {} name", locale, attribute.getId());
         if (locale == null) {
             return attribute.getId();
         }
         return attribute.getDisplayNames().get(locale);
     }
-    
-    public String getAttributeDescription(Attribute<?> attribute, Locale userLocale) {
-        Locale locale = selectLocale(attribute.getDisplayDescriptions().keySet(), userLocale);
+
+    /**
+     * Gets the localized description of an attribute.
+     * 
+     * @param attribute The attribute
+     * @param userLocale The user's preferred locale.
+     * @return Returns the localized description of an attribute.
+     */
+    public String getAttributeDescription(final Attribute<?> attribute, final Locale userLocale) {
+        final Locale locale = selectLocale(attribute.getDisplayDescriptions().keySet(), userLocale);
         logger.debug("Locale {} choosen for attribute {} description", locale, attribute.getId());
         if (locale == null) {
             return "";
         }
         return attribute.getDisplayDescriptions().get(locale);
     }
-    
-    // TODO: check modifier
-    Locale selectLocale(Collection<Locale> availableLocales, Locale userLocale) {              
-        
+
+    /**
+     * Selects the right locale from a collection of available locales.
+     * 
+     * First it is checked whether a locale is enforced. If yes and it is available, too, it is selected, else none
+     * locale is selected. Second it checks if the user's preferred local is available, if yes, it is selected. Third it
+     * checks if the configured preferred local is available, if yes, it is selected, else none locale is selected.
+     * 
+     * @param availableLocales A collection of all available locales.
+     * @param userLocale The user's preferred locale.
+     * @return Returns the right locale.
+     */
+    public Locale selectLocale(final Collection<Locale> availableLocales, final Locale userLocale) {
+
         if (localeEnforcement) {
             if (availableLocales.contains(preferredLocale)) {
                 logger.debug("Locale {} is enforced and available", preferredLocale);
@@ -117,79 +170,121 @@ public class LocalizationHelper {
                 return null;
             }
         }
-        
+
         if (availableLocales.contains(userLocale)) {
             logger.debug("User's locale {} is available", userLocale);
             return userLocale;
         }
-                
+
         if (availableLocales.contains(preferredLocale)) {
             logger.debug("Preferred locale {} is available", preferredLocale);
             return preferredLocale;
         }
-        
+
         logger.debug("Neither user's locale {} nor preferred locale {} is available", userLocale, preferredLocale);
         return null;
     }
-    
-    private Collection<Locale> getAvailableNameLocales(List<ServiceName> serviceNames) {
-        Collection<Locale> availableLocales = new HashSet<Locale>();
-        for (ServiceName serviceName: serviceNames) {
+
+    /**
+     * Gets all available locales for relying party names.
+     * 
+     * @param serviceNames A list of all service names of the relying party .
+     * @return Returns a collection of available locales.
+     */
+    private Collection<Locale> getAvailableNameLocales(final List<ServiceName> serviceNames) {
+        final Collection<Locale> availableLocales = new HashSet<Locale>();
+        for (ServiceName serviceName : serviceNames) {
             availableLocales.add(new Locale(serviceName.getName().getLanguage()));
         }
         return availableLocales;
     }
-    
-    private Collection<Locale> getAvailableDescriptionLocales(List<ServiceDescription> serviceDescriptions) {
-        Collection<Locale> availableLocales = new HashSet<Locale>();
-        for (ServiceDescription serviceDescription: serviceDescriptions) {
+
+    /**
+     * Gets all available locales for relying party descriptions.
+     * 
+     * @param serviceDescriptions A list of all service descriptions of the relying party.
+     * @return Returns a collection of available locales.
+     */
+    private Collection<Locale> getAvailableDescriptionLocales(final List<ServiceDescription> serviceDescriptions) {
+        final Collection<Locale> availableLocales = new HashSet<Locale>();
+        for (ServiceDescription serviceDescription : serviceDescriptions) {
             availableLocales.add(new Locale(serviceDescription.getDescription().getLanguage()));
         }
         return availableLocales;
     }
-    
-    private String getRelyingPartyName(List<ServiceName> serviceNames, Locale locale) {
-        for (ServiceName serviceName: serviceNames) {
+
+    /**
+     * Gets the localized name of a list of service names.
+     * 
+     * @param serviceNames A list of all service names.
+     * @param locale The locale which should be used.
+     * @return Returns the localized name or null if the service name is not available for the given locale.
+     */
+    private String getRelyingPartyName(final List<ServiceName> serviceNames, final Locale locale) {
+        for (ServiceName serviceName : serviceNames) {
             if (serviceName.getName().getLanguage().equals(locale.getLanguage())) {
                 return serviceName.getName().getLocalString();
             }
-        }      
-        return null;
-    }
-    
-    private String getRelyingPartyDescription(List<ServiceDescription> serviceDescriptions, Locale locale) {
-        for (ServiceDescription serviceDescription: serviceDescriptions) {
-            if (serviceDescription.getDescription().getLanguage().equals(locale.getLanguage())) {
-                return serviceDescription.getDescription().getLocalString();
-            }
-        }      
+        }
         return null;
     }
 
-    private List<ServiceName> getServiceNames(MetadataProvider metadataProvider, String entityId) {
-        AttributeConsumingService attributeConsumingService = getAttributeConsumingService(metadataProvider, entityId);  
+    /**
+     * Gets the localized name of a list of service descriptions.
+     * 
+     * @param serviceDescriptions A list of all service descriptions.
+     * @param locale The locale which should be used.
+     * @return Returns the localized description or null if the service description is not available for the given
+     *         locale.
+     */
+    private String getRelyingPartyDescription(final List<ServiceDescription> serviceDescriptions, final Locale locale) {
+        for (ServiceDescription serviceDescription : serviceDescriptions) {
+            if (serviceDescription.getDescription().getLanguage().equals(locale.getLanguage())) {
+                return serviceDescription.getDescription().getLocalString();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets a list of all service names for a relying party.
+     * 
+     * @param entityId The entityId of the relying party.
+     * @return Returns a list of all service names.
+     */
+    private List<ServiceName> getServiceNames(final String entityId) {
+        final AttributeConsumingService attributeConsumingService = getAttributeConsumingService(entityId);
         if (attributeConsumingService != null) {
             return attributeConsumingService.getNames();
         } else {
             return Collections.EMPTY_LIST;
         }
     }
-    
-    private List<ServiceDescription> getServiceDescriptions(MetadataProvider metadataProvider, String entityId) {
-        AttributeConsumingService attributeConsumingService = getAttributeConsumingService(metadataProvider, entityId);  
+
+    /**
+     * Gets a list of all service descriptions for a relying party.
+     * 
+     * @param entityId The entityId of the relying party.
+     * @return Returns a list of all service descriptions.
+     */
+    private List<ServiceDescription> getServiceDescriptions(final String entityId) {
+        final AttributeConsumingService attributeConsumingService = getAttributeConsumingService(entityId);
         if (attributeConsumingService != null) {
             return attributeConsumingService.getDescriptions();
         } else {
             return Collections.EMPTY_LIST;
         }
     }
-    
+
     /**
-     * @return
+     * Gets the attribute consuming service for a specific relying party.
+     * 
+     * @param entityId The entityId of the relying party.
+     * @return Returns the attribute consuming service element or null if not available.
      */
-    private AttributeConsumingService getAttributeConsumingService(MetadataProvider metadataProvider, String entityId) {
+    private AttributeConsumingService getAttributeConsumingService(final String entityId) {
         Assert.notNull(metadataProvider);
-        
+
         EntityDescriptor entityDescriptor = null;
         try {
             entityDescriptor = metadataProvider.getEntityDescriptor(entityId);
@@ -198,16 +293,17 @@ public class LocalizationHelper {
             return null;
         }
         String[] protocols = {SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, SAMLConstants.SAML10P_NS};
-        for (String protocol: protocols) {
-            SPSSODescriptor spSSODescriptor = entityDescriptor.getSPSSODescriptor(protocol);                
+        for (String protocol : protocols) {
+            final SPSSODescriptor spSSODescriptor = entityDescriptor.getSPSSODescriptor(protocol);
             if (spSSODescriptor == null) {
                 continue;
             }
-            AttributeConsumingService defaultAttributeConsumingService = spSSODescriptor.getDefaultAttributeConsumingService();
+            final AttributeConsumingService defaultAttributeConsumingService =
+                    spSSODescriptor.getDefaultAttributeConsumingService();
             if (defaultAttributeConsumingService != null) {
                 return defaultAttributeConsumingService;
-            } 
-            List<AttributeConsumingService> list = spSSODescriptor.getAttributeConsumingServices();
+            }
+            final List<AttributeConsumingService> list = spSSODescriptor.getAttributeConsumingServices();
             if (list != null && !list.isEmpty()) {
                 return list.get(0);
             }

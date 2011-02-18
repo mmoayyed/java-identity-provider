@@ -1,4 +1,6 @@
+
 package net.shibboleth.idp.attribute.consent.storage;
+
 /*
  * Copyright 2009 University Corporation for Advanced Internet Development, Inc.
  *
@@ -15,11 +17,7 @@ package net.shibboleth.idp.attribute.consent.storage;
  * limitations under the License.
  */
 
-
-
 import javax.annotation.Resource;
-
-import net.shibboleth.idp.attribute.consent.storage.JDBCStorage;
 
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -30,22 +28,23 @@ import org.testng.annotations.Test;
  * Tests JDBC storage using the Spring JDBC framework.
  */
 
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback=true)
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class JDBCStorageTest extends AbstractStorageTest {
-    
-    @Resource(name="consent.storage.jdbc")
+
+    @Resource(name = "consent.storage.jdbc")
     private JDBCStorage jdbcStorage;
-    
+
     @Parameters("consent.schema")
     @Rollback(false)
     public void setup(final String jdbcSchema) {
         super.executeSqlScript(jdbcSchema, false);
     }
-   
+
     /** {@inheritDoc} */
-    @Test(dependsOnMethods={"setup"})
+    @Override
+    @Test(dependsOnMethods = {"setup"})
     public void initialization() {
         setStorage(jdbcStorage);
     }
-    
+
 }

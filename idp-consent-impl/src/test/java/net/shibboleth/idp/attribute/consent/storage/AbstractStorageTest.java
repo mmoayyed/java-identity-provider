@@ -16,14 +16,16 @@
 
 package net.shibboleth.idp.attribute.consent.storage;
 
-import static org.testng.AssertJUnit.*;
+import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
+import static org.testng.AssertJUnit.assertNull;
+import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.consent.AttributeRelease;
 import net.shibboleth.idp.attribute.consent.TestData;
 import net.shibboleth.idp.attribute.consent.User;
-import net.shibboleth.idp.attribute.consent.storage.Storage;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -33,29 +35,26 @@ import org.springframework.test.context.testng.AbstractTransactionalTestNGSpring
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-
-
-
 @ContextConfiguration("classpath:/consent-test-context.xml")
 @Test(dataProviderClass = TestData.class)
 public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpringContextTests {
-    
+
     protected final Logger logger = LoggerFactory.getLogger("Test");
-    
+
     protected Storage storage;
-    
+
     protected void setStorage(Storage storage) {
         this.storage = storage;
     }
-    
+
     @BeforeTest
-    public abstract void initialization();   
-    
+    public abstract void initialization();
+
     @Test(dataProvider = "userIdGlobalConsent")
     public void crudUser(String userId, boolean globalConsent) {
         assertFalse(storage.containsUser(userId));
         assertNull(storage.readUser(userId));
-        
+
         User user = new User(userId, globalConsent);
         storage.createUser(user);
         assertTrue(storage.containsUser(userId));
@@ -63,7 +62,7 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
         user = storage.readUser(userId);
         assertEquals(userId, user.getId());
         assertEquals(globalConsent, user.hasGlobalConsent());
-        
+
         user.setGlobalConsent(!globalConsent);
         storage.updateUser(user);
         user = storage.readUser(userId);
@@ -72,7 +71,8 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
     }
 
     @Test(dataProvider = "userRelyingPartyIdAttributeIdHashDate")
-    public void crudAttributeRelease(final User user, final String relyingPartyId, final String attributeId, final String hash, final DateTime date) {    
+    public void crudAttributeRelease(final User user, final String relyingPartyId, final String attributeId,
+            final String hash, final DateTime date) {
         AttributeRelease attributeRelease = new AttributeRelease(attributeId, hash, date);
         assertFalse(storage.containsAttributeRelease(user.getId(), relyingPartyId, attributeId));
         assertTrue(storage.readAttributeReleases(user.getId(), relyingPartyId).isEmpty());
@@ -80,27 +80,27 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
         storage.createUser(user);
         assertFalse(storage.containsAttributeRelease(user.getId(), relyingPartyId, attributeId));
         assertTrue(storage.readAttributeReleases(user.getId(), relyingPartyId).isEmpty());
-        
+
         storage.createAttributeRelease(user.getId(), relyingPartyId, attributeRelease);
         assertTrue(storage.containsAttributeRelease(user.getId(), relyingPartyId, attributeId));
-        
+
         Collection<AttributeRelease> attributeReleases = storage.readAttributeReleases(user.getId(), relyingPartyId);
         assertEquals(1, attributeReleases.size());
-        
+
         attributeRelease = attributeReleases.iterator().next();
         assertEquals(attributeId, attributeRelease.getAttributeId());
         assertEquals(hash, attributeRelease.getValuesHash());
         assertEquals(date, attributeRelease.getDate());
-        
+
         attributeRelease = new AttributeRelease(attributeId, hash.substring(1), date.plusMonths(1));
         storage.updateAttributeRelease(user.getId(), relyingPartyId, attributeRelease);
 
         attributeReleases = storage.readAttributeReleases(user.getId(), relyingPartyId);
         assertEquals(1, attributeReleases.size());
-        
+
         attributeRelease = attributeReleases.iterator().next();
         assertEquals(attributeId, attributeRelease.getAttributeId());
         assertEquals(hash.substring(1), attributeRelease.getValuesHash());
         assertEquals(date.plusMonths(1), attributeRelease.getDate());
-    }  
+    }
 }

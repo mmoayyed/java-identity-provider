@@ -36,7 +36,7 @@
         p:preferredLocale="en"
         p:localeEnforcement="false"/>
     
-    <bean id="consent.config.relyingPartyBlacklist" class="java.util.HashSet">
+    <bean id="consent.config.relyingPartyWhiteBlackList" class="java.util.HashSet">
         <constructor-arg type="java.util.Collection">
             <set>
                 <value>https://sp\.example1\.org/shibboleth</value>
@@ -44,6 +44,10 @@
                 <value>https://.*\.example3\.org/shibboleth</value>                
             </set>
         </constructor-arg>
+    </bean>
+    
+    <bean id="consent.config.relyingPartyWhiteBlackList.isBlacklist" class="java.lang.Boolean">
+        <constructor-arg type="java.lang.String" value="true"/>
     </bean>
     
     <bean id="consent.config.attributeSortOrder" class="java.util.ArrayList">

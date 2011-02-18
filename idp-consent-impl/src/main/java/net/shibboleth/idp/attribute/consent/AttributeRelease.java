@@ -16,82 +16,102 @@
 
 package net.shibboleth.idp.attribute.consent;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import edu.vt.middleware.crypt.digest.SHA256;
-import edu.vt.middleware.crypt.util.HexConverter;
-
-/**
- *
- */
+/** Represents an attribute release. */
+@ThreadSafe
 public class AttributeRelease {
-    
-    private static final Logger logger = LoggerFactory.getLogger(AttributeRelease.class);
-   
+
+    /** The attribute id. */
     private final String attributeId;
+
+    /** An hash over all attribute values. */
     private final String valuesHash;
+
+    /** A timestamp when consent for this attribute release was given. */
     private final DateTime consentDate;
-    
+
+    /**
+     * Constructs a @see AttributeRelease.
+     * 
+     * @param attributeId The id of the attribute.
+     * @param valuesHash The hashed values.
+     * @param consentDate The timestamp for this @see AttributeRelease.
+     */
     public AttributeRelease(final String attributeId, final String valuesHash, final DateTime consentDate) {
         this.attributeId = attributeId;
         this.valuesHash = valuesHash;
-    	this.consentDate = consentDate;
-    }
-
-    private AttributeRelease(final Attribute<?> attribute, final DateTime consentDate) {
-        this.attributeId = attribute.getId();
-        this.valuesHash = hashValues(attribute.getValues());
         this.consentDate = consentDate;
     }
-    
+
+    /**
+     * Constructs a @see AttributeRelease.
+     * 
+     * @param attribute The @see Attribute.
+     * @param consentDate The timestamp for this @see AttributeRelease.
+     */
+    private AttributeRelease(final Attribute<?> attribute, final DateTime consentDate) {
+        this.attributeId = attribute.getId();
+        this.valuesHash = ConsentHelper.hashAttributeValues(attribute);
+        this.consentDate = consentDate;
+    }
+
+    /**
+     * Gets the attribute id.
+     * 
+     * @return Returns the id.
+     */
     public String getAttributeId() {
         return attributeId;
     }
 
+    /**
+     * Gets the hash value of the attribute values.
+     * 
+     * @return Returns the values hash.
+     */
     public String getValuesHash() {
         return valuesHash;
     }
 
+    /**
+     * Gets the timestamp when consent for this attribute release was given.
+     * 
+     * @return Returns the date.
+     */
     public DateTime getDate() {
         return consentDate;
     }
 
-    public static Collection<AttributeRelease> createAttributeReleases(Collection<Attribute<?>> attributes, DateTime date) {
-        Collection<AttributeRelease> attributeReleases = new HashSet<AttributeRelease>();        
+    /**
+     * Creates a collection of @see AttributeRelease.
+     * 
+     * @param attributes The attributes from where the attribute releases should created.
+     * @param date The consent date for the attributes.
+     * @return Returns a collection of attribute releases
+     */
+    public static Collection<AttributeRelease> createAttributeReleases(Collection<Attribute<?>> attributes,
+            DateTime date) {
+        Collection<AttributeRelease> attributeReleases = new HashSet<AttributeRelease>();
         for (Attribute attribute : attributes) {
             attributeReleases.add(new AttributeRelease(attribute, date));
         }
         return attributeReleases;
     }
-    
-    static String hashValues(final Collection<?> values) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ObjectOutputStream objectOutputStream;
-        try {
-            objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-            objectOutputStream.writeObject(values);
-            objectOutputStream.flush();
-            objectOutputStream.close();
-            byteArrayOutputStream.close();
-        } catch (IOException e) {
-            logger.error("Error while converting attribute values into a byte array", e);
-            return null;
-        }
-        return new SHA256().digest(byteArrayOutputStream.toByteArray(), new HexConverter(true));
-    }
-    
+
+    /**
+     * Checks if an @see AttributeRelease contains a given @see Attribute.
+     * 
+     * @param attribute The @see Attribute to check for.
+     * @return Returns true if this @see AttributeRelease contains the given attribute.
+     */
     public boolean contains(Attribute<?> attribute) {
-        return attributeId.equals(attribute.getId()) && 
-            valuesHash.equals(hashValues(attribute.getValues()));
+        return attributeId.equals(attribute.getId()) && valuesHash.equals(ConsentHelper.hashAttributeValues(attribute));
     }
 }

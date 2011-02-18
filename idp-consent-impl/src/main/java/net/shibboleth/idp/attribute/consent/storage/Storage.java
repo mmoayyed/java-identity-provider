@@ -21,67 +21,83 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.consent.AttributeRelease;
 import net.shibboleth.idp.attribute.consent.User;
 
-
-/**
- *
- */
+/** Storage interface for user consent. */
 public interface Storage {
 
     /**
-     * @param userId
-     * @return
+     * Checks if the storage contains a user.
+     * 
+     * @param userId The user id.
+     * @return Returns true if the storage contains the user, false otherwise.
      */
     boolean containsUser(final String userId);
 
     /**
-     * @param userId
-     * @return
+     * Reads a user from the storage.
+     * 
+     * @param userId The user id.
+     * @return Returns the user for the given user id or null if user is not available.
      */
     User readUser(final String userId);
-    
-    /**
-     * @param user
-     */
-    void updateUser(User user);
 
     /**
-     * @param user
+     * Updates a user.
+     * 
+     * @param user The user.
      */
-    void createUser(User user);
+    void updateUser(final User user);
 
     /**
-     * @param userId
-     * @param relyingPartyId
-     * @return
+     * Creates a user.
+     * 
+     * @param user The user.
+     */
+    void createUser(final User user);
+
+    /**
+     * Reads the attribute releases from the storage for a specific user and relying party.
+     * 
+     * @param userId The user id.
+     * @param relyingPartyId The relying party id.
+     * @return Returns a collection of attribute releases, might be empty but never null.
      */
     Collection<AttributeRelease> readAttributeReleases(final String userId, final String relyingPartyId);
 
     /**
-     * @param userId
-     * @param relyingPartyId
+     * Deletes the attribute releases from the storage for a specific user and relying party.
+     * 
+     * @param userId The user id.
+     * @param relyingPartyId The relying party id.
      */
     void deleteAttributeReleases(final String userId, final String relyingPartyId);
 
     /**
-     * @param userId
-     * @param relyingPartyId
-     * @param attributeId
-     * @return
+     * Checks if the storage contains a attribute release for a specific user, relying party and attribute.
+     * 
+     * @param userId The user id.
+     * @param relyingPartyId The relying party id.
+     * @param attributeId attribute id.
+     * @return Returns true if the storage contains the attribute release, false otherwise.
      */
-    boolean containsAttributeRelease(String userId, String relyingPartyId, String attributeId);
+    boolean containsAttributeRelease(final String userId, final String relyingPartyId, final String attributeId);
 
     /**
-     * @param userId
-     * @param relyingPartyId
-     * @param attributeRelease
+     * Updates the attribute releases for a specific user and relying party.
+     * 
+     * @param userId The user id.
+     * @param relyingPartyId The relying party id.
+     * @param attributeRelease The attribute release.
      */
-    void updateAttributeRelease(String userId, String relyingPartyId, AttributeRelease attributeRelease);
+    void updateAttributeRelease(final String userId, String relyingPartyId, final AttributeRelease attributeRelease);
 
     /**
-     * @param userId
-     * @param relyingPartyId
-     * @param attributeRelease
+     * Creates an attribute releases for a specific user and relying party.
+     * 
+     * @param userId The user id.
+     * @param relyingPartyId The relying party id.
+     * @param attributeRelease The attribute release.
      */
-    void createAttributeRelease(String userId, String relyingPartyId, AttributeRelease attributeRelease);
-    
+    void createAttributeRelease(final String userId, final String relyingPartyId,
+            final AttributeRelease attributeRelease);
+
 }
