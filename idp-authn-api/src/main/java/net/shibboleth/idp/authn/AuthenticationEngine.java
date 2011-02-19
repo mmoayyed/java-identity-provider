@@ -27,7 +27,7 @@ package net.shibboleth.idp.authn;
  * a single authentication method. However, this is not a requirement. A subject may poses, and an authentication engine
  * may request, more than a single credential and validate the subject's identity using multiple methods.
  */
-public interface AuthenticationEngine {
+public class AuthenticationEngine {
 
     /**
      * Authenticates the subject according to the rules of the engine implementation.
@@ -36,5 +36,20 @@ public interface AuthenticationEngine {
      * 
      * @throws AuthenticationException thrown if the engine encounters an error attempting to authenticate the subject
      */
-    public void authenticateSubject(AuthenticationContext context) throws AuthenticationException;
+    public Object authenticateSubject(AuthenticationRequestContext context) throws AuthenticationException {
+
+        // Check if necessary method(s) are already done and active if so return complete
+
+        // Run extractors
+
+        // Determine active validator set
+
+        // For each validator and credentials
+        // check if validator works on credential
+        // if so run validator
+        // if validator returns a continuation, break out of loop and send back response
+        // if validator returns success move on to next validator
+
+        return null;
+    }
 }

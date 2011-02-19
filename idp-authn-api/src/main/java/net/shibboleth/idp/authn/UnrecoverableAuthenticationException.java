@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 University Corporation for Advanced Internet Development, Inc.
+ * Copyright 2011 University Corporation for Advanced Internet Development, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,31 @@
 
 package net.shibboleth.idp.authn;
 
-/** Exception indicating a problem authenticating a user. */
-public class AuthenticationException extends Exception {
+/**
+ * A authentication error which the current request can not recover from (e.g., a required authentication source being
+ * down).
+ */
+public class UnrecoverableAuthenticationException extends AuthenticationException {
 
     /** Serial version UID. */
-    private static final long serialVersionUID = 6587176160411149029L;
-
-    /** Constructor. */
-    public AuthenticationException() {
-        super();
-    }
+    private static final long serialVersionUID = -8576810879768090505L;
 
     /**
      * Constructor.
      * 
      * @param message exception message
      */
-    public AuthenticationException(final String message) {
+    public UnrecoverableAuthenticationException(final String message) {
         super(message);
     }
 
     /**
      * Constructor.
      * 
-     * @param wrappedException exception to be wrapped by this one
-     */
-    public AuthenticationException(final Exception wrappedException) {
-        super(wrappedException);
-    }
-
-    /**
-     * Constructor.
-     * 
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AuthenticationException(final String message, final Exception wrappedException) {
+    public UnrecoverableAuthenticationException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }
