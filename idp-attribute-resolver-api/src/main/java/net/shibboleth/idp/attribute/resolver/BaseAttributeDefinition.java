@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
 
@@ -213,13 +214,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
      */
     public void setAttributeEncoders(final List<AttributeEncoder> attributeEncoders) {
-        encoders.clear();
-
-        if (attributeEncoders != null) {
-            for (AttributeEncoder<?> encoder : attributeEncoders) {
-                addAttributeEncoder(encoder);
-            }
-        }
+        CollectionSupport.nonNullReplace(attributeEncoders, encoders);
     }
 
     /**
@@ -230,11 +225,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @return true if the addition changed the encoders for this definition, false otherwise
      */
     public boolean addAttributeEncoder(final AttributeEncoder<?> attributeEncoder) {
-        if (attributeEncoder == null || encoders.contains(attributeEncoder)) {
-            return false;
-        }
-
-        return encoders.add(attributeEncoder);
+        return CollectionSupport.nonNullAdd(encoders, attributeEncoder);
     }
 
     /**
@@ -245,11 +236,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @return true if the removal changed the encoders for this definition, false otherwise
      */
     public boolean removeAttributeEndoer(final AttributeEncoder<?> attributeEncoder) {
-        if (attributeEncoder == null) {
-            return false;
-        }
-
-        return encoders.remove(attributeEncoder);
+        return CollectionSupport.nonNullRemove(encoders, attributeEncoder);
     }
 
     /**

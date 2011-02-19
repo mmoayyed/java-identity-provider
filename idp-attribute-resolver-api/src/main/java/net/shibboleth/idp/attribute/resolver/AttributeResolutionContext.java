@@ -28,6 +28,7 @@ import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
 
@@ -88,13 +89,7 @@ public class AttributeResolutionContext implements Subcontext {
      * @param attributes attributes requested to be resolved
      */
     public void setRequestedAttributes(final Set<Attribute<?>> attributes) {
-        requestedAttributes.clear();
-
-        if (attributes != null) {
-            for (Attribute<?> attribute : attributes) {
-                addRequestedAttribute(attribute);
-            }
-        }
+        CollectionSupport.nonNullReplace(attributes, requestedAttributes);
     }
 
     /**
@@ -106,11 +101,7 @@ public class AttributeResolutionContext implements Subcontext {
      *         requested attribute set)
      */
     public boolean addRequestedAttribute(final Attribute<?> attribute) {
-        if (attribute == null) {
-            return false;
-        }
-
-        return requestedAttributes.add(attribute);
+        return CollectionSupport.nonNullAdd(requestedAttributes, attribute);
     }
 
     /**
@@ -122,11 +113,7 @@ public class AttributeResolutionContext implements Subcontext {
      *         requested attribute set)
      */
     public boolean removeRequestedAttribute(final Attribute<?> attribute) {
-        if (attribute == null) {
-            return false;
-        }
-
-        return requestedAttributes.remove(attribute);
+        return CollectionSupport.nonNullRemove(requestedAttributes, attribute);
     }
 
     /**

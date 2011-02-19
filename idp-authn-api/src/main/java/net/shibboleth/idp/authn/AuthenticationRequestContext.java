@@ -27,6 +27,7 @@ import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.messaging.context.impl.BaseSubcontext;
+import org.opensaml.util.collections.CollectionSupport;
 
 /** A context representing the state of an authentication attempt. */
 @ThreadSafe
@@ -95,15 +96,7 @@ public final class AuthenticationRequestContext extends BaseSubcontext {
      * @param methods methods to be used, may be null or contain null entries
      */
     public void setAuthenticationMethods(final Collection<AuthenticationMethodContext> methods) {
-        authenticationMethods.clear();
-
-        if (methods == null) {
-            return;
-        }
-
-        for (AuthenticationMethodContext method : methods) {
-            addAuthenticationMethod(method);
-        }
+        CollectionSupport.nonNullReplace(methods, authenticationMethods);
     }
 
     /**
@@ -114,11 +107,7 @@ public final class AuthenticationRequestContext extends BaseSubcontext {
      * @return true of the collection of authentication methods has changed due to this addition, false otherwise
      */
     public boolean addAuthenticationMethod(final AuthenticationMethodContext method) {
-        if (method == null) {
-            return false;
-        }
-
-        return authenticationMethods.add(method);
+        return CollectionSupport.nonNullAdd(authenticationMethods, method);
     }
 
     /**
@@ -129,10 +118,6 @@ public final class AuthenticationRequestContext extends BaseSubcontext {
      * @return true of the collection of authentication methods has changed due to this removal, false otherwise
      */
     public boolean removeAuthenticationMethod(final AuthenticationMethodContext method) {
-        if (method == null) {
-            return false;
-        }
-
-        return authenticationMethods.remove(method);
+        return CollectionSupport.nonNullRemove(authenticationMethods, method);
     }
 }

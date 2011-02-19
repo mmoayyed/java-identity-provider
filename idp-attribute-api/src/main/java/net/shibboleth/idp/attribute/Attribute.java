@@ -28,6 +28,7 @@ import net.jcip.annotations.NotThreadSafe;
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
@@ -220,15 +221,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * @param newValues the new values for this attribute, may be null
      */
     public void setValues(final Collection<ValueType> newValues) {
-        values.clear();
-
-        if (newValues == null) {
-            return;
-        }
-
-        for (ValueType value : newValues) {
-            addValue(value);
-        }
+        CollectionSupport.nonNullReplace(newValues, values);
     }
 
     /**
@@ -239,11 +232,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * @return true if a value was added, false otherwise
      */
     public boolean addValue(final ValueType value) {
-        if (value == null) {
-            return false;
-        }
-
-        return values.add(value);
+        return CollectionSupport.nonNullAdd(values, value);
     }
 
     /**
@@ -253,12 +242,8 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * 
      * @return true if a value was removed, false otherwise
      */
-    public boolean removeValue(final ValueType value) {
-        if (value == null) {
-            return false;
-        }
-
-        return values.remove(value);
+    public boolean removeValue(final Object value) {
+        return CollectionSupport.nonNullRemove(values, value);
     }
 
     /**
@@ -278,15 +263,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * @param newEncoders the new encoders for this attribute, may be null
      */
     public void setEncoders(final Set<AttributeEncoder<?>> newEncoders) {
-        encoders.clear();
-
-        if (newEncoders == null) {
-            return;
-        }
-
-        for (AttributeEncoder<?> encoder : newEncoders) {
-            addEncoder(encoder);
-        }
+        CollectionSupport.nonNullReplace(newEncoders, encoders);
     }
 
     /**
@@ -297,11 +274,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * @return true if an encoder was added, false otherwise
      */
     public boolean addEncoder(final AttributeEncoder<?> encoder) {
-        if (encoder == null) {
-            return false;
-        }
-
-        return encoders.add(encoder);
+        return CollectionSupport.nonNullAdd(encoders, encoder);
     }
 
     /**
@@ -312,11 +285,7 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
      * @return true if an encoder was removed, false otherwise
      */
     public boolean removeEncoder(final AttributeEncoder<?> encoder) {
-        if (encoder == null) {
-            return false;
-        }
-
-        return encoders.remove(encoder);
+        return CollectionSupport.nonNullRemove(encoders, encoder);
     }
 
     /** {@inheritDoc} */

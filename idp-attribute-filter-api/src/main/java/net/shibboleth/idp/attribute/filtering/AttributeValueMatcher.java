@@ -16,7 +16,7 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
-import java.util.List;
+import java.util.Collection;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
@@ -37,6 +37,6 @@ public interface AttributeValueMatcher {
      * @throws AttributeFilteringException thrown is there is a problem evaluating one or more attribute values against
      *             this rule's criteria
      */
-    public List<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
+    public Collection<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException;
 }

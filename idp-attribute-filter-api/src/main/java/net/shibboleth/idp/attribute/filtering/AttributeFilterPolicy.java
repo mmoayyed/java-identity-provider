@@ -22,13 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 //TODO performance metrics
 
@@ -40,13 +39,10 @@ import org.slf4j.LoggerFactory;
  * policies run this collection will contain the final result.
  */
 @ThreadSafe
-public class AttributeFilterPolicy {
+public class AttributeFilterPolicy extends AbstractComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
-
-    /** Unique identifier for this policy. */
-    private final String policyId;
 
     /** Requirement that must be met for this policy to apply. */
     private final AttributeFilterPolicyRequirementRule requirementRule;
@@ -63,8 +59,7 @@ public class AttributeFilterPolicy {
      */
     public AttributeFilterPolicy(final String id, final AttributeFilterPolicyRequirementRule policyRequirementRule,
             final List<AttributeValueFilterPolicy> attributeValuePolicies) {
-        policyId = StringSupport.trimOrNull(id);
-        Assert.isNotNull(policyId, "Attribute filter policy ID may not be null or empty");
+        super(id);
 
         Assert.isNotNull(policyRequirementRule, "Attribute filter policy requirement rule may not be null");
         requirementRule = policyRequirementRule;
@@ -72,18 +67,9 @@ public class AttributeFilterPolicy {
         if (attributeValuePolicies == null) {
             valuePolicies = Collections.emptyList();
         } else {
-            valuePolicies = Collections.unmodifiableList(new ArrayList<AttributeValueFilterPolicy>(
-                    attributeValuePolicies));
+            valuePolicies =
+                    Collections.unmodifiableList(new ArrayList<AttributeValueFilterPolicy>(attributeValuePolicies));
         }
-    }
-
-    /**
-     * Gets the unique ID for this policy.
-     * 
-     * @return unique ID for this policy
-     */
-    public String getPolicyId() {
-        return policyId;
     }
 
     /**
@@ -115,7 +101,7 @@ public class AttributeFilterPolicy {
      * @throws AttributeFilteringException thrown if there is a problem evaluating this filter's requirement rule
      */
     public boolean isActive(final AttributeFilterContext filterContext) throws AttributeFilteringException {
-        log.debug("Checking if attribute filter policy '{}' is active", getPolicyId());
+        log.debug("Checking if attribute filter policy '{}' is active", getId());
 
         boolean isActive = requirementRule.isSatisfied(filterContext);
         if (isActive) {
@@ -125,7 +111,6 @@ public class AttributeFilterPolicy {
         }
 
         return isActive;
-
     }
 
     /**
@@ -137,10 +122,10 @@ public class AttributeFilterPolicy {
      * @throws AttributeFilteringException thrown if there is a problem filtering out the attributes and values for this
      *             request
      */
-    public void apply(AttributeFilterContext filterContext) throws AttributeFilteringException {
-        Map<String, Attribute<?>> attributes = filterContext.getFilteredAttributes();
-        log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getPolicyId(), attributes
-                .keySet());
+    public void apply(final AttributeFilterContext filterContext) throws AttributeFilteringException {
+        final Map<String, Attribute<?>> attributes = filterContext.getFilteredAttributes();
+        log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getId(),
+                attributes.keySet());
 
         Attribute<?> attribute;
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
@@ -153,7 +138,7 @@ public class AttributeFilterPolicy {
                 if (attribute.getValues().isEmpty()) {
                     log.debug("Removing attribute '{}' from attribute collection, it no longer contains any values",
                             attribute.getId());
-                    attributes.remove(attribute.getId());
+                    filterContext.removeFilteredAttributes(attribute.getId());
                 }
             }
         }

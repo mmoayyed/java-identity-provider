@@ -16,16 +16,16 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
-import java.util.List;
+import java.util.Collection;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.collections.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /** Represents a value filtering rule for a particular attribute. */
 @ThreadSafe
@@ -102,13 +102,23 @@ public class AttributeValueFilterPolicy {
             throws AttributeFilteringException {
         log.debug("Filtering values for attribute '{}' which currently contains {} values", attribute.getId(),
                 attribute.getValues().size());
-        List<?> matchingValues = valueMatchingRule.getMatchingValues(attribute, filterContext);
+        Collection<?> matchingValues = valueMatchingRule.getMatchingValues(attribute, filterContext);
 
-        if (matchingPermittedValues) {
-            attribute.getValues().retainAll(matchingValues);
-        } else {
-            attribute.getValues().removeAll(matchingValues);
+        Collection toBeRemoved = new LazyList<Object>();
+        for (Object value : attribute.getValues()) {
+            if (matchingPermittedValues && !matchingValues.contains(value)) {
+                toBeRemoved.add(value);
+            }
+
+            if (!matchingPermittedValues && matchingValues.contains(value)) {
+                toBeRemoved.add(value);
+            }
         }
+
+        for (Object value : toBeRemoved) {
+            attribute.removeValue(value);
+        }
+
         log.debug("Attribute '{}' contains {} values after filtering", attribute.getId(), attribute.getValues().size());
     }
 }
