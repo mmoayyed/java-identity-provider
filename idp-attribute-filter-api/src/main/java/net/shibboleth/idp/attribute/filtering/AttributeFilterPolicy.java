@@ -100,14 +100,14 @@ public class AttributeFilterPolicy extends AbstractComponent {
      * 
      * @throws AttributeFilteringException thrown if there is a problem evaluating this filter's requirement rule
      */
-    public boolean isActive(final AttributeFilterContext filterContext) throws AttributeFilteringException {
+    public boolean isApplicable(final AttributeFilterContext filterContext) throws AttributeFilteringException {
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
         boolean isActive = requirementRule.isSatisfied(filterContext);
         if (isActive) {
-            log.debug("Attribute filter policy '{}' is active");
+            log.debug("Attribute filter policy '{}' is active", getId());
         } else {
-            log.debug("Attribute filter policy '{}' is not active");
+            log.debug("Attribute filter policy '{}' is not active", getId());
         }
 
         return isActive;
@@ -115,7 +115,8 @@ public class AttributeFilterPolicy extends AbstractComponent {
 
     /**
      * Applies this filter policy to the given filter context. Note, this method does not check whether this policy is
-     * applicable, it is up to the caller to ensure that is true (e.g. via {@link #isActive(AttributeFilterContext)}).
+     * applicable, it is up to the caller to ensure that is true (e.g. via {@link #isApplicable(AttributeFilterContext)}
+     * ).
      * 
      * @param filterContext current filter context
      * 
@@ -123,7 +124,7 @@ public class AttributeFilterPolicy extends AbstractComponent {
      *             request
      */
     public void apply(final AttributeFilterContext filterContext) throws AttributeFilteringException {
-        final Map<String, Attribute<?>> attributes = filterContext.getFilteredAttributes();
+        final Map<String, Attribute<?>> attributes = filterContext.getPrefilteredAttributes();
         log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getId(),
                 attributes.keySet());
 
@@ -138,7 +139,7 @@ public class AttributeFilterPolicy extends AbstractComponent {
                 if (attribute.getValues().isEmpty()) {
                     log.debug("Removing attribute '{}' from attribute collection, it no longer contains any values",
                             attribute.getId());
-                    filterContext.removeFilteredAttributes(attribute.getId());
+                    filterContext.removeFilteredAttribute(attribute.getId());
                 }
             }
         }

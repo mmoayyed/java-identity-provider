@@ -23,7 +23,6 @@ import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.LazyList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +48,7 @@ public class AttributeValueFilterPolicy {
     /**
      * Constructor.
      * 
-     * @param id unique ID of this rule
+     * @param id ID of the attribute to which this rule applies
      * @param matcher matcher used to matching attribute values filtered by this rule
      */
     public AttributeValueFilterPolicy(final String id, final AttributeValueMatcher matcher) {
@@ -100,25 +99,18 @@ public class AttributeValueFilterPolicy {
      */
     public void apply(final Attribute<?> attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        log.debug("Filtering values for attribute '{}' which currently contains {} values", attribute.getId(),
-                attribute.getValues().size());
+        log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
+                .getValues().size());
+
         Collection<?> matchingValues = valueMatchingRule.getMatchingValues(attribute, filterContext);
-
-        Collection toBeRemoved = new LazyList<Object>();
-        for (Object value : attribute.getValues()) {
-            if (matchingPermittedValues && !matchingValues.contains(value)) {
-                toBeRemoved.add(value);
-            }
-
-            if (!matchingPermittedValues && matchingValues.contains(value)) {
-                toBeRemoved.add(value);
-            }
+        if (matchingPermittedValues) {
+            log.debug("Filter has permitted the release of {} values for attribute {}", matchingValues.size(),
+                    getAttributeId());
+            filterContext.addPermittedAttributeValues(getAttributeId(), matchingValues);
+        } else {
+            log.debug("Filter has denied the release of {} values for attribute {}", matchingValues.size(),
+                    getAttributeId());
+            filterContext.addDeniedAttributeValues(getAttributeId(), matchingValues);
         }
-
-        for (Object value : toBeRemoved) {
-            attribute.removeValue(value);
-        }
-
-        log.debug("Attribute '{}' contains {} values after filtering", attribute.getId(), attribute.getValues().size());
     }
 }

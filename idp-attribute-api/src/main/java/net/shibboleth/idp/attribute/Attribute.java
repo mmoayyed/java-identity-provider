@@ -43,7 +43,7 @@ import org.opensaml.util.collections.LazySet;
  * @param <ValueType> the object type of the values for this attribute
  */
 @NotThreadSafe
-public class Attribute<ValueType> implements Comparable<Attribute> {
+public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
 
     /** ID of this attribute. */
     private final String id;
@@ -291,6 +291,26 @@ public class Attribute<ValueType> implements Comparable<Attribute> {
     /** {@inheritDoc} */
     public int compareTo(final Attribute other) {
         return getId().compareTo(other.getId());
+    }
+
+    /**
+     * Clones an attribute. The clone will contains defensive copies of this objects display descriptions and names,
+     * encoders, and values.  The elements of each collection, however, are not themselves cloned.
+     * 
+     * {@inheritDoc}
+     */
+    public Attribute clone() {
+        try {
+            Attribute clone = (Attribute) super.clone();
+            clone.setDisplayDescriptions(getDisplayDescriptions());
+            clone.setDisplayNames(getDisplayNames());
+            clone.setEncoders(getEncoders());
+            clone.setValues(getValues());
+            return (Attribute) super.clone();
+        } catch (CloneNotSupportedException e) {
+            // nothing to do, all Attribute's must support clone
+            return null;
+        }
     }
 
     /** {@inheritDoc} */

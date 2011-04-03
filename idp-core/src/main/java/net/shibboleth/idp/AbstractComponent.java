@@ -17,6 +17,7 @@
 package net.shibboleth.idp;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 
 /**
@@ -27,7 +28,7 @@ public abstract class AbstractComponent implements Component {
 
     /** Identifier for this component. */
     private final String id;
-    
+
     /**
      * Constructor.
      * 
@@ -50,5 +51,31 @@ public abstract class AbstractComponent implements Component {
      */
     public void validate() throws ComponentValidationException {
         // no-op implementation
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof AbstractComponent)) {
+            return false;
+        }
+
+        AbstractComponent other = (AbstractComponent) obj;
+        return ObjectSupport.equals(getId(), other.getId());
     }
 }
