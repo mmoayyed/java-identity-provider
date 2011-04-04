@@ -336,7 +336,7 @@ public class BaseAttributeDefinitionTest {
     public void testResolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext(null);
 
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute) null);
         Assert.assertNull(definition.resolve(context));
 
         Attribute<?> attribute = new Attribute<String>("foo");
@@ -353,5 +353,32 @@ public class BaseAttributeDefinitionTest {
         Assert.assertEquals(attribute.getEncoders().size(), 1);
         Assert.assertTrue(attribute.getDisplayDescriptions().containsKey(en));
         Assert.assertTrue(attribute.getDisplayNames().containsKey(en));
+    }
+
+    /**
+     * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
+     * {@link BaseAttributeDefinition}.
+     */
+    private static final class MockBaseAttributeDefinition extends BaseAttributeDefinition {
+
+        /** Static attribute value returned from resolution. */
+        private Attribute staticAttribute;
+
+        /**
+         * Constructor.
+         * 
+         * @param id id of the attribute definition, never null or empty
+         * @param attribute value returned from the resolution of this attribute, may be null
+         */
+        public MockBaseAttributeDefinition(String id, Attribute<?> attribute) {
+            super(id);
+            staticAttribute = attribute;
+        }
+
+        /** {@inheritDoc} */
+        protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
+                throws AttributeResolutionException {
+            return staticAttribute;
+        }
     }
 }

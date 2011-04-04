@@ -17,17 +17,18 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
+import java.util.Map;
 
 import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazySet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 //TODO test during resolve: failover, requested attributes, bad pluginIDs, plugin throwing error, error propagation
-//TODO test during validation: plugin throw error
 
 /** Test case for {@link AttributeResolver}. */
 public class AttributeResolverTest {
@@ -59,10 +60,10 @@ public class AttributeResolverTest {
         Assert.assertNotNull(resolver.getAttributeDefinitions());
         Assert.assertTrue(resolver.getAttributeDefinitions().isEmpty());
 
-        definitions.add(new MockAttributeDefinition("foo", null));
+        definitions.add(new MockAttributeDefinition("foo", new Attribute<String>("test")));
         definitions.add(null);
-        definitions.add(new MockAttributeDefinition("bar", null));
-        definitions.add(new MockAttributeDefinition("foo", null));
+        definitions.add(new MockAttributeDefinition("bar", new Attribute<String>("test")));
+        definitions.add(new MockAttributeDefinition("foo", new Attribute<String>("test")));
         resolver.setAttributeDefinition(definitions);
         Assert.assertNotNull(resolver.getAttributeDefinitions());
         Assert.assertEquals(resolver.getAttributeDefinitions().size(), 2);
@@ -91,10 +92,10 @@ public class AttributeResolverTest {
         Assert.assertNotNull(resolver.getDataConnectors());
         Assert.assertTrue(resolver.getDataConnectors().isEmpty());
 
-        connectors.add(new MockDataConnector("foo", null));
+        connectors.add(new MockDataConnector("foo", (Map)null));
         connectors.add(null);
-        connectors.add(new MockDataConnector("bar", null));
-        connectors.add(new MockDataConnector("foo", null));
+        connectors.add(new MockDataConnector("bar", (Map)null));
+        connectors.add(new MockDataConnector("foo", (Map)null));
         resolver.setDataConnectors(connectors);
         Assert.assertNotNull(resolver.getDataConnectors());
         Assert.assertEquals(resolver.getDataConnectors().size(), 2);
@@ -133,14 +134,14 @@ public class AttributeResolverTest {
     public void testResolveWithDependencies() throws AttributeResolutionException {
         AttributeResolver resolver = new AttributeResolver("foo");
 
-        MockDataConnector dc1 = new MockDataConnector("dc1", null);
+        MockDataConnector dc1 = new MockDataConnector("dc1", (Map)null);
 
-        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", null);
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
         ad1.addDependency(new ResolverPluginDependency("dc1", null));
 
-        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", null);
+        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute<String>("test"));
 
-        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", null);
+        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
         ad0.addDependency(new ResolverPluginDependency("ad1", null));
         ad0.addDependency(new ResolverPluginDependency("ad2", null));
 
@@ -173,7 +174,7 @@ public class AttributeResolverTest {
         AttributeResolver resolver = new AttributeResolver("foo");
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
-        definitions.add(new MockAttributeDefinition("ad1", null));
+        definitions.add(new MockAttributeDefinition("ad1", new Attribute<String>("test")));
         resolver.setAttributeDefinition(definitions);
 
         AttributeResolutionContext context = new AttributeResolutionContext(null);
@@ -264,15 +265,15 @@ public class AttributeResolverTest {
     public void testSimpleValidate() throws ComponentValidationException {
         AttributeResolver resolver = new AttributeResolver("foo");
 
-        MockDataConnector dc1 = new MockDataConnector("dc1", null);
+        MockDataConnector dc1 = new MockDataConnector("dc1", (Map)null);
 
-        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", null);
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
         ad1.addDependency(new ResolverPluginDependency("dc1", null));
 
-        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", null);
+        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute<String>("test"));
         ad2.addDependency(new ResolverPluginDependency("dc1", null));
 
-        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", null);
+        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
         ad0.addDependency(new ResolverPluginDependency("ad1", null));
         ad0.addDependency(new ResolverPluginDependency("ad2", null));
 
@@ -288,16 +289,56 @@ public class AttributeResolverTest {
 
         resolver.validate();
     }
+    
+    /** Test validation when a plugin throws a validation exception. */
+    @Test
+    public void testInvalidPluginValidate() {
+        AttributeResolver resolver = new AttributeResolver("foo");
+        
+        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", (Attribute)null);
+        ad1.setInvalid(true);
+        
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        definitions.add(ad0);
+        definitions.add(ad1);
+        resolver.setAttributeDefinition(definitions);
+        
+        try{
+            resolver.validate();
+            Assert.fail("resolver with invalid plugin didn't fail validation");
+        }catch(ComponentValidationException e){
+            // expected this
+        }
+    }
 
+    /** Tests that an invalid data connector fails over to the failover connector if its invalid. */
+    @Test
+    public void testDataConnectorFailoverDuringValidate() throws ComponentValidationException{
+        AttributeResolver resolver = new AttributeResolver("foo");
+        
+        MockDataConnector dc0 = new MockDataConnector("dc0", (Map)null);
+        MockDataConnector dc1 = new MockDataConnector("dc1", (Map)null);
+        dc1.setInvalid(true);
+        dc1.setFailoverDataConnectorId("dc0");
+        
+        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dc0);
+        connectors.add(dc1);
+        resolver.setDataConnectors(connectors);
+        
+        resolver.validate();
+    }
+    
     /** Test that validation fails when a plugin depends on a non-existent plugin. */
     @Test
     public void testBadPluginIdValidate() throws ComponentValidationException {
         AttributeResolver resolver = new AttributeResolver("foo");
 
-        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", null);
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
         ad1.addDependency(new ResolverPluginDependency("dc1", null));
 
-        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", null);
+        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
         ad0.addDependency(new ResolverPluginDependency("ad1", null));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -312,7 +353,7 @@ public class AttributeResolverTest {
             // expected this
         }
 
-        ad0 = new MockAttributeDefinition("ad0", null);
+        ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
         ad0.addDependency(new ResolverPluginDependency("ad0", null));
         definitions = new LazySet<BaseAttributeDefinition>();
         definitions.add(ad0);
@@ -331,7 +372,7 @@ public class AttributeResolverTest {
     public void testCircularDependencyValidation() {
         AttributeResolver resolver = new AttributeResolver("foo");
 
-        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", null);
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
         ad1.addDependency(new ResolverPluginDependency("ad1", null));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
@@ -345,16 +386,16 @@ public class AttributeResolverTest {
             // expected this
         }
 
-        MockDataConnector dc1 = new MockDataConnector("dc1", null);
+        MockDataConnector dc1 = new MockDataConnector("dc1", (Map)null);
         dc1.addDependency(new ResolverPluginDependency("ad0", null));
 
-        ad1 = new MockAttributeDefinition("ad1", null);
+        ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
         ad1.addDependency(new ResolverPluginDependency("dc1", null));
 
-        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", null);
+        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute<String>("test"));
         ad2.addDependency(new ResolverPluginDependency("dc1", null));
 
-        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", null);
+        MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
         ad0.addDependency(new ResolverPluginDependency("ad1", null));
         ad0.addDependency(new ResolverPluginDependency("ad2", null));
 

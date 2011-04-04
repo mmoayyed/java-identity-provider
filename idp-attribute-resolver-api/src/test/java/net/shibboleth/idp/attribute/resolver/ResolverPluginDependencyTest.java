@@ -17,6 +17,7 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
 
@@ -59,8 +60,8 @@ public class ResolverPluginDependencyTest {
     /** Test getting a dependent attribute from a resolution context. */
     @Test
     public void testGetDependentAttribute() throws Exception {
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
-        MockDataConnector connector = new MockDataConnector("bar", null);
+        MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute)null);
+        MockDataConnector connector = new MockDataConnector("bar", (Map<String, Attribute<?>>)null);
         
         AttributeResolutionContext context = new AttributeResolutionContext(null);
         context.recordAttributeDefinitionResolution(definition, null);

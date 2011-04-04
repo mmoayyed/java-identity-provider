@@ -16,6 +16,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class BaseDataConnectorTest {
     /** Test instantiation and post-instantiation state. */
     @Test
     public void testInstantiation() {
-        MockBaseDataConnector connector = new MockBaseDataConnector("foo", null);
+        MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
         Assert.assertNull(connector.getFailoverDataConnectorId());
     }
@@ -41,7 +42,7 @@ public class BaseDataConnectorTest {
     /** Test getting/setting dependency ID. */
     @Test
     public void testFailoverDependencyId() {
-        MockBaseDataConnector connector = new MockBaseDataConnector("foo", null);
+        MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
         connector.setFailoverDataConnectorId(" foo ");
         Assert.assertEquals(connector.getFailoverDataConnectorId(), "foo");
@@ -58,7 +59,7 @@ public class BaseDataConnectorTest {
     public void testResolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext(null);
 
-        MockBaseDataConnector connector = new MockBaseDataConnector("foo", null);
+        MockBaseDataConnector connector = new MockBaseDataConnector("foo", (Map<String, Attribute<?>>)null);
         Assert.assertNull(connector.resolve(context));
 
         HashMap<String, Attribute<?>> values = new HashMap<String, Attribute<?>>();
@@ -72,5 +73,32 @@ public class BaseDataConnectorTest {
         Map<String, Attribute<?>> result = connector.resolve(context);
         Assert.assertTrue(result.containsKey(attribute.getId()));
         Assert.assertEquals(result.get(attribute.getId()), attribute);
+    }
+    
+    /**
+     * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
+     * {@link BaseDataConnector}.
+     */
+    private static final class MockBaseDataConnector extends BaseDataConnector {
+
+        /** Static values returned for {@link #resolve(AttributeResolutionContext)}. */
+        private Map<String, Attribute<?>> staticValues;
+
+        /**
+         * Constructor.
+         * 
+         * @param id id of the data connector
+         * @param values values returned for {@link #resolve(AttributeResolutionContext)}
+         */
+        public MockBaseDataConnector(final String id, final Map<String, Attribute<?>> values) {
+            super(id);
+            staticValues = values;
+        }
+
+        /** {@inheritDoc} */
+        protected Map<String, Attribute<?>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
+                throws AttributeResolutionException {
+            return staticValues;
+        }
     }
 }

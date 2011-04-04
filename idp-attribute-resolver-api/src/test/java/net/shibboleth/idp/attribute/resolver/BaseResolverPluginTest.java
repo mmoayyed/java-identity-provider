@@ -135,4 +135,30 @@ public class BaseResolverPluginTest {
 
         Assert.assertEquals(plugin.resolve(context), "bar");
     }
+
+    /**
+     * This class implements the minimal level of functionality and is meant only as a means of testing the abstract
+     * {@link BaseResolverPlugin}.
+     */
+    private static final class MockBaseResolverPlugin extends BaseResolverPlugin<String> {
+
+        /** Static value return by {@link #doResolve(AttributeResolutionContext)}. */
+        private String resolverValue;
+
+        /**
+         * Constructor.
+         * 
+         * @param id id of this plugin
+         * @param value value returned by {@link #doResolve(AttributeResolutionContext)}
+         */
+        public MockBaseResolverPlugin(String id, String value) {
+            super(id);
+            resolverValue = value;
+        }
+
+        /** {@inheritDoc} */
+        protected String doResolve(AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            return resolverValue;
+        }
+    }
 }

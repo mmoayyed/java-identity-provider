@@ -144,7 +144,7 @@ public class AttributeResolutionContextTest {
             //expected this
         }
         
-        definition = new MockAttributeDefinition("bar", null);
+        definition = new MockAttributeDefinition("bar", (Attribute)null);
         
         context.recordAttributeDefinitionResolution(definition, null);
         Assert.assertNotNull(context.getResolvedAttributeDefinitions());
@@ -188,7 +188,7 @@ public class AttributeResolutionContextTest {
             //expected this
         }
         
-        connector = new MockDataConnector("bar", null);
+        connector = new MockDataConnector("bar", (Map)null);
         
         context.recordDataConnectorResolution(connector, null);
         Assert.assertNotNull(context.getResolvedDataConnectors());

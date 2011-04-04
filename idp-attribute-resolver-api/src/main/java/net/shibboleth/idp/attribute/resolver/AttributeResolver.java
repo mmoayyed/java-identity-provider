@@ -44,10 +44,10 @@ public class AttributeResolver extends AbstractComponent {
     private final Logger log = LoggerFactory.getLogger(AttributeResolver.class);
 
     /** Attribute definitions defined for this resolver. */
-    private LazyMap<String, BaseAttributeDefinition> attributeDefinitions;
+    private Map<String, BaseAttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
-    private LazyMap<String, BaseDataConnector> dataConnectors;
+    private Map<String, BaseDataConnector> dataConnectors;
 
     /**
      * Constructor.
@@ -56,8 +56,8 @@ public class AttributeResolver extends AbstractComponent {
      */
     public AttributeResolver(final String id) {
         super(id);
-        attributeDefinitions = new LazyMap<String, BaseAttributeDefinition>();
-        dataConnectors = new LazyMap<String, BaseDataConnector>();
+        attributeDefinitions = Collections.emptyMap();
+        dataConnectors = Collections.emptyMap();
     }
 
     /**
@@ -67,7 +67,7 @@ public class AttributeResolver extends AbstractComponent {
      * @return attribute definitions loaded in to this resolver
      */
     public Map<String, BaseAttributeDefinition> getAttributeDefinitions() {
-        return Collections.unmodifiableMap(attributeDefinitions);
+        return attributeDefinitions;
     }
 
     /**
@@ -76,17 +76,19 @@ public class AttributeResolver extends AbstractComponent {
      * @param definitions definition to set, may be null or contain null elements
      */
     public void setAttributeDefinition(final Collection<BaseAttributeDefinition> definitions) {
-        final LazyMap<String, BaseAttributeDefinition> newDefinitions = new LazyMap<String, BaseAttributeDefinition>();
+        if (definitions == null || definitions.isEmpty()) {
+            attributeDefinitions = Collections.emptyMap();
+            return;
+        }
 
-        if (definitions != null) {
-            for (BaseAttributeDefinition definition : definitions) {
-                if (definition != null) {
-                    newDefinitions.put(definition.getId(), definition);
-                }
+        final LazyMap<String, BaseAttributeDefinition> newDefinitions = new LazyMap<String, BaseAttributeDefinition>();
+        for (BaseAttributeDefinition definition : definitions) {
+            if (definition != null) {
+                newDefinitions.put(definition.getId(), definition);
             }
         }
 
-        attributeDefinitions = newDefinitions;
+        attributeDefinitions = Collections.unmodifiableMap(newDefinitions);
     }
 
     /**
@@ -96,7 +98,7 @@ public class AttributeResolver extends AbstractComponent {
      * @return data connectors loaded in to this resolver
      */
     public Map<String, BaseDataConnector> getDataConnectors() {
-        return Collections.unmodifiableMap(dataConnectors);
+        return dataConnectors;
     }
 
     /**
@@ -105,17 +107,19 @@ public class AttributeResolver extends AbstractComponent {
      * @param connectors connectors to set, may be null or contain null elements
      */
     public void setDataConnectors(final Collection<BaseDataConnector> connectors) {
-        final LazyMap<String, BaseDataConnector> newConnectors = new LazyMap<String, BaseDataConnector>();
+        if (connectors == null || connectors.isEmpty()) {
+            dataConnectors = Collections.emptyMap();
+            return;
+        }
 
-        if (connectors != null) {
-            for (BaseDataConnector connector : connectors) {
-                if (connector != null) {
-                    newConnectors.put(connector.getId(), connector);
-                }
+        final LazyMap<String, BaseDataConnector> newConnectors = new LazyMap<String, BaseDataConnector>();
+        for (BaseDataConnector connector : connectors) {
+            if (connector != null) {
+                newConnectors.put(connector.getId(), connector);
             }
         }
 
-        dataConnectors = newConnectors;
+        dataConnectors = Collections.unmodifiableMap(newConnectors);
     }
 
     /**
@@ -397,38 +401,63 @@ public class AttributeResolver extends AbstractComponent {
      */
     public void validate() throws ComponentValidationException {
         HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
-        final LazyList<String> invalidPluginIds = new LazyList<String>();
 
+        final LazyList<String> invalidDataConnectors = new LazyList<String>();
         for (BaseDataConnector plugin : dataConnectors.values()) {
             log.debug("Attribute resolver {}: checking if data connector {} is valid", getId(), plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
-            try {
-                plugin.validate();
-                log.debug("Attribute resolver {}: data connector {} is valid", this.getId(), plugin.getId());
-            } catch (ComponentValidationException e) {
-                log.warn("Attribute resolver {}: data connector {} is not valid",
-                        new Object[] {this.getId(), plugin.getId(), e,});
-                invalidPluginIds.add(plugin.getId());
-            }
+            validateDataConnector(plugin, invalidDataConnectors);
         }
 
+        final LazyList<String> invalidAttributeDefinitions = new LazyList<String>();
         for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("Attribute resolver {}: checking if attribute definition {} is valid", this.getId(),
-                    plugin.getId());
+            log.debug("Attribute resolver {}: checking if attribute definition {} is valid", getId(), plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
             try {
                 plugin.validate();
-                log.debug("Attribute resolver {}: attribute definition {} is valid", this.getId(), plugin.getId());
+                log.debug("Attribute resolver {}: attribute definition {} is valid", getId(), plugin.getId());
             } catch (ComponentValidationException e) {
                 log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {this.getId(),
                         plugin.getId(), e,});
-                invalidPluginIds.add(plugin.getId());
+                invalidAttributeDefinitions.add(plugin.getId());
             }
         }
 
-        if (!invalidPluginIds.isEmpty()) {
-            throw new ComponentValidationException("The following attribute resolver plugins were invalid: "
-                    + StringSupport.listToStringValue(invalidPluginIds, ", "));
+        if (!invalidDataConnectors.isEmpty() || !invalidAttributeDefinitions.isEmpty()) {
+            throw new ComponentValidationException("Attribute resolver " + getId()
+                    + ": the following attribute definitions were invalid ["
+                    + StringSupport.listToStringValue(invalidAttributeDefinitions, ", ")
+                    + "] and the following data connectors were invalid ["
+                    + StringSupport.listToStringValue(invalidDataConnectors, ", ") + "]");
+        }
+    }
+
+    protected boolean validateDataConnector(BaseDataConnector connector, LazyList<String> invalidDataConnectors) {
+        try {
+            connector.validate();
+            log.debug("Attribute resolver {}: data connector {} is valid", getId(), connector.getId());
+            return true;
+        } catch (ComponentValidationException e) {
+            if (connector.getFailoverDataConnectorId() != null) {
+                if (invalidDataConnectors.contains(connector.getFailoverDataConnectorId())) {
+                    log.warn(
+                            "Attribute resolver {}: data connector {} is not valid for the following reason and failover data connector {} has already been found to be inavlid",
+                            new Object[] {getId(), connector.getId(), connector.getFailoverDataConnectorId(), e,});
+                    invalidDataConnectors.add(connector.getId());
+                    return false;
+                } else {
+                    log.warn(
+                            "Attribute resolver {}: data connector {} is not valid for the following reason, checking if failover data connector {} is valid",
+                            new Object[] {getId(), connector.getId(), connector.getFailoverDataConnectorId(), e,});
+                    return validateDataConnector(dataConnectors.get(connector.getFailoverDataConnectorId()),
+                            invalidDataConnectors);
+                }
+            }
+
+            log.warn("Attribute resolver {}: data connector {} is not valid and has not failover connector",
+                    new Object[] {this.getId(), connector.getId(), e,});
+            invalidDataConnectors.add(connector.getId());
+            return false;
         }
     }
 

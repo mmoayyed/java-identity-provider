@@ -19,15 +19,21 @@ package net.shibboleth.idp.attribute.resolver;
 import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
-
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
 public class MockDataConnector extends BaseDataConnector {
 
+    /** Whether this connector fails validation. */
+    private boolean invalid;
+
     /** Static collection of values returned by this connector. */
-    private final Map<String, Attribute<?>> values;
+    private Map<String, Attribute<?>> values;
+
+    /** Exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}. */
+    private AttributeResolutionException resolutionException;
 
     /**
      * Constructor.
@@ -40,9 +46,42 @@ public class MockDataConnector extends BaseDataConnector {
         values = connectorValues;
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param id id of the data connector
+     * @param exception exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}
+     */
+    public MockDataConnector(final String id, final AttributeResolutionException exception) {
+        super(id);
+        invalid = false;
+        resolutionException = exception;
+    }
+
+    /**
+     * Sets whether this data connector is considered invalid.
+     * 
+     * @param isInvalid whether this data connector is considered invalid
+     */
+    public void setInvalid(boolean isInvalid) {
+        invalid = isInvalid;
+    }
+
     /** {@inheritDoc} */
-    protected Map<String, Attribute<?>> doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
+    protected Map<String, Attribute<?>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
+        if (resolutionException != null) {
+            throw resolutionException;
+        }
+
         return values;
     }
+
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        if (invalid) {
+            throw new ComponentValidationException();
+        }
+    }
+
 }
