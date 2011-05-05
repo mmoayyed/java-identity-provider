@@ -17,6 +17,7 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.ComponentValidationException;
@@ -55,9 +56,46 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      */
     public MappedAttributeDefinition(String id, Collection<ValueMap> map) {
         super(id);
-        valueMaps = map;
+        if (null == map) {
+            valueMaps = new LazySet<ValueMap>();
+        } else {
+            valueMaps = map;
+        }
     }
 
+    /**
+     * Gets the default return value.
+     * 
+     * @return the default return value.
+     */
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * Sets the default return value.
+     * 
+     * @param newDefaultValue the default return value
+     */
+    public void setDefaultValue(String newDefaultValue) {
+        defaultValue = newDefaultValue;
+    }
+    
+    /** Set the value maps.
+     * @param maps what to set.  Cannot be null.
+     */
+    public void setValueMaps(Collection<ValueMap> maps) {
+        CollectionSupport.nonNullReplace(valueMaps, maps);
+    }
+
+    /**
+     * Get the value maps.
+     * 
+     * @return the value maps.
+     */
+    public Collection<ValueMap> getValueMaps() {
+        return Collections.unmodifiableCollection(valueMaps);
+    }
     /** {@inheritDoc} */
     protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
@@ -86,8 +124,8 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
             log.debug("Attribute Definition {}: No values from dependency attributes", getId());
             if (!DatatypeHelper.isEmpty(getDefaultValue())) {
                 log.debug(
-                        "Attribute Definition {}: Default value is not empty, adding it as the value for this attribute",
-                        getId());
+                    "Attribute Definition {}: Default value is not empty, adding it as the value for this attribute",
+                    getId());
                 result.addValue(getDefaultValue());
             }
             return result;
@@ -152,32 +190,5 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
             throw new ComponentValidationException("MappedAttributeDefinition (" + getId()
                     + ") may not have a DefaultValue string with passThru enabled.");
         }
-    }
-
-    /**
-     * Gets the default return value.
-     * 
-     * @return the default return value.
-     */
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    /**
-     * Sets the default return value.
-     * 
-     * @param newDefaultValue the default return value
-     */
-    public void setDefaultValue(String newDefaultValue) {
-        defaultValue = newDefaultValue;
-    }
-
-    /**
-     * Get the value maps.
-     * 
-     * @return the value maps.
-     */
-    public Collection<ValueMap> getValueMaps() {
-        return valueMaps;
     }
 }
