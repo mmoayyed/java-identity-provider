@@ -18,9 +18,8 @@ package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collection;
 import java.util.Set;
-
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.xml.util.LazySet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
@@ -29,17 +28,34 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
+import org.opensaml.xml.util.LazySet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** A Simple Attribute definition. */
 @NotThreadSafe
-public class SimpleAttributeDefinition extends BaseAttributeDefinition {
+public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinition.class);
+
+    /** Regular expression used to split values. */
+    private Pattern regex;
 
     /**
      * Constructor.
      * 
-     * @param id the name of the attribute.
+     * @param id the identifier of the attribute
+     * @param regularExpression expression used to split attribute values
+     * @param caseSensitive whether the regular expression is case sensitive
      */
-    public SimpleAttributeDefinition(String id) {
+    public RegexSplitAttributeDefinition(String id, String regularExpression, boolean caseSensitive) {
         super(id);
+        if (!caseSensitive) {
+            regex = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
+        } else {
+            regex = Pattern.compile(regularExpression);
+        }
     }
 
     /** {@inheritDoc} */
@@ -48,6 +64,7 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
         Set<ResolverPluginDependency> depends = getDependencies();
         Attribute<Object> result = new Attribute<Object>(getId());
         Collection<Object> results = new LazySet<Object>();
+        Matcher matcher;
 
         if (null == depends) {
             //
@@ -58,7 +75,20 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
         for (ResolverPluginDependency dep : depends) {
             Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
-                CollectionSupport.addNonNull(dependentAttribute.getValues(), results);
+                for (Object value : dependentAttribute.getValues()) {
+                    if (value instanceof String) {
+                        matcher = regex.matcher((String) value);
+                        if (matcher.matches()) {
+                            String s = matcher.group(1);
+                            results.add(s);
+                        } else {
+                            log.debug("Value {} did not result in any values when split by regular expression {}",
+                                    value, regex.toString());
+                        }
+                    } else {
+                        log.debug("Ignoring non-string attribute value");
+                    }
+                }
             }
         }
         result.setValues(results);

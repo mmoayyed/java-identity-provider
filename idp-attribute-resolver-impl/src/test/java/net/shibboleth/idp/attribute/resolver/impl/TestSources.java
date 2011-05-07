@@ -46,8 +46,12 @@ public final class TestSources {
     /** A value from the attribute. */
     protected static final String ATTRIBUTE_ATTRIBUTE_VALUE = "at1-Attribute";
 
-    /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map testing). */
-    protected static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-Connect.+";
+    /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map & regexp testing). */
+    protected static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
+    
+    /** Regexp result. for CONNECTOR_ATTRIBUTE_VALUE (for regexp testing). */
+    protected static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = "Connect";
+    
 
     /** Constructor. */
     private TestSources() {
