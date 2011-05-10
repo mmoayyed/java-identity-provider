@@ -32,7 +32,7 @@ import org.opensaml.xml.util.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** A Simple Attribute definition. */
+/** A Regexp Attribute definition. */
 @NotThreadSafe
 public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
 
