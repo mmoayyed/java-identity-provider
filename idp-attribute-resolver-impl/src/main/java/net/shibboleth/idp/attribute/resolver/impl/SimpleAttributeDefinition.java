@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.xml.util.LazySet;
+import org.opensaml.util.collections.LazySet;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;

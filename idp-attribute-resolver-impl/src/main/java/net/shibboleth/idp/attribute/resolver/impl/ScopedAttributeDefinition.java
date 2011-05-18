@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-import org.opensaml.xml.util.LazySet;
+import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

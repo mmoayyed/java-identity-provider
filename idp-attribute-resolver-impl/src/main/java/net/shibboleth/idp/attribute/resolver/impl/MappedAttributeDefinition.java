@@ -27,9 +27,10 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
+import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazySet;
-import org.opensaml.xml.util.DatatypeHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +123,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
         if (unmappedResults.isEmpty()) {
             log.debug("Attribute Definition {}: No values from dependency attributes", getId());
-            if (!DatatypeHelper.isEmpty(getDefaultValue())) {
+            if (!StringSupport.isNullOrEmpty(getDefaultValue())) {
                 log.debug(
                     "Attribute Definition {}: Default value is not empty, adding it as the value for this attribute",
                     getId());
@@ -159,7 +160,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         LazySet<String> mappedValues = new LazySet<String>();
 
         boolean valueMapMatch = false;
-        if (!DatatypeHelper.isEmpty(value)) {
+        if (!StringSupport.isNullOrEmpty(value)) {
             for (ValueMap valueMap : valueMaps) {
                 mappedValues.addAll(valueMap.evaluate(value));
                 if (!mappedValues.isEmpty()) {
@@ -184,7 +185,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        if (passThru && !DatatypeHelper.isEmpty(defaultValue)) {
+        if (passThru && !StringSupport.isNullOrEmpty(defaultValue)) {
             log.error("MappedAttributeDefinition (" + getId()
                     + ") may not have a DefaultValue string with passThru enabled.");
             throw new ComponentValidationException("MappedAttributeDefinition (" + getId()
