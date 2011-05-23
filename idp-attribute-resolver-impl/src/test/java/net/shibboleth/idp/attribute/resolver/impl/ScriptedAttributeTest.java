@@ -32,7 +32,7 @@ import org.opensaml.util.collections.LazySet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.impl.SimpleAttribute}. */
+/** test for {@link net.shibboleth.idp.attribute.resolver.impl.ScriptedAttribute}. */
 public class ScriptedAttributeTest {
 
     /** The name. */
@@ -193,11 +193,14 @@ public class ScriptedAttributeTest {
         Assert.assertTrue(f.contains(context), "looking for context");
     }
 
-    /** trivial context container to test the gett something from a container. */
+    /** trivial context container to test the get something from a container. */
     class TestContextContainer extends AbstractSubcontextContainer {
         /** constructor. */
         public TestContextContainer() {
             super();
+            //
+            // Do not auto create subcontexts.
+            //
             setAutoCreateSubcontexts(false);
         }
     }
