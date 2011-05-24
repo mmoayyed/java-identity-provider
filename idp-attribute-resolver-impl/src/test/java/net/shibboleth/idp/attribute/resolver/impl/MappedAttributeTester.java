@@ -17,6 +17,7 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.shibboleth.idp.ComponentValidationException;
@@ -40,8 +41,7 @@ public class MappedAttributeTester {
     /** Test with no mapping provided. */
     @Test
     public void testEmptyMap() {
-        Collection<ValueMap> map = new LazySet<ValueMap>();
-        BaseAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map);
+        BaseAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, null, false);
         //
         // Set the dependency on the data connector
         //
@@ -74,12 +74,10 @@ public class MappedAttributeTester {
 
     /** Test no mapping but with a default. */
     @Test
-    public void testNoMapDefauly() {
-        Collection<ValueMap> map = new LazySet<ValueMap>();
+    public void testNoMapDefault() {
         final String mapResult = "result";
 
-        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map);
-        mapped.setDefaultValue(mapResult);
+        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, mapResult, false);
 
         //
         // Set the dependency on the data connector
@@ -114,18 +112,57 @@ public class MappedAttributeTester {
         Assert.assertTrue(f.contains(mapResult), "looking for value TEST_DEFAULT_VALUE");
     }
 
+    /** Test no mapping but with passthrough. */
+    @Test
+    public void testNoMapPassThru() {
+        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, null, true);
+
+        //
+        // Set the dependency on the data connector
+        //
+        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        mapped.setDependencies(dependencySet);
+
+        //
+        // And resolve
+        //
+        AttributeResolver resolver = new AttributeResolver("foo");
+        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        connectorSet.add(TestSources.populatedStaticConnectior());
+
+        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        attributeSet.add(mapped);
+        resolver.setDataConnectors(connectorSet);
+        resolver.setAttributeDefinition(attributeSet);
+
+        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        try {
+            resolver.resolveAttributes(context);
+        } catch (AttributeResolutionException e) {
+            Assert.fail("resolution failed", e);
+        }
+
+        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+
+        Assert.assertEquals(f.size(), 2);
+        Assert.assertTrue(f.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for value COMMON_ATTRIBUTE_VALUE");
+        Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE),
+                "looking for value CONNECTOR_ATTRIBUTE_VALUE");
+    }
+
     /** Test mapping . */
     @Test
     public void testMap() {
-        Collection<ValueMap> map = new LazySet<ValueMap>();
         final String mapResult = "result";
+        Collection<ValueMap> map = new LazySet<ValueMap>();
+        HashSet<ValueMap.SourceValue> valueSet = new HashSet<ValueMap.SourceValue>();
+        valueSet.add(new ValueMap.SourceValue(TestSources.COMMON_ATTRIBUTE_VALUE, false, false));
 
-        ValueMap valueMap = new ValueMap();
-        valueMap.setReturnValue(mapResult);
-        valueMap.getSourceValues().add(valueMap.new SourceValue(TestSources.COMMON_ATTRIBUTE_VALUE, false, false));
-        map.add(valueMap);
+        map.add(new ValueMap(valueSet, mapResult));
 
-        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map);
+        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map, null, false);
 
         //
         // Set the dependency on the data connector
@@ -163,29 +200,26 @@ public class MappedAttributeTester {
     /**
      * Test mapping .
      * 
-     * @throws ComponentValidationException
+     * @throws ComponentValidationException if validation failed.
      */
     @Test
     public void testMultiMap() throws ComponentValidationException {
-        Collection<ValueMap> map = new LazySet<ValueMap>();
+        Collection<ValueMap> map = new HashSet<ValueMap>();
         final String mapResult1 = "result1";
         final String mapResult2 = "result2";
 
-        ValueMap valueMap = new ValueMap();
-        valueMap.setReturnValue(mapResult1);
+        HashSet<ValueMap.SourceValue> valueSet = new HashSet<ValueMap.SourceValue>();
         String trunc = TestSources.COMMON_ATTRIBUTE_VALUE;
         trunc = trunc.substring(0, trunc.length() - 1);
         trunc = trunc.toUpperCase();
-        valueMap.getSourceValues().add(valueMap.new SourceValue(trunc, true, true));
-        map.add(valueMap);
+        valueSet.add(new ValueMap.SourceValue(trunc, true, true));
+        map.add(new ValueMap(valueSet, mapResult1));
 
-        valueMap = new ValueMap();
-        valueMap.setReturnValue(mapResult2);
-        valueMap.getSourceValues().add(
-                valueMap.new SourceValue(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP.toUpperCase(), true, false));
-        map.add(valueMap);
+        valueSet = new HashSet<ValueMap.SourceValue>();
+        valueSet.add(new ValueMap.SourceValue(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP.toUpperCase(), true, false));
+        map.add(new ValueMap(valueSet, mapResult2));
 
-        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map);
+        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map, null, false);
         mapped.validate();
 
         Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();

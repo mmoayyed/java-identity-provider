@@ -23,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,47 +32,27 @@ import org.slf4j.LoggerFactory;
  * Performs many to one mapping of source values to a return value. SourceValue strings may include regular expressions
  * and the ReturnValue may include back references to capturing groups as supported by {@link java.util.regex.Pattern}.
  */
+@ThreadSafe
 public class ValueMap {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValueMap.class);
 
     /** Return value. */
-    private String returnValue;
+    private final String returnValue;
 
     /** Source values. */
-    private Collection<SourceValue> sourceValues;
-
-    /** Constructor. */
-    public ValueMap() {
-        sourceValues = new HashSet<SourceValue>();
-    }
+    private final Collection<SourceValue> sourceValues;
 
     /**
-     * Gets the return value.
+     * Constructor.
      * 
-     * @return the return value
+     * @param source source values
+     * @param returnVal return value
      */
-    public String getReturnValue() {
-        return returnValue;
-    }
-
-    /**
-     * Sets the return value.
-     * 
-     * @param newReturnValue the return value
-     */
-    public void setReturnValue(String newReturnValue) {
-        returnValue = newReturnValue;
-    }
-
-    /**
-     * Gets the collection of source values.
-     * 
-     * @return the collection of source values
-     */
-    public Collection<SourceValue> getSourceValues() {
-        return sourceValues;
+    public ValueMap(final Collection<SourceValue> source, final String returnVal) {
+        sourceValues = source;
+        returnValue = returnVal;
     }
 
     /**
@@ -79,7 +61,7 @@ public class ValueMap {
      * @param attributeValue incoming attribute value
      * @return set of new values the incoming value mapped to
      */
-    public Set<String> evaluate(String attributeValue) {
+    public Set<String> evaluate(final String attributeValue) {
         log.debug("Attempting to map attribute value '{}'", attributeValue);
         Set<String> mappedValues = new HashSet<String>();
         Matcher m;
@@ -133,22 +115,23 @@ public class ValueMap {
     /**
      * Represents incoming attribute values and rules used for matching them. The value may include regular expressions.
      */
-    public class SourceValue {
+    @ThreadSafe
+    public static class SourceValue {
 
         /**
          * Value string. This may contain regular expressions.
          */
-        private String value;
+        private final String value;
 
         /**
          * Whether case should be ignored when matching.
          */
-        private boolean ignoreCase;
+        private final boolean ignoreCase;
 
         /**
          * Whether partial matches should be allowed.
          */
-        private boolean partialMatch;
+        private final boolean partialMatch;
 
         /**
          * Constructor.
@@ -157,7 +140,7 @@ public class ValueMap {
          * @param newIgnoreCase whether case should be ignored when matching
          * @param newPartialMatch whether partial matches should be allowed
          */
-        public SourceValue(String newValue, boolean newIgnoreCase, boolean newPartialMatch) {
+        public SourceValue(final String newValue, final boolean newIgnoreCase, final boolean newPartialMatch) {
             value = newValue;
             ignoreCase = newIgnoreCase;
             partialMatch = newPartialMatch;
