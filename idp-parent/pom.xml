@@ -40,11 +40,6 @@
             <name>Shibboleth.net</name>
             <url>http://shibboleth.net/nexus/content/groups/public/</url>
         </repository>
-        <repository>
-            <id>jboss-public-repository-group</id>
-            <name>JBoss Public Maven Repository Group</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public</url>
-        </repository>
     </repositories>
 
     <!-- Dependencies which are required by every single project module should go here and will be inherited by all modules. -->
