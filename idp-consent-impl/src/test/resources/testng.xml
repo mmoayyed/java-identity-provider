@@ -1,15 +1,14 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-
-<suite name="suite.consent" verbose="2">
-    <parameter name="consent.schema" value="classpath:/schema.sql" />    
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="suite.consent" verbose="2" junit="false" parallel="false" configfailurepolicy="skip" thread-count="5" skipfailedinvocationcounts="false" data-provider-thread-count="10">
+    <parameter name="consent.schema" value="classpath:/schema.sql"/>    
     
-    <test name="consent" enabled="true">  
+    <test name="consent" enabled="true" junit="false" skipfailedinvocationcounts="false" preserve-order="false">  
         <packages>       
             <package name="net.shibboleth.idp.attribute.consent"/>
         </packages>
     </test>
     
-    <test name="consent.storage">  
+    <test name="consent.storage" junit="false" skipfailedinvocationcounts="false" preserve-order="false">  
         <packages>       
             <package name="net.shibboleth.idp.attribute.consent.storage"/>
         </packages>

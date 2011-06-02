@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <configuration>
 
-    <logger name="net.shibboleth.attribute" level="DEBUG" />
+    <logger name="net.shibboleth.attribute" level="DEBUG"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -12,7 +11,7 @@
     </appender>
 
     <root level="WARN">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
     </root>
 
 </configuration>

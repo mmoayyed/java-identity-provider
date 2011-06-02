@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -9,15 +8,15 @@
         </encoder>
     </appender>
 
-    <logger name="org.opensaml" level="WARN" />
-    <logger name="org.infinispan" level="WARN" />
-    <logger name="org.springframework" level="WARN" />
-    <logger name="org.testng" level="WARN" />
+    <logger name="org.opensaml" level="WARN"/>
+    <logger name="org.infinispan" level="WARN"/>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.testng" level="WARN"/>
     
-    <logger name="net.shibboleth.idp.tou" level="TRACE" />
-    <logger name="Test" level="DEBUG" />
+    <logger name="net.shibboleth.idp.tou" level="TRACE"/>
+    <logger name="Test" level="DEBUG"/>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
