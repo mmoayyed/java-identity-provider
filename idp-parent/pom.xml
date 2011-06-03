@@ -37,7 +37,7 @@
         <repository>
             <id>shibboleth</id>
             <name>Shibboleth.net</name>
-            <url>http://shibboleth.net/nexus/content/groups/public/</url>
+            <url>https://shibboleth.net/nexus/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -151,7 +151,7 @@
             <dependency>
                 <groupId>org.opensaml</groupId>
                 <artifactId>opensaml</artifactId>
-                <version>2.4.1</version>
+                <version>2.5.0</version>
             </dependency>
             <dependency>
                 <groupId>${spring.groupId}</groupId>
