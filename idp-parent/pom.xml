@@ -22,9 +22,10 @@
         <module>../idp-attribute-filter-impl</module>
         <module>../idp-consent-api</module>
         <module>../idp-consent-impl</module>
-        <module>../idp-profile-api</module>
         <module>../idp-tou-api</module>
-        <module>../idp-tou-impl</module>
+        <module>../idp-tou-impl</module>        
+        <module>../idp-profile-api</module>
+        <module>../idp-profile-saml-impl</module>
     </modules>
 
     <properties>
