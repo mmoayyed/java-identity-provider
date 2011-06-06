@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.consent.ConsentContext.Consent;
 import net.shibboleth.idp.attribute.consent.storage.Storage;
-import net.shibboleth.idp.profile.ProfileContext;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class ConsentEngineImpl implements ConsentEngine {
     public void determineConsent(final ConsentContext consentContext) throws ConsentException {
 
         Assert.notNull(consentContext, "No consent context found");
-        Assert.state(consentContext.getOwner().getClass().equals(ProfileContext.class),
+        Assert.state(consentContext.getOwner().getClass().equals(ProfileRequestContext.class),
                 "Owner of a consent context must be a profile context");
 
         final String relyingPartyId = ConsentHelper.getRelyingParty(consentContext);
