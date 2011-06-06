@@ -22,41 +22,54 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.messaging.context.impl.BasicInOutOperationContext;
 
-/** Context that holds the ongoing state of a profile conversation. */
-public class ProfileContext<InboundMessageType, OutboundMessageType> extends BasicInOutOperationContext<InboundMessageType, OutboundMessageType> {
-    
-    /** Indicates whether the current profile is passive, that is, not capable of showing a UI to a user, or not. */
+/**
+ * Context that holds the ongoing state of a profile request.
+ * 
+ * @param <InboundMessageType> type of in-bound message
+ * @param <OutboundMessageType> type of out-bound message
+ */
+public class ProfileRequestContext<InboundMessageType, OutboundMessageType> extends
+        BasicInOutOperationContext<InboundMessageType, OutboundMessageType> {
+
+    /** ID under which this context is stored, for example, within maps or sessions. */
+    public static final String BINDING_KEY = ProfileRequestContext.class.getPackage().getName()
+            + ProfileRequestContext.class.getName();
+
+    /**
+     * Indicates whether the current profile request is passive. Passive requests are not capable of showing a UI to a
+     * user.
+     */
     private boolean passiveProfile;
-    
+
     /** Current HTTP request. */
     private transient HttpServletRequest httpRequest;
-    
+
     /** Current HTTP response. */
     private transient HttpServletResponse httpResponse;
-    
+
     /** Constructor. */
-    public ProfileContext() {
+    public ProfileRequestContext() {
         super();
     }
-    
+
     /**
-     * Gets whether the current profile is passive, that is, not capable of showing a UI to a user, or not.
+     * Gets whether the current profile request is passive.
      * 
-     * @return whether the current profile is passive, that is, not capable of showing a UI to a user, or not
+     * @return whether the current profile request is passive
      */
     public boolean isPassiveProfile() {
         return passiveProfile;
     }
-    
+
     /**
-     * Sets whether the current profile is passive, that is, not capable of showing a UI to a user, or not.
+     * Sets whether the current profile request is passive.
      * 
-     * @param isPassive whether the current profile is passive, that is, not capable of showing a UI to a user, or not
+     * @param isPassive whether the current profile request is passive
      */
-    public void setPassiveProfile(boolean isPassive) {
+    public void setPassiveProfile(final boolean isPassive) {
         passiveProfile = isPassive;
     }
-    
+
     /**
      * Gets the current HTTP request if available.
      * 
@@ -65,16 +78,16 @@ public class ProfileContext<InboundMessageType, OutboundMessageType> extends Bas
     public HttpServletRequest getHttpRequest() {
         return httpRequest;
     }
-    
+
     /**
      * Sets the current HTTP request.
      * 
      * @param request current HTTP request
      */
-    public void setHttpRequest(HttpServletRequest request) {
+    public void setHttpRequest(final HttpServletRequest request) {
         httpRequest = request;
     }
-    
+
     /**
      * Gets the current HTTP response.
      * 
@@ -83,13 +96,13 @@ public class ProfileContext<InboundMessageType, OutboundMessageType> extends Bas
     public HttpServletResponse getHttpResponse() {
         return httpResponse;
     }
-    
+
     /**
      * Sets the current HTTP response.
      * 
      * @param response current HTTP response
      */
-    public void setHttpResponse(HttpServletResponse response) {
+    public void setHttpResponse(final HttpServletResponse response) {
         httpResponse = response;
     }
 }

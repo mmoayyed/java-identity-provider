@@ -21,6 +21,10 @@
             <artifactId>idp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+        </dependency>
 
         <!-- Provided Dependencies -->
 

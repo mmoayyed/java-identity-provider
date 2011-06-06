@@ -15,23 +15,6 @@
  * limitations under the License.
  */
 
+/** Common APIs for handling profile requests. */
+
 package net.shibboleth.idp.profile;
-
-import javax.servlet.http.HttpServletRequest;
-
-/**
- * This manager is responsible for determining the correct {@link ProfileHandler} for a given request. The
- * manner in which this is done is completely implementation specific but implementers should make the selection process
- * as quick and simple as absolutely possible as this process will be run on every request.
- */
-public interface ProfileHandlerManager {
-
-    /**
-     * Gets the profile handler to service this request.
-     * 
-     * @param request request that will be serviced by the profile handler
-     * 
-     * @return the profile handler that should be used to service the given request
-     */
-    public ProfileHandler getProfileHandler(HttpServletRequest request);
-}
