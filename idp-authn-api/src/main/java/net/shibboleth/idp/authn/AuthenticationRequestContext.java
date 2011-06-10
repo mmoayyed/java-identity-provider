@@ -27,12 +27,12 @@ import net.jcip.annotations.ThreadSafe;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.messaging.context.impl.BaseSubcontext;
+import org.opensaml.messaging.context.impl.AbstractSubcontext;
 import org.opensaml.util.collections.CollectionSupport;
 
 /** A context representing the state of an authentication attempt. */
 @ThreadSafe
-public final class AuthenticationRequestContext extends BaseSubcontext {
+public final class AuthenticationRequestContext extends AbstractSubcontext {
 
     /** Time when the authentication process started. */
     private DateTime initiationInstant;
