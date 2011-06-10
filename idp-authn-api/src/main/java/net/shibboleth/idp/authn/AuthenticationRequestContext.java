@@ -26,8 +26,8 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
+import org.opensaml.messaging.context.AbstractSubcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.messaging.context.impl.AbstractSubcontext;
 import org.opensaml.util.collections.CollectionSupport;
 
 /** A context representing the state of an authentication attempt. */
