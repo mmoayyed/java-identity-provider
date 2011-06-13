@@ -37,6 +37,12 @@ public final class TestSources {
 
     /** The name of the attribute we use as source. */
     protected static final String DEPENDS_ON_ATTRIBUTE_NAME = "at1";
+    
+    /** The name of another attribute we use as source. */
+    protected static final String DEPENDS_ON_SECOND_ATTRIBUTE_NAME = "at2";
+
+    /** Another attributes values. */
+    protected static final String[] SECOND_ATTRIBUTE_VALUES = {"at2-Val1", "at2-Val2"};
 
     /** A value from both providers. */
     protected static final String COMMON_ATTRIBUTE_VALUE = "at1-Data";
@@ -77,10 +83,10 @@ public final class TestSources {
         attr.setValues(valuesSet);
         values.put(DEPENDS_ON_ATTRIBUTE_NAME, attr);
 
-        attr = new Attribute<String>("at2");
+        attr = new Attribute<String>(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
         valuesSet = new LazySet<String>();
-        valuesSet.add("at2-Val1");
-        valuesSet.add("at2-Val2");
+        valuesSet.add(SECOND_ATTRIBUTE_VALUES[0]);
+        valuesSet.add(SECOND_ATTRIBUTE_VALUES[1]);
 
         attr.setValues(valuesSet);
         values.put("at2", attr);
