@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
+import org.opensaml.messaging.context.impl.AbstractSubcontextContainer;
 import org.opensaml.util.collections.LazySet;
 import org.testng.Assert;
 import org.testng.annotations.Test;
