@@ -17,12 +17,15 @@
 
 package net.shibboleth.idp.profile;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.springframework.webflow.conversation.Conversation;
 import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.ConversationManager;
 import org.springframework.webflow.conversation.ConversationParameters;
 
 /**  A {@link ConversationManager} that stores conversation state in the Infinispan instance used by the IdP. */
+@ThreadSafe
 public class InfinispanBindingConversationManager implements ConversationManager {
 
     /** {@inheritDoc} */

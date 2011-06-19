@@ -20,7 +20,9 @@ package net.shibboleth.idp.profile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opensaml.messaging.context.impl.BasicInOutOperationContext;
+import net.jcip.annotations.ThreadSafe;
+
+import org.opensaml.messaging.context.BasicInOutOperationContext;
 
 /**
  * Context that holds the ongoing state of a profile request.
@@ -28,6 +30,7 @@ import org.opensaml.messaging.context.impl.BasicInOutOperationContext;
  * @param <InboundMessageType> type of in-bound message
  * @param <OutboundMessageType> type of out-bound message
  */
+@ThreadSafe
 public class ProfileRequestContext<InboundMessageType, OutboundMessageType> extends
         BasicInOutOperationContext<InboundMessageType, OutboundMessageType> {
 
@@ -69,7 +72,7 @@ public class ProfileRequestContext<InboundMessageType, OutboundMessageType> exte
     public void setPassiveProfile(final boolean isPassive) {
         passiveProfile = isPassive;
     }
-
+    
     /**
      * Gets the current HTTP request if available.
      * 
