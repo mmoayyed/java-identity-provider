@@ -23,7 +23,7 @@ import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
 
-import org.opensaml.messaging.context.impl.BasicMessageContext;
+import org.opensaml.messaging.context.BasicMessageContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
