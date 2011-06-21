@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
 public class TemplateAttributeTest {
 
     /** The name. */
-    private static final String TEST_ATTRIBUTE_NAME = "TEMPLATE";
+    private static final String TEST_ATTRIBUTE_BASE_NAME = "TEMPLATE";
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
@@ -86,12 +86,13 @@ public class TemplateAttributeTest {
     @Test
     public void testSimple() throws AttributeResolutionException {
 
-        TemplateAttributeDefinition attr =
-                new TemplateAttributeDefinition(TEST_ATTRIBUTE_NAME, getEngine(), TEST_ATTRIBUTES_TEMPLATE,
+        final String name = TEST_ATTRIBUTE_BASE_NAME + "1";
+        final TemplateAttributeDefinition attr =
+                new TemplateAttributeDefinition(name, getEngine(), TEST_ATTRIBUTES_TEMPLATE,
                         new LazyList<String>());
 
-        Attribute<?> val = attr.doAttributeResolution(new AttributeResolutionContext(null));
-        Collection<?> results = val.getValues();
+        final Attribute<?> val = attr.doAttributeResolution(new AttributeResolutionContext(null));
+        final Collection<?> results = val.getValues();
 
         Assert.assertEquals(results.size(), 0, "Templated value count");
     }
@@ -104,30 +105,31 @@ public class TemplateAttributeTest {
     @Test
     public void testSimpleWithValues() throws AttributeResolutionException {
 
-        List<String> sources = new LazyList<String>();
+        final String name = TEST_ATTRIBUTE_BASE_NAME + "2";
+        final List<String> sources = new LazyList<String>();
         sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME);
 
-        TemplateAttributeDefinition templateDef =
-                new TemplateAttributeDefinition(TEST_ATTRIBUTE_NAME, getEngine(), TEST_SIMPLE_TEMPLATE, sources);
-        Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        final TemplateAttributeDefinition templateDef =
+                new TemplateAttributeDefinition(name, getEngine(), TEST_SIMPLE_TEMPLATE, sources);
+        final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
 
-        AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver("foo");
 
-        Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);
 
-        Attribute<?> a = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
-        Collection results = a.getValues();
+        Attribute<?> a = context.getResolvedAttributes().get(name);
+        final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 1, "Templated value count");
         Assert.assertTrue(results.contains(SIMPLE_VALUE), "Single value context is correct");
 
@@ -141,33 +143,34 @@ public class TemplateAttributeTest {
     @Test
     public void testTemplateWithValues() throws AttributeResolutionException {
 
-        List<String> sources = new LazyList<String>();
+        final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
+        final List<String> sources = new LazyList<String>();
         sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME);
         sources.add(TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
 
         TemplateAttributeDefinition templateDef =
-                new TemplateAttributeDefinition(TEST_ATTRIBUTE_NAME, getEngine(), TEST_ATTRIBUTES_TEMPLATE, sources);
+                new TemplateAttributeDefinition(name, getEngine(), TEST_ATTRIBUTES_TEMPLATE, sources);
         Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         ds.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
 
-        AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver("foo");
 
-        Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);
 
-        Attribute<?> a = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
-        Collection results = a.getValues();
+        final Attribute<?> a = context.getResolvedAttributes().get(name);
+        final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 2, "Templated value count");
         String s = "Att " + TestSources.COMMON_ATTRIBUTE_VALUE + "-" + TestSources.SECOND_ATTRIBUTE_VALUES[0];
         Assert.assertTrue(results.contains(s), "First Match");

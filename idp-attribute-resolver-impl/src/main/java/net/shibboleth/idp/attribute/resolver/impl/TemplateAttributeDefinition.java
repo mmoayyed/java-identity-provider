@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
+import org.opensaml.util.Assert;
+import org.opensaml.util.StringSupport;
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +50,18 @@ import org.slf4j.LoggerFactory;
  * Template Language. Dependencies may have multiple values, however multiples dependencies must have the same number of
  * values. In the case of multi-valued dependencies, the template will be evaluated multiples times, iterating over each
  * dependency.
+ * 
+ * The template is inserted into the engine with a unique name derived from this class and from the id supplied for this
+ * attribute.
+ * 
+ * This is marked not thread safe since the constructor cannot do a safe check & insert of the template into the
+ * repository.
  */
 @NotThreadSafe
 public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(TemplateAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinition.class);
 
     /** Velocity engine to use to render attribute values. */
     private final VelocityEngine velocity;
@@ -60,7 +70,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     private final String templateName;
 
     /** Template that produces the attribute value. */
-    private final String attributeTemplate;
+    private final String templateSource;
 
     /**
      * IDs of the attributes used in this composite.
@@ -81,23 +91,66 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             final List<String> attributes) {
         super(id);
         velocity = engine;
-        templateName = "shibboleth.resolver.ad." + id;
-        sourceAttributes = new HashSet<String>(attributes);
-        attributeTemplate = template;
+        templateName = "shibboleth.resolver.ad." + this.getClass().getName() + id;
 
-        //
+        Set<String> attributesSet = new HashSet<String>();
+        CollectionSupport.addNonNull(attributes, attributesSet);
+        sourceAttributes = Collections.unmodifiableSet(attributesSet);
+
+        templateSource = StringSupport.trimOrNull(template);
+        Assert.isNotNull(templateSource, "Template must not be null or empty");
+
         // Register the template
-        //
-        StringResourceRepository repository = StringResourceLoader.getRepository();
-        repository.putStringResource(templateName, attributeTemplate.trim());
+        final StringResourceRepository repository = StringResourceLoader.getRepository();
+        if (null != repository.getStringResource(templateName)) {
+            throw new IllegalArgumentException("Template named " + templateName + "has already been declared");
+        }
+        repository.putStringResource(templateName, templateSource);
+    }
+
+    /**
+     * Access the velocity engine being used.
+     * 
+     * @return the velocity engine.
+     */
+    public VelocityEngine getVelocityEngine() {
+        return velocity;
+    }
+
+    /**
+     * Access the name by which the template is used. This name is uniqueified by the implemeting class and the id of
+     * the attribute resolver.
+     * 
+     * @return the template name.
+     */
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    /**
+     * Access the source used in this template. This will have been trimmed and cannot be null.
+     * 
+     * @return the source used by this template.
+     */
+    public String getTemplateSource() {
+        return templateSource;
+    }
+
+    /**
+     * Access the source attribute names used by this template.
+     * 
+     * @return the attribute names.
+     */
+    public Set<String> getSourceAttributes() {
+        return sourceAttributes;
     }
 
     /**
      * Set up a map which can be used to populate the template. The key is the attribute name and the value is the
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
-     * a mismatch.
+     * a mismatch in number of elements in any attribute.
      * 
-     * Finally the names of the source attributes is checked against the dependency attributes and if there is a
+     * Finally, the names of the source attributes is checked against the dependency attributes and if there is a
      * mismatch then a warning is emitted.
      * 
      * @param resolutionContext to look for dependencies in.
@@ -108,12 +161,11 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     private int countAndSetupSourceValues(final AttributeResolutionContext resolutionContext,
             Map<String, Iterator> sourceValues) throws AttributeResolutionException {
         int valueCount = -1;
-        Set<ResolverPluginDependency> depends = getDependencies();
-        Set<String> unresolvedAttributes = new HashSet<String>(sourceAttributes);
+        final Set<ResolverPluginDependency> depends = getDependencies();
+        final Set<String> unresolvedAttributes = new HashSet<String>(sourceAttributes);
 
         for (ResolverPluginDependency dep : depends) {
-            Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            Collection<?> values;
+            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null == dependentAttribute) {
                 log.warn("Dependency of TemplateAttribute " + getId() + " returned null dependent attribute");
                 continue;
@@ -123,15 +175,12 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                         + " not a source attribute for template attribute definition " + getId());
                 continue;
             }
-            //
+
             // Take from the input list
-            //
             unresolvedAttributes.remove(dependentAttribute.getId());
 
-            //
             // And add the values to the output list
-            //
-            values = dependentAttribute.getValues();
+            final Collection<?> values = dependentAttribute.getValues();
             if (null == values) {
                 log.warn("Dependency " + dependentAttribute.getId() + " of TemplateAttribute " + getId()
                         + "returned null value set");
@@ -140,10 +189,11 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             if (valueCount == -1) {
                 valueCount = values.size();
             } else if (valueCount != values.size()) {
-                log.error("All attributes used in TemplateAttributeDefinition " + getId()
-                        + " must have the same number of values.");
-                throw new AttributeResolutionException("All attributes used in TemplateAttributeDefinition " + getId()
-                        + " must have the same number of values.");
+                final String msg =
+                        "All attributes used in TemplateAttributeDefinition " + getId()
+                                + " must have the same number of values.";
+                log.error(msg);
+                throw new AttributeResolutionException(msg);
             }
 
             sourceValues.put(dependentAttribute.getId(), values.iterator());
@@ -160,9 +210,9 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
-        Map<String, Iterator> sourceValues = new LazyMap<String, Iterator>();
-        Attribute<String> result = new Attribute<String>(getId());
-        int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
+        final Attribute<String> resultantAttribute = new Attribute<String>(getId());
+        final Map<String, Iterator> sourceValues = new LazyMap<String, Iterator>();
+        final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
 
         if (null == getDependencies()) {
             log.info("TemplateAttribute definition " + getId() + " had no dependencies");
@@ -175,7 +225,10 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         for (int i = 0; i < valueCount; i++) {
             // Setup the attributes for this time around
             for (String attributeId : sourceValues.keySet()) {
-                vCtx.put(attributeId, sourceValues.get(attributeId).next());
+                final Object value = sourceValues.get(attributeId).next();
+                log.debug("TemplateAttribute definition {} iteration {}; attribute {} has value {}", new Object[] {
+                        getId(), i+1, attributeId, value.toString(),});
+                vCtx.put(attributeId, value);
             }
 
             try {
@@ -185,7 +238,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                 Template template;
                 template = velocity.getTemplate(templateName);
                 template.merge(vCtx, output);
-                result.addValue(output.toString());
+                resultantAttribute.addValue(output.toString());
 
             } catch (Exception e) {
                 //
@@ -196,6 +249,6 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             }
         }
 
-        return result;
+        return resultantAttribute;
     }
 }

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
@@ -34,12 +35,20 @@ import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Implementation of Mapped Attributes. */
+/** Implementation of Mapped Attributes. 
+ * 
+ * An attribute definition take the values from previous resolution stages 
+ * and convert as it creates the output atribute.  Each value is compared 
+ * with a lookup table (a {@link java.util.Collection} of @link{ValueMap}s 
+ * and if it matches then the appropriate value(s) is/are substituted.  
+ * Non matches are either passed through or are removed depending on the 
+ * setting 'passThru'.  
+ * */
 @ThreadSafe
 public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
 
     /** Default return value. */
     private final String defaultValue;
@@ -56,70 +65,86 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * @param id the name
      * @param maps the value maps to apply
      * @param defaultVal the default value to apply (if any)
-     * @param passThruParm whether to pass unmacthes values through or not.
+     * @param passThruParm whether to pass unmatched values through or not.
      */
     public MappedAttributeDefinition(final String id, final Collection<ValueMap> maps, final String defaultVal,
             final boolean passThruParm) {
         super(id);
-        if (null == maps) {
-            valueMaps = new LazySet<ValueMap>();
-        } else {
-            valueMaps = maps;
-        }
-        defaultValue = defaultVal;
+        
+        final Set<ValueMap> working = new LazySet<ValueMap>();
+        CollectionSupport.addNonNull(maps, working);
+        valueMaps = Collections.unmodifiableSet(working);
+        
+        defaultValue = StringSupport.trimOrNull(defaultVal);
         passThru = passThruParm;
+    }
+    
+    /**
+     * Access to our value maps. 
+     * @return the value maps we were initialised with (never null, always normalized and unmodifiable)
+     */
+    public Collection<ValueMap> getValueMaps() {
+        return valueMaps;
     }
 
     /**
      * Gets the default return value.
      * 
-     * @return the default return value.
+     * @return the default return value. Can be null but can never be "";
      */
-    private String getDefaultValue() {
+    public String getDefaultValue() {
         return defaultValue;
+    }
+    
+    /**
+     * Returns whether passThru (sic) is set for this version of this resolver.
+     * @return the value of passThru.
+     */
+    public boolean getPassThru() {
+        return passThru;
     }
 
     /** {@inheritDoc} */
     protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Set<ResolverPluginDependency> depends = getDependencies();
-        Attribute<Object> result = new Attribute<Object>(getId());
-        Collection<Object> unmappedResults = new LazySet<Object>();
-        Collection<Object> mappedResults;
-
+        final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
             return null;
         }
+        
+        final Collection<Object> unmappedResults = new LazySet<Object>();
         for (ResolverPluginDependency dep : depends) {
             Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
                 CollectionSupport.addNonNull(dependentAttribute.getValues(), unmappedResults);
             }
         }
+        
+        // Bucket for results
+        final Attribute<Object> resultAttribute = new Attribute<Object>(getId());
 
         if (unmappedResults.isEmpty()) {
             log.debug("Attribute Definition {}: No values from dependency attributes", getId());
-            if (!StringSupport.isNullOrEmpty(getDefaultValue())) {
+            if (null != getDefaultValue()) {
                 log.debug("Attribute Definition {}: Default value "
                         + "is not empty, adding it as the value for this attribute", getId());
-                result.addValue(getDefaultValue());
+                resultAttribute.addValue(getDefaultValue());
             }
-            return result;
+            return resultAttribute;
         }
 
-        mappedResults = new LazySet<Object>();
-        Set<String> mappedValues;
+        final Collection<Object> mappedValues = new LazySet<Object>();
         for (Object o : unmappedResults) {
             if (o == null) {
                 log.debug("Attribute Definition {}: null attribute value, skipping it", getId());
                 continue;
             }
-            mappedValues = mapValue(o.toString());
-            mappedResults.addAll(mappedValues);
+            Set<String> mappedValuesThisObject = mapValue(o.toString());
+            mappedValues.addAll(mappedValuesThisObject);
         }
 
-        result.setValues(mappedResults);
-        return result;
+        resultAttribute.setValues(mappedValues);
+        return resultAttribute;
     }
 
     /**
@@ -132,9 +157,9 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     protected Set<String> mapValue(final String value) {
         log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
 
-        LazySet<String> mappedValues = new LazySet<String>();
-
+        final LazySet<String> mappedValues = new LazySet<String>();
         boolean valueMapMatch = false;
+        
         if (!StringSupport.isNullOrEmpty(value)) {
             for (ValueMap valueMap : valueMaps) {
                 mappedValues.addAll(valueMap.evaluate(value));
@@ -161,10 +186,10 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         if (passThru && !StringSupport.isNullOrEmpty(defaultValue)) {
-            log.error("MappedAttributeDefinition (" + getId()
-                    + ") may not have a DefaultValue string with passThru enabled.");
-            throw new ComponentValidationException("MappedAttributeDefinition (" + getId()
-                    + ") may not have a DefaultValue string with passThru enabled.");
+            final String message = "MappedAttributeDefinition {} (" + getId() +
+                ") may not have a DefaultValue string with passThru enabled.";
+            log.error(message);
+            throw new ComponentValidationException(message);
         }
     }
 }

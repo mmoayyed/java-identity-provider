@@ -42,11 +42,10 @@ public class MappedAttributeTester {
     /** Test with no mapping provided. */
     @Test
     public void testEmptyMap() {
-        BaseAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, null, false);
-        //
+        final BaseAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, null, false);
+
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         mapped.setDependencies(dependencySet);
@@ -54,16 +53,16 @@ public class MappedAttributeTester {
         //
         // And resolve
         //
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final AttributeResolver resolver = new AttributeResolver("foo");
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(mapped);
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -77,37 +76,32 @@ public class MappedAttributeTester {
     @Test
     public void testNoMapDefault() {
         final String mapResult = "result";
+        final MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, mapResult, false);
 
-        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, mapResult, false);
-
-        //
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         mapped.setDependencies(dependencySet);
 
-        //
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final AttributeResolver resolver = new AttributeResolver("foo");
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(mapped);
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 1);
         Assert.assertTrue(f.contains(mapResult), "looking for value TEST_DEFAULT_VALUE");
@@ -116,36 +110,32 @@ public class MappedAttributeTester {
     /** Test no mapping but with passthrough. */
     @Test
     public void testNoMapPassThru() {
-        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, null, true);
+        final MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, null, null, true);
 
-        //
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         mapped.setDependencies(dependencySet);
 
-        //
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final AttributeResolver resolver = new AttributeResolver("foo");
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(mapped);
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 2);
         Assert.assertTrue(f.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for value COMMON_ATTRIBUTE_VALUE");
@@ -153,53 +143,48 @@ public class MappedAttributeTester {
                 "looking for value CONNECTOR_ATTRIBUTE_VALUE");
     }
 
-    /** Test mapping . */
+    /** Test mapping. Set up some values, pass them through a map.  Do we get what we expect? */
     @Test
     public void testMap() {
         final String mapResult = "result";
-        Collection<ValueMap> map = new LazySet<ValueMap>();
-        HashSet<ValueMap.SourceValue> valueSet = new HashSet<ValueMap.SourceValue>();
+        final Collection<ValueMap> map = new LazySet<ValueMap>();
+        final HashSet<ValueMap.SourceValue> valueSet = new HashSet<ValueMap.SourceValue>();
         valueSet.add(new ValueMap.SourceValue(TestSources.COMMON_ATTRIBUTE_VALUE, false, false));
 
         map.add(new ValueMap(valueSet, mapResult));
 
-        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map, null, false);
+        final MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map, null, false);
 
-        //
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         mapped.setDependencies(dependencySet);
 
-        //
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final AttributeResolver resolver = new AttributeResolver("foo");
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(mapped);
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
-
+        final Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(f.size(), 1);
         Assert.assertTrue(f.contains(mapResult), "looking for value TEST_DEFAULT_VALUE");
     }
 
     /**
-     * Test mapping .
+     * Test mapping with multiple mappings and use of regexps.
      * 
      * @throws ComponentValidationException if validation failed.
      */
@@ -220,31 +205,31 @@ public class MappedAttributeTester {
         valueSet.add(new ValueMap.SourceValue(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP.toUpperCase(), true, false));
         map.add(new ValueMap(valueSet, mapResult2));
 
-        MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map, null, false);
+        final MappedAttributeDefinition mapped = new MappedAttributeDefinition(TEST_ATTRIBUTE_NAME, map, null, false);
         mapped.validate();
 
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         mapped.setDependencies(dependencySet);
 
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final AttributeResolver resolver = new AttributeResolver("foo");
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(mapped);
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertTrue(f.contains(mapResult1), "looking for value mapResult1");
         Assert.assertTrue(f.contains(mapResult2), "looking for value mapResult2");
