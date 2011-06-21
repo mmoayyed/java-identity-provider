@@ -50,14 +50,6 @@ public class PrecscopedAtributeTest {
     @Test
     public void testPreScoped() throws AttributeResolutionException {
 
-        BaseAttributeDefinition attrDef = new PrescopedAttributeDefinition(TEST_ATTRIBUTE_NAME, "-");
-        //
-        // The test Data Connector provides an input attribute "at1" with values
-        // at1-Data and at1-Connector. We can feed these into the prescoped, looking for '-'
-        //
-        ScopedAttributeValue res1 = new ScopedAttributeValue("at1", "Data");
-        ScopedAttributeValue res2 = new ScopedAttributeValue("at1", "Connector");
-        //
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
