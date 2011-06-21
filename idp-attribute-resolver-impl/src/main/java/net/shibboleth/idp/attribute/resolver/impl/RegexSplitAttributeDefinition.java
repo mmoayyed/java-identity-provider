@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
@@ -33,15 +33,19 @@ import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** A Regexp Attribute definition. */
-@NotThreadSafe
+/**
+ * A Regexp Attribute definition.
+ * 
+ * The provided regexp is run across each input attribute and the first group is returned as the value.
+ */
+@ThreadSafe
 public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinition.class);
 
     /** Regular expression used to split values. */
-    private Pattern regex;
+    private final Pattern regExp;
 
     /**
      * Constructor.
@@ -50,50 +54,55 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
      * @param regularExpression expression used to split attribute values
      * @param caseSensitive whether the regular expression is case sensitive
      */
-    public RegexSplitAttributeDefinition(String id, String regularExpression, boolean caseSensitive) {
+    public RegexSplitAttributeDefinition(final String id, final String regularExpression, final boolean caseSensitive) {
         super(id);
         if (!caseSensitive) {
-            regex = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
+            regExp = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
         } else {
-            regex = Pattern.compile(regularExpression);
+            regExp = Pattern.compile(regularExpression);
         }
     }
 
-    /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        Set<ResolverPluginDependency> depends = getDependencies();
-        Attribute<Object> result = new Attribute<Object>(getId());
-        Collection<Object> results = new LazySet<Object>();
-        Matcher matcher;
+    /**
+     * Get the regular expression for this resolver.
+     * 
+     * @return the regexp.
+     */
+    public Pattern getRegExp() {
+        return regExp;
+    }
 
+    /** {@inheritDoc} */
+    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+            throws AttributeResolutionException {
+        final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
-            //
-            // No input? No output
-            //
             return null;
         }
+
+        final Collection<Object> results = new LazySet<Object>();
         for (ResolverPluginDependency dep : depends) {
             Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
                 for (Object value : dependentAttribute.getValues()) {
                     if (value instanceof String) {
-                        matcher = regex.matcher((String) value);
+                        final Matcher matcher = regExp.matcher((String) value);
                         if (matcher.matches()) {
-                            String s = matcher.group(1);
-                            results.add(s);
+                            results.add(matcher.group(1));
                         } else {
-                            log.debug("Value {} did not result in any values when split by regular expression {}",
-                                    value, regex.toString());
+                            log.debug(
+                       "Resolver {}: Value {} did not result in any values when split by regular expression {}",
+                                    value, new Object[] {getId(), regExp.toString(), regExp.toString(),});
                         }
                     } else {
-                        log.debug("Ignoring non-string attribute value");
+                        log.info("Ignoring non-string attribute value");
                     }
                 }
             }
         }
-        result.setValues(results);
-        return result;
+        Attribute<Object> resultantAttribute = new Attribute<Object>(getId());
+        resultantAttribute.setValues(results);
+        return resultantAttribute;
     }
 
 }

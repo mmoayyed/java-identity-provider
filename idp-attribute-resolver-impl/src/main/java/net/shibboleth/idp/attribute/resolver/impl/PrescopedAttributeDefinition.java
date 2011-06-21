@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl;
 import java.util.Collection;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
@@ -28,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
+import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
@@ -37,13 +39,14 @@ import org.slf4j.LoggerFactory;
  * An attribute definition that creates {@link ScopedAttributeValue}s by taking a source attribute value splitting it at
  * a delimiter. The first atom becomes the attribute value and the second value becomes the scope.
  */
+@ThreadSafe
 public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinition.class);
 
     /** Delimiter between value and scope. */
-    private String scopeDelimiter;
+    private final String scopeDelimiter;
 
     /**
      * Constructor.
@@ -51,31 +54,40 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
      * @param id the id of the object
      * @param delimiter scope of the attribute
      */
-    public PrescopedAttributeDefinition(String id, String delimiter) {
+    public PrescopedAttributeDefinition(final String id, final String delimiter) {
         super(id);
         scopeDelimiter = delimiter;
+        Assert.isFalse(StringSupport.isNullOrEmpty(scopeDelimiter), "Scope delimiter must be non null and non empty");
+    }
+
+    /**
+     * Access the scope delimiter we were initialised with.
+     * 
+     * @return the delimiter
+     */
+    public String getScopeDelimiter() {
+        return scopeDelimiter;
     }
 
     /** {@inheritDoc} */
-    protected Attribute<ScopedAttributeValue> doAttributeResolution(AttributeResolutionContext resolutionContext)
+    protected Attribute<ScopedAttributeValue> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Set<ResolverPluginDependency> depends = getDependencies();
-        Attribute<ScopedAttributeValue> result = new Attribute<ScopedAttributeValue>(getId());
-        Collection<ScopedAttributeValue> results = new LazySet<ScopedAttributeValue>();
-
+        
+        final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
             log.info("PrescopedAttribute definition " + getId() + " had no dependencies");
             return null;
         }
+        
+        final Collection<ScopedAttributeValue> resultingValues = new LazySet<ScopedAttributeValue>();
         for (ResolverPluginDependency dep : depends) {
-            Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            Collection<?> values;
-
+            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null == dependentAttribute) {
                 log.error("Dependency of PrescopedAttribute " + getId() + " returned null dependent attribute");
                 continue;
             }
-            values = dependentAttribute.getValues();
+
+            final Collection<?> values = dependentAttribute.getValues();
             if (null == dependentAttribute.getValues()) {
                 log.error("Dependency " + dependentAttribute.getId() + " of PrescopedAttribute " + getId()
                         + "returned null value set");
@@ -86,46 +98,38 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
                         + "returned no values, skipping");
                 continue;
             }
+            
             for (Object value : values) {
-                String[] stringValues;
                 if (!(value instanceof String)) {
                     log.debug("Skipping non string value " + value.toString());
                     continue;
                 }
-
-                stringValues = ((String) value).split(scopeDelimiter);
+                final String[] stringValues = ((String) value).split(scopeDelimiter);
                 if (stringValues.length < 2) {
                     log.error("Input attribute value {} does not contain delimited {} and can not be split", value,
                             scopeDelimiter);
                     throw new AttributeResolutionException("Input attribute value can not be split.");
                 }
-                results.add(new ScopedAttributeValue(stringValues[0], stringValues[1]));
+                resultingValues.add(new ScopedAttributeValue(stringValues[0], stringValues[1]));
             }
         }
-        if (results.isEmpty()) {
+        if (resultingValues.isEmpty()) {
             log.debug("Prescoped definition " + getId() + " returned no values");
         }
-        result.setValues(results);
-        return result;
-    }
-
-    /**
-     * Get delimiter between value and scope.
-     * 
-     * @return delimiter between value and scope
-     */
-    public String getScopeDelimited() {
-        return scopeDelimiter;
+        
+        final Attribute<ScopedAttributeValue> resultantAttribute = new Attribute<ScopedAttributeValue>(getId());
+        resultantAttribute.setValues(resultingValues);
+        return resultantAttribute;
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
 
         if (StringSupport.isNullOrEmpty(scopeDelimiter)) {
-
-            log.error("PrescopedAtributeDefinition (" + getId() + ") Should have a valid delimiter.  None provided.");
-            throw new ComponentValidationException("PrescopedAtributeDefinition (" + getId()
-                    + ") Should have a valid delimiter.  None provided.");
+            final String msg =
+                    "PrescopedAtributeDefinition (" + getId() + ") Should have a valid delimiter.  None provided.";
+            log.error(msg);
+            throw new ComponentValidationException(msg);
         }
     }
 }

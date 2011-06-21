@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl;
 import java.util.Collection;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -27,6 +28,8 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
+import org.opensaml.util.Assert;
+import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +38,14 @@ import org.slf4j.LoggerFactory;
  * An attribute definition that creates {@link ScopedAttributeValue}s by taking a source attribute value and applying a
  * static scope to each.
  */
+@ThreadSafe
 public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(ScopedAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinition.class);
 
     /** Scope value. */
-    private String scope;
+    private final String scope;
 
     /**
      * Constructor.
@@ -49,52 +53,53 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
      * @param id the id of the definition.
      * @param newScope scope of the attribute
      */
-    public ScopedAttributeDefinition(String id, String newScope) {
+    public ScopedAttributeDefinition(final String id, final String newScope) {
         super(id);
-        this.scope = newScope;
+        scope = newScope;
+        Assert.isFalse(StringSupport.isNullOrEmpty(scope), "Scope delimiter must be non null and non empty");
     }
 
     /** {@inheritDoc} */
-    protected Attribute<ScopedAttributeValue> doAttributeResolution(AttributeResolutionContext resolutionContext)
+    protected Attribute<ScopedAttributeValue> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Set<ResolverPluginDependency> depends = getDependencies();
-        Attribute<ScopedAttributeValue> result = new Attribute<ScopedAttributeValue>(getId());
-        Collection<ScopedAttributeValue> results = new LazySet<ScopedAttributeValue>();
 
+        final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
-            //
-            // No input? No output
-            //
             log.info("ScopedAttribute definition " + getId() + " had no dependencies");
             return null;
         }
+
+        final Collection<ScopedAttributeValue> resultingValues = new LazySet<ScopedAttributeValue>();
         for (ResolverPluginDependency dep : depends) {
-            Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            Collection<?> values;
+
+            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null == dependentAttribute) {
                 log.error("Dependency of ScopedAttribute " + getId() + " returned null dependent attribute");
                 continue;
             }
-            values = dependentAttribute.getValues();
-            if (null == dependentAttribute.getValues()) {
+
+            final Collection<?> values = dependentAttribute.getValues();
+            if (null == values) {
                 log.error("Dependency " + dependentAttribute.getId() + " of ScopedAttribute " + getId()
                         + "returned null value set");
                 continue;
             }
-            if (dependentAttribute.getValues().isEmpty()) {
+            if (values.isEmpty()) {
                 log.debug("Dependency " + dependentAttribute.getId() + " of ScopedAttribute " + getId()
                         + "returned no values, skipping");
                 continue;
             }
             for (Object value : values) {
-                results.add(new ScopedAttributeValue(value.toString(), scope));
+                resultingValues.add(new ScopedAttributeValue(value.toString(), scope));
             }
         }
-        if (results.isEmpty()) {
+        if (resultingValues.isEmpty()) {
             log.debug("Scoped definition " + getId() + " returned no values");
         }
-        result.setValues(results);
-        return result;
+
+        final Attribute<ScopedAttributeValue> resultantAttribute = new Attribute<ScopedAttributeValue>(getId());
+        resultantAttribute.setValues(resultingValues);
+        return resultantAttribute;
     }
 
     /**

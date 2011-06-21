@@ -39,37 +39,35 @@ public class RegexAtributeTest {
     private static final String TEST_ATTRIBUTE_NAME = "simple";
 
     /**
-     * Test regexp.
+     * Test regexp.  We set up an attribute called 'at1-Connector', we throw this
+     * at 'at1-(.+)or' and look for group 1 'Connect'.
      * 
      * @throws AttributeResolutionException on resolution issues.
      */
     @Test
     public void testRegex() throws AttributeResolutionException {
 
-        BaseAttributeDefinition attrDef =
+        final BaseAttributeDefinition attrDef =
                 new RegexSplitAttributeDefinition(TEST_ATTRIBUTE_NAME, TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP,
                         false);
-        //
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         attrDef.setDependencies(dependencySet);
 
-        //
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);
+        
+        final AttributeResolver resolver = new AttributeResolver("foo");
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);
         Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 

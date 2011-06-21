@@ -39,51 +39,48 @@ public class ScopedAttributeTest {
 
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "scoped";
+
     /** The scope. */
     private static final String TEST_SCOPE = "scope";
 
     /**
-     * Test resolution.
+     * Test resolution of the scoped attribute resolver.
      * 
      * @throws AttributeResolutionException if resolution failed.
      */
     @Test
     public void testScopes() throws AttributeResolutionException {
-        ScopedAttributeDefinition scoped = new ScopedAttributeDefinition(TEST_ATTRIBUTE_NAME, TEST_SCOPE);
-        ScopedAttributeValue res1 = new ScopedAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE);
-        ScopedAttributeValue res2 = new ScopedAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE);
 
-        //
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+
+        final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition(TEST_ATTRIBUTE_NAME, TEST_SCOPE);
         scoped.setDependencies(dependencySet);
 
-        //
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(scoped);
+
+        final AttributeResolver resolver = new AttributeResolver("foo");
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);
 
-        //
         // Now test that we got exactly what we expected - two scoped attributes
-        //
-        Collection<?> f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<?> f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(res1), "looking for COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(res2), "looking for CONNECTOR_ATTRIBUTE_VALUE");
+        Assert.assertTrue(f.contains(new ScopedAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
+                "looking for COMMON_ATTRIBUTE_VALUE");
+        Assert.assertTrue(f.contains(new ScopedAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
+                "looking for CONNECTOR_ATTRIBUTE_VALUE");
 
     }
 }

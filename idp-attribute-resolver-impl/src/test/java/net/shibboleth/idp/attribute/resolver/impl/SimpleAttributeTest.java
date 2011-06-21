@@ -45,9 +45,9 @@ public class SimpleAttributeTest {
      */
     @Test
     public void testEmpty() throws AttributeResolutionException {
-        SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
 
-        Attribute<?> result = simple.doAttributeResolution(null);
+        final Attribute<?> result = simple.doAttributeResolution(null);
 
         Assert.assertNotNull(result.getValues());
     }
@@ -56,60 +56,56 @@ public class SimpleAttributeTest {
     @Test
     public void testDataConnector() {
 
-        SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
-        //
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         simple.setDependencies(dependencySet);
 
-        //
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-        Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
+        final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
-        Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(simple);
+
+        final AttributeResolver resolver = new AttributeResolver("foo");
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE), "looking for CONNECTOR_ATTRIBUTE_VALUE");
+        final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for COMMON_ATTRIBUTE_VALUE");
+        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE),
+                "looking for CONNECTOR_ATTRIBUTE_VALUE");
     }
 
     /** Test when dependent on another attribute. */
     @Test
     public void testAttribute() {
 
-        SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
-        //
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
+
         // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
-        simple.setDependencies(ds);
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        simple.setDependencies(dependencySet);
 
-        //
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-
-        Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
+
+        final AttributeResolver resolver = new AttributeResolver("foo");
         resolver.setAttributeDefinition(am);
 
         AttributeResolutionContext context = new AttributeResolutionContext(null);
@@ -118,11 +114,12 @@ public class SimpleAttributeTest {
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
-        Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for value COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE),
+                "looking for value COMMON_ATTRIBUTE_VALUE");
+        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
                 "looking for value ATTRIBUTE_ATTRIBUTE_VALUE");
     }
 
@@ -130,41 +127,38 @@ public class SimpleAttributeTest {
     @Test
     public void testBoth() {
 
-        SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
-        //
-        // Set the dependency on the data connector
-        //
-        Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
-        ds.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
-        simple.setDependencies(ds);
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
 
-        //
+        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        simple.setDependencies(dependencySet);
+
         // And resolve
-        //
-        AttributeResolver resolver = new AttributeResolver("foo");
-
-        Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
+        final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(simple);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
+        
+        final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
+
+        final AttributeResolver resolver = new AttributeResolver("foo");
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
-
-        Assert.assertEquals(f.size(), 3);
-        Assert.assertTrue(f.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for value COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
+        
+        final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        Assert.assertEquals(values.size(), 3);
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for value COMMON_ATTRIBUTE_VALUE");
+        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
                 "looking for value ATTRIBUTE_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE),
+        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE),
                 "looking for value CONNECTOR_ATTRIBUTE_VALUE");
     }
 }

@@ -20,18 +20,23 @@ package net.shibboleth.idp.attribute.resolver.impl;
 import java.util.Collection;
 import java.util.Set;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazySet;
-
-import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-/** A Simple Attribute definition. */
-@NotThreadSafe
+import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.collections.LazySet;
+
+/**
+ * A Simple Attribute definition. Basically it copies all inputs to outputs.
+ * 
+ * Note that a given name will be resolved both from attributes and from data providers and so an element of cobination
+ * can be achieved.
+ * */
+@ThreadSafe
 public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
     /**
@@ -39,30 +44,28 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param id the name of the attribute.
      */
-    public SimpleAttributeDefinition(String id) {
+    public SimpleAttributeDefinition(final String id) {
         super(id);
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
+    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Set<ResolverPluginDependency> depends = getDependencies();
-        Attribute<Object> result = new Attribute<Object>(getId());
-        Collection<Object> results = new LazySet<Object>();
-
+        final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
-            //
-            // No input? No output
-            //
             return null;
         }
+
+        final Collection<Object> resultValues = new LazySet<Object>();
         for (ResolverPluginDependency dep : depends) {
-            Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
-                CollectionSupport.addNonNull(dependentAttribute.getValues(), results);
+                CollectionSupport.addNonNull(dependentAttribute.getValues(), resultValues);
             }
         }
-        result.setValues(results);
+
+        final Attribute<Object> result = new Attribute<Object>(getId());
+        result.setValues(resultValues);
         return result;
     }
 

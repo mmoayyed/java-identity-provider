@@ -27,6 +27,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -34,14 +35,16 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-import org.opensaml.xml.util.DatatypeHelper;
+import org.opensaml.util.Assert;
+import org.opensaml.util.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An attribute definition the computes the attribute definition by executing a script written in some JSR-223
+ * An attribute definition that computes the attribute definition by executing a script written in some JSR-223
  * supporting language.
  */
+@ThreadSafe
 public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
     /** Class logger. */
@@ -57,7 +60,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     private final ScriptEngine scriptEngine;
 
     /** The compiled form of the script, if the script engine supports compiling. */
-    private CompiledScript compiledScript;
+    private final CompiledScript compiledScript;
 
     /**
      * Constructor.
@@ -66,13 +69,17 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * @param theLanguage which language the script is in
      * @param theScript the text of the script
      */
-    public ScriptedAttributeDefinition(String id, String theLanguage, String theScript) {
+    public ScriptedAttributeDefinition(final String id, final String theLanguage, final String theScript) {
         super(id);
         scriptLanguage = theLanguage;
-        script = theScript;
-        ScriptEngineManager sem = new ScriptEngineManager();
+
+        final String trimmedScript = StringSupport.trimOrNull(theScript);
+        Assert.isNotNull(trimmedScript, "Script for " + id + " must be non-null and non empty");
+        script = trimmedScript;
+
+        final ScriptEngineManager sem = new ScriptEngineManager();
         scriptEngine = sem.getEngineByName(scriptLanguage);
-        compileScript();
+        compiledScript = compileScript();
 
     }
 
@@ -94,26 +101,47 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         return script;
     }
 
+    /**
+     * Get this resolver's script engine.
+     * 
+     * @return the engine.
+     */
+    public ScriptEngine getScriptEngine() {
+        return scriptEngine;
+    }
+
+    /**
+     * Get the compiled script for this engine. Note that this will be null if the langiage does not support
+     * compilation.
+     * 
+     * @return the compiled script.
+     */
+    public CompiledScript getCompiledScript() {
+        return compiledScript;
+    }
+
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         if (scriptEngine == null) {
-            log.error("ScriptletAttributeDefinition " + getId()
-                    + " unable to create scripting engine for the language: " + scriptLanguage);
-            throw new ComponentValidationException("ScriptletAttributeDefinition " + getId()
-                    + " unable to create scripting engine for the language: " + scriptLanguage);
+            final String msg =
+                    "ScriptletAttributeDefinition " + getId() + " unable to create scripting engine for the language: "
+                            + scriptLanguage;
+            log.error(msg);
+            throw new ComponentValidationException(msg);
         }
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
+    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        Set<ResolverPluginDependency> depends = getDependencies();
-        ScriptContext context = getScriptContext(resolutionContext);
 
+        final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
             log.info("Scripted definition " + getId() + " had no dependencies");
             return null;
         }
+
+        final ScriptContext context = getScriptContext(resolutionContext);
         try {
             if (compiledScript != null) {
                 compiledScript.eval(context);
@@ -122,37 +150,37 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
             }
 
         } catch (ScriptException e) {
-            log.error("ScriptletAttributeDefinition " + getId() + " unable to execute script", e);
-            throw new AttributeResolutionException("ScriptletAttributeDefinition " + getId()
-                    + " unable to execute script", e);
+            final String message = "ScriptletAttributeDefinition " + getId() + " unable to execute script";
+            log.error(message, e);
+            throw new AttributeResolutionException(message, e);
         }
 
         return (Attribute<?>) context.getAttribute(getId());
     }
 
-    /** Compiles the script if the scripting engine supports it. */
-    protected void compileScript() {
-        if (DatatypeHelper.isEmpty(script)) {
-            return;
-        }
-
+    /**
+     * Compiles the script if the scripting engine supports it.
+     * 
+     * @return the compiled script.
+     */
+    protected CompiledScript compileScript() {
         try {
             if (scriptEngine != null && scriptEngine instanceof Compilable) {
-                compiledScript = ((Compilable) scriptEngine).compile(script);
+                return ((Compilable) scriptEngine).compile(script);
             }
         } catch (ScriptException e) {
-            compiledScript = null;
             log.warn("{} unable to compile even though the scripting engine supports this functionality: {}", getId(),
                     e.toString());
             log.debug("Fails", e);
         }
+        return null;
     }
 
     /**
      * Creates the script execution context from the resolution context.
      * 
-     * Inserts all the dependent (shibboleth) attributes as (script) attributes.
-     * It also adds a (script) attribute called 'requestContext' with our context.
+     * Inserts all the dependent (shibboleth) attributes as (script) attributes. It also adds a (script) attribute
+     * called 'requestContext' with our context.
      * 
      * @param resolutionContext current resolution context
      * 
@@ -161,16 +189,14 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * @throws AttributeResolutionException thrown if dependent data connectors or attribute definitions can not be
      *             resolved
      */
-    protected ScriptContext getScriptContext(AttributeResolutionContext resolutionContext)
+    protected ScriptContext getScriptContext(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        SimpleScriptContext scriptContext = new SimpleScriptContext();
+        final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
-        Set<ResolverPluginDependency> depends = getDependencies();
-
         scriptContext.setAttribute("requestContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
 
-        for (ResolverPluginDependency dep : depends) {
-            Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+        for (ResolverPluginDependency dep : getDependencies()) {
+            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
                 scriptContext.setAttribute(dependentAttribute.getId(), dependentAttribute, ScriptContext.ENGINE_SCOPE);
             }
