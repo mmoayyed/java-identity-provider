@@ -18,20 +18,35 @@
 package net.shibboleth.idp.profile;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/** Checks that the incoming message has an issuer. */
-public class MandatoryIssuerCheck extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+/** An action that checks that the inbound message should be considered valid based upon when it was issued. */
+public class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
 
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(CheckMessageLifetime.class);
+
+    /** Allowed clock skew, in milliseconds. */
+    private long clockskew;
+
+    /** Amount of time, in milliseconds, for which a message is valid. */
+    private long messageLifetime;
+
+    /** Constructor. The ID of this component is set to the name of this class. */
+    public CheckMessageLifetime(){
+        super(CheckMessageLifetime.class.getName());
+    }
+    
     /**
      * Constructor.
      * 
-     * @param componentId unique ID for this component
+     * @param componentId unique ID for this action
      */
-    public MandatoryIssuerCheck(String componentId) {
+    public CheckMessageLifetime(String componentId) {
         super(componentId);
-        // TODO Auto-generated constructor stub
     }
 
     /** {@inheritDoc} */
@@ -42,8 +57,17 @@ public class MandatoryIssuerCheck extends AbstractInboundMessageSubcontextAction
     /** {@inheritDoc} */
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
             BasicMessageMetadataSubcontext messageSubcontext) {
-        
-        if (messageSubcontext.getMessageIssuer() == null) {
+
+        long issueInstant = messageSubcontext.getMessageIssueInstant();
+        long currentTime = System.currentTimeMillis();
+
+        if (issueInstant < currentTime - clockskew) {
+            log.warn("Message was expired");
+            // TODO ERROR
+        }
+
+        if (issueInstant > currentTime + messageLifetime + clockskew) {
+            log.warn("Message is not yet valid");
             // TODO ERROR
         }
 

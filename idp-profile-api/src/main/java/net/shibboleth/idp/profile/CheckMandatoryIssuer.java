@@ -18,22 +18,23 @@
 package net.shibboleth.idp.profile;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
-import org.opensaml.util.storage.ReplayCache;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/** Checks that the given message has not be replayed. */
-public class MessageReplayCheck extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+/** Checks that the incoming message has an issuer. */
+public class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
 
-    /** Cache used to store message issuer/id pairs and check to see if a message is being replayed. */
-    private ReplayCache replayCache;
-
+    /** Constructor. The ID of this component is set to the name of this class. */
+    public CheckMandatoryIssuer(){
+        super(CheckMandatoryIssuer.class.getName());
+    }
+    
     /**
      * Constructor.
      * 
-     * @param componentId unique identifier for this action
+     * @param componentId unique ID for this component
      */
-    public MessageReplayCheck(String componentId) {
+    public CheckMandatoryIssuer(String componentId) {
         super(componentId);
     }
 
@@ -45,9 +46,9 @@ public class MessageReplayCheck extends AbstractInboundMessageSubcontextAction<B
     /** {@inheritDoc} */
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
             BasicMessageMetadataSubcontext messageSubcontext) {
-
-        if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
-            // TODO error
+        
+        if (messageSubcontext.getMessageIssuer() == null) {
+            // TODO ERROR
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);

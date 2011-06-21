@@ -29,6 +29,11 @@ import org.springframework.webflow.execution.RequestContext;
 @ThreadSafe
 public class InitializeProfileRequestContext extends AbstractIdentityProviderAction {
 
+    /** Constructor. The ID of this component is set to the name of this class. */
+    public InitializeProfileRequestContext(){
+        super(InitializeProfileRequestContext.class.getName());
+    }
+    
     /**
      * Constructor.
      * 

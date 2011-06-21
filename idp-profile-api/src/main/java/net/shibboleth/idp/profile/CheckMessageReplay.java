@@ -18,29 +18,27 @@
 package net.shibboleth.idp.profile;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opensaml.util.storage.ReplayCache;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/** An action that checks that the inbound message should be considered valid based upon when it was issued. */
-public class MessageLifetimeCheck extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+/** Checks that the given message has not be replayed. */
+public class CheckMessageReplay extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(MessageLifetimeCheck.class);
+    /** Cache used to store message issuer/id pairs and check to see if a message is being replayed. */
+    private ReplayCache replayCache;
 
-    /** Allowed clock skew, in milliseconds. */
-    private long clockskew;
-
-    /** Amount of time, in milliseconds, for which a message is valid. */
-    private long messageLifetime;
+    /** Constructor. The ID of this component is set to the name of this class. */
+    public CheckMessageReplay() {
+        super(CheckMessageReplay.class.getName());
+    }
 
     /**
      * Constructor.
      * 
-     * @param componentId unique ID for this action
+     * @param componentId unique identifier for this action
      */
-    public MessageLifetimeCheck(String componentId) {
+    public CheckMessageReplay(String componentId) {
         super(componentId);
     }
 
@@ -53,17 +51,8 @@ public class MessageLifetimeCheck extends AbstractInboundMessageSubcontextAction
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
             BasicMessageMetadataSubcontext messageSubcontext) {
 
-        long issueInstant = messageSubcontext.getMessageIssueInstant();
-        long currentTime = System.currentTimeMillis();
-
-        if (issueInstant < currentTime - clockskew) {
-            log.warn("Message was expired");
-            // TODO ERROR
-        }
-
-        if (issueInstant > currentTime + messageLifetime + clockskew) {
-            log.warn("Message is not yet valid");
-            // TODO ERROR
+        if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
+            // TODO error
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
