@@ -31,6 +31,9 @@ import org.opensaml.xml.security.EvaluableCriteria;
 /** The configuration that applies to given relying party. */
 public class RelyingPartyConfiguration {
 
+    /** Unique identifier for this configuration. */
+    private final String id;
+
     /** Criteria that must be met in order for this relying party configuration to apply to a given profile request. */
     private final EvaluableCriteria<ProfileRequestContext> requirementCriteria;
 
@@ -40,12 +43,18 @@ public class RelyingPartyConfiguration {
     /**
      * Constructor.
      * 
+     * @param configurationId unique ID for this configuration
      * @param criteria criteria that must be met in order for this relying party configuration to apply to a given
      *            profile request, never null
      * @param configurations communication profile configurations for this relying party, may be null or empty
      */
-    public RelyingPartyConfiguration(final EvaluableCriteria<ProfileRequestContext> criteria,
+    public RelyingPartyConfiguration(final String configurationId,
+            final EvaluableCriteria<ProfileRequestContext> criteria,
             final Collection<ProfileConfiguration> configurations) {
+        String trimmedId = StringSupport.trimOrNull(configurationId);
+        Assert.isNotNull(trimmedId, "Relying party configuration ID can not be null or empty");
+        id = trimmedId;
+
         Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");
         requirementCriteria = criteria;
 
@@ -54,14 +63,12 @@ public class RelyingPartyConfiguration {
             return;
         }
 
-        String trimmedProfileId;
         final HashMap<String, ProfileConfiguration> configMap = new HashMap<String, ProfileConfiguration>();
         for (ProfileConfiguration config : configurations) {
             if (config != null) {
-                trimmedProfileId = StringSupport.trimOrNull(config.getProfileId());
-                Assert.isNotNull(trimmedProfileId, "ID of profile class " + config.getClass().getName()
-                        + " can not be null");
-                configMap.put(trimmedProfileId, config);
+                trimmedId = StringSupport.trimOrNull(config.getProfileId());
+                Assert.isNotNull(trimmedId, "ID of profile class " + config.getClass().getName() + " can not be null");
+                configMap.put(trimmedId, config);
             }
         }
 
@@ -70,6 +77,15 @@ public class RelyingPartyConfiguration {
         } else {
             profileConfigurations = Collections.unmodifiableMap(configMap);
         }
+    }
+
+    /**
+     * Gets the unique ID of this configuration.
+     * 
+     * @return unique ID of this configuration, never null or empty
+     */
+    public String getConfigurationId() {
+        return id;
     }
 
     /**
