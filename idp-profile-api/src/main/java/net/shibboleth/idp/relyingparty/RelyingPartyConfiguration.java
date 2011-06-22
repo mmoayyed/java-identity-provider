@@ -29,6 +29,7 @@ import org.opensaml.util.StringSupport;
 import org.opensaml.xml.security.EvaluableCriteria;
 
 /** The configuration that applies to given relying party. */
+//TODO probably need to track a default org.opensaml.xml.security.SecurityConfiguration here
 public class RelyingPartyConfiguration {
 
     /** Unique identifier for this configuration. */
@@ -36,7 +37,7 @@ public class RelyingPartyConfiguration {
 
     /** Criteria that must be met in order for this relying party configuration to apply to a given profile request. */
     private final EvaluableCriteria<ProfileRequestContext> requirementCriteria;
-
+    
     /** Registered and usable communication profile configurations for this relying party. */
     private final Map<String, ProfileConfiguration> profileConfigurations;
 
