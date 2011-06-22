@@ -433,6 +433,14 @@ public class AttributeResolver extends AbstractComponent {
         }
     }
 
+    /**
+     * Validates the given data connector.
+     * 
+     * @param connector connector to valid
+     * @param invalidDataConnectors data connectors which have already been validated
+     * 
+     * @return whether the given data connector is valid
+     */
     protected boolean validateDataConnector(BaseDataConnector connector, LazyList<String> invalidDataConnectors) {
         try {
             connector.validate();
