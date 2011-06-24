@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.relyingparty.impl;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
-
-import org.opensaml.xml.security.EvaluableCriteria;
 import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -32,10 +29,8 @@ public class AbstractSAMLProfileConfigurationTest {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignAssertionsCriteria());
 
-        EvaluableCriteria<ProfileRequestContext> criteria =
-                new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
-        config.setSignAssertionsCriteria(criteria);
-        Assert.assertSame(config.getSignAssertionsCriteria(), criteria);
+        config.setSignAssertionsCriteria(StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getSignAssertionsCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
 
         try {
             config.setSignAssertionsCriteria(null);
@@ -50,10 +45,8 @@ public class AbstractSAMLProfileConfigurationTest {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignResponsesCriteria());
 
-        EvaluableCriteria<ProfileRequestContext> criteria =
-                new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
-        config.setSignResponsesCriteria(criteria);
-        Assert.assertSame(config.getSignResponsesCriteria(), criteria);
+        config.setSignResponsesCriteria(StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getSignResponsesCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
 
         try {
             config.setSignResponsesCriteria(null);
@@ -68,10 +61,8 @@ public class AbstractSAMLProfileConfigurationTest {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignedRequestsCriteria());
 
-        EvaluableCriteria<ProfileRequestContext> criteria =
-                new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
-        config.setSignedRequestsCriteria(criteria);
-        Assert.assertSame(config.getSignedRequestsCriteria(), criteria);
+        config.setSignedRequestsCriteria(StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getSignedRequestsCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
 
         try {
             config.setSignedRequestsCriteria(null);

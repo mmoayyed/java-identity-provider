@@ -105,7 +105,12 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
 
     /** {@inheritDoc} */
     public Iterable<RelyingPartyConfiguration> resolve(final ProfileRequestContext context) throws SecurityException {
+        if (context == null) {
+            return Collections.emptyList();
+        }
+
         log.debug("Resolving relying party configurations for profile request {}", context.getId());
+
         final ArrayList<RelyingPartyConfiguration> matches = new ArrayList<RelyingPartyConfiguration>();
 
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
@@ -126,6 +131,10 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
 
     /** {@inheritDoc} */
     public RelyingPartyConfiguration resolveSingle(final ProfileRequestContext context) throws SecurityException {
+        if (context == null) {
+            return null;
+        }
+
         log.debug("Resolving relying party configuration for profile request {}", context.getId());
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",

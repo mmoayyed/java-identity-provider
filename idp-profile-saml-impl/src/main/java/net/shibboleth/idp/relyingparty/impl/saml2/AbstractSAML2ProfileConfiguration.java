@@ -52,8 +52,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      */
     public AbstractSAML2ProfileConfiguration(String profileId) {
         super(profileId);
-        encryptNameIDsCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
-        encryptAssertionsCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(true);
+        encryptNameIDsCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
+        encryptAssertionsCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
         proxyCount = 0;
         proxyAudiences = Collections.emptySet();
     }

@@ -19,9 +19,6 @@ package net.shibboleth.idp.relyingparty.impl.saml2;
 
 import java.util.ArrayList;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
-
-import org.opensaml.xml.security.EvaluableCriteria;
 import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -34,10 +31,8 @@ public class AbstractSAML2ProfileConfigurationTest {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptNameIDsCriteria());
 
-        EvaluableCriteria<ProfileRequestContext> criteria =
-                new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
-        config.setEncryptNameIDsCriteria(criteria);
-        Assert.assertSame(config.getEncryptNameIDsCriteria(), criteria);
+        config.setEncryptNameIDsCriteria(StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getEncryptNameIDsCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
 
         try {
             config.setEncryptNameIDsCriteria(null);
@@ -52,10 +47,8 @@ public class AbstractSAML2ProfileConfigurationTest {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptAssertionsCriteria());
 
-        EvaluableCriteria<ProfileRequestContext> criteria =
-                new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
-        config.setEncryptAssertionsCriteria(criteria);
-        Assert.assertSame(config.getEncryptAssertionsCriteria(), criteria);
+        config.setEncryptAssertionsCriteria(StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getEncryptAssertionsCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
 
         try {
             config.setEncryptAssertionsCriteria(null);

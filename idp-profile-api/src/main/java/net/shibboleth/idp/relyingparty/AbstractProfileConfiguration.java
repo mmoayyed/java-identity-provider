@@ -18,6 +18,7 @@
 package net.shibboleth.idp.relyingparty;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
@@ -59,5 +60,28 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      */
     public void setEnabled(boolean isEnabled) {
         enabled = isEnabled;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof AbstractProfileConfiguration)) {
+            return false;
+        }
+
+        AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
+        return ObjectSupport.equals(id, other.getProfileId());
     }
 }

@@ -43,9 +43,9 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      */
     public AbstractSAMLProfileConfiguration(String profileId) {
         super(profileId);
-        signedRequestsCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
-        signResponsesCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(true);
-        signAssertionsCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
+        signedRequestsCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
+        signResponsesCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
+        signAssertionsCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
     }
 
     /**
