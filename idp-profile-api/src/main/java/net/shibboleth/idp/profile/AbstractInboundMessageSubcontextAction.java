@@ -49,14 +49,18 @@ public abstract class AbstractInboundMessageSubcontextAction<SubcontextType exte
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext)
             throws Throwable {
 
+        if (profileRequestContext == null) {
+            return ActionSupport.buildErrorEvent(this, null, "Profile request context is null");
+        }
+
         MessageContext<?> inboundMessageContext = profileRequestContext.getInboundMessageContext();
         if (inboundMessageContext == null) {
-            // TODO ERROR
+            return ActionSupport.buildErrorEvent(this, null, "Inbound message context is null");
         }
 
         SubcontextType messageSubcontext = inboundMessageContext.getSubcontext(getSubcontextType());
         if (messageSubcontext == null) {
-            // TODO ERROR
+            return ActionSupport.buildErrorEvent(this, null, "Message subcontext is null");
         }
 
         return doExecute(springRequestContext, profileRequestContext, messageSubcontext);

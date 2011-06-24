@@ -25,10 +25,10 @@ import org.springframework.webflow.execution.RequestContext;
 public class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
 
     /** Constructor. The ID of this component is set to the name of this class. */
-    public CheckMandatoryIssuer(){
+    public CheckMandatoryIssuer() {
         super(CheckMandatoryIssuer.class.getName());
     }
-    
+
     /**
      * Constructor.
      * 
@@ -46,9 +46,10 @@ public class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction
     /** {@inheritDoc} */
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
             BasicMessageMetadataSubcontext messageSubcontext) {
-        
+
         if (messageSubcontext.getMessageIssuer() == null) {
-            // TODO ERROR
+            return ActionSupport.buildErrorEvent(this, null,
+                    "Basic message metadata subcontext does not a message issuer");
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);

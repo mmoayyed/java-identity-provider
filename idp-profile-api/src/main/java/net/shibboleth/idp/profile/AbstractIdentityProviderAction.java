@@ -1,8 +1,8 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, Inc.
- * under one or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information regarding
- * copyright ownership. The ASF licenses this file to You under the Apache 
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
  * License, Version 2.0 (the "License"); you may not use this file except in 
  * compliance with the License.  You may obtain a copy of the License at
  *
@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.AbstractComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
@@ -48,6 +50,9 @@ import org.springframework.webflow.execution.RequestContext;
 public abstract class AbstractIdentityProviderAction<InboundMessageType, OutboundMessageType> extends AbstractComponent
         implements Action {
 
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AbstractIdentityProviderAction.class);
+
     /**
      * Constructor.
      * 
@@ -62,8 +67,10 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
         final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
                 (ProfileRequestContext<InboundMessageType, OutboundMessageType>) springRequestContext
                         .getConversationScope().get(ProfileRequestContext.BINDING_KEY);
-        profileRequestContext.setHttpRequest(ActionSupport.getHttpServletRequest(springRequestContext));
-        profileRequestContext.setHttpResponse(ActionSupport.getHttpServletResponse(springRequestContext));
+        if (profileRequestContext != null) {
+            profileRequestContext.setHttpRequest(ActionSupport.getHttpServletRequest(springRequestContext));
+            profileRequestContext.setHttpResponse(ActionSupport.getHttpServletResponse(springRequestContext));
+        }
 
         Event result;
         try {
@@ -72,6 +79,11 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
             result =
                     ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, new LocalAttributeMap(
                             ActionSupport.ERROR_THROWABLE_ID, t));
+        }
+
+        if (ActionSupport.ERROR_EVENT_ID.equals(result.getId())) {
+            log.debug("Action {} failed with erro message {}", getId(),
+                    result.getAttributes().get(ActionSupport.ERROR_MESSAGE_ID));
         }
 
         return result;

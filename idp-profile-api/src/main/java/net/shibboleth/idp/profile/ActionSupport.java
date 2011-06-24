@@ -1,8 +1,8 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development, Inc.
- * under one or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information regarding
- * copyright ownership. The ASF licenses this file to You under the Apache 
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
  * License, Version 2.0 (the "License"); you may not use this file except in 
  * compliance with the License.  You may obtain a copy of the License at
  *
@@ -25,7 +25,9 @@ import net.shibboleth.idp.Component;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -54,7 +56,10 @@ public final class ActionSupport {
      * Event attribute name under which the {@link Throwable} thrown by the {@link #doExecute(ProfileRequestContext)}
      * method is stored.
      */
-    public static final String ERROR_THROWABLE_ID = "exception";
+    public static final String ERROR_THROWABLE_ID = "errorException";
+
+    /** Event attribute name under a message describing the error is stored. */
+    public static final String ERROR_MESSAGE_ID = "errorMessage";
 
     /** Constructor. */
     private ActionSupport() {
@@ -73,7 +78,7 @@ public final class ActionSupport {
         }
 
         ExternalContext externalContext = requestContext.getExternalContext();
-        if (externalContext == null) {
+        if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
             return null;
         }
 
@@ -93,7 +98,7 @@ public final class ActionSupport {
         }
 
         ExternalContext externalContext = requestContext.getExternalContext();
-        if (externalContext == null) {
+        if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
             return null;
         }
 
@@ -120,5 +125,31 @@ public final class ActionSupport {
         } else {
             return new Event(source.getId(), eventId, eventAttributes);
         }
+    }
+
+    /**
+     * Builds an error event. The event ID is {@link #ERROR_EVENT_ID} and includes in its attribute map the given
+     * exception, bound under {@link #ERROR_THROWABLE_ID} and the textual error message, bound under
+     * {@link #ERROR_MESSAGE_ID}.
+     * 
+     * @param source component that produced the error event
+     * @param error exception that represents the error, may be null
+     * @param message textual error message, may be null
+     * 
+     * @return the constructed event
+     */
+    public static Event buildErrorEvent(Component source, Exception error, String message) {
+        LocalAttributeMap eventAttributes = new LocalAttributeMap();
+
+        if (error != null) {
+            eventAttributes.put(ERROR_THROWABLE_ID, error);
+        }
+
+        String trimmedMessage = StringSupport.trimOrNull(message);
+        if (trimmedMessage != null) {
+            eventAttributes.put(ERROR_MESSAGE_ID, trimmedMessage);
+        }
+
+        return buildEvent(source, ERROR_EVENT_ID, eventAttributes);
     }
 }
