@@ -15,25 +15,20 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty.impl.saml1;
+package net.shibboleth.idp.relyingparty.impl.saml2;
 
-/** Configuration for SAML 1 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML1ProfileConfiguration {
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-    /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/attribute";
+/** Unit test for {@link AttributeQueryProfileConfiguration}. */
+public class AttributeQueryProfileConfigurationTest {
 
-    /** Constructor. */
-    public AttributeQueryProfileConfiguration() {
-        this(PROFILE_ID);
-    }
+    @Test
+    public void testProfileId() {
+        Assert.assertEquals(AttributeQueryProfileConfiguration.PROFILE_ID,
+                "http://shibboleth.net/ns/profiles/saml2/query/attribute");
 
-    /**
-     * Constructor.
-     * 
-     * @param profileId unique ID for this profile
-     */
-    protected AttributeQueryProfileConfiguration(String profileId) {
-        super(profileId);
+        AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+        Assert.assertEquals(config.getProfileId(), AttributeQueryProfileConfiguration.PROFILE_ID);
     }
 }

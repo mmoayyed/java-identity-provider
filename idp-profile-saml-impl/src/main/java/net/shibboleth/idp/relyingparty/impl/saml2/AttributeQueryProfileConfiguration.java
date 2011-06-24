@@ -21,10 +21,19 @@ package net.shibboleth.idp.relyingparty.impl.saml2;
 public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:query:attribute";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/attribute";
 
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
-        super(PROFILE_ID);
+        this(PROFILE_ID);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param profileId unique ID for this profile
+     */
+    protected AttributeQueryProfileConfiguration(String profileId) {
+        super(profileId);
     }
 }

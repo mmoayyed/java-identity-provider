@@ -17,22 +17,24 @@
 
 package net.shibboleth.idp.relyingparty.impl;
 
+import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.AbstractProfileConfiguration;
+
+import org.opensaml.util.Assert;
+import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 
 /** Base class for SAML profile configurations. */
 public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration {
-    
-    /** Whether to sign assertions. */
-    //TODO
-    //private CryptoOperationRequirementLevel signAssertions;
 
-    /** Whether to sign protocol requests. */
-    //TODO
-    //private CryptoOperationRequirementLevel signRequests;
+    /** Criteria used to determine if the received assertion should be signed. */
+    private EvaluableCriteria<ProfileRequestContext> signedRequestsCriteria;
 
-    /** Whether to sign protocol responses. */
-    //TODO
-    //private CryptoOperationRequirementLevel signResponses;
+    /** Criteria used to determine if the generated response should be signed. */
+    private EvaluableCriteria<ProfileRequestContext> signResponsesCriteria;
+
+    /** Criteria used to determine if the generated assertion should be signed. */
+    private EvaluableCriteria<ProfileRequestContext> signAssertionsCriteria;
 
     /**
      * Constructor.
@@ -41,5 +43,65 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      */
     public AbstractSAMLProfileConfiguration(String profileId) {
         super(profileId);
+        signedRequestsCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
+        signResponsesCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(true);
+        signAssertionsCriteria = new StaticResponseEvaluableCritieria<ProfileRequestContext>(false);
+    }
+
+    /**
+     * Gets the criteria used to determine if the generated assertion should be signed.
+     * 
+     * @return criteria used to determine if the generated assertion should be signed, never null
+     */
+    public EvaluableCriteria<ProfileRequestContext> getSignAssertionsCriteria() {
+        return signAssertionsCriteria;
+    }
+
+    /**
+     * Sets the criteria used to determine if the generated assertion should be signed.
+     * 
+     * @param criteria criteria used to determine if the generated assertion should be signed, never null
+     */
+    public void setSignAssertionsCriteria(EvaluableCriteria<ProfileRequestContext> criteria) {
+        Assert.isNotNull(criteria, "Criteria to determine if assertions should be signed can not be null");
+        signAssertionsCriteria = criteria;
+    }
+
+    /**
+     * Gets the criteria used to determine if the received assertion should be signed.
+     * 
+     * @return criteria used to determine if the received assertion should be signed, never null
+     */
+    public EvaluableCriteria<ProfileRequestContext> getSignedRequestsCriteria() {
+        return signedRequestsCriteria;
+    }
+
+    /**
+     * Sets the criteria used to determine if the received assertion should be signed.
+     * 
+     * @param criteria criteria used to determine if the received assertion should be signed, never null
+     */
+    public void setSignedRequestsCriteria(EvaluableCriteria<ProfileRequestContext> criteria) {
+        Assert.isNotNull(criteria, "Criteria to determine if received requests should be signed can not be null");
+        signedRequestsCriteria = criteria;
+    }
+
+    /**
+     * Gets the criteria used to determine if the generated response should be signed.
+     * 
+     * @return criteria used to determine if the generated response should be signed, never null
+     */
+    public EvaluableCriteria<ProfileRequestContext> getSignResponsesCriteria() {
+        return signResponsesCriteria;
+    }
+
+    /**
+     * Sets the criteria used to determine if the generated response should be signed.
+     * 
+     * @param criteria criteria used to determine if the generated response should be signed, never null
+     */
+    public void setSignResponsesCriteria(EvaluableCriteria<ProfileRequestContext> criteria) {
+        Assert.isNotNull(criteria, "Criteria to determine if responses should be signed can not be null");
+        signResponsesCriteria = criteria;
     }
 }

@@ -21,20 +21,35 @@ package net.shibboleth.idp.relyingparty.impl.saml2;
 public class SsoProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:sso";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso";
 
-    /** Whether responses to the authentication request should include an attribute statement. */
+    /** Whether responses to the authentication request should include an attribute statement. Default value: true */
     private boolean includeAttributeStatement;
 
-    /** The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. */
+    /**
+     * The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. A value
+     * of 0 or less indicates no cap is put on the SP's session lifetime. Default value: 0
+     */
     private long maximumSPSessionLifetime;
 
-    /** Whether produced assertions may be delegated. */
+    /** Whether produced assertions may be delegated. Default value: false */
     private boolean allowingDelegation;
 
     /** Constructor. */
     public SsoProfileConfiguration() {
-        super(PROFILE_ID);
+        this(PROFILE_ID);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param profileId unique ID for this profile
+     */
+    protected SsoProfileConfiguration(String profileId) {
+        super(profileId);
+        includeAttributeStatement = true;
+        maximumSPSessionLifetime = 0;
+        allowingDelegation = false;
     }
 
     /**

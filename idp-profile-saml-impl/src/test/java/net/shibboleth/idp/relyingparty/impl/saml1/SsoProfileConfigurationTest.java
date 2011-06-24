@@ -17,23 +17,26 @@
 
 package net.shibboleth.idp.relyingparty.impl.saml1;
 
-/** Configuration for SAML 1 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML1ProfileConfiguration {
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-    /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/attribute";
+/** Unit test for {@link SsoProfileConfiguration}. */
+public class SsoProfileConfigurationTest {
 
-    /** Constructor. */
-    public AttributeQueryProfileConfiguration() {
-        this(PROFILE_ID);
+    @Test
+    public void testProfileId() {
+        Assert.assertEquals(SsoProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml1/sso");
+
+        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        Assert.assertEquals(config.getProfileId(), SsoProfileConfiguration.PROFILE_ID);
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param profileId unique ID for this profile
-     */
-    protected AttributeQueryProfileConfiguration(String profileId) {
-        super(profileId);
+    
+    @Test
+    public void testIncludeAttributeStatement(){
+        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        Assert.assertFalse(config.includeAttributeStatement());
+        
+        config.setIncludeAttributeStatement(true);
+        Assert.assertTrue(config.includeAttributeStatement());
     }
 }

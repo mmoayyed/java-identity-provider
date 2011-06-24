@@ -17,83 +17,23 @@
 
 package net.shibboleth.idp.relyingparty.impl.saml2;
 
-/** Configuration for SAML 2 SSO requests. */
-public class EcpProfileConfiguration extends AbstractSAML2ProfileConfiguration {
+/** Configuration for SAML 2 ECP requests. */
+public class EcpProfileConfiguration extends SsoProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:sso";
-
-    /** Whether responses to the authentication request should include an attribute statement. */
-    private boolean includeAttributeStatement;
-
-    /** The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. */
-    private long maximumSPSessionLifetime;
-
-    /** Whether produced assertions may be delegated. */
-    private boolean allowingDelegation;
+    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:ecp";
 
     /** Constructor. */
     public EcpProfileConfiguration() {
-        super(PROFILE_ID);
+        this(PROFILE_ID);
     }
 
     /**
-     * Gets whether responses to the authentication request should include an attribute statement.
+     * Constructor.
      * 
-     * @return whether responses to the authentication request should include an attribute statement
+     * @param profileId unique ID for this profile
      */
-    public boolean includeAttributeStatement() {
-        return includeAttributeStatement;
-    }
-
-    /**
-     * Sets whether responses to the authentication request should include an attribute statement.
-     * 
-     * @param include whether responses to the authentication request should include an attribute statement
-     */
-    public void setIncludeAttributeStatement(boolean include) {
-        includeAttributeStatement = include;
-    }
-
-    /**
-     * Gets the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
-     * based on the authentication assertion. A value less than or equal to 0 is interpreted as an unlimited lifetime.
-     * 
-     * @return max lifetime of service provider should maintain a session
-     */
-    public long getMaximumSPSessionLifetime() {
-        return maximumSPSessionLifetime;
-    }
-
-    /**
-     * Sets the maximum amount of time, in milliseconds, the service provider should maintain a session for the user
-     * based on the authentication assertion. A value less than or equal to 0 is interpreted as an unlimited lifetime.
-     * 
-     * @param lifetime max lifetime of service provider should maintain a session
-     */
-    public void setMaximumSPSessionLifetime(long lifetime) {
-        if (lifetime < 1) {
-            maximumSPSessionLifetime = 0;
-        } else {
-            maximumSPSessionLifetime = lifetime;
-        }
-    }
-
-    /**
-     * Gets whether produced assertions may be delegated.
-     * 
-     * @return whether produced assertions may be delegated
-     */
-    public boolean isAllowingDelegation() {
-        return allowingDelegation;
-    }
-
-    /**
-     * Sets whether produced assertions may be delegated.
-     * 
-     * @param isAllowed whether produced assertions may be delegated
-     */
-    public void setAllowingDelegation(boolean isAllowed) {
-        allowingDelegation = isAllowed;
+    protected EcpProfileConfiguration(String profileId) {
+        super(profileId);
     }
 }

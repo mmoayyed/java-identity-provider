@@ -21,10 +21,19 @@ package net.shibboleth.idp.relyingparty.impl.saml1;
 public class ArtifactResolutionProfileConfiguration extends AbstractSAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml1:query:artifact";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/artifact";
 
     /** Constructor. */
     public ArtifactResolutionProfileConfiguration() {
-        super(PROFILE_ID);
+        this(PROFILE_ID);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param profileId unique ID for this profile
+     */
+    protected ArtifactResolutionProfileConfiguration(String profileId) {
+        super(profileId);
     }
 }

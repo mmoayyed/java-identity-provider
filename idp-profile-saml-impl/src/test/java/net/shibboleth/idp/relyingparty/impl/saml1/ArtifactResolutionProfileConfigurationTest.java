@@ -17,23 +17,18 @@
 
 package net.shibboleth.idp.relyingparty.impl.saml1;
 
-/** Configuration for SAML 1 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML1ProfileConfiguration {
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-    /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/attribute";
+/** Unit test for {@link ArtifactResolutionProfileConfiguration}. */
+public class ArtifactResolutionProfileConfigurationTest {
 
-    /** Constructor. */
-    public AttributeQueryProfileConfiguration() {
-        this(PROFILE_ID);
-    }
+    @Test
+    public void testProfileId() {
+        Assert.assertEquals(ArtifactResolutionProfileConfiguration.PROFILE_ID,
+                "http://shibboleth.net/ns/profiles/saml1/query/artifact");
 
-    /**
-     * Constructor.
-     * 
-     * @param profileId unique ID for this profile
-     */
-    protected AttributeQueryProfileConfiguration(String profileId) {
-        super(profileId);
+        ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
+        Assert.assertEquals(config.getProfileId(), ArtifactResolutionProfileConfiguration.PROFILE_ID);
     }
 }

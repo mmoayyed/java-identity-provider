@@ -15,25 +15,6 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty.impl.saml1;
+/** Functionality and base classes common to both SAML 1 and 2 relying party configuration. */
 
-/** Configuration for SAML 1 attribute query requests. */
-public class AttributeQueryProfileConfiguration extends AbstractSAML1ProfileConfiguration {
-
-    /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/attribute";
-
-    /** Constructor. */
-    public AttributeQueryProfileConfiguration() {
-        this(PROFILE_ID);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param profileId unique ID for this profile
-     */
-    protected AttributeQueryProfileConfiguration(String profileId) {
-        super(profileId);
-    }
-}
+package net.shibboleth.idp.relyingparty.impl;

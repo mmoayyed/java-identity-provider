@@ -21,14 +21,24 @@ package net.shibboleth.idp.relyingparty.impl.saml1;
 public class SsoProfileConfiguration extends AbstractSAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
-    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml1:sso";
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso";
 
-    /** Whether responses to the authentication request should include an attribute statement. */
+    /** Whether responses to the authentication request should include an attribute statement. Default value: false */
     private boolean includeAttributeStatement;
 
     /** Constructor. */
     public SsoProfileConfiguration() {
-        super(PROFILE_ID);
+        this(PROFILE_ID);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param profileId unique ID for this profile
+     */
+    protected SsoProfileConfiguration(String profileId) {
+        super(profileId);
+        includeAttributeStatement = false;
     }
 
     /**
