@@ -19,7 +19,8 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
 
-import org.springframework.expression.Expression;
+import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -32,28 +33,16 @@ public class BaseResolverPluginTest {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
 
         Assert.assertEquals(plugin.getId(), "foo");
-        Assert.assertFalse(plugin.isPropagateEvaluationConditionExceptions());
         Assert.assertFalse(plugin.isPropagateResolutionExceptions());
         Assert.assertNull(plugin.getEvaluationCondition());
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
     }
 
-    /**
-     * Test setters to <code>propogateEvaluationConditionException</code> and <code>propogateResolutionException</code>.
-     */
+    /** Test setters to {@link BaseResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
     @Test
     public void testPropogateSetters() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
-
-        plugin.setPropagateEvaluationConditionExceptions(true);
-        Assert.assertTrue(plugin.isPropagateEvaluationConditionExceptions());
-
-        plugin.setPropagateEvaluationConditionExceptions(true);
-        Assert.assertTrue(plugin.isPropagateEvaluationConditionExceptions());
-
-        plugin.setPropagateEvaluationConditionExceptions(false);
-        Assert.assertFalse(plugin.isPropagateEvaluationConditionExceptions());
 
         plugin.setPropagateResolutionExceptions(true);
         Assert.assertTrue(plugin.isPropagateResolutionExceptions());
@@ -67,22 +56,22 @@ public class BaseResolverPluginTest {
 
     /** Testing setting and evaluating expression conditions. */
     @Test
-    public void testExpressionCondition() throws Exception {
+    public void testExpressionCondition() {
         AttributeResolutionContext context = new AttributeResolutionContext(null);
 
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
         Assert.assertTrue(plugin.isApplicable(context));
 
-        Expression expression = new MockExpression(Boolean.FALSE);
-        plugin.setEvaluationCondition(expression);
+        EvaluableCriteria<AttributeResolutionContext> criteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
+        plugin.setEvaluationCondition(criteria);
         Assert.assertNotNull(plugin.getEvaluationCondition());
-        Assert.assertEquals(plugin.getEvaluationCondition(), expression);
+        Assert.assertEquals(plugin.getEvaluationCondition(), criteria);
         Assert.assertFalse(plugin.isApplicable(context));
 
-        expression = new MockExpression(Boolean.TRUE);
-        plugin.setEvaluationCondition(expression);
+        criteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
+        plugin.setEvaluationCondition(criteria);
         Assert.assertNotNull(plugin.getEvaluationCondition());
-        Assert.assertEquals(plugin.getEvaluationCondition(), expression);
+        Assert.assertEquals(plugin.getEvaluationCondition(), criteria);
         Assert.assertTrue(plugin.isApplicable(context));
 
         plugin.setEvaluationCondition(null);

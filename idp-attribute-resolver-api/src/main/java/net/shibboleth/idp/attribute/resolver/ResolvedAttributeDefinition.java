@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.collections.LazyList;
+import org.opensaml.xml.security.EvaluableCriteria;
 import org.springframework.expression.Expression;
 
 /**
@@ -99,7 +100,7 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public Expression getEvaluationCondition() {
+    public EvaluableCriteria<AttributeResolutionContext> getEvaluationCondition() {
         return null;
     }
 
@@ -123,18 +124,13 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public boolean isApplicable(AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+    public boolean isApplicable(AttributeResolutionContext resolutionContext) {
         return true;
     }
 
     /** {@inheritDoc} */
     public boolean isDependencyOnly() {
         return resolvedDefinition.isDependencyOnly();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isPropagateEvaluationConditionExceptions() {
-        return resolvedDefinition.isPropagateEvaluationConditionExceptions();
     }
 
     /** {@inheritDoc} */

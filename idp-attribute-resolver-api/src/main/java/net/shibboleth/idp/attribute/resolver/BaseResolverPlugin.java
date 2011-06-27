@@ -25,10 +25,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.AbstractComponent;
 
 import org.opensaml.util.collections.LazySet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.expression.EvaluationException;
-import org.springframework.expression.Expression;
+import org.opensaml.xml.security.EvaluableCriteria;
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
@@ -38,20 +35,11 @@ import org.springframework.expression.Expression;
 @ThreadSafe
 public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
-
-    /**
-     * Whether an {@link EvaluationException} that occurred when checking this plugins evaluation condition is re-thrown
-     * as a {@link AttributeResolutionException}.
-     */
-    private boolean propagateEvaluationConditionExceptions;
-
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions;
 
     /** Condition, whose result must be a {@link Boolean}, under which this plugin will be resolved. */
-    private Expression evaluationCondition;
+    private EvaluableCriteria<AttributeResolutionContext> evaluationCondition;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
     private Set<ResolverPluginDependency> dependencies;
@@ -64,32 +52,9 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
     public BaseResolverPlugin(final String pluginId) {
         super(pluginId);
 
-        propagateEvaluationConditionExceptions = false;
         propagateResolutionExceptions = false;
         evaluationCondition = null;
         dependencies = new LazySet<ResolverPluginDependency>();
-    }
-
-    /**
-     * Gets whether an {@link EvaluationException} that occurred when checking this plugins evaluation condition is
-     * re-thrown as a {@link AttributeResolutionException}. Doing so will cause the entire attribute resolution request
-     * to fail.
-     * 
-     * @return true if {@link EvaluationException}s are propagated, false if not
-     */
-    public boolean isPropagateEvaluationConditionExceptions() {
-        return propagateEvaluationConditionExceptions;
-    }
-
-    /**
-     * Sets whether an {@link EvaluationException} that occurred when checking this plugins evaluation condition is
-     * re-thrown as a {@link AttributeResolutionException}. Doing so will cause the entire attribute resolution request
-     * to fail.
-     * 
-     * @param propagate true if {@link EvaluationException}s are propagated, false if not
-     */
-    public void setPropagateEvaluationConditionExceptions(final boolean propagate) {
-        propagateEvaluationConditionExceptions = propagate;
     }
 
     /**
@@ -117,7 +82,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @return condition which must be met for this plugin to be resolved for a given request
      */
-    public Expression getEvaluationCondition() {
+    public EvaluableCriteria<AttributeResolutionContext> getEvaluationCondition() {
         return evaluationCondition;
     }
 
@@ -126,7 +91,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @param condition condition which must be met for this plugin to be resolved for a given request
      */
-    public void setEvaluationCondition(final Expression condition) {
+    public void setEvaluationCondition(final EvaluableCriteria<AttributeResolutionContext> condition) {
         evaluationCondition = condition;
     }
 
@@ -193,23 +158,17 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * @param resolutionContext current resolution context
      * 
      * @return true if the current resolution context meets the requirements for this plugin, false if not
-     * 
-     * @throws AttributeResolutionException thrown if there is a problem evaluating the condition
      */
-    public boolean isApplicable(final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+    public boolean isApplicable(final AttributeResolutionContext resolutionContext) {
         if (evaluationCondition == null) {
             return true;
         }
 
-        try {
-            return evaluationCondition.getValue(resolutionContext, Boolean.class);
-        } catch (EvaluationException e) {
-            log.error("Error checking evaluation condition for resolver plugin '{}'", getId(), e);
-            if (propagateEvaluationConditionExceptions) {
-                throw new AttributeResolutionException(e);
-            }
-            return false;
+        if (evaluationCondition.evaluate(resolutionContext)) {
+            return true;
         }
+
+        return false;
     }
 
     /**
