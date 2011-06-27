@@ -27,6 +27,7 @@ import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.Assert;
+import org.opensaml.xml.security.EvaluableCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class AttributeFilterPolicy extends AbstractComponent {
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
     /** Requirement that must be met for this policy to apply. */
-    private final AttributeFilterPolicyRequirementRule requirementRule;
+    private final EvaluableCriteria<AttributeFilterContext> requirementRule;
 
     /** Filters to be used on attribute values. */
     private final List<AttributeValueFilterPolicy> valuePolicies;
@@ -58,7 +59,8 @@ public class AttributeFilterPolicy extends AbstractComponent {
      * @param policyRequirementRule rule that indicates when this policy is active, never null
      * @param attributeValuePolicies set of attribute rules enforced when this rule is active
      */
-    public AttributeFilterPolicy(final String id, final AttributeFilterPolicyRequirementRule policyRequirementRule,
+    public AttributeFilterPolicy(final String id,
+            final EvaluableCriteria<AttributeFilterContext> policyRequirementRule,
             final List<AttributeValueFilterPolicy> attributeValuePolicies) {
         super(id);
 
@@ -78,7 +80,7 @@ public class AttributeFilterPolicy extends AbstractComponent {
      * 
      * @return requirement for this policy
      */
-    public AttributeFilterPolicyRequirementRule getRequirementRule() {
+    public EvaluableCriteria<AttributeFilterContext> getRequirementRule() {
         return requirementRule;
     }
 
@@ -104,7 +106,7 @@ public class AttributeFilterPolicy extends AbstractComponent {
     public boolean isApplicable(final AttributeFilterContext filterContext) throws AttributeFilteringException {
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
-        boolean isActive = requirementRule.isSatisfied(filterContext);
+        Boolean isActive = requirementRule.evaluate(filterContext);
         if (isActive) {
             log.debug("Attribute filter policy '{}' is active", getId());
         } else {

@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filtering;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,11 +41,11 @@ public class AttributeFilteringEngineTest {
     public void testFilterPolicies() {
 
         AttributeFilterPolicy policy1 =
-                new AttributeFilterPolicy("policy1", new MockAttributeFilterPolicyRequirementRule(), null);
+                new AttributeFilterPolicy("policy1", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
         AttributeFilterPolicy policy2 =
-                new AttributeFilterPolicy("policy2", new MockAttributeFilterPolicyRequirementRule(), null);
+                new AttributeFilterPolicy("policy2", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
         AttributeFilterPolicy policy3 =
-                new AttributeFilterPolicy("policy3", new MockAttributeFilterPolicyRequirementRule(), null);
+                new AttributeFilterPolicy("policy3", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine");
 
@@ -70,29 +71,29 @@ public class AttributeFilteringEngineTest {
             // expected this
         }
     }
-    
+
     /** Test filtering attributes. */
     @Test
-    public void testFilterAttributes() throws Exception{
+    public void testFilterAttributes() throws Exception {
         MockAttributeValueMatcher attribute1Matcher = new MockAttributeValueMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
-        AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy("attribute1",attribute1Matcher);
-        
-        MockAttributeFilterPolicyRequirementRule requirementRule = new MockAttributeFilterPolicyRequirementRule();
-        requirementRule.setSatisfied(true);
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", requirementRule, CollectionSupport.toList(attribute1Policy));
-                
+        AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy("attribute1", attribute1Matcher);
+
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", StaticResponseEvaluableCritieria.TRUE_RESPONSE,
+                        CollectionSupport.toList(attribute1Policy));
+
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
-        
+
         Attribute<String> attribute1 = new Attribute<String>("attribute1");
         attribute1.setValues(CollectionSupport.toList("one", "two"));
         filterContext.addPrefilteredAttribute(attribute1);
-        
+
         Attribute<String> attribute2 = new Attribute<String>("attribute2");
         attribute2.setValues(CollectionSupport.toList("a", "b"));
         filterContext.addPrefilteredAttribute(attribute2);
-        
+
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine");
         engine.setFilterPolicies(CollectionSupport.toList(policy));
 
