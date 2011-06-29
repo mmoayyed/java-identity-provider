@@ -77,7 +77,7 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public EvaluableCriteria<AttributeResolutionContext> getEvaluationCondition() {
+    public EvaluableCriteria<AttributeResolutionContext> getActivationCriteria() {
         return null;
     }
 

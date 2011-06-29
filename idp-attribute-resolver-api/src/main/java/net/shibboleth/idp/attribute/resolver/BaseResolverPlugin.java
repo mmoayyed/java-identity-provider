@@ -26,6 +26,7 @@ import net.shibboleth.idp.AbstractComponent;
 
 import org.opensaml.util.collections.LazySet;
 import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
@@ -38,8 +39,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions;
 
-    /** Condition, whose result must be a {@link Boolean}, under which this plugin will be resolved. */
-    private EvaluableCriteria<AttributeResolutionContext> evaluationCondition;
+    /** Criteria that must be met for this plugin to be active for the given request. */
+    private EvaluableCriteria<AttributeResolutionContext> activationCriteria;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
     private Set<ResolverPluginDependency> dependencies;
@@ -53,7 +54,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
         super(pluginId);
 
         propagateResolutionExceptions = false;
-        evaluationCondition = null;
+        activationCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
         dependencies = new LazySet<ResolverPluginDependency>();
     }
 
@@ -78,21 +79,25 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
     }
 
     /**
-     * Gets the condition which must be met for this plugin to be resolved for a given request.
+     * Gets the criteria that must be met for this plugin to be active for a given request.
      * 
-     * @return condition which must be met for this plugin to be resolved for a given request
+     * @return criteria that must be met for this plugin to be active for a given request, never null
      */
-    public EvaluableCriteria<AttributeResolutionContext> getEvaluationCondition() {
-        return evaluationCondition;
+    public EvaluableCriteria<AttributeResolutionContext> getActivationCriteria() {
+        return activationCriteria;
     }
 
     /**
-     * Sets the condition which must be met for this plugin to be resolved for a given request.
+     * Sets the criteria that must be met for this plugin to be active for a given request.
      * 
-     * @param condition condition which must be met for this plugin to be resolved for a given request
+     * @param criteria criteria that must be met for this plugin to be active for a given request
      */
-    public void setEvaluationCondition(final EvaluableCriteria<AttributeResolutionContext> condition) {
-        evaluationCondition = condition;
+    public void setActivationCriteria(final EvaluableCriteria<AttributeResolutionContext> criteria) {
+        if (criteria == null) {
+            activationCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
+        } else {
+            activationCriteria = criteria;
+        }
     }
 
     /**
@@ -160,11 +165,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * @return true if the current resolution context meets the requirements for this plugin, false if not
      */
     public boolean isApplicable(final AttributeResolutionContext resolutionContext) {
-        if (evaluationCondition == null) {
-            return true;
-        }
-
-        if (evaluationCondition.evaluate(resolutionContext)) {
+        if (activationCriteria.evaluate(resolutionContext)) {
             return true;
         }
 

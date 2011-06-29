@@ -100,7 +100,7 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public EvaluableCriteria<AttributeResolutionContext> getEvaluationCondition() {
+    public EvaluableCriteria<AttributeResolutionContext> getActivationCriteria() {
         return null;
     }
 

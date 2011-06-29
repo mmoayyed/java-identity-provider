@@ -116,7 +116,7 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
-            if (configuration.getRequirementCriteria().evaluate(context) == Boolean.TRUE) {
+            if (configuration.getActivationCriteria().evaluate(context) == Boolean.TRUE) {
                 log.debug("Relying party configuration {} is applicable to profile request {}",
                         configuration.getConfigurationId(), context.getId());
                 matches.add(configuration);
@@ -139,7 +139,7 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
-            if (configuration.getRequirementCriteria().evaluate(context) == Boolean.TRUE) {
+            if (configuration.getActivationCriteria().evaluate(context) == Boolean.TRUE) {
                 log.debug("Relying party configuration {} is applicable to profile request {}",
                         configuration.getConfigurationId(), context.getId());
                 return configuration;

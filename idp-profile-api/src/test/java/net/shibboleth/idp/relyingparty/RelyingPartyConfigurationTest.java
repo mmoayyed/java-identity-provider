@@ -35,12 +35,12 @@ public class RelyingPartyConfigurationTest {
                 new RelyingPartyConfiguration("foo", StaticResponseEvaluableCritieria.FALSE_RESPONSE,
                         Collections.EMPTY_LIST);
         Assert.assertEquals(config.getConfigurationId(), "foo");
-        Assert.assertSame(config.getRequirementCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
         Assert.assertEquals(config.getConfigurationId(), "foo");
-        Assert.assertSame(config.getRequirementCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
@@ -50,7 +50,7 @@ public class RelyingPartyConfigurationTest {
 
         config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCritieria.FALSE_RESPONSE, profileConfigs);
         Assert.assertEquals(config.getConfigurationId(), "foo");
-        Assert.assertSame(config.getRequirementCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
         Assert.assertEquals(config.getProfileConfigurations().size(), 2);
 
         try {

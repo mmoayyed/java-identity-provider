@@ -26,8 +26,8 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.attribute.Attribute;
 
-import org.opensaml.util.Assert;
 import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +46,8 @@ public class AttributeFilterPolicy extends AbstractComponent {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
-    /** Requirement that must be met for this policy to apply. */
-    private final EvaluableCriteria<AttributeFilterContext> requirementRule;
+    /** Criteria that must be met for this policy to be active for a given request. */
+    private final EvaluableCriteria<AttributeFilterContext> activationCriteria;
 
     /** Filters to be used on attribute values. */
     private final List<AttributeValueFilterPolicy> valuePolicies;
@@ -56,7 +56,8 @@ public class AttributeFilterPolicy extends AbstractComponent {
      * Constructor.
      * 
      * @param id unique ID for the policy, never null
-     * @param policyRequirementRule rule that indicates when this policy is active, never null
+     * @param policyRequirementRule rule that indicates when this policy is active, if null then
+     *            {@link StaticResponseEvaluableCritieria#FALSE_RESPONSE} is used
      * @param attributeValuePolicies set of attribute rules enforced when this rule is active
      */
     public AttributeFilterPolicy(final String id,
@@ -64,8 +65,11 @@ public class AttributeFilterPolicy extends AbstractComponent {
             final List<AttributeValueFilterPolicy> attributeValuePolicies) {
         super(id);
 
-        Assert.isNotNull(policyRequirementRule, "Attribute filter policy requirement rule may not be null");
-        requirementRule = policyRequirementRule;
+        if (policyRequirementRule == null) {
+            activationCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
+        } else {
+            activationCriteria = policyRequirementRule;
+        }
 
         if (attributeValuePolicies == null) {
             valuePolicies = Collections.emptyList();
@@ -76,12 +80,12 @@ public class AttributeFilterPolicy extends AbstractComponent {
     }
 
     /**
-     * Gets the requirement for this policy.
+     * Gets the criteria that must be met for this policy to be active for a given request.
      * 
-     * @return requirement for this policy
+     * @return criteria that must be met for this policy to be active for a given request, never null
      */
-    public EvaluableCriteria<AttributeFilterContext> getRequirementRule() {
-        return requirementRule;
+    public EvaluableCriteria<AttributeFilterContext> getActivationCriteria() {
+        return activationCriteria;
     }
 
     /**
@@ -106,7 +110,7 @@ public class AttributeFilterPolicy extends AbstractComponent {
     public boolean isApplicable(final AttributeFilterContext filterContext) throws AttributeFilteringException {
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
-        Boolean isActive = requirementRule.evaluate(filterContext);
+        Boolean isActive = activationCriteria.evaluate(filterContext);
         if (isActive) {
             log.debug("Attribute filter policy '{}' is active", getId());
         } else {

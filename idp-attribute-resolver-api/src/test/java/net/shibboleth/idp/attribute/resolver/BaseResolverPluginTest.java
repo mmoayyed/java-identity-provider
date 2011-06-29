@@ -34,7 +34,7 @@ public class BaseResolverPluginTest {
 
         Assert.assertEquals(plugin.getId(), "foo");
         Assert.assertFalse(plugin.isPropagateResolutionExceptions());
-        Assert.assertNull(plugin.getEvaluationCondition());
+        Assert.assertNull(plugin.getActivationCriteria());
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
     }
@@ -63,19 +63,19 @@ public class BaseResolverPluginTest {
         Assert.assertTrue(plugin.isApplicable(context));
 
         EvaluableCriteria<AttributeResolutionContext> criteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
-        plugin.setEvaluationCondition(criteria);
-        Assert.assertNotNull(plugin.getEvaluationCondition());
-        Assert.assertEquals(plugin.getEvaluationCondition(), criteria);
+        plugin.setActivationCriteria(criteria);
+        Assert.assertNotNull(plugin.getActivationCriteria());
+        Assert.assertEquals(plugin.getActivationCriteria(), criteria);
         Assert.assertFalse(plugin.isApplicable(context));
 
         criteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
-        plugin.setEvaluationCondition(criteria);
-        Assert.assertNotNull(plugin.getEvaluationCondition());
-        Assert.assertEquals(plugin.getEvaluationCondition(), criteria);
+        plugin.setActivationCriteria(criteria);
+        Assert.assertNotNull(plugin.getActivationCriteria());
+        Assert.assertEquals(plugin.getActivationCriteria(), criteria);
         Assert.assertTrue(plugin.isApplicable(context));
 
-        plugin.setEvaluationCondition(null);
-        Assert.assertNull(plugin.getEvaluationCondition());
+        plugin.setActivationCriteria(null);
+        Assert.assertNull(plugin.getActivationCriteria());
         Assert.assertTrue(plugin.isApplicable(context));
     }
 

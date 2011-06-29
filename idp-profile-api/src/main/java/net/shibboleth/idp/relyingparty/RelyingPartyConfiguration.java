@@ -29,15 +29,15 @@ import org.opensaml.util.StringSupport;
 import org.opensaml.xml.security.EvaluableCriteria;
 
 /** The configuration that applies to given relying party. */
-//TODO probably need to track a default org.opensaml.xml.security.SecurityConfiguration here
+// TODO probably need to track a default org.opensaml.xml.security.SecurityConfiguration here
 public class RelyingPartyConfiguration {
 
     /** Unique identifier for this configuration. */
     private final String id;
 
-    /** Criteria that must be met in order for this relying party configuration to apply to a given profile request. */
-    private final EvaluableCriteria<ProfileRequestContext> requirementCriteria;
-    
+    /** Criteria that must be met for this configuration to be active for a given request. */
+    private final EvaluableCriteria<ProfileRequestContext> activationCriteria;
+
     /** Registered and usable communication profile configurations for this relying party. */
     private final Map<String, ProfileConfiguration> profileConfigurations;
 
@@ -57,7 +57,7 @@ public class RelyingPartyConfiguration {
         id = trimmedId;
 
         Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");
-        requirementCriteria = criteria;
+        activationCriteria = criteria;
 
         if (configurations == null || configurations.isEmpty()) {
             profileConfigurations = Collections.emptyMap();
@@ -90,14 +90,12 @@ public class RelyingPartyConfiguration {
     }
 
     /**
-     * Gets the criteria that must be met in order for this relying party configuration to apply to a given profile
-     * request.
+     * Gets the criteria that must be met for this configuration to be active for a given request.
      * 
-     * @return criteria that must be met in order for this relying party configuration to apply to a given profile
-     *         request
+     * @return criteria that must be met for this configuration to be active for a given request, never null
      */
-    public EvaluableCriteria<ProfileRequestContext> getRequirementCriteria() {
-        return requirementCriteria;
+    public EvaluableCriteria<ProfileRequestContext> getActivationCriteria() {
+        return activationCriteria;
     }
 
     /**
