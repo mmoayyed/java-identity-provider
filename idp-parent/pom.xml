@@ -20,6 +20,7 @@
         <module>../idp-attribute-resolver-impl</module>
         <module>../idp-attribute-filter-api</module>
         <module>../idp-attribute-filter-impl</module>
+        <module>../idp-metadata-api</module>
         <module>../idp-consent-api</module>
         <module>../idp-consent-impl</module>
         <module>../idp-tou-api</module>
