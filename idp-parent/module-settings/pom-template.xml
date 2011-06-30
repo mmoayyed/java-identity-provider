@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: DESCRIPTIVE NAME</name>
+    <name>Shibboleth IdP :: DESCRIPTIVE_NAME</name>
     <artifactId>idp-MODULE_NAME</artifactId>
     <packaging>jar</packaging>
 
