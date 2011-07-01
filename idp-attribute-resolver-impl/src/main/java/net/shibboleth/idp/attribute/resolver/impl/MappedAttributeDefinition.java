@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
@@ -35,14 +34,13 @@ import org.opensaml.util.collections.LazySet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Implementation of Mapped Attributes. 
+/**
+ * Implementation of Mapped Attributes.
  * 
- * An attribute definition take the values from previous resolution stages 
- * and convert as it creates the output atribute.  Each value is compared 
- * with a lookup table (a {@link java.util.Collection} of @link{ValueMap}s 
- * and if it matches then the appropriate value(s) is/are substituted.  
- * Non matches are either passed through or are removed depending on the 
- * setting 'passThru'.  
+ * An attribute definition take the values from previous resolution stages and convert as it creates the output
+ * attribute. Each value is compared with a lookup table (a {@link java.util.Collection} of @link{ValueMap}s and if it
+ * matches then the appropriate value(s) is/are substituted. Non matches are either passed through or are removed
+ * depending on the setting 'passThru'.
  * */
 @ThreadSafe
 public class MappedAttributeDefinition extends BaseAttributeDefinition {
@@ -70,17 +68,26 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     public MappedAttributeDefinition(final String id, final Collection<ValueMap> maps, final String defaultVal,
             final boolean passThruParm) {
         super(id);
-        
+
         final Set<ValueMap> working = new LazySet<ValueMap>();
         CollectionSupport.addNonNull(maps, working);
         valueMaps = Collections.unmodifiableSet(working);
-        
+
         defaultValue = StringSupport.trimOrNull(defaultVal);
         passThru = passThruParm;
+
+        // Check configuration
+        if (passThru && !StringSupport.isNullOrEmpty(defaultValue)) {
+            final String message =
+                    "MappedAttributeDefinition {} (" + getId()
+                            + ") may not have a DefaultValue string with passThru enabled.";
+            org.opensaml.util.Assert.isTrue(false, message);
+        }
     }
-    
+
     /**
-     * Access to our value maps. 
+     * Access to our value maps.
+     * 
      * @return the value maps we were initialised with (never null, always normalized and unmodifiable)
      */
     public Collection<ValueMap> getValueMaps() {
@@ -95,9 +102,10 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     public String getDefaultValue() {
         return defaultValue;
     }
-    
+
     /**
      * Returns whether passThru (sic) is set for this version of this resolver.
+     * 
      * @return the value of passThru.
      */
     public boolean getPassThru() {
@@ -111,7 +119,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         if (null == depends) {
             return null;
         }
-        
+
         final Collection<Object> unmappedResults = new LazySet<Object>();
         for (ResolverPluginDependency dep : depends) {
             Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
@@ -119,7 +127,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
                 CollectionSupport.addNonNull(dependentAttribute.getValues(), unmappedResults);
             }
         }
-        
+
         // Bucket for results
         final Attribute<Object> resultAttribute = new Attribute<Object>(getId());
 
@@ -159,7 +167,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
         final LazySet<String> mappedValues = new LazySet<String>();
         boolean valueMapMatch = false;
-        
+
         if (!StringSupport.isNullOrEmpty(value)) {
             for (ValueMap valueMap : valueMaps) {
                 mappedValues.addAll(valueMap.evaluate(value));
@@ -183,13 +191,4 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         return mappedValues;
     }
 
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        if (passThru && !StringSupport.isNullOrEmpty(defaultValue)) {
-            final String message = "MappedAttributeDefinition {} (" + getId() +
-                ") may not have a DefaultValue string with passThru enabled.";
-            log.error(message);
-            throw new ComponentValidationException(message);
-        }
-    }
 }

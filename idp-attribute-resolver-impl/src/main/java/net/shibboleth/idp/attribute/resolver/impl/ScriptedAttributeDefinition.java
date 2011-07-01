@@ -28,7 +28,6 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
@@ -81,6 +80,9 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         scriptEngine = sem.getEngineByName(scriptLanguage);
         compiledScript = compileScript();
 
+        // Validate
+        Assert.isNotNull(scriptEngine, "ScriptletAttributeDefinition " + getId()
+                + " unable to create scripting engine for the language: " + scriptLanguage);
     }
 
     /**
@@ -120,18 +122,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         return compiledScript;
     }
 
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        if (scriptEngine == null) {
-            final String msg =
-                    "ScriptletAttributeDefinition " + getId() + " unable to create scripting engine for the language: "
-                            + scriptLanguage;
-            log.error(msg);
-            throw new ComponentValidationException(msg);
-        }
-    }
-
-    /** {@inheritDoc} */
+     /** {@inheritDoc} */
     protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 

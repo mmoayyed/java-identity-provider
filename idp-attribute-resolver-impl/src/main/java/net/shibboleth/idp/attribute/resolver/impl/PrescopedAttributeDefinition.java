@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -57,7 +56,8 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     public PrescopedAttributeDefinition(final String id, final String delimiter) {
         super(id);
         scopeDelimiter = delimiter;
-        Assert.isFalse(StringSupport.isNullOrEmpty(scopeDelimiter), "Scope delimiter must be non null and non empty");
+        Assert.isFalse(StringSupport.isNullOrEmpty(scopeDelimiter), "PrescopedAtributeDefinition (" + getId()
+                + ") Should have a valid delimiter.  None provided.");
     }
 
     /**
@@ -72,13 +72,13 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     protected Attribute<ScopedAttributeValue> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        
+
         final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
             log.info("PrescopedAttribute definition " + getId() + " had no dependencies");
             return null;
         }
-        
+
         final Collection<ScopedAttributeValue> resultingValues = new LazySet<ScopedAttributeValue>();
         for (ResolverPluginDependency dep : depends) {
             final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
@@ -98,7 +98,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
                         + "returned no values, skipping");
                 continue;
             }
-            
+
             for (Object value : values) {
                 if (!(value instanceof String)) {
                     log.debug("Skipping non string value " + value.toString());
@@ -116,20 +116,10 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
         if (resultingValues.isEmpty()) {
             log.debug("Prescoped definition " + getId() + " returned no values");
         }
-        
+
         final Attribute<ScopedAttributeValue> resultantAttribute = new Attribute<ScopedAttributeValue>(getId());
         resultantAttribute.setValues(resultingValues);
         return resultantAttribute;
     }
 
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-
-        if (StringSupport.isNullOrEmpty(scopeDelimiter)) {
-            final String msg =
-                    "PrescopedAtributeDefinition (" + getId() + ") Should have a valid delimiter.  None provided.";
-            log.error(msg);
-            throw new ComponentValidationException(msg);
-        }
-    }
 }
