@@ -17,31 +17,19 @@
 
 package net.shibboleth.idp.authn;
 
+import org.springframework.webflow.execution.Action;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
 /**
- * An authentication exception from which the current request might recover (e.g., user entering the wrong
- * username/password).
+ * This action inspects the current request context and determines which subflow(s) to invoke in order to meet the
+ * necessary requested {@link AuthenticationMethod}s.
  */
-public class RecoverableAuthenticationException extends AuthenticationException {
+public class PerformAuthentication implements Action {
 
-    /** Serial version UID. */
-    private static final long serialVersionUID = -1058168632014106244L;
-
-    /**
-     * Constructor.
-     * 
-     * @param message a message describing the problem that occurred during authentication
-     */
-    public RecoverableAuthenticationException(final String message) {
-        super(message);
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param message exception message
-     * @param wrappedException exception to be wrapped by this one
-     */
-    public RecoverableAuthenticationException(final String message, final Exception wrappedException) {
-        super(message, wrappedException);
+    /** {@inheritDoc} */
+    public Event execute(final RequestContext context) throws Exception {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

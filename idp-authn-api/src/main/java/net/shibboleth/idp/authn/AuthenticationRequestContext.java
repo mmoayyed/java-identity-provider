@@ -35,14 +35,13 @@ import org.opensaml.util.collections.CollectionSupport;
 public final class AuthenticationRequestContext extends AbstractSubcontext {
 
     /** Time when the authentication process started. */
-    private DateTime initiationInstant;
+    private final DateTime initiationInstant;
 
-    /** Default authentication method to use if no other method is requested. */
-    // TODO what to do about this?
-    private String defaultMethod;
+    /** Whether authentication must occur even if an existing authentication method exists and is still valid. */
+    private final boolean forcingAuthentication;
 
     /** List of requested authentication methods. */
-    private SortedSet<AuthenticationMethodContext> authenticationMethods;
+    private SortedSet<AuthenticationMethod> authenticationMethods;
 
     /** Time when authentication process completed. */
     private DateTime completionInstant;
@@ -51,11 +50,13 @@ public final class AuthenticationRequestContext extends AbstractSubcontext {
      * Constructor.
      * 
      * @param parent context that owns this context
+     * @param isForcedAuthentication whether authentication is to be forced
      */
-    public AuthenticationRequestContext(final SubcontextContainer parent) {
+    public AuthenticationRequestContext(final SubcontextContainer parent, final boolean isForcedAuthentication) {
         super(parent);
         initiationInstant = new DateTime(ISOChronology.getInstanceUTC());
-        authenticationMethods = new TreeSet<AuthenticationMethodContext>();
+        forcingAuthentication = isForcedAuthentication;
+        authenticationMethods = new TreeSet<AuthenticationMethod>();
     }
 
     /**
@@ -82,12 +83,21 @@ public final class AuthenticationRequestContext extends AbstractSubcontext {
     }
 
     /**
+     * Gets whether authentication must occur even if an existing authentication method exists and is still valid.
+     * 
+     * @return Returns the forcingAuthentication.
+     */
+    public boolean isForcingAuthentication() {
+        return forcingAuthentication;
+    }
+
+    /**
      * Gets the unmodifiable set of authentication methods that may be used to authenticate the user. This returned
      * collection is never null nor contains any null entries.
      * 
      * @return list of authentication methods that may be used to authenticate the user
      */
-    public SortedSet<AuthenticationMethodContext> getAuthenticationMethods() {
+    public SortedSet<AuthenticationMethod> getAuthenticationMethods() {
         return Collections.unmodifiableSortedSet(authenticationMethods);
     }
 
@@ -96,7 +106,7 @@ public final class AuthenticationRequestContext extends AbstractSubcontext {
      * 
      * @param methods methods to be used, may be null or contain null entries
      */
-    public void setAuthenticationMethods(final Collection<AuthenticationMethodContext> methods) {
+    public void setAuthenticationMethods(final Collection<AuthenticationMethod> methods) {
         CollectionSupport.nonNullReplace(methods, authenticationMethods);
     }
 
@@ -107,7 +117,7 @@ public final class AuthenticationRequestContext extends AbstractSubcontext {
      * 
      * @return true of the collection of authentication methods has changed due to this addition, false otherwise
      */
-    public boolean addAuthenticationMethod(final AuthenticationMethodContext method) {
+    public boolean addAuthenticationMethod(final AuthenticationMethod method) {
         return CollectionSupport.nonNullAdd(authenticationMethods, method);
     }
 
@@ -118,7 +128,7 @@ public final class AuthenticationRequestContext extends AbstractSubcontext {
      * 
      * @return true of the collection of authentication methods has changed due to this removal, false otherwise
      */
-    public boolean removeAuthenticationMethod(final AuthenticationMethodContext method) {
+    public boolean removeAuthenticationMethod(final AuthenticationMethod method) {
         return CollectionSupport.nonNullRemove(authenticationMethods, method);
     }
 }

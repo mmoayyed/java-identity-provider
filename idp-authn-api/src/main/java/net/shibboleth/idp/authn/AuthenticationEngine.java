@@ -37,7 +37,7 @@ public class AuthenticationEngine {
      * 
      * @throws AuthenticationException thrown if the engine encounters an error attempting to authenticate the subject
      */
-    public Object authenticateSubject(AuthenticationRequestContext context) throws AuthenticationException {
+    public Object authenticate(AuthenticationRequestContext context) throws AuthenticationException {
 
         // Check if necessary method(s) are already done and active if so return complete
 
