@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -11,15 +11,20 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: SAML 1/2 Profile Handlers</name>
-    <artifactId>idp-profile-saml-impl</artifactId>
+    <name>Shibboleth IdP :: APIs for SAML profile handling</name>
+    <artifactId>idp-saml-api</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <!-- Compile Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-saml-api</artifactId>
+            <artifactId>idp-profile-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-metadata-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
