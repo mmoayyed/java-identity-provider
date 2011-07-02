@@ -17,4 +17,4 @@
 
 /** Profile processing actions related to SAML 2 messages. */
 
-package net.shibboleth.idp.profile.impl.saml2;
+package net.shibboleth.idp.saml.impl.profile.saml2;

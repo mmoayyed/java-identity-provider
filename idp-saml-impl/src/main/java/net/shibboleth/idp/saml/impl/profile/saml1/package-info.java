@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** Items common to SAML 1 and SAML 2 processing. */
+/** Profile processing actions related to SAML 1 messages. */
 
-package net.shibboleth.idp.profile.impl;
+package net.shibboleth.idp.saml.impl.profile.saml1;

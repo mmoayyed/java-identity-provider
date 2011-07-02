@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.impl;
+package net.shibboleth.idp.saml.impl.profile;
 
 import java.io.Serializable;
 
