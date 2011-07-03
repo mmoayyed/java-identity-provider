@@ -17,14 +17,16 @@
 
 package net.shibboleth.idp.metadata;
 
+import net.shibboleth.idp.Component;
+
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.Resolver;
 
 /**
- * Resolver that iterates over a set of metadata about an entity and returns those bits that match the given criteria.
+ * Resolver that locates and returns one or more metdata elements that meet a given set of criteria.
  * 
  * @param <MetadataType> type of metadata returned by the resolver
  */
-public interface MetadataResolver<MetadataType> extends Resolver<MetadataType, CriteriaSet> {
+public interface MetadataResolver<MetadataType> extends Resolver<MetadataType, CriteriaSet>, Component {
 
 }

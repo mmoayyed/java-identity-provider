@@ -20,25 +20,24 @@ package net.shibboleth.idp.saml.metadata;
 import net.shibboleth.idp.metadata.MetadataResolver;
 
 import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.xml.security.CriteriaSet;
-import org.opensaml.xml.security.SecurityException;
 
-/** 
- * A metadata resolver that scans SAML metadata for Entities that match a given set of criteria. 
+/**
+ * A metadata resolver that scans SAML metadata for Entities that match a given set of criteria.
  * 
- * This metadata resolver supports searching based on the following criteria
+ * Note, this interface differs from a {@link org.opensaml.saml2.metadata.provider.MetadataProvider} in that the
+ * provider is focused on reading in batches of metadata and making them accessible while the resolver is focused on
+ * searching for metadata. The resolution process may simply search a static batch provided by a
+ * {@link org.opensaml.saml2.metadata.provider.MetadataProvider} or it may do something more dynamic such as query a
+ * remote service.
+ * 
+ * At a minimum, a {@link SamlMetadataResolver} implementation should support the following criteria:
+ * <ul>
+ * <li>{@link org.opensaml.xml.security.criteria.EntityIDCriteria}</li>
+ * <li>{@link SupportedBindingCriteria}</li>
+ * <li>{@link SupportedProtocolCriteria}</li>
+ * <li>{@link SupportedRoleCriteria}</li>
+ * </ul>
  */
-public class SamlMetadataResolver implements MetadataResolver<EntityDescriptor> {
+public interface SamlMetadataResolver extends MetadataResolver<EntityDescriptor> {
 
-    /** {@inheritDoc} */
-    public Iterable<EntityDescriptor> resolve(CriteriaSet criteria) throws SecurityException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /** {@inheritDoc} */
-    public EntityDescriptor resolveSingle(CriteriaSet criteria) throws SecurityException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }
