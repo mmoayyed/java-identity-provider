@@ -28,7 +28,7 @@ public class TestNot {
 
     /** Test whether not denies a null parameter. */
     @Test
-    public void testNotWithNull() {
+    public void notCriterionWithNullTest() {
         try {
             new NotCriterion(null);
             Assert.assertTrue(false, "NOT should not accept a null parameter");
@@ -39,7 +39,7 @@ public class TestNot {
     
     /** Test various combinations of not. */
     @Test
-    public void testNot() {
+    public void notCriterionTest() {
         EvaluableCriteria<AttributeFilterContext> base = new AnyCriterion();
         NotCriterion not = new NotCriterion(base);
         EvaluableCriteria<AttributeFilterContext> notNot = new NotCriterion(not);

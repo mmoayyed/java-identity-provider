@@ -32,7 +32,7 @@ public class TestAnd {
 
     /** Test whether not denies a null parameter. */
     @Test
-    public void testAndWithNull() {
+    public void andCriterionWithNullTest() {
         AndCriterion and = new AndCriterion(null);
         
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
@@ -51,7 +51,7 @@ public class TestAnd {
 
     /** Test various combinations of not. */
     @Test
-    public void testAnd() {
+    public void andCriterionTest() {
         EvaluableCriteria<AttributeFilterContext> t = new AnyCriterion();
         EvaluableCriteria<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
         

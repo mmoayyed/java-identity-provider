@@ -27,7 +27,7 @@ public class TestAny {
      *  test whether true is.
      */
     @Test
-    public void testAny() {
+    public void anyCriterionTest() {
         Assert.assertTrue(new AnyCriterion().evaluate(null), "True ");
     }   
 }
