@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
-import org.codehaus.janino.Java.NewAnonymousClassInstance;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.xml.security.EvaluableCriteria;
 import org.testng.Assert;
@@ -34,15 +34,24 @@ public class TestAnd {
     @Test
     public void andCriterionWithNullTest() {
         AndCriterion and = new AndCriterion(null);
-        
+
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
         Assert.assertFalse(and.evaluate(null), "and(NULL)");
+        //
+        // We cannot add null to a list via CollectionSupport.toList.
+        //
+        List<EvaluableCriteria<AttributeFilterContext>> list =
+                new ArrayList<EvaluableCriteria<AttributeFilterContext>>(3);
+        list.add(null);
+        list.add(null);
+        list.add(null);
 
-        List<EvaluableCriteria<AttributeFilterContext>> list = CollectionSupport.toList(null, null, null);
         and = new AndCriterion(list);
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
-        
-        list = CollectionSupport.toList((EvaluableCriteria<AttributeFilterContext>)null, new AnyCriterion());
+
+        list = new ArrayList<EvaluableCriteria<AttributeFilterContext>>(2);
+        list.add(null);
+        list.add(new AnyCriterion());
         and = new AndCriterion(list);
         Assert.assertEquals(and.getSubCriteria().size(), 1, "list size");
         Assert.assertTrue(and.evaluate(null), "and(NULL, TRUE)");
@@ -54,8 +63,8 @@ public class TestAnd {
     public void andCriterionTest() {
         EvaluableCriteria<AttributeFilterContext> t = new AnyCriterion();
         EvaluableCriteria<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
-        
-        List<EvaluableCriteria<AttributeFilterContext>> list = CollectionSupport.toList(t,t,t);
+
+        List<EvaluableCriteria<AttributeFilterContext>> list = CollectionSupport.toList(t, t, t);
         AndCriterion and = new AndCriterion(list);
         Assert.assertTrue(and.evaluate(null), "and(TRUE, TRUE, TRUE)");
 
@@ -64,6 +73,6 @@ public class TestAnd {
 
         and = new AndCriterion(list);
         Assert.assertFalse(and.evaluate(null), "and(FALSE, TRUE, TRUE");
-        
+
     }
 }
