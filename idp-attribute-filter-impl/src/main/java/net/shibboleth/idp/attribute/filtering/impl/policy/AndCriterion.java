@@ -23,7 +23,6 @@ import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.xml.security.EvaluableCriteria;
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class AndCriterion implements EvaluableCriteria<AttributeFilterContext> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeFilteringEngine.class);
+    private final Logger log = LoggerFactory.getLogger(AndCriterion.class);
 
     /**
      * The supplied criteria to be anded together.
