@@ -17,8 +17,11 @@
 
 /**
  * Implementation various policy activation criteria.
+ * <br />
+ *  The classes in this package all implement 
+ *  {@link org.opensaml.xml.security.EvaluableCriteria}&lt;
+ *{@link net.shibboleth.idp.attribute.filtering.AttributeFilterContext}&gt;
  */
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
-
 

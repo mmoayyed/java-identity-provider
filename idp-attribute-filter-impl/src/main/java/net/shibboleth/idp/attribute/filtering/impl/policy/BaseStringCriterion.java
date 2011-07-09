@@ -73,7 +73,14 @@ public abstract class BaseStringCriterion {
         return caseSensitive;
     }
 
-    /** {@inheritDoc} */
+    /** 
+     * Does this provided object match the constructed string.  {@link Object#toString()} is used to produce the
+     * string value to evaluate.
+     * 
+     * @param value the value to evaluate
+     * 
+     * @return true if the value matches the given match string, false if not
+     */
     public Boolean isMatch(final Object value) {
         if (caseSensitive) {
             return matchString.equals(value.toString());
