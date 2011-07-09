@@ -25,24 +25,24 @@ import org.opensaml.util.StringSupport;
 /**
  * The basis of all String-based Filter criteria.
  * 
- * just as for {@link BaseStringCriterion} Principal, AttributeValue, AttributeScope regex criteria all extend this.
- * This class's job is to just provide the match functor that they call.
+ * just as for {@link net.shibboleth.idp.attribute.filtering.impl.BaseStringCompare} Principal, AttributeValue,
+ * AttributeScope regex criteria all extend this. This class's job is to just provide the match functor that they call.
  * 
  */
 public abstract class BaseRegexCriterion {
-    
+
     /** Regular expression to match. */
     private final Pattern regex;
-    
+
     /**
-     * Constructor.  
-     *
-     * @param expression the regexp under consideration.  Must not be null or empty.
+     * Constructor.
+     * 
+     * @param expression the regexp under consideration. Must not be null or empty.
      */
     protected BaseRegexCriterion(final String expression) {
         String exp = StringSupport.trimOrNull(expression);
         Assert.isNotNull(exp, "Null or empy string passed to a Regexp attribute filter");
-        regex = Pattern.compile(expression);        
+        regex = Pattern.compile(expression);
     }
 
     /** Private Constructor. Here uniquely to guarantee that we always have non null members. */

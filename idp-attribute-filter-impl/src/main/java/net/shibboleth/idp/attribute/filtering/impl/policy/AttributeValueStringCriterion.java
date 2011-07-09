@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filtering.impl.BaseStringCompare;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * If the supplied attribute name has any value which matches the provided string (according to the provided case
  * sensitivity criterion) then we return true.
  */
-public class AttributeValueStringCriterion extends BaseStringCriterion implements
+public class AttributeValueStringCriterion extends BaseStringCompare implements
         EvaluableCriteria<AttributeFilterContext> {
 
     /** Class logger. */

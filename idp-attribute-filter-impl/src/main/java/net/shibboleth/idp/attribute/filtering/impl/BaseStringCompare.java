@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.policy;
+package net.shibboleth.idp.attribute.filtering.impl;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
@@ -26,7 +26,7 @@ import org.opensaml.util.StringSupport;
  * Principal, AttributeValue, AttributeScope criteria all extend this. This class's job is to just provide the match
  * functor that they call.
  */
-public abstract class BaseStringCriterion {
+public abstract class BaseStringCompare {
 
     /** String to match for a positive evaluation. */
     private final String matchString;
@@ -40,7 +40,7 @@ public abstract class BaseStringCriterion {
      * @param match the string we are matching against.
      * @param isCaseSensitive whether to do a case sensitive comparison.
      */
-    protected BaseStringCriterion(final String match, final boolean isCaseSensitive) {
+    protected BaseStringCompare(final String match, final boolean isCaseSensitive) {
         matchString = StringSupport.trimOrNull(match);
         Assert.isNotNull(matchString,
                 "String comparison base Policy Requirement rule must have non null matching string");
@@ -49,7 +49,7 @@ public abstract class BaseStringCriterion {
 
     /** Private Constructor. Here uniquely to guarantee that we always have non null members. */
     @SuppressWarnings("unused")
-    private BaseStringCriterion() {
+    private BaseStringCompare() {
         Assert.isTrue(false, "Private constructor should not be called");
         matchString = null;
         caseSensitive = true;
