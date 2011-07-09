@@ -44,14 +44,14 @@ public class TestOrMatcher {
      */
     @Test
     public void orMatcherTest() throws AttributeFilteringException {
-        Attribute<String> attribute = new Attribute<String>("attribute");
-        Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
+        final Attribute<String> attribute = new Attribute<String>("attribute");
+        final Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
         attribute.setValues(values);
 
         OrMatcher filter = new OrMatcher(null);
         Assert.assertTrue(filter.getMatchingValues(attribute, null).isEmpty(), "null filter gives empty result");
 
-        List<AttributeValueMatcher> list = new ArrayList<AttributeValueMatcher>(1);
+        final List<AttributeValueMatcher> list = new ArrayList<AttributeValueMatcher>(1);
         list.add((AttributeValueMatcher) null);
         filter = new OrMatcher(list);
         Assert.assertTrue(filter.getSubMatchers().isEmpty(), "empty elements are nulled out");
@@ -68,8 +68,8 @@ public class TestOrMatcher {
         list.add(new AnyMatcher());
         filter = new OrMatcher(list);
         // Force into set to make the testNG Collection comparison work.
-        Set result = new HashSet(filter.getMatchingValues(attribute, null));
-        Set vals = new HashSet(values);
+        final Set result = new HashSet(filter.getMatchingValues(attribute, null));
+        final Set vals = new HashSet(values);
 
         Assert.assertEquals(result, vals, "Match OR of anything and ANY the same as ANY");
     }

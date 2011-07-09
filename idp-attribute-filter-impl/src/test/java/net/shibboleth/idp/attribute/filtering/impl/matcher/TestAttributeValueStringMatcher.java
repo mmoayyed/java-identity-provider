@@ -47,8 +47,8 @@ public class TestAttributeValueStringMatcher {
             Assert.assertTrue(true, "testing bad constructor (empty match): usual case");
         }
 
-        Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
-        Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
+        final Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
+        final Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
         attribute.setValues(values);
 
         AttributeValueStringMatcher filter = new AttributeValueStringMatcher("one", true);

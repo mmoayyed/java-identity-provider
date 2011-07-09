@@ -58,7 +58,7 @@ public class OrMatcher implements AttributeValueMatcher {
      */
     public OrMatcher(final List<AttributeValueMatcher> theMatchers) {
 
-        List<AttributeValueMatcher> workingMatcherList =
+        final List<AttributeValueMatcher> workingMatcherList =
                 new ArrayList<AttributeValueMatcher>();
 
         CollectionSupport.addNonNull(theMatchers, workingMatcherList);
@@ -87,7 +87,7 @@ public class OrMatcher implements AttributeValueMatcher {
     public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
         
-        Set result = new HashSet(); 
+        final Set result = new HashSet(); 
         
         for (AttributeValueMatcher matcher:matchers) {
             result.addAll(matcher.getMatchingValues(attribute, filterContext));

@@ -47,10 +47,10 @@ public class AttributeValueStringMatcher extends BaseStringCompare implements At
     }
 
     /** {@inheritDoc} */
-    public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+    public Collection<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        Set<String> result = new LazySet<String>();
-        Collection values = attribute.getValues();
+        final Set<String> result = new LazySet<String>();
+        final Collection values = attribute.getValues();
         //
         // We must do this bit by bit in order to enforce the .toString in the
         // call to isMatch (so in the case sensitive side we cannot just call 
