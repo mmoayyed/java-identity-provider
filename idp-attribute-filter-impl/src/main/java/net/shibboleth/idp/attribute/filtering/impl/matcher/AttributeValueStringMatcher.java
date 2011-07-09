@@ -51,19 +51,17 @@ public class AttributeValueStringMatcher extends BaseStringCompare implements At
             throws AttributeFilteringException {
         Set<String> result = new LazySet<String>();
         Collection values = attribute.getValues();
-        if (isCaseSensitive()) {
-            // Case sensitive, so we can use the {@link Collection#contains}
-            if (values.contains(getMatchString())) {
-                result.add(getMatchString());
-            }
-        } else {
-            // Do this bit by bit
-            for (Object value : values) {
-                if (isMatch(value)) {
-                    result.add(getMatchString());
-                    // All done
-                    break;
-                }
+        //
+        // We must do this bit by bit in order to enforce the .toString in the
+        // call to isMatch (so in the case sensitive side we cannot just call 
+        // values.contains())
+        // Do this bit by bit
+        for (Object value : values) {
+            if (isMatch(value)) {
+                // Add value, not the patter since the patter might be uppercase.
+                result.add(value.toString());
+                // All done
+                break;
             }
         }
         return Collections.unmodifiableCollection(result);
