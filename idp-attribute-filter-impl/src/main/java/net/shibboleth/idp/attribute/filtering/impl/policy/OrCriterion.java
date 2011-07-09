@@ -44,7 +44,7 @@ public class OrCriterion implements EvaluableCriteria<AttributeFilterContext> {
     private final Logger log = LoggerFactory.getLogger(OrCriterion.class);
 
     /**
-     * The supplied criteria to be anded together.
+     * The supplied criteria to be ORed together.
      * 
      * This list in unmodifiable.
      */
