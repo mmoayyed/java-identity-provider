@@ -58,7 +58,7 @@ public class TestAnd {
 
     }
 
-    /** Test various combinations of not. */
+    /** Test various combinations of And. */
     @Test
     public void andCriterionTest() {
         EvaluableCriteria<AttributeFilterContext> t = new AnyCriterion();

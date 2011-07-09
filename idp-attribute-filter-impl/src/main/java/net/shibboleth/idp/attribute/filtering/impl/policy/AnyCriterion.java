@@ -29,7 +29,7 @@ import org.opensaml.xml.security.EvaluableCriteria;
 public class AnyCriterion implements EvaluableCriteria<AttributeFilterContext> {
 
     /** {@inheritDoc} */
-    public Boolean evaluate(AttributeFilterContext target) {
+    public Boolean evaluate(final AttributeFilterContext target) {
         return true;
     }
 

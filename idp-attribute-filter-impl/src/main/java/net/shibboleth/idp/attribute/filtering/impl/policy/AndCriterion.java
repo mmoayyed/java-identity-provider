@@ -79,7 +79,7 @@ public class AndCriterion implements EvaluableCriteria<AttributeFilterContext> {
     }
 
     /** {@inheritDoc} */
-    public Boolean evaluate(AttributeFilterContext target) {
+    public Boolean evaluate(final AttributeFilterContext target) {
         if (criteria.isEmpty()) {
             return Boolean.FALSE;
         }

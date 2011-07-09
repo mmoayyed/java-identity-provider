@@ -38,7 +38,7 @@ public class NotCriterion implements EvaluableCriteria<AttributeFilterContext> {
      * 
      * @param theCriterion we are 'not'ing.
      */
-    public NotCriterion(EvaluableCriteria<AttributeFilterContext> theCriterion) {
+    public NotCriterion(final EvaluableCriteria<AttributeFilterContext> theCriterion) {
         Assert.isNotNull(theCriterion, "Null criterion added to NOT functot");
         criterion = theCriterion;
     }
@@ -61,7 +61,7 @@ public class NotCriterion implements EvaluableCriteria<AttributeFilterContext> {
     }
 
     /** {@inheritDoc} */
-    public Boolean evaluate(AttributeFilterContext target) {
+    public Boolean evaluate(final AttributeFilterContext target) {
         return !criterion.evaluate(target);
     }
 
