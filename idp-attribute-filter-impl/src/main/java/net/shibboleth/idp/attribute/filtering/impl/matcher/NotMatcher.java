@@ -30,9 +30,9 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import org.opensaml.util.Assert;
 
 /**
- * Implement the NOTE matcher.
+ * Implement the NOT matcher.
  * <br />
- * Anything returned from the sub matcher is removed from the attribute list of values. 
+ * Anything returned from the sub matcher is removed from the attribute's list of values. 
  */
 public class NotMatcher implements AttributeValueMatcher {
 
@@ -70,6 +70,9 @@ public class NotMatcher implements AttributeValueMatcher {
         final Set result = new HashSet(attribute.getValues());
         for (Object value:subMatcher.getMatchingValues(attribute, filterContext)) {
             result.remove(value);
+        }
+        if (result.isEmpty()) {
+            return Collections.emptySet();
         }
         return Collections.unmodifiableCollection(result);
     }
