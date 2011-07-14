@@ -31,8 +31,10 @@ import org.opensaml.xml.util.LazySet;
 
 /**
  * Implement the Attribute String Value Matcher. <br />
- * If any of the values matches the string then a singleton collection containing that string is returned, otherwise an
- * empty collection is returned.
+ * If any of the values matches the string then the result is a {@link Collection} with those entries. Otherwise an
+ * empty collection is returned. null is never returned.
+ * <br /> <em> Note </em> If case sensitive is true then this function only returns and empty set or a set 
+ * with one value.   
  */
 public class AttributeValueStringMatcher extends BaseStringCompare implements AttributeValueMatcher {
 
@@ -49,20 +51,26 @@ public class AttributeValueStringMatcher extends BaseStringCompare implements At
     /** {@inheritDoc} */
     public Collection<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        final Set<String> result = new LazySet<String>();
+        Set<String> result = null;
         final Collection values = attribute.getValues();
-        //
-        // We must do this bit by bit in order to enforce the .toString in the
-        // call to isMatch (so in the case sensitive side we cannot just call 
-        // values.contains())
-        // Do this bit by bit
+
         for (Object value : values) {
             if (isMatch(value)) {
-                // Add value, not the patter since the patter might be uppercase.
+                if (null == result) {
+                    // Lazy object allocation
+                    result = new LazySet<String>();
+                }
+                // Add value, not the pattern since the pattern might be in a different case.
                 result.add(value.toString());
-                // All done
-                break;
+                if (isCaseSensitive()) {
+                    // There can only be one element which matches. Adding other ones
+                    // will be a no-op in a Set
+                    break;
+                }
             }
+        }
+        if (null == result) {
+            return Collections.emptySet();
         }
         return Collections.unmodifiableCollection(result);
     }
