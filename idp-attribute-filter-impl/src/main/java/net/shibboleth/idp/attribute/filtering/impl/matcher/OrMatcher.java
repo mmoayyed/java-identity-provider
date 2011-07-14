@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Implement the OR matcher.
  * 
- * All elements from all child matchers are combined. 
+ * All elements from all child matchers are combined into the resultant set.
  */
 public class OrMatcher implements AttributeValueMatcher {
 
@@ -68,7 +68,7 @@ public class OrMatcher implements AttributeValueMatcher {
         matchers = Collections.unmodifiableList(workingMatcherList);
     }
     
-    /** private default constructor to force invariant of matchers being non null. */
+    /** private default constructor to force the invariant of matchers being non null. */
     @SuppressWarnings("unused")
     private OrMatcher() {
         Assert.isFalse(true, "uncallable code");
@@ -91,6 +91,9 @@ public class OrMatcher implements AttributeValueMatcher {
         
         for (AttributeValueMatcher matcher:matchers) {
             result.addAll(matcher.getMatchingValues(attribute, filterContext));
+        }
+        if (result.isEmpty()) {
+            return Collections.emptySet();
         }
         return Collections.unmodifiableCollection(result);
     }
