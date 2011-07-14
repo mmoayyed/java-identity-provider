@@ -26,8 +26,8 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 /**
  * Implement the ANY Match functor.
- * 
- * Return all the values from the attribute.
+ * <br />
+ * Return all the values which the attribute has resolved to.
  */
 public class AnyMatcher implements AttributeValueMatcher {
 
