@@ -22,6 +22,7 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filtering.impl.BaseRegexCompare;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  * If the supplied attribute name has any value with a scope which matches the provided regex then we return true.
  */
-public class AttributeScopeRegexCriterion extends BaseRegexCriterion implements
+public class AttributeScopeRegexCriterion extends BaseRegexCompare implements
         EvaluableCriteria<AttributeFilterContext> {
 
     /** Class logger. */

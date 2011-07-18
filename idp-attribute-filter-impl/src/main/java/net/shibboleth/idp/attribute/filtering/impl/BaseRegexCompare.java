@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.policy;
+package net.shibboleth.idp.attribute.filtering.impl;
 
 import java.util.regex.Pattern;
 
@@ -23,13 +23,14 @@ import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 
 /**
- * The basis of all String-based Filter criteria.
+ * The basis of all Regex-based Filter criteria.
  * 
- * just as for {@link net.shibboleth.idp.attribute.filtering.impl.BaseStringCompare} Principal, AttributeValue,
- * AttributeScope regex criteria all extend this. This class's job is to just provide the match functor that they call.
+ * Just as for {@link BaseStringCompare} Principal, AttributeValue, AttributeScope regex matchers and criteria all
+ * extend this class. This class's job is to just provide the match functor that they call and to police the
+ * constructor.
  * 
  */
-public abstract class BaseRegexCriterion {
+public abstract class BaseRegexCompare {
 
     /** Regular expression to match. */
     private final Pattern regex;
@@ -39,7 +40,7 @@ public abstract class BaseRegexCriterion {
      * 
      * @param expression the regexp under consideration. Must not be null or empty.
      */
-    protected BaseRegexCriterion(final String expression) {
+    protected BaseRegexCompare(final String expression) {
         String exp = StringSupport.trimOrNull(expression);
         Assert.isNotNull(exp, "Null or empy string passed to a Regexp attribute filter");
         regex = Pattern.compile(expression);
@@ -47,7 +48,7 @@ public abstract class BaseRegexCriterion {
 
     /** Private Constructor. Here uniquely to guarantee that we always have non null members. */
     @SuppressWarnings("unused")
-    private BaseRegexCriterion() {
+    private BaseRegexCompare() {
         Assert.isTrue(false, "Private constructor should not be called");
         regex = null;
     }
