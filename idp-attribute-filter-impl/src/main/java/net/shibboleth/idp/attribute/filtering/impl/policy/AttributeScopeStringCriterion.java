@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import java.util.Collection;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * If the supplied attribute name has any value with a scope which matches the provided string (according to the
  * provided case sensitivity criterion) then we return true.
  */
+@ThreadSafe
 public class AttributeScopeStringCriterion extends BaseStringCompare implements
         EvaluableCriteria<AttributeFilterContext> {
 

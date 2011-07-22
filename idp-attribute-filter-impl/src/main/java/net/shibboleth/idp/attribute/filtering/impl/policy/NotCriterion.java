@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.Assert;
@@ -28,6 +29,7 @@ import org.opensaml.xml.security.EvaluableCriteria;
  * 
  * If the supplied subcontext is true then this returns false and vice versa
  */
+@ThreadSafe
 public class NotCriterion implements EvaluableCriteria<AttributeFilterContext> {
 
     /** The criterion we are NOT ing. */

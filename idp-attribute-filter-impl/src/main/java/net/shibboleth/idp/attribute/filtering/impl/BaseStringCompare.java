@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filtering.impl;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 
@@ -26,6 +28,7 @@ import org.opensaml.util.StringSupport;
  * Principal, AttributeValue, AttributeScope criteria all extend this. This class's job is to just provide the match
  * functor that they call.
  */
+@ThreadSafe
 public abstract class BaseStringCompare {
 
     /** String to match for a positive evaluation. */

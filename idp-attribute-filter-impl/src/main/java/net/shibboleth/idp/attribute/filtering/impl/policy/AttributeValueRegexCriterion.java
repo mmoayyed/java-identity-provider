@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import java.util.Collection;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.impl.BaseRegexCompare;
@@ -34,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  * If the supplied attribute name has any value which matches the provided regex then we return true.
  */
+@ThreadSafe
 public class AttributeValueRegexCriterion extends BaseRegexCompare implements
         EvaluableCriteria<AttributeFilterContext> {
 

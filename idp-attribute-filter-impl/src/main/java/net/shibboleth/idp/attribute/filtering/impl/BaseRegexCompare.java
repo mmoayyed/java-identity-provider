@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.filtering.impl;
 
 import java.util.regex.Pattern;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 
@@ -30,6 +32,7 @@ import org.opensaml.util.StringSupport;
  * constructor.
  * 
  */
+@ThreadSafe
 public abstract class BaseRegexCompare {
 
     /** Regular expression to match. */
