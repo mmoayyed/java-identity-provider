@@ -25,7 +25,7 @@ import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.util.resolver.Resolver;
-import org.opensaml.xml.security.SecurityException;
+import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,7 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
     }
 
     /** {@inheritDoc} */
-    public Iterable<RelyingPartyConfiguration> resolve(final ProfileRequestContext context) throws SecurityException {
+    public Iterable<RelyingPartyConfiguration> resolve(final ProfileRequestContext context) throws ResolverException {
         if (context == null) {
             return Collections.emptyList();
         }
@@ -130,7 +130,7 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
     }
 
     /** {@inheritDoc} */
-    public RelyingPartyConfiguration resolveSingle(final ProfileRequestContext context) throws SecurityException {
+    public RelyingPartyConfiguration resolveSingle(final ProfileRequestContext context) throws ResolverException {
         if (context == null) {
             return null;
         }

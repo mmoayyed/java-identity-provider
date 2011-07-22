@@ -28,7 +28,7 @@ import net.shibboleth.idp.AbstractComponent;
 import org.opensaml.util.Assert;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.resolver.Resolver;
-import org.opensaml.xml.security.SecurityException;
+import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +110,7 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
     }
 
     /** {@inheritDoc} */
-    public Iterable<Session> resolve(EvaluableCriterion<Session> criteria) throws SecurityException {
+    public Iterable<Session> resolve(EvaluableCriterion<Session> criteria) throws ResolverException {
         log.debug("Resolving sessions");
 
         if (criteria == null || sessionStore.isEmpty()) {
@@ -133,7 +133,7 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
     }
 
     /** {@inheritDoc} */
-    public Session resolveSingle(EvaluableCriterion<Session> criteria) throws SecurityException {
+    public Session resolveSingle(EvaluableCriterion<Session> criteria) throws ResolverException {
         log.debug("Resolving session");
 
         if (criteria == null || sessionStore.isEmpty()) {
