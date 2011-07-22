@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -34,6 +35,7 @@ import org.opensaml.xml.util.LazySet;
  * The result is a {@link Collection} with those value which match the regular expression. If none match then an empty
  * collection is returned. null is never returned. <br />
  */
+@ThreadSafe
 public class AttributeValueRegexMatcher extends BaseRegexCompare implements AttributeValueMatcher {
 
     /**

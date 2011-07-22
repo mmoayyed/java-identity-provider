@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
  * 
  * All elements from all child matchers are combined into the resultant set.
  */
+@ThreadSafe
 public class OrMatcher implements AttributeValueMatcher {
 
     /** Class logger. */

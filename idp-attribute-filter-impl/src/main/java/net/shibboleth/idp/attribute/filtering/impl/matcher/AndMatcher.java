@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
  * matcher2 AND .... <br />
  * However it seems likely that such a constraint is erroneous...
  */
+@ThreadSafe
 public class AndMatcher implements AttributeValueMatcher {
 
     /** Class logger. */

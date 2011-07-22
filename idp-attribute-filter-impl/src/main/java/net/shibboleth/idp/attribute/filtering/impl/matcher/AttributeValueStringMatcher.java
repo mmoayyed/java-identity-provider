@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -36,6 +37,7 @@ import org.opensaml.xml.util.LazySet;
  * <br /> <em> Note </em> If case sensitive is true then this function only returns and empty set or a set 
  * with one value.   
  */
+@ThreadSafe
 public class AttributeValueStringMatcher extends BaseStringCompare implements AttributeValueMatcher {
 
     /**

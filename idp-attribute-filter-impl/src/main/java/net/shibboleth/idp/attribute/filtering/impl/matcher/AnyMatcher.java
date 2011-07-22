@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import java.util.Collection;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -29,6 +30,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
  * <br />
  * Return all the values which the attribute has resolved to.
  */
+@ThreadSafe
 public class AnyMatcher implements AttributeValueMatcher {
 
     /** {@inheritDoc} */

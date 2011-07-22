@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -34,6 +35,7 @@ import org.opensaml.util.Assert;
  * <br />
  * Anything returned from the sub matcher is removed from the attribute's list of values. 
  */
+@ThreadSafe
 public class NotMatcher implements AttributeValueMatcher {
 
     /** The matcher we are NOT-ing. */

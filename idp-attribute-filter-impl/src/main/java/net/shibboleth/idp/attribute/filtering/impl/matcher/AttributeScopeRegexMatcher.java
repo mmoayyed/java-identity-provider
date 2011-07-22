@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
@@ -37,6 +38,7 @@ import org.opensaml.xml.util.LazySet;
  * it matches then we include this attribute in our result. The match function never returns null, rather an empty
  * collection is returned.
  */
+@ThreadSafe
 public class AttributeScopeRegexMatcher extends BaseRegexCompare implements AttributeValueMatcher {
 
     /**
