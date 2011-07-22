@@ -27,7 +27,7 @@ import net.shibboleth.idp.AbstractComponent;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.xml.security.Resolver;
+import org.opensaml.util.resolver.Resolver;
 import org.opensaml.xml.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -24,7 +24,7 @@ import java.util.List;
 import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.xml.security.Resolver;
+import org.opensaml.util.resolver.Resolver;
 import org.opensaml.xml.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
