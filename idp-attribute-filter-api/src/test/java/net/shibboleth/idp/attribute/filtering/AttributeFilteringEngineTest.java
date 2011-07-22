@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filtering;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -41,11 +41,11 @@ public class AttributeFilteringEngineTest {
     public void testFilterPolicies() {
 
         AttributeFilterPolicy policy1 =
-                new AttributeFilterPolicy("policy1", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
+                new AttributeFilterPolicy("policy1", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
         AttributeFilterPolicy policy2 =
-                new AttributeFilterPolicy("policy2", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
+                new AttributeFilterPolicy("policy2", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
         AttributeFilterPolicy policy3 =
-                new AttributeFilterPolicy("policy3", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
+                new AttributeFilterPolicy("policy3", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine");
 
@@ -81,7 +81,7 @@ public class AttributeFilteringEngineTest {
         AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy("attribute1", attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", StaticResponseEvaluableCritieria.TRUE_RESPONSE,
+                new AttributeFilterPolicy("attribute1Policy", StaticResponseEvaluableCriterion.TRUE_RESPONSE,
                         CollectionSupport.toList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext(null);

@@ -21,7 +21,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.Assert;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 
 
 /**
@@ -30,17 +30,17 @@ import org.opensaml.xml.security.EvaluableCriteria;
  * If the supplied subcontext is true then this returns false and vice versa
  */
 @ThreadSafe
-public class NotCriterion implements EvaluableCriteria<AttributeFilterContext> {
+public class NotCriterion implements EvaluableCriterion<AttributeFilterContext> {
 
     /** The criterion we are NOT ing. */
-    private final EvaluableCriteria<AttributeFilterContext> criterion;
+    private final EvaluableCriterion<AttributeFilterContext> criterion;
 
     /**
      * Constructor.
      * 
      * @param theCriterion we are 'not'ing.
      */
-    public NotCriterion(final EvaluableCriteria<AttributeFilterContext> theCriterion) {
+    public NotCriterion(final EvaluableCriterion<AttributeFilterContext> theCriterion) {
         Assert.isNotNull(theCriterion, "Null criterion added to NOT functot");
         criterion = theCriterion;
     }
@@ -58,7 +58,7 @@ public class NotCriterion implements EvaluableCriteria<AttributeFilterContext> {
      * Return the criterion we are 'not'ing.
      * @return the criterion
      */
-    public EvaluableCriteria<AttributeFilterContext> getSubCriterion() {
+    public EvaluableCriterion<AttributeFilterContext> getSubCriterion() {
         return criterion;
     }
 

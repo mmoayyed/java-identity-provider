@@ -19,8 +19,8 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
 
-import org.opensaml.xml.security.EvaluableCriteria;
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
+import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -62,13 +62,13 @@ public class BaseResolverPluginTest {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
         Assert.assertTrue(plugin.isApplicable(context));
 
-        EvaluableCriteria<AttributeResolutionContext> criteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
+        EvaluableCriterion<AttributeResolutionContext> criteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
         plugin.setActivationCriteria(criteria);
         Assert.assertNotNull(plugin.getActivationCriteria());
         Assert.assertEquals(plugin.getActivationCriteria(), criteria);
         Assert.assertFalse(plugin.isApplicable(context));
 
-        criteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
+        criteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
         plugin.setActivationCriteria(criteria);
         Assert.assertNotNull(plugin.getActivationCriteria());
         Assert.assertEquals(plugin.getActivationCriteria(), criteria);

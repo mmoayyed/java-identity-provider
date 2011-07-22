@@ -25,7 +25,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @ThreadSafe
-public class AndCriterion implements EvaluableCriteria<AttributeFilterContext> {
+public class AndCriterion implements EvaluableCriterion<AttributeFilterContext> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AndCriterion.class);
@@ -49,17 +49,17 @@ public class AndCriterion implements EvaluableCriteria<AttributeFilterContext> {
      * 
      * This list in unmodifiable.
      */
-    private final List<EvaluableCriteria<AttributeFilterContext>> criteria;
+    private final List<EvaluableCriterion<AttributeFilterContext>> criteria;
 
     /**
      * Constructor.
      * 
      * @param theCriteria a list of sub criteria.
      */
-    public AndCriterion(final List<EvaluableCriteria<AttributeFilterContext>> theCriteria) {
+    public AndCriterion(final List<EvaluableCriterion<AttributeFilterContext>> theCriteria) {
 
-        List<EvaluableCriteria<AttributeFilterContext>> workingCriteriaList =
-                new ArrayList<EvaluableCriteria<AttributeFilterContext>>();
+        List<EvaluableCriterion<AttributeFilterContext>> workingCriteriaList =
+                new ArrayList<EvaluableCriterion<AttributeFilterContext>>();
 
         CollectionSupport.addNonNull(theCriteria, workingCriteriaList);
         if (workingCriteriaList.isEmpty()) {
@@ -73,7 +73,7 @@ public class AndCriterion implements EvaluableCriteria<AttributeFilterContext> {
      * 
      * @return the criteria
      */
-    public List<EvaluableCriteria<AttributeFilterContext>> getSubCriteria() {
+    public List<EvaluableCriterion<AttributeFilterContext>> getSubCriteria() {
         // criteria is created as unmodifiable.
         return criteria;
     }
@@ -83,7 +83,7 @@ public class AndCriterion implements EvaluableCriteria<AttributeFilterContext> {
         if (criteria.isEmpty()) {
             return Boolean.FALSE;
         }
-        for (EvaluableCriteria<AttributeFilterContext> criterion : criteria) {
+        for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
             if (!criterion.evaluate(target)) {
                 return Boolean.FALSE;
             }

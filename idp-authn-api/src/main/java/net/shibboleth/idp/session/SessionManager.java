@@ -26,7 +26,7 @@ import java.util.Map;
 import net.shibboleth.idp.AbstractComponent;
 
 import org.opensaml.util.Assert;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.xml.security.Resolver;
 import org.opensaml.xml.security.SecurityException;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import edu.vt.middleware.crypt.util.HexConverter;
 
 /** Component that creates, manages and locates session. */
-public class SessionManager extends AbstractComponent implements Resolver<Session, EvaluableCriteria<Session>> {
+public class SessionManager extends AbstractComponent implements Resolver<Session, EvaluableCriterion<Session>> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(SessionManager.class);
@@ -110,7 +110,7 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
     }
 
     /** {@inheritDoc} */
-    public Iterable<Session> resolve(EvaluableCriteria<Session> criteria) throws SecurityException {
+    public Iterable<Session> resolve(EvaluableCriterion<Session> criteria) throws SecurityException {
         log.debug("Resolving sessions");
 
         if (criteria == null || sessionStore.isEmpty()) {
@@ -133,7 +133,7 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
     }
 
     /** {@inheritDoc} */
-    public Session resolveSingle(EvaluableCriteria<Session> criteria) throws SecurityException {
+    public Session resolveSingle(EvaluableCriterion<Session> criteria) throws SecurityException {
         log.debug("Resolving session");
 
         if (criteria == null || sessionStore.isEmpty()) {

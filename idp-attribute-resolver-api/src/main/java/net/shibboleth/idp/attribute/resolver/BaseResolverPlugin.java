@@ -25,8 +25,8 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.AbstractComponent;
 
 import org.opensaml.util.collections.LazySet;
-import org.opensaml.xml.security.EvaluableCriteria;
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
+import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
@@ -39,8 +39,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions;
 
-    /** Criteria that must be met for this plugin to be active for the given request. */
-    private EvaluableCriteria<AttributeResolutionContext> activationCriteria;
+    /** Criterion that must be met for this plugin to be active for the given request. */
+    private EvaluableCriterion<AttributeResolutionContext> activationCriteria;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
     private Set<ResolverPluginDependency> dependencies;
@@ -54,7 +54,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
         super(pluginId);
 
         propagateResolutionExceptions = false;
-        activationCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
+        activationCriteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
         dependencies = new LazySet<ResolverPluginDependency>();
     }
 
@@ -83,7 +83,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
-    public EvaluableCriteria<AttributeResolutionContext> getActivationCriteria() {
+    public EvaluableCriterion<AttributeResolutionContext> getActivationCriteria() {
         return activationCriteria;
     }
 
@@ -92,9 +92,9 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @param criteria criteria that must be met for this plugin to be active for a given request
      */
-    public void setActivationCriteria(final EvaluableCriteria<AttributeResolutionContext> criteria) {
+    public void setActivationCriteria(final EvaluableCriterion<AttributeResolutionContext> criteria) {
         if (criteria == null) {
-            activationCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
+            activationCriteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
         } else {
             activationCriteria = criteria;
         }

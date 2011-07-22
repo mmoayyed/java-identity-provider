@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -34,12 +34,12 @@ public class RelyingPartyConfigurationResolverTest {
         RelyingPartyConfigurationResolver resolver;
 
         RelyingPartyConfiguration anonConfig =
-                new RelyingPartyConfiguration("anonymous", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
+                new RelyingPartyConfiguration("anonymous", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
 
         ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
-        rpConfigs.add(new RelyingPartyConfiguration("one", StaticResponseEvaluableCritieria.TRUE_RESPONSE, null));
-        rpConfigs.add(new RelyingPartyConfiguration("two", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null));
-        rpConfigs.add(new RelyingPartyConfiguration("three", StaticResponseEvaluableCritieria.TRUE_RESPONSE, null));
+        rpConfigs.add(new RelyingPartyConfiguration("one", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
+        rpConfigs.add(new RelyingPartyConfiguration("two", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null));
+        rpConfigs.add(new RelyingPartyConfiguration("three", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
 
         resolver = new RelyingPartyConfigurationResolver("test", anonConfig, rpConfigs);
         Assert.assertEquals(resolver.getId(), "test");
@@ -76,11 +76,11 @@ public class RelyingPartyConfigurationResolverTest {
         ProfileRequestContext requestContext = new ProfileRequestContext();
 
         RelyingPartyConfiguration config1 =
-                new RelyingPartyConfiguration("one", StaticResponseEvaluableCritieria.TRUE_RESPONSE, null);
+                new RelyingPartyConfiguration("one", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
         RelyingPartyConfiguration config2 =
-                new RelyingPartyConfiguration("two", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
+                new RelyingPartyConfiguration("two", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
         RelyingPartyConfiguration config3 =
-                new RelyingPartyConfiguration("three", StaticResponseEvaluableCritieria.TRUE_RESPONSE, null);
+                new RelyingPartyConfiguration("three", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
 
         ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
         rpConfigs.add(config1);

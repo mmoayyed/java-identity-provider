@@ -26,7 +26,7 @@ import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.Assert;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.springframework.expression.Expression;
 
 /**
@@ -77,7 +77,7 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public EvaluableCriteria<AttributeResolutionContext> getActivationCriteria() {
+    public EvaluableCriterion<AttributeResolutionContext> getActivationCriteria() {
         return null;
     }
 

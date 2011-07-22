@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.collections.LazyList;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.springframework.expression.Expression;
 
 /**
@@ -100,7 +100,7 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public EvaluableCriteria<AttributeResolutionContext> getActivationCriteria() {
+    public EvaluableCriterion<AttributeResolutionContext> getActivationCriteria() {
         return null;
     }
 

@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.filtering.impl.BaseRegexCompare;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * If the supplied attribute name has any value with a scope which matches the provided regex then we return true.
  */
 public class AttributeScopeRegexCriterion extends BaseRegexCompare implements
-        EvaluableCriteria<AttributeFilterContext> {
+        EvaluableCriterion<AttributeFilterContext> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeScopeRegexCriterion.class);

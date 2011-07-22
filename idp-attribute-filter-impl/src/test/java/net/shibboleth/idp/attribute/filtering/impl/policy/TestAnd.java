@@ -23,7 +23,7 @@ import java.util.List;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,8 +40,8 @@ public class TestAnd {
         //
         // We cannot add null to a list via CollectionSupport.toList.
         //
-        List<EvaluableCriteria<AttributeFilterContext>> list =
-                new ArrayList<EvaluableCriteria<AttributeFilterContext>>(3);
+        List<EvaluableCriterion<AttributeFilterContext>> list =
+                new ArrayList<EvaluableCriterion<AttributeFilterContext>>(3);
         list.add(null);
         list.add(null);
         list.add(null);
@@ -49,7 +49,7 @@ public class TestAnd {
         and = new AndCriterion(list);
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
 
-        list = new ArrayList<EvaluableCriteria<AttributeFilterContext>>(2);
+        list = new ArrayList<EvaluableCriterion<AttributeFilterContext>>(2);
         list.add(null);
         list.add(new AnyCriterion());
         and = new AndCriterion(list);
@@ -61,10 +61,10 @@ public class TestAnd {
     /** Test various combinations of And. */
     @Test
     public void andCriterionTest() {
-        EvaluableCriteria<AttributeFilterContext> t = new AnyCriterion();
-        EvaluableCriteria<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
+        EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();
+        EvaluableCriterion<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
 
-        List<EvaluableCriteria<AttributeFilterContext>> list = CollectionSupport.toList(t, t, t);
+        List<EvaluableCriterion<AttributeFilterContext>> list = CollectionSupport.toList(t, t, t);
         AndCriterion and = new AndCriterion(list);
         Assert.assertTrue(and.evaluate(null), "and(TRUE, TRUE, TRUE)");
 

@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,9 +40,9 @@ public class TestNot {
     /** Test various combinations of not. */
     @Test
     public void notCriterionTest() {
-        EvaluableCriteria<AttributeFilterContext> base = new AnyCriterion();
+        EvaluableCriterion<AttributeFilterContext> base = new AnyCriterion();
         NotCriterion not = new NotCriterion(base);
-        EvaluableCriteria<AttributeFilterContext> notNot = new NotCriterion(not);
+        EvaluableCriterion<AttributeFilterContext> notNot = new NotCriterion(not);
         
         Assert.assertEquals(not.getSubCriterion(), base, "test getSubcriterion");
         

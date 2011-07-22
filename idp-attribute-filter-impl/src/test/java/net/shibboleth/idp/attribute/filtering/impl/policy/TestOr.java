@@ -22,7 +22,7 @@ import java.util.List;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,11 +37,11 @@ public class TestOr {
         Assert.assertEquals(or.getSubCriteria().size(), 0, "null list");
         Assert.assertFalse(or.evaluate(null), "or(NULL)");
 
-        EvaluableCriteria<AttributeFilterContext> t = new AnyCriterion();
-        EvaluableCriteria<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
+        EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();
+        EvaluableCriterion<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
         
-        List<EvaluableCriteria<AttributeFilterContext>> list =
-            new ArrayList<EvaluableCriteria<AttributeFilterContext>>(3);
+        List<EvaluableCriterion<AttributeFilterContext>> list =
+            new ArrayList<EvaluableCriterion<AttributeFilterContext>>(3);
         list.add(f);
         list.add(null);
         or = new OrCriterion(list);

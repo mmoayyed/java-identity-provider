@@ -20,7 +20,7 @@ package net.shibboleth.idp.relyingparty;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -32,15 +32,15 @@ public class RelyingPartyConfigurationTest {
         RelyingPartyConfiguration config;
 
         config =
-                new RelyingPartyConfiguration("foo", StaticResponseEvaluableCritieria.FALSE_RESPONSE,
+                new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE,
                         Collections.EMPTY_LIST);
         Assert.assertEquals(config.getConfigurationId(), "foo");
-        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
-        config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCritieria.FALSE_RESPONSE, null);
+        config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
         Assert.assertEquals(config.getConfigurationId(), "foo");
-        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
@@ -48,14 +48,14 @@ public class RelyingPartyConfigurationTest {
         profileConfigs.add(null);
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
-        config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCritieria.FALSE_RESPONSE, profileConfigs);
+        config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
         Assert.assertEquals(config.getConfigurationId(), "foo");
-        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertEquals(config.getProfileConfigurations().size(), 2);
 
         try {
             config =
-                    new RelyingPartyConfiguration(null, StaticResponseEvaluableCritieria.FALSE_RESPONSE,
+                    new RelyingPartyConfiguration(null, StaticResponseEvaluableCriterion.FALSE_RESPONSE,
                             Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
@@ -64,7 +64,7 @@ public class RelyingPartyConfigurationTest {
 
         try {
             config =
-                    new RelyingPartyConfiguration("", StaticResponseEvaluableCritieria.FALSE_RESPONSE,
+                    new RelyingPartyConfiguration("", StaticResponseEvaluableCriterion.FALSE_RESPONSE,
                             Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
@@ -86,7 +86,7 @@ public class RelyingPartyConfigurationTest {
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
         RelyingPartyConfiguration config =
-                new RelyingPartyConfiguration("foo", StaticResponseEvaluableCritieria.FALSE_RESPONSE, profileConfigs);
+                new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
         Assert.assertNotNull(config.getProfileConfiguration("foo"));
         Assert.assertNotNull(config.getProfileConfiguration("bar"));
         Assert.assertNull(config.getProfileConfiguration("baz"));

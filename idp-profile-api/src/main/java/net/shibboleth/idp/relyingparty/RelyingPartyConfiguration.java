@@ -26,7 +26,7 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.xml.security.EvaluableCriteria;
+import org.opensaml.util.criteria.EvaluableCriterion;
 
 /** The configuration that applies to given relying party. */
 // TODO probably need to track a default org.opensaml.xml.security.SecurityConfiguration here
@@ -35,8 +35,8 @@ public class RelyingPartyConfiguration {
     /** Unique identifier for this configuration. */
     private final String id;
 
-    /** Criteria that must be met for this configuration to be active for a given request. */
-    private final EvaluableCriteria<ProfileRequestContext> activationCriteria;
+    /** Criterion that must be met for this configuration to be active for a given request. */
+    private final EvaluableCriterion<ProfileRequestContext> activationCriteria;
 
     /** Registered and usable communication profile configurations for this relying party. */
     private final Map<String, ProfileConfiguration> profileConfigurations;
@@ -50,7 +50,7 @@ public class RelyingPartyConfiguration {
      * @param configurations communication profile configurations for this relying party, may be null or empty
      */
     public RelyingPartyConfiguration(final String configurationId,
-            final EvaluableCriteria<ProfileRequestContext> criteria,
+            final EvaluableCriterion<ProfileRequestContext> criteria,
             final Collection<ProfileConfiguration> configurations) {
         String trimmedId = StringSupport.trimOrNull(configurationId);
         Assert.isNotNull(trimmedId, "Relying party configuration ID can not be null or empty");
@@ -94,7 +94,7 @@ public class RelyingPartyConfiguration {
      * 
      * @return criteria that must be met for this configuration to be active for a given request, never null
      */
-    public EvaluableCriteria<ProfileRequestContext> getActivationCriteria() {
+    public EvaluableCriterion<ProfileRequestContext> getActivationCriteria() {
         return activationCriteria;
     }
 

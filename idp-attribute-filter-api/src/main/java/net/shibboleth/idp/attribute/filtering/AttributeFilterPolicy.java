@@ -26,8 +26,8 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.attribute.Attribute;
 
-import org.opensaml.xml.security.EvaluableCriteria;
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
+import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +46,8 @@ public class AttributeFilterPolicy extends AbstractComponent {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
-    /** Criteria that must be met for this policy to be active for a given request. */
-    private final EvaluableCriteria<AttributeFilterContext> activationCriteria;
+    /** Criterion that must be met for this policy to be active for a given request. */
+    private final EvaluableCriterion<AttributeFilterContext> activationCriteria;
 
     /** Filters to be used on attribute values. */
     private final List<AttributeValueFilterPolicy> valuePolicies;
@@ -57,16 +57,16 @@ public class AttributeFilterPolicy extends AbstractComponent {
      * 
      * @param id unique ID for the policy, never null
      * @param policyRequirementRule rule that indicates when this policy is active, if null then
-     *            {@link StaticResponseEvaluableCritieria#FALSE_RESPONSE} is used
+     *            {@link StaticResponseEvaluableCriterion#FALSE_RESPONSE} is used
      * @param attributeValuePolicies set of attribute rules enforced when this rule is active
      */
     public AttributeFilterPolicy(final String id,
-            final EvaluableCriteria<AttributeFilterContext> policyRequirementRule,
+            final EvaluableCriterion<AttributeFilterContext> policyRequirementRule,
             final List<AttributeValueFilterPolicy> attributeValuePolicies) {
         super(id);
 
         if (policyRequirementRule == null) {
-            activationCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
+            activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
         } else {
             activationCriteria = policyRequirementRule;
         }
@@ -84,7 +84,7 @@ public class AttributeFilterPolicy extends AbstractComponent {
      * 
      * @return criteria that must be met for this policy to be active for a given request, never null
      */
-    public EvaluableCriteria<AttributeFilterContext> getActivationCriteria() {
+    public EvaluableCriterion<AttributeFilterContext> getActivationCriteria() {
         return activationCriteria;
     }
 
