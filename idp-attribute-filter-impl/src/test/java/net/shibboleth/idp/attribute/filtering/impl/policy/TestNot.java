@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filtering.impl.policy;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -37,9 +38,10 @@ public class TestNot {
         }
     }
     
-    /** Test various combinations of not. */
+    /** Test various combinations of not. 
+     * @throws EvaluationException if a child throws. */
     @Test
-    public void notCriterionTest() {
+    public void notCriterionTest() throws EvaluationException {
         EvaluableCriterion<AttributeFilterContext> base = new AnyCriterion();
         NotCriterion not = new NotCriterion(base);
         EvaluableCriterion<AttributeFilterContext> notNot = new NotCriterion(not);

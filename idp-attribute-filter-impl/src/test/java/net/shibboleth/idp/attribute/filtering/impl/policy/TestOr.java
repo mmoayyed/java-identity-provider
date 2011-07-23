@@ -23,15 +23,17 @@ import java.util.List;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** tests for the OR criterion. */
 public class TestOr {
 
-    /** Test various combinations of Or. */
+    /** Test various combinations of Or. 
+     * @throws EvaluationException if a child throws. */
     @Test
-    public void orCriterionTest() {
+    public void orCriterionTest() throws EvaluationException {
         OrCriterion or = new OrCriterion(null);
         
         Assert.assertEquals(or.getSubCriteria().size(), 0, "null list");

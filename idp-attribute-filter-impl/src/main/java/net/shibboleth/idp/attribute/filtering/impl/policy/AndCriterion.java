@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,8 +79,9 @@ public class AndCriterion implements EvaluableCriterion<AttributeFilterContext> 
         return criteria;
     }
 
-    /** {@inheritDoc} */
-    public Boolean evaluate(final AttributeFilterContext target) {
+    /** {@inheritDoc} 
+     * @throws EvaluationException */
+    public Boolean evaluate(final AttributeFilterContext target) throws EvaluationException {
         if (criteria.isEmpty()) {
             return Boolean.FALSE;
         }

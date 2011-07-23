@@ -24,15 +24,17 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** tests for the AND criterion. */
 public class TestAnd {
 
-    /** Test whether not denies a null parameter. */
+    /** Test whether not denies a null parameter. 
+     * @throws EvaluationException if a child throws*/
     @Test
-    public void andCriterionWithNullTest() {
+    public void andCriterionWithNullTest() throws EvaluationException {
         AndCriterion and = new AndCriterion(null);
 
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
@@ -58,9 +60,10 @@ public class TestAnd {
 
     }
 
-    /** Test various combinations of And. */
+    /** Test various combinations of And. 
+     * @throws EvaluationException if a child throws*/
     @Test
-    public void andCriterionTest() {
+    public void andCriterionTest() throws EvaluationException {
         EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();
         EvaluableCriterion<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
 
