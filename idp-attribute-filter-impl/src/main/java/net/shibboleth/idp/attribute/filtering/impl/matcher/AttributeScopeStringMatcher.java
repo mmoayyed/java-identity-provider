@@ -27,7 +27,6 @@ import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.idp.attribute.filtering.impl.BaseStringCompare;
 
 import org.opensaml.xml.util.LazySet;
 
@@ -39,7 +38,7 @@ import org.opensaml.xml.util.LazySet;
  * collection is returned.
  */
 @ThreadSafe
-public class AttributeScopeStringMatcher extends BaseStringCompare implements AttributeValueMatcher {
+public class AttributeScopeStringMatcher extends BaseStringMatcher implements AttributeValueMatcher {
 
     /**
      * Constructor.

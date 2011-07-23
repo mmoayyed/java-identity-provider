@@ -31,8 +31,11 @@ import org.testng.annotations.Test;
 /** tests for the AND criterion. */
 public class TestAnd {
 
-    /** Test whether not denies a null parameter. 
-     * @throws EvaluationException if a child throws*/
+    /**
+     * Test whether not denies a null parameter.
+     * 
+     * @throws EvaluationException if a child throws
+     */
     @Test
     public void andCriterionWithNullTest() throws EvaluationException {
         AndCriterion and = new AndCriterion(null);
@@ -60,8 +63,11 @@ public class TestAnd {
 
     }
 
-    /** Test various combinations of And. 
-     * @throws EvaluationException if a child throws*/
+    /**
+     * Test various combinations of And.
+     * 
+     * @throws EvaluationException if a child throws
+     */
     @Test
     public void andCriterionTest() throws EvaluationException {
         EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();

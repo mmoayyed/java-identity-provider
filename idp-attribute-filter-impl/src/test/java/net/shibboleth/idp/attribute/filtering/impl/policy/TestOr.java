@@ -30,20 +30,23 @@ import org.testng.annotations.Test;
 /** tests for the OR criterion. */
 public class TestOr {
 
-    /** Test various combinations of Or. 
-     * @throws EvaluationException if a child throws. */
+    /**
+     * Test various combinations of Or.
+     * 
+     * @throws EvaluationException if a child throws.
+     */
     @Test
     public void orCriterionTest() throws EvaluationException {
         OrCriterion or = new OrCriterion(null);
-        
+
         Assert.assertEquals(or.getSubCriteria().size(), 0, "null list");
         Assert.assertFalse(or.evaluate(null), "or(NULL)");
 
         EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();
         EvaluableCriterion<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
-        
+
         List<EvaluableCriterion<AttributeFilterContext>> list =
-            new ArrayList<EvaluableCriterion<AttributeFilterContext>>(3);
+                new ArrayList<EvaluableCriterion<AttributeFilterContext>>(3);
         list.add(f);
         list.add(null);
         or = new OrCriterion(list);
@@ -52,11 +55,11 @@ public class TestOr {
         list.set(1, f);
         or = new OrCriterion(list);
         Assert.assertFalse(or.evaluate(null), "and(FALSE, FALSE)");
-        
+
         list.set(0, t);
         Assert.assertFalse(or.evaluate(null), "test immutability of parameter");
         or = new OrCriterion(list);
         Assert.assertTrue(or.evaluate(null), "and(FALSE, TRUE)");
-        
+
     }
 }

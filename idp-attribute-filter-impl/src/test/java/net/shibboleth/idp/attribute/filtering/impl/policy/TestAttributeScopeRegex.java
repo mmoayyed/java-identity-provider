@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,9 +34,13 @@ public class TestAttributeScopeRegex {
     /** name used throughout the tests for the attribute. */
     private static final String ATTR_NAME = "attributeName";
 
-    /** Test various combinations of bad parameters. */
+    /**
+     * Test various combinations of bad parameters.
+     * 
+     * @throws EvaluationException to keep the compiler happy.
+     */
     @Test
-    public void attributeScopeRegexCriterionBadParamsTest() {
+    public void attributeScopeRegexCriterionBadParamsTest() throws EvaluationException {
         try {
             new AttributeScopeRegexCriterion("", ATTR_NAME);
             Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
@@ -59,9 +64,13 @@ public class TestAttributeScopeRegex {
 
     }
 
-    /** test usual operation. */
+    /**
+     * test usual operation.
+     * 
+     * @throws EvaluationException to keep the compiler happy.
+     */
     @Test
-    public void attributeScopeStringCriterionTest() {
+    public void attributeScopeStringCriterionTest() throws EvaluationException {
         Attribute<Object> attribute = new Attribute<Object>(ATTR_NAME);
 
         // Attribute values "foo", "foo@bar", "BAR@three".

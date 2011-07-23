@@ -26,7 +26,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.idp.attribute.filtering.impl.BaseRegexCompare;
 
 import org.opensaml.xml.util.LazySet;
 
@@ -36,7 +35,7 @@ import org.opensaml.xml.util.LazySet;
  * collection is returned. null is never returned. <br />
  */
 @ThreadSafe
-public class AttributeValueRegexMatcher extends BaseRegexCompare implements AttributeValueMatcher {
+public class AttributeValueRegexMatcher extends BaseRegexMatcher implements AttributeValueMatcher {
 
     /**
      * Constructor.

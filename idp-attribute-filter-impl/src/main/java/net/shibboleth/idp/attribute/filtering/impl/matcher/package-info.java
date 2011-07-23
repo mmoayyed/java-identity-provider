@@ -20,7 +20,6 @@
  * 
  * The classes in this package all implement {@link net.shibboleth.idp.attribute.filtering.AttributeValueMatcher} 
  */
+
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
-
-
 

@@ -25,6 +25,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @ThreadSafe
-public class OrCriterion implements EvaluableCriterion<AttributeFilterContext> {
+public class OrCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(OrCriterion.class);
@@ -78,9 +79,12 @@ public class OrCriterion implements EvaluableCriterion<AttributeFilterContext> {
         return criteria;
     }
 
-    /** {@inheritDoc} 
-     * @throws EvaluationException s */
-    public Boolean evaluate(final AttributeFilterContext target) throws EvaluationException {
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws EvaluationException s
+     */
+    public Boolean doEvaluate(final AttributeFilterContext target) throws EvaluationException {
 
         for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
             if (criterion.evaluate(target)) {

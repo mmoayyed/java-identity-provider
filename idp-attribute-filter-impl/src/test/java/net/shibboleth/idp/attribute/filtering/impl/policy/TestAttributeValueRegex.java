@@ -23,19 +23,24 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** tests for the Attribute Value Regex criterion. */
 
 public class TestAttributeValueRegex {
-    
+
     /** name used throughout the tests for the attribute. */
     private static final String ATTR_NAME = "attributeName";
 
-    /** Test various combinations of bad parameters. */
+    /**
+     * Test various combinations of bad parameters.
+     * 
+     * @throws EvaluationException to keep the compiler happy.
+     */
     @Test
-    public void attributeValueRegexCriterionBadParamsTest() {
+    public void attributeValueRegexCriterionBadParamsTest() throws EvaluationException {
         try {
             new AttributeValueRegexCriterion("", ATTR_NAME);
             Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
@@ -59,9 +64,13 @@ public class TestAttributeValueRegex {
 
     }
 
-    /** test usual operation. */
+    /**
+     * test usual operation.
+     * 
+     * @throws EvaluationException to keep the compiler happy.
+     */
     @Test
-    public void attributeValueCriterionStringTest() {
+    public void attributeValueCriterionStringTest() throws EvaluationException {
         Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
 
         attribute.setValues(CollectionSupport.toSet("one", "two", "three"));

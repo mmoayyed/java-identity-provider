@@ -19,17 +19,17 @@ package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 
 /**
  * Implement the ANY policy activation criterion.
  * 
  * Always say yes.
  */
-public class AnyCriterion implements EvaluableCriterion<AttributeFilterContext> {
+public class AnyCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> {
 
     /** {@inheritDoc} */
-    public Boolean evaluate(final AttributeFilterContext target) {
+    public Boolean doEvaluate(final AttributeFilterContext target) {
         return true;
     }
 

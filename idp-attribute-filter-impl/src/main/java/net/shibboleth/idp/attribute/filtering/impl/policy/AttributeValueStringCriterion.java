@@ -22,7 +22,6 @@ import java.util.Collection;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.impl.BaseStringCompare;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
@@ -76,7 +75,7 @@ public class AttributeValueStringCriterion extends BaseStringCompare implements
     }
 
     /** {@inheritDoc} */
-    public Boolean evaluate(final AttributeFilterContext target) {
+    public Boolean doEvaluate(final AttributeFilterContext target) {
         Attribute<?> attribute = target.getPrefilteredAttributes().get(attributeName);
 
         if (null == attribute) {

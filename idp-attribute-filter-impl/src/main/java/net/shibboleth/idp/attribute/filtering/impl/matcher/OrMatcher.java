@@ -47,7 +47,7 @@ public class OrMatcher implements AttributeValueMatcher {
     private final Logger log = LoggerFactory.getLogger(OrMatcher.class);
 
     /**
-     * The supplied matchers to be ORed  together.
+     * The supplied matchers to be ORed together.
      * 
      * This list in unmodifiable.
      */
@@ -60,8 +60,7 @@ public class OrMatcher implements AttributeValueMatcher {
      */
     public OrMatcher(final List<AttributeValueMatcher> theMatchers) {
 
-        final List<AttributeValueMatcher> workingMatcherList =
-                new ArrayList<AttributeValueMatcher>();
+        final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
 
         CollectionSupport.addNonNull(theMatchers, workingMatcherList);
         if (workingMatcherList.isEmpty()) {
@@ -69,29 +68,30 @@ public class OrMatcher implements AttributeValueMatcher {
         }
         matchers = Collections.unmodifiableList(workingMatcherList);
     }
-    
+
     /** private default constructor to force the invariant of matchers being non null. */
     @SuppressWarnings("unused")
     private OrMatcher() {
         Assert.isFalse(true, "uncallable code");
         matchers = null;
     }
-    
+
     /**
      * Get the sub matchers which are to be OR'd.
+     * 
      * @return the sub matchers. This is never null or empty,
      */
     public List<AttributeValueMatcher> getSubMatchers() {
         return matchers;
     }
-    
+
     /** {@inheritDoc} */
     public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        
-        final Set result = new HashSet(); 
-        
-        for (AttributeValueMatcher matcher:matchers) {
+
+        final Set result = new HashSet();
+
+        for (AttributeValueMatcher matcher : matchers) {
             result.addAll(matcher.getMatchingValues(attribute, filterContext));
         }
         if (result.isEmpty()) {

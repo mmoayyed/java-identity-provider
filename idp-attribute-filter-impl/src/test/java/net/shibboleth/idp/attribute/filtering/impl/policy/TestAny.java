@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
+import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -24,10 +25,12 @@ import org.testng.annotations.Test;
 public class TestAny {
 
     /**
-     *  test whether true is.
+     * test whether true is.
+     * 
+     * @throws EvaluationException to keep the compiler happy.
      */
     @Test
-    public void anyCriterionTest() {
+    public void anyCriterionTest() throws EvaluationException {
         Assert.assertTrue(new AnyCriterion().evaluate(null), "True ");
-    }   
+    }
 }

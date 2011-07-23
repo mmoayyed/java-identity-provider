@@ -54,8 +54,8 @@ public class TestNotMatcher {
                         true), new AttributeValueStringMatcher("two", true)));
         not = new NotMatcher(or);
         
-        Collection<String> expected = CollectionSupport.toSet("one", "three", "simple not");
-        Assert.assertEquals(not.getMatchingValues(attribute, null), expected);
+        Collection<String> expected = CollectionSupport.toSet("one", "three");
+        Assert.assertEquals(not.getMatchingValues(attribute, null), expected, "simple not");
         
         expected = CollectionSupport.toSet("zero", "two");
         not = new NotMatcher(not);

@@ -21,6 +21,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 
@@ -31,7 +32,7 @@ import org.opensaml.util.criteria.EvaluationException;
  * If the supplied subcontext is true then this returns false and vice versa
  */
 @ThreadSafe
-public class NotCriterion implements EvaluableCriterion<AttributeFilterContext> {
+public class NotCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> {
 
     /** The criterion we are NOT ing. */
     private final EvaluableCriterion<AttributeFilterContext> criterion;
@@ -65,7 +66,7 @@ public class NotCriterion implements EvaluableCriterion<AttributeFilterContext> 
 
     /** {@inheritDoc} 
      * @throws EvaluationException if a child throws. */
-    public Boolean evaluate(final AttributeFilterContext target) throws EvaluationException {
+    public Boolean doEvaluate(final AttributeFilterContext target) throws EvaluationException {
         return !criterion.evaluate(target);
     }
 

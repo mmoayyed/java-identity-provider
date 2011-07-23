@@ -37,17 +37,20 @@ public class TestNot {
             Assert.assertTrue(true, "Expected code path");
         }
     }
-    
-    /** Test various combinations of not. 
-     * @throws EvaluationException if a child throws. */
+
+    /**
+     * Test various combinations of not.
+     * 
+     * @throws EvaluationException if a child throws.
+     */
     @Test
     public void notCriterionTest() throws EvaluationException {
         EvaluableCriterion<AttributeFilterContext> base = new AnyCriterion();
         NotCriterion not = new NotCriterion(base);
         EvaluableCriterion<AttributeFilterContext> notNot = new NotCriterion(not);
-        
+
         Assert.assertEquals(not.getSubCriterion(), base, "test getSubcriterion");
-        
+
         Assert.assertFalse(not.evaluate(null), "not(true)");
         Assert.assertTrue(notNot.evaluate(null), "not(not(true))");
     }

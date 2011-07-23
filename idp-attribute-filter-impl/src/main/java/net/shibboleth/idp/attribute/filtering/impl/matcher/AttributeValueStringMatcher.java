@@ -26,19 +26,17 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.idp.attribute.filtering.impl.BaseStringCompare;
 
 import org.opensaml.xml.util.LazySet;
 
 /**
  * Implement the Attribute String Value Matcher. <br />
  * If any of the values matches the string then the result is a {@link Collection} with those entries. Otherwise an
- * empty collection is returned. null is never returned.
- * <br /> <em> Note </em> If case sensitive is true then this function only returns and empty set or a set 
- * with one value.   
+ * empty collection is returned. null is never returned. <br />
+ * <em> Note </em> If case sensitive is true then this function only returns and empty set or a set with one value.
  */
 @ThreadSafe
-public class AttributeValueStringMatcher extends BaseStringCompare implements AttributeValueMatcher {
+public class AttributeValueStringMatcher extends BaseStringMatcher implements AttributeValueMatcher {
 
     /**
      * Constructor.

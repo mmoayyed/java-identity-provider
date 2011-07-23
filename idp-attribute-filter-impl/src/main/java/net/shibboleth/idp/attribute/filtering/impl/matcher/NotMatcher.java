@@ -31,26 +31,25 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import org.opensaml.util.Assert;
 
 /**
- * Implement the NOT matcher.
- * <br />
- * Anything returned from the sub matcher is removed from the attribute's list of values. 
+ * Implement the NOT matcher. <br />
+ * Anything returned from the sub matcher is removed from the attribute's list of values.
  */
 @ThreadSafe
 public class NotMatcher implements AttributeValueMatcher {
 
     /** The matcher we are NOT-ing. */
     private final AttributeValueMatcher subMatcher;
-    
+
     /**
      * Constructor.
-     *
+     * 
      * @param child the matcher we will NOT with.
      */
     public NotMatcher(final AttributeValueMatcher child) {
         Assert.isNotNull(child, "Not matcher must have a child");
         subMatcher = child;
     }
-    
+
     /** private Constructor to ensure that the sub matcher is never null. */
     @SuppressWarnings("unused")
     private NotMatcher() {
@@ -58,19 +57,21 @@ public class NotMatcher implements AttributeValueMatcher {
         subMatcher = null;
     }
 
-    /** Get the matcher we are NOT ing.
+    /**
+     * Get the matcher we are NOT ing.
+     * 
      * @return the sub matcher, this is never NULL.
      */
     public AttributeValueMatcher getSubMatcher() {
         return subMatcher;
     }
-    
+
     /** {@inheritDoc} */
     public Collection<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        
+
         final Set result = new HashSet(attribute.getValues());
-        for (Object value:subMatcher.getMatchingValues(attribute, filterContext)) {
+        for (Object value : subMatcher.getMatchingValues(attribute, filterContext)) {
             result.remove(value);
         }
         if (result.isEmpty()) {

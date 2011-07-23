@@ -20,7 +20,6 @@
  * 
  * The classes in this package are the base classes used by both policy and match functors.
  */
+
 package net.shibboleth.idp.attribute.filtering.impl;
-
-
 
