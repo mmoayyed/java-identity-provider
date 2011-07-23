@@ -26,7 +26,7 @@ import org.opensaml.util.collections.CollectionSupport;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** tests for the Attribute Value String criterion. */
+/** tests for the {@link AttributeValueStringCriterion}. */
 public class TestAttributeValueString {
 
     /** name used throughout the tests for the attribute. */
