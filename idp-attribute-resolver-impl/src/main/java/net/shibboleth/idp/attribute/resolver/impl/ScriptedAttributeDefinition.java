@@ -88,7 +88,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     /**
      * Gets the scripting language used.
      * 
-     * @return scripting language used
+     * @return scripting language used.  This is always a valid language.
      */
     public String getScriptLanguage() {
         return scriptLanguage;
@@ -97,7 +97,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     /**
      * Gets the script that will be executed.
      * 
-     * @return script that will be executed
+     * @return script that will be executed.  This is never null or empty.
      */
     public String getScript() {
         return script;
@@ -106,14 +106,14 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     /**
      * Get this resolver's script engine.
      * 
-     * @return the engine.
+     * @return the engine.  Never null.
      */
     public ScriptEngine getScriptEngine() {
         return scriptEngine;
     }
 
     /**
-     * Get the compiled script for this engine. Note that this will be null if the langiage does not support
+     * Get the compiled script for this engine. Note that this will be null if the language does not support
      * compilation.
      * 
      * @return the compiled script.
