@@ -25,9 +25,9 @@ import java.util.Map;
 
 import net.shibboleth.idp.AbstractComponent;
 
+import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.util.Assert;
 import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.resolver.Resolver;
 import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +35,10 @@ import org.slf4j.LoggerFactory;
 import edu.vt.middleware.crypt.util.HexConverter;
 
 /** Component that creates, manages and locates session. */
-public class SessionManager extends AbstractComponent implements Resolver<Session, EvaluableCriterion<Session>> {
+public class BasicSessionManager extends AbstractComponent implements SessionResolver {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(SessionManager.class);
+    private final Logger log = LoggerFactory.getLogger(BasicSessionManager.class);
 
     /** Number of random bits within a session ID. */
     private final int sessionIDSize = 32;
@@ -62,7 +62,7 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
     private final long sessionTimeout;
 
     /** Session storage keyed by session ID. */
-    private final Map<String, Session> sessionStore;
+    private final Map<String, IdPSession> sessionStore;
 
     /**
      * Constructor.
@@ -74,7 +74,7 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
      *            expired. A value of 0 or less indicates that the session never times out due to inactivity.
      * @param storage session store keyed by session value, never null
      */
-    public SessionManager(String componentId, long lifetime, long timeout, Map<String, Session> storage) {
+    public BasicSessionManager(String componentId, long lifetime, long timeout, Map<String, IdPSession> storage) {
         super(componentId);
 
         prng = new SecureRandom();
@@ -86,40 +86,73 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
         Assert.isNotNull(storage, "Session store can not be null");
         sessionStore = storage;
     }
+    
+    public Iterable<IdPSession> getSessions(){
+        return sessionStore.values();
+    }
 
     /**
      * Creates a new session.
      * 
      * @return the new session
      */
-    public Session newSession() {
+    public IdPSession newSession() {
         // generate a random session ID
         byte[] sid = new byte[sessionIDSize];
         prng.nextBytes(sid);
-        String sessionID = hexCodec.fromBytes(sid);
+        final String sessionId = hexCodec.fromBytes(sid);
 
         // generate a random secret
-        byte[] sessionSecret = new byte[16];
+        final byte[] sessionSecret = new byte[16];
         prng.nextBytes(sessionSecret);
 
         long now = System.currentTimeMillis();
-        Session session = new Session(sessionID, sessionSecret, now + sessionLifetime, sessionTimeout);
-        sessionStore.put(sessionID, session);
+        IdPSession session = new IdPSession();
+        session.setActivityInstant(now);
+        session.setExipriationInstant(now + sessionLifetime);
+        session.setId(sessionId);
+        session.setInactivityTimeout(sessionTimeout);
+        session.setSecret(sessionSecret);
+        sessionStore.put(sessionId, session);
 
         return session;
     }
 
+    public void removeSession(String sessionId) {
+        sessionStore.remove(sessionId);
+    }
+
+    public void updateSessionLastActivityInstant(IdPSession idpSession) {
+
+    }
+
+    public void addAuthenticationEvent(IdPSession idpSession, String serviceId, AuthenticationEvent event) {
+
+    }
+
+    public void addIdPSessionContext(IdPSession idpSession, Subcontext subcontext) {
+
+    }
+
+    public void addAuthenticationEventContext(IdPSession idpSession, AuthenticationEvent authnEvent, Subcontext subcontext) {
+
+    }
+
+    public void addServiceSessonContext(IdPSession idpSession, ServiceSession serviceSession, Subcontext subcontext) {
+
+    }
+
     /** {@inheritDoc} */
-    public Iterable<Session> resolve(EvaluableCriterion<Session> criteria) throws ResolverException {
+    public Iterable<IdPSession> resolve(EvaluableCriterion<IdPSession> criteria) throws ResolverException {
         log.debug("Resolving sessions");
 
         if (criteria == null || sessionStore.isEmpty()) {
             return Collections.emptyList();
         }
 
-        Collection<Session> sessions = sessionStore.values();
-        ArrayList<Session> matchedSessions = new ArrayList<Session>();
-        for (Session session : sessions) {
+        Collection<IdPSession> sessions = sessionStore.values();
+        ArrayList<IdPSession> matchedSessions = new ArrayList<IdPSession>();
+        for (IdPSession session : sessions) {
             log.debug("Checking if session {} meets the selection criteria", session.getId());
             if (criteria.evaluate(session) == Boolean.TRUE) {
                 log.debug("Session {} meets the selection criteria", session.getId());
@@ -133,15 +166,15 @@ public class SessionManager extends AbstractComponent implements Resolver<Sessio
     }
 
     /** {@inheritDoc} */
-    public Session resolveSingle(EvaluableCriterion<Session> criteria) throws ResolverException {
+    public IdPSession resolveSingle(EvaluableCriterion<IdPSession> criteria) throws ResolverException {
         log.debug("Resolving session");
 
         if (criteria == null || sessionStore.isEmpty()) {
             return null;
         }
 
-        Collection<Session> sessions = sessionStore.values();
-        for (Session session : sessions) {
+        Collection<IdPSession> sessions = sessionStore.values();
+        for (IdPSession session : sessions) {
             log.debug("Checking if session {} meets the selection criteria", session.getId());
             if (criteria.evaluate(session) == Boolean.TRUE) {
                 log.debug("Session {} meets the selection criteria", session.getId());
