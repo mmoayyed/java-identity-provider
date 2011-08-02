@@ -26,11 +26,13 @@ import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 
+//TODO implement hashCode/equals - need to implement this for AbstractSubcontextContainer as well
+
 /**
  * An identity provider session.
  * 
  * Properties of this object <strong>must not</strong> be modifiable directly. Instead, use the modification methods
- * available via the {@link BasicSessionManager} that created this session.
+ * available via the {@link SessionManager} that created this session.
  */
 public class IdPSession extends AbstractSubcontextContainer {
 
@@ -240,5 +242,9 @@ public class IdPSession extends AbstractSubcontextContainer {
      */
     protected Collection<ServiceSession> getModifiableSeviceSessionCollection() {
         return serviceSessions;
+    }
+    
+    public ServiceSession getServiceSession(String serviceId){
+        
     }
 }

@@ -23,11 +23,13 @@ import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 
+//TODO implement hashCode/equals - need to implement this for AbstractSubcontextContainer as well
+
 /**
  * Describes an authentication event that took place within the scope of an {@link IdPSession}.
  * 
  * Properties of this object <strong>must not</strong> be modifiable directly. Instead, use the modification methods
- * available via the {@link BasicSessionManager} that created the associate {@link IdPSession}.
+ * available via the {@link SessionManager} that created the associate {@link IdPSession}.
  */
 public class AuthenticationEvent extends AbstractSubcontextContainer {
 

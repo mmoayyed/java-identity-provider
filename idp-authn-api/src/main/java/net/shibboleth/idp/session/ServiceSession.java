@@ -21,11 +21,13 @@ import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 
+//TODO implement hashCode/equals - need to implement this for AbstractSubcontextContainer as well
+
 /**
  * Describes a session with a service associated with an {@link IdPSession}.
  * 
  * Properties of this object <strong>must not</strong> be modifiable directly. Instead, use the modification methods
- * available via the {@link BasicSessionManager} that created the associate {@link IdPSession}.
+ * available via the {@link SessionManager} that created the associate {@link IdPSession}.
  */
 public class ServiceSession extends AbstractSubcontextContainer {
 
@@ -51,4 +53,6 @@ public class ServiceSession extends AbstractSubcontextContainer {
         Assert.isNotNull(trimmedId, "Service ID can not be null nor empty");
         serviceId = trimmedId;
     }
+    
+    
 }
