@@ -27,6 +27,7 @@ import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +111,14 @@ public class AttributeFilterPolicy extends AbstractComponent {
     public boolean isApplicable(final AttributeFilterContext filterContext) throws AttributeFilteringException {
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
-        Boolean isActive = activationCriteria.evaluate(filterContext);
+        Boolean isActive = Boolean.FALSE;
+        try {
+            isActive = activationCriteria.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            throw new AttributeFilteringException("Error evaluating applicability criteria for filter policy "
+                    + getId(), e);
+        }
+
         if (isActive) {
             log.debug("Attribute filter policy '{}' is active", getId());
         } else {

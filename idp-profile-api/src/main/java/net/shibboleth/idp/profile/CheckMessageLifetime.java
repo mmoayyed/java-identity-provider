@@ -18,16 +18,11 @@
 package net.shibboleth.idp.profile;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** An action that checks that the inbound message should be considered valid based upon when it was issued. */
 public class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CheckMessageLifetime.class);
 
     /** Allowed clock skew, in milliseconds. */
     private long clockskew;
@@ -36,10 +31,10 @@ public class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction
     private long messageLifetime;
 
     /** Constructor. The ID of this component is set to the name of this class. */
-    public CheckMessageLifetime(){
+    public CheckMessageLifetime() {
         super(CheckMessageLifetime.class.getName());
     }
-    
+
     /**
      * Constructor.
      * 
@@ -58,17 +53,22 @@ public class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
             BasicMessageMetadataSubcontext messageSubcontext) {
 
+        if (messageSubcontext.getMessageIssueInstant() <= 0) {
+            return ActionSupport.buildErrorEvent(this, null,
+                    "Basic message metadata subcontext does not contain a message issue instant");
+        }
+
         long issueInstant = messageSubcontext.getMessageIssueInstant();
         long currentTime = System.currentTimeMillis();
 
         if (issueInstant < currentTime - clockskew) {
-            log.warn("Message was expired");
-            // TODO ERROR
+            return ActionSupport.buildErrorEvent(this, null, "Message " + messageSubcontext.getMessageId()
+                    + " was expired");
         }
 
         if (issueInstant > currentTime + messageLifetime + clockskew) {
-            log.warn("Message is not yet valid");
-            // TODO ERROR
+            return ActionSupport.buildErrorEvent(this, null, "Message " + messageSubcontext.getMessageId()
+                    + " is not yet valid");
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);

@@ -99,6 +99,8 @@ public class AuthenticationMethod {
 
     /** The error that prevented the principal from being authenticated. */
     private AuthenticationException authenticationError;
+    
+    //TODO duration
 
     /**
      * Constructor. Also sets the current state to {@link MethodState#NOT_STARTED}.
@@ -108,6 +110,8 @@ public class AuthenticationMethod {
      *            is null
      */
     public AuthenticationMethod(final String methodId, final MethodRequirement requirementLevel) {
+        super();
+        
         id = StringSupport.trimOrNull(methodId);
         Assert.isNotNull(id, "Authentication method identifier can not be null or empty");
 

@@ -19,9 +19,10 @@ package net.shibboleth.idp.saml.relyingparty.saml2;
 
 import java.util.ArrayList;
 
-import net.shibboleth.idp.saml.relyingparty.saml2.AbstractSAML2ProfileConfiguration;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
+import org.opensaml.xml.security.EvaluableCriteria;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,8 +34,9 @@ public class AbstractSAML2ProfileConfigurationTest {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptNameIDsCriteria());
 
-        config.setEncryptNameIDsCriteria(StaticResponseEvaluableCritieria.FALSE_RESPONSE);
-        Assert.assertSame(config.getEncryptNameIDsCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        config.setEncryptNameIDsCriteria((EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        Assert.assertSame(config.getEncryptNameIDsCriteria(),
+                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
 
         try {
             config.setEncryptNameIDsCriteria(null);
@@ -49,8 +51,9 @@ public class AbstractSAML2ProfileConfigurationTest {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptAssertionsCriteria());
 
-        config.setEncryptAssertionsCriteria(StaticResponseEvaluableCritieria.FALSE_RESPONSE);
-        Assert.assertSame(config.getEncryptAssertionsCriteria(), StaticResponseEvaluableCritieria.FALSE_RESPONSE);
+        config.setEncryptAssertionsCriteria((EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        Assert.assertSame(config.getEncryptAssertionsCriteria(),
+                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
 
         try {
             config.setEncryptAssertionsCriteria(null);

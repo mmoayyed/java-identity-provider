@@ -51,8 +51,19 @@ public class CheckMessageReplay extends AbstractInboundMessageSubcontextAction<B
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
             BasicMessageMetadataSubcontext messageSubcontext) {
 
+        if (messageSubcontext.getMessageIssuer() == null) {
+            return ActionSupport.buildErrorEvent(this, null,
+                    "Basic message metadata subcontext does not contain a message issuer");
+        }
+
+        if (messageSubcontext.getMessageId() == null) {
+            return ActionSupport.buildErrorEvent(this, null,
+                    "Basic message metadata subcontext does not contain a message ID");
+        }
+
         if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
-            // TODO error
+            return ActionSupport.buildErrorEvent(this, null, "Message ID " + messageSubcontext.getMessageId()
+                    + " from issuer " + messageSubcontext.getMessageIssuer() + " is a replayed message");
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);

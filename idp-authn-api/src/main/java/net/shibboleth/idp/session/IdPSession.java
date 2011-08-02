@@ -17,13 +17,16 @@
 
 package net.shibboleth.idp.session;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
+import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 
 //TODO implement hashCode/equals - need to implement this for AbstractSubcontextContainer as well
@@ -64,7 +67,7 @@ public class IdPSession extends AbstractSubcontextContainer {
     private Collection<AuthenticationEvent> authnEvents;
 
     /** Gets the service session tied to this IdP session. */
-    private Collection<ServiceSession> serviceSessions;
+    private Map<String, ServiceSession> serviceSessions;
 
     /**
      * Gets the unique identifier for this session.
@@ -211,7 +214,8 @@ public class IdPSession extends AbstractSubcontextContainer {
     /**
      * Gets the unmodifiable collection of authentication events that have occurred within the scope of this session.
      * 
-     * @return unmodifiable collection of authentication events that have occurred within the scope of this session
+     * @return unmodifiable collection of authentication events that have occurred within the scope of this session,
+     *         never null
      */
     public Collection<AuthenticationEvent> getAuthenticateEvents() {
         return Collections.unmodifiableCollection(authnEvents);
@@ -220,7 +224,8 @@ public class IdPSession extends AbstractSubcontextContainer {
     /**
      * Gets the modifiable collection of authentication events that have occurred within the scope of this session.
      * 
-     * @return modifiable collection of authentication events that have occurred within the scope of this session
+     * @return modifiable collection of authentication events that have occurred within the scope of this session, never
+     *         null
      */
     protected Collection<AuthenticationEvent> getModifiableAuthenticationEventCollection() {
         return authnEvents;
@@ -229,22 +234,87 @@ public class IdPSession extends AbstractSubcontextContainer {
     /**
      * Gets the unmodifiable collection of service sessions associated with this session.
      * 
-     * @return unmodifiable collection of service sessions associated with this session
+     * @return unmodifiable collection of service sessions associated with this session, never null
      */
     public Collection<ServiceSession> getServiceSessions() {
-        return Collections.unmodifiableCollection(serviceSessions);
+        return Collections.unmodifiableCollection(serviceSessions.values());
     }
 
     /**
      * Gets the modifiable collection of service sessions associated with this session.
      * 
-     * @return modifiable collection of service sessions associated with this session
+     * @return modifiable collection of service sessions associated with this session, never null
      */
-    protected Collection<ServiceSession> getModifiableSeviceSessionCollection() {
+    protected Map<String, ServiceSession> getModifiableSeviceSessionCollection() {
         return serviceSessions;
     }
-    
-    public ServiceSession getServiceSession(String serviceId){
-        
+
+    /**
+     * Gets all the authentication events for a particular method that have occurred within this session.
+     * 
+     * @param authenticationMethod the authentication method, may be null or empty
+     * 
+     * @return all the authentication events for a particular method that have occurred within this session, never null
+     */
+    public Collection<AuthenticationEvent> getAuthenticationEvents(String authenticationMethod) {
+        String trimmedMethod = StringSupport.trimOrNull(authenticationMethod);
+        if (trimmedMethod == null || authnEvents.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        ArrayList<AuthenticationEvent> matchingEvents = new ArrayList<AuthenticationEvent>();
+
+        for (AuthenticationEvent event : authnEvents) {
+            if (ObjectSupport.equals(event.getAuthenticationMethod(), authenticationMethod)) {
+                matchingEvents.add(event);
+            }
+        }
+
+        return matchingEvents;
+    }
+
+    /**
+     * The session service for the given service.
+     * 
+     * @param serviceId ID of the service
+     * 
+     * @return the session service or null if no session exists for that service
+     */
+    public ServiceSession getServiceSession(String serviceId) {
+        String trimmedId = StringSupport.trimOrNull(serviceId);
+        if (trimmedId == null || serviceSessions.isEmpty()) {
+            return null;
+        }
+
+        return serviceSessions.get(trimmedId);
+    }
+
+    /**
+     * Gets all the authentication events, of a particular method, for a particular service that have occurred within
+     * this IdP session.
+     * 
+     * @param serviceId the ID of the service
+     * @param authenticationMethod the authentication method
+     * 
+     * @return all the authentication events, of a particular method, for a particular service that have occurred within
+     *         this IdP session, never null
+     */
+    public Collection<AuthenticationEvent> getAuthenticationEventForService(String serviceId,
+            String authenticationMethod) {
+        String trimmedMethod = StringSupport.trimOrNull(authenticationMethod);
+        String trimmedId = StringSupport.trimOrNull(serviceId);
+        if (trimmedMethod == null || trimmedId == null || authnEvents.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        ArrayList<AuthenticationEvent> matchingEvents = new ArrayList<AuthenticationEvent>();
+
+        for (AuthenticationEvent event : authnEvents) {
+            if (ObjectSupport.equals(event.getServiceId(), trimmedId)) {
+                matchingEvents.add(event);
+            }
+        }
+
+        return matchingEvents;
     }
 }

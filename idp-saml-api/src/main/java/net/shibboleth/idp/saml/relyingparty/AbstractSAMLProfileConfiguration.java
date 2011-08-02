@@ -21,8 +21,8 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.AbstractProfileConfiguration;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.opensaml.xml.security.EvaluableCriteria;
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 
 /** Base class for SAML profile configurations. */
 public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration {
@@ -43,9 +43,12 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      */
     public AbstractSAMLProfileConfiguration(String profileId) {
         super(profileId);
-        signedRequestsCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
-        signResponsesCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
-        signAssertionsCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
+        signedRequestsCriteria =
+                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+        signResponsesCriteria =
+                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.TRUE_RESPONSE;
+        signAssertionsCriteria =
+                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
     }
 
     /**

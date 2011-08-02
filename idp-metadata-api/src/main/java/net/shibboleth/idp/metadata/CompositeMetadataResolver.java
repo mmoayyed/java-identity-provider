@@ -39,9 +39,6 @@ import org.slf4j.LoggerFactory;
 public class CompositeMetadataResolver<MetadataType> extends AbstractComponent implements
         MetadataResolver<MetadataType> {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CompositeMetadataResolver.class);
-
     /** Resolvers composed by this resolver. */
     private final List<MetadataResolver<MetadataType>> resolvers;
 

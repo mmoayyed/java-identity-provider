@@ -33,6 +33,9 @@ import org.opensaml.util.StringSupport;
  */
 public class AuthenticationEvent extends AbstractSubcontextContainer {
 
+    /** Service for which the principal was authenticated. */
+    private String serviceId;
+    
     /** The principal established by the authentication event. */
     private Principal principal;
 
@@ -48,6 +51,25 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
      */
     private long expirationInstant;
 
+    /**
+     * Gets the identifier of the service for which the principal was authenticated.
+     * 
+     * @return identifier of the service for which the principal was authenticated
+     */
+    public String getServiceId() {
+        return serviceId;
+    }
+    
+    /**
+     * Sets the identifier of the service for which the principal was authenticated.
+     * 
+     * @param id identifier of the service for which the principal was authenticated, may not be null or empty
+     */
+    protected void setServiceId(String id) {
+        serviceId = StringSupport.trimOrNull(id);
+        Assert.isNotNull(serviceId, "Service ID can not be null or empty");
+    }
+    
     /**
      * Gets the principal established by the authentication event.
      * 

@@ -34,6 +34,7 @@ import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -223,10 +224,10 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
 
     /** {@inheritDoc} */
     public void addAuthenticationEvent(IdPSession idpSession, String serviceId, AuthenticationEvent event) {
-        if(!isInitialized()){
+        if (!isInitialized()) {
             throw new UninitializedComponentException("Session manager has not be initialized");
         }
-        
+
         checkIdPSession(idpSession);
 
         String trimmedServiceId = StringSupport.trimOrNull(serviceId);
@@ -235,12 +236,12 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
         Assert.isNotNull(event, "Authentication event can not be null or empty");
 
         ServiceSession serviceSesson = idpSession.getServiceSession(trimmedServiceId);
-        if(serviceSesson == null){
+        if (serviceSesson == null) {
             serviceSesson = new ServiceSession();
             serviceSesson.setServiceId(trimmedServiceId);
-            //TODO add service session to IdP session
+            // TODO add service session to IdP session
         }
-        
+
         // TODO
     }
 
@@ -249,8 +250,8 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
         if (subcontext == null) {
             return;
         }
-        
-        if(!isInitialized()){
+
+        if (!isInitialized()) {
             throw new UninitializedComponentException("Session manager has not be initialized");
         }
 
@@ -264,7 +265,7 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
             return;
         }
 
-        if(!isInitialized()){
+        if (!isInitialized()) {
             throw new UninitializedComponentException("Session manager has not be initialized");
         }
 
@@ -281,7 +282,7 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
             return;
         }
 
-        if(!isInitialized()){
+        if (!isInitialized()) {
             throw new UninitializedComponentException("Session manager has not be initialized");
         }
 
@@ -299,21 +300,25 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
         if (criteria == null || sessionStore.isEmpty()) {
             return Collections.emptyList();
         }
-        
-        if(!isInitialized()){
+
+        if (!isInitialized()) {
             throw new UninitializedComponentException("Session manager has not be initialized");
         }
 
         Collection<IdPSession> sessions = sessionStore.values();
         ArrayList<IdPSession> matchedSessions = new ArrayList<IdPSession>();
-        for (IdPSession session : sessions) {
-            log.debug("Checking if session {} meets the selection criteria", session.getId());
-            if (criteria.evaluate(session) == Boolean.TRUE) {
-                log.debug("Session {} meets the selection criteria", session.getId());
-                matchedSessions.add(session);
-            } else {
-                log.debug("Session {} did not meet the selection criteria", session.getId());
+        try {
+            for (IdPSession session : sessions) {
+                log.debug("Checking if session {} meets the selection criteria", session.getId());
+                if (criteria.evaluate(session) == Boolean.TRUE) {
+                    log.debug("Session {} meets the selection criteria", session.getId());
+                    matchedSessions.add(session);
+                } else {
+                    log.debug("Session {} did not meet the selection criteria", session.getId());
+                }
             }
+        } catch (EvaluationException e) {
+            throw new ResolverException("Error evaluating session resolution criteria", e);
         }
 
         return matchedSessions;
@@ -326,20 +331,24 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
         if (criteria == null || sessionStore.isEmpty()) {
             return null;
         }
-        
-        if(!isInitialized()){
+
+        if (!isInitialized()) {
             throw new UninitializedComponentException("Session manager has not be initialized");
         }
 
         Collection<IdPSession> sessions = sessionStore.values();
-        for (IdPSession session : sessions) {
-            log.debug("Checking if session {} meets the selection criteria", session.getId());
-            if (criteria.evaluate(session) == Boolean.TRUE) {
-                log.debug("Session {} meets the selection criteria", session.getId());
-                return session;
-            } else {
-                log.debug("Session {} did not meet the selection criteria", session.getId());
+        try {
+            for (IdPSession session : sessions) {
+                log.debug("Checking if session {} meets the selection criteria", session.getId());
+                if (criteria.evaluate(session) == Boolean.TRUE) {
+                    log.debug("Session {} meets the selection criteria", session.getId());
+                    return session;
+                } else {
+                    log.debug("Session {} did not meet the selection criteria", session.getId());
+                }
             }
+        } catch (EvaluationException e) {
+            throw new ResolverException("Error evaluating session resolution criteria", e);
         }
 
         log.debug("No session meets the selection criteria");

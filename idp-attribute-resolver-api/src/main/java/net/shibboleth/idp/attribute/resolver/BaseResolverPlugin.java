@@ -26,7 +26,10 @@ import net.shibboleth.idp.AbstractComponent;
 
 import org.opensaml.util.collections.LazySet;
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
@@ -35,6 +38,9 @@ import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
  */
 @ThreadSafe
 public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent {
+    
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
 
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions;
@@ -165,8 +171,12 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * @return true if the current resolution context meets the requirements for this plugin, false if not
      */
     public boolean isApplicable(final AttributeResolutionContext resolutionContext) {
-        if (activationCriteria.evaluate(resolutionContext)) {
-            return true;
+        try{
+            if (activationCriteria.evaluate(resolutionContext)) {
+                return true;
+            }
+        }catch(EvaluationException e){
+            log.warn("Error evaluating plugin applicability criteria", e);
         }
 
         return false;

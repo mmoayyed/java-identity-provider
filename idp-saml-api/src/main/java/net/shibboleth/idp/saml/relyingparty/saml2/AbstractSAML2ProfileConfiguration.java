@@ -27,8 +27,8 @@ import net.shibboleth.idp.saml.relyingparty.AbstractSAMLProfileConfiguration;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.opensaml.xml.security.EvaluableCriteria;
-import org.opensaml.xml.security.StaticResponseEvaluableCritieria;
 
 /** Base class for SAML 2 profile configurations. */
 public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProfileConfiguration {
@@ -52,8 +52,10 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      */
     public AbstractSAML2ProfileConfiguration(String profileId) {
         super(profileId);
-        encryptNameIDsCriteria = StaticResponseEvaluableCritieria.FALSE_RESPONSE;
-        encryptAssertionsCriteria = StaticResponseEvaluableCritieria.TRUE_RESPONSE;
+        encryptNameIDsCriteria =
+                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+        encryptAssertionsCriteria =
+                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.TRUE_RESPONSE;
         proxyCount = 0;
         proxyAudiences = Collections.emptySet();
     }
