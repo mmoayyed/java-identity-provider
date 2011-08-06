@@ -5,6 +5,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>net.shibboleth</groupId>
+        <artifactId>parent</artifactId>
+        <version>1</version>
+    </parent>
+
     <name>Shibboleth IdP</name>
     <groupId>net.shibboleth.idp</groupId>
     <artifactId>idp-parent</artifactId>
@@ -31,20 +37,8 @@
     </modules>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.groupId>org.springframework</spring.groupId>
-        <spring.version>3.0.5.RELEASE</spring.version>
-        <xerces.groupId>org.apache.xerces</xerces.groupId>
-        <xerces.version>2.10.0</xerces.version>
+        <svn.relative.location>java-identity-provider</svn.relative.location>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>shibboleth</id>
-            <name>Shibboleth.net</name>
-            <url>https://shibboleth.net/nexus/content/groups/public/</url>
-        </repository>
-    </repositories>
 
     <!-- Dependencies which are required by every single project module should go here and will be inherited by all modules. -->
     <dependencies>
@@ -59,74 +53,12 @@
             <artifactId>opensaml-messaging-api</artifactId>
             <version>3.0.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>${spring.groupId}</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>0.9.27</version>
-        </dependency>
-        <dependency>
-            <!-- needed for logback SMTP appender -->
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.1</version>
-        </dependency>
-        <dependency>
-            <!-- needed for logback SMTP appender -->
-            <groupId>janino</groupId>
-            <artifactId>janino</artifactId>
-            <version>2.5.10</version>
-        </dependency>
 
         <!-- Provided Dependencies -->
-        <dependency>
-            <groupId>net.jcip</groupId>
-            <artifactId>jcip-annotations</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>5.14.6</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-test</artifactId>
@@ -138,6 +70,30 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Managed Dependencies -->
+        <dependency>
+            <groupId>${spring.groupId}</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <!-- needed for logback SMTP appender -->
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+        <dependency>
+            <!-- needed for logback SMTP appender -->
+            <groupId>janino</groupId>
+            <artifactId>janino</artifactId>
         </dependency>
     </dependencies>
 
@@ -204,36 +160,6 @@
             <!-- Provided Dependencies -->
 
             <!-- Runtime Dependencies -->
-            <dependency>
-                <groupId>${xerces.groupId}</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>${xerces.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>${xerces.groupId}</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>${xerces.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>${xerces.groupId}</groupId>
-                <artifactId>resolver</artifactId>
-                <version>${xerces.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>${xerces.groupId}</groupId>
-                <artifactId>serializer</artifactId>
-                <version>${xerces.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>2.7.1</version>
-                <scope>runtime</scope>
-            </dependency>
 
             <!-- Test Dependencies -->
             <dependency>
@@ -245,204 +171,36 @@
         </dependencies>
     </dependencyManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>release-repo</id>
-            <url>${dist.release.url}</url>
-        </repository>
-    </distributionManagement>
-
-    <build>
-        <defaultGoal>install</defaultGoal>
-
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2.1</version>
-                <configuration>
-                    <tarLongFileMode>gnu</tarLongFileMode>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.8</version>
-                <configuration>
-                    <argLine>-Xmx256m</argLine>
-                    <parallel>methods</parallel>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
-                <configuration>
-                    <archive>
-                        <index>true</index>
-                        <manifestEntries>
-                            <Main-Class>net.shibboleth.idp.Version</Main-Class>
-                        </manifestEntries>
-                        <manifestSections>
-                            <manifestSection>
-                                <name>net/shibboleth/idp</name>
-                                <manifestEntries>
-                                    <Implementation-Title>${project.artifactId}</Implementation-Title>
-                                    <Implementation-Version>${project.version}</Implementation-Version>
-                                    <Implementation-Vendor>shibboleth.net</Implementation-Vendor>
-                                </manifestEntries>
-                            </manifestSection>
-                        </manifestSections>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <reporting>
-        <!-- TODO: configure reporting plugins: javadoc, jxr, checkstyle report, surefire report -->
-
-    </reporting>
-
     <profiles>
         <profile>
             <id>release</id>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.1</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>2.3.1</version>
+                        <configuration>
+                            <archive>
+                                <index>true</index>
+                                <manifestEntries>
+                                    <Main-Class>net.shibboleth.idp.Version</Main-Class>
+                                </manifestEntries>
+                                <manifestSections>
+                                    <manifestSection>
+                                        <name>net/shibboleth/idp</name>
+                                        <manifestEntries>
+                                            <Implementation-Title>${project.artifactId}</Implementation-Title>
+                                            <Implementation-Version>${project.version}</Implementation-Version>
+                                            <Implementation-Vendor>shibboleth.net</Implementation-Vendor>
+                                        </manifestEntries>
+                                    </manifestSection>
+                                </manifestSections>
+                            </archive>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
-
-    <!-- Project Metadata -->
-    <url>http://www.shibboleth.net/</url>
-
-    <inceptionYear>2006</inceptionYear>
-
-    <licenses>
-        <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <organization>
-        <name>Internet2</name>
-        <url>http://www.internet2.edu/</url>
-    </organization>
-
-    <issueManagement>
-        <system>JIRA</system>
-        <url>https://issues.shibboleth.net/jira</url>
-    </issueManagement>
-
-    <mailingLists>
-        <mailingList>
-            <name>Shibboleth Announce</name>
-            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
-            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
-            <post>shibboleth-announce@internet2.edu</post>
-            <archive>https://mail.internet2.edu/wws/arc/shibboleth-announce</archive>
-        </mailingList>
-        <mailingList>
-            <name>Shibboleth Users</name>
-            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
-            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
-            <post>shibboleth-users@internet2.edu</post>
-            <archive>https://mail.internet2.edu/wws/arc/shibboleth-users</archive>
-        </mailingList>
-        <mailingList>
-            <name>Shibboleth Development</name>
-            <subscribe>http://shibboleth.internet2.edu/support.html#lists</subscribe>
-            <unsubscribe>http://shibboleth.internet2.edu/support.html#lists</unsubscribe>
-            <post>shibboleth-dev@internet2.edu</post>
-            <archive>https://mail.internet2.edu/wws/arc/shibboleth-dev</archive>
-        </mailingList>
-    </mailingLists>
-
-    <scm>
-        <connection>scm:svn:https://svn.shibboleth.net/java-identity-provider/</connection>
-        <developerConnection>scm:svn:https://svn.shibboleth.net/java-identity-provider/</developerConnection>
-        <tag>HEAD</tag>
-        <url>http://svn.shibboleth.net/view/java-identity-provider</url>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>cantor</id>
-            <name>Scott Cantor</name>
-            <organization>The Ohio State University</organization>
-            <organizationUrl>http://www.ohio-state.edu/</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>-5</timezone>
-        </developer>
-        <developer>
-            <id>ndk</id>
-            <name>Nate Klingenstein</name>
-            <organization>Internet2</organization>
-            <organizationUrl>http://www.internet2.edu/</organizationUrl>
-            <roles>
-                <role>documentation</role>
-            </roles>
-            <timezone>-7</timezone>
-        </developer>
-        <developer>
-            <id>lajoie</id>
-            <name>Chad La Joie</name>
-            <organization>SWITCH</organization>
-            <organizationUrl>http://www.switch.ch/</organizationUrl>
-            <roles>
-                <role>developer</role>
-                <role>documentation</role>
-            </roles>
-            <timezone>+1</timezone>
-        </developer>
-        <developer>
-            <id>reusser</id>
-            <name>Halm Reusser</name>
-            <organization>SWITCH</organization>
-            <organizationUrl>http://www.switch.ch/</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>+1</timezone>
-        </developer>
-        <developer>
-            <id>rdw</id>
-            <name>Rod Widdowson</name>
-            <organization>University of Edinburgh</organization>
-            <organizationUrl>http://www.ed.ac.uk/</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>0</timezone>
-        </developer>
-    </developers>
 
 </project>
