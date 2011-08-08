@@ -23,6 +23,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.UnmodifiableComponentException;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
@@ -30,15 +31,6 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
 
     /** ID of the data connector to use if this one fails. */
     private String failoverDataConnectorId;
-
-    /**
-     * Constructor.
-     * 
-     * @param connectorId unique identifier for this data connector
-     */
-    public BaseDataConnector(final String connectorId) {
-        super(connectorId);
-    }
 
     /**
      * Gets the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
@@ -58,7 +50,12 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @param id ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
-    public void setFailoverDataConnectorId(final String id) {
+    public synchronized void setFailoverDataConnectorId(final String id) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, failover connector can not be changed.");
+        }
+
         failoverDataConnectorId = StringSupport.trimOrNull(id);
     }
 

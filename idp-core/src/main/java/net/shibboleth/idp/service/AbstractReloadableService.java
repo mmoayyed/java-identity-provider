@@ -28,9 +28,9 @@ import net.shibboleth.idp.log.PerformanceEvent;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.opensaml.util.Assert;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Base class for {@link ReloadableService}. This base class will start a background thread that will perform a periodic
@@ -41,11 +41,17 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AbstractReloadableService.class);
 
-    /** Milliseconds between one reload check and another. */
-    private final long reloadCheckDelay;
+    /**
+     * Number of milliseconds between one reload check and another. A value of 0 or less indicates that no reloading
+     * will be performed. Default value: {@value} (5 minutes)
+     */
+    private long reloadCheckDelay = 300000;
+
+    /** Timer used to schedule configuration reload tasks. */
+    private Timer reloadTaskTimer;
 
     /** Watcher that monitors the set of configuration resources for this service for changes. */
-    private final ServiceReloadTask reloadTask;
+    private ServiceReloadTask reloadTask;
 
     /** The last time time the service was reloaded, whether successful or not. */
     private DateTime lastReloadInstant;
@@ -57,34 +63,53 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     private Throwable reloadFailureCause;
 
     /**
-     * Constructor.
-     * 
-     * @param id unique service identifier
-     * @param reloadTaskTimer timer used to schedule service reloading background task
-     * @param reloadDelay milliseconds between one reload check and another
-     */
-    public AbstractReloadableService(final String id, final Timer reloadTaskTimer, final long reloadDelay) {
-        super(id);
-
-        if (reloadDelay > 0) {
-            Assert.isNotNull(reloadTaskTimer, "Reload task timer may not be null");
-            Assert.isGreaterThan(0, reloadDelay, "Reload delay must be greater than 0");
-            reloadCheckDelay = reloadDelay;
-            reloadTask = new ServiceReloadTask();
-            reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
-        } else {
-            reloadCheckDelay = -1;
-            reloadTask = null;
-        }
-    }
-
-    /**
-     * Gets the number of milliseconds between one reload check and another.
+     * Gets the number of milliseconds between one reload check and another. A value of 0 or less indicates that no
+     * reloading will be performed.
      * 
      * @return number of milliseconds between one reload check and another
      */
     public long getReloadCheckDelay() {
         return reloadCheckDelay;
+    }
+
+    /**
+     * Sets the number of milliseconds between one reload check and another. A value of 0 or less indicates that no
+     * reloading will be performed.
+     * 
+     * This setting can not be changed after the service has been initialized.
+     * 
+     * @param delay number of milliseconds between one reload check and another
+     */
+    public synchronized void setReloadCheckDelay(long delay) {
+        if (isInitialized()) {
+            return;
+        }
+
+        reloadCheckDelay = delay;
+    }
+
+    /**
+     * Gets the timer used to schedule configuration reload tasks.
+     * 
+     * @return timer used to schedule configuration reload tasks
+     */
+    public Timer getReloadTaskTimer() {
+        return reloadTaskTimer;
+    }
+
+    /**
+     * Sets the timer used to schedule configuration reload tasks.
+     * 
+     * This setting can not be changed after the service has been initialized.
+     * 
+     * @param timer timer used to schedule configuration reload tasks
+     */
+    public synchronized void setReloadTaskTimer(Timer timer) {
+        if (isInitialized()) {
+            return;
+        }
+
+        reloadTaskTimer = timer;
     }
 
     /** {@inheritDoc} */
@@ -100,6 +125,17 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     /** {@inheritDoc} */
     public Throwable getReloadFailureCause() {
         return reloadFailureCause;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (reloadCheckDelay > 0) {
+            Assert.isNotNull(reloadTaskTimer, "Reload task timer may not be null");
+            reloadTask = new ServiceReloadTask();
+            reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
+        }
     }
 
     /**

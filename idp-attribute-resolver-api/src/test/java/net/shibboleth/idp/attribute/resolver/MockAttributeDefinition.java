@@ -18,8 +18,9 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
+
+import org.opensaml.util.component.ComponentValidationException;
 
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
@@ -41,7 +42,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition {
      * @param value static value returned by this definition
      */
     public MockAttributeDefinition(final String id, final Attribute<?> value) {
-        super(id);
+        setId(id);
         invalid = false;
         staticValue = value;
     }
@@ -53,7 +54,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition {
      * @param exception exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}
      */
     public MockAttributeDefinition(final String id, final AttributeResolutionException exception) {
-        super(id);
+        setId(id);
         invalid = false;
         resolutionException = exception;
     }

@@ -17,8 +17,7 @@
 
 package net.shibboleth.idp.metadata;
 
-import net.shibboleth.idp.Component;
-
+import org.opensaml.util.component.IdentifiedComponent;
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.Resolver;
 
@@ -27,6 +26,6 @@ import org.opensaml.xml.security.Resolver;
  * 
  * @param <MetadataType> type of metadata returned by the resolver
  */
-public interface MetadataResolver<MetadataType> extends Resolver<MetadataType, CriteriaSet>, Component {
+public interface MetadataResolver<MetadataType> extends Resolver<MetadataType, CriteriaSet>, IdentifiedComponent {
 
 }

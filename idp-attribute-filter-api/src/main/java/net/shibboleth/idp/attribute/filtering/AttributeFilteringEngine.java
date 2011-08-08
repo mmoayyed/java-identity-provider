@@ -22,13 +22,19 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.AbstractComponent;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
+import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,28 +42,24 @@ import org.slf4j.LoggerFactory;
 
 /** Services that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public class AttributeFilteringEngine extends AbstractComponent {
+public class AttributeFilteringEngine extends AbstractIdentifiedInitializableComponent implements ValidatableComponent,
+        DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilteringEngine.class);
 
     /** Filter policies used by this engine. */
-    private Set<AttributeFilterPolicy> filterPolicies;
+    private Set<AttributeFilterPolicy> filterPolicies = Collections.EMPTY_SET;
 
-    /**
-     * Constructor.
-     * 
-     * @param id the unique ID for this engine
-     */
-    public AttributeFilteringEngine(final String id) {
-        super(id);
-        filterPolicies = Collections.emptySet();
+    /** {@inheritDoc} */
+    public synchronized void setId(final String componentId) {
+        super.setId(componentId);
     }
 
     /**
      * Gets the immutable collection of filter policies.
      * 
-     * @return immutable collection of filter policies, never null
+     * @return immutable collection of filter policies, never null or containing null elements
      */
     public Set<AttributeFilterPolicy> getFilterPolicies() {
         return filterPolicies;
@@ -66,28 +68,21 @@ public class AttributeFilteringEngine extends AbstractComponent {
     /**
      * Sets the new policies for the filtering engine.
      * 
-     * @param policies new policies for the filtering engine, may be null
+     * @param policies new policies for the filtering engine, may be null or contain null elements
      */
-    public void setFilterPolicies(final Collection<AttributeFilterPolicy> policies) {
-        if (policies == null || policies.isEmpty()) {
-            filterPolicies = Collections.emptySet();
-            return;
+    public synchronized void setFilterPolicies(final Collection<AttributeFilterPolicy> policies) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute filter egine " + getId()
+                    + " has already been initialized, its filter policies can not be changed.");
         }
 
-        final LazySet<AttributeFilterPolicy> newPolicies = new LazySet<AttributeFilterPolicy>();
-        for (AttributeFilterPolicy policy : policies) {
-            if (policy != null) {
-                newPolicies.add(policy);
-            }
-        }
-
+        LazySet<AttributeFilterPolicy> newPolicies =
+                CollectionSupport.addNonNull(policies, new LazySet<AttributeFilterPolicy>());
         filterPolicies = Collections.unmodifiableSet(newPolicies);
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        super.validate();
-
         final LazyList<String> invalidPolicyIds = new LazyList<String>();
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
@@ -108,6 +103,16 @@ public class AttributeFilteringEngine extends AbstractComponent {
         }
     }
 
+    /** {@inheritDoc} */
+    public synchronized void destroy() {
+        final Set<AttributeFilterPolicy> policies = getFilterPolicies();
+        for (AttributeFilterPolicy policy : policies) {
+            policy.destroy();
+        }
+
+        filterPolicies = Collections.emptySet();
+    }
+
     /**
      * Filters attributes and values. This filtering process may remove attributes and values but must never add them.
      * 
@@ -118,6 +123,11 @@ public class AttributeFilteringEngine extends AbstractComponent {
      *             policy
      */
     public void filterAttributes(final AttributeFilterContext filterContext) throws AttributeFilteringException {
+        if (!isInitialized()) {
+            throw new AttributeFilteringException("Attribute filtering engine " + getId()
+                    + " has not be initialized and can not yet be used");
+        }
+
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
             if (!policy.isApplicable(filterContext)) {
@@ -153,7 +163,7 @@ public class AttributeFilteringEngine extends AbstractComponent {
      * @return the values which are permitted to be released and not denied or null if no values are allowed to be
      *         released
      */
-    protected Collection<?> getFilteredValues(String attributeId, AttributeFilterContext filterContext) {
+    protected Collection<?> getFilteredValues(final String attributeId, final AttributeFilterContext filterContext) {
         final Collection<?> filteredAttributeValues = filterContext.getPermittedAttributeValues().get(attributeId);
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             return null;
@@ -168,5 +178,14 @@ public class AttributeFilteringEngine extends AbstractComponent {
         }
 
         return filteredAttributeValues;
+    }
+    
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        for(AttributeFilterPolicy policy : filterPolicies){
+            policy.initialize();
+        }
     }
 }

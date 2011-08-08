@@ -32,16 +32,7 @@ public class ResolveAttributes extends AbstractIdentityProviderAction {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public ResolveAttributes() {
-        super(ResolveAttributes.class.getName());
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this component
-     */
-    public ResolveAttributes(String componentId) {
-        super(componentId);
+        setId(ResolveAttributes.class.getName());
     }
 
     /** {@inheritDoc} */

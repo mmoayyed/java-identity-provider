@@ -30,16 +30,7 @@ public class CheckMessageReplay extends AbstractInboundMessageSubcontextAction<B
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckMessageReplay() {
-        super(CheckMessageReplay.class.getName());
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique identifier for this action
-     */
-    public CheckMessageReplay(String componentId) {
-        super(componentId);
+        setId(CheckMessageReplay.class.getName());
     }
 
     /** {@inheritDoc} */

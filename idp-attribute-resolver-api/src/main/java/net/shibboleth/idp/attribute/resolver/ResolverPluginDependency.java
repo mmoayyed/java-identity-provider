@@ -103,8 +103,8 @@ public class ResolverPluginDependency {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + dependencyPluginId.hashCode();
         result = prime * result + ((dependencyAttributeId == null) ? 0 : dependencyAttributeId.hashCode());
-        result = prime * result + ((dependencyPluginId == null) ? 0 : dependencyPluginId.hashCode());
         return result;
     }
 

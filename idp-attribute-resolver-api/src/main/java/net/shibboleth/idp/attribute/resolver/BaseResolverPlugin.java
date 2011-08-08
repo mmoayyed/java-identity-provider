@@ -19,12 +19,20 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.AbstractComponent;
 
-import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
+import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
@@ -37,8 +45,9 @@ import org.slf4j.LoggerFactory;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent {
-    
+public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifiedInitializableComponent implements
+        ValidatableComponent, UnmodifiableComponent, DestructableComponent {
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
 
@@ -46,22 +55,20 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
     private boolean propagateResolutionExceptions;
 
     /** Criterion that must be met for this plugin to be active for the given request. */
-    private EvaluableCriterion<AttributeResolutionContext> activationCriteria;
+    private EvaluableCriterion<AttributeResolutionContext> activationCriteria =
+            StaticResponseEvaluableCriterion.TRUE_RESPONSE;
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
-    private Set<ResolverPluginDependency> dependencies;
+    private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
 
-    /**
-     * Constructor.
-     * 
-     * @param pluginId unique identifier for the plugin, never null or empty
-     */
-    public BaseResolverPlugin(final String pluginId) {
-        super(pluginId);
-
-        propagateResolutionExceptions = false;
-        activationCriteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
-        dependencies = new LazySet<ResolverPluginDependency>();
+    /** {@inheritDoc} */
+    public synchronized void setId(final String componentId) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, plugin ID can not be changed.");
+        }
+        
+        super.setId(componentId);
     }
 
     /**
@@ -80,7 +87,12 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @param propagate true if {@link AttributeResolutionException}s are propagated, false if not
      */
-    public void setPropagateResolutionExceptions(final boolean propagate) {
+    public synchronized void setPropagateResolutionExceptions(final boolean propagate) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, resolution exception propagation can not be changed.");
+        }
+
         propagateResolutionExceptions = propagate;
     }
 
@@ -98,7 +110,12 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @param criteria criteria that must be met for this plugin to be active for a given request
      */
-    public void setActivationCriteria(final EvaluableCriterion<AttributeResolutionContext> criteria) {
+    public synchronized void setActivationCriteria(final EvaluableCriterion<AttributeResolutionContext> criteria) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, resolution exception propagation can not be changed.");
+        }
+
         if (criteria == null) {
             activationCriteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
         } else {
@@ -112,7 +129,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * @return unmodifiable list of dependencies for this plugin, never null
      */
     public Set<ResolverPluginDependency> getDependencies() {
-        return Collections.unmodifiableSet(dependencies);
+        return dependencies;
     }
 
     /**
@@ -120,44 +137,19 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * 
      * @param pluginDependencies unmodifiable list of dependencies for this plugin
      */
-    public void setDependencies(final Collection<ResolverPluginDependency> pluginDependencies) {
-        dependencies.clear();
-
-        if (pluginDependencies != null) {
-            for (ResolverPluginDependency dependency : pluginDependencies) {
-                addDependency(dependency);
-            }
-        }
-    }
-
-    /**
-     * Adds a dependency to this plugin.
-     * 
-     * @param dependency dependency to added, may be null
-     * 
-     * @return true if the addition changed the dependencies for this plugin, false otherwise
-     */
-    public boolean addDependency(final ResolverPluginDependency dependency) {
-        if (dependency == null) {
-            return false;
+    public synchronized void setDependencies(final Collection<ResolverPluginDependency> pluginDependencies) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, resolution exception propagation can not be changed.");
         }
 
-        return dependencies.add(dependency);
-    }
-
-    /**
-     * Removes a dependency from this plugin.
-     * 
-     * @param dependency dependency to removed, may be null
-     * 
-     * @return true if the removal changed the dependencies for this plugin, false otherwise
-     */
-    public boolean removeDependency(final ResolverPluginDependency dependency) {
-        if (dependency == null) {
-            return false;
+        HashSet<ResolverPluginDependency> checkedDependencies =
+                CollectionSupport.addNonNull(pluginDependencies, new HashSet<ResolverPluginDependency>());
+        if (checkedDependencies.isEmpty()) {
+            dependencies = Collections.emptySet();
+        } else {
+            dependencies = Collections.unmodifiableSet(checkedDependencies);
         }
-
-        return dependencies.remove(dependency);
     }
 
     /**
@@ -171,11 +163,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      * @return true if the current resolution context meets the requirements for this plugin, false if not
      */
     public boolean isApplicable(final AttributeResolutionContext resolutionContext) {
-        try{
+        try {
             if (activationCriteria.evaluate(resolutionContext)) {
                 return true;
             }
-        }catch(EvaluationException e){
+        } catch (EvaluationException e) {
             log.warn("Error evaluating plugin applicability criteria", e);
         }
 
@@ -199,6 +191,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
      */
     public final ResolvedType resolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
+        if (!isInitialized()) {
+            throw new AttributeResolutionException("Resolver plugin" + getId()
+                    + " has not be initialized and can not yet be used");
+        }
+
         if (!isApplicable(resolutionContext)) {
             return null;
         }
@@ -211,6 +208,31 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractComponent
             } else {
                 return null;
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        if (activationCriteria instanceof ValidatableComponent) {
+            ((ValidatableComponent) activationCriteria).validate();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public synchronized void destroy() {
+        if (activationCriteria instanceof DestructableComponent) {
+            ((DestructableComponent) activationCriteria).destroy();
+        }
+        activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+        dependencies = Collections.emptySet();
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (activationCriteria instanceof InitializableComponent) {
+            ((InitializableComponent) activationCriteria).initialize();
         }
     }
 

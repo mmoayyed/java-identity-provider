@@ -31,16 +31,7 @@ public class InitializeProfileRequestContext extends AbstractIdentityProviderAct
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public InitializeProfileRequestContext(){
-        super(InitializeProfileRequestContext.class.getName());
-    }
-    
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this component
-     */
-    public InitializeProfileRequestContext(String componentId) {
-        super(componentId);
+        setId(InitializeProfileRequestContext.class.getName());
     }
 
     /** {@inheritDoc} */

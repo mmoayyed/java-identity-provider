@@ -33,16 +33,7 @@ public class FilterAttributes extends AbstractIdentityProviderAction {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public FilterAttributes() {
-        super(FilterAttributes.class.getName());
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this component
-     */
-    public FilterAttributes(String componentId) {
-        super(componentId);
+        setId(FilterAttributes.class.getName());
     }
 
     /** {@inheritDoc} */

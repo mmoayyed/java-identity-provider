@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.resolver.Resolver;
 import org.opensaml.util.resolver.ResolverException;
@@ -36,72 +38,75 @@ import org.slf4j.LoggerFactory;
  * 
  * Note, this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
  */
-public class RelyingPartyConfigurationResolver extends AbstractComponent implements
+public class RelyingPartyConfigurationResolver extends AbstractIdentifiedInitializableComponent implements
         Resolver<RelyingPartyConfiguration, ProfileRequestContext> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(RelyingPartyConfigurationResolver.class);
 
     /** Configuration used with anonymous relying parties. */
-    private final RelyingPartyConfiguration anonymousRpConfiguration;
+    private RelyingPartyConfiguration anonymousRpConfiguration;
 
     /** Registered relying party configurations. */
-    private final List<RelyingPartyConfiguration> rpConfigurations;
+    private List<RelyingPartyConfiguration> rpConfigurations = Collections.emptyList();
 
-    /**
-     * Constructor.
-     * 
-     * @param id unique identifier for this component
-     * @param anonymous configuration to use for an anonymous relying party, may be null
-     * @param configs configurations, in order of preference, for relying parties, may be null or contain null entries
-     */
-    public RelyingPartyConfigurationResolver(final String id, final RelyingPartyConfiguration anonymous,
-            final List<RelyingPartyConfiguration> configs) {
-        super(id);
-
-        anonymousRpConfiguration = anonymous;
-
-        if (configs == null || configs.isEmpty()) {
-            rpConfigurations = Collections.emptyList();
-            return;
-        }
-
-        final ArrayList<String> configIds = new ArrayList<String>();
-        final ArrayList<RelyingPartyConfiguration> configList = new ArrayList<RelyingPartyConfiguration>();
-        for (RelyingPartyConfiguration config : configs) {
-            if (config != null) {
-                if (configIds.contains(config.getConfigurationId())) {
-                    throw new IllegalArgumentException("Relying party configuration with ID "
-                            + config.getConfigurationId() + " already exists.");
-                }
-                configList.add(config);
-                configIds.add(config.getConfigurationId());
-            }
-        }
-
-        if (configList.isEmpty()) {
-            rpConfigurations = Collections.emptyList();
-        } else {
-            rpConfigurations = Collections.unmodifiableList(configList);
-        }
+    /** {@inheritDoc} */
+    public synchronized void setId(String componentId) {
+        super.setId(componentId);
     }
 
     /**
-     * Gets the configuration used with anonymous relying parties.
+     * Gets the relying party configuration used for anonymous relying parties.
      * 
-     * @return configuration used with anonymous relying parties, may be null
+     * @return relying party configuration used for anonymous relying parties, may be null
      */
     public RelyingPartyConfiguration getAnonymousRelyingPartyConfiguration() {
         return anonymousRpConfiguration;
     }
 
     /**
-     * Gets the unmodifiable list of available relying party configurations.
+     * Sets the relying party configuration used for anonymous relying parties.
      * 
-     * @return unmodifiable list of available relying party configurations, never null and never contains null entries
+     * This property may not be changed after the resolver is initialized.
+     * 
+     * @param config relying party configuration used for anonymous relying parties
+     */
+    public synchronized void setAnonymousRelyingPartyConfiguration(RelyingPartyConfiguration config) {
+        if (isInitialized()) {
+            return;
+        }
+
+        anonymousRpConfiguration = config;
+    }
+
+    /**
+     * Gets the unmodifiable list of registered relying party configurations.
+     * 
+     * @return unmodifiable list of registered relying party configurations, never null nor containing null entries
      */
     public List<RelyingPartyConfiguration> getRelyingPartyConfigurations() {
         return rpConfigurations;
+    }
+
+    /**
+     * Sets the list of registered relying party configurations.
+     * 
+     * This property may not be changed after the resolver is initialized.
+     * 
+     * @param configs list of registered relying party configurations
+     */
+    public synchronized void setRelyingPartyConfigurations(List<RelyingPartyConfiguration> configs) {
+        if (isInitialized()) {
+            return;
+        }
+
+        ArrayList<RelyingPartyConfiguration> checkedConfigs =
+                CollectionSupport.addNonNull(configs, new ArrayList<RelyingPartyConfiguration>());
+        if (checkedConfigs.isEmpty()) {
+            rpConfigurations = Collections.emptyList();
+        } else {
+            rpConfigurations = Collections.unmodifiableList(checkedConfigs);
+        }
     }
 
     /** {@inheritDoc} */
@@ -117,7 +122,7 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
-            try{
+            try {
                 if (configuration.getActivationCriteria().evaluate(context) == Boolean.TRUE) {
                     log.debug("Relying party configuration {} is applicable to profile request {}",
                             configuration.getConfigurationId(), context.getId());
@@ -126,7 +131,7 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
                     log.debug("Relying party configuration {} is not applicable to profile request {}",
                             configuration.getConfigurationId(), context.getId());
                 }
-            }catch(EvaluationException e){
+            } catch (EvaluationException e) {
                 log.warn("Error evaluating relying party configuration criteria", e);
             }
         }
@@ -144,7 +149,7 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
-            try{
+            try {
                 if (configuration.getActivationCriteria().evaluate(context) == Boolean.TRUE) {
                     log.debug("Relying party configuration {} is applicable to profile request {}",
                             configuration.getConfigurationId(), context.getId());
@@ -153,12 +158,27 @@ public class RelyingPartyConfigurationResolver extends AbstractComponent impleme
                     log.debug("Relying party configuration {} is not applicable to profile request {}",
                             configuration.getConfigurationId(), context.getId());
                 }
-            }catch(EvaluationException e){
+            } catch (EvaluationException e) {
                 log.warn("Error evaluating relying party configuration criteria", e);
             }
         }
 
         log.debug("No relying party configurations are applicable to profile request {}", context.getId());
         return null;
+    }
+    
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        final ArrayList<String> configIds = new ArrayList<String>();
+        for (RelyingPartyConfiguration config : rpConfigurations) {
+            if (configIds.contains(config.getConfigurationId())) {
+                throw new ComponentInitializationException("Multiple replying party configurations with ID "
+                        + config.getConfigurationId() + " detected.  Configuration IDs must be unique.");
+            }
+            configIds.add(config.getConfigurationId());
+        }
+
     }
 }

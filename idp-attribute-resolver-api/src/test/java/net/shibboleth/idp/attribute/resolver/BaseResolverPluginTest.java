@@ -142,7 +142,7 @@ public class BaseResolverPluginTest {
          * @param value value returned by {@link #doResolve(AttributeResolutionContext)}
          */
         public MockBaseResolverPlugin(String id, String value) {
-            super(id);
+            setId(id);
             resolverValue = value;
         }
 

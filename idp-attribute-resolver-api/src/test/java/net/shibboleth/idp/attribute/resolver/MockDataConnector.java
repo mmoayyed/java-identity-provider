@@ -20,8 +20,9 @@ package net.shibboleth.idp.attribute.resolver;
 import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
+
+import org.opensaml.util.component.ComponentValidationException;
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
@@ -43,7 +44,7 @@ public class MockDataConnector extends BaseDataConnector {
      * @param connectorValues static collection of values returned by this connector
      */
     public MockDataConnector(String id, Map<String, Attribute<?>> connectorValues) {
-        super(id);
+        setId(id);
         values = connectorValues;
     }
 
@@ -54,7 +55,7 @@ public class MockDataConnector extends BaseDataConnector {
      * @param exception exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}
      */
     public MockDataConnector(final String id, final AttributeResolutionException exception) {
-        super(id);
+        setId(id);
         invalid = false;
         resolutionException = exception;
     }
@@ -84,5 +85,4 @@ public class MockDataConnector extends BaseDataConnector {
             throw new ComponentValidationException();
         }
     }
-
 }

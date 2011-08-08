@@ -32,15 +32,6 @@ public abstract class AbstractInboundMessageSubcontextAction<SubcontextType exte
         AbstractIdentityProviderAction {
 
     /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this action
-     */
-    public AbstractInboundMessageSubcontextAction(String componentId) {
-        super(componentId);
-    }
-
-    /**
      * Retrieves the incoming message subcontext specified by {@link #getSubcontextType()}. If no incoming message
      * context or the specified subcontext is not available an error is returned.
      * 

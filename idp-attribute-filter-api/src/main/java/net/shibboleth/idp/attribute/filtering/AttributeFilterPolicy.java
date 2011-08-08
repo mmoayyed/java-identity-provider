@@ -23,9 +23,17 @@ import java.util.List;
 import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.attribute.Attribute;
 
+import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
+import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
@@ -42,42 +50,21 @@ import org.slf4j.LoggerFactory;
  * policies run this collection will contain the final result.
  */
 @ThreadSafe
-public class AttributeFilterPolicy extends AbstractComponent {
+public class AttributeFilterPolicy extends AbstractIdentifiedInitializableComponent implements ValidatableComponent,
+        DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
     /** Criterion that must be met for this policy to be active for a given request. */
-    private final EvaluableCriterion<AttributeFilterContext> activationCriteria;
+    private EvaluableCriterion<AttributeFilterContext> activationCriteria;
 
     /** Filters to be used on attribute values. */
-    private final List<AttributeValueFilterPolicy> valuePolicies;
+    private List<AttributeValueFilterPolicy> valuePolicies = Collections.emptyList();
 
-    /**
-     * Constructor.
-     * 
-     * @param id unique ID for the policy, never null
-     * @param policyRequirementRule rule that indicates when this policy is active, if null then
-     *            {@link StaticResponseEvaluableCriterion#FALSE_RESPONSE} is used
-     * @param attributeValuePolicies set of attribute rules enforced when this rule is active
-     */
-    public AttributeFilterPolicy(final String id,
-            final EvaluableCriterion<AttributeFilterContext> policyRequirementRule,
-            final List<AttributeValueFilterPolicy> attributeValuePolicies) {
-        super(id);
-
-        if (policyRequirementRule == null) {
-            activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
-        } else {
-            activationCriteria = policyRequirementRule;
-        }
-
-        if (attributeValuePolicies == null) {
-            valuePolicies = Collections.emptyList();
-        } else {
-            valuePolicies =
-                    Collections.unmodifiableList(new ArrayList<AttributeValueFilterPolicy>(attributeValuePolicies));
-        }
+    /** {@inheritDoc} */
+    public synchronized void setId(final String componentId) {
+        super.setId(componentId);
     }
 
     /**
@@ -90,12 +77,70 @@ public class AttributeFilterPolicy extends AbstractComponent {
     }
 
     /**
-     * Gets the attribute rules that are in effect if this policy is in effect.
+     * Sets the criteria that must be met for this policy to be active for a given request.
      * 
-     * @return attribute rules that are in effect if this policy is in effect, never null
+     * @param criteria criteria that must be met for this policy to be active for a given request
+     */
+    public synchronized void setActivationCriteria(final EvaluableCriterion<AttributeFilterContext> criteria) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute filter policy " + getId()
+                    + " has already been initialized, its activiation criteria can not be changed.");
+        }
+
+        activationCriteria = criteria;
+    }
+
+    /**
+     * Gets the unmodifiable attribute rules that are in effect if this policy is in effect.
+     * 
+     * @return attribute rules that are in effect if this policy is in effect, never null nor containing null entries
      */
     public List<AttributeValueFilterPolicy> getAttributeValuePolicies() {
         return valuePolicies;
+    }
+
+    /**
+     * Sets the attribute rules that are in effect if this policy is in effect.
+     * 
+     * @param policies attribute rules that are in effect if this policy is in effect, may be null or contain null
+     *            entries
+     */
+    public synchronized void setAttributeValuePolicies(final List<AttributeValueFilterPolicy> policies) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute filter policy " + getId()
+                    + " has already been initialized, its attribute value filter policies can not be changed.");
+        }
+
+        final ArrayList<AttributeValueFilterPolicy> checkedPolicies =
+                CollectionSupport.addNonNull(policies, new ArrayList<AttributeValueFilterPolicy>());
+        if (checkedPolicies.isEmpty()) {
+            valuePolicies = Collections.emptyList();
+        } else {
+            valuePolicies = Collections.unmodifiableList(checkedPolicies);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        if (activationCriteria instanceof ValidatableComponent) {
+            ((ValidatableComponent) activationCriteria).validate();
+        }
+
+        for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
+            valuePolicy.validate();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public synchronized void destroy() {
+        if (activationCriteria instanceof DestructableComponent) {
+            ((DestructableComponent) activationCriteria).destroy();
+        }
+        activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+
+        for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
+            valuePolicy.destroy();
+        }
     }
 
     /**
@@ -139,6 +184,11 @@ public class AttributeFilterPolicy extends AbstractComponent {
      *             request
      */
     public void apply(final AttributeFilterContext filterContext) throws AttributeFilteringException {
+        if (!isInitialized()) {
+            throw new AttributeFilteringException("Attribute filtering policy " + getId()
+                    + " has not be initialized and can not yet be used");
+        }
+        
         final Map<String, Attribute<?>> attributes = filterContext.getPrefilteredAttributes();
         log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getId(),
                 attributes.keySet());
@@ -157,6 +207,23 @@ public class AttributeFilterPolicy extends AbstractComponent {
                     filterContext.removeFilteredAttribute(attribute.getId());
                 }
             }
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (activationCriteria == null) {
+            activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+        } else {
+            if (activationCriteria instanceof InitializableComponent) {
+                ((InitializableComponent) activationCriteria).initialize();
+            }
+        }
+
+        for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
+            valuePolicy.initialize();
         }
     }
 }

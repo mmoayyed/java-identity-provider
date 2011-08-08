@@ -33,16 +33,7 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckRequestVersion() {
-        super(CheckRequestVersion.class.getName());
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this component
-     */
-    public CheckRequestVersion(String componentId) {
-        super(componentId);
+        setId(CheckRequestVersion.class.getName());
     }
 
     /** {@inheritDoc} */

@@ -18,21 +18,25 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazyMap;
-import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
+import org.opensaml.util.component.ValidatableComponent;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
@@ -42,27 +46,13 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     private boolean dependencyOnly;
 
     /** Attribute encoders associated with this definition. */
-    private LazySet<AttributeEncoder> encoders;
+    private Set<AttributeEncoder> encoders = Collections.emptySet();
 
     /** Localized human intelligible attribute name. */
-    private Map<Locale, String> displayNames;
+    private Map<Locale, String> displayNames = Collections.emptyMap();
 
     /** Localized human readable description of attribute. */
-    private Map<Locale, String> displayDescriptions;
-
-    /**
-     * Constructor.
-     * 
-     * @param definitionId unique identifier for this attribute definition
-     */
-    public BaseAttributeDefinition(final String definitionId) {
-        super(definitionId);
-
-        dependencyOnly = false;
-        encoders = new LazySet<AttributeEncoder>();
-        displayNames = new LazyMap<Locale, String>();
-        displayDescriptions = new LazyMap<Locale, String>();
-    }
+    private Map<Locale, String> displayDescriptions = Collections.emptyMap();
 
     /**
      * Gets whether this attribute definition is only a dependency and thus its values should never be released outside
@@ -80,7 +70,12 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param isDependencyOnly whether this attribute definition is only a dependency
      */
-    public void setDependencyOnly(final boolean isDependencyOnly) {
+    public synchronized void setDependencyOnly(final boolean isDependencyOnly) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, dependency only status can not be changed.");
+        }
+
         dependencyOnly = isDependencyOnly;
     }
 
@@ -91,7 +86,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @return human readable descriptions of attribute, never null
      */
     public Map<Locale, String> getDisplayDescriptions() {
-        return Collections.unmodifiableMap(displayDescriptions);
+        return displayDescriptions;
     }
 
     /**
@@ -99,47 +94,31 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public void setDisplayDescriptions(final Map<Locale, String> descriptions) {
-        displayDescriptions.clear();
+    public synchronized void setDisplayDescriptions(final Map<Locale, String> descriptions) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, display descriptions can not be changed.");
+        }
 
-        if (descriptions != null) {
-            for (Entry<Locale, String> description : descriptions.entrySet()) {
-                addDisplayDescription(description.getKey(), description.getValue());
+        HashMap<Locale, String> checkedDescriptions = new HashMap<Locale, String>();
+
+        String trimmedDescription;
+        for (Locale locale : descriptions.keySet()) {
+            if (locale == null) {
+                continue;
+            }
+
+            trimmedDescription = StringSupport.trimOrNull(descriptions.get(locale));
+            if (trimmedDescription != null) {
+                checkedDescriptions.put(locale, trimmedDescription);
             }
         }
-    }
 
-    /**
-     * Adds a display description to this definition.
-     * 
-     * @param locale local of the description, never null
-     * @param description description, never null or empty
-     * 
-     * @return the description previously associated with the given locale or null if there was no previous description
-     */
-    public String addDisplayDescription(final Locale locale, final String description) {
-        Assert.isNotNull(locale, "display description locale may not be null");
-
-        String trimmedDescription = StringSupport.trimOrNull(description);
-        Assert.isNotNull(trimmedDescription, "display description may not be null or empty");
-
-        return displayDescriptions.put(locale, trimmedDescription);
-    }
-
-    /**
-     * Removes a display description from this definition.
-     * 
-     * @param locale local of the description, may be null
-     * 
-     * @return the description associated with the given locale or null if there was no description associated with the
-     *         locale
-     */
-    public String removeDisplayDescription(final Locale locale) {
-        if (locale == null) {
-            return null;
+        if (checkedDescriptions.isEmpty()) {
+            displayDescriptions = Collections.emptyMap();
+        } else {
+            displayDescriptions = Collections.unmodifiableMap(descriptions);
         }
-
-        return displayDescriptions.remove(locale);
     }
 
     /**
@@ -149,7 +128,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @return human readable names of the attribute
      */
     public Map<Locale, String> getDisplayNames() {
-        return Collections.unmodifiableMap(displayNames);
+        return displayNames;
     }
 
     /**
@@ -157,46 +136,31 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param names localized human readable names of the attribute
      */
-    public void setDisplayNames(final Map<Locale, String> names) {
-        displayNames.clear();
+    public synchronized void setDisplayNames(final Map<Locale, String> names) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, display names can not be changed.");
+        }
 
-        if (names != null) {
-            for (Entry<Locale, String> name : names.entrySet()) {
-                addDisplayName(name.getKey(), name.getValue());
+        HashMap<Locale, String> checkedNames = new HashMap<Locale, String>();
+
+        String trimmedName;
+        for (Locale locale : names.keySet()) {
+            if (locale == null) {
+                continue;
+            }
+
+            trimmedName = StringSupport.trimOrNull(names.get(locale));
+            if (trimmedName != null) {
+                checkedNames.put(locale, trimmedName);
             }
         }
-    }
 
-    /**
-     * Adds a display name to this definition.
-     * 
-     * @param locale locale of the name, never null
-     * @param name the display name, never null or empty
-     * 
-     * @return the name previously associated with the given locale or null if there was no previous name
-     */
-    public String addDisplayName(final Locale locale, final String name) {
-        Assert.isNotNull(locale, "display name locale may not be null");
-
-        String trimmedName = StringSupport.trimOrNull(name);
-        Assert.isNotNull(trimmedName, "display name may not be null or empty");
-
-        return displayNames.put(locale, trimmedName);
-    }
-
-    /**
-     * Removes a display name to this definition.
-     * 
-     * @param locale locale of the name, may be null
-     * 
-     * @return the name previously associated with the given locale or null if there was no previous name
-     */
-    public String removeDisplayName(final Locale locale) {
-        if (locale == null) {
-            return null;
+        if (checkedNames.isEmpty()) {
+            displayNames = Collections.emptyMap();
+        } else {
+            displayNames = Collections.unmodifiableMap(checkedNames);
         }
-
-        return displayNames.remove(locale);
     }
 
     /**
@@ -206,7 +170,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
      */
     public Set<AttributeEncoder> getAttributeEncoders() {
-        return Collections.unmodifiableSet(encoders);
+        return encoders;
     }
 
     /**
@@ -215,29 +179,56 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
      */
     public void setAttributeEncoders(final List<AttributeEncoder> attributeEncoders) {
-        CollectionSupport.nonNullReplace(attributeEncoders, encoders);
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has already been initialized, attribute encoders can not be changed.");
+        }
+
+        HashSet<AttributeEncoder> checkedEncoders =
+                CollectionSupport.addNonNull(attributeEncoders, new HashSet<AttributeEncoder>());
+        if (checkedEncoders.isEmpty()) {
+            encoders = Collections.emptySet();
+        } else {
+            encoders = Collections.unmodifiableSet(checkedEncoders);
+        }
     }
 
-    /**
-     * Adds an attribute encoder to this definition.
-     * 
-     * @param attributeEncoder encoder to be added, may be null
-     * 
-     * @return true if the addition changed the encoders for this definition, false otherwise
-     */
-    public boolean addAttributeEncoder(final AttributeEncoder<?> attributeEncoder) {
-        return CollectionSupport.nonNullAdd(encoders, attributeEncoder);
+    /** {@inheritDoc} */
+    public synchronized void destroy() {
+
+        for (AttributeEncoder encoder : encoders) {
+            if (encoder instanceof DestructableComponent) {
+                ((DestructableComponent) encoder).destroy();
+            }
+        }
+
+        encoders = Collections.emptySet();
+        displayDescriptions = Collections.emptyMap();
+        displayNames = Collections.emptyMap();
+
+        super.destroy();
     }
 
-    /**
-     * Removes an attribute encoder from this definition.
-     * 
-     * @param attributeEncoder encoder to be removed, may be null
-     * 
-     * @return true if the removal changed the encoders for this definition, false otherwise
-     */
-    public boolean removeAttributeEndoer(final AttributeEncoder<?> attributeEncoder) {
-        return CollectionSupport.nonNullRemove(encoders, attributeEncoder);
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        super.validate();
+
+        for (AttributeEncoder encoder : encoders) {
+            if (encoder instanceof ValidatableComponent) {
+                ((ValidatableComponent) encoder).validate();
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        for (AttributeEncoder encoder : encoders) {
+            if (encoder instanceof InitializableComponent) {
+                ((InitializableComponent) encoder).initialize();
+            }
+        }
     }
 
     /**
@@ -249,6 +240,11 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      */
     protected Attribute<?> doResolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
+        if (!isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
+                    + " has not been initialized and can not yet be used.");
+        }
+
         final Attribute resolvedAttribute = doAttributeResolution(resolutionContext);
 
         if (resolvedAttribute == null) {

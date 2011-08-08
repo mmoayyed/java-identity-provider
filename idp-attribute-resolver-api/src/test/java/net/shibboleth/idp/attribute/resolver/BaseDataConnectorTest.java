@@ -92,7 +92,7 @@ public class BaseDataConnectorTest {
          * @param values values returned for {@link #resolve(AttributeResolutionContext)}
          */
         public MockBaseDataConnector(final String id, final Map<String, Attribute<?>> values) {
-            super(id);
+            setId(id);
             staticValues = values;
         }
 

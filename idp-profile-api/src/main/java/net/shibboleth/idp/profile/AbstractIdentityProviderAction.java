@@ -18,8 +18,10 @@
 package net.shibboleth.idp.profile;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.AbstractComponent;
 
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -47,19 +49,15 @@ import org.springframework.webflow.execution.RequestContext;
 
 // TODO perf metrics
 @ThreadSafe
-public abstract class AbstractIdentityProviderAction<InboundMessageType, OutboundMessageType> extends AbstractComponent
-        implements Action {
+public abstract class AbstractIdentityProviderAction<InboundMessageType, OutboundMessageType> extends
+        AbstractIdentifiedInitializableComponent implements ValidatableComponent, Action {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractIdentityProviderAction.class);
 
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this action
-     */
-    public AbstractIdentityProviderAction(final String componentId) {
-        super(componentId);
+    /** {@inheritDoc} */
+    public synchronized void setId(String componentId) {
+        super.setId(componentId);
     }
 
     /** {@inheritDoc} */
@@ -87,6 +85,11 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
         }
 
         return result;
+    }
+
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        // nothing to do here
     }
 
     /**

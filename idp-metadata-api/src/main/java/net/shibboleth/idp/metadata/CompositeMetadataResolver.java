@@ -21,10 +21,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.shibboleth.idp.AbstractComponent;
-
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.SecurityException;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @param <MetadataType> type of metadata returned by the resolver
  */
-public class CompositeMetadataResolver<MetadataType> extends AbstractComponent implements
+public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedInitializableComponent implements
         MetadataResolver<MetadataType> {
 
     /** Resolvers composed by this resolver. */
@@ -45,12 +44,9 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractComponent i
     /**
      * Constructor.
      * 
-     * @param id unique identifier for this resolver
      * @param composedResolvers resolvers composed by this resolver, may be null or contain null elements
      */
-    public CompositeMetadataResolver(final String id, final List<MetadataResolver<MetadataType>> composedResolvers) {
-        super(id);
-
+    public CompositeMetadataResolver(final List<MetadataResolver<MetadataType>> composedResolvers) {
         if (composedResolvers == null || composedResolvers.isEmpty()) {
             resolvers = Collections.emptyList();
         } else {
@@ -58,6 +54,11 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractComponent i
                     CollectionSupport.addNonNull(composedResolvers, new LazyList<MetadataResolver<MetadataType>>());
             resolvers = Collections.unmodifiableList(checkedResolvers);
         }
+    }
+
+    /** {@inheritDoc} */
+    public synchronized void setId(String componentId) {
+        super.setId(componentId);
     }
 
     /**

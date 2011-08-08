@@ -41,34 +41,26 @@ public class RelyingPartyConfigurationResolverTest {
         rpConfigs.add(new RelyingPartyConfiguration("two", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null));
         rpConfigs.add(new RelyingPartyConfiguration("three", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
 
-        resolver = new RelyingPartyConfigurationResolver("test", anonConfig, rpConfigs);
+        resolver = new RelyingPartyConfigurationResolver();
+        resolver.setId("test");
+        resolver.setAnonymousRelyingPartyConfiguration(anonConfig);
+        resolver.setRelyingPartyConfigurations(rpConfigs);
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertSame(resolver.getAnonymousRelyingPartyConfiguration(), anonConfig);
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 3);
 
-        resolver = new RelyingPartyConfigurationResolver("test", anonConfig, null);
+        resolver = new RelyingPartyConfigurationResolver();
+        resolver.setId("test");
+        resolver.setAnonymousRelyingPartyConfiguration(anonConfig);
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertSame(resolver.getAnonymousRelyingPartyConfiguration(), anonConfig);
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
 
-        resolver = new RelyingPartyConfigurationResolver("test", null, null);
+        resolver = new RelyingPartyConfigurationResolver();
+        resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertNull(resolver.getAnonymousRelyingPartyConfiguration());
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
-
-        try {
-            resolver = new RelyingPartyConfigurationResolver(null, null, null);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected this
-        }
-
-        try {
-            resolver = new RelyingPartyConfigurationResolver("", null, null);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected this
-        }
     }
 
     @Test
@@ -87,7 +79,9 @@ public class RelyingPartyConfigurationResolverTest {
         rpConfigs.add(config2);
         rpConfigs.add(config3);
 
-        RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver("test", null, rpConfigs);
+        RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver();
+        resolver.setId("test");
+        resolver.setRelyingPartyConfigurations(rpConfigs);
 
         Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
         Assert.assertNotNull(results);

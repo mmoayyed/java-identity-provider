@@ -26,16 +26,7 @@ public class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckMandatoryIssuer() {
-        super(CheckMandatoryIssuer.class.getName());
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this component
-     */
-    public CheckMandatoryIssuer(String componentId) {
-        super(componentId);
+        setId(CheckMandatoryIssuer.class.getName());
     }
 
     /** {@inheritDoc} */

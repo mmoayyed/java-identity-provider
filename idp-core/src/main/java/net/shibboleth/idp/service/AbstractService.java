@@ -23,19 +23,22 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.AbstractComponent;
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Base class for {@link Service} implementations. */
 @ThreadSafe
-public abstract class AbstractService extends AbstractComponent implements Service {
+public abstract class AbstractService extends AbstractIdentifiedInitializableComponent implements Service,
+        ValidatableComponent {
 
     /** Suffix appended to service ID to form the starting performance event ID. Value: {@value} */
     public static final String START_PERF_EVENT_ID_SUFFIX = ".start";
@@ -52,18 +55,17 @@ public abstract class AbstractService extends AbstractComponent implements Servi
     /** Lock for this service. */
     private ReentrantReadWriteLock serviceLock;
 
-    /**
-     * Constructor.
-     * 
-     * @param serviceId the unique ID of this service
-     */
-    public AbstractService(final String serviceId) {
-        super(serviceId);
-
+    /** Constructor. */
+    public AbstractService() {
         currentState = STATE_NEW;
         serviceLock = new ReentrantReadWriteLock(true);
     }
 
+    /** {@inheritDoc} */
+    public synchronized void setId(String componentId) {
+        super.setId(componentId);
+    }
+    
     /** {@inheritDoc} */
     public final String getCurrentState() {
         return currentState;
@@ -270,5 +272,10 @@ public abstract class AbstractService extends AbstractComponent implements Servi
      */
     protected void doPostStop(final HashMap context) throws ServiceException {
         log.info("Service '{}' has been stopped", getId());
+    }
+
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        // nothing to do here
     }
 }

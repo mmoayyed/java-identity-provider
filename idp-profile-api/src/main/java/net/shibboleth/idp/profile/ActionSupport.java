@@ -20,10 +20,9 @@ package net.shibboleth.idp.profile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.Component;
-
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.IdentifiedComponent;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -114,7 +113,7 @@ public final class ActionSupport {
      * 
      * @return the constructed {@link Event}
      */
-    public static Event buildEvent(Component source, String eventId, AttributeMap eventAttributes) {
+    public static Event buildEvent(IdentifiedComponent source, String eventId, AttributeMap eventAttributes) {
         Assert.isNotNull(source, "Component may not be null");
 
         final String trimmedEventId = StringSupport.trimOrNull(eventId);
@@ -138,7 +137,7 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    public static Event buildErrorEvent(Component source, Exception error, String message) {
+    public static Event buildErrorEvent(IdentifiedComponent source, Exception error, String message) {
         LocalAttributeMap eventAttributes = new LocalAttributeMap();
 
         if (error != null) {

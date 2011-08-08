@@ -22,10 +22,10 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.springframework.expression.Expression;
 
@@ -52,11 +52,8 @@ public class ResolvedDataConnector extends BaseDataConnector {
      * @param attributes attributes produced by the resolved data connector, may be null
      */
     public ResolvedDataConnector(BaseDataConnector connector, Map<String, Attribute<?>> attributes) {
-        super(connector.getId());
-
         Assert.isNotNull(connector, "Resolved data connector can not be null");
         resolvedConnector = connector;
-
         resolvedAttributes = attributes;
     }
 
@@ -148,5 +145,10 @@ public class ResolvedDataConnector extends BaseDataConnector {
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         return;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInitialized() {
+        return true;
     }
 }

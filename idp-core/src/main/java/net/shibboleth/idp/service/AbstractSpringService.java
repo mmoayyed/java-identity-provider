@@ -25,14 +25,13 @@ import java.util.List;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.spring.SpringSupport;
 
-import org.opensaml.util.Assert;
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
-
 
 /**
  * A service whose Spring beans are loaded into a service specific {@link ApplicationContext} that is a child of the
@@ -57,38 +56,36 @@ public abstract class AbstractSpringService extends AbstractService {
     private final Logger log = LoggerFactory.getLogger(AbstractSpringService.class);
 
     /** List of configuration resources for this service. */
-    private final List<Resource> serviceConfigurations;
+    private List<Resource> serviceConfigurations = Collections.emptyList();
 
     /** Application context owning this engine. */
-    private final ApplicationContext parentContext;
+    private ApplicationContext parentContext;
 
     /** Context containing loaded with service content. */
     private GenericApplicationContext serviceContext;
 
     /**
-     * Constructor.
+     * Gets the application context that is the parent to this service's context.
      * 
-     * @param id the unique ID for this service
-     * @param configs the configuration files to be loaded by the service
+     * @return application context that is the parent to this service's context
      */
-    public AbstractSpringService(final String id, final List<Resource> configs) {
-        this(id, null, configs);
+    public ApplicationContext getParentContext() {
+        return parentContext;
     }
 
     /**
-     * Constructor.
+     * Sets the application context that is the parent to this service's context.
      * 
-     * @param id the unique ID for this service
-     * @param parent the parent application context for this context, may be null if there is no parent
-     * @param configs the configuration files to be loaded by the service
+     * This setting can not be changed after the service has been initialized.
+     * 
+     * @param context context that is the parent to this service's context, may be null
      */
-    public AbstractSpringService(final String id, final ApplicationContext parent, final List<Resource> configs) {
-        super(id);
+    public synchronized void setParentContext(ApplicationContext context) {
+        if (isInitialized()) {
+            return;
+        }
 
-        parentContext = parent;
-
-        Assert.isNotEmpty(configs, "Service configuration set may not be null or empty");
-        serviceConfigurations = Collections.unmodifiableList(new ArrayList<Resource>(configs));
+        parentContext = context;
     }
 
     /**
@@ -101,12 +98,23 @@ public abstract class AbstractSpringService extends AbstractService {
     }
 
     /**
-     * Gets the application context that is the parent to this service's context.
+     * Sets the list of configurations for this service.
      * 
-     * @return application context that is the parent to this service's context
+     * This setting can not be changed after the service has been initialized.
+     * 
+     * @param configs list of configurations for this service, may be null or empty
      */
-    protected ApplicationContext getParentContext() {
-        return parentContext;
+    public synchronized void setServiceConfigurations(List<Resource> configs) {
+        if (isInitialized()) {
+            return;
+        }
+
+        ArrayList<Resource> checkedConfigs = CollectionSupport.addNonNull(configs, new ArrayList<Resource>());
+        if (checkedConfigs.isEmpty()) {
+            serviceConfigurations = Collections.emptyList();
+        } else {
+            serviceConfigurations = checkedConfigs;
+        }
     }
 
     /**
@@ -132,15 +140,15 @@ public abstract class AbstractSpringService extends AbstractService {
 
         try {
             log.debug("Creating new ApplicationContext for service '{}'", getId());
-            GenericApplicationContext appContext = SpringSupport.newContext(getId(),
-                    getServiceConfigurations(), getParentContext());
+            GenericApplicationContext appContext =
+                    SpringSupport.newContext(getId(), getServiceConfigurations(), getParentContext());
             log.debug("New Application Context created for service '{}'", getId());
             context.put(APP_CTX_CTX_KEY, appContext);
         } catch (BeansException e) {
             // Here we catch all the other exceptions thrown by Spring when it starts up the context
             Throwable cause = e.getMostSpecificCause();
-            log.error("Error creating new application context for service '{}'.  Cause: {}", getId(), cause
-                    .getMessage());
+            log.error("Error creating new application context for service '{}'.  Cause: {}", getId(),
+                    cause.getMessage());
             log.debug("Full stacktrace is: ", e);
             throw new ServiceException("Error creating new application context for service " + getId());
         }

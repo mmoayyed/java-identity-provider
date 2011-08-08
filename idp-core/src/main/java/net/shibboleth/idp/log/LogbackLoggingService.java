@@ -21,14 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Timer;
 
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.CloseableSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.resource.Resource;
 import org.opensaml.util.resource.ResourceException;
 import org.slf4j.LoggerFactory;
@@ -46,34 +45,37 @@ import ch.qos.logback.core.status.StatusManager;
 public class LogbackLoggingService extends AbstractReloadableService {
 
     /** Logback logger context. */
-    private final LoggerContext loggerContext;
+    private LoggerContext loggerContext;
 
     /** Logger used to log messages without relying on the logging system to be full initialized. */
-    private final StatusManager statusManager;
+    private StatusManager statusManager;
 
     /** URL to the fallback logback configuration found in the IdP jar. */
-    private final URL fallbackConfiguraiton;
+    private URL fallbackConfiguraiton;
 
     /** Logging configuration resource. */
-    private final Resource configurationResource;
+    private Resource configurationResource;
 
     /**
-     * Constructor.
+     * Gets the logging configuration.
      * 
-     * @param id unique ID of this service
-     * @param loggingConfiguration logback configuration resource
-     * @param reloadTaskTimer timer used to schedule service reloading background task
-     * @param reloadDelay milliseconds between one reload check and another
+     * @return logging configuration
      */
-    public LogbackLoggingService(String id, Resource loggingConfiguration, Timer reloadTaskTimer, long reloadDelay) {
-        super(id, reloadTaskTimer, reloadDelay);
+    public Resource getLoggingConfiguration() {
+        return configurationResource;
+    }
 
-        Assert.isNotNull(loggingConfiguration, "Logging configuration resource may not be null");
-        configurationResource = loggingConfiguration;
-        fallbackConfiguraiton = LogbackLoggingService.class.getResource("/logback.xml");
+    /**
+     * Sets the logging configuration.
+     * 
+     * @param configuration logging configuration
+     */
+    public synchronized void setLoggingConfiguration(Resource configuration) {
+        if (isInitialized()) {
+            return;
+        }
 
-        loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        statusManager = loggerContext.getStatusManager();
+        configurationResource = configuration;
     }
 
     /** {@inheritDoc} */
@@ -156,5 +158,18 @@ public class LogbackLoggingService extends AbstractReloadableService {
         } catch (JoranException e) {
             throw new ServiceException(e);
         }
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.initialize();
+
+        if (configurationResource == null) {
+            throw new ComponentInitializationException("Logging configuration must be specified.");
+        }
+
+        fallbackConfiguraiton = LogbackLoggingService.class.getResource("/logback.xml");
+        loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        statusManager = loggerContext.getStatusManager();
     }
 }

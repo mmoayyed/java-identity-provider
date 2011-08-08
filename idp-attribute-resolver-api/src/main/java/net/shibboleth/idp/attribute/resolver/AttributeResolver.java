@@ -24,14 +24,19 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.AbstractComponent;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
+import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,26 +44,21 @@ import org.slf4j.LoggerFactory;
 
 /** A component that resolves the attributes for a particular subject. */
 @ThreadSafe
-public class AttributeResolver extends AbstractComponent {
+public class AttributeResolver extends AbstractIdentifiedInitializableComponent implements ValidatableComponent,
+        DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeResolver.class);
 
     /** Attribute definitions defined for this resolver. */
-    private Map<String, BaseAttributeDefinition> attributeDefinitions;
+    private Map<String, BaseAttributeDefinition> attributeDefinitions = Collections.emptyMap();
 
     /** Data connectors defined for this resolver. */
-    private Map<String, BaseDataConnector> dataConnectors;
+    private Map<String, BaseDataConnector> dataConnectors = Collections.emptyMap();
 
-    /**
-     * Constructor.
-     * 
-     * @param id the unique ID for this resolver
-     */
-    public AttributeResolver(final String id) {
-        super(id);
-        attributeDefinitions = Collections.emptyMap();
-        dataConnectors = Collections.emptyMap();
+    /** {@inheritDoc} */
+    public synchronized void setId(final String componentId) {
+        super.setId(componentId);
     }
 
     /**
@@ -76,7 +76,12 @@ public class AttributeResolver extends AbstractComponent {
      * 
      * @param definitions definition to set, may be null or contain null elements
      */
-    public void setAttributeDefinition(final Collection<BaseAttributeDefinition> definitions) {
+    public synchronized void setAttributeDefinition(final Collection<BaseAttributeDefinition> definitions) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver " + getId()
+                    + " has already been initialized, attribute definitions can not be changed.");
+        }
+
         if (definitions == null || definitions.isEmpty()) {
             attributeDefinitions = Collections.emptyMap();
             return;
@@ -89,7 +94,11 @@ public class AttributeResolver extends AbstractComponent {
             }
         }
 
-        attributeDefinitions = Collections.unmodifiableMap(newDefinitions);
+        if (newDefinitions.isEmpty()) {
+            attributeDefinitions = Collections.emptyMap();
+        } else {
+            attributeDefinitions = Collections.unmodifiableMap(newDefinitions);
+        }
     }
 
     /**
@@ -107,7 +116,12 @@ public class AttributeResolver extends AbstractComponent {
      * 
      * @param connectors connectors to set, may be null or contain null elements
      */
-    public void setDataConnectors(final Collection<BaseDataConnector> connectors) {
+    public synchronized void setDataConnectors(final Collection<BaseDataConnector> connectors) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Attribute resolver " + getId()
+                    + " has already been initialized, data connectors can not be changed.");
+        }
+
         if (connectors == null || connectors.isEmpty()) {
             dataConnectors = Collections.emptyMap();
             return;
@@ -120,7 +134,61 @@ public class AttributeResolver extends AbstractComponent {
             }
         }
 
-        dataConnectors = Collections.unmodifiableMap(newConnectors);
+        if (newConnectors.isEmpty()) {
+            dataConnectors = Collections.emptyMap();
+        } else {
+            dataConnectors = Collections.unmodifiableMap(newConnectors);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * This method checks if each registered data connector and attribute definition is valid (via
+     * {@link BaseResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all
+     * registered plugins.
+     */
+    public void validate() throws ComponentValidationException {
+        final LazyList<String> invalidDataConnectors = new LazyList<String>();
+        for (BaseDataConnector plugin : dataConnectors.values()) {
+            log.debug("Attribute resolver {}: checking if data connector {} is valid", getId(), plugin.getId());
+            validateDataConnector(plugin, invalidDataConnectors);
+        }
+
+        final LazyList<String> invalidAttributeDefinitions = new LazyList<String>();
+        for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
+            log.debug("Attribute resolver {}: checking if attribute definition {} is valid", getId(), plugin.getId());
+            try {
+                plugin.validate();
+                log.debug("Attribute resolver {}: attribute definition {} is valid", getId(), plugin.getId());
+            } catch (ComponentValidationException e) {
+                log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {this.getId(),
+                        plugin.getId(), e,});
+                invalidAttributeDefinitions.add(plugin.getId());
+            }
+        }
+
+        if (!invalidDataConnectors.isEmpty() || !invalidAttributeDefinitions.isEmpty()) {
+            throw new ComponentValidationException("Attribute resolver " + getId()
+                    + ": the following attribute definitions were invalid ["
+                    + StringSupport.listToStringValue(invalidAttributeDefinitions, ", ")
+                    + "] and the following data connectors were invalid ["
+                    + StringSupport.listToStringValue(invalidDataConnectors, ", ") + "]");
+        }
+    }
+
+    /** {@inheritDoc} */
+    public synchronized void destroy() {
+        for (BaseResolverPlugin plugin : attributeDefinitions.values()) {
+            plugin.destroy();
+        }
+
+        for (BaseResolverPlugin plugin : dataConnectors.values()) {
+            plugin.destroy();
+        }
+
+        attributeDefinitions = Collections.emptyMap();
+        dataConnectors = Collections.emptyMap();
     }
 
     /**
@@ -136,6 +204,11 @@ public class AttributeResolver extends AbstractComponent {
      */
     public void resolveAttributes(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
+        if (!isInitialized()) {
+            throw new AttributeResolutionException("Attribute resolver " + getId()
+                    + " has not be initialized and can not yet be used");
+        }
+
         log.debug("Attribute Resolver {}: initiating attribute resolution", getId());
 
         if (attributeDefinitions.size() == 0) {
@@ -394,46 +467,6 @@ public class AttributeResolver extends AbstractComponent {
     }
 
     /**
-     * {@inheritDoc}
-     * 
-     * This method checks if each registered data connector and attribute definition is valid (via
-     * {@link BaseResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all
-     * registered plugins.
-     */
-    public void validate() throws ComponentValidationException {
-        HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
-
-        final LazyList<String> invalidDataConnectors = new LazyList<String>();
-        for (BaseDataConnector plugin : dataConnectors.values()) {
-            log.debug("Attribute resolver {}: checking if data connector {} is valid", getId(), plugin.getId());
-            checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
-            validateDataConnector(plugin, invalidDataConnectors);
-        }
-
-        final LazyList<String> invalidAttributeDefinitions = new LazyList<String>();
-        for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("Attribute resolver {}: checking if attribute definition {} is valid", getId(), plugin.getId());
-            checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
-            try {
-                plugin.validate();
-                log.debug("Attribute resolver {}: attribute definition {} is valid", getId(), plugin.getId());
-            } catch (ComponentValidationException e) {
-                log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {this.getId(),
-                        plugin.getId(), e,});
-                invalidAttributeDefinitions.add(plugin.getId());
-            }
-        }
-
-        if (!invalidDataConnectors.isEmpty() || !invalidAttributeDefinitions.isEmpty()) {
-            throw new ComponentValidationException("Attribute resolver " + getId()
-                    + ": the following attribute definitions were invalid ["
-                    + StringSupport.listToStringValue(invalidAttributeDefinitions, ", ")
-                    + "] and the following data connectors were invalid ["
-                    + StringSupport.listToStringValue(invalidDataConnectors, ", ") + "]");
-        }
-    }
-
-    /**
      * Validates the given data connector.
      * 
      * @param connector connector to valid
@@ -470,6 +503,25 @@ public class AttributeResolver extends AbstractComponent {
         }
     }
 
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
+
+        for (BaseDataConnector plugin : dataConnectors.values()) {
+            log.debug("Attribute resolver {}: checking if data connector {} is has a cirucular depdency", getId(),
+                    plugin.getId());
+            checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
+        }
+
+        for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
+            log.debug("Attribute resolver {}: checking if attribute definition {} ihase a circular depdency", getId(),
+                    plugin.getId());
+            checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
+        }
+    }
+
     /**
      * Checks to ensure that there are no circular dependencies or dependencies on non-existent plugins.
      * 
@@ -477,10 +529,10 @@ public class AttributeResolver extends AbstractComponent {
      * @param plugin current plugin, in the dependency tree of the plugin being checked, that we're currently looking at
      * @param checkedPlugins IDs of plugins that have already been checked and known to be good
      * 
-     * @throws ComponentValidationException thrown if there is a dependency loop
+     * @throws ComponentInitializationException thrown if there is a dependency loop
      */
     protected void checkPlugInDependencies(final String circularCheckPluginId, final BaseResolverPlugin<?> plugin,
-            final Set<String> checkedPlugins) throws ComponentValidationException {
+            final Set<String> checkedPlugins) throws ComponentInitializationException {
         final String pluginId = plugin.getId();
 
         BaseResolverPlugin<?> dependencyPlugin;
@@ -490,8 +542,8 @@ public class AttributeResolver extends AbstractComponent {
             }
 
             if (circularCheckPluginId.equals(dependency.getDependencyPluginId())) {
-                throw new ComponentValidationException("Plugin " + circularCheckPluginId
-                        + " has a dependency on plugin " + dependency.getDependencyPluginId());
+                throw new ComponentInitializationException("Plugin " + circularCheckPluginId + " and plugin "
+                        + dependency.getDependencyPluginId() + " have a circular dependecy on each other.");
             }
 
             dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
@@ -499,7 +551,7 @@ public class AttributeResolver extends AbstractComponent {
                 dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
             }
             if (dependencyPlugin == null) {
-                throw new ComponentValidationException("Plugin " + plugin.getId() + " has a dependency on plugin "
+                throw new ComponentInitializationException("Plugin " + plugin.getId() + " has a dependency on plugin "
                         + dependency.getDependencyPluginId() + " which does not exist");
             }
 

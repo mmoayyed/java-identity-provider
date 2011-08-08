@@ -23,13 +23,14 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.idp.ComponentValidationException;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.collections.LazyList;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.springframework.expression.Expression;
 
 /**
@@ -55,8 +56,6 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * @param attribute attribute produced by the given attribute definition, may be null
      */
     public ResolvedAttributeDefinition(BaseAttributeDefinition definition, Attribute<?> attribute) {
-        super(definition.getId());
-
         Assert.isNotNull(definition, "Wrapped attribute definition may not be null");
         resolvedDefinition = definition;
 
@@ -101,7 +100,7 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     public EvaluableCriterion<AttributeResolutionContext> getActivationCriteria() {
-        return null;
+        return StaticResponseEvaluableCriterion.TRUE_RESPONSE;
     }
 
     /** {@inheritDoc} */
@@ -195,5 +194,10 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         return;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInitialized() {
+        return true;
     }
 }

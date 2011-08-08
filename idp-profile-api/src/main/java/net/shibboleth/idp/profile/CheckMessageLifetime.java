@@ -32,16 +32,7 @@ public class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckMessageLifetime() {
-        super(CheckMessageLifetime.class.getName());
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param componentId unique ID for this action
-     */
-    public CheckMessageLifetime(String componentId) {
-        super(componentId);
+        setId(CheckMessageLifetime.class.getName());
     }
 
     /** {@inheritDoc} */
