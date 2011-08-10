@@ -225,7 +225,7 @@ public class BasicSessionManager implements SessionResolver, SessionManager, Ini
     /** {@inheritDoc} */
     public void addAuthenticationEvent(IdPSession idpSession, String serviceId, AuthenticationEvent event) {
         if (!isInitialized()) {
-            throw new UninitializedComponentException("Session manager has not be initialized");
+            throw new UninitializedComponentException("Session manager has not been initialized");
         }
 
         checkIdPSession(idpSession);
