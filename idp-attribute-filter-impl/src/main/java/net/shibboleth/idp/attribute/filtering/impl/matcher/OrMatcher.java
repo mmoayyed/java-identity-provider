@@ -30,8 +30,10 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.InitializableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,25 +43,66 @@ import org.slf4j.LoggerFactory;
  * All elements from all child matchers are combined into the resultant set.
  */
 @ThreadSafe
-public class OrMatcher implements AttributeValueMatcher {
+public class OrMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(OrMatcher.class);
+
+    /** Initialized state.*/
+    private boolean initialized;
+
+    /** Destructor state. */
+    private boolean destroyed;
 
     /**
      * The supplied matchers to be ORed together.
      * 
      * This list in unmodifiable.
      */
-    private final List<AttributeValueMatcher> matchers;
+    private List<AttributeValueMatcher> matchers = Collections.emptyList();
+
+    /** Constructor. */
+    public OrMatcher() {
+    }
 
     /**
-     * Constructor.
-     * 
+     * Has initialize been called on this object. {@inheritDoc}.
+     * */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
+    public void initialize() throws ComponentInitializationException {
+        if (initialized) {
+            throw new ComponentInitializationException("Or Matcher is initialized multiple times");
+        }
+        for (AttributeValueMatcher matcher : matchers) {
+            if (matcher instanceof InitializableComponent) {
+                InitializableComponent init = (InitializableComponent) matcher;
+                init.initialize();
+            }
+        }
+        initialized = true;
+    }
+
+    /** tear down any destructable children. {@inheritDoc} */
+    public void destroy() {
+        destroyed = true;
+        for (AttributeValueMatcher matcher : matchers) {
+            if (matcher instanceof DestructableComponent) {
+                DestructableComponent destructee = (DestructableComponent) matcher;
+                destructee.destroy();
+            }
+        }
+        matchers = null;
+    }
+    
+    /**
+     * Set the sub-matchers.
      * @param theMatchers a list of sub matchers.
      */
-    public OrMatcher(final List<AttributeValueMatcher> theMatchers) {
-
+    public void setSubMatchers(final List<AttributeValueMatcher> theMatchers) {
         final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
 
         CollectionSupport.addNonNull(theMatchers, workingMatcherList);
@@ -67,13 +110,6 @@ public class OrMatcher implements AttributeValueMatcher {
             log.warn("No sub-matchers provided to OR Value Matcher, this always returns no results");
         }
         matchers = Collections.unmodifiableList(workingMatcherList);
-    }
-
-    /** private default constructor to force the invariant of matchers being non null. */
-    @SuppressWarnings("unused")
-    private OrMatcher() {
-        Assert.isFalse(true, "uncallable code");
-        matchers = null;
     }
 
     /**
@@ -89,9 +125,19 @@ public class OrMatcher implements AttributeValueMatcher {
     public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
 
+        if (!initialized) {
+            throw new AttributeFilteringException("Object has not been initialized");
+        }
+        // Capture submatchers.  Where we do this is important - after the initialized
+        // test and before the destroyed test.
+        final List<AttributeValueMatcher> theMatchers = getSubMatchers();
+        if (destroyed) {
+            throw new AttributeFilteringException("Object has been destroyed");
+        }
+        
         final Set result = new HashSet();
-
-        for (AttributeValueMatcher matcher : matchers) {
+        
+        for (AttributeValueMatcher matcher : theMatchers) {
             result.addAll(matcher.getMatchingValues(attribute, filterContext));
         }
         if (result.isEmpty()) {

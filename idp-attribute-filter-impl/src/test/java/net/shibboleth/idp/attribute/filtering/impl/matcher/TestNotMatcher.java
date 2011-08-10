@@ -24,41 +24,80 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Test the {@link NotMatcher} matcher. */
 public class TestNotMatcher {
 
-    /** Test the {@link NotMatcher} matcher in a variety of configurations.
+    /**
+     * Test the {@link NotMatcher} matcher in a variety of configurations.
+     * 
      * @throws AttributeFilteringException if the filter has issues.
+     * @throws ComponentInitializationException if initialize fails when we didn't exdpect it to
      */
     @Test
-    public void notMatcherTest() throws AttributeFilteringException {
+    public void notMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
         final Attribute<String> attribute = new Attribute<String>("attribute");
         final Collection<String> values = CollectionSupport.toSet("zero", "one", "two", "three");
         attribute.setValues(values);
 
+        NotMatcher not = new NotMatcher();
+        boolean threw = false;
         try {
-            new NotMatcher(null);
-            Assert.assertFalse(true, "unreachable code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "normal flow");
+            not.getMatchingValues(attribute, null);
+            Assert.assertTrue(false, "unreachable code (new)");
+        } catch (AttributeFilteringException e) {
+            threw = true;
         }
+        Assert.assertTrue(threw, "Non initialized filter should throw");
 
-        NotMatcher not = new NotMatcher(new AnyMatcher());
-        Assert.assertTrue(not.getMatchingValues(attribute, null).isEmpty(), "Not of everything is nothing");
+        threw = false;
+        try {
+            not.initialize();
+            Assert.assertTrue(false, "initialized should fail if no paraeter set");
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "Initialize of non setup filter should throw");
 
-        final OrMatcher or =
-                new OrMatcher(CollectionSupport.toList((AttributeValueMatcher) new AttributeValueStringMatcher("zero",
-                        true), new AttributeValueStringMatcher("two", true)));
-        not = new NotMatcher(or);
+        // starrt with a new one
+        not = new NotMatcher();
+        not.setSubMatcher(new AnyMatcher());
+        not.initialize();
         
+        Assert.assertTrue(not.getMatchingValues(attribute, null).isEmpty(), "Not of everything is nothing");
+        
+        final OrMatcher or = new OrMatcher();
+        or.initialize();
+        or.setSubMatchers(CollectionSupport.toList(
+                (AttributeValueMatcher) new AttributeValueStringMatcher("zero", true), new AttributeValueStringMatcher(
+                        "two", true)));
+        not.setSubMatcher(or);
+
         Collection<String> expected = CollectionSupport.toSet("one", "three");
         Assert.assertEquals(not.getMatchingValues(attribute, null), expected, "simple not");
-        
+
         expected = CollectionSupport.toSet("zero", "two");
-        not = new NotMatcher(not);
-        Assert.assertEquals(not.getMatchingValues(attribute, null), expected, "not of not");   
+        NotMatcher notNot = new NotMatcher();
+        // Play a trick to stop the submatcher being reinitialized.
+        notNot.setSubMatcher(new AnyMatcher());
+        notNot.initialize();
+        notNot.setSubMatcher(not);
+        Assert.assertEquals(notNot.getMatchingValues(attribute, null), expected, "not of not");
+        
+        DestroyableAttributeValueStringMatcher destroyTester = new DestroyableAttributeValueStringMatcher("ONE", false);
+        not.setSubMatcher(destroyTester);
+        not.destroy();
+        Assert.assertTrue(destroyTester.isDestroyed(), "destroyable sub matcher not destroyed");
+        try {
+            not.getMatchingValues(attribute, null);
+            Assert.assertTrue(false, "unreachable code (destroy)");
+        } catch (AttributeFilteringException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "should not be able to match after destrouction");
+
     }
 }

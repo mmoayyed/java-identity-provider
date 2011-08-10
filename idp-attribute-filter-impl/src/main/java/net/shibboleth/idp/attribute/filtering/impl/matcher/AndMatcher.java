@@ -30,8 +30,10 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.InitializableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,45 +46,67 @@ import org.slf4j.LoggerFactory;
  * However it seems likely that such a constraint is erroneous...
  */
 @ThreadSafe
-public class AndMatcher implements AttributeValueMatcher {
+public class AndMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(OrMatcher.class);
+
+    /** Initialized state. */
+    private boolean initialized;
+
+    /** Destructor state. */
+    private boolean destroyed;
 
     /**
      * The supplied matchers to be ORed together.
      * 
      * This list in unmodifiable.
      */
-    private final List<AttributeValueMatcher> matchers;
+    private List<AttributeValueMatcher> matchers = Collections.emptyList();
 
     /**
      * Constructor.
-     * 
-     * @param theMatchers a list of sub matchers.
      */
-    public AndMatcher(final List<AttributeValueMatcher> theMatchers) {
-
-        final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
-
+    public AndMatcher() {
         log.info("AND matcher as part of a Permit or Deny rule is likely to be a configuration error");
-
-        CollectionSupport.addNonNull(theMatchers, workingMatcherList);
-        if (workingMatcherList.isEmpty()) {
-            log.warn("No sub-matchers provided to AND Value Matcher, this always returns no results");
-        }
-        matchers = Collections.unmodifiableList(workingMatcherList);
     }
 
-    /** private default constructor to force the invariant of matchers being non null. */
-    @SuppressWarnings("unused")
-    private AndMatcher() {
-        Assert.isFalse(true, "uncallable code");
+    /**
+     * Has initialize been called on this object. {@inheritDoc}.
+     * */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
+    public void initialize() throws ComponentInitializationException {
+        if (initialized) {
+            throw new ComponentInitializationException("And Matcher is initialized multiple times");
+        }
+        for (AttributeValueMatcher matcher : matchers) {
+            if (matcher instanceof InitializableComponent) {
+                InitializableComponent init = (InitializableComponent) matcher;
+                init.initialize();
+            }
+        }
+        initialized = true;
+    }
+
+    /** tear down any destructable children. {@inheritDoc} */
+    public void destroy() {
+        destroyed = true;
+        for (AttributeValueMatcher matcher : matchers) {
+            if (matcher instanceof DestructableComponent) {
+                DestructableComponent destructee = (DestructableComponent) matcher;
+                destructee.destroy();
+            }
+        }
+        // Clear after the setting of the flag top avoid race with getMatchingValues
         matchers = null;
     }
 
     /**
-     * Get the sub matchers which are to be OR'd.
+     * Get the sub matchers which are to be AND'd.
      * 
      * @return the sub matchers. This is never null or empty,
      */
@@ -90,30 +114,30 @@ public class AndMatcher implements AttributeValueMatcher {
         return matchers;
     }
 
-    /** {@inheritDoc} */
-    public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
-            throws AttributeFilteringException {
-
-        if (matchers.isEmpty()) {
-            return Collections.emptySet();
+    /**
+     * Set the sub matchers which will be anded together.
+     * 
+     * @param newMatchers what to set.
+     */
+    public void setSubMatchers(final List<AttributeValueMatcher> newMatchers) {
+        final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
+        CollectionSupport.addNonNull(newMatchers, workingMatcherList);
+        if (workingMatcherList.isEmpty()) {
+            log.warn("No sub-matchers provided to AND Value Matcher, this always returns no results");
         }
+        matchers = Collections.unmodifiableList(workingMatcherList);
+    }
 
-        if (matchers.size() == 1) {
-            // just return all the values returned by the child
-            return matchers.get(0).getMatchingValues(attribute, filterContext);
-        }
-
-        // Grab all the values allowed by all the filters
-        List<Collection> valueSets = new ArrayList<Collection>(matchers.size());
-        for (AttributeValueMatcher matcher : matchers) {
-            valueSets.add(matcher.getMatchingValues(attribute, filterContext));
-        }
-        // Check each value against all the matchers.
-        // Rather than start with all values and compare against all
-        // matchers we'll start with the values allowed by the first matcher
-        // and compare against all the others, bailing out as soon as we
-        // see a failure.
-        //
+    /**
+     * Computer the logical "And" of the set of values.<br />
+     * Check each value against all the matchers. <br />
+     * Rather than start with all values and compare against all matchers we'll start with the values allowed by the
+     * first matcher and compare against all the others, bailing out as soon as we see a failure. <br />
+     * 
+     * @param valueSets the array of sets of child attributes.
+     * @return the "logical and" of the results (all values which are in all sets(
+     */
+    private Collection<?> computeAnd(List<Collection> valueSets) {
         final Set result = new HashSet();
 
         for (Object value : valueSets.get(0)) {
@@ -128,10 +152,44 @@ public class AndMatcher implements AttributeValueMatcher {
                 result.add(value);
             }
         }
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+            throws AttributeFilteringException {
+
+        if (!initialized) {
+            throw new AttributeFilteringException("Object has not been initialized");
+        }
+        // NOTE capture the matchers to avoid race with setSubMatchers.
+        // Do this before the test on destruction to avoid
+        // race with destroy code.
+        final List<AttributeValueMatcher> theMatchers = getSubMatchers();
+        if (destroyed) {
+            throw new AttributeFilteringException("Object has been destroyed");
+        }
+
+        if (theMatchers.isEmpty()) {
+            return Collections.emptySet();
+        }
+        if (theMatchers.size() == 1) {
+            // just return all the values returned by the child
+            return theMatchers.get(0).getMatchingValues(attribute, filterContext);
+        }
+
+        // Grab all the values allowed by all the filters
+        List<Collection> valueSets = new ArrayList<Collection>(theMatchers.size());
+        for (AttributeValueMatcher matcher : theMatchers) {
+            valueSets.add(matcher.getMatchingValues(attribute, filterContext));
+        }
+
+        final Collection result = computeAnd(valueSets);
 
         if (result.isEmpty()) {
-            Collections.emptySet();
+            return Collections.emptySet();
         }
         return Collections.unmodifiableCollection(result);
     }
+
 }
