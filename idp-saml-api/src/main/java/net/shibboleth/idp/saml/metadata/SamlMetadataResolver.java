@@ -33,9 +33,9 @@ import org.opensaml.saml2.metadata.EntityDescriptor;
  * At a minimum, a {@link SamlMetadataResolver} implementation should support the following criteria:
  * <ul>
  * <li>{@link org.opensaml.xml.security.criteria.EntityIDCriteria}</li>
- * <li>{@link SupportedBindingCriteria}</li>
- * <li>{@link SupportedProtocolCriteria}</li>
- * <li>{@link SupportedRoleCriteria}</li>
+ * <li>{@link SupportedBindingCriterion}</li>
+ * <li>{@link SupportedProtocolCriterion}</li>
+ * <li>{@link SupportedRoleCriterion}</li>
  * </ul>
  */
 public interface SamlMetadataResolver extends MetadataResolver<EntityDescriptor> {

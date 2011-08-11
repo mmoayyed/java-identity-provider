@@ -21,8 +21,8 @@ import java.util.ArrayList;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
-import org.opensaml.xml.security.EvaluableCriteria;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -34,9 +34,9 @@ public class AbstractSAML2ProfileConfigurationTest {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptNameIDsCriteria());
 
-        config.setEncryptNameIDsCriteria((EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setEncryptNameIDsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertSame(config.getEncryptNameIDsCriteria(),
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
 
         try {
             config.setEncryptNameIDsCriteria(null);
@@ -51,9 +51,9 @@ public class AbstractSAML2ProfileConfigurationTest {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptAssertionsCriteria());
 
-        config.setEncryptAssertionsCriteria((EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setEncryptAssertionsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertSame(config.getEncryptAssertionsCriteria(),
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
 
         try {
             config.setEncryptAssertionsCriteria(null);

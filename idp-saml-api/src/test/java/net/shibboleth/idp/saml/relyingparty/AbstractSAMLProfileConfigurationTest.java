@@ -19,8 +19,8 @@ package net.shibboleth.idp.saml.relyingparty;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
-import org.opensaml.xml.security.EvaluableCriteria;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -32,9 +32,9 @@ public class AbstractSAMLProfileConfigurationTest {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignAssertionsCriteria());
 
-        config.setSignAssertionsCriteria((EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setSignAssertionsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertSame(config.getSignAssertionsCriteria(),
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
 
         try {
             config.setSignAssertionsCriteria(null);
@@ -49,9 +49,9 @@ public class AbstractSAMLProfileConfigurationTest {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignResponsesCriteria());
 
-        config.setSignResponsesCriteria((EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setSignResponsesCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertSame(config.getSignResponsesCriteria(),
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
 
         try {
             config.setSignResponsesCriteria(null);
@@ -66,9 +66,9 @@ public class AbstractSAMLProfileConfigurationTest {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignedRequestsCriteria());
 
-        config.setSignedRequestsCriteria((EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setSignedRequestsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertSame(config.getSignedRequestsCriteria(),
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
 
         try {
             config.setSignedRequestsCriteria(null);

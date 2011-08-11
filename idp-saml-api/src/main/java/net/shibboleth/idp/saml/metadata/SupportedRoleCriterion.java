@@ -17,32 +17,36 @@
 
 package net.shibboleth.idp.saml.metadata;
 
+import javax.xml.namespace.QName;
+
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.xml.security.Criteria;
+import org.opensaml.util.criteria.Criterion;
 
-/** Represents a criteria that a particular protocol is supported. */
-public class SupportedProtocolCriteria implements Criteria {
+/** Represents a criteria that a particular role is supported. */
+public class SupportedRoleCriterion implements Criterion {
 
-    /** Protocol that must be supported by the entity. */
-    private String protocol;
+    /** Role that must be supported by the entity. */
+    private QName role;
 
     /**
      * Constructor.
      * 
-     * @param supportedProtocol protocol that must be supported by the entity, never null or empty
+     * @param supportedRole role that must be supported by the entity, never null and must contain a namespace
      */
-    public SupportedProtocolCriteria(String supportedProtocol) {
-        protocol = StringSupport.trimOrNull(supportedProtocol);
-        Assert.isNotNull(protocol, "Supported protocol can not be null or empty");
+    public SupportedRoleCriterion(QName supportedRole) {
+        Assert.isNotNull(role, "Supported role can not be null");
+        Assert.isFalse(StringSupport.isNullOrEmpty(supportedRole.getLocalPart()), "Role QName must have a local name");
+        Assert.isFalse(StringSupport.isNullOrEmpty(supportedRole.getNamespaceURI()), "Role QName must have a namespace");
+        role = supportedRole;
     }
 
     /**
-     * Gets the protocol that must be supported by the entity.
+     * Gets the role that must be supported by the entity.
      * 
-     * @return protocol that must be supported by the entity, never null or empty
+     * @return role that must be supported by the entity, never null or empty
      */
-    public String getSupportedProtocol() {
-        return protocol;
+    public QName getSupportedRole() {
+        return role;
     }
 }

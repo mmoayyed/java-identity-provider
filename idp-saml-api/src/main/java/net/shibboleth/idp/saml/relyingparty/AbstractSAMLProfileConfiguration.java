@@ -21,20 +21,20 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.AbstractProfileConfiguration;
 
 import org.opensaml.util.Assert;
+import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
-import org.opensaml.xml.security.EvaluableCriteria;
 
 /** Base class for SAML profile configurations. */
 public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration {
 
     /** Criteria used to determine if the received assertion should be signed. */
-    private EvaluableCriteria<ProfileRequestContext> signedRequestsCriteria;
+    private EvaluableCriterion<ProfileRequestContext> signedRequestsCriteria;
 
     /** Criteria used to determine if the generated response should be signed. */
-    private EvaluableCriteria<ProfileRequestContext> signResponsesCriteria;
+    private EvaluableCriterion<ProfileRequestContext> signResponsesCriteria;
 
     /** Criteria used to determine if the generated assertion should be signed. */
-    private EvaluableCriteria<ProfileRequestContext> signAssertionsCriteria;
+    private EvaluableCriterion<ProfileRequestContext> signAssertionsCriteria;
 
     /**
      * Constructor.
@@ -44,11 +44,11 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
     public AbstractSAMLProfileConfiguration(String profileId) {
         super(profileId);
         signedRequestsCriteria =
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
         signResponsesCriteria =
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.TRUE_RESPONSE;
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.TRUE_RESPONSE;
         signAssertionsCriteria =
-                (EvaluableCriteria<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
     }
 
     /**
@@ -56,7 +56,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @return criteria used to determine if the generated assertion should be signed, never null
      */
-    public EvaluableCriteria<ProfileRequestContext> getSignAssertionsCriteria() {
+    public EvaluableCriterion<ProfileRequestContext> getSignAssertionsCriteria() {
         return signAssertionsCriteria;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param criteria criteria used to determine if the generated assertion should be signed, never null
      */
-    public void setSignAssertionsCriteria(EvaluableCriteria<ProfileRequestContext> criteria) {
+    public void setSignAssertionsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
         Assert.isNotNull(criteria, "Criteria to determine if assertions should be signed can not be null");
         signAssertionsCriteria = criteria;
     }
@@ -75,7 +75,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @return criteria used to determine if the received assertion should be signed, never null
      */
-    public EvaluableCriteria<ProfileRequestContext> getSignedRequestsCriteria() {
+    public EvaluableCriterion<ProfileRequestContext> getSignedRequestsCriteria() {
         return signedRequestsCriteria;
     }
 
@@ -84,7 +84,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param criteria criteria used to determine if the received assertion should be signed, never null
      */
-    public void setSignedRequestsCriteria(EvaluableCriteria<ProfileRequestContext> criteria) {
+    public void setSignedRequestsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
         Assert.isNotNull(criteria, "Criteria to determine if received requests should be signed can not be null");
         signedRequestsCriteria = criteria;
     }
@@ -94,7 +94,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @return criteria used to determine if the generated response should be signed, never null
      */
-    public EvaluableCriteria<ProfileRequestContext> getSignResponsesCriteria() {
+    public EvaluableCriterion<ProfileRequestContext> getSignResponsesCriteria() {
         return signResponsesCriteria;
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param criteria criteria used to determine if the generated response should be signed, never null
      */
-    public void setSignResponsesCriteria(EvaluableCriteria<ProfileRequestContext> criteria) {
+    public void setSignResponsesCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
         Assert.isNotNull(criteria, "Criteria to determine if responses should be signed can not be null");
         signResponsesCriteria = criteria;
     }

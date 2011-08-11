@@ -17,36 +17,32 @@
 
 package net.shibboleth.idp.saml.metadata;
 
-import javax.xml.namespace.QName;
-
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.xml.security.Criteria;
+import org.opensaml.util.criteria.Criterion;
 
-/** Represents a criteria that a particular role is supported. */
-public class SupportedRoleCriteria implements Criteria {
+/** Represents a criteria that a particular binding is supported. */
+public class SupportedBindingCriterion implements Criterion {
 
-    /** Role that must be supported by the entity. */
-    private QName role;
+    /** Binding that must be supported by the entity. */
+    private String binding;
 
     /**
      * Constructor.
      * 
-     * @param supportedRole role that must be supported by the entity, never null and must contain a namespace
+     * @param supportedBinding binding that must be supported by the entity, never null and must contain a namespace
      */
-    public SupportedRoleCriteria(QName supportedRole) {
-        Assert.isNotNull(role, "Supported role can not be null");
-        Assert.isFalse(StringSupport.isNullOrEmpty(supportedRole.getLocalPart()), "Role QName must have a local name");
-        Assert.isFalse(StringSupport.isNullOrEmpty(supportedRole.getNamespaceURI()), "Role QName must have a namespace");
-        role = supportedRole;
+    public SupportedBindingCriterion(String supportedBinding) {
+        binding = StringSupport.trimOrNull(supportedBinding);
+        Assert.isNotNull(binding, "Supported binding can not be null or empty");
     }
 
     /**
-     * Gets the role that must be supported by the entity.
+     * Gets the binding that must be supported by the entity.
      * 
-     * @return role that must be supported by the entity, never null or empty
+     * @return binding that must be supported by the entity, never null or empty
      */
-    public QName getSupportedRole() {
-        return role;
+    public String getSupportedBinding() {
+        return binding;
     }
 }

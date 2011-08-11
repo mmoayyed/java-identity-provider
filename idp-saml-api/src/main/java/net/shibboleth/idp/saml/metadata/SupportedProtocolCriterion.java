@@ -19,30 +19,30 @@ package net.shibboleth.idp.saml.metadata;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.xml.security.Criteria;
+import org.opensaml.util.criteria.Criterion;
 
-/** Represents a criteria that a particular binding is supported. */
-public class SupportedBindingCriteria implements Criteria {
+/** Represents a criteria that a particular protocol is supported. */
+public class SupportedProtocolCriterion implements Criterion {
 
-    /** Binding that must be supported by the entity. */
-    private String binding;
+    /** Protocol that must be supported by the entity. */
+    private String protocol;
 
     /**
      * Constructor.
      * 
-     * @param supportedBinding binding that must be supported by the entity, never null and must contain a namespace
+     * @param supportedProtocol protocol that must be supported by the entity, never null or empty
      */
-    public SupportedBindingCriteria(String supportedBinding) {
-        binding = StringSupport.trimOrNull(supportedBinding);
-        Assert.isNotNull(binding, "Supported binding can not be null or empty");
+    public SupportedProtocolCriterion(String supportedProtocol) {
+        protocol = StringSupport.trimOrNull(supportedProtocol);
+        Assert.isNotNull(protocol, "Supported protocol can not be null or empty");
     }
 
     /**
-     * Gets the binding that must be supported by the entity.
+     * Gets the protocol that must be supported by the entity.
      * 
-     * @return binding that must be supported by the entity, never null or empty
+     * @return protocol that must be supported by the entity, never null or empty
      */
-    public String getSupportedBinding() {
-        return binding;
+    public String getSupportedProtocol() {
+        return protocol;
     }
 }

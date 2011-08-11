@@ -29,5 +29,9 @@
         <!-- Test Dependencies -->
 
         <!-- Managed Dependencies -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+        </dependency>
     </dependencies>
 </project>

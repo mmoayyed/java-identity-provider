@@ -25,9 +25,5 @@
         <!-- Test Dependencies -->
 
         <!-- Managed Dependencies -->
-        <dependency>
-            <groupId>org.opensaml</groupId>
-            <artifactId>opensaml</artifactId>
-        </dependency>
     </dependencies>
 </project>

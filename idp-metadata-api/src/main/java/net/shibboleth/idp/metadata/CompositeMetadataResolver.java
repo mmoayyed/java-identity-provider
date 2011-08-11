@@ -24,8 +24,8 @@ import java.util.List;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
-import org.opensaml.xml.security.CriteriaSet;
-import org.opensaml.xml.security.SecurityException;
+import org.opensaml.util.criteria.CriteriaSet;
+import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,12 +71,12 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
     }
 
     /** {@inheritDoc} */
-    public Iterable<MetadataType> resolve(CriteriaSet criteria) throws SecurityException {
+    public Iterable<MetadataType> resolve(CriteriaSet criteria) throws ResolverException {
         return new CompositeMetadataResolverIterable<MetadataType>(resolvers, criteria);
     }
 
     /** {@inheritDoc} */
-    public MetadataType resolveSingle(CriteriaSet criteria) throws SecurityException {
+    public MetadataType resolveSingle(CriteriaSet criteria) throws ResolverException {
         MetadataType metadata = null;
         for (MetadataResolver<MetadataType> resolver : resolvers) {
             metadata = resolver.resolveSingle(criteria);
@@ -180,7 +180,7 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
                             return;
                         }
                     }
-                } catch (SecurityException e) {
+                } catch (ResolverException e) {
                     log.debug("Error encountered attempting to fetch results from resolver {}",
                             currentResolver.getId(), e);
                 }

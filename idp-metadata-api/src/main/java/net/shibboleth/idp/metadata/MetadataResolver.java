@@ -18,8 +18,8 @@
 package net.shibboleth.idp.metadata;
 
 import org.opensaml.util.component.IdentifiedComponent;
-import org.opensaml.xml.security.CriteriaSet;
-import org.opensaml.xml.security.Resolver;
+import org.opensaml.util.criteria.CriteriaSet;
+import org.opensaml.util.resolver.Resolver;
 
 /**
  * Resolver that locates and returns one or more metdata elements that meet a given set of criteria.
