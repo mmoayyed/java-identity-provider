@@ -45,7 +45,7 @@ public class ToUHelperTest extends AbstractTestNGSpringContextTests {
     private ToU defaultToU;
 
     public void getToUForRelyingParty() {
-        ToU specificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth");
+        final ToU specificToU = ToUHelper.getToUForRelyingParty(touMap, "https://sp.example.org/shibboleth");
         assertNotNull(specificToU);
         assertFalse(specificToU.getVersion().equals(defaultToU.getVersion()));
 

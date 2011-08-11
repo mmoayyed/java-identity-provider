@@ -40,7 +40,7 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
 
     protected Storage storage;
 
-    protected void setStorage(Storage storage) {
+    protected void setStorage(final Storage storage) {
         this.storage = storage;
     }
 
@@ -48,7 +48,8 @@ public abstract class AbstractStorageTest extends AbstractTransactionalTestNGSpr
     public abstract void initialization();
 
     @Test(dataProvider = "userIdVersionFingerprintDate")
-    public void crudToUAcceptance(final String userId, String version, String fingerprint, DateTime date) {
+    public void crudToUAcceptance(final String userId, final String version, final String fingerprint,
+            final DateTime date) {
         assertFalse(storage.containsToUAcceptance(userId, version));
         assertNull(storage.readToUAcceptance(userId, version));
 

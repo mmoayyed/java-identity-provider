@@ -28,13 +28,13 @@ public final class TermsOfUseContext implements Subcontext {
     public static enum Decision {
         /** Indicates that no claim is made about terms of use acceptance. */
         UNSPECIFIED,
-        
+
         /**
-         * Indicates that it was not possible to determine th
-         * user's acceptance of the terms of use for the given request.
+         * Indicates that it was not possible to determine th user's acceptance of the terms of use for the given
+         * request.
          */
         INAPPLICABLE,
-        
+
         /** User gave acceptance of the terms of use in the past. */
         PRIOR,
 
@@ -46,7 +46,7 @@ public final class TermsOfUseContext implements Subcontext {
     }
 
     /** Owner of this consent context. */
-    private SubcontextContainer owner;
+    private final SubcontextContainer owner;
 
     /** The decision determined by the terms of use engine. */
     private Decision termsOfUseDecision;
@@ -56,10 +56,10 @@ public final class TermsOfUseContext implements Subcontext {
      * 
      * @param superContext owner of this context
      */
-    public TermsOfUseContext(SubcontextContainer superContext) {
+    public TermsOfUseContext(final SubcontextContainer superContext) {
         Assert.isNotNull(superContext, "Owning super context may not be null");
         owner = superContext;
-        
+
         termsOfUseDecision = Decision.UNSPECIFIED;
     }
 
@@ -82,7 +82,7 @@ public final class TermsOfUseContext implements Subcontext {
      * 
      * @param decision terms of use decision established by the user
      */
-    public void setTermsOfUseDecision(Decision decision) {
+    public void setTermsOfUseDecision(final Decision decision) {
         termsOfUseDecision = decision;
     }
 }

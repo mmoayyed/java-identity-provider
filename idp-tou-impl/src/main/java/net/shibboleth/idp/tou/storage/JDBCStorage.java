@@ -41,7 +41,7 @@ public class JDBCStorage implements Storage {
     /** {@see ToUAcceptance} row mapper. */
     private static final class ToUAcceptanceMapper implements RowMapper<ToUAcceptance> {
         @Override
-        public ToUAcceptance mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public ToUAcceptance mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final ToUAcceptance touAcceptance =
                     new ToUAcceptance(rs.getString("version"), rs.getString("fingerprint"), new DateTime(
                             rs.getTimestamp("acceptanceDate")));
@@ -85,7 +85,7 @@ public class JDBCStorage implements Storage {
                         + " WHERE userId = ? AND version = ?";
         try {
             return jdbcTemplate.queryForObject(sql, touAcceptanceMapper, userId, version);
-        } catch (EmptyResultDataAccessException e) {
+        } catch (final EmptyResultDataAccessException e) {
             return null;
         }
     }

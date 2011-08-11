@@ -90,9 +90,9 @@ public class TermsOfUseEngineImpl implements TermsOfUseEngine {
         logger.debug("Dispatch to terms of use view");
         try {
             request.getRequestDispatcher("terms-of-use").forward(request, response);
-        } catch (ServletException e) {
+        } catch (final ServletException e) {
             logger.error("Error while dispatching to terms of use view", e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             logger.error("Error while dispatching to terms of use view", e);
         }
     }

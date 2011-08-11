@@ -35,20 +35,21 @@ public class TestData {
     }
 
     private static String getRandomFingerprint() {
-        byte[] bytes = new byte[4096];
+        final byte[] bytes = new byte[4096];
         random.nextBytes(bytes);
         return new SHA256().digest(bytes, new HexConverter(true));
     }
 
     private static String getRandomVersion() {
-        int i1 = random.nextInt(10) + 1;
-        int i2 = random.nextInt(10) + 1;
+        final int i1 = random.nextInt(10) + 1;
+        final int i2 = random.nextInt(10) + 1;
         return i1 + "." + i2;
     }
 
     private static DateTime getRandomDate() {
         // Fri, Jan 01 2010 12:00:00 UTC | Tue, Feb 02 2010 12:00:00 UTC | Wed, Mar 03 2010 12:00:00 UTC
-        DateTime[] dates = {new DateTime(1262347200000L), new DateTime(1265112000000L), new DateTime(1267617600000L)};
+        final DateTime[] dates =
+                {new DateTime(1262347200000L), new DateTime(1265112000000L), new DateTime(1267617600000L)};
         return dates[random.nextInt(dates.length)];
     }
 

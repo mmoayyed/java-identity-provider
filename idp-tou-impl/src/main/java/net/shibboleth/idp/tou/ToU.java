@@ -60,7 +60,7 @@ public class ToU {
                 stringBuilder.append(line + "\n");
             }
             bufferedReader.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new TermsOfUseException("Error while initializing terms of use", e);
         }
         text = stringBuilder.toString();

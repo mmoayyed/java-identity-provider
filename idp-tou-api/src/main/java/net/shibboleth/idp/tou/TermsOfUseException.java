@@ -33,7 +33,7 @@ public class TermsOfUseException extends Exception {
      * 
      * @param message exception message
      */
-    public TermsOfUseException(String message) {
+    public TermsOfUseException(final String message) {
         super(message);
     }
 
@@ -42,7 +42,7 @@ public class TermsOfUseException extends Exception {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public TermsOfUseException(Exception wrappedException) {
+    public TermsOfUseException(final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -52,7 +52,7 @@ public class TermsOfUseException extends Exception {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public TermsOfUseException(String message, Exception wrappedException) {
+    public TermsOfUseException(final String message, final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

@@ -84,9 +84,9 @@ public final class ToUHelper {
     // TODO: Method is duplicated in ConsentHelper
     public static final String findUserId(final String userIdAttribute,
             final Collection<Attribute<?>> releasedAttributes) {
-        for (Attribute<?> releasedAttribute : releasedAttributes) {
+        for (final Attribute<?> releasedAttribute : releasedAttributes) {
             if (releasedAttribute.getId().equals(userIdAttribute)) {
-                Collection<?> userIdAttributeValues = releasedAttribute.getValues();
+                final Collection<?> userIdAttributeValues = releasedAttribute.getValues();
                 if (userIdAttributeValues.isEmpty()) {
                     LOGGER.error("uniqueId attribute {} contains no values.", userIdAttribute);
                     return null;
@@ -114,7 +114,7 @@ public final class ToUHelper {
     public static ToU getToUForRelyingParty(final Map<String, ToU> touMap, final String entityId) {
         Pattern pattern;
         LOGGER.trace("touMap {}", touMap);
-        for (Entry<String, ToU> entry : touMap.entrySet()) {
+        for (final Entry<String, ToU> entry : touMap.entrySet()) {
             pattern = Pattern.compile(entry.getKey());
             LOGGER.trace("checking pattern {}", pattern);
             if (pattern.matcher(entityId).find()) {

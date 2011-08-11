@@ -44,12 +44,11 @@ public class ToUTest extends AbstractTestNGSpringContextTests {
     }
 
     public void loadWrongFile() {
-        Resource resource = new FileSystemResource("not-existent.txt");
+        final Resource resource = new FileSystemResource("not-existent.txt");
         try {
-            @SuppressWarnings("unused")
-            final ToU invalidTermsOfUse = new ToU("1.0", resource);
+            @SuppressWarnings("unused") final ToU invalidTermsOfUse = new ToU("1.0", resource);
             fail("Exception expected");
-        } catch (TermsOfUseException e) {
+        } catch (final TermsOfUseException e) {
         }
     }
 }

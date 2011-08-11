@@ -72,7 +72,7 @@ public class ToUServlet extends HttpServlet {
 
         try {
             velocityEngine.mergeTemplate("terms-of-use.vm", "UTF-8", context, response.getWriter());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ServletException("Unable to call velocity engine", e);
         }
     }
