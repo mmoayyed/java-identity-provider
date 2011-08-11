@@ -120,12 +120,6 @@
     <dependencyManagement>
         <dependencies>
             <!-- Compile Dependencies -->
-            <!-- OpenSAML 2 dependency will go away once OpenSAML3 is further along -->
-            <dependency>
-                <groupId>org.opensaml</groupId>
-                <artifactId>opensaml</artifactId>
-                <version>2.5.0</version>
-            </dependency>
             <dependency>
                 <groupId>${spring.groupId}</groupId>
                 <artifactId>spring-jdbc</artifactId>
@@ -147,6 +141,11 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>1.7</version>
             </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>
