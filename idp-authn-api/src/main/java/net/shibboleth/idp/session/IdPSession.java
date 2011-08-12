@@ -22,20 +22,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 
-//TODO implement hashCode/equals - need to implement this for AbstractSubcontextContainer as well
-
 /**
  * An identity provider session.
  * 
  * Properties of this object <strong>must not</strong> be modifiable directly. Instead, use the modification methods
- * available via the {@link SessionManager} that created this session.
+ * available via the {@link SessionStore} that created this session.
  */
 public class IdPSession extends AbstractSubcontextContainer {
 
@@ -45,23 +41,11 @@ public class IdPSession extends AbstractSubcontextContainer {
     /** Secret associated with this session. */
     private byte[] secret;
 
-    /**
-     * Time, in milliseconds since the epoch, when this session expires, regardless of activity. A value of 0 or less
-     * indicates the session does not have an absolute expiration instant.
-     */
-    private long expirationInstant;
-
-    /**
-     * Amount of time, in milliseconds, a session may be inactive before it is considered expired. A value of 0 or less
-     * indicates the session never expires due to inactivity.
-     */
-    private long inactivityTimeout;
+    /** Time, in milliseconds since the epoch, when this session was created. */
+    private long creationInstant;
 
     /** Last activity instant, in milliseconds since the epoch, for this session. */
     private long lastActivityInstant;
-
-    /** Gets the subject associated with this session. */
-    private Subject subject;
 
     /** Gets the authentication events that have occurred within the scope of this session. */
     private Collection<AuthenticationEvent> authnEvents;
@@ -108,23 +92,22 @@ public class IdPSession extends AbstractSubcontextContainer {
     }
 
     /**
-     * Gets the time, in milliseconds since the epoch, when this session expires regardless of activity. A value of 0 or
-     * less indicates the session does not have an absolute expiration instant.
+     * Gets the time, in milliseconds since the epoch, when this session was created.
      * 
-     * @return time, in milliseconds since the epoch, when this session expires regardless of activity
+     * @return time this session was created
      */
-    public long getExpirationInstant() {
-        return expirationInstant;
+    public long getCreationInstant() {
+        return creationInstant;
     }
 
     /**
-     * Sets the time, in milliseconds since the epoch, when this session expires regardless of activity. A value of 0 or
-     * less indicates the session does not have an absolute expiration instant.
+     * Sets the time, in milliseconds since the epoch, when this session was created.
      * 
-     * @param instant time, in milliseconds since the epoch, when this session expires regardless of activity
+     * @param instant time when this session was created, must be greater than 0
      */
-    protected void setExipriationInstant(long instant) {
-        expirationInstant = instant;
+    protected void setCreationInstant(long instant) {
+        Assert.isGreaterThan(0, instant, "IdP Session creation instant must be greater than 0");
+        creationInstant = instant;
     }
 
     /**
@@ -153,65 +136,6 @@ public class IdPSession extends AbstractSubcontextContainer {
     }
 
     /**
-     * Gets the amount of time, in milliseconds, a session may be inactive before it is considered expired. A value of 0
-     * or less indicates the session never expires due to inactivity.
-     * 
-     * @return amount of time, in milliseconds, a session may be inactive before it is considered expired
-     */
-    public long getInactivityTimeout() {
-        return inactivityTimeout;
-    }
-
-    /**
-     * Sets the amount of time, in milliseconds, a session may be inactive before it is considered expired. A value of 0
-     * or less indicates the session never expires due to inactivity.
-     * 
-     * @param timeout amount of time, in milliseconds, a session may be inactive before it is considered expired
-     */
-    protected void setInactivityTimeout(long timeout) {
-        inactivityTimeout = timeout;
-    }
-
-    /**
-     * Gets whether this session has expired. A session is considered expired if the current time is after the
-     * expiration instant or the current time minus the last activity instant is greater than the inactivity timeout.
-     * 
-     * @return whether this session has expired
-     */
-    public boolean isExpired() {
-        long now = System.currentTimeMillis();
-
-        if (expirationInstant > 0 && now > expirationInstant) {
-            return true;
-        }
-
-        if (inactivityTimeout > 0 && now - lastActivityInstant > inactivityTimeout) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Gets the subject associated with this session.
-     * 
-     * @return subject associated with this session, never null
-     */
-    public Subject getSubject() {
-        return subject;
-    }
-
-    /**
-     * Sets the subject associated with this session.
-     * 
-     * @param sessionSubject subject associated with this session, never null
-     */
-    protected void setSubject(Subject sessionSubject) {
-        Assert.isNotNull(sessionSubject, "Session subject may not be null");
-        subject = sessionSubject;
-    }
-
-    /**
      * Gets the unmodifiable collection of authentication events that have occurred within the scope of this session.
      * 
      * @return unmodifiable collection of authentication events that have occurred within the scope of this session,
@@ -222,31 +146,13 @@ public class IdPSession extends AbstractSubcontextContainer {
     }
 
     /**
-     * Gets the modifiable collection of authentication events that have occurred within the scope of this session.
+     * Sets the internal authentication event collection to the given collection.
      * 
-     * @return modifiable collection of authentication events that have occurred within the scope of this session, never
-     *         null
+     * @param events collection used to store authentication events, can not be null
      */
-    protected Collection<AuthenticationEvent> getModifiableAuthenticationEventCollection() {
-        return authnEvents;
-    }
-
-    /**
-     * Gets the unmodifiable collection of service sessions associated with this session.
-     * 
-     * @return unmodifiable collection of service sessions associated with this session, never null
-     */
-    public Collection<ServiceSession> getServiceSessions() {
-        return Collections.unmodifiableCollection(serviceSessions.values());
-    }
-
-    /**
-     * Gets the modifiable collection of service sessions associated with this session.
-     * 
-     * @return modifiable collection of service sessions associated with this session, never null
-     */
-    protected Map<String, ServiceSession> getModifiableSeviceSessionCollection() {
-        return serviceSessions;
+    protected void setAuthenticationEvents(Collection<AuthenticationEvent> events) {
+        Assert.isNotNull(events, "Authentication event collection can not be null");
+        authnEvents = events;
     }
 
     /**
@@ -274,6 +180,45 @@ public class IdPSession extends AbstractSubcontextContainer {
     }
 
     /**
+     * Adds an authentication event to this session. Prior to the event being added, this IdP session must have a
+     * {@link ServiceSession} recorded for the service referenced by the {@link AuthenticationEvent}. If the given event
+     * is null or has already been added to this session this method simply returns.
+     * 
+     * @param event event to be added, may be null
+     */
+    public void addAuthenticationEvent(AuthenticationEvent event) {
+        if (event == null || authnEvents.contains(event)) {
+            return;
+        }
+
+        String serviceId = StringSupport.trimOrNull(event.getServiceId());
+        Assert.isNotNull(serviceId, "Authentication event service ID can not be null or empty");
+        ServiceSession serviceSession = serviceSessions.get(event.getServiceId());
+        Assert.isNotNull(serviceSession, "Authentication event references a session for which there is no session");
+
+        authnEvents.add(event);
+    }
+
+    /**
+     * Gets the unmodifiable collection of service sessions associated with this session.
+     * 
+     * @return unmodifiable collection of service sessions associated with this session, never null
+     */
+    public Collection<ServiceSession> getServiceSessions() {
+        return Collections.unmodifiableCollection(serviceSessions.values());
+    }
+
+    /**
+     * Sets the internal service session collection to the given collection.
+     * 
+     * @param sessions collection used to store service session, can not be null
+     */
+    protected void setServiceSessions(Map<String, ServiceSession> sessions) {
+        Assert.isNotNull(sessions, "Service session collection can not be null");
+        serviceSessions = sessions;
+    }
+
+    /**
      * The session service for the given service.
      * 
      * @param serviceId ID of the service
@@ -287,6 +232,20 @@ public class IdPSession extends AbstractSubcontextContainer {
         }
 
         return serviceSessions.get(trimmedId);
+    }
+
+    /**
+     * Associates a service session with this IdP session. If the given service session is null or has already been
+     * added to this session this method simply returns.
+     * 
+     * @param serviceSession service session to be associated with this IdP session
+     */
+    public void addServiceSession(ServiceSession serviceSession) {
+        if (serviceSession == null || serviceSessions.containsKey(serviceSession.getServiceId())) {
+            return;
+        }
+
+        serviceSessions.put(serviceSession.getServiceId(), serviceSession);
     }
 
     /**
@@ -316,5 +275,27 @@ public class IdPSession extends AbstractSubcontextContainer {
         }
 
         return matchingEvents;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+
+        if (other == this) {
+            return true;
+        }
+
+        if (other instanceof IdPSession) {
+            return ObjectSupport.equals(id, ((IdPSession) other).getId());
+        }
+
+        return false;
     }
 }

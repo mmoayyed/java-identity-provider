@@ -29,7 +29,7 @@ import org.opensaml.util.StringSupport;
  * Describes an authentication event that took place within the scope of an {@link IdPSession}.
  * 
  * Properties of this object <strong>must not</strong> be modifiable directly. Instead, use the modification methods
- * available via the {@link SessionManager} that created the associate {@link IdPSession}.
+ * available via the {@link SessionStore} that created the associate {@link IdPSession}.
  */
 public class AuthenticationEvent extends AbstractSubcontextContainer {
 
