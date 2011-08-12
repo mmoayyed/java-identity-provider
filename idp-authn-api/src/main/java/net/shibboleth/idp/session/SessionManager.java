@@ -17,19 +17,12 @@
 
 package net.shibboleth.idp.session;
 
+import net.shibboleth.idp.persistence.PersistenceManager;
+
 import org.opensaml.messaging.context.Subcontext;
-import org.opensaml.util.component.IdentifiedComponent;
-import org.opensaml.util.component.ValidatableComponent;
 
 /** A manager of identity provider sessions. */
-public interface SessionManager extends IdentifiedComponent, ValidatableComponent {
-
-    /**
-     * Gets all the sessions currently under control of this manager.
-     * 
-     * @return sessions currently under control of this manager, never null
-     */
-    public Iterable<IdPSession> getSessions();
+public interface SessionManager extends PersistenceManager<IdPSession> {
 
     /**
      * Creates a new session.
@@ -37,20 +30,6 @@ public interface SessionManager extends IdentifiedComponent, ValidatableComponen
      * @return the new session, never null
      */
     public IdPSession createSession();
-
-    /**
-     * Removes a session from the control of this manager.
-     * 
-     * @param idpSession session to be removed, may not be null
-     */
-    public void removeSession(IdPSession idpSession);
-
-    /**
-     * Updates the last activity instant of the given session to the current time.
-     * 
-     * @param idpSession session to be removed, may not be null
-     */
-    public void updateSessionLastActivityInstant(IdPSession idpSession);
 
     /**
      * Adds an authentication event to an existing session.
