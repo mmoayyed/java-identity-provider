@@ -195,7 +195,7 @@ public class LocalizationHelper {
     private Collection<Locale> getAvailableNameLocales(final List<ServiceName> serviceNames) {
         final Collection<Locale> availableLocales = new HashSet<Locale>();
         for (ServiceName serviceName : serviceNames) {
-            availableLocales.add(new Locale(serviceName.getName().getLanguage()));
+            availableLocales.add(new Locale(serviceName.getXMLLang()));
         }
         return availableLocales;
     }
@@ -209,7 +209,7 @@ public class LocalizationHelper {
     private Collection<Locale> getAvailableDescriptionLocales(final List<ServiceDescription> serviceDescriptions) {
         final Collection<Locale> availableLocales = new HashSet<Locale>();
         for (ServiceDescription serviceDescription : serviceDescriptions) {
-            availableLocales.add(new Locale(serviceDescription.getDescription().getLanguage()));
+            availableLocales.add(new Locale(serviceDescription.getXMLLang()));
         }
         return availableLocales;
     }
@@ -223,8 +223,8 @@ public class LocalizationHelper {
      */
     private String getRelyingPartyName(final List<ServiceName> serviceNames, final Locale locale) {
         for (ServiceName serviceName : serviceNames) {
-            if (serviceName.getName().getLanguage().equals(locale.getLanguage())) {
-                return serviceName.getName().getLocalString();
+            if (serviceName.getXMLLang().equals(locale.getLanguage())) {
+                return serviceName.getXMLLang();
             }
         }
         return null;
@@ -240,8 +240,8 @@ public class LocalizationHelper {
      */
     private String getRelyingPartyDescription(final List<ServiceDescription> serviceDescriptions, final Locale locale) {
         for (ServiceDescription serviceDescription : serviceDescriptions) {
-            if (serviceDescription.getDescription().getLanguage().equals(locale.getLanguage())) {
-                return serviceDescription.getDescription().getLocalString();
+            if (serviceDescription.getXMLLang().equals(locale.getLanguage())) {
+                return serviceDescription.getXMLLang();
             }
         }
         return null;
