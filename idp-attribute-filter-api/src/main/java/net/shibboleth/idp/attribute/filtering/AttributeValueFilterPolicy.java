@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
 import org.opensaml.util.component.InitializableComponent;
@@ -149,25 +150,19 @@ public class AttributeValueFilterPolicy implements InitializableComponent, Valid
             throw new ComponentInitializationException("No value matching rule specified");
         }
 
-        if (valueMatchingRule instanceof InitializableComponent) {
-            ((InitializableComponent) valueMatchingRule).initialize();
-        }
+        ComponentSupport.initialize(valueMatchingRule);
 
         initialized = true;
     }
 
     /** {@inheritDoc} */
     public synchronized void destroy() {
-        if (valueMatchingRule instanceof DestructableComponent) {
-            ((DestructableComponent) valueMatchingRule).destroy();
-        }
+        ComponentSupport.destory(valueMatchingRule);
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        if (valueMatchingRule instanceof ValidatableComponent) {
-            ((ValidatableComponent) valueMatchingRule).validate();
-        }
+        ComponentSupport.validate(valueMatchingRule);
     }
 
     /**

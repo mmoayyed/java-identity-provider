@@ -27,9 +27,9 @@ import net.jcip.annotations.ThreadSafe;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.component.ValidatableComponent;
@@ -213,16 +213,12 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifie
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        if (activationCriteria instanceof ValidatableComponent) {
-            ((ValidatableComponent) activationCriteria).validate();
-        }
+        ComponentSupport.validate(activationCriteria);
     }
 
     /** {@inheritDoc} */
     public synchronized void destroy() {
-        if (activationCriteria instanceof DestructableComponent) {
-            ((DestructableComponent) activationCriteria).destroy();
-        }
+        ComponentSupport.destory(activationCriteria);
         activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
         dependencies = Collections.emptySet();
     }
@@ -231,9 +227,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifie
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (activationCriteria instanceof InitializableComponent) {
-            ((InitializableComponent) activationCriteria).initialize();
-        }
+        ComponentSupport.initialize(activationCriteria);
     }
 
     /**

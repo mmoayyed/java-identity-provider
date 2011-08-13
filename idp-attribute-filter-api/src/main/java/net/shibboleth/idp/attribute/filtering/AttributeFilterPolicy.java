@@ -28,9 +28,9 @@ import net.shibboleth.idp.attribute.Attribute;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.component.ValidatableComponent;
@@ -122,9 +122,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        if (activationCriteria instanceof ValidatableComponent) {
-            ((ValidatableComponent) activationCriteria).validate();
-        }
+        ComponentSupport.validate(activationCriteria);
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
             valuePolicy.validate();
@@ -133,9 +131,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
 
     /** {@inheritDoc} */
     public synchronized void destroy() {
-        if (activationCriteria instanceof DestructableComponent) {
-            ((DestructableComponent) activationCriteria).destroy();
-        }
+        ComponentSupport.destory(activationCriteria);
         activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
@@ -217,9 +213,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
         if (activationCriteria == null) {
             activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
         } else {
-            if (activationCriteria instanceof InitializableComponent) {
-                ((InitializableComponent) activationCriteria).initialize();
-            }
+            ComponentSupport.initialize(activationCriteria);
         }
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
