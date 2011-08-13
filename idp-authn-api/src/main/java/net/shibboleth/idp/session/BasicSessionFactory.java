@@ -24,10 +24,10 @@ import java.util.HashMap;
 import edu.vt.middleware.crypt.util.HexConverter;
 
 /**
- * A basic {@link SessionCreationStrategy} that generates a the session ID and session secret using a
+ * A basic {@link SessionFactory} that generates a the session ID and session secret using a
  * {@link SecureRandom} PRNG.
  */
-public class BasicSessionCreationStrategy implements SessionCreationStrategy {
+public class BasicSessionFactory implements SessionFactory {
 
     /** Number of random bits within a session ID. Default value: {@value} */
     private final int sessionIDSize = 32;
@@ -39,7 +39,7 @@ public class BasicSessionCreationStrategy implements SessionCreationStrategy {
     private final HexConverter hexCodec;
 
     /** Constructor. */
-    public BasicSessionCreationStrategy() {
+    public BasicSessionFactory() {
         prng = new SecureRandom();
         hexCodec = new HexConverter();
     }

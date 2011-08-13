@@ -21,9 +21,8 @@ import java.security.Principal;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
+import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
-
-//TODO implement hashCode/equals - need to implement this for AbstractSubcontextContainer as well
 
 /**
  * Describes an authentication event that took place within the scope of an {@link IdPSession}.
@@ -35,7 +34,7 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
 
     /** Service for which the principal was authenticated. */
     private String serviceId;
-    
+
     /** The principal established by the authentication event. */
     private Principal principal;
 
@@ -59,7 +58,7 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
     public String getServiceId() {
         return serviceId;
     }
-    
+
     /**
      * Sets the identifier of the service for which the principal was authenticated.
      * 
@@ -69,7 +68,7 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
         serviceId = StringSupport.trimOrNull(id);
         Assert.isNotNull(serviceId, "Service ID can not be null or empty");
     }
-    
+
     /**
      * Gets the principal established by the authentication event.
      * 
@@ -145,5 +144,33 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
      */
     protected void setExpirationInstant(long instant) {
         expirationInstant = instant;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + authnMethod.hashCode();
+        result = prime * result + serviceId.hashCode();
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof AuthenticationEvent) {
+            AuthenticationEvent other = (AuthenticationEvent) obj;
+            return ObjectSupport.equals(getServiceId(), other.getServiceId())
+                    && ObjectSupport.equals(getAuthenticationMethod(), other.getAuthenticationMethod());
+        }
+
+        return false;
     }
 }

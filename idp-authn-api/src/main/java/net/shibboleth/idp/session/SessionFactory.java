@@ -21,7 +21,7 @@ package net.shibboleth.idp.session;
  * Strategy for creating new {@link IdPSession}. The strategy must ensure that all IdP properties which can not be null
  * have been initialized.
  */
-public interface SessionCreationStrategy {
+public interface SessionFactory {
 
     /**
      * Builds a new IdP session.
