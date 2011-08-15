@@ -35,6 +35,10 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,53 +48,68 @@ import org.slf4j.LoggerFactory;
  * This is just a scripting shim around {@link AttributeValueMatcher#getMatchingValues}.
  */
 @ThreadSafe
-public class ScriptedMatcher implements AttributeValueMatcher {
+public class ScriptedMatcher implements AttributeValueMatcher, InitializableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
 
     /** The scripting language. */
-    private final String scriptLanguage;
+    private String scriptLanguage;
 
     /** The script to execute. */
-    private final String script;
+    private String script;
 
     /** The script engine to execute the script. */
-    private final ScriptEngine scriptEngine;
+    private ScriptEngine scriptEngine;
 
     /** The compiled form of the script, if the script engine supports compiling. */
-    private final CompiledScript compiledScript;
+    private CompiledScript compiledScript;
+
+    /** Initialization state. */
+    private boolean initialized;
 
     /**
-     * Constructor.
-     * 
-     * @param theLanguage the scripting language
-     * @param theScript the script to execute
-     */
-    public ScriptedMatcher(final String theLanguage, final String theScript) {
-        scriptLanguage = theLanguage;
-
-        final String trimmedScript = StringSupport.trimOrNull(theScript);
-        Assert.isNotNull(trimmedScript, "Script for ScriptedMatcher must be non-null and non empty");
-        script = trimmedScript;
-
-        final ScriptEngineManager sem = new ScriptEngineManager();
-        scriptEngine = sem.getEngineByName(scriptLanguage);
-        compiledScript = compileScript();
-
-        // Validate
-        Assert.isNotNull(scriptEngine, "ScriptedMatcher: unable to create scripting engine for the language: "
-                + scriptLanguage);
+     * Has initialize been called on this object. {@inheritDoc}.
+     * */
+    public boolean isInitialized() {
+        return initialized;
     }
 
-    /** private Constructor to maintain the invariants about the script and language being non null. */
-    @SuppressWarnings("unused")
-    private ScriptedMatcher() {
-        scriptLanguage = null;
-        compiledScript = null;
-        scriptEngine = null;
-        script = null;
-        Assert.isFalse(true, "No default constructor");
+    /**
+     *  Initialize.  Check parameters and try to compile the script
+     * {@inheritDoc} 
+     */
+    public synchronized void initialize() throws ComponentInitializationException {
+        if (initialized) {
+            throw new ComponentInitializationException("ScriptedMatcher: initialized multiple times.");
+        }
+        
+        if (null == scriptLanguage) {
+            throw new ComponentInitializationException("ScriptedMatcher: No language set.");
+        }
+        
+        if (null == script) {
+            throw new ComponentInitializationException("ScriptedMatcher: No script set.");
+        }
+        
+        final ScriptEngineManager sem = new ScriptEngineManager();
+        scriptEngine = sem.getEngineByName(scriptLanguage);
+        if (null == scriptEngine) {
+            throw new ComponentInitializationException("ScriptedMatcher: No valid language set.");
+        }
+        compiledScript = compileScript();
+        initialized = true;
+    }
+
+    /**
+     * Set the language we are using.
+     * @param theLanguage what we use.
+     */
+    public synchronized void setLanguage(final String theLanguage) {
+        if (initialized) {
+            throw new UnmodifiableComponentException("Scriptlet matcher has already been initialized");
+        }
+        scriptLanguage = StringSupport.trimOrNull(theLanguage);
     }
 
     /**
@@ -102,6 +121,18 @@ public class ScriptedMatcher implements AttributeValueMatcher {
         return scriptLanguage;
     }
 
+    
+    /**
+     * Set the actual Script we will use.
+     * @param theScript what to use.
+     */
+    public synchronized void setScript(final String theScript) {
+        if (initialized) {
+            throw new UnmodifiableComponentException("Scriptlet matcher has already been initialized");
+        }
+        script = StringSupport.trimOrNull(theScript);
+    }
+    
     /**
      * Gets the script that will be executed.
      * 
@@ -135,7 +166,7 @@ public class ScriptedMatcher implements AttributeValueMatcher {
      * 
      * @return the compiled script.
      */
-    protected CompiledScript compileScript() {
+    private CompiledScript compileScript() {
         try {
             if (scriptEngine != null && scriptEngine instanceof Compilable) {
                 return ((Compilable) scriptEngine).compile(script);

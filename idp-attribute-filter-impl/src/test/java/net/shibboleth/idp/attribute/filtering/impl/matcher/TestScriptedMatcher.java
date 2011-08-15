@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 import java.util.Collection;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -54,31 +56,64 @@ public class TestScriptedMatcher {
      * Function to return data from the provided input.
      * 
      * @throws AttributeFilteringException if the resolution fails when it shouldn't.
+     * @throws ComponentInitializationException never.
      */
     @Test
-    public void scriptedMatcherTest() throws AttributeFilteringException {
+    public void scriptedMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
         boolean threw = false;
-
+        ScriptedMatcher matcher;
+        
         try {
-            new ScriptedMatcher("", TEST_INVALID_SCRIPT);
+            matcher = new ScriptedMatcher();
+            matcher.setScript(TEST_INVALID_SCRIPT);
+            matcher.setLanguage("");
+            matcher.initialize();
             Assert.assertTrue(false, "unreachable code path");
-        } catch (IllegalArgumentException e) {
+        } catch (ComponentInitializationException e) {
             threw = true;
         }
-        Assert.assertTrue(threw, "empty language should throw a resolution error");
+        Assert.assertTrue(threw, "empty language should throw an initialization error");
 
         threw = false;
         try {
-            new ScriptedMatcher("imp", TEST_INVALID_SCRIPT);
+            matcher = new ScriptedMatcher();
+            matcher.setScript(TEST_INVALID_SCRIPT);
+            matcher.setLanguage("imp");
+            matcher.initialize();
             Assert.assertTrue(false, "unreachable code path");
-        } catch (IllegalArgumentException e) {
+        } catch (ComponentInitializationException  e) {
             threw = true;
         }
-        Assert.assertTrue(threw, "invalid language should throw a resolution error");
+        Assert.assertTrue(threw, "invalid language should throw a initialization error");
 
-        ScriptedMatcher matcher = new ScriptedMatcher(TEST_SCRIPT_LANGUAGE, TEST_INVALID_SCRIPT);
+        threw = false;
+        try {
+            matcher = new ScriptedMatcher();
+            matcher.setScript(TEST_INVALID_SCRIPT);
+            matcher.setLanguage(TEST_SCRIPT_LANGUAGE);
+            matcher.initialize();
+            matcher.setLanguage(TEST_SCRIPT_LANGUAGE);
+            Assert.assertTrue(false, "unreachable code path");
+        } catch (UnmodifiableComponentException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "invalid language should throw a UnmodifiableComponentException");
+        
+        matcher = new ScriptedMatcher();
+        matcher.setLanguage(TEST_SCRIPT_LANGUAGE);
+        matcher.setScript(TEST_INVALID_SCRIPT);
+        matcher.initialize();
         Assert.assertNull(matcher.getCompiledScript(), "Invalid script should compile to null");
 
+        threw = false;
+        try {
+            matcher.initialize();
+            Assert.assertTrue(false, "unreachable code path");
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "double initialize should throw a UnmodifiableComponentException");
+        
         threw = false;
         try {
             matcher.getMatchingValues(null, null);
@@ -88,7 +123,10 @@ public class TestScriptedMatcher {
         }
         Assert.assertTrue(threw, "bad syntax should throw a resolution error");
 
-        matcher = new ScriptedMatcher(TEST_SCRIPT_LANGUAGE, TEST_TRIVIAL_SCRIPT);
+        matcher = new ScriptedMatcher();
+        matcher.setLanguage(TEST_SCRIPT_LANGUAGE);
+        matcher.setScript(TEST_TRIVIAL_SCRIPT);
+        matcher.initialize();
 
         Collection result = matcher.getMatchingValues(null, null);
         Assert.assertEquals(result.size(), 3, "Result of trivial Script");
@@ -98,7 +136,10 @@ public class TestScriptedMatcher {
         Attribute<String> attribute = new Attribute<String>("attribute");
         attribute.setValues(CollectionSupport.toList("zero", "one", "two", "three", "four", "five"));
 
-        matcher = new ScriptedMatcher(TEST_SCRIPT_LANGUAGE, TEST_COMPLEX_SCRIPT);
+        matcher = new ScriptedMatcher();
+        matcher.setLanguage(TEST_SCRIPT_LANGUAGE);
+        matcher.setScript(TEST_COMPLEX_SCRIPT);
+        matcher.initialize();
 
         result = matcher.getMatchingValues(attribute, null);
         Assert.assertEquals(result.size(), 3, "Result of complex Script");
