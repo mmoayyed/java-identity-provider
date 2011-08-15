@@ -23,6 +23,8 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,31 +38,88 @@ public class TestAttributeValueStringMatcher {
 
     /** Test the getMatchingValue. 
      * @throws AttributeFilteringException if the filter fails
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeValueStringMatcherTest() throws AttributeFilteringException {
+    public void attributeValueStringMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+        AttributeValueStringMatcher filter;
+        boolean thrown = false;
         // Bad Parameters
         try {
-            new AttributeValueStringMatcher("", true);
+            filter = new AttributeValueStringMatcher();
+            filter.setCaseSentitive(true);
+            filter.setMatchString("");
+            filter.initialize();
             Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty match): usual case");
+        } catch (ComponentInitializationException e) {
+            thrown = true;
         }
+        Assert.assertTrue(thrown, "testing bad constructor (empty match): usual case");
+
+        thrown = false;
+        try {
+            filter = new AttributeValueStringMatcher();
+            filter.setMatchString("string");
+            filter.initialize();
+            Assert.assertTrue(false, "testing bad constructor (empty case sensitivity): unreacahble code");
+        } catch (ComponentInitializationException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "testing bad constructor (empty case sensitivity): usual case");
+
+        thrown = false;
+        // multiple sets
+        try {
+            filter = new AttributeValueStringMatcher();
+            filter.setCaseSentitive(true);
+            filter.setMatchString("string");
+            filter.initialize();
+            filter.setCaseSentitive(false);
+            Assert.assertTrue(false, "testing bad constructor (missing initialize): unreacahble code");
+        } catch (UnmodifiableComponentException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "testing bad constructor (missing initialize): usual case");
 
         final Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
         final Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
         attribute.setValues(values);
 
-        AttributeValueStringMatcher filter = new AttributeValueStringMatcher("one", true);
+        thrown = false;
+        // Missing initialize
+        try {
+            filter = new AttributeValueStringMatcher();
+            filter.setCaseSentitive(true);
+            filter.setMatchString("string");
+            filter.getMatchingValues(attribute, null);
+            Assert.assertTrue(false, "testing bad constructor (missing initialize): unreacahble code");
+        } catch (AttributeFilteringException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "testing bad constructor (missing initialize): usual case");
+
+        filter = new AttributeValueStringMatcher();
+        filter.setCaseSentitive(true);
+        filter.setMatchString("one");
+        filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 1, "counts of 'one' (case sensitive)");
         
-        filter  = new AttributeValueStringMatcher("one", false);
+        filter = new AttributeValueStringMatcher();
+        filter.setCaseSentitive(false);
+        filter.setMatchString("one");
+        filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 1, "counts of 'one' (case insensitive)");
         
-        filter  = new AttributeValueStringMatcher("ONE", true);
+        filter = new AttributeValueStringMatcher();
+        filter.setCaseSentitive(true);
+        filter.setMatchString("ONE");
+        filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 0, "counts of 'ONE' (case sensitive)");
         
-        filter  = new AttributeValueStringMatcher("TWO", false);
+        filter = new AttributeValueStringMatcher();
+        filter.setCaseSentitive(false);
+        filter.setMatchString("TWO");
+        filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 1, "counts of 'TWO' (case insensitive)");
 
     }

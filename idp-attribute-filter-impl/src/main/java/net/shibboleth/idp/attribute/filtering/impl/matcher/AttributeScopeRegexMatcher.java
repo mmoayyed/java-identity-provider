@@ -40,15 +40,6 @@ import org.opensaml.xml.util.LazySet;
 @ThreadSafe
 public class AttributeScopeRegexMatcher extends BaseRegexMatcher implements AttributeValueMatcher {
 
-    /**
-     * Constructor.
-     * 
-     * @param regex the pattern
-     */
-    protected AttributeScopeRegexMatcher(String regex) {
-        super(regex);
-    }
-
     /** {@inheritDoc} */
     public Collection<ScopedAttributeValue> getMatchingValues(final Attribute<?> attribute,
             final AttributeFilterContext filterContext) throws AttributeFilteringException {

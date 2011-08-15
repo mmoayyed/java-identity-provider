@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -39,17 +40,13 @@ public class TestAttributeScopeStringMatcher {
      * Test the getMatchingValue.
      * 
      * @throws AttributeFilteringException if the filter fails
+     * @throws ComponentInitializationException never.
      */
     @Test
-    public void attributeScopeStringMatcherTest() throws AttributeFilteringException {
-        // Bad Parameters
-        try {
-            new AttributeScopeStringMatcher("", true);
-            Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty match): usual case");
-        }
+    public void attributeScopeStringMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+        // Bad Parameters are handles in the base class and tested in @link(TestAttributeValueStringMatcher
 
+        AttributeScopeStringMatcher filter; 
         final Attribute<?> attribute = new Attribute<String>(ATTR_NAME);
         // set up "a", "a@foo", "b@FOO", "foo@a"
         final Collection values =
@@ -57,13 +54,22 @@ public class TestAttributeScopeStringMatcher {
                         "b", "FOO"), new ScopedAttributeValue("foo", "A"));
         attribute.setValues(values);
 
-        AttributeScopeStringMatcher filter = new AttributeScopeStringMatcher("foo", true);
+        filter = new AttributeScopeStringMatcher();
+        filter.setCaseSentitive(true);
+        filter.setMatchString("foo");
+        filter.initialize();        
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 1, "counts of '@foo' (case sensitive)");
 
-        filter = new AttributeScopeStringMatcher("foo", false);
+        filter = new AttributeScopeStringMatcher();
+        filter.setCaseSentitive(false);
+        filter.setMatchString("foo");
+        filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 2, "counts of '@foo' (case insensitive)");
 
-        filter = new AttributeScopeStringMatcher("a", true);
+        filter = new AttributeScopeStringMatcher();
+        filter.setCaseSentitive(true);
+        filter.setMatchString("a");
+        filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 0, "counts of 'ONE' (case sensitive)");
 
 

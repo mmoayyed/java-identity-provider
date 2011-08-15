@@ -40,16 +40,6 @@ import org.opensaml.xml.util.LazySet;
 @ThreadSafe
 public class AttributeScopeStringMatcher extends BaseStringMatcher implements AttributeValueMatcher {
 
-    /**
-     * Constructor.
-     * 
-     * @param match what to compare against.
-     * @param isCaseSensitive whether comparison is case sensitive.
-     */
-    protected AttributeScopeStringMatcher(String match, boolean isCaseSensitive) {
-        super(match, isCaseSensitive);
-    }
-
     /** {@inheritDoc} */
     public Collection<ScopedAttributeValue> getMatchingValues(final Attribute<?> attribute,
             final AttributeFilterContext filterContext) throws AttributeFilteringException {

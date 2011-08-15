@@ -18,62 +18,105 @@
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
 
 /**
  * The basis of all Regex-based Filter matchers.
  * 
- * Just as for {@link BaseStringCompare} Principal, AttributeValue, AttributeScope regex matchers all
- * extend this class. This class's job is to just provide the match functor that they call and to police the
- * constructor.
+ * 
+ * Just as for {@link net.shibboleth.idp.attribute.filtering.impl.policy.BaseStringCompare} Principal, AttributeValue,
+ * AttributeScope regex matchers all extend this class. This class's job is to just provide the match functor that they
+ * call and to police the constructor. <br />
+ * 
+ * We make this an initializable and unmodifiable functor which allows us to know that the regex will no move under our
+ * feet while we are doing the comparison over all of an attribute's values and finesses the issue of getting a
+ * PatternSyntaxException during non intializing operation.
+ * 
  * 
  */
 @ThreadSafe
-public abstract class BaseRegexMatcher {
+public abstract class BaseRegexMatcher implements InitializableComponent, UnmodifiableComponent {
 
     /** Regular expression to match. */
-    private final Pattern regex;
+    private Pattern regex;
+
+    /** The text of the expression. */
+    private String expressionAsText;
+
+    /** Initialized state. */
+    private boolean initialized;
 
     /**
-     * Constructor.
+     * Set the expression.
      * 
-     * @param expression the regexp under consideration. Must not be null or empty.
+     * @param expression the regexp under consideration. Must not be null or empty
      */
-    protected BaseRegexMatcher(final String expression) {
-        String exp = StringSupport.trimOrNull(expression);
-        Assert.isNotNull(exp, "Null or empy string passed to a Regexp attribute filter");
-        regex = Pattern.compile(expression);
+    public synchronized void setRegularExpression(final String expression) {
+        if (initialized) {
+            throw new UnmodifiableComponentException("Regular expression matcher has already been initialized");
+        }
+        expressionAsText = StringSupport.trimOrNull(expression);
     }
 
-    /** Private Constructor. Here uniquely to guarantee that we always have non null members. */
-    @SuppressWarnings("unused")
-    private BaseRegexMatcher() {
-        Assert.isTrue(false, "Private constructor should not be called");
-        regex = null;
+    /**
+     * Mark the regexp as initialized.
+     * 
+     * @throws ComponentInitializationException if we have been called already or the expression is bogus
+     */
+    public synchronized void initialize() throws ComponentInitializationException {
+        if (initialized) {
+            throw new ComponentInitializationException("Regexp Matcher is initialized multiple times");
+        }
+        if (null == expressionAsText) {
+            throw new ComponentInitializationException("No valid pattern provided to Regexp Matcher");
+        }
+        try {
+            regex = Pattern.compile(expressionAsText);
+        } catch (PatternSyntaxException e) {
+            throw new ComponentInitializationException("Regexp Matcher: Could not compile provided pattern "
+                    + expressionAsText, e);
+        }
+        initialized = true;
+    }
+
+    /**
+     * Has initialize been called on this object. {@inheritDoc}.
+     * */
+    public boolean isInitialized() {
+        return initialized;
     }
 
     /**
      * Gets the regular expression to match.
      * 
-     * @return regular expression to match
+     * @return regular expression to match. Might return null if no expression provided.
      */
     public String getRegularExpression() {
-        return regex.pattern();
+        return regex.toString();
     }
 
     /**
      * Matches the given value against the provided regular expression. {@link Object#toString()} is used to produce the
-     * string value to evaluate.
+     * string value to evaluate. We do not use our local
      * 
      * @param value the value to evaluate
      * 
      * @return true if the value matches the given match string, false if not
+     * @throws AttributeFilteringException if we haven't been initialized
      */
-    protected boolean isMatch(final Object value) {
+    protected boolean isMatch(final Object value) throws AttributeFilteringException {
+        if (!initialized) {
+            throw new AttributeFilteringException("Regexp Matcher has not been initialized");
+        }
         if (regex.matcher(value.toString()).matches()) {
             return true;
         }

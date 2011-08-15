@@ -37,15 +37,6 @@ import org.opensaml.xml.util.LazySet;
 @ThreadSafe
 public class AttributeValueRegexMatcher extends BaseRegexMatcher implements AttributeValueMatcher {
 
-    /**
-     * Constructor.
-     * 
-     * @param regex The regular expression to match.
-     */
-    protected AttributeValueRegexMatcher(String regex) {
-        super(regex);
-    }
-
     /** {@inheritDoc} */
     public Collection<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException {

@@ -24,6 +24,8 @@ import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -35,15 +37,34 @@ public class TestAttributeScopeRegexMatcher {
     /**
      * test the {@link AttributeScopeRegexMatcher} filtering and constructor. 
      * @throws AttributeFilteringException if the filtering fails.
+     * @throws ComponentInitializationException never.
      */
     @Test
-    public void attributeValueRegexMatcherTest() throws AttributeFilteringException {
+    public void attributeValueRegexMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+        AttributeScopeRegexMatcher filter; 
+        boolean thrown = false;
         try {
-            new AttributeScopeRegexMatcher("");
+            filter = new AttributeScopeRegexMatcher();
+            filter.setRegularExpression("");
+            filter.initialize();
             Assert.assertTrue(false, "testing bad constructor (empty regexp): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty regexp): usual case");
+        } catch (ComponentInitializationException e) {
+            thrown = true;
         }
+        Assert.assertTrue(thrown, "testing bad constructor (empty regexp): usual case");
+        
+        thrown = false;
+        // multiple sets
+        try {
+            filter = new AttributeScopeRegexMatcher();
+            filter.setRegularExpression("string");
+            filter.initialize();
+            filter.setRegularExpression("string");
+            Assert.assertTrue(false, "testing bad constructor (missing initialize): unreacahble code");
+        } catch (UnmodifiableComponentException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "testing bad constructor (missing initialize): usual case");
 
         final Attribute<?> attribute = new Attribute("Attribute");
         // set up "foo", "a@foo", "a@foobar", "a@flo", "foo@a"
@@ -54,14 +75,30 @@ public class TestAttributeScopeRegexMatcher {
         final Collection values = CollectionSupport.toList((Object) "foo", aAtfoo, aAtfoobar, aAtflo, fooAta);
         attribute.setValues(values);
 
-        AttributeScopeRegexMatcher filter = new AttributeScopeRegexMatcher("f.o");
+        thrown = false;
+        // Missing initialize
+        try {
+            filter = new AttributeScopeRegexMatcher();
+            filter.setRegularExpression("string");
+            filter.getMatchingValues(attribute, null);
+            Assert.assertTrue(false, "testing bad constructor (missing initialize): unreacahble code");
+        } catch (AttributeFilteringException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "testing bad constructor (missing initialize): usual case");
+
+        filter = new AttributeScopeRegexMatcher();
+        filter.setRegularExpression("f.o");
+        filter.initialize();
         Collection res = filter.getMatchingValues(attribute, null);
         
         Assert.assertEquals(res.size(), 2, "f.o matches a@foo and a@flo");
         Assert.assertTrue(res.contains(aAtfoo), "f.o matches a@foo");
         Assert.assertTrue(res.contains(aAtflo), "f.o matches a@flo");
 
-        filter = new AttributeScopeRegexMatcher("fo.*");
+        filter = new AttributeScopeRegexMatcher();
+        filter.setRegularExpression("fo.*");
+        filter.initialize();
         res = filter.getMatchingValues(attribute, null);
 
         Assert.assertEquals(res.size(), 2, "fo.* matches a@foo, a@foobar ");
@@ -70,7 +107,6 @@ public class TestAttributeScopeRegexMatcher {
         Assert.assertFalse(res.contains(aAtflo), "f.o does not match a@flo");
         Assert.assertFalse(res.contains(fooAta), "f.o does not match foo@a");
         Assert.assertFalse(res.contains("foo"), "f.o does not match foo");
-
 
     }
 }

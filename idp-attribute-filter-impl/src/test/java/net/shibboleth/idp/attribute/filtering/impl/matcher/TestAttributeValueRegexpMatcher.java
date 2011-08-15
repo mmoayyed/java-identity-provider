@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,16 +37,12 @@ public class TestAttributeValueRegexpMatcher {
      * Test the regexp value matcher.
      * 
      * @throws AttributeFilteringException if the filter fails
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeValueRegexMatchertest() throws AttributeFilteringException {
+    public void attributeValueRegexMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
 
-        try {
-            new AttributeValueRegexMatcher("");
-            Assert.assertTrue(false, "testing bad constructor (empty regexp): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty regexp): usual case");
-        }
+        // Initialize testing in implemented in the base class and tested in @link(TestAttributeScopeRegexMatcher)
 
         final Attribute<?> attribute = new Attribute("Attribute");
         // set up "X", "fot", "a@foo", "foobar", "foo", "foo@a"
@@ -54,14 +51,18 @@ public class TestAttributeValueRegexpMatcher {
         final Collection values = CollectionSupport.toList((Object) "X", "fot", aAtfoo, "foobar", "foo", fooAta);
         attribute.setValues(values);
 
-        AttributeValueRegexMatcher filter = new AttributeValueRegexMatcher("f.o");
+        AttributeValueRegexMatcher filter = new AttributeValueRegexMatcher();
+        filter.setRegularExpression("f.o");
+        filter.initialize();
         Collection res = filter.getMatchingValues(attribute, null);
 
         Assert.assertEquals(res.size(), 2, "f.o matches foo and foo@a");
         Assert.assertTrue(res.contains("foo"), "f.o matches foo");
         Assert.assertTrue(res.contains(fooAta), "f.o matches foo@a");
 
-        filter = new AttributeValueRegexMatcher("fo.*");
+        filter = new AttributeValueRegexMatcher();
+        filter.setRegularExpression("fo.*");
+        filter.initialize();
         res = filter.getMatchingValues(attribute, null);
 
         Assert.assertEquals(res.size(), 4, "fo.* matches foo, fot, foobar, foo@a");
