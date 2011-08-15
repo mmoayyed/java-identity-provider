@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.ComponentValidationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,15 +36,16 @@ import org.testng.annotations.Test;
  * 
  */
 public class TestAndMatcher {
-
+    
     /**
      * test {@link AndMatcher}.
      * 
      * @throws AttributeFilteringException if anything dies horribly.
      * @throws ComponentInitializationException init initialize fails
+     * @throws ComponentValidationException if validate fails (it shouldn't).
      */
     @Test
-    public void andMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+    public void andMatcherTest() throws AttributeFilteringException, ComponentInitializationException, ComponentValidationException {
         final Attribute<String> attribute = new Attribute<String>("attribute");
         final Collection<String> values = CollectionSupport.toList("a", "b", "c", "d");
         attribute.setValues(values);
@@ -75,24 +76,24 @@ public class TestAndMatcher {
         
         // Construct three or filters to give {"a","b","c"}, {"b", "c"}, {"a", "b", "d"}
 
-        list.add(new AttributeValueStringMatcher("a", false));
-        list.add(new AttributeValueStringMatcher("b", true));
-        list.add(new AttributeValueStringMatcher("c", true));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("a", false));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("b", true));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("c", true));
         OrMatcher or1 = new OrMatcher();
         or1.setSubMatchers(list);
         or1.initialize();
         
         list.clear();
-        list.add(new AttributeValueStringMatcher("c", false));
-        list.add(new AttributeValueStringMatcher("b", true));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("c", false));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("b", true));
         OrMatcher or2 = new OrMatcher();
         or2.setSubMatchers(list);
         or2.initialize();
 
         list.clear();
-        list.add(new AttributeValueStringMatcher("a", false));
-        list.add(new AttributeValueStringMatcher("b", true));
-        DestroyableAttributeValueStringMatcher destroyTester = new DestroyableAttributeValueStringMatcher("d", true);
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("a", false));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("b", true));
+        DestroyableValidatableAttributeValueStringMatcher destroyTester = DestroyableValidatableAttributeValueStringMatcher.newMatcher("d", true);
         list.add(destroyTester);
         OrMatcher or3 = new OrMatcher();
         or3.setSubMatchers(list);
@@ -103,9 +104,15 @@ public class TestAndMatcher {
         Assert.assertEquals(c.size(), 1, "Match complex AND");
         Assert.assertTrue(c.contains("b"));
         
-        threw = false;
+        Assert.assertFalse(destroyTester.isValidated(), "Has validate not yet been passed down");
+        filter.validate();
+        Assert.assertTrue(destroyTester.isValidated(), "Has validate been passed down");
+                
+        Assert.assertFalse(destroyTester.isDestroyed(), "Has destroy not yet been passed down");
         filter.destroy();
-        Assert.assertTrue(destroyTester.isDestroyed(), "Has destroy been passed down (via ORmatcher)");
+        Assert.assertTrue(destroyTester.isDestroyed(), "Has destroy been passed down");
+
+        threw = false;
         try {
             filter.getMatchingValues(attribute, null);
             Assert.assertTrue(false, "unreachable code (destroy)");

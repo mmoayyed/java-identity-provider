@@ -32,8 +32,11 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentSupport;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +49,8 @@ import org.slf4j.LoggerFactory;
  * However it seems likely that such a constraint is erroneous...
  */
 @ThreadSafe
-public class AndMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent {
+public class AndMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent,
+        ValidatableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(OrMatcher.class);
@@ -79,15 +83,13 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
     }
 
     /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
-    public void initialize() throws ComponentInitializationException {
+    public synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
-            throw new ComponentInitializationException("And Matcher is initialized multiple times");
+            throw new ComponentInitializationException("And Matcher being initialized multiple times");
         }
+
         for (AttributeValueMatcher matcher : matchers) {
-            if (matcher instanceof InitializableComponent) {
-                InitializableComponent init = (InitializableComponent) matcher;
-                init.initialize();
-            }
+            ComponentSupport.initialize(matcher);
         }
         initialized = true;
     }
@@ -96,13 +98,25 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
     public void destroy() {
         destroyed = true;
         for (AttributeValueMatcher matcher : matchers) {
-            if (matcher instanceof DestructableComponent) {
-                DestructableComponent destructee = (DestructableComponent) matcher;
-                destructee.destroy();
-            }
+            ComponentSupport.destroy(matcher);
         }
         // Clear after the setting of the flag top avoid race with getMatchingValues
         matchers = null;
+    }
+
+    /**
+     * Validate any validatable children. 
+     * {@inheritDoc}
+     * 
+     * @throws ComponentValidationException if any of the child validates failed.
+     */
+    public void validate() throws ComponentValidationException {
+        if (!initialized) {
+            throw new ComponentValidationException("Object not initialized");
+        }
+        for (AttributeValueMatcher matcher : matchers) {
+            ComponentSupport.validate(matcher);
+        }
     }
 
     /**
@@ -119,7 +133,7 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
      * 
      * @param newMatchers what to set.
      */
-    public void setSubMatchers(final List<AttributeValueMatcher> newMatchers) {
+    public synchronized void setSubMatchers(final List<AttributeValueMatcher> newMatchers) {
         final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
         CollectionSupport.addNonNull(newMatchers, workingMatcherList);
         if (workingMatcherList.isEmpty()) {
@@ -160,14 +174,14 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
             throws AttributeFilteringException {
 
         if (!initialized) {
-            throw new AttributeFilteringException("Object has not been initialized");
+            throw new AttributeFilteringException("And Matcher has not been initialized");
         }
         // NOTE capture the matchers to avoid race with setSubMatchers.
         // Do this before the test on destruction to avoid
         // race with destroy code.
         final List<AttributeValueMatcher> theMatchers = getSubMatchers();
         if (destroyed) {
-            throw new AttributeFilteringException("Object has been destroyed");
+            throw new AttributeFilteringException("And Matcher has been destroyed");
         }
 
         if (theMatchers.isEmpty()) {

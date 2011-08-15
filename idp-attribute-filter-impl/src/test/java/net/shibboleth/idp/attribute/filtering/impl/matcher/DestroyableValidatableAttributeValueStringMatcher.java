@@ -17,28 +17,36 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.ValidatableComponent;
 
 /**
  * Simple class to test destruction.
  */
-public class DestroyableAttributeValueStringMatcher extends AttributeValueStringMatcher implements DestructableComponent
+public class DestroyableValidatableAttributeValueStringMatcher extends AttributeValueStringMatcher implements DestructableComponent, ValidatableComponent
 {
     /**
-     * Constructor.
-     *
-     * @param match what to match against.
-     * @param isCaseSensitive whether the check is case sensitive.
+     * Handy helper function to create the submatchers in the boolean testers.
+     * @param pattern the pattern to match.
+     * @param caseSensitive whether we are case sensitive.
+     * @return a new matcher.
      */
-    protected DestroyableAttributeValueStringMatcher(String match, boolean isCaseSensitive) {
-        super(match, isCaseSensitive);
+    static public DestroyableValidatableAttributeValueStringMatcher newMatcher(String pattern, boolean caseSensitive) {
+        DestroyableValidatableAttributeValueStringMatcher value = new DestroyableValidatableAttributeValueStringMatcher();
+        value.setCaseSentitive(caseSensitive);
+        value.setMatchString(pattern);
+        return value;
     }
+
     private boolean destroyed; 
+    private boolean validated;
 
     /** {@inheritDoc} */
     public void destroy() {
         destroyed = true;
     }
+
     /**
      * Has destroy been called?
      * @return whether destroyed has been called.
@@ -47,5 +55,18 @@ public class DestroyableAttributeValueStringMatcher extends AttributeValueString
         return destroyed;
         
     }
+
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        validated = true;
+    }
     
+    /**
+     * Has validated been called?
+     * @return whether destroyed has been called.
+     */
+    public boolean isValidated() {
+        return validated;
+    }
+
 }

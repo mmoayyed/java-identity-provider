@@ -25,6 +25,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -36,9 +37,10 @@ public class TestNotMatcher {
      * 
      * @throws AttributeFilteringException if the filter has issues.
      * @throws ComponentInitializationException if initialize fails when we didn't exdpect it to
+     * @throws ComponentValidationException never
      */
     @Test
-    public void notMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+    public void notMatcherTest() throws AttributeFilteringException, ComponentInitializationException, ComponentValidationException {
         final Attribute<String> attribute = new Attribute<String>("attribute");
         final Collection<String> values = CollectionSupport.toSet("zero", "one", "two", "three");
         attribute.setValues(values);
@@ -66,15 +68,15 @@ public class TestNotMatcher {
         not = new NotMatcher();
         not.setSubMatcher(new AnyMatcher());
         not.initialize();
-        
+
         Assert.assertTrue(not.getMatchingValues(attribute, null).isEmpty(), "Not of everything is nothing");
-        
+
         final OrMatcher or = new OrMatcher();
-        or.initialize();
         or.setSubMatchers(CollectionSupport.toList(
-                (AttributeValueMatcher) new AttributeValueStringMatcher("zero", true), new AttributeValueStringMatcher(
-                        "two", true)));
+                (AttributeValueMatcher) DestroyableValidatableAttributeValueStringMatcher.newMatcher("zero", true),
+                DestroyableValidatableAttributeValueStringMatcher.newMatcher("two", true)));
         not.setSubMatcher(or);
+        not.initialize();
 
         Collection<String> expected = CollectionSupport.toSet("one", "three");
         Assert.assertEquals(not.getMatchingValues(attribute, null), expected, "simple not");
@@ -86,9 +88,16 @@ public class TestNotMatcher {
         notNot.initialize();
         notNot.setSubMatcher(not);
         Assert.assertEquals(notNot.getMatchingValues(attribute, null), expected, "not of not");
-        
-        DestroyableAttributeValueStringMatcher destroyTester = new DestroyableAttributeValueStringMatcher("ONE", false);
+
+        DestroyableValidatableAttributeValueStringMatcher destroyTester = DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false);
         not.setSubMatcher(destroyTester);
+        
+        Assert.assertFalse(destroyTester.isValidated(), "Has validate not yet been passed down");
+        not.validate();
+        Assert.assertTrue(destroyTester.isValidated(), "Has validate been passed down");
+
+        // test destroy
+        Assert.assertFalse(destroyTester.isDestroyed(), "Has destroy not yet been passed down");
         not.destroy();
         Assert.assertTrue(destroyTester.isDestroyed(), "destroyable sub matcher not destroyed");
         try {

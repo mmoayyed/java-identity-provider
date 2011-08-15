@@ -32,8 +32,11 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentSupport;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +46,13 @@ import org.slf4j.LoggerFactory;
  * All elements from all child matchers are combined into the resultant set.
  */
 @ThreadSafe
-public class OrMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent {
+public class OrMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent,
+        ValidatableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(OrMatcher.class);
 
-    /** Initialized state.*/
+    /** Initialized state. */
     private boolean initialized;
 
     /** Destructor state. */
@@ -73,15 +77,12 @@ public class OrMatcher implements AttributeValueMatcher, InitializableComponent,
     }
 
     /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
-    public void initialize() throws ComponentInitializationException {
+    public synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
-            throw new ComponentInitializationException("Or Matcher is initialized multiple times");
+            throw new ComponentInitializationException("Or Matcher being initialized multiple times");
         }
         for (AttributeValueMatcher matcher : matchers) {
-            if (matcher instanceof InitializableComponent) {
-                InitializableComponent init = (InitializableComponent) matcher;
-                init.initialize();
-            }
+            ComponentSupport.initialize(matcher);
         }
         initialized = true;
     }
@@ -90,19 +91,32 @@ public class OrMatcher implements AttributeValueMatcher, InitializableComponent,
     public void destroy() {
         destroyed = true;
         for (AttributeValueMatcher matcher : matchers) {
-            if (matcher instanceof DestructableComponent) {
-                DestructableComponent destructee = (DestructableComponent) matcher;
-                destructee.destroy();
-            }
+            ComponentSupport.destroy(matcher);
         }
         matchers = null;
     }
-    
+
+    /**
+     * Validate any validatable children. 
+     * {@inheritDoc}
+     * 
+     * @throws ComponentValidationException if any of the child validates failed.
+     */
+    public void validate() throws ComponentValidationException {
+        if (!initialized) {
+            throw new ComponentValidationException("Object not initialized");
+        }
+        for (AttributeValueMatcher matcher : matchers) {
+            ComponentSupport.validate(matcher);
+        }
+    }
+
     /**
      * Set the sub-matchers.
+     * 
      * @param theMatchers a list of sub matchers.
      */
-    public void setSubMatchers(final List<AttributeValueMatcher> theMatchers) {
+    public synchronized void setSubMatchers(final List<AttributeValueMatcher> theMatchers) {
         final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
 
         CollectionSupport.addNonNull(theMatchers, workingMatcherList);
@@ -126,17 +140,17 @@ public class OrMatcher implements AttributeValueMatcher, InitializableComponent,
             throws AttributeFilteringException {
 
         if (!initialized) {
-            throw new AttributeFilteringException("Object has not been initialized");
+            throw new AttributeFilteringException("Or Matcher has not been initialized");
         }
-        // Capture submatchers.  Where we do this is important - after the initialized
+        // Capture submatchers. Where we do this is important - after the initialized
         // test and before the destroyed test.
         final List<AttributeValueMatcher> theMatchers = getSubMatchers();
         if (destroyed) {
-            throw new AttributeFilteringException("Object has been destroyed");
+            throw new AttributeFilteringException("Or Matcher has been destroyed");
         }
-        
+
         final Set result = new HashSet();
-        
+
         for (AttributeValueMatcher matcher : theMatchers) {
             result.addAll(matcher.getMatchingValues(attribute, filterContext));
         }

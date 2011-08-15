@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -43,9 +44,10 @@ public class TestOrMatcher {
      * 
      * @throws AttributeFilteringException if anything dies horribly.
      * @throws ComponentInitializationException  if the initialize fails
+     * @throws ComponentValidationException never
      */
     @Test
-    public void orMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+    public void orMatcherTest() throws AttributeFilteringException, ComponentInitializationException, ComponentValidationException {
         final Attribute<String> attribute = new Attribute<String>("attribute");
         final Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
         attribute.setValues(values);
@@ -72,23 +74,35 @@ public class TestOrMatcher {
         filter.setSubMatchers(CollectionSupport.toList((AttributeValueMatcher) new AnyMatcher()));
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), values.size(), "or of ANY is ANY");
 
-        list.add(new AttributeValueStringMatcher("ONE", false));
-        list.add(new AttributeValueStringMatcher("three", true));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("three", true));
+        filter = new OrMatcher();
         filter.setSubMatchers(list);
+        filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 2, "Match OR of two element values");
 
-        DestroyableAttributeValueStringMatcher destroyTester = new DestroyableAttributeValueStringMatcher("ONE", false);
+        DestroyableValidatableAttributeValueStringMatcher destroyTester = DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false);
+        list.clear();
         list.add(destroyTester);
         list.add(new AnyMatcher());
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false));
+        list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("three", true));
         
+        filter = new OrMatcher();
         filter.setSubMatchers(list);
+        filter.initialize();
         // Force into set to make the testNG Collection comparison work.
         final Set result = new HashSet(filter.getMatchingValues(attribute, null));
         final Set vals = new HashSet(values);
 
         Assert.assertEquals(result, vals, "Match OR of anything and ANY the same as ANY");
-        
+
+        Assert.assertFalse(destroyTester.isValidated(), "Has validate not yet been passed down");
+        filter.validate();
+        Assert.assertTrue(destroyTester.isValidated(), "Has validate been passed down");
+
         // test destroy
+        Assert.assertFalse(destroyTester.isDestroyed(), "Has destroy not yet been passed down");
         filter.destroy();
         Assert.assertTrue(destroyTester.isDestroyed(), "destroyable sub matcher not destroyed");
         try {

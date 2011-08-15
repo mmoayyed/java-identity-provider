@@ -29,15 +29,17 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.ComponentSupport;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.ValidatableComponent;
 
 /**
  * Implement the NOT matcher. <br />
  * Anything returned from the sub matcher is removed from the attribute's list of values.
  */
 @ThreadSafe
-public class NotMatcher implements AttributeValueMatcher, InitializableComponent {
+public class NotMatcher implements AttributeValueMatcher, InitializableComponent, ValidatableComponent {
 
     /** The matcher we are NOT-ing. */
     private AttributeValueMatcher subMatcher;
@@ -65,33 +67,40 @@ public class NotMatcher implements AttributeValueMatcher, InitializableComponent
     /**
      * Mark the object as initialized, calling the child if appropriate {@inheritDoc}.
      */
-    public void initialize() throws ComponentInitializationException {
+    public synchronized void initialize() throws ComponentInitializationException {
         if (null == subMatcher) {
             throw new ComponentInitializationException("No child attribute specified");
         }
-        if (subMatcher instanceof InitializableComponent) {
-            InitializableComponent init = (InitializableComponent) subMatcher;
-            init.initialize();
-        }
+        ComponentSupport.initialize(subMatcher);
         initialized = true;
     }
 
     /** tear down the child is destructable. {@inheritDoc} */
     public void destroy() {
         destroyed = true;
-        if (subMatcher instanceof DestructableComponent) {
-            DestructableComponent destructee = (DestructableComponent) subMatcher;
-            destructee.destroy();
-        }
+        ComponentSupport.destroy(subMatcher);
         subMatcher = null;
     }
     
+    /**
+     * Validate the sub component. 
+     * {@inheritDoc}.
+     * 
+     * @throws ComponentValidationException if any of the child validates failed.
+     */
+    public void validate() throws ComponentValidationException {
+        if (!initialized) {
+            throw new ComponentValidationException("Not Matcher not initialized");
+        }
+        ComponentSupport.validate(subMatcher);
+    }
+   
     /**
      * Set the child matcher we are NOT ing.
      * 
      * @param child the matcher we will NOT with.
      */
-    public void setSubMatcher(final AttributeValueMatcher child) {
+    public synchronized void setSubMatcher(final AttributeValueMatcher child) {
         subMatcher = child;
     }
 
@@ -109,13 +118,13 @@ public class NotMatcher implements AttributeValueMatcher, InitializableComponent
             throws AttributeFilteringException {
 
         if (!initialized) {
-            throw new AttributeFilteringException("Object has not been initialized");
+            throw new AttributeFilteringException("Not Matcher has not been initialized");
         }
         
         // capture the child to guarantee atomicity.
         final AttributeValueMatcher theSubMatcher = subMatcher;
         if (destroyed) {
-            throw new AttributeFilteringException("Object has been destroyed");            
+            throw new AttributeFilteringException("Not Matcher has been destroyed");            
         }
 
         final Collection subMatcherResults = theSubMatcher.getMatchingValues(attribute, filterContext);
@@ -129,4 +138,5 @@ public class NotMatcher implements AttributeValueMatcher, InitializableComponent
         }
         return Collections.unmodifiableCollection(result);
     }
+
 }
