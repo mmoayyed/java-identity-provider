@@ -25,6 +25,12 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentSupport;
+import org.opensaml.util.component.ComponentValidationException;
+import org.opensaml.util.component.DestructableComponent;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
@@ -40,7 +46,8 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @ThreadSafe
-public class OrCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> {
+public class OrCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> implements
+        InitializableComponent, DestructableComponent, ValidatableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(OrCriterion.class);
@@ -50,23 +57,73 @@ public class OrCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilte
      * 
      * This list in unmodifiable.
      */
-    private final List<EvaluableCriterion<AttributeFilterContext>> criteria;
+    private List<EvaluableCriterion<AttributeFilterContext>> criteria = Collections.EMPTY_LIST;
+
+    /** Initialization state. */
+    private boolean initialized;
+
+    /** Destructor state. */
+    private boolean destroyed;
 
     /**
-     * Constructor.
+     * Has initialize been called on this object. {@inheritDoc}.
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
+    public synchronized void initialize() throws ComponentInitializationException {
+        if (initialized) {
+            throw new ComponentInitializationException("And Matcher being initialized multiple times");
+        }
+
+        for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
+            ComponentSupport.initialize(criterion);
+        }
+        initialized = true;
+    }
+
+    /** tear down any destructable children. {@inheritDoc} */
+    public void destroy() {
+        destroyed = true;
+        for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
+            ComponentSupport.destroy(criterion);
+        }
+        // Clear after the setting of the flag top avoid race with doEvaluate
+        criteria = null;
+    }
+
+    /**
+     * Validate any validatable children. {@inheritDoc}
+     * 
+     * @throws ComponentValidationException if any of the child validates failed.
+     */
+    public void validate() throws ComponentValidationException {
+        if (!initialized) {
+            throw new ComponentValidationException("Object not initialized");
+        }
+        for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
+            ComponentSupport.validate(criterion);
+        }
+    }
+
+    /**
+     * Set the sub criteria we will use. Note that this can be called after initialization.
      * 
      * @param theCriteria a list of sub criteria.
      */
-    public OrCriterion(final List<EvaluableCriterion<AttributeFilterContext>> theCriteria) {
+    public void setSubCriteria(final List<EvaluableCriterion<AttributeFilterContext>> theCriteria) {
 
         List<EvaluableCriterion<AttributeFilterContext>> workingCriteriaList =
-                new ArrayList<EvaluableCriterion<AttributeFilterContext>>();
+                CollectionSupport.addNonNull(theCriteria, new ArrayList<EvaluableCriterion<AttributeFilterContext>>());
 
-        CollectionSupport.addNonNull(theCriteria, workingCriteriaList);
         if (workingCriteriaList.isEmpty()) {
             log.warn("No sub-criteria provided to OR PolicyRequirementRule, this always returns FALSE");
+            criteria = Collections.EMPTY_LIST;
+        } else {
+            criteria = Collections.unmodifiableList(workingCriteriaList);
         }
-        criteria = Collections.unmodifiableList(workingCriteriaList);
     }
 
     /**
@@ -86,7 +143,19 @@ public class OrCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilte
      */
     public Boolean doEvaluate(final AttributeFilterContext target) throws EvaluationException {
 
-        for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
+        if (!initialized) {
+            throw new EvaluationException("Or Criterion has not been initialized");
+        }
+        // NOTE capture the criteria to avoid race with setSubCriterion.
+        // Do this before the test on destruction to avoid race with destroy code.
+
+        List<EvaluableCriterion<AttributeFilterContext>> theCriteria = criteria;
+
+        if (destroyed) {
+            throw new EvaluationException("And Criterion has been destroyed");
+        }
+
+        for (EvaluableCriterion<AttributeFilterContext> criterion : theCriteria) {
             if (criterion.evaluate(target)) {
                 return Boolean.TRUE;
             }

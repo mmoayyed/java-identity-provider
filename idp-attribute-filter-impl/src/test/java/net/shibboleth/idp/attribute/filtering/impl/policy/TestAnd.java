@@ -23,6 +23,8 @@ import java.util.List;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
@@ -35,12 +37,14 @@ public class TestAnd {
      * Test whether not denies a null parameter.
      * 
      * @throws EvaluationException if a child throws
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void andCriterionWithNullTest() throws EvaluationException {
-        AndCriterion and = new AndCriterion(null);
+    public void andCriterionWithNullTest() throws EvaluationException, ComponentInitializationException {
+        AndCriterion and = new AndCriterion();
 
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
+        and.initialize();
         Assert.assertFalse(and.evaluate(null), "and(NULL)");
         //
         // We cannot add null to a list via CollectionSupport.toList.
@@ -51,37 +55,74 @@ public class TestAnd {
         list.add(null);
         list.add(null);
 
-        and = new AndCriterion(list);
+        and.setSubCriteria(list);
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
 
         list = new ArrayList<EvaluableCriterion<AttributeFilterContext>>(2);
         list.add(null);
         list.add(new AnyCriterion());
-        and = new AndCriterion(list);
+        and.setSubCriteria(list);
         Assert.assertEquals(and.getSubCriteria().size(), 1, "list size");
         Assert.assertTrue(and.evaluate(null), "and(NULL, TRUE)");
 
+        boolean thrown = false;
+        try {
+            and.initialize();
+            Assert.assertTrue(false, "unreachable code (double initialize)");
+        } catch (ComponentInitializationException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "double initialize should throw");
     }
 
     /**
      * Test various combinations of And.
      * 
      * @throws EvaluationException if a child throws
+     * @throws ComponentInitializationException never
+     * @throws ComponentValidationException never
      */
     @Test
-    public void andCriterionTest() throws EvaluationException {
+    public void andCriterionTest() throws EvaluationException, ComponentInitializationException, ComponentValidationException {
         EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();
-        EvaluableCriterion<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
+        DestroyableValidatableAnyCriterion d = new DestroyableValidatableAnyCriterion();
+        NotCriterion f = new NotCriterion();
+        f.setSubCriterion(d);
 
         List<EvaluableCriterion<AttributeFilterContext>> list = CollectionSupport.toList(t, t, t);
-        AndCriterion and = new AndCriterion(list);
+        AndCriterion and = new AndCriterion();
+        and.initialize();
+        and.setSubCriteria(list);
         Assert.assertTrue(and.evaluate(null), "and(TRUE, TRUE, TRUE)");
 
         list.set(0, f);
         Assert.assertTrue(and.evaluate(null), "list is unmodifiable");
 
-        and = new AndCriterion(list);
+        and = new AndCriterion();
+        
+        Assert.assertFalse(d.isInitialized(), "initialization of subcriteria should not have happened yet");
+        and.setSubCriteria(list);
+        and.initialize();
+        Assert.assertTrue(d.isInitialized(), "initialization of subcriteria should have happened");
+
+        Assert.assertFalse(d.isValidated(), "validation of subcriteria should not have happened yet");
+        and.validate();
+        Assert.assertTrue(d.isValidated(), "validation of subcriteria should have happened");
+        
         Assert.assertFalse(and.evaluate(null), "and(FALSE, TRUE, TRUE");
+
+        Assert.assertFalse(d.isDestroyed(), "destruction of subcriteria should not have happened yet");
+        and.destroy();
+        Assert.assertTrue(d.isDestroyed(), "destruction of subcretia should have happened");
+        
+        boolean thrown = false;
+        try {
+            and.evaluate(null);
+            Assert.assertTrue(false, "unreachable code (evaluate after destroy)");
+        } catch (EvaluationException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "evaluate after destroy should throw");
 
     }
 }

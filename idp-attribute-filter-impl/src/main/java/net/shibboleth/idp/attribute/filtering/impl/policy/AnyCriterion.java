@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
+import org.opensaml.util.component.Component;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 
 /**
@@ -26,7 +27,7 @@ import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
  * 
  * Always say yes.
  */
-public class AnyCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> {
+public class AnyCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> implements Component {
 
     /** {@inheritDoc} */
     public Boolean doEvaluate(final AttributeFilterContext target) {

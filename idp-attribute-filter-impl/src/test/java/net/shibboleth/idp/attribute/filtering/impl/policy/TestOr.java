@@ -22,6 +22,8 @@ import java.util.List;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
@@ -34,32 +36,66 @@ public class TestOr {
      * Test various combinations of Or.
      * 
      * @throws EvaluationException if a child throws.
+     * @throws ComponentValidationException never
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void orCriterionTest() throws EvaluationException {
-        OrCriterion or = new OrCriterion(null);
+    public void orCriterionTest() throws EvaluationException, ComponentValidationException, ComponentInitializationException {
+        OrCriterion or = new OrCriterion();
 
         Assert.assertEquals(or.getSubCriteria().size(), 0, "null list");
+        or.initialize();
+        Assert.assertFalse(or.evaluate(null), "or(NULL)");
+        or.setSubCriteria(null);
         Assert.assertFalse(or.evaluate(null), "or(NULL)");
 
+
         EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();
-        EvaluableCriterion<AttributeFilterContext> f = new NotCriterion(new AnyCriterion());
+        DestroyableValidatableAnyCriterion d = new DestroyableValidatableAnyCriterion();
+        NotCriterion f = new NotCriterion();
+        f.setSubCriterion(d);
 
         List<EvaluableCriterion<AttributeFilterContext>> list =
                 new ArrayList<EvaluableCriterion<AttributeFilterContext>>(3);
         list.add(f);
         list.add(null);
-        or = new OrCriterion(list);
-        Assert.assertFalse(or.evaluate(null), "and(FALSE, NULL)");
+        or = new OrCriterion();
+        or.setSubCriteria(list);
 
+        
+        Assert.assertFalse(d.isInitialized(), "initialize trickle down (pre)");
+        or.initialize();
+        Assert.assertTrue(d.isInitialized(), "initialize trickle down (post)");
+        Assert.assertFalse(or.evaluate(null), "or(FALSE, NULL)");
+
+        
+        Assert.assertFalse(d.isValidated(), "Validate trickle down (pre)");
+        or.validate();
+        Assert.assertTrue(d.isValidated(), "Validated trickle down (post)");
+        
+        
         list.set(1, f);
-        or = new OrCriterion(list);
-        Assert.assertFalse(or.evaluate(null), "and(FALSE, FALSE)");
+        or.setSubCriteria(list);
+        Assert.assertFalse(or.evaluate(null), "or(FALSE, FALSE)");
 
         list.set(0, t);
         Assert.assertFalse(or.evaluate(null), "test immutability of parameter");
-        or = new OrCriterion(list);
-        Assert.assertTrue(or.evaluate(null), "and(FALSE, TRUE)");
+        or.setSubCriteria(list);
+        Assert.assertTrue(or.evaluate(null), "or(FALSE, TRUE)");
 
+
+        Assert.assertFalse(d.isDestroyed(), "Destroyed trickle down (pre)");
+        or.destroy();
+        Assert.assertTrue(d.isDestroyed(), "Destroyed trickle down (post)");
+
+        boolean thrown = false;
+        try {
+            or.evaluate(null);
+            Assert.assertTrue(false, "unreachable code (evaluate after destroy)");
+        } catch (EvaluationException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "evaluate after destroy should throw");
+        
     }
 }
