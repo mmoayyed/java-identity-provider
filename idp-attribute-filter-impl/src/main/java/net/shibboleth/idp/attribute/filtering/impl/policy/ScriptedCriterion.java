@@ -27,9 +27,13 @@ import javax.script.SimpleScriptContext;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.slf4j.Logger;
@@ -44,54 +48,70 @@ import org.slf4j.LoggerFactory;
  * context allowing arbitrary complexity.
  */
 @ThreadSafe
-public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> {
+public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> implements
+        InitializableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedCriterion.class);
 
     /** The scripting language. */
-    private final String scriptLanguage;
+    private String scriptLanguage;
 
     /** The script to execute. */
-    private final String script;
+    private String script;
 
     /** The script engine to execute the script. */
-    private final ScriptEngine scriptEngine;
+    private ScriptEngine scriptEngine;
 
     /** The compiled form of the script, if the script engine supports compiling. */
-    private final CompiledScript compiledScript;
+    private CompiledScript compiledScript;
+
+    /** Initialization state. */
+    private boolean initialized;
 
     /**
-     * Constructor.
-     * 
-     * @param theLanguage the scripting language
-     * @param theScript the script to execute
-     */
-    public ScriptedCriterion(final String theLanguage, final String theScript) {
-        scriptLanguage = theLanguage;
+     * Has initialize been called on this object. {@inheritDoc}.
+     * */
+    public boolean isInitialized() {
+        return initialized;
+    }
 
-        final String trimmedScript = StringSupport.trimOrNull(theScript);
-        Assert.isNotNull(trimmedScript, "Script for ScriptedCriterion must be non-null and non empty");
-        script = trimmedScript;
+    /**
+     * Initialize. Check parameters and try to compile the script {@inheritDoc}
+     */
+    public synchronized void initialize() throws ComponentInitializationException {
+        if (initialized) {
+            throw new ComponentInitializationException("ScriptedCriterion: initialized multiple times.");
+        }
+
+        if (null == scriptLanguage) {
+            throw new ComponentInitializationException("ScriptedCriterion: No language set.");
+        }
+
+        if (null == script) {
+            throw new ComponentInitializationException("ScriptedCriterion: No script set.");
+        }
 
         final ScriptEngineManager sem = new ScriptEngineManager();
         scriptEngine = sem.getEngineByName(scriptLanguage);
+        if (null == scriptEngine) {
+            throw new ComponentInitializationException("ScriptedCriterion: No valid language set.");
+        }
         compiledScript = compileScript();
-
-        // Validate
-        Assert.isNotNull(scriptEngine, "ScriptedCriterion: unable to create scripting engine for the language: "
-                + scriptLanguage);
+        initialized = true;
     }
 
-    /** private Constructor to maintain the invariants about the script and language being non null. */
-    @SuppressWarnings("unused")
-    private ScriptedCriterion() {
-        scriptLanguage = null;
-        compiledScript = null;
-        scriptEngine = null;
-        script = null;
-        Assert.isFalse(true, "No default constructor");
+    /**
+     * Set the language we are using.
+     * @param theLanguage what we use.
+     */
+    public synchronized void setLanguage(final String theLanguage) {
+        if (initialized) {
+            throw new UnmodifiableComponentException("ScriptletCriterion has already been initialized");
+        }
+        scriptLanguage = StringSupport.trimOrNull(theLanguage);
     }
+
 
     /**
      * Gets the scripting language used.
@@ -103,7 +123,18 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
     }
 
     /**
-     * Gets the script that will be executed.
+    * Set the actual Script we will use.
+     * @param theScript what to use.
+     */
+    public synchronized void setScript(final String theScript) {
+        if (initialized) {
+            throw new UnmodifiableComponentException("ScriptletCriterion has already been initialized");
+        }
+        script = StringSupport.trimOrNull(theScript);
+    }
+    
+    /**
+      * Gets the script that will be executed.
      * 
      * @return script that will be executed. This is never null or empty.
      */
@@ -153,6 +184,11 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         final Boolean result;
+        
+        if (!isInitialized()) {
+            throw new EvaluationException("ScriptedMatcher has not been initialized");
+        }
+        
         try {
             if (compiledScript != null) {
                 result = (Boolean) compiledScript.eval(scriptContext);

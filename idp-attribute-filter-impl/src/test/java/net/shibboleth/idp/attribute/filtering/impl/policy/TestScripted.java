@@ -25,6 +25,8 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -64,52 +66,87 @@ public class TestScripted {
      * script to access parameters.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException e
      */
     @Test
-    public void scriptedCriterionTest() throws EvaluationException {
+    public void scriptedCriterionTest() throws EvaluationException, ComponentInitializationException {
 
+        AttributeFilterContext filterContext = new AttributeFilterContext(null);
+        ScriptedCriterion criterion;
         boolean threw = false;
 
+        criterion = new ScriptedCriterion();
         try {
-            new ScriptedCriterion("", TEST_INVALID_SCRIPT);
-            Assert.assertTrue(false, "unreachable code path");
-        } catch (IllegalArgumentException e) {
+            criterion.evaluate(filterContext);
+        } catch (EvaluationException e) {
             threw = true;
         }
-        Assert.assertTrue(threw, "empty language should throw a resolution error");
-
+        Assert.assertTrue(threw, "evaluate of an unitialized should throw");
+        
+        
+        criterion.setScript(TEST_INVALID_SCRIPT);
         threw = false;
         try {
-            new ScriptedCriterion("imp", TEST_INVALID_SCRIPT);
-            Assert.assertTrue(false, "unreachable code path");
-        } catch (IllegalArgumentException e) {
+            criterion.initialize();
+       } catch (ComponentInitializationException e) {
             threw = true;
         }
-        Assert.assertTrue(threw, "invalid language should throw a resolution error");
+        Assert.assertTrue(threw, "empty language should throw an initialization exception");
 
-        ScriptedCriterion criterion = new ScriptedCriterion(TEST_SCRIPT_LANGUAGE, TEST_INVALID_SCRIPT);
+        criterion.setLanguage("imp77");
+        threw = false;
+        try {
+            criterion.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "invalid language should throw an initialization");
+
+        criterion.setLanguage(TEST_SCRIPT_LANGUAGE);
+        criterion.initialize();
+
         Assert.assertNull(criterion.getCompiledScript(), "Invalid script should compile to null");
 
         threw = false;
         try {
             criterion.doEvaluate(null);
-            Assert.assertTrue(false, "unreachable code path");
         } catch (EvaluationException e) {
             threw = true;
         }
         Assert.assertTrue(threw, "bad syntax should throw a resolution error");
 
-        criterion = new ScriptedCriterion(TEST_SCRIPT_LANGUAGE, TEST_TRIVIAL_SCRIPT);
+        threw = false;
+        try {
+            criterion.setLanguage("fortran4");
+        } catch (UnmodifiableComponentException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "post initialize setting should fail");
+
+        threw = false;
+        try {
+            criterion.setScript("fortran4");
+        } catch (UnmodifiableComponentException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "post initialize setting should fail");
+        
+        criterion = new ScriptedCriterion();
+        criterion.setLanguage(TEST_SCRIPT_LANGUAGE);
+        criterion.setScript(TEST_TRIVIAL_SCRIPT);
+        criterion.initialize();
         Assert.assertTrue(criterion.evaluate(null), "Trvial script");
 
         Attribute<String> attribute = new Attribute<String>("attribute");
 
         attribute.setValues(CollectionSupport.toSet("val1", KNOWN_VALUE, "VAL3"));
-        AttributeFilterContext filterContext = new AttributeFilterContext(null);
 
         filterContext.setPrefilteredAttributes((Set) CollectionSupport.toSet(attribute));
 
-        criterion = new ScriptedCriterion(TEST_SCRIPT_LANGUAGE, TEST_SCRIPT_PARAMETERS);
+        criterion = new ScriptedCriterion();
+        criterion.setLanguage(TEST_SCRIPT_LANGUAGE);
+        criterion.setScript(TEST_SCRIPT_PARAMETERS);
+        criterion.initialize();
         Assert.assertTrue(criterion.evaluate(filterContext), "Parameter script");
 
     }

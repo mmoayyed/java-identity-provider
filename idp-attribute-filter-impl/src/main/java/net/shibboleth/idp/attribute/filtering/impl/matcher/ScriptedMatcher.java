@@ -33,7 +33,6 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.InitializableComponent;
@@ -187,6 +186,11 @@ public class ScriptedMatcher implements AttributeValueMatcher, InitializableComp
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
         final Object result;
+        
+        if (!isInitialized()) {
+            throw new AttributeFilteringException("ScriptedMatcher has not been initialized");
+        }
+        
         try {
             if (compiledScript != null) {
                 result = compiledScript.eval(scriptContext);
