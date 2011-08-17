@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {
@@ -68,8 +69,9 @@ public final class TestSources {
      * Create a static connector with known attributes and values.
      * 
      * @return The connector
+     * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    protected static BaseDataConnector populatedStaticConnectior() {
+    protected static BaseDataConnector populatedStaticConnectior() throws ComponentInitializationException {
         Map<String, Attribute<?>> values;
         Attribute<String> attr;
         Set<String> valuesSet;
@@ -90,16 +92,22 @@ public final class TestSources {
 
         attr.setValues(valuesSet);
         values.put("at2", attr);
+        
+        StaticDataConnector connector = new StaticDataConnector();
+        connector.setId(STATIC_CONNECTOR_NAME);
+        connector.setValues(values);
+        connector.initialize();
 
-        return new StaticDataConnector(STATIC_CONNECTOR_NAME, values);
+        return connector;
     }
 
     /**
      * Create a static attribute with known values.
      * 
      * @return the attribute definition
+     * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    protected static BaseAttributeDefinition populatedStaticAttribute() {
+    protected static BaseAttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
         Attribute<String> attr;
         Set<String> valuesSet;
 
@@ -109,7 +117,12 @@ public final class TestSources {
         valuesSet.add(ATTRIBUTE_ATTRIBUTE_VALUE);
         attr = new Attribute<String>(DEPENDS_ON_ATTRIBUTE_NAME);
         attr.setValues(valuesSet);
-        return new StaticAttributeDefinition(STATIC_ATTRIBUTE_NAME, attr);
+        
+        StaticAttributeDefinition definition = new StaticAttributeDefinition();
+        definition.setId(STATIC_ATTRIBUTE_NAME);
+        definition.setAttribute(attr);
+        definition.initialize();
+        return definition;
     }
 
 }

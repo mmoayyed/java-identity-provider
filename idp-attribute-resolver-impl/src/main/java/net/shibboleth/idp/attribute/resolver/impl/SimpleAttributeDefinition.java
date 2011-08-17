@@ -39,15 +39,6 @@ import org.opensaml.util.collections.LazySet;
 @ThreadSafe
 public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
-    /**
-     * Constructor.
-     * 
-     * @param id the name of the attribute.
-     */
-    public SimpleAttributeDefinition(final String id) {
-        super(id);
-    }
-
     /** {@inheritDoc} */
     protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {

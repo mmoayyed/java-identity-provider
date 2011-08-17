@@ -23,22 +23,44 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
+
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
 public class StaticAttributeDefinition extends BaseAttributeDefinition {
 
     /** Static value returned by this definition. */
-    private final Attribute<?> value;
+    private Attribute<?> value;
 
     /**
-     * Constructor.
-     * 
-     * @param id unique ID of this attribute definition
-     * @param definitionValue static value returned by this definition
+     * Set the attribute value we are returning.
+     * @param newAttrribute what to set.
      */
-    public StaticAttributeDefinition(final String id, final Attribute<?> definitionValue) {
-        super(id);
-        value = definitionValue;
+    public synchronized void setAttribute(Attribute<?> newAttrribute) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Static Attribute definition " + getId()
+                    + " has already been initialized, attribute can not be changed.");
+        }
+        value = newAttrribute;
+    }
+
+    /**
+     * Return the static attribute we are returning.
+     * @return the attribute.
+     */
+    public Attribute<?> getValue() {
+        return value;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == value) {
+            throw new ComponentInitializationException("Static Attribute definition " + getId()
+                    + " does not have an attribute set up.");
+        }
     }
 
     /** {@inheritDoc} */

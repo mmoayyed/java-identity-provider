@@ -19,6 +19,9 @@ package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Map;
 
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
+
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -31,19 +34,38 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 public class StaticDataConnector extends BaseDataConnector {
 
     /** Static collection of values returned by this connector. */
-    private final Map<String, Attribute<?>> values;
+    private Map<String, Attribute<?>> values;
 
-    /**
-     * Constructor.
-     * 
-     * @param id unique ID for this data connector
-     * @param connectorValues static collection of values returned by this connector
-     */
-    public StaticDataConnector(String id, Map<String, Attribute<?>> connectorValues) {
-        super(id);
-        values = connectorValues;
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == values) {
+            throw new ComponentInitializationException("Static Data connector " + getId()
+                    + " does not have values set up.");
+        }
     }
 
+    /**
+     * Set the values used.
+     * @param newValues what to set.
+     */
+    public synchronized void setValues(Map<String, Attribute<?>> newValues) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Static Data Connector " + getId()
+                    + " has already been initialized, values can not be changed.");
+        }
+        values = newValues;
+    }
+    
+    /**
+     * Get our values.
+     * @return the values we return.
+     */
+    public Map<String, Attribute<?>> getValues() {
+        return values;
+    }
+    
     /** {@inheritDoc} */
     protected Map<String, Attribute<?>> doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {

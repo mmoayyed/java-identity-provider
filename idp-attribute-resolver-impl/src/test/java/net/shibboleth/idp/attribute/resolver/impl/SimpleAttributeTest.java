@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -42,26 +43,36 @@ public class SimpleAttributeTest {
      * Test resolution of an empty definition to nothing.
      * 
      * @throws AttributeResolutionException if resolution failed.
+     * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
     @Test
-    public void testEmpty() throws AttributeResolutionException {
-        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
+    public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        simple.setId(TEST_ATTRIBUTE_NAME);
+        simple.initialize();
 
         final Attribute<?> result = simple.doAttributeResolution(null);
 
         Assert.assertNotNull(result.getValues());
     }
 
-    /** Test when dependent on a data connector. */
+    /**
+     * Test when dependent on a data connector.
+     * 
+     * @throws ComponentInitializationException if initialization fails (which it shouldn't).
+     */
     @Test
-    public void testDataConnector() {
+    public void testDataConnector() throws ComponentInitializationException {
 
         // Set the dependency on the data connector
-        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        simple.setId(TEST_ATTRIBUTE_NAME);
+
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         simple.setDependencies(dependencySet);
+        simple.initialize();
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
@@ -70,9 +81,12 @@ public class SimpleAttributeTest {
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(simple);
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
+
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
@@ -88,25 +102,33 @@ public class SimpleAttributeTest {
                 "looking for CONNECTOR_ATTRIBUTE_VALUE");
     }
 
-    /** Test when dependent on another attribute. */
+    /**
+     * Test when dependent on another attribute.
+     * 
+     * @throws ComponentInitializationException if initialization fails (which it shouldn't).
+     */
     @Test
-    public void testAttribute() {
+    public void testAttribute() throws ComponentInitializationException {
 
-        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        simple.setId(TEST_ATTRIBUTE_NAME);
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         simple.setDependencies(dependencySet);
+        simple.initialize();
 
         // And resolve
         final Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setAttributeDefinition(am);
+        resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
@@ -123,28 +145,39 @@ public class SimpleAttributeTest {
                 "looking for value ATTRIBUTE_ATTRIBUTE_VALUE");
     }
 
-    /** Test when dependent on a data connector and another attribute. */
+    /**
+     * Test when dependent on a data connector and another attribute.
+     * 
+     * @throws ComponentInitializationException if initialization fails (which it shouldn't).
+     */
     @Test
-    public void testBoth() {
+    public void testBoth() throws ComponentInitializationException {
 
-        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition(TEST_ATTRIBUTE_NAME);
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        simple.setId(TEST_ATTRIBUTE_NAME);
 
         Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         simple.setDependencies(dependencySet);
+        simple.initialize();
 
         // And resolve
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(simple);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        
+
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
+
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
@@ -152,10 +185,11 @@ public class SimpleAttributeTest {
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        
+
         final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(values.size(), 3);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for value COMMON_ATTRIBUTE_VALUE");
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE),
+                "looking for value COMMON_ATTRIBUTE_VALUE");
         Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
                 "looking for value ATTRIBUTE_ATTRIBUTE_VALUE");
         Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE),
