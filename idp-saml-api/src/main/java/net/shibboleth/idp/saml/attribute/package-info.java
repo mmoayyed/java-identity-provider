@@ -15,17 +15,6 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.metadata;
+/** Interfaces and base classes for components that produce/consume IdP attributes. */
 
-import org.opensaml.util.component.IdentifiedComponent;
-import org.opensaml.util.criteria.CriteriaSet;
-import org.opensaml.util.resolver.Resolver;
-
-/**
- * Resolver that locates and returns one or more metadata elements that meet a given set of criteria.
- * 
- * @param <MetadataType> type of metadata returned by the resolver
- */
-public interface MetadataResolver<MetadataType> extends Resolver<MetadataType, CriteriaSet>, IdentifiedComponent {
-
-}
+package net.shibboleth.idp.saml.attribute;

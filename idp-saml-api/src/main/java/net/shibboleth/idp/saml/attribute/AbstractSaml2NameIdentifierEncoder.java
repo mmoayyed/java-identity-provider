@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.metadata;
+package net.shibboleth.idp.saml.attribute;
 
-import org.opensaml.util.component.IdentifiedComponent;
-import org.opensaml.util.criteria.CriteriaSet;
-import org.opensaml.util.resolver.Resolver;
+import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.saml2.core.NameID;
 
-/**
- * Resolver that locates and returns one or more metadata elements that meet a given set of criteria.
- * 
- * @param <MetadataType> type of metadata returned by the resolver
- */
-public interface MetadataResolver<MetadataType> extends Resolver<MetadataType, CriteriaSet>, IdentifiedComponent {
+/** Base class for attribute encoders that produce a SAML 2 {@link NameID}. */
+public abstract class AbstractSaml2NameIdentifierEncoder extends AbstractSamlNameIdentifierEncoder<NameID> {
 
+    /** {@inheritDoc} */
+    public final String getProtocol() {
+        return SAMLConstants.SAML20P_NS;
+    }
 }
