@@ -18,44 +18,80 @@
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UnmodifiableComponent;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 
 /**
  * The basis of all Regex-based Filter criteria.
  * 
- * Just as for {@link BaseStringCompare} Principal, AttributeValue, AttributeScope regex criteria all
- * extend this class. This class's job is to just provide the match functor that they call and to police the
- * constructor.
+ * Just as for {@link BaseStringCompare} Principal, AttributeValue, AttributeScope regex criteria all extend this class.
+ * This class's job is to just provide the match functor that they call and to police the constructor.
  * 
  */
 @ThreadSafe
-public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> {
+public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> implements
+        InitializableComponent, UnmodifiableComponent {
 
     /** Regular expression to match. */
-    private final Pattern regex;
+    private Pattern regex;
+
+    /** The source of the regexp. */
+    private String patternText;
+
+    /** Initialization state. */
+    private boolean initialized;
+
+    /** The name of the target attribute. */
+    private String attributeName;
 
     /**
-     * Constructor.
-     * 
-     * @param expression the regexp under consideration. Must not be null or empty.
+     * Has initialize been called on this object. {@inheritDoc}.
      */
-    protected BaseRegexCompare(final String expression) {
-        String exp = StringSupport.trimOrNull(expression);
-        Assert.isNotNull(exp, "Null or empy string passed to a Regexp attribute filter");
-        regex = Pattern.compile(expression);
+    public boolean isInitialized() {
+        return initialized;
     }
 
-    /** Private Constructor. Here uniquely to guarantee that we always have non null members. */
-    @SuppressWarnings("unused")
-    private BaseRegexCompare() {
-        Assert.isTrue(false, "Private constructor should not be called");
-        regex = null;
+    /** Mark the object as initialized having checked parameters. {@inheritDoc}. */
+    public synchronized void initialize() throws ComponentInitializationException {
+        if (initialized) {
+            throw new ComponentInitializationException("Regexp comparison criterion being initialized multiple times");
+        }
+        if (null == attributeName) {
+            throw new ComponentInitializationException(
+                    "Regexp comparison criterion being initialized without a valid attribute name being set");
+        }
+        if (null == patternText) {
+            throw new ComponentInitializationException(
+                    "Regexp comparison criterion being initialized without a valid match pattern being set");
+        }
+        try {
+            regex = Pattern.compile(patternText);
+        } catch (PatternSyntaxException e) {
+            throw new ComponentInitializationException(e);
+        }
+        initialized = true;
+    }
+
+    /**
+     * Set the text of the regexp. Cannot be called after initialization.
+     * 
+     * @param pattern the pattern we will use.
+     */
+    public synchronized void setRegularExpression(String pattern) {
+        if (initialized) {
+            throw new UnmodifiableComponentException("Attempting to set the regexp patter after class initialization");
+        }
+        patternText = StringSupport.trimOrNull(pattern);
     }
 
     /**
@@ -64,7 +100,28 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
      * @return regular expression to match
      */
     public String getRegularExpression() {
-        return regex.pattern();
+        return patternText;
+    }
+
+    /**
+     * Sets the attribute name. Cannot be called after initialization.
+     * 
+     * @param theName the name of the attribute to user.
+     */
+    public synchronized void setAttributeName(final String theName) {
+        if (initialized) {
+            throw new UnmodifiableComponentException("Attempting to set the attribute name after class initialization");
+        }
+        attributeName = StringSupport.trimOrNull(theName);
+    }
+
+    /**
+     * Gets the name of the attribute under consideration.
+     * 
+     * @return the name of the attribute under consideration, never null or empty after initialization.
+     */
+    public String getAttributeName() {
+        return attributeName;
     }
 
     /**
@@ -73,9 +130,13 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
      * 
      * @param value the value to evaluate
      * 
-     * @return true if the value matches the given match string, false if not
+     * @return true if the value matches the given match string, false if not.
+     * @throws EvaluationException if we have not been initialized.
      */
-    protected boolean isMatch(final Object value) {
+    protected boolean isMatch(final Object value) throws EvaluationException {
+        if (!initialized) {
+            throw new EvaluationException("Class not initialized");
+        }
         if (regex.matcher(value.toString()).matches()) {
             return true;
         }

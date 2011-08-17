@@ -23,6 +23,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -38,29 +39,55 @@ public class TestAttributeValueRegex {
      * Test various combinations of bad parameters.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeValueRegexCriterionBadParamsTest() throws EvaluationException {
-        try {
-            new AttributeValueRegexCriterion("", ATTR_NAME);
-            Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty match): usual case");
-        }
+    public void attributeValueRegexCriterionBadParamsTest() throws EvaluationException,
+            ComponentInitializationException {
+        AttributeFilterContext filterContext = new AttributeFilterContext(null);
+        AttributeValueRegexCriterion filter;
 
+        boolean threw = false;
+        filter = new AttributeValueRegexCriterion();
+        filter.setAttributeName(ATTR_NAME);
+        filter.setRegularExpression("");
         try {
-            new AttributeValueRegexCriterion("r.x", null);
-            Assert.assertTrue(false, "testing bad constructor (null attribute name): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (null attribute name): usual case");
+            filter.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            threw = true;
         }
+        Assert.assertTrue(threw, "filtering before initialization");
+
+        threw = true;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "initialize with null regex");
+
+        filter.setRegularExpression("r.x.");
+        filter.setAttributeName(null);
+        threw = true;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "initialize with null attreibute");
+
         //
         // mismatched attribute
         //
-        AttributeFilterContext filterContext = new AttributeFilterContext(null);
-        AttributeValueRegexCriterion filter = new AttributeValueRegexCriterion("r.x", ATTR_NAME);
-
-        Assert.assertFalse(filter.evaluate(filterContext), "missed attribute should return false");
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
+        threw = false;
+        try {
+            filter.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "missed attribute should throw an EvaluationException");
 
     }
 
@@ -68,9 +95,10 @@ public class TestAttributeValueRegex {
      * test usual operation.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeValueCriterionStringTest() throws EvaluationException {
+    public void attributeValueCriterionStringTest() throws EvaluationException, ComponentInitializationException {
         Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
 
         attribute.setValues(CollectionSupport.toSet("one", "two", "three"));
@@ -79,10 +107,16 @@ public class TestAttributeValueRegex {
         Set s = CollectionSupport.toSet(attribute);
         filterContext.setPrefilteredAttributes(s);
 
-        AttributeValueRegexCriterion filter = new AttributeValueRegexCriterion("t.e", ATTR_NAME);
+        AttributeValueRegexCriterion filter = new AttributeValueRegexCriterion();
+        filter.setRegularExpression("t.e");
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "match for the string \"t.e\"");
 
-        filter = new AttributeValueRegexCriterion("t.*e", ATTR_NAME);
+        filter = new AttributeValueRegexCriterion();
+        filter.setRegularExpression("t.*e");
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertTrue(filter.evaluate(filterContext), "match for the string \"t.*e\" (against 'three')");
 
     }

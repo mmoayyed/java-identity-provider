@@ -23,6 +23,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -37,39 +38,71 @@ public class TestAttributeValueString {
      * Test various combinations of bad parameters.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeValueStringCriterionBadParamsTest() throws EvaluationException {
-        try {
-            new AttributeValueStringCriterion("", true, ATTR_NAME);
-            Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty match): usual case");
-        }
-
-        try {
-            new AttributeValueStringCriterion("match", true, null);
-            Assert.assertTrue(false, "testing bad constructor (null attribute name): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (null attribute name): usual case");
-        }
-        //
-        // mismatched attribute
-        //
+    public void attributeValueStringCriterionBadParamsTest() throws EvaluationException,
+            ComponentInitializationException {
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
-        AttributeValueStringCriterion filter = new AttributeValueStringCriterion("match", true, ATTR_NAME);
+        AttributeValueStringCriterion filter = new AttributeValueStringCriterion();
 
-        Assert.assertFalse(filter.evaluate(filterContext), "missed attribute should return false");
+        boolean threw = false;
+        filter.setAttributeName(ATTR_NAME);
+        filter.setMatchString("foo");
+        try {
+            filter.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "evaluate on an unitialized filter");
 
+        threw = false;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "initialize without case sensitivity being set");
+
+        filter.setCaseSensitive(true);
+        filter.setMatchString("");
+        threw = false;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "initialize null match string being set");
+
+        filter.setMatchString("match");
+        filter.setAttributeName(null);
+        threw = false;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "initialize null attribute name being set");
+
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
+        threw = false;
+        try {
+            filter.evaluate(filterContext);
+        } catch (Exception e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "missed attribute should throw an exception");
     }
 
     /**
      * test usual operation.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeValueCriterionStringTest() throws EvaluationException {
+    public void attributeValueCriterionStringTest() throws EvaluationException, ComponentInitializationException {
         Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
 
         attribute.setValues(CollectionSupport.toSet("val1", "val2", "VAL3"));
@@ -78,16 +111,32 @@ public class TestAttributeValueString {
         Set s = CollectionSupport.toSet(attribute);
         filterContext.setPrefilteredAttributes(s);
 
-        AttributeValueStringCriterion filter = new AttributeValueStringCriterion("match", true, ATTR_NAME);
+        AttributeValueStringCriterion filter = new AttributeValueStringCriterion();
+        filter.setMatchString("match");
+        filter.setCaseSensitive(true);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "match for the string \"match\"");
 
-        filter = new AttributeValueStringCriterion("VAL3", true, ATTR_NAME);
+        filter = new AttributeValueStringCriterion();
+        filter.setMatchString("VAL3");
+        filter.setCaseSensitive(true);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertTrue(filter.evaluate(filterContext), "match for the string \"VAL3\"");
 
-        filter = new AttributeValueStringCriterion("val3", true, ATTR_NAME);
+        filter = new AttributeValueStringCriterion();
+        filter.setMatchString("val3");
+        filter.setCaseSensitive(true);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "case sensitive match for the string \"val3\"");
 
-        filter = new AttributeValueStringCriterion("val3", false, ATTR_NAME);
+        filter = new AttributeValueStringCriterion();
+        filter.setMatchString("val3");
+        filter.setCaseSensitive(false);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertTrue(filter.evaluate(filterContext), "case sensitive match for the string \"val3\"");
     }
 

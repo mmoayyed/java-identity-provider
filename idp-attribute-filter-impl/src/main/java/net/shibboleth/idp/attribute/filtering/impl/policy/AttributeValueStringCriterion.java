@@ -23,9 +23,8 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.EvaluationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,45 +41,18 @@ public class AttributeValueStringCriterion extends BaseStringCompare implements
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeValueStringCriterion.class);
 
-    /** The name of the target attribute. */
-    private final String attributeName;
-
     /**
-     * Constructor.
+     * {@inheritDoc}
      * 
-     * @param match the string we are matching against.
-     * @param isCaseSensitive whether to do a case sensitive comparison.
-     * @param attribute the name of the attribute
-     */
-    protected AttributeValueStringCriterion(final String match, final boolean isCaseSensitive, final String attribute) {
-        super(match, isCaseSensitive);
-        attributeName = StringSupport.trimOrNull(attribute);
-        Assert.isNotNull(attributeName, "AttributeValue Policy Requirement rule must have non null attribute name");
-    }
-
-    /** Private Constructor. Here uniquely to guarantee that we always have non null members. */
-    private AttributeValueStringCriterion() {
-        super(null, true);
-        Assert.isTrue(false, "Private constructor should not be called");
-        attributeName = null;
-    }
-
-    /**
-     * Gets the name of the attribute under consideration.
-     * 
-     * @return the name of the attribute under consideration, never null or empty.
-     */
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    /** {@inheritDoc} */
-    public Boolean doEvaluate(final AttributeFilterContext target) {
-        Attribute<?> attribute = target.getPrefilteredAttributes().get(attributeName);
+     * @throws EvaluationException if the attribute name could not be found.
+     * */
+    public Boolean doEvaluate(final AttributeFilterContext target) throws EvaluationException {
+        Attribute<?> attribute = target.getPrefilteredAttributes().get(getAttributeName());
 
         if (null == attribute) {
-            log.warn("PolicyRequirementRule: Could not locate atribute named " + attributeName);
-            return false;
+            String msg = "PolicyRequirementRule: Could not locate atribute named " + getAttributeName();
+            log.warn(msg);
+            throw new EvaluationException(msg);
         }
 
         Collection<?> values = attribute.getValues();

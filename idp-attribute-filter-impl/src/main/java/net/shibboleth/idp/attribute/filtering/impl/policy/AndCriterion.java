@@ -76,7 +76,7 @@ public class AndCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilt
     /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
     public synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
-            throw new ComponentInitializationException("And Matcher being initialized multiple times");
+            throw new ComponentInitializationException("And Criterion being initialized multiple times");
         }
 
         for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
@@ -150,7 +150,7 @@ public class AndCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilt
         // NOTE capture the criteria to avoid race with setSubCriterion.
         // Do this before the test on destruction to avoid race with destroy code.
         List<EvaluableCriterion<AttributeFilterContext>> theCriteria = criteria;
-        
+
         if (destroyed) {
             throw new EvaluationException("And Criterion has been destroyed");
         }

@@ -75,7 +75,7 @@ public class OrCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilte
     /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
     public synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
-            throw new ComponentInitializationException("And Matcher being initialized multiple times");
+            throw new ComponentInitializationException("Or Criterion being initialized multiple times");
         }
 
         for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {

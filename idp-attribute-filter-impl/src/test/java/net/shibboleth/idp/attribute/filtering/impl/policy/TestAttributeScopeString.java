@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -34,30 +35,69 @@ public class TestAttributeScopeString {
     /** name used throughout the tests for the attribute. */
     private static final String ATTR_NAME = "attributeName";
 
-    /** Test various combinations of bad parameters. 
-     * @throws EvaluationException to keep the compiler happy.*/
+    /**
+     * Test various combinations of bad parameters.
+     * 
+     * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException if the only non bracketed initialize throws an error
+     */
     @Test
-    public void attributeScopeStringCriterionBadParamsTest() throws EvaluationException {
-        try {
-            new AttributeScopeStringCriterion("", true, ATTR_NAME);
-            Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty match): usual case");
-        }
+    public void attributeScopeStringCriterionBadParamsTest() throws EvaluationException,
+            ComponentInitializationException {
+        AttributeScopeStringCriterion filter;
+        AttributeFilterContext filterContext = new AttributeFilterContext(null);
 
+        boolean threw = false;
+        filter = new AttributeScopeStringCriterion();
+        filter.setMatchString("match");
+        filter.setAttributeName(ATTR_NAME);
         try {
-            new AttributeScopeStringCriterion("scope", true, null);
-            Assert.assertTrue(false, "testing bad constructor (null attribute name): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (null attribute name): usual case");
+            filter.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            threw = true;
         }
+        Assert.assertTrue(threw, "testing an evaluate before initialize");
+
+        threw = false;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "testing bad initialize case sensitivity not defaulted");
+
+        filter.setCaseSensitive(true);
+        filter.setMatchString("");
+        threw = false;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "testing bad initialize (empty match)");
+
+        filter.setMatchString("match");
+        filter.setAttributeName(null);
+        threw = false;
+        try {
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "testing bad initialize (null attribute name)");
+
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         //
         // mismatched attribute
         //
-        AttributeFilterContext filterContext = new AttributeFilterContext(null);
-        AttributeScopeStringCriterion filter = new AttributeScopeStringCriterion("scope", true, ATTR_NAME);
-
-        Assert.assertFalse(filter.evaluate(filterContext), "missed attribute should return false");
+        threw = false;
+        try {
+            filter.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "missed attribute should return throw an exception");
 
     }
 
@@ -65,9 +105,10 @@ public class TestAttributeScopeString {
      * test usual operation.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeScopeStringCriterionTest() throws EvaluationException {
+    public void attributeScopeStringCriterionTest() throws EvaluationException, ComponentInitializationException {
         Attribute<Object> attribute = new Attribute<Object>(ATTR_NAME);
 
         attribute.setValues(CollectionSupport.toSet("val1", new ScopedAttributeValue("foo", "bar"),
@@ -77,16 +118,32 @@ public class TestAttributeScopeString {
         Set s = CollectionSupport.toSet(attribute);
         filterContext.setPrefilteredAttributes(s);
 
-        AttributeScopeStringCriterion filter = new AttributeScopeStringCriterion("FRED", true, ATTR_NAME);
+        AttributeScopeStringCriterion filter = new AttributeScopeStringCriterion();
+        filter.setMatchString("FRED");
+        filter.setCaseSensitive(true);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "match for the scope \"FRED\"");
 
-        filter = new AttributeScopeStringCriterion("bar", true, ATTR_NAME);
+        filter = new AttributeScopeStringCriterion();
+        filter.setMatchString("bar");
+        filter.setCaseSensitive(true);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertTrue(filter.evaluate(filterContext), "match for the scope \"bar\"");
 
-        filter = new AttributeScopeStringCriterion("BAR", true, ATTR_NAME);
+        filter = new AttributeScopeStringCriterion();
+        filter.setMatchString("BAR");
+        filter.setCaseSensitive(true);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "case sensitive match for the scope \"BAR\"");
 
-        filter = new AttributeScopeStringCriterion("BAR", false, ATTR_NAME);
+        filter = new AttributeScopeStringCriterion();
+        filter.setMatchString("BAR");
+        filter.setCaseSensitive(false);
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertTrue(filter.evaluate(filterContext), "case sensitive match for the scope \"BAR\"");
     }
 

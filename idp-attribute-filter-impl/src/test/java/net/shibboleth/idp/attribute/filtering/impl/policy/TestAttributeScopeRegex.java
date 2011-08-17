@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -38,39 +39,62 @@ public class TestAttributeScopeRegex {
      * Test various combinations of bad parameters.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeScopeRegexCriterionBadParamsTest() throws EvaluationException {
+    public void attributeScopeRegexCriterionBadParamsTest() throws EvaluationException,
+            ComponentInitializationException {
+        boolean threw = false;
         try {
-            new AttributeScopeRegexCriterion("", ATTR_NAME);
-            Assert.assertTrue(false, "testing bad constructor (empty match): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (empty match): usual case");
+            new AttributeScopeRegexCriterion().initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
         }
+        Assert.assertTrue(threw, "testing bad constructor (empty match): expected an exception");
 
+        threw = false;
+        AttributeScopeRegexCriterion filter = new AttributeScopeRegexCriterion();
         try {
-            new AttributeScopeRegexCriterion("r.e", null);
-            Assert.assertTrue(false, "testing bad constructor (null attribute name): unreacahble code");
-        } catch (IllegalArgumentException e) {
-            Assert.assertTrue(true, "testing bad constructor (null attribute name): usual case");
+            filter.setAttributeName("r.e");
+            filter.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
         }
+        Assert.assertTrue(threw, "testing bad constructor (null attribute name): expected an exception");
         //
         // mismatched attribute
         //
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
-        AttributeScopeRegexCriterion filter = new AttributeScopeRegexCriterion("r.e", ATTR_NAME);
+        filter = new AttributeScopeRegexCriterion();
+        filter.setAttributeName(ATTR_NAME);
+        filter.setRegularExpression("r.e");
 
-        Assert.assertFalse(filter.evaluate(filterContext), "missed attribute should return false");
+        threw = false;
+        try {
+            filter.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "missed initialize should throw");
 
+        filter.initialize();
+        threw = false;
+        try {
+            filter.evaluate(filterContext);
+        } catch (EvaluationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "missed attribute should throw");
     }
 
     /**
      * test usual operation.
      * 
      * @throws EvaluationException to keep the compiler happy.
+     * @throws ComponentInitializationException never
      */
     @Test
-    public void attributeScopeStringCriterionTest() throws EvaluationException {
+    public void attributeScopeStringCriterionTest() throws EvaluationException, ComponentInitializationException {
         Attribute<Object> attribute = new Attribute<Object>(ATTR_NAME);
 
         // Attribute values "foo", "foo@bar", "BAR@three".
@@ -84,13 +108,22 @@ public class TestAttributeScopeRegex {
         Set s = CollectionSupport.toSet(attribute);
         filterContext.setPrefilteredAttributes(s);
 
-        AttributeScopeRegexCriterion filter = new AttributeScopeRegexCriterion("foo", ATTR_NAME);
+        AttributeScopeRegexCriterion filter = new AttributeScopeRegexCriterion();
+        filter.setRegularExpression("foo");
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "match for the scope regex \"foo\"");
 
-        filter = new AttributeScopeRegexCriterion("t.e", ATTR_NAME);
+        filter = new AttributeScopeRegexCriterion();
+        filter.setRegularExpression("t.e");
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "match for the scope \"t.e\"");
 
-        filter = new AttributeScopeRegexCriterion("t.*e", ATTR_NAME);
+        filter = new AttributeScopeRegexCriterion();
+        filter.setRegularExpression("t.*e");
+        filter.setAttributeName(ATTR_NAME);
+        filter.initialize();
         Assert.assertTrue(filter.evaluate(filterContext), "match for the scope \"t.*e\" (against 'three')");
 
     }
