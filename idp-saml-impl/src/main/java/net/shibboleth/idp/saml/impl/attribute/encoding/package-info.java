@@ -15,16 +15,6 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute;
+/** SAML specific implementations of attribute classses. */
 
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml1.core.NameIdentifier;
-
-/** Base class for attribute encoders that produce a SAML 1 {@link NameIdentifier}. */
-public abstract class AbstractSaml1NameIdentifierEncoder extends AbstractSamlNameIdentifierEncoder<NameIdentifier> {
-
-    /** {@inheritDoc} */
-    public final String getProtocol() {
-        return SAMLConstants.SAML10P_NS;
-    }
-}
+package net.shibboleth.idp.saml.impl.attribute.encoding;

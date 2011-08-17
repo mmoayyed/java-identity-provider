@@ -15,6 +15,16 @@
  * limitations under the License.
  */
 
-/** Interfaces and base classes for components that produce/consume IdP attributes. */
+package net.shibboleth.idp.saml.attribute.encoding;
 
-package net.shibboleth.idp.saml.attribute;
+import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.saml2.core.NameID;
+
+/** Base class for attribute encoders that produce a SAML 2 {@link NameID}. */
+public abstract class AbstractSaml2NameIdentifierEncoder extends AbstractSamlNameIdentifierEncoder<NameID> {
+
+    /** {@inheritDoc} */
+    public final String getProtocol() {
+        return SAMLConstants.SAML20P_NS;
+    }
+}

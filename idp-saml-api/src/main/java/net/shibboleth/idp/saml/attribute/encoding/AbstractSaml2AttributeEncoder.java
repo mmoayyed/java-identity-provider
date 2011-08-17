@@ -15,18 +15,41 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute;
+package net.shibboleth.idp.saml.attribute.encoding;
 
+import java.util.List;
+
+import net.shibboleth.idp.attribute.AttributeEncodingException;
+
+import org.opensaml.Configuration;
+import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.UnmodifiableComponentException;
+import org.opensaml.xml.XMLObject;
 
-/** Base class for encoders that produce a SAML 2 {@link Attribute}. */
-public abstract class AbstractSaml2AttributeEncoder extends AbstractSamlAttributeEncoder<Attribute> {
+/**
+ * Base class for encoders that produce a SAML 2 {@link Attribute}.
+ * 
+ * @param <EncodedType> the type of data that can be encoded by the encoder
+ */
+public abstract class AbstractSaml2AttributeEncoder<EncodedType> extends
+        AbstractSamlAttributeEncoder<Attribute, EncodedType> {
+
+    /** Builder used to construct {@link Attribute} objects. */
+    private final SAMLObjectBuilder<Attribute> attributeBuilder;
 
     /** A friendly, human readable, name for the attribute. */
     private String friendlyName;
+
+    /** Constructor. */
+    public AbstractSaml2AttributeEncoder() {
+        super();
+
+        attributeBuilder =
+                (SAMLObjectBuilder<Attribute>) Configuration.getBuilderFactory().getBuilder(Attribute.TYPE_NAME);
+    }
 
     /** {@inheritDoc} */
     public final String getProtocol() {
@@ -53,5 +76,18 @@ public abstract class AbstractSaml2AttributeEncoder extends AbstractSamlAttribut
                     "Friendly attribute name can not be changed after encoder has been initialized");
         }
         friendlyName = StringSupport.trimOrNull(attributeFriendlyName);
+    }
+
+    /** {@inheritDoc} */
+    protected Attribute buildAttribute(net.shibboleth.idp.attribute.Attribute<?> attribute,
+            List<XMLObject> attributeValues) throws AttributeEncodingException {
+
+        Attribute samlAttribute = attributeBuilder.buildObject();
+        samlAttribute.setName(getName());
+        samlAttribute.setFriendlyName(getFriendlyName());
+        samlAttribute.setNameFormat(getNamespace());
+        samlAttribute.getAttributeValues().addAll(attributeValues);
+
+        return samlAttribute;
     }
 }

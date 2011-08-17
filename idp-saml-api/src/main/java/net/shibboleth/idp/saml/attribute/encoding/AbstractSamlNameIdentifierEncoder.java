@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute;
+package net.shibboleth.idp.saml.attribute.encoding;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 
