@@ -157,7 +157,7 @@ public class AttributeValueFilterPolicy implements InitializableComponent, Valid
 
     /** {@inheritDoc} */
     public synchronized void destroy() {
-        ComponentSupport.destory(valueMatchingRule);
+        ComponentSupport.destroy(valueMatchingRule);
     }
 
     /** {@inheritDoc} */

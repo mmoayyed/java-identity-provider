@@ -131,7 +131,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
 
     /** {@inheritDoc} */
     public synchronized void destroy() {
-        ComponentSupport.destory(activationCriteria);
+        ComponentSupport.destroy(activationCriteria);
         activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {

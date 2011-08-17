@@ -218,7 +218,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifie
 
     /** {@inheritDoc} */
     public synchronized void destroy() {
-        ComponentSupport.destory(activationCriteria);
+        ComponentSupport.destroy(activationCriteria);
         activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
         dependencies = Collections.emptySet();
     }
