@@ -34,8 +34,9 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,54 +51,52 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinition.class);
 
     /** The scripting language. */
-    private final String scriptLanguage;
+    private String scriptLanguage;
 
     /** The script to execute. */
-    private final String script;
+    private String script;
 
     /** The script engine to execute the script. */
-    private final ScriptEngine scriptEngine;
+    private ScriptEngine scriptEngine;
 
     /** The compiled form of the script, if the script engine supports compiling. */
-    private final CompiledScript compiledScript;
+    private CompiledScript compiledScript;
 
     /**
-     * Constructor.
+     * The the language.
      * 
-     * @param id the identifier of the resolver definition
      * @param theLanguage which language the script is in
-     * @param theScript the text of the script
      */
-    public ScriptedAttributeDefinition(final String id, final String theLanguage, final String theScript) {
-        super(id);
-        scriptLanguage = theLanguage;
-
-        final String trimmedScript = StringSupport.trimOrNull(theScript);
-        Assert.isNotNull(trimmedScript, "Script for " + id + " must be non-null and non empty");
-        script = trimmedScript;
-
-        final ScriptEngineManager sem = new ScriptEngineManager();
-        scriptEngine = sem.getEngineByName(scriptLanguage);
-        compiledScript = compileScript();
-
-        // Validate
-        Assert.isNotNull(scriptEngine, "ScriptletAttributeDefinition " + getId()
-                + " unable to create scripting engine for the language: " + scriptLanguage);
+    public synchronized void setScriptLanguage(final String theLanguage) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Scrpited Attribute definition " + getId()
+                    + " has already been initialized, language value can not be changed.");
+        }
+        scriptLanguage = StringSupport.trimOrNull(theLanguage);
     }
 
     /**
      * Gets the scripting language used.
      * 
-     * @return scripting language used.  This is always a valid language.
+     * @return scripting language used. After initialization, this is always a valid language
      */
     public String getScriptLanguage() {
         return scriptLanguage;
     }
 
     /**
+     * Set the actual script.
+     * 
+     * @param theScript the text of the script
+     */
+    public synchronized void setScript(final String theScript) {
+        script = StringSupport.trimOrNull(theScript);
+    }
+
+    /**
      * Gets the script that will be executed.
      * 
-     * @return script that will be executed.  This is never null or empty.
+     * @return script that will be executed. After initialization, this is never null or empty.
      */
     public String getScript() {
         return script;
@@ -106,7 +105,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     /**
      * Get this resolver's script engine.
      * 
-     * @return the engine.  Never null.
+     * @return the engine. After initialization, this is never null.
      */
     public ScriptEngine getScriptEngine() {
         return scriptEngine;
@@ -114,7 +113,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
     /**
      * Get the compiled script for this engine. Note that this will be null if the language does not support
-     * compilation.
+     * compilation. Only valid after initialization.
      * 
      * @return the compiled script.
      */
@@ -122,7 +121,30 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         return compiledScript;
     }
 
-     /** {@inheritDoc} */
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == scriptLanguage) {
+            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
+                    + " is being initialized, without a language being set");
+        }
+
+        final ScriptEngineManager sem = new ScriptEngineManager();
+        scriptEngine = sem.getEngineByName(scriptLanguage);
+        if (null == scriptEngine) {
+            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
+                    + ". Unable to create scripting engine for the language:  " + getScriptLanguage());
+        }
+        
+        if (null == script) {
+            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
+                    + " is being initialized, without a script being set");
+        }
+        compiledScript = compileScript();
+    }
+
+    /** {@inheritDoc} */
     protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 

@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -38,6 +39,9 @@ public class ScriptedAttributeTest {
 
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "Scripted";
+
+    /** The language */
+    private static final String SCRIPT_LANGUAGE = "JavaScript";
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
@@ -63,38 +67,56 @@ public class ScriptedAttributeTest {
 
     /**
      * Test Invalid syntax.
+     * 
+     * @throws ComponentInitializationException only if bad things happens
      */
     @Test
-    public void testInvalid() {
+    public void testInvalid() throws ComponentInitializationException {
 
         boolean threw = false;
 
-        final ScriptedAttributeDefinition attr =
-                new ScriptedAttributeDefinition(TEST_ATTRIBUTE_NAME, "JavaScript", "badSyntox.");
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScriptLanguage("COBOL");
+        attr.setScript(TEST_SIMPLE_SCRIPT);
         try {
-            final Attribute<?> val = attr.doAttributeResolution(new AttributeResolutionContext(null));
-            // The following lines should never get hit.
-            Assert.assertNull(val, "unreachable code path");
+            attr.initialize();
+        } catch (ComponentInitializationException e) {
+            threw = true;
+        }
+        Assert.assertTrue(threw, "invalid language threw a initialization  error");
+
+        threw = false;
+        attr.setScriptLanguage(SCRIPT_LANGUAGE);
+        attr.setScript("badSyntox.");
+        attr.initialize();
+        try {
+            attr.doAttributeResolution(new AttributeResolutionContext(null));
         } catch (AttributeResolutionException e) {
             threw = true;
         }
-        Assert.assertTrue(threw, "invalid syntax threw a resolution error");
+        Assert.assertTrue(threw, "bad syntax threw a initialization error");
+
     }
 
     /**
      * Test resolution of an simple script (statically generated data).
      * 
      * @throws AttributeResolutionException
+     * @throws ComponentInitializationException only if the test will fail
      */
     @Test
-    public void testSimple() throws AttributeResolutionException {
+    public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
 
         final Attribute<String> test = new Attribute<String>(TEST_ATTRIBUTE_NAME);
 
         test.addValue(SIMPLE_VALUE);
 
-        final ScriptedAttributeDefinition attr =
-                new ScriptedAttributeDefinition(TEST_ATTRIBUTE_NAME, "JavaScript", TEST_SIMPLE_SCRIPT);
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScriptLanguage(SCRIPT_LANGUAGE);
+        attr.setScript(TEST_SIMPLE_SCRIPT);
+        attr.initialize();
 
         final Attribute<?> val = attr.doAttributeResolution(new AttributeResolutionContext(null));
         final Collection<?> results = val.getValues();
@@ -108,17 +130,20 @@ public class ScriptedAttributeTest {
      * Test resolution of an script which looks at the provided attributes.
      * 
      * @throws AttributeResolutionException if the resolve fails
+     * @throws ComponentInitializationException only if things go wrong
      */
     @Test
-    public void testWithAttributes() throws AttributeResolutionException {
-
-        ScriptedAttributeDefinition scripted =
-                new ScriptedAttributeDefinition(TEST_ATTRIBUTE_NAME, "JavaScript", TEST_ATTRIBUTES_SCRIPT);
+    public void testWithAttributes() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
+        scripted.setId(TEST_ATTRIBUTE_NAME);
+        scripted.setScriptLanguage(SCRIPT_LANGUAGE);
+        scripted.setScript(TEST_ATTRIBUTES_SCRIPT);
         scripted.setDependencies(ds);
+        scripted.initialize();
 
         // And resolve
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
@@ -128,9 +153,11 @@ public class ScriptedAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
         try {
@@ -152,17 +179,21 @@ public class ScriptedAttributeTest {
      * Test resolution of an script which looks at the provided request context.
      * 
      * @throws AttributeResolutionException if the resolve fails
+     * @throws ComponentInitializationException only if the test has gone wrong
      */
     @Test
-    public void testRequestContext() throws AttributeResolutionException {
-
-        ScriptedAttributeDefinition scripted =
-                new ScriptedAttributeDefinition(TEST_ATTRIBUTE_NAME, "JavaScript", TEST_REQUEST_SCRIPT);
+    public void testRequestContext() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+
+        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
+        scripted.setId(TEST_ATTRIBUTE_NAME);
+        scripted.setScriptLanguage(SCRIPT_LANGUAGE);
+        scripted.setScript(TEST_REQUEST_SCRIPT);
         scripted.setDependencies(ds);
+        scripted.initialize();
 
         // And resolve
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
@@ -172,9 +203,11 @@ public class ScriptedAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(new TestContextContainer());
         try {

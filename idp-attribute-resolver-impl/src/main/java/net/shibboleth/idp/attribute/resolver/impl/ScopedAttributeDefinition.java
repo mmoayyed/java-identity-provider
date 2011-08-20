@@ -28,9 +28,10 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,18 +46,38 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinition.class);
 
     /** Scope value. */
-    private final String scope;
+    private String scope;
 
     /**
-     * Constructor.
+     * Set the scope for this definition.
      * 
-     * @param id the id of the definition.
-     * @param newScope scope of the attribute
+     * @param newScope what to set.
      */
-    public ScopedAttributeDefinition(final String id, final String newScope) {
-        super(id);
-        scope = newScope;
-        Assert.isFalse(StringSupport.isNullOrEmpty(scope), "Scope delimiter must be non null and non empty");
+    public synchronized void setScope(final String newScope) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Scoped Attribute definition " + getId()
+                    + " has already been initialized, scope can not be changed.");
+        }
+        scope = StringSupport.trimOrNull(newScope);
+    }
+
+    /**
+     * Get scope value.
+     * 
+     * @return Returns the scope.
+     */
+    public String getScope() {
+        return scope;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == scope) {
+            throw new ComponentInitializationException("Scoped Attribute definition " + getId()
+                    + " does not have valid scope set up.");
+        }
     }
 
     /** {@inheritDoc} */
@@ -100,14 +121,5 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
         final Attribute<ScopedAttributeValue> resultantAttribute = new Attribute<ScopedAttributeValue>(getId());
         resultantAttribute.setValues(resultingValues);
         return resultantAttribute;
-    }
-
-    /**
-     * Get scope value.
-     * 
-     * @return Returns the scope.
-     */
-    public String getScope() {
-        return scope;
     }
 }

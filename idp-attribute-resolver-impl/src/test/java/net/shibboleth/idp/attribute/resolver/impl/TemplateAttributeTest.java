@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.xml.util.LazyList;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -82,15 +84,19 @@ public class TemplateAttributeTest {
      * Test resolution of an template script (statically generated data).
      * 
      * @throws AttributeResolutionException id resolution fails
+     * @throws ComponentInitializationException only if bad things thingas
      */
     @Test
-    public void testSimple() throws AttributeResolutionException {
+    public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "1";
-        final TemplateAttributeDefinition attr =
-                new TemplateAttributeDefinition(name, getEngine(), TEST_ATTRIBUTES_TEMPLATE,
-                        new LazyList<String>());
+        final TemplateAttributeDefinition attr = new TemplateAttributeDefinition();
 
+        attr.setId(name);
+        attr.setVelocityEngine(getEngine());
+        attr.setTemplateSource(TEST_ATTRIBUTES_TEMPLATE);
+        attr.setSourceAttributes(Collections.EMPTY_LIST);
+        attr.initialize();
         final Attribute<?> val = attr.doAttributeResolution(new AttributeResolutionContext(null));
         final Collection<?> results = val.getValues();
 
@@ -101,31 +107,38 @@ public class TemplateAttributeTest {
      * Test resolution of an template script (statically generated data). By giving it attributes we create some values.
      * 
      * @throws AttributeResolutionException if resolution fails
+     * @throws ComponentInitializationException only if things go wrong
      */
     @Test
-    public void testSimpleWithValues() throws AttributeResolutionException {
+    public void testSimpleWithValues() throws AttributeResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "2";
         final List<String> sources = new LazyList<String>();
         sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME);
 
-        final TemplateAttributeDefinition templateDef =
-                new TemplateAttributeDefinition(name, getEngine(), TEST_SIMPLE_TEMPLATE, sources);
+        final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
+        templateDef.setId(name);
+        templateDef.setVelocityEngine(getEngine());
+        templateDef.setTemplateSource(TEST_SIMPLE_TEMPLATE);
+        templateDef.setSourceAttributes(sources);
+
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
-
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        templateDef.initialize();
 
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
+
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
-
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        resolver.initialize();
         resolver.resolveAttributes(context);
 
         Attribute<?> a = context.getResolvedAttributes().get(name);
@@ -139,34 +152,43 @@ public class TemplateAttributeTest {
      * Test resolution of an template script with data generated from the attributes.
      * 
      * @throws AttributeResolutionException if it goes wrong.
+     * @throws ComponentInitializationException if it goes wrong.
      */
     @Test
-    public void testTemplateWithValues() throws AttributeResolutionException {
+    public void testTemplateWithValues() throws AttributeResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
         final List<String> sources = new LazyList<String>();
         sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME);
         sources.add(TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
 
-        TemplateAttributeDefinition templateDef =
-                new TemplateAttributeDefinition(name, getEngine(), TEST_ATTRIBUTES_TEMPLATE, sources);
+        final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
+        templateDef.setId(name);
+        templateDef.setVelocityEngine(getEngine());
+        templateDef.setTemplateSource(TEST_ATTRIBUTES_TEMPLATE);
+        templateDef.setSourceAttributes(sources);
+
         Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         ds.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
-
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        templateDef.initialize();
 
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
+
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        resolver.initialize();
+
         resolver.resolveAttributes(context);
 
         final Attribute<?> a = context.getResolvedAttributes().get(name);

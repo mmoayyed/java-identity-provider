@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -41,21 +42,24 @@ public class PrecscopedAtributeTest {
     private static final String TEST_ATTRIBUTE_NAME = "prescoped";
 
     /**
-     * Test regexp.
-     * The test Data Connector provides an input attribute "at1" with values
-     * at1-Data and at1-Connector. We can feed these into the prescoped, looking for '-'
+     * Test regexp. The test Data Connector provides an input attribute "at1" with values at1-Data and at1-Connector. We
+     * can feed these into the prescoped, looking for '-'
      * 
      * @throws AttributeResolutionException on resolution issues.
+     * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
     @Test
-    public void testPreScoped() throws AttributeResolutionException {
+    public void testPreScoped() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
-        final BaseAttributeDefinition attrDef = new PrescopedAttributeDefinition(TEST_ATTRIBUTE_NAME, "-");
+        final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        attrDef.setScopeDelimiter("-");
         attrDef.setDependencies(dependencySet);
+        attrDef.initialize();
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
@@ -63,9 +67,13 @@ public class PrecscopedAtributeTest {
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);
-        final AttributeResolver resolver = new AttributeResolver("foo");
+
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
+        resolver.setDataConnectors(connectorSet);
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);
@@ -80,26 +88,34 @@ public class PrecscopedAtributeTest {
      * Test the prescoped attribute resolve when there are no matches.
      * 
      * @throws AttributeResolutionException if resolution fails.
+     * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
     @Test
-    public void testPreScopedNoValues() throws AttributeResolutionException {
+    public void testPreScopedNoValues() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
-        final BaseAttributeDefinition attrDef = new PrescopedAttributeDefinition(TEST_ATTRIBUTE_NAME, "@");
+        final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        attrDef.setScopeDelimiter("@");
         attrDef.setDependencies(dependencySet);
+        attrDef.initialize();
 
         // And resolve
-        final AttributeResolver resolver = new AttributeResolver("foo");
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
         connectorSet.add(TestSources.populatedStaticConnectior());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);
+
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
+        resolver.setDataConnectors(connectorSet);
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);

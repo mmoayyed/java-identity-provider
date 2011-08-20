@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
@@ -29,7 +30,10 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
+import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,31 +49,89 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinition.class);
 
     /** Regular expression used to split values. */
-    private final Pattern regExp;
+    private Pattern compiledRegExp;
+
+    /** Text of regular expression. */
+    private String regExp;
+
+    /** Whether the regexp is case sensitive. */
+    private boolean caseSensitive;
 
     /**
-     * Constructor.
+     * Set whether the regexp is case sensitive or not. This cannot be modified after initialization.
      * 
-     * @param id the identifier of the attribute
-     * @param regularExpression expression used to split attribute values
-     * @param caseSensitive whether the regular expression is case sensitive
+     * @param isCaseSensitive the case sensitivity flag.
      */
-    public RegexSplitAttributeDefinition(final String id, final String regularExpression, final boolean caseSensitive) {
-        super(id);
-        if (!caseSensitive) {
-            regExp = Pattern.compile(regularExpression, Pattern.CASE_INSENSITIVE);
-        } else {
-            regExp = Pattern.compile(regularExpression);
+    public synchronized void setCaseSensitive(final boolean isCaseSensitive) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Regexp Split Attribute definition " + getId()
+                    + " has already been initialized, case sensitvity can not be changed.");
         }
+        caseSensitive = new Boolean(isCaseSensitive);
     }
 
     /**
-     * Get the regular expression for this resolver.
+     * returns the case sensitivity.
      * 
-     * @return the regexp.
+     * @return whether we are case sensitive or not. defaults to false
      */
-    public Pattern getRegExp() {
+    public boolean getCaseSensitive() {
+        return caseSensitive;
+    }
+
+    /**
+     * Sets the pattern we are matching with. This cannot be modified after initialization.
+     * 
+     * @param newRegExp the pattern.
+     */
+    public synchronized void setRegExp(final String newRegExp) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Regexp Split Attribute definition " + getId()
+                    + " has already been initialized, regexp can not be changed.");
+        }
+        regExp = StringSupport.trimOrNull(newRegExp);
+    }
+
+    /**
+     * Returns the regexp we are using.
+     * 
+     * @return the pattern. Never returns null after initialization.
+     */
+    public String getRegExp() {
         return regExp;
+    }
+
+    /**
+     * Returns the regexp we are using.
+     * 
+     * @return the compiled pattern. Always returns null before initialization and never after.
+     */
+    public Pattern getCompiledRegExp() {
+        return compiledRegExp;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == regExp) {
+            throw new ComponentInitializationException("Regexp Split Attribute definition " + getId()
+                    + " is being initialized, without a valid regexp being set");
+        }
+
+        try {
+            if (!caseSensitive) {
+                compiledRegExp = Pattern.compile(regExp, Pattern.CASE_INSENSITIVE);
+            } else {
+                compiledRegExp = Pattern.compile(regExp);
+            }
+        } catch (PatternSyntaxException e) {
+            throw new ComponentInitializationException(e);
+        }
+        if (null == compiledRegExp) {
+            throw new ComponentInitializationException("Regexp Split Attribute definition " + getId()
+                    + " was not compiled correctly");
+        }
     }
 
     /** {@inheritDoc} */
@@ -86,13 +148,13 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
             if (null != dependentAttribute) {
                 for (Object value : dependentAttribute.getValues()) {
                     if (value instanceof String) {
-                        final Matcher matcher = regExp.matcher((String) value);
+                        final Matcher matcher = compiledRegExp.matcher((String) value);
                         if (matcher.matches()) {
                             results.add(matcher.group(1));
                         } else {
-                            log.debug(
-                       "Resolver {}: Value {} did not result in any values when split by regular expression {}",
-                                    value, new Object[] {getId(), regExp.toString(), regExp.toString(),});
+                            log.debug("Resolver {}: Value {} did not result in any values"
+                                    + " when split by regular expression {}", value,
+                                    new Object[] {getId(), regExp.toString(), regExp.toString(),});
                         }
                     } else {
                         log.info("Ignoring non-string attribute value");
@@ -104,5 +166,4 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
         resultantAttribute.setValues(results);
         return resultantAttribute;
     }
-
 }

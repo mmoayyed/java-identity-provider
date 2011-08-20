@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -47,17 +48,21 @@ public class ScopedAttributeTest {
      * Test resolution of the scoped attribute resolver.
      * 
      * @throws AttributeResolutionException if resolution failed.
+     * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
     @Test
-    public void testScopes() throws AttributeResolutionException {
+    public void testScopes() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
 
-        final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition(TEST_ATTRIBUTE_NAME, TEST_SCOPE);
+        final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition();
+        scoped.setScope(TEST_SCOPE);
+        scoped.setId(TEST_ATTRIBUTE_NAME);
         scoped.setDependencies(dependencySet);
+        scoped.initialize();
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
@@ -66,9 +71,11 @@ public class ScopedAttributeTest {
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(scoped);
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);

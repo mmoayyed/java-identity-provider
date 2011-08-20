@@ -38,10 +38,10 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyMap;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,54 +64,34 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinition.class);
 
     /** Velocity engine to use to render attribute values. */
-    private final VelocityEngine velocity;
+    private VelocityEngine velocity;
 
     /** Name the attribute template is registered under within the template engine. */
-    private final String templateName;
+    private String templateName;
 
     /** Template that produces the attribute value. */
-    private final String templateSource;
+    private String templateSource;
 
     /**
      * IDs of the attributes used in this composite.
      * 
      * This is checked against dependencies
      */
-    private final Set<String> sourceAttributes;
+    private Set<String> sourceAttributes;
 
     /**
-     * Constructor.
+     * Set the engine to use.
      * 
-     * @param id the identifier for this definition.
      * @param engine velocity engine used to parse template.
-     * @param template the template we use.
-     * @param attributes the attributes.
      */
-    public TemplateAttributeDefinition(final String id, final VelocityEngine engine, final String template,
-            final List<String> attributes) {
-        super(id);
+    public synchronized void setVelocityEngine(final VelocityEngine engine) {
         velocity = engine;
-        templateName = "shibboleth.resolver.ad." + this.getClass().getName() + id;
-
-        Set<String> attributesSet = new HashSet<String>();
-        CollectionSupport.addNonNull(attributes, attributesSet);
-        sourceAttributes = Collections.unmodifiableSet(attributesSet);
-
-        templateSource = StringSupport.trimOrNull(template);
-        Assert.isNotNull(templateSource, "Template must not be null or empty");
-
-        // Register the template
-        final StringResourceRepository repository = StringResourceLoader.getRepository();
-        if (null != repository.getStringResource(templateName)) {
-            throw new IllegalArgumentException("Template named " + templateName + "has already been declared");
-        }
-        repository.putStringResource(templateName, templateSource);
     }
 
     /**
      * Access the velocity engine being used.
      * 
-     * @return the velocity engine.
+     * @return the velocity engine. Not null after initialization.
      */
     public VelocityEngine getVelocityEngine() {
         return velocity;
@@ -121,19 +101,42 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * Access the name by which the template is used. This name is uniqueified by the implemeting class and the id of
      * the attribute resolver.
      * 
-     * @return the template name.
+     * @return the template name. Only available after initialization.
      */
     public String getTemplateName() {
         return templateName;
     }
 
     /**
-     * Access the source used in this template. This will have been trimmed and cannot be null.
+     * Set the source to use.
      * 
-     * @return the source used by this template.
+     * @param template the template we use.
+     */
+    public synchronized void setTemplateSource(final String template) {
+        templateSource = StringSupport.trimOrNull(template);
+    }
+
+    /**
+     * Access the source used in this template.
+     * 
+     * @return the source used by this template. Not null after initialization.
      */
     public String getTemplateSource() {
         return templateSource;
+    }
+
+    /**
+     * Set the attributes we will use/.
+     * 
+     * @param attributes the attributes.
+     */
+    public synchronized void setSourceAttributes(final List<String> attributes) {
+        Set<String> attributesSet = CollectionSupport.addNonNull(attributes, new HashSet<String>());
+        if (attributesSet.isEmpty()) {
+            sourceAttributes = Collections.EMPTY_SET;
+        } else {
+            sourceAttributes = Collections.unmodifiableSet(attributesSet);
+        }
     }
 
     /**
@@ -143,6 +146,34 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      */
     public Set<String> getSourceAttributes() {
         return sourceAttributes;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        templateName = "shibboleth.resolver.ad." + this.getClass().getName() + getId();
+
+        if (null == templateSource) {
+            throw new ComponentInitializationException("TemplateAttribute definition " + getId()
+                    + " is being initialized without any source");
+        }
+        if (null == velocity) {
+            throw new ComponentInitializationException("TemplateAttribute definition " + getId()
+                    + " is being initialized without and engine being supplied");
+        }
+
+        if (sourceAttributes.isEmpty()) {
+            log.info("Template attribute: " + getId() + " has no attributes supplied.");
+        }
+
+        // Register the template
+        final StringResourceRepository repository = StringResourceLoader.getRepository();
+        if (null != repository.getStringResource(templateName)) {
+            throw new ComponentInitializationException("TemplateAttribute definition " + getId() + ". emplate named "
+                    + templateName + "has already been declared");
+        }
+        repository.putStringResource(templateName, templateSource);
     }
 
     /**
@@ -227,7 +258,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             for (String attributeId : sourceValues.keySet()) {
                 final Object value = sourceValues.get(attributeId).next();
                 log.debug("TemplateAttribute definition {} iteration {}; attribute {} has value {}", new Object[] {
-                        getId(), i+1, attributeId, value.toString(),});
+                        getId(), i + 1, attributeId, value.toString(),});
                 vCtx.put(attributeId, value);
             }
 

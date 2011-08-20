@@ -28,9 +28,10 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,28 +46,38 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinition.class);
 
     /** Delimiter between value and scope. */
-    private final String scopeDelimiter;
+    private String scopeDelimiter;
 
     /**
-     * Constructor.
+     * Set the scope for this definition.
      * 
-     * @param id the id of the object
-     * @param delimiter scope of the attribute
+     * @param newScopeDelimiter what to set.
      */
-    public PrescopedAttributeDefinition(final String id, final String delimiter) {
-        super(id);
-        scopeDelimiter = delimiter;
-        Assert.isFalse(StringSupport.isNullOrEmpty(scopeDelimiter), "PrescopedAtributeDefinition (" + getId()
-                + ") Should have a valid delimiter.  None provided.");
+    public synchronized void setScopeDelimiter(final String newScopeDelimiter) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("PreScoped Attribute definition " + getId()
+                    + " has already been initialized, scope delimiter can not be changed.");
+        }
+        scopeDelimiter = StringSupport.trimOrNull(newScopeDelimiter);
     }
 
     /**
-     * Access the scope delimiter we were initialised with.
+     * Get scope delimiter.
      * 
-     * @return the delimiter
+     * @return the delimiter.
      */
     public String getScopeDelimiter() {
         return scopeDelimiter;
+    }
+    
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == scopeDelimiter) {
+            throw new ComponentInitializationException("PreScoped Attribute definition " + getId()
+                    + " does not have a valid scope delimiter set up.");
+        }
     }
 
     /** {@inheritDoc} */

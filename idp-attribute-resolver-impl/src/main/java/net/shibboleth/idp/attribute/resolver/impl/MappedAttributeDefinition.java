@@ -31,6 +31,8 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,49 +51,57 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
 
     /** Default return value. */
-    private final String defaultValue;
+    private String defaultValue;
 
     /** Whether the definition passes thru unmatched values. */
-    private final boolean passThru;
+    private boolean passThru;
 
     /** Value maps. */
-    private final Collection<ValueMap> valueMaps;
+    private Collection<ValueMap> valueMaps;
 
     /**
-     * Constructor.
+     * Set the value maps. Cannot be called after initialization.
      * 
-     * @param id the name
      * @param maps the value maps to apply
-     * @param defaultVal the default value to apply (if any)
-     * @param passThruParm whether to pass unmatched values through or not.
      */
-    public MappedAttributeDefinition(final String id, final Collection<ValueMap> maps, final String defaultVal,
-            final boolean passThruParm) {
-        super(id);
 
-        final Set<ValueMap> working = new LazySet<ValueMap>();
-        CollectionSupport.addNonNull(maps, working);
-        valueMaps = Collections.unmodifiableSet(working);
+    public synchronized void setValueMaps(final Collection<ValueMap> maps) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Mapped Attribute definition " + getId()
+                    + " has already been initialized, Value maps can not be changed.");
+        }
 
-        defaultValue = StringSupport.trimOrNull(defaultVal);
-        passThru = passThruParm;
+        final Set<ValueMap> working = CollectionSupport.addNonNull(maps, new LazySet<ValueMap>());
 
-        // Check configuration
-        if (passThru && !StringSupport.isNullOrEmpty(defaultValue)) {
-            final String message =
-                    "MappedAttributeDefinition {} (" + getId()
-                            + ") may not have a DefaultValue string with passThru enabled.";
-            org.opensaml.util.Assert.isTrue(false, message);
+        if (working.isEmpty()) {
+            log.info("Mapped Attribute definition " + getId() + " empty map supplied");
+            valueMaps = Collections.EMPTY_SET;
+        } else {
+            valueMaps = Collections.unmodifiableSet(working);
         }
     }
 
     /**
      * Access to our value maps.
      * 
-     * @return the value maps we were initialised with (never null, always normalized and unmodifiable)
+     * @return the value maps we were initialised with (never null after initialization, always normalized and
+     *         unmodifiable).
      */
     public Collection<ValueMap> getValueMaps() {
         return valueMaps;
+    }
+
+    /**
+     * Set the default value. Cannot be called after initialization.
+     * 
+     * @param defaultVal the default value to apply (if any)
+     */
+    public synchronized void setDefaultValue(final String defaultVal) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Mapped Attribute definition " + getId()
+                    + " has already been initialized, default value can not be changed.");
+        }
+        defaultValue = StringSupport.trimOrNull(defaultVal);
     }
 
     /**
@@ -104,12 +114,40 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
-     * Returns whether passThru (sic) is set for this version of this resolver.
+     * Set the pass through value. Cannot be called after initialization.
+     * 
+     * @param passThruParm whether to pass unmatched values through or not.
+     */
+    public synchronized void setPassThru(final boolean passThruParm) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Mapped Attribute definition " + getId()
+                    + " has already been initialized, passThru value can not be changed.");
+        }
+        passThru = passThruParm;
+    }
+
+    /**
+     * Returns whether passThru (sic) is set for this version of this resolver. Defaults to false.
      * 
      * @return the value of passThru.
      */
     public boolean getPassThru() {
         return passThru;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == valueMaps) {
+            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
+                    + " is being initialized, without value maps being set");
+        }
+        // Check configuration
+        if (passThru && !StringSupport.isNullOrEmpty(defaultValue)) {
+            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
+                            + ") must not have a DefaultValue string with passThru enabled.");
+        }
     }
 
     /** {@inheritDoc} */

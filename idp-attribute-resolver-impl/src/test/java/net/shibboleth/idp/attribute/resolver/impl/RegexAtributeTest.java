@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
 import org.opensaml.util.collections.LazySet;
+import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -39,22 +40,24 @@ public class RegexAtributeTest {
     private static final String TEST_ATTRIBUTE_NAME = "simple";
 
     /**
-     * Test regexp.  We set up an attribute called 'at1-Connector', we throw this
-     * at 'at1-(.+)or' and look for group 1 'Connect'.
+     * Test regexp. We set up an attribute called 'at1-Connector', we throw this at 'at1-(.+)or' and look for group 1
+     * 'Connect'.
      * 
      * @throws AttributeResolutionException on resolution issues.
+     * @throws ComponentInitializationException only if things went bad.
      */
     @Test
-    public void testRegex() throws AttributeResolutionException {
+    public void testRegex() throws AttributeResolutionException, ComponentInitializationException {
 
-        final BaseAttributeDefinition attrDef =
-                new RegexSplitAttributeDefinition(TEST_ATTRIBUTE_NAME, TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP,
-                        false);
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        attrDef.setRegExp(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
         attrDef.setDependencies(dependencySet);
+        attrDef.initialize();
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
@@ -62,10 +65,12 @@ public class RegexAtributeTest {
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);
-        
-        final AttributeResolver resolver = new AttributeResolver("foo");
+
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
+        resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext(null);
         resolver.resolveAttributes(context);
