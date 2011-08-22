@@ -61,7 +61,7 @@ public class IdPSession extends AbstractSubcontextContainer {
      * Creation and last activity instant are initialized to now. Authentication events collection is initialized to an
      * empty {@link Vector}. Service session collection is initialized to an empty {@link ConcurrentHashMap}.
      */
-    public IdPSession() {
+    protected IdPSession() {
         super();
 
         creationInstant = System.currentTimeMillis();
