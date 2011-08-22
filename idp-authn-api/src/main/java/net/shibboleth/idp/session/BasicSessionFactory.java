@@ -18,14 +18,11 @@
 package net.shibboleth.idp.session;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import edu.vt.middleware.crypt.util.HexConverter;
 
 /**
- * A basic {@link SessionFactory} that generates a the session ID and session secret using a
- * {@link SecureRandom} PRNG.
+ * A basic {@link SessionFactory} that generates a the session ID and session secret using a {@link SecureRandom} PRNG.
  */
 public class BasicSessionFactory implements SessionFactory {
 
@@ -55,14 +52,9 @@ public class BasicSessionFactory implements SessionFactory {
         final byte[] sessionSecret = new byte[16];
         prng.nextBytes(sessionSecret);
 
-        long now = System.currentTimeMillis();
         IdPSession session = new IdPSession();
-        session.setActivityInstant(now);
-        session.setAuthenticationEvents(new ArrayList<AuthenticationEvent>());
-        session.setCreationInstant(now);
         session.setId(sessionId);
         session.setSecret(sessionSecret);
-        session.setServiceSessions(new HashMap<String, ServiceSession>());
 
         return session;
     }

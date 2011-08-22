@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
@@ -52,6 +54,21 @@ public class IdPSession extends AbstractSubcontextContainer {
 
     /** Gets the service session tied to this IdP session. */
     private Map<String, ServiceSession> serviceSessions;
+
+    /**
+     * Constructor.
+     * 
+     * Creation and last activity instant are initialized to now. Authentication events collection is initialized to an
+     * empty {@link Vector}. Service session collection is initialized to an empty {@link ConcurrentHashMap}.
+     */
+    public IdPSession() {
+        super();
+
+        creationInstant = System.currentTimeMillis();
+        lastActivityInstant = creationInstant;
+        authnEvents = new Vector<AuthenticationEvent>();
+        serviceSessions = new ConcurrentHashMap<String, ServiceSession>();
+    }
 
     /**
      * Gets the unique identifier for this session.
