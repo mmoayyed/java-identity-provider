@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute;
 
+import java.util.Locale;
+import java.util.Map;
+
 import net.jcip.annotations.ThreadSafe;
 
 /**
@@ -36,6 +39,27 @@ public interface AttributeDecoder<DecodedType> {
      */
     public String getProtocol();
 
+    /**
+     * Gets the ID of the generated {@link Attribute}.
+     * 
+     * @return the ID of the generated IdP attribute
+     */
+    public String getId();
+    
+    /**
+     * Gets the display names associated with the generated {@link Attribute}.
+     * 
+     * @return display names associated with the generated IdP attribute
+     */
+    public Map<Locale, String> getDisplayNames();
+    
+    /**
+     * Gets the display descriptions associated with the generated {@link Attribute}.
+     * 
+     * @return display descriptions associated with the generated IdP attribute
+     */
+    public Map<Locale, String> getDisplayDescriptions();
+    
     /**
      * Decodes a given piece of data into an {@link Attribute}.
      * 

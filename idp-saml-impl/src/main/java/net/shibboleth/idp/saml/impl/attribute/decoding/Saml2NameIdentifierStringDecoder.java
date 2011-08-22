@@ -15,8 +15,19 @@
  * limitations under the License.
  */
 
-/** 
- * Base classes for encoding {@link net.shibboleth.idp.attribute.Attribute} objects into SAML message components. 
- */
+package net.shibboleth.idp.saml.impl.attribute.decoding;
 
-package net.shibboleth.idp.saml.attribute.encoding;
+import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeDecodingException;
+import net.shibboleth.idp.saml.attribute.decoding.AbstractSaml2NameIdentifierDecoder;
+
+import org.opensaml.saml2.core.NameID;
+
+/** Decodes a SAML 2 {@link NameID} into a String by returning its {@link NameID#getValue()} value. */
+public class Saml2NameIdentifierStringDecoder extends AbstractSaml2NameIdentifierDecoder<String> {
+
+    /** {@inheritDoc} */
+    protected void doDecode(Attribute<String> attribute, NameID nameId) throws AttributeDecodingException {
+        attribute.getValues().add(nameId.getValue());
+    }
+}

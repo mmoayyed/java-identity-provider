@@ -15,18 +15,22 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.attribute.encoding;
+package net.shibboleth.idp.saml.attribute.decoding;
 
-import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.idp.attribute.AbstractAttributeDecoder;
 
+import org.opensaml.common.SAMLObject;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.UnmodifiableComponentException;
 
 /**
- * Base class for attribute encoders that produce SAML name identifiers.
+ * Base class for decoders that read SAML name identifiers and create IdP attributes.
  * 
- * @param <NameIdType> type of name identifier produced by this encoder
+ * @param <NameIdType> type of name identifier consumed by this decoder
+ * @param <ValueType> type of the values of the IdP attribute
  */
-public abstract class AbstractSamlNameIdentifierEncoder<NameIdType> implements AttributeEncoder<NameIdType> {
+public abstract class AbstractSamlNameIdentifierDecoder<NameIdType extends SAMLObject, ValueType> extends
+        AbstractAttributeDecoder<NameIdType, ValueType> {
 
     /** The format of the name identifier. */
     private String format;
@@ -48,7 +52,11 @@ public abstract class AbstractSamlNameIdentifierEncoder<NameIdType> implements A
      * 
      * @param nameFormat format of the name identifier
      */
-    public final void setNameFormat(final String nameFormat) {
+    public final synchronized void setNameFormat(final String nameFormat) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException(
+                    "Name identifier name format can not be changed after decoder has been initialized");
+        }
         format = StringSupport.trimOrNull(nameFormat);
     }
 
@@ -66,7 +74,11 @@ public abstract class AbstractSamlNameIdentifierEncoder<NameIdType> implements A
      * 
      * @param nameQualifier security or administrative domain that qualifies the name identifier
      */
-    public final void setNameQualifier(final String nameQualifier) {
+    public final synchronized void setNameQualifier(String nameQualifier) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException(
+                    "Name identifier name qualifier can not be changed after decoder has been initialized");
+        }
         qualifier = StringSupport.trimOrNull(nameQualifier);
     }
 }

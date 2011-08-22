@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** SAML specific implementations of attribute classses. */
+/** SAML specific {@link net.shibboleth.idp.attribute.AttributeEncoder} implementations. */
 
 package net.shibboleth.idp.saml.impl.attribute.encoding;

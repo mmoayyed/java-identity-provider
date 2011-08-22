@@ -15,8 +15,21 @@
  * limitations under the License.
  */
 
-/** 
- * Base classes for encoding {@link net.shibboleth.idp.attribute.Attribute} objects into SAML message components. 
- */
+package net.shibboleth.idp.saml.attribute.decoding;
 
-package net.shibboleth.idp.saml.attribute.encoding;
+import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.saml1.core.Attribute;
+
+/**
+ * Base class for decoders that read SAML 1 attributes.
+ * 
+ * @param <ValueType> type of the values of the IdP attribute
+ */
+public abstract class AbstractSaml1AttributeDecoder<ValueType> extends
+        AbstractSamlAttributeDecoder<Attribute, ValueType> {
+
+    /** {@inheritDoc} */
+    public final String getProtocol() {
+        return SAMLConstants.SAML10P_NS;
+    }
+}

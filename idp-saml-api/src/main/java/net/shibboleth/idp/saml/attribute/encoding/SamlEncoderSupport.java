@@ -51,16 +51,18 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeStringValue(Attribute<?> attribute, QName attributeValueElementName, String value) {
+    public static XMLObject encodeStringValue(final Attribute<?> attribute, final QName attributeValueElementName,
+            final String value) {
         if (StringSupport.isNullOrEmpty(value)) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
 
-        XMLObjectBuilder<XSString> stringBuilder = Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+        final XMLObjectBuilder<XSString> stringBuilder =
+                Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
 
         LOG.debug("Encoding value {} of attribute {}", value, attribute.getId());
-        XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
+        final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
         samlAttributeValue.setValue(value);
         return samlAttributeValue;
     }
@@ -74,15 +76,17 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeByteArrayValue(Attribute<?> attribute, QName attributeValueElementName, byte[] value) {
+    public static XMLObject encodeByteArrayValue(final Attribute<?> attribute, final QName attributeValueElementName,
+            final byte[] value) {
         if (value == null || value.length == 0) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
 
-        XMLObjectBuilder<XSString> stringBuilder = Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+        final XMLObjectBuilder<XSString> stringBuilder =
+                Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
 
-        XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
+        final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
 
         samlAttributeValue.setValue(Base64.encodeBytes(value));
         return samlAttributeValue;
@@ -97,15 +101,16 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeXmlObjectValue(Attribute<?> attribute, QName attributeValueElementName,
-            XMLObject value) {
+    public static XMLObject encodeXmlObjectValue(final Attribute<?> attribute, final QName attributeValueElementName,
+            final XMLObject value) {
         if (value == null) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
 
-        XMLObjectBuilder<XSAny> attributeValueBuilder = Configuration.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);
-        XSAny samlAttributeValue = attributeValueBuilder.buildObject(attributeValueElementName);
+        final XMLObjectBuilder<XSAny> attributeValueBuilder =
+                Configuration.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);
+        final XSAny samlAttributeValue = attributeValueBuilder.buildObject(attributeValueElementName);
         samlAttributeValue.getUnknownXMLObjects().add(value);
 
         return samlAttributeValue;

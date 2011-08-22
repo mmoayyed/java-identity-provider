@@ -70,7 +70,7 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType> extends
      * 
      * @param attributeFriendlyName friendly, human readable, name for the attribute
      */
-    public final synchronized void setFriendlyName(String attributeFriendlyName) {
+    public final synchronized void setFriendlyName(final String attributeFriendlyName) {
         if (isInitialized()) {
             throw new UnmodifiableComponentException(
                     "Friendly attribute name can not be changed after encoder has been initialized");
@@ -79,10 +79,10 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType> extends
     }
 
     /** {@inheritDoc} */
-    protected Attribute buildAttribute(net.shibboleth.idp.attribute.Attribute<?> attribute,
-            List<XMLObject> attributeValues) throws AttributeEncodingException {
+    protected Attribute buildAttribute(final net.shibboleth.idp.attribute.Attribute<?> attribute,
+            final List<XMLObject> attributeValues) throws AttributeEncodingException {
 
-        Attribute samlAttribute = attributeBuilder.buildObject();
+        final Attribute samlAttribute = attributeBuilder.buildObject();
         samlAttribute.setName(getName());
         samlAttribute.setFriendlyName(getFriendlyName());
         samlAttribute.setNameFormat(getNamespace());

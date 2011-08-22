@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-/** 
- * Base classes for encoding {@link net.shibboleth.idp.attribute.Attribute} objects into SAML message components. 
- */
+/** SAML specific {@link net.shibboleth.idp.attribute.AttributeDecoder} implementations. */
 
-package net.shibboleth.idp.saml.attribute.encoding;
+package net.shibboleth.idp.saml.impl.attribute.decoding;
