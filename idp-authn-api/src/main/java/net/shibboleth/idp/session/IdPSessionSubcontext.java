@@ -42,6 +42,9 @@ public class IdPSessionSubcontext extends IdPSession implements Subcontext {
     public IdPSessionSubcontext(final SubcontextContainer owningContext, final IdPSession idpSession){
         Assert.isNotNull(owningContext, "Owning context can not be null");
         owner = owningContext;
+        if (owner != null) {
+            owner.addSubcontext(this);
+        }
         
         Assert.isNotNull(idpSession, "IdP session can not be null");
         session = idpSession;
