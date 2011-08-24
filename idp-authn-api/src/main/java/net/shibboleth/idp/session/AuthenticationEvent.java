@@ -19,54 +19,43 @@ package net.shibboleth.idp.session;
 
 import java.security.Principal;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
 
-/**
- * Describes an authentication event that took place within the scope of an {@link IdPSession}.
- * 
- * Properties of this object <strong>must not</strong> be modifiable directly. Instead, use the modification methods
- * available via the {@link SessionStore} that created the associate {@link IdPSession}.
- */
-public class AuthenticationEvent extends AbstractSubcontextContainer {
-
-    /** Service for which the principal was authenticated. */
-    private String serviceId;
+/** Describes an authentication event that took place within the scope of an {@link IdPSession}. */
+@ThreadSafe
+public final class AuthenticationEvent extends AbstractSubcontextContainer {
 
     /** The principal established by the authentication event. */
-    private Principal principal;
+    private Principal authenticatedPrincipal;
 
     /** The identifier of the method used to authenticate the principal. */
-    private String authnMethod;
+    private String authenticationWorkflow;
 
     /** The time, in milliseconds since the epoch, that the authentication completed. */
-    private long autnInstant;
+    private long authenticationInstant;
+
+    /** The last activity instant, in milliseconds since the epoch, for this event. */
+    private long lastActivityInstant;
 
     /**
-     * Time, in milliseconds since the epoch, when this authentication method expires. A value of 0 or less indicates
-     * the authentication method does not have an absolute expiration instant.
-     */
-    private long expirationInstant;
-
-    /**
-     * Gets the identifier of the service for which the principal was authenticated.
+     * Constructor. Initializes authentication instant time to the current time.
      * 
-     * @return identifier of the service for which the principal was authenticated
+     * @param workflow the workflow used to authenticate the principal, can not be null or empty
+     * @param principal the principal that was authenticated, can not be null
      */
-    public String getServiceId() {
-        return serviceId;
-    }
+    public AuthenticationEvent(String workflow, Principal principal) {
+        authenticationWorkflow = StringSupport.trimOrNull(workflow);
+        Assert.isNotNull(authenticationWorkflow, "Authentication method can not be null nor empty");
 
-    /**
-     * Sets the identifier of the service for which the principal was authenticated.
-     * 
-     * @param id identifier of the service for which the principal was authenticated, may not be null or empty
-     */
-    protected void setServiceId(String id) {
-        serviceId = StringSupport.trimOrNull(id);
-        Assert.isNotNull(serviceId, "Service ID can not be null or empty");
+        Assert.isNotNull(principal, "Authenticationed princpal can not be null");
+        authenticatedPrincipal = principal;
+
+        authenticationInstant = System.currentTimeMillis();
     }
 
     /**
@@ -75,37 +64,16 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
      * @return principal established by the authentication event, never null
      */
     public Principal getPrincipal() {
-        return principal;
+        return authenticatedPrincipal;
     }
 
     /**
-     * Sets the principal established by the authentication event.
+     * Gets the workflow used to authenticate the principal.
      * 
-     * @param authenticationPrincipal principal established by the authentication event, never null
+     * @return workflow used to authenticate the principal, never null
      */
-    protected void setPrincipal(Principal authenticationPrincipal) {
-        Assert.isNotNull(authenticationPrincipal, "Authentication principal can not be null");
-        principal = authenticationPrincipal;
-    }
-
-    /**
-     * Gets the method used to authenticate the principal.
-     * 
-     * @return method used to authenticate the principal, never null
-     */
-    public String getAuthenticationMethod() {
-        return authnMethod;
-    }
-
-    /**
-     * Sets the method used to authenticate the principal.
-     * 
-     * @param method method used to authenticate the principal, never null nor empty
-     */
-    protected void setAuthenticationMethod(String method) {
-        String trimmedMethod = StringSupport.trimOrNull(method);
-        Assert.isNotNull(trimmedMethod, "Authentication method can not be null nor empty");
-        authnMethod = trimmedMethod;
+    public String getAuthenticationWorkflow() {
+        return authenticationWorkflow;
     }
 
     /**
@@ -114,44 +82,40 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
      * @return time, in milliseconds since the epoch, that the authentication completed, never less than 0
      */
     public long getAuthenticationInstant() {
-        return autnInstant;
+        return authenticationInstant;
     }
 
     /**
-     * Sets the time, in milliseconds since the epoch, that the authentication completed.
+     * Gets the last activity instant, in milliseconds since the epoch, for this event.
      * 
-     * @param instant time, in milliseconds since the epoch, that the authentication completed, must be greater than 0
+     * @return last activity instant, in milliseconds since the epoch, for this event, never less than 0
      */
-    protected void setAuthenticationInstant(long instant) {
-        Assert.isGreaterThan(0, instant, "Authentication instant must be greater than 0");
-        autnInstant = instant;
+    public long getLastActivityInstant() {
+        return lastActivityInstant;
     }
 
     /**
-     * Gets the time, in milliseconds since the epoch, when this authentication method expires. A value of 0 or less
-     * indicates the authentication method does not have an absolute expiration instant.
+     * Sets the last activity instant, in milliseconds since the epoch, for this event.
      * 
-     * @return time, in milliseconds since the epoch, when this authentication method expires
+     * @param instant last activity instant, in milliseconds since the epoch, for this event, must be greater than 0
      */
-    public long getExpirationInstant() {
-        return expirationInstant;
+    public void setLastActivityInstant(long instant) {
+        Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
+        lastActivityInstant = instant;
     }
 
     /**
-     * Sets the time, in milliseconds since the epoch, when this authentication method expires.
-     * 
-     * @param instant time, in milliseconds since the epoch, when this authentication method expires
+     * Sets the last activity instant, in milliseconds since the epoch, for this event to the current time.
      */
-    protected void setExpirationInstant(long instant) {
-        expirationInstant = instant;
+    public void setLastActivityInstantToNow() {
+        lastActivityInstant = System.currentTimeMillis();
     }
 
     /** {@inheritDoc} */
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + authnMethod.hashCode();
-        result = prime * result + serviceId.hashCode();
+        result = prime * result + authenticationWorkflow.hashCode();
         return result;
     }
 
@@ -167,8 +131,7 @@ public class AuthenticationEvent extends AbstractSubcontextContainer {
 
         if (obj instanceof AuthenticationEvent) {
             AuthenticationEvent other = (AuthenticationEvent) obj;
-            return ObjectSupport.equals(getServiceId(), other.getServiceId())
-                    && ObjectSupport.equals(getAuthenticationMethod(), other.getAuthenticationMethod());
+            return ObjectSupport.equals(getAuthenticationWorkflow(), other.getAuthenticationWorkflow());
         }
 
         return false;
