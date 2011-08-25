@@ -20,6 +20,7 @@
     <modules>
         <module>../idp-core</module>
         <module>../idp-authn-api</module>
+        <module>../idp-authn-api</module>
         <module>../idp-attribute-api</module>
         <module>../idp-attribute-impl</module>
         <module>../idp-attribute-resolver-api</module>
