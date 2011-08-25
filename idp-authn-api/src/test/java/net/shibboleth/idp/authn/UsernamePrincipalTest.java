@@ -17,19 +17,35 @@
 
 package net.shibboleth.idp.authn;
 
-import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-/**
- * This action inspects the current request context and determines which subflow(s) to invoke in order to meet the
- * necessary requested {@link AuthenticationMethod}s.
- */
-public class PerformAuthentication implements Action {
+public class UsernamePrincipalTest {
 
-    /** {@inheritDoc} */
-    public Event execute(final RequestContext context) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
+    @Test
+    public void testInstantiation() {
+        UsernamePrincipal principal = new UsernamePrincipal("bob");
+        Assert.assertEquals(principal.getName(), "bob");
+
+        try {
+            new UsernamePrincipal(null);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+
+        try {
+            new UsernamePrincipal("");
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+
+        try {
+            new UsernamePrincipal("   ");
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+
+        }
     }
 }

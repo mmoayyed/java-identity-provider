@@ -17,73 +17,96 @@
 
 package net.shibboleth.idp.authn;
 
-import java.util.Collection;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.session.AuthenticationEvent;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
-import org.opensaml.messaging.context.AbstractSubcontext;
+import org.opensaml.messaging.context.AbstractSubcontextContainer;
+import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.collections.CollectionSupport;
 
 /** A context representing the state of an authentication attempt. */
 @ThreadSafe
-public final class AuthenticationRequestContext extends AbstractSubcontext {
+public final class AuthenticationRequestContext extends AbstractSubcontextContainer implements Subcontext {
 
-    /** Time when the authentication process started. */
-    private final DateTime initiationInstant;
+    /** The owner of this subcontext. */
+    private final SubcontextContainer owner;
 
-    /** Whether authentication must occur even if an existing authentication method exists and is still valid. */
-    private final boolean forcingAuthentication;
+    /** Time, in milliseconds since the epoch, when the authentication process started. */
+    private final long initiationInstant;
 
-    /** List of requested authentication methods. */
-    private SortedSet<AuthenticationMethod> authenticationMethods;
+    /** Whether authentication must occur even if an existing authentication event exists and is still valid. */
+    private boolean forcingAuthentication;
 
-    /** Time when authentication process completed. */
-    private DateTime completionInstant;
+    /** Authentication workflow used if user authentication is needed but no particular workflows are requested. */
+    private AuthenticationWorkflowDescriptor defaultWorfklow;
+
+    /** Authentication workflows, in order of preference, that must be used if user authentication is required. */
+    private List<AuthenticationWorkflowDescriptor> requestedWorkflows;
+
+    /** Authentication workflow that was attempted in order to authenticate the user. */
+    private AuthenticationWorkflowDescriptor attemptedWorkflow;
+
+    /** The authenticated principal. */
+    private Principal authenticatedPrincipal;
+
+    /** Time, in milliseconds since the epoch, when authentication process completed. */
+    private long completionInstant;
 
     /**
      * Constructor.
      * 
      * @param parent context that owns this context
-     * @param isForcedAuthentication whether authentication is to be forced
      */
-    public AuthenticationRequestContext(final SubcontextContainer parent, final boolean isForcedAuthentication) {
-        super(parent);
-        initiationInstant = new DateTime(ISOChronology.getInstanceUTC());
-        forcingAuthentication = isForcedAuthentication;
-        authenticationMethods = new TreeSet<AuthenticationMethod>();
+    public AuthenticationRequestContext(final SubcontextContainer parent) {
+        super();
+
+        if (parent != null) {
+            owner = parent;
+            parent.addSubcontext(this);
+        } else {
+            owner = null;
+        }
+
+        initiationInstant = System.currentTimeMillis();
+        requestedWorkflows = Collections.emptyList();
+    }
+
+    /** {@inheritDoc} */
+    public SubcontextContainer getOwner() {
+        return owner;
     }
 
     /**
-     * Gets the time when the authentication event started.
+     * Gets the time, in milliseconds since the epoch, when the authentication process started.
      * 
-     * @return time when the authentication event started, never null
+     * @return time when the authentication process started
      */
-    public DateTime getInitiationInstant() {
+    public long getInitiationInstant() {
         return initiationInstant;
     }
 
     /**
-     * Gets the time when the authentication event ended.
+     * Gets the time, in milliseconds since the epoch, when the authentication process ended. A value of 0 indicates
+     * that authentication has not yet completed.
      * 
-     * @return time when the authentication event ended, may be null
+     * @return time when the authentication process ended
      */
-    public DateTime getCompletionInstant() {
+    public long getCompletionInstant() {
         return completionInstant;
     }
 
     /** Sets the completion time of the authentication attempt to the current time. */
     public void setCompletionInstant() {
-        completionInstant = new DateTime(ISOChronology.getInstanceUTC());
+        completionInstant = System.currentTimeMillis();
     }
 
     /**
-     * Gets whether authentication must occur even if an existing authentication method exists and is still valid.
+     * Gets whether authentication must occur even if an existing authentication event exists and is still valid.
      * 
      * @return Returns the forcingAuthentication.
      */
@@ -92,43 +115,125 @@ public final class AuthenticationRequestContext extends AbstractSubcontext {
     }
 
     /**
-     * Gets the unmodifiable set of authentication methods that may be used to authenticate the user. This returned
-     * collection is never null nor contains any null entries.
+     * Sets whether authentication must occur even if an existing authentication event exists and is still valid.
      * 
-     * @return list of authentication methods that may be used to authenticate the user
+     * @param isForcingAuthentication whether authentication must occur even if an existing authentication event exists
+     *            and is still valid
      */
-    public SortedSet<AuthenticationMethod> getAuthenticationMethods() {
-        return Collections.unmodifiableSortedSet(authenticationMethods);
+    public void setForcingAuthentication(boolean isForcingAuthentication) {
+        forcingAuthentication = isForcingAuthentication;
     }
 
     /**
-     * Sets the authentication methods that may be used to authenticate the user. This replaces all existing methods.
+     * Gets the authentication workflow to use if user authentication is needed but no particular workflows are
+     * requested. If no default workflow is specified then any workflow that meets the passive/forced authentication
+     * requirements for this request may be used.
      * 
-     * @param methods methods to be used, may be null or contain null entries
+     * @return authentication workflow to use if user authentication is needed but no particular workflows are
+     *         requested, may be null
      */
-    public void setAuthenticationMethods(final Collection<AuthenticationMethod> methods) {
-        CollectionSupport.nonNullReplace(methods, authenticationMethods);
+    public AuthenticationWorkflowDescriptor getDefaultAuthenticationWorfklow() {
+        return defaultWorfklow;
     }
 
     /**
-     * Adds an authentication method that may be used to authenticate the user.
+     * Sets the authentication workflow to use if user authentication is needed but no particular workflows are
+     * requested. If no default workflow is specified then any workflow that meets the passive/forced authentication
+     * requirements for this request may be used.
      * 
-     * @param method method to be added, may be null
-     * 
-     * @return true of the collection of authentication methods has changed due to this addition, false otherwise
+     * @param workflow authentication workflow to use if user authentication is needed but no particular workflows are
+     *            requested, may be null
      */
-    public boolean addAuthenticationMethod(final AuthenticationMethod method) {
-        return CollectionSupport.nonNullAdd(authenticationMethods, method);
+    public void setDefaultWorfklow(AuthenticationWorkflowDescriptor workflow) {
+        defaultWorfklow = workflow;
     }
 
     /**
-     * Removes an authentication method that may be used to authenticate the user.
+     * Gets the unmodifiable list of authentication workflows, in order of preference, that must be used if user
+     * authentication is required.
      * 
-     * @param method method to be removed, may be null
-     * 
-     * @return true of the collection of authentication methods has changed due to this removal, false otherwise
+     * @return authentication workflows, in order of preference, that must be used if user authentication is required,
+     *         never null nor containing null elements
      */
-    public boolean removeAuthenticationMethod(final AuthenticationMethod method) {
-        return CollectionSupport.nonNullRemove(authenticationMethods, method);
+    public List<AuthenticationWorkflowDescriptor> getRequestedWorkflows() {
+        return requestedWorkflows;
+    }
+
+    /**
+     * Sets the authentication workflows, in order of preference, that must be used if user authentication is required.
+     * 
+     * @param workflows authentication workflows, in order of preference, that must be used if user authentication is
+     *            required, may be null or contain null elements
+     */
+    public void setRequestedWorkflows(List<AuthenticationWorkflowDescriptor> workflows) {
+        if (workflows == null || workflows.isEmpty()) {
+            requestedWorkflows = Collections.emptyList();
+            return;
+        }
+
+        ArrayList<AuthenticationWorkflowDescriptor> descriptors = new ArrayList<AuthenticationWorkflowDescriptor>();
+        for (AuthenticationWorkflowDescriptor descriptor : workflows) {
+            if (descriptor == null) {
+                continue;
+            }
+
+            if (descriptors.contains(descriptor)) {
+                continue;
+            }
+
+            descriptors.add(descriptor);
+        }
+
+        if (descriptors.isEmpty()) {
+            requestedWorkflows = Collections.emptyList();
+        } else {
+            requestedWorkflows = Collections.unmodifiableList(descriptors);
+        }
+    }
+
+    /**
+     * Gets the authentication workflow that was attempted in order to authenticate the user.
+     * 
+     * @return authentication workflow that was attempted in order to authenticate the user, may be null
+     */
+    public AuthenticationWorkflowDescriptor getAttemptedWorkflow() {
+        return attemptedWorkflow;
+    }
+
+    /**
+     * Sets the authentication workflow that was attempted in order to authenticate the user.
+     * 
+     * @param workflow authentication workflow that was attempted in order to authenticate the user, may be null
+     */
+    public void setAttemptedWorkflow(AuthenticationWorkflowDescriptor workflow) {
+        attemptedWorkflow = workflow;
+    }
+
+    /**
+     * Gets the principal that was authenticated.
+     * 
+     * @return principal that was authenticated, may be null
+     */
+    public Principal getAuthenticatedPrincipal() {
+        return authenticatedPrincipal;
+    }
+
+    /**
+     * Sets the principal that was authenticated.
+     * 
+     * @param principal principal that was authenticated, may be null
+     */
+    public void setAuthenticatedPrincipal(Principal principal) {
+        authenticatedPrincipal = principal;
+    }
+
+    /**
+     * Creates an authentication event based on the information in this context. Note, authentication must have
+     * completed successfully in order to do this.
+     * 
+     * @return the constructed authentication event
+     */
+    public AuthenticationEvent buildAuthenticationEvent() {
+        return new AuthenticationEvent(attemptedWorkflow.getWorkflowId(), authenticatedPrincipal);
     }
 }

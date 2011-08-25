@@ -214,6 +214,7 @@ public final class IdPSession extends AbstractSubcontextContainer implements Ide
 
         HashSet<ServiceSession> sessionsCopy = new HashSet<ServiceSession>(serviceSessions);
         sessionsCopy.add(serviceSession);
+        serviceSessionIndex.put(serviceSession.getServiceId(), serviceSession);
         serviceSessions = Collections.unmodifiableSet(sessionsCopy);
     }
 
@@ -230,6 +231,7 @@ public final class IdPSession extends AbstractSubcontextContainer implements Ide
 
         HashSet<ServiceSession> sessionsCopy = new HashSet<ServiceSession>(serviceSessions);
         sessionsCopy.remove(serviceSession);
+        serviceSessionIndex.remove(serviceSession.getServiceId());
         serviceSessions = Collections.unmodifiableSet(sessionsCopy);
     }
 }

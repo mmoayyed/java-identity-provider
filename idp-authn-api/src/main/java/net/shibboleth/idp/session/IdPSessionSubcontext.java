@@ -36,9 +36,13 @@ public class IdPSessionSubcontext extends AbstractSubcontext {
         super(owningContext);
 
         if (idpSession == null) {
-            owningContext.removeSubcontext(this);
+            if (owningContext != null) {
+                owningContext.removeSubcontext(this);
+            }
             throw new IllegalArgumentException("IdP session can not be null");
         }
+
+        session = idpSession;
     }
 
     /**

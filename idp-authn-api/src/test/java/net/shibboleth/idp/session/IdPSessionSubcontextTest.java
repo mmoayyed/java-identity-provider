@@ -15,9 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn;
+package net.shibboleth.idp.session;
 
-/** A marker interface for a credential used to authenticate a subject. */
-public interface PrincipalCredential {
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
+public class IdPSessionSubcontextTest {
+
+    @Test
+    public void testInstantiation() {
+        IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
+        IdPSessionSubcontext ctx = new IdPSessionSubcontext(null, session);
+
+        Assert.assertEquals(ctx.getIdPSession(), session);
+
+        try {
+            new IdPSessionSubcontext(null, null);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
 }

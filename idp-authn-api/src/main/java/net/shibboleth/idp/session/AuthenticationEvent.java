@@ -56,6 +56,7 @@ public final class AuthenticationEvent extends AbstractSubcontextContainer {
         authenticatedPrincipal = principal;
 
         authenticationInstant = System.currentTimeMillis();
+        lastActivityInstant = authenticationInstant;
     }
 
     /**
