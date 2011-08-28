@@ -25,6 +25,7 @@ import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
 import org.opensaml.util.criteria.CriteriaSet;
+import org.opensaml.util.resolver.Resolver;
 import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,22 +37,23 @@ import org.slf4j.LoggerFactory;
  * @param <MetadataType> type of metadata returned by the resolver
  */
 public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedInitializableComponent implements
-        MetadataResolver<MetadataType> {
+        Resolver<MetadataType, CriteriaSet> {
 
     /** Resolvers composed by this resolver. */
-    private final List<MetadataResolver<MetadataType>> resolvers;
+    private final List<Resolver<MetadataType, CriteriaSet>> resolvers;
 
     /**
      * Constructor.
      * 
      * @param composedResolvers resolvers composed by this resolver, may be null or contain null elements
      */
-    public CompositeMetadataResolver(final List<MetadataResolver<MetadataType>> composedResolvers) {
+    public CompositeMetadataResolver(final List<Resolver<MetadataType, CriteriaSet>> composedResolvers) {
         if (composedResolvers == null || composedResolvers.isEmpty()) {
             resolvers = Collections.emptyList();
         } else {
-            LazyList<MetadataResolver<MetadataType>> checkedResolvers =
-                    CollectionSupport.addNonNull(composedResolvers, new LazyList<MetadataResolver<MetadataType>>());
+            LazyList<Resolver<MetadataType, CriteriaSet>> checkedResolvers =
+                    CollectionSupport
+                            .addNonNull(composedResolvers, new LazyList<Resolver<MetadataType, CriteriaSet>>());
             resolvers = Collections.unmodifiableList(checkedResolvers);
         }
     }
@@ -66,7 +68,7 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
      * 
      * @return list of resolvers composed by this resolver, never null nor containing null elements
      */
-    public List<MetadataResolver<MetadataType>> getComposedResolvers() {
+    public List<Resolver<MetadataType, CriteriaSet>> getComposedResolvers() {
         return resolvers;
     }
 
@@ -78,7 +80,7 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
     /** {@inheritDoc} */
     public MetadataType resolveSingle(CriteriaSet criteria) throws ResolverException {
         MetadataType metadata = null;
-        for (MetadataResolver<MetadataType> resolver : resolvers) {
+        for (Resolver<MetadataType, CriteriaSet> resolver : resolvers) {
             metadata = resolver.resolveSingle(criteria);
             if (metadata != null) {
                 return metadata;
@@ -98,7 +100,7 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
         private final Logger log = LoggerFactory.getLogger(CompositeMetadataResolverIterable.class);
 
         /** Resolvers over which to iterate. */
-        private final List<MetadataResolver<MetadataType>> resolvers;
+        private final List<Resolver<MetadataType, CriteriaSet>> resolvers;
 
         /** Criteria being search for. */
         private final CriteriaSet criteria;
@@ -109,13 +111,14 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
          * @param composedResolvers resolvers from which results will be pulled
          * @param metadataCritiera criteria for the resolver query
          */
-        public CompositeMetadataResolverIterable(final List<MetadataResolver<MetadataType>> composedResolvers,
+        public CompositeMetadataResolverIterable(final List<Resolver<MetadataType, CriteriaSet>> composedResolvers,
                 final CriteriaSet metadataCritiera) {
             if (composedResolvers == null || composedResolvers.isEmpty()) {
                 resolvers = Collections.emptyList();
             } else {
-                LazyList<MetadataResolver<MetadataType>> checkedResolvers =
-                        CollectionSupport.addNonNull(composedResolvers, new LazyList<MetadataResolver<MetadataType>>());
+                LazyList<Resolver<MetadataType, CriteriaSet>> checkedResolvers =
+                        CollectionSupport.addNonNull(composedResolvers,
+                                new LazyList<Resolver<MetadataType, CriteriaSet>>());
                 resolvers = Collections.unmodifiableList(checkedResolvers);
             }
 
@@ -132,10 +135,10 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
         private class CompositeMetadataResolverIterator implements Iterator<MetadataType> {
 
             /** Iterator over the composed resolvers. */
-            private Iterator<MetadataResolver<MetadataType>> resolverIterator;
+            private Iterator<Resolver<MetadataType, CriteriaSet>> resolverIterator;
 
             /** Current resolver from which we are getting results. */
-            private MetadataResolver<MetadataType> currentResolver;
+            private Resolver<MetadataType, CriteriaSet> currentResolver;
 
             /** Iterator over the results of the current resolver. */
             private Iterator<MetadataType> currentResolverMetadataIterator;
@@ -181,8 +184,7 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedI
                         }
                     }
                 } catch (ResolverException e) {
-                    log.debug("Error encountered attempting to fetch results from resolver {}",
-                            currentResolver.getId(), e);
+                    log.debug("Error encountered attempting to fetch results from resolver", e);
                 }
             }
         }
