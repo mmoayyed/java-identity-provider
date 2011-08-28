@@ -80,7 +80,7 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
         }
 
         if (ActionSupport.ERROR_EVENT_ID.equals(result.getId())) {
-            log.debug("Action {} failed with erro message {}", getId(),
+            log.debug("Action {}: failed with error message {}", getId(),
                     result.getAttributes().get(ActionSupport.ERROR_MESSAGE_ID));
         }
 
@@ -105,4 +105,5 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
     public abstract Event doExecute(final RequestContext springRequestContext,
             final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
             throws Throwable;
+
 }

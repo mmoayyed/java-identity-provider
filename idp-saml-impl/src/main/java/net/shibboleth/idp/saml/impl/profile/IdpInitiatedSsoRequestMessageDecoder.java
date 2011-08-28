@@ -21,15 +21,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.decoder.AbstractMessageDecoder;
+import org.opensaml.messaging.context.BasicMessageContext;
+import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
-import org.opensaml.util.Assert;
+import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
 import org.opensaml.util.StringSupport;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
 @NotThreadSafe
-public class IdpInitiatedSsoRequestMessageDecoder extends AbstractMessageDecoder<IdpInitatedSsoRequest> {
+public class IdpInitiatedSsoRequestMessageDecoder extends
+        AbstractHttpServletRequestMessageDecoder<IdpInitatedSsoRequest> {
 
     /**
      * Deprecated name of the query parameter carrying the service provider entity ID: {@value} . Use of
@@ -49,33 +50,31 @@ public class IdpInitiatedSsoRequestMessageDecoder extends AbstractMessageDecoder
     /** Name of the query parameter carrying the service provider's assertion consumer service URL: {@value} . */
     public static final String ACS_URL_PARAM = "acs";
 
-    /** Name of the query parameter carrying the service provider's target information: {@value} . */
+    /** Deprecated name of the query parameter carrying the service provider's target information: {@value} . */
     public static final String TARGET_PARAM = "target";
+
+    /** Name of the query parameter carrying the service provider's relay state information: {@value} . */
+    public static final String RELAY_STATE_PARAM = "relayState";
 
     /** Name of the query parameter carrying the current time at the service provider: {@value. } */
     public static final String TIME_PARAM = "time";
 
-    /** Current Servlet request. */
-    private HttpServletRequest currentRequest;
-
-    /**
-     * Constructor.
-     * 
-     * @param servletRequest current Servlet Request
-     */
-    public IdpInitiatedSsoRequestMessageDecoder(HttpServletRequest servletRequest) {
-        Assert.isNotNull(servletRequest, "Current HTTP Servlet Request can not be null");
-        currentRequest = servletRequest;
-    }
-
     /** {@inheritDoc} */
     public void decode() throws MessageDecodingException {
         IdpInitatedSsoRequest authnRequest =
-                new IdpInitatedSsoRequest(getEntityId(currentRequest), getShire(currentRequest),
-                        getTarget(currentRequest), getTime(currentRequest));
+                new IdpInitatedSsoRequest(getEntityId(getHttpServletRequest()), getAcsUrl(getHttpServletRequest()),
+                        getTarget(getHttpServletRequest()), getTime(getHttpServletRequest()));
 
-        MessageContext<IdpInitatedSsoRequest> messageContext = getMessageContext();
+        BasicMessageContext<IdpInitatedSsoRequest> messageContext = new BasicMessageContext<IdpInitatedSsoRequest>();
         messageContext.setMessage(authnRequest);
+
+        BasicMessageMetadataSubcontext msgMetadata = new BasicMessageMetadataSubcontext(messageContext);
+        // TODO need to generate a message ID, probably need to base it off of the conversation ID
+        // msgMetadata.setMessageId(messageId);
+        msgMetadata.setMessageIssueInstant(authnRequest.getTime());
+        msgMetadata.setMessageIssuer(authnRequest.getEntityId());
+
+        setMessageContext(messageContext);
     }
 
     /**
@@ -107,7 +106,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends AbstractMessageDecoder
      * 
      * @return the assertion consumer service URL, may be null if none is given in the request
      */
-    private String getShire(HttpServletRequest request) {
+    private String getAcsUrl(HttpServletRequest request) {
         String acsUrl = StringSupport.trimOrNull(request.getParameter(ACS_URL_PARAM));
         if (acsUrl == null) {
             acsUrl = StringSupport.trimOrNull(request.getParameter(SHIRE_PARAM));
@@ -117,15 +116,19 @@ public class IdpInitiatedSsoRequestMessageDecoder extends AbstractMessageDecoder
     }
 
     /**
-     * Gets the opaque target sent by the service provider.
-     * 
+     * Gets the opaque relay state sent by the service provider.
      * 
      * @param request current HTTP request
      * 
-     * @return the target, or null if the service provider did not send one
+     * @return the relay state, or null if the service provider did not send one
      */
     private String getTarget(HttpServletRequest request) {
-        return StringSupport.trimOrNull(request.getParameter(TARGET_PARAM));
+        String relayState = StringSupport.trimOrNull(request.getParameter(RELAY_STATE_PARAM));
+        if (relayState == null) {
+            relayState = StringSupport.trimOrNull(request.getParameter(TARGET_PARAM));
+        }
+
+        return relayState;
     }
 
     /**

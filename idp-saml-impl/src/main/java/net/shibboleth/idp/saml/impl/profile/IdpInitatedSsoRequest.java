@@ -17,13 +17,11 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
-import java.io.Serializable;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
-
-import net.jcip.annotations.ThreadSafe;
 
 /**
  * Object representing a Shibboleth Authentication Request message.
@@ -35,10 +33,7 @@ import net.jcip.annotations.ThreadSafe;
  * should be used by SAML 2 service providers wishing to initiate authentication.
  */
 @ThreadSafe
-public class IdpInitatedSsoRequest implements Serializable {
-
-    /** Serial version UID. */
-    private static final long serialVersionUID = 1282333199225082502L;
+public class IdpInitatedSsoRequest {
 
     /** The entity ID of the requesting service provider. */
     private final String entityId;
@@ -50,7 +45,7 @@ public class IdpInitatedSsoRequest implements Serializable {
     private final String acsUrl;
 
     /** An opaque value to be returned to the service provider with the authentication response. */
-    private final String target;
+    private final String relayState;
 
     /** The current time, at the service provider, in milliseconds since the epoch. */
     private final long time;
@@ -72,18 +67,18 @@ public class IdpInitatedSsoRequest implements Serializable {
 
         acsUrl = StringSupport.trimOrNull(newAcsUrl);
 
-        target = StringSupport.trimOrNull(newTarget);
+        relayState = StringSupport.trimOrNull(newTarget);
 
         time = newTime;
         Assert.isGreaterThanOrEqual(0, time, "Time must be greater than or equal to 0");
     }
 
     /**
-     * Gets the entity ID of the requesting service provider.
+     * Gets the entity ID of the requesting relying party.
      * 
-     * @return entity ID of the requesting service provider, never null or empty
+     * @return entity ID of the requesting relying party, never null or empty
      */
-    public String getProviderId() {
+    public String getEntityId() {
         return entityId;
     }
 
@@ -94,7 +89,7 @@ public class IdpInitatedSsoRequest implements Serializable {
      * @return assertion consumer service endpoint, at the service provider, to which to deliver the authentication
      *         response, may be null, never empty
      */
-    public String getShire() {
+    public String getAcsUrl() {
         return acsUrl;
     }
 
@@ -104,8 +99,8 @@ public class IdpInitatedSsoRequest implements Serializable {
      * @return opaque value to be returned to the service provider with the authentication response, may be null, never
      *         empty
      */
-    public String getTarget() {
-        return target;
+    public String getRelayState() {
+        return relayState;
     }
 
     /**
@@ -120,12 +115,13 @@ public class IdpInitatedSsoRequest implements Serializable {
     /** {@inheritDoc} */
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ShibbolethAuthnRequest [entityId=");
+        builder.append(IdpInitatedSsoRequest.class.getName());
+        builder.append(" [entityId=");
         builder.append(entityId);
         builder.append(", acsUrl=");
         builder.append(acsUrl);
-        builder.append(", target=");
-        builder.append(target);
+        builder.append(", relayState=");
+        builder.append(relayState);
         builder.append(", time=");
         builder.append(time);
         builder.append("]");
@@ -145,8 +141,8 @@ public class IdpInitatedSsoRequest implements Serializable {
             result = prime * result + 0;
         }
 
-        if (target != null) {
-            result = prime * result + target.hashCode();
+        if (relayState != null) {
+            result = prime * result + relayState.hashCode();
         } else {
             result = prime * result + 0;
         }
@@ -172,6 +168,6 @@ public class IdpInitatedSsoRequest implements Serializable {
 
         IdpInitatedSsoRequest other = (IdpInitatedSsoRequest) obj;
         return ObjectSupport.equals(entityId, other.entityId) && ObjectSupport.equals(acsUrl, other.acsUrl)
-                && ObjectSupport.equals(target, other.target) && time == other.time;
+                && ObjectSupport.equals(relayState, other.relayState) && time == other.time;
     }
 }
