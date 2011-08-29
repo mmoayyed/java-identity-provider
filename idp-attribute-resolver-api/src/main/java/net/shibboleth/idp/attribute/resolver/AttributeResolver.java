@@ -292,9 +292,8 @@ public class AttributeResolver extends AbstractIdentifiedInitializableComponent 
             resolvedAttribute = definition.resolve(resolutionContext);
         } catch (AttributeResolutionException e) {
             if (definition.isPropagateResolutionExceptions()) {
-                log.debug(
-                        "Attribute Resolver {}: attribute definition {} produced the following error but was configured not to propogate it.",
-                        new Object[] {getId(), attributeId, e,});
+                log.debug("Attribute Resolver {}: attribute definition {} produced the following"
+                        + " error but was configured not to propogate it.", new Object[] {getId(), attributeId, e,});
             } else {
                 throw e;
             }
@@ -348,9 +347,9 @@ public class AttributeResolver extends AbstractIdentifiedInitializableComponent 
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
             } else {
                 if (connector.isPropagateResolutionExceptions()) {
-                    log.debug(
-                            "Attribute Resolver {}: data connector {} produced the following error but was configured not to propogate it.",
-                            new Object[] {getId(), connectorId, e});
+                    log.debug("Attribute Resolver {}: data connector {} produced the"
+                            + " following error but was configured not to propogate it.", new Object[] {getId(),
+                            connectorId, e,});
                 } else {
                     throw e;
                 }
@@ -422,9 +421,8 @@ public class AttributeResolver extends AbstractIdentifiedInitializableComponent 
 
             // remove dependency-only attributes
             if (definition.isDependencyOnly()) {
-                log.debug(
-                        "Attribute Resolver {}: removing result of attribute definition {}, it's marked as depdency only",
-                        getId(), definition.getId());
+                log.debug("Attribute Resolver {}: removing result of attribute definition {},"
+                        + " it's marked as depdency only", getId(), definition.getId());
                 continue;
             }
 
@@ -433,9 +431,8 @@ public class AttributeResolver extends AbstractIdentifiedInitializableComponent 
 
             // remove value-less attributes
             if (resolvedAttribute.getValues().size() == 0) {
-                log.debug(
-                        "Attribute Resolver {}: removing result of attribute definition {}, it's attribute contains no values",
-                        getId(), definition.getId());
+                log.debug("Attribute Resolver {}: removing result of attribute definition {},"
+                        + " it's attribute contains no values", getId(), definition.getId());
                 continue;
             }
 
@@ -482,14 +479,14 @@ public class AttributeResolver extends AbstractIdentifiedInitializableComponent 
         } catch (ComponentValidationException e) {
             if (connector.getFailoverDataConnectorId() != null) {
                 if (invalidDataConnectors.contains(connector.getFailoverDataConnectorId())) {
-                    log.warn(
-                            "Attribute resolver {}: data connector {} is not valid for the following reason and failover data connector {} has already been found to be inavlid",
-                            new Object[] {getId(), connector.getId(), connector.getFailoverDataConnectorId(), e,});
+                    log.warn("Attribute resolver {}: data connector {} is not valid for the following reason"
+                            + " and failover data connector {} has already been found to be inavlid", new Object[] {
+                            getId(), connector.getId(), connector.getFailoverDataConnectorId(), e,});
                     invalidDataConnectors.add(connector.getId());
                     return false;
                 } else {
-                    log.warn(
-                            "Attribute resolver {}: data connector {} is not valid for the following reason, checking if failover data connector {} is valid",
+                    log.warn("Attribute resolver {}: data connector {} is not valid for the following reason,"
+                            + " checking if failover data connector {} is valid",
                             new Object[] {getId(), connector.getId(), connector.getFailoverDataConnectorId(), e,});
                     return validateDataConnector(dataConnectors.get(connector.getFailoverDataConnectorId()),
                             invalidDataConnectors);
@@ -516,7 +513,7 @@ public class AttributeResolver extends AbstractIdentifiedInitializableComponent 
         }
 
         for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("Attribute resolver {}: checking if attribute definition {} ihase a circular depdency", getId(),
+            log.debug("Attribute resolver {}: checking if attribute definition {} has a circular depdency", getId(),
                     plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
