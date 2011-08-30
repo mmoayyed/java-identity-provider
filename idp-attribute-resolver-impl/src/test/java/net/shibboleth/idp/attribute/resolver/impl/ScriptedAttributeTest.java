@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.collections.LazySet;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
@@ -224,12 +223,4 @@ public class ScriptedAttributeTest {
         Assert.assertTrue(values.contains(context), "looking for context");
     }
 
-    /** trivial context container to test the get something from a container. */
-    class TestContextContainer extends AbstractSubcontextContainer {
-        /** constructor. */
-        public TestContextContainer() {
-            super();
-            setAutoCreateSubcontexts(false);
-        }
-    }
 }

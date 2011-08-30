@@ -60,6 +60,15 @@ public final class TestSources {
     /** Regexp result. for CONNECTOR_ATTRIBUTE_VALUE (for regexp testing). */
     protected static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = "Connect";
     
+    /** Principal name for Principal method tests */
+    protected static final String TEST_PRINCIPAL = "PrincipalName";
+
+    /** Relying party name for Principal method tests */
+    protected static final String TEST_RELYING_PARTY = "RP1";
+
+    /** Authenitcation method for Principal method tests */
+    protected static final String TEST_AUTHN_METHOD = "AuthNmEthod";
+
 
     /** Constructor. */
     private TestSources() {
