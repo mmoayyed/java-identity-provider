@@ -17,13 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.util.Collections;
+
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.session.AuthenticationEvent;
 
 import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.CollectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,16 +43,20 @@ public class PrincipalNameAttributeDefinition extends AbstractPrincipalAttribute
     protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
-        final String principalName =
-                StringSupport.trimOrNull(getAuthenticationEvent(resolutionContext).getPrincipal().getName());
+        final AuthenticationEvent event = getAuthenticationEvent(resolutionContext);
+
+        if (null == event) {
+            return null;
+        }
+        final String principalName = StringSupport.trimOrNull(event.getPrincipal().getName());
 
         if (null == principalName) {
-            log.debug("Principal Attribute Definition " + getId() + ": principal name was emtpy");
+            log.debug("Attribute Definition {}: principal name was emtpy", getId());
             return null;
         }
 
         final Attribute<String> result = new Attribute<String>(getId());
-        result.setValues(CollectionSupport.toList(principalName));
+        result.setValues(Collections.singleton(principalName));
         return result;
     }
 }

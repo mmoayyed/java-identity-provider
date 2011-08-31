@@ -17,13 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.util.Collections;
+
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.session.AuthenticationEvent;
 
 import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.CollectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,16 +43,21 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractPr
     protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
-        final String authMethod =
-                StringSupport.trimOrNull(getAuthenticationEvent(resolutionContext).getAuthenticationWorkflow());
+        final AuthenticationEvent event = getAuthenticationEvent(resolutionContext);
+
+        if (null == event) {
+            return null;
+        }
+
+        final String authMethod = StringSupport.trimOrNull(event.getAuthenticationWorkflow());
 
         if (null == authMethod) {
-            log.debug("Principal Authentication Method Attribute Definition " + getId() + ": method was empty");
+            log.debug("Attribute Definition {}: method was empty", getId());
             return null;
         }
 
         final Attribute<String> result = new Attribute<String>(getId());
-        result.setValues(CollectionSupport.toList(authMethod));
+        result.setValues(Collections.singleton(authMethod));
         return result;
     }
 
