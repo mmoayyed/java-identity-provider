@@ -23,7 +23,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** Checks that the given message has not be replayed. */
-public class CheckMessageReplay extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
 
     /** Cache used to store message issuer/id pairs and check to see if a message is being replayed. */
     private ReplayCache replayCache;
@@ -53,10 +53,51 @@ public class CheckMessageReplay extends AbstractInboundMessageSubcontextAction<B
         }
 
         if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
-            return ActionSupport.buildErrorEvent(this, null, "Message ID " + messageSubcontext.getMessageId()
-                    + " from issuer " + messageSubcontext.getMessageIssuer() + " is a replayed message");
+            return ActionSupport.buildErrorEvent(this, new ReplayedMessageException(), "Message ID "
+                    + messageSubcontext.getMessageId() + " from issuer " + messageSubcontext.getMessageIssuer()
+                    + " is a replayed message");
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+    }
+    
+    /** Profile processing error that occurred because the given request was detected as a replay. */
+    public static class ReplayedMessageException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = -7832608050308498183L;
+
+        /** Constructor. */
+        public ReplayedMessageException() {
+            super();
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public ReplayedMessageException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public ReplayedMessageException(Exception wrappedException) {
+            super(wrappedException);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public ReplayedMessageException(String message, Exception wrappedException) {
+            super(message, wrappedException);
+        }
     }
 }

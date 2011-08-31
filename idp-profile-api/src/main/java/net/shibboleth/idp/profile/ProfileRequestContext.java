@@ -31,7 +31,7 @@ import org.opensaml.messaging.context.BasicInOutOperationContext;
  * @param <OutboundMessageType> type of out-bound message
  */
 @ThreadSafe
-public class ProfileRequestContext<InboundMessageType, OutboundMessageType> extends
+public final class ProfileRequestContext<InboundMessageType, OutboundMessageType> extends
         BasicInOutOperationContext<InboundMessageType, OutboundMessageType> {
 
     /** ID under which this context is stored, for example, within maps or sessions. */

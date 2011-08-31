@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** Checks that the incoming message has an issuer. */
-public class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckMandatoryIssuer() {
@@ -39,10 +39,50 @@ public class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction
             BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
-            return ActionSupport.buildErrorEvent(this, null,
+            return ActionSupport.buildErrorEvent(this, new NoMessageIssuerException(),
                     "Basic message metadata subcontext does not a message issuer");
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+    }
+
+    /** A profile processing exception that occurs when the inbound message has no identified message issuer. */
+    public static class NoMessageIssuerException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = 8451917927885322986L;
+
+        /** Constructor. */
+        public NoMessageIssuerException() {
+            super();
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public NoMessageIssuerException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public NoMessageIssuerException(Exception wrappedException) {
+            super(wrappedException);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public NoMessageIssuerException(String message, Exception wrappedException) {
+            super(message, wrappedException);
+        }
     }
 }

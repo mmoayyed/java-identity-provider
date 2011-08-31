@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** An action that checks that the inbound message should be considered valid based upon when it was issued. */
-public class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+public final class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
 
     /** Allowed clock skew, in milliseconds. */
     private long clockskew;
@@ -53,15 +53,101 @@ public class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction
         long currentTime = System.currentTimeMillis();
 
         if (issueInstant < currentTime - clockskew) {
-            return ActionSupport.buildErrorEvent(this, null, "Message " + messageSubcontext.getMessageId()
-                    + " was expired");
+            return ActionSupport.buildErrorEvent(this, new PastMessageException(),
+                    "Message " + messageSubcontext.getMessageId() + " was expired");
         }
 
         if (issueInstant > currentTime + messageLifetime + clockskew) {
-            return ActionSupport.buildErrorEvent(this, null, "Message " + messageSubcontext.getMessageId()
-                    + " is not yet valid");
+            return ActionSupport.buildErrorEvent(this, new FutureMessageException(),
+                    "Message " + messageSubcontext.getMessageId() + " is not yet valid");
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+    }
+
+    /**
+     * A profile processing exception that occurs when the inbound message was issued from a point in time to far in the
+     * future.
+     */
+    public static class FutureMessageException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = 342762836397375458L;
+
+        /** Constructor. */
+        public FutureMessageException() {
+            super();
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public FutureMessageException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public FutureMessageException(Exception wrappedException) {
+            super(wrappedException);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public FutureMessageException(String message, Exception wrappedException) {
+            super(message, wrappedException);
+        }
+    }
+
+    /**
+     * A profile processing exception that occurs when the inbound message was issued from a point in time to far in the
+     * past.
+     */
+    public static class PastMessageException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = -4635709969472487859L;
+
+        /** Constructor. */
+        public PastMessageException() {
+            super();
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public PastMessageException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public PastMessageException(Exception wrappedException) {
+            super(wrappedException);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public PastMessageException(String message, Exception wrappedException) {
+            super(message, wrappedException);
+        }
     }
 }

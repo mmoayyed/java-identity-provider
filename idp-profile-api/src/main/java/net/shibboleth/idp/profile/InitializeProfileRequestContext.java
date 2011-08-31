@@ -27,10 +27,10 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link ProfileRequestContext#BINDING_KEY} key.
  */
 @ThreadSafe
-public class InitializeProfileRequestContext extends AbstractIdentityProviderAction {
+public final class InitializeProfileRequestContext extends AbstractIdentityProviderAction {
 
     /** Constructor. The ID of this component is set to the name of this class. */
-    public InitializeProfileRequestContext(){
+    public InitializeProfileRequestContext() {
         setId(InitializeProfileRequestContext.class.getName());
     }
 
