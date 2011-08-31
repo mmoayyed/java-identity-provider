@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.impl;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

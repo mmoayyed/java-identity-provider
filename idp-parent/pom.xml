@@ -33,6 +33,7 @@
         <module>../idp-tou-api</module>
         <module>../idp-tou-impl</module>
         <module>../idp-profile-api</module>
+        <module>../idp-profile-impl</module>
         <module>../idp-saml-api</module>
         <module>../idp-saml-impl</module>
     </modules>

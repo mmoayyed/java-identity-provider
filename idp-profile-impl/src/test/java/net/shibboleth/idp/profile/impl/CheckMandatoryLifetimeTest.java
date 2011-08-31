@@ -15,22 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.impl;
 
-import org.springframework.webflow.test.MockRequestContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import net.shibboleth.idp.profile.impl.CheckMessageLifetime;
 
-/** Unit test for {@link InitializeProfileRequestContext}. */
-public class InitializeProfileRequestContextTest {
+/** Unit test for {@link CheckMessageLifetime}. */
+public class CheckMandatoryLifetimeTest {
 
-    @Test
-    public void testExecute() {
-        MockRequestContext springContext = new MockRequestContext();
-
-        InitializeProfileRequestContext action = new InitializeProfileRequestContext();
-        action.execute(springContext);
-
-        Assert.assertNotNull(springContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY));
-    }
 }

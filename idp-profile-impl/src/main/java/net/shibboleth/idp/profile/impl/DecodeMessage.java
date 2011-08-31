@@ -15,9 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.impl;
 
 import javax.servlet.http.HttpServletRequest;
+
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;

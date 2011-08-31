@@ -15,9 +15,20 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.saml.impl.profile;
 
-/** Unit test for {@link CheckMessageReplay}. */
-public class CheckMessageReplayTest {
+import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.opensaml.messaging.context.MessageContext;
+
+/**
+ * Implementation of {@link AbstractAddSamlMetadataToMessageContext} that operates on the
+ * {@link ProfileRequestContext#getOutboundMessageContext()}.
+ */
+public final class AddSamlMetadataToOutboundMessageContext extends AbstractAddSamlMetadataToMessageContext {
+
+    /** {@inheritDoc} */
+    protected MessageContext getMessageContext(ProfileRequestContext profileRequestContext) {
+        return profileRequestContext.getOutboundMessageContext();
+    }
 }

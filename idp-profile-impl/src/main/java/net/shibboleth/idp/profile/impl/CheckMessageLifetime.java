@@ -15,7 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.impl;
+
+import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
+import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.springframework.webflow.execution.Event;

@@ -15,18 +15,27 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.impl;
+
+import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
+import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.util.storage.ReplayCache;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/** Checks that the incoming message has an issuer. */
-public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+/** Checks that the given message has not be replayed. */
+public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+
+    /** Cache used to store message issuer/id pairs and check to see if a message is being replayed. */
+    private ReplayCache replayCache;
 
     /** Constructor. The ID of this component is set to the name of this class. */
-    public CheckMandatoryIssuer() {
-        setId(CheckMandatoryIssuer.class.getName());
+    public CheckMessageReplay() {
+        setId(CheckMessageReplay.class.getName());
     }
 
     /** {@inheritDoc} */
@@ -39,21 +48,32 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
             BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
-            return ActionSupport.buildErrorEvent(this, new NoMessageIssuerException(),
-                    "Basic message metadata subcontext does not a message issuer");
+            return ActionSupport.buildErrorEvent(this, null,
+                    "Basic message metadata subcontext does not contain a message issuer");
+        }
+
+        if (messageSubcontext.getMessageId() == null) {
+            return ActionSupport.buildErrorEvent(this, null,
+                    "Basic message metadata subcontext does not contain a message ID");
+        }
+
+        if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
+            return ActionSupport.buildErrorEvent(this, new ReplayedMessageException(), "Message ID "
+                    + messageSubcontext.getMessageId() + " from issuer " + messageSubcontext.getMessageIssuer()
+                    + " is a replayed message");
         }
 
         return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
     }
-
-    /** A profile processing exception that occurs when the inbound message has no identified message issuer. */
-    public static class NoMessageIssuerException extends ProfileException {
+    
+    /** Profile processing error that occurred because the given request was detected as a replay. */
+    public static class ReplayedMessageException extends ProfileException {
 
         /** Serial version UID. */
-        private static final long serialVersionUID = 8451917927885322986L;
+        private static final long serialVersionUID = -7832608050308498183L;
 
         /** Constructor. */
-        public NoMessageIssuerException() {
+        public ReplayedMessageException() {
             super();
         }
 
@@ -62,7 +82,7 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
          * 
          * @param message exception message
          */
-        public NoMessageIssuerException(String message) {
+        public ReplayedMessageException(String message) {
             super(message);
         }
 
@@ -71,7 +91,7 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
          * 
          * @param wrappedException exception to be wrapped by this one
          */
-        public NoMessageIssuerException(Exception wrappedException) {
+        public ReplayedMessageException(Exception wrappedException) {
             super(wrappedException);
         }
 
@@ -81,7 +101,7 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
          * @param message exception message
          * @param wrappedException exception to be wrapped by this one
          */
-        public NoMessageIssuerException(String message, Exception wrappedException) {
+        public ReplayedMessageException(String message, Exception wrappedException) {
             super(message, wrappedException);
         }
     }

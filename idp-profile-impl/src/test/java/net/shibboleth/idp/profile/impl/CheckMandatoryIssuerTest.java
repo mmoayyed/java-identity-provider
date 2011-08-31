@@ -15,7 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile;
+package net.shibboleth.idp.profile.impl;
+
+import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.impl.CheckMandatoryIssuer;
 
 import org.opensaml.messaging.context.BasicMessageContext;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
