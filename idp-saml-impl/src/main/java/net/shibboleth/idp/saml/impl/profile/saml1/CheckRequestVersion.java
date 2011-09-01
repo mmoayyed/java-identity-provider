@@ -43,7 +43,7 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
         RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
         if (ObjectSupport.equals(SAMLVersion.VERSION_10, request.getVersion())
                 || ObjectSupport.equals(SAMLVersion.VERSION_11, request.getVersion())) {
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         // TODO Error

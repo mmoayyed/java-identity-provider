@@ -54,13 +54,13 @@ public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderA
         final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
         if (outMsgCtx == null) {
             log.debug("Action {}: no outbound message context available, no NotBefore condition added", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final Response response = outMsgCtx.getMessage();
         if (response == null) {
             log.debug("Action {}: no outbound message available,no NotBefore condition added", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final SAMLObjectBuilder<Conditions> conditionsBuilder =
@@ -69,7 +69,7 @@ public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderA
         final List<Assertion> assertions = response.getAssertions();
         if (assertions == null || assertions.isEmpty()) {
             log.debug("Action {}: no assertions present in response, nothing to add NotBefore conditions to", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         Conditions conditions;
@@ -85,6 +85,6 @@ public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderA
         }
 
         log.debug("Action {}: added NotBefore condition to all assertions in response {}", getId(), response.getID());
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 }

@@ -64,13 +64,13 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
         final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
         if (outMsgCtx == null) {
             log.debug("Action {}: no outbound message context available, no DoNotCache condition added", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final Response response = outMsgCtx.getMessage();
         if (response == null) {
             log.debug("Action {}: no outbound message available, no DoNotCache condition added", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final List<Assertion> assertions = response.getAssertions();
@@ -79,7 +79,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
         if (assertions.isEmpty()) {
             assertion = buildAssertion(profileRequestContext, outMsgCtx, response);
             if (assertion == null) {
-                return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+                return ActionSupport.buildProceedEvent(this);
             }
         } else {
             assertion = assertions.get(0);
@@ -87,13 +87,13 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
 
         final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext);
         if (statement == null) {
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         assertion.getAuthenticationStatements().add(statement);
         log.debug("Action {}: add authentication statement to assertion {} in response {}", new Object[] {getId(),
                 assertion.getID(), response.getID(),});
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 
     /**

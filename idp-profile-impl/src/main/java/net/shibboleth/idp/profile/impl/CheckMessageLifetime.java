@@ -67,7 +67,7 @@ public final class CheckMessageLifetime extends AbstractInboundMessageSubcontext
                     "Message " + messageSubcontext.getMessageId() + " is not yet valid");
         }
 
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 
     /**

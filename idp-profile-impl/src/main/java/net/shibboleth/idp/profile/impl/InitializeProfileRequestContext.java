@@ -40,6 +40,6 @@ public final class InitializeProfileRequestContext extends AbstractIdentityProvi
     /** {@inheritDoc} */
     public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext) {
         springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, new ProfileRequestContext());
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 }

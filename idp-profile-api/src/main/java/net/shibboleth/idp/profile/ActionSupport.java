@@ -35,15 +35,9 @@ public final class ActionSupport {
 
     /**
      * ID of an Event indicating that the action completed successfully and processing should move on to the next
-     * action.
+     * step.
      */
     public static final String PROCEED_EVENT_ID = "proceed";
-
-    /**
-     * ID of an Event indicating that the action completed successfully and that the profile request processing is
-     * complete and a successful message should be sent back to the requester.
-     */
-    public static final String SUCCESS_EVENT_ID = "success";
 
     /**
      * ID of an Event indicating that the action encountered an error and that the profile request processing is
@@ -102,6 +96,17 @@ public final class ActionSupport {
         }
 
         return (HttpServletResponse) externalContext.getNativeResponse();
+    }
+    
+    /**
+     * Builds a {@link #PROCEED_EVENT_ID} event with no related attributes.
+     * 
+     * @param source the source of the event
+     * 
+     * @return the proceed event
+     */
+    public static Event buildProceedEvent(IdentifiedComponent source){
+        return buildEvent(source, PROCEED_EVENT_ID, null);
     }
 
     /**

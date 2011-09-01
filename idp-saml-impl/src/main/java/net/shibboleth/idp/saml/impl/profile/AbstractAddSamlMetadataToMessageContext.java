@@ -51,7 +51,7 @@ public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractId
         MessageContext messageCtx = getMessageContext(profileRequestContext);
         if (messageCtx == null) {
             log.debug("Action {}: appropriate message context not available, skipping this action.", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         BasicMessageMetadataSubcontext msgMetadataCtx =
@@ -59,7 +59,7 @@ public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractId
         if (msgMetadataCtx == null) {
             log.debug("Action {}: message context did not contain basic message metadata, skipping this action.",
                     getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
         EntityIdCriterion entiryIdCriterion = new EntityIdCriterion(msgMetadataCtx.getMessageIssuer());
 
@@ -85,7 +85,7 @@ public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractId
 
             log.debug("Action {}: populated {} added to MessageContext.", getId(),
                     SamlMetadataSubcontext.class.getName());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         } catch (ResolverException e) {
             // TODO should this error out the request or continue on?
             return null;

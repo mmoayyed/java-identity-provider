@@ -48,25 +48,25 @@ public class AddInResponseToToResponse extends AbstractIdentityProviderAction<Ob
         final String inMsgId = getInboundMessageId(profileRequestContext);
         if (inMsgId == null) {
             log.debug("Action {}: inbound message did not have an ID, no InResponse to added to response", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
         if (outMsgCtx == null) {
             log.debug("Action {}: no outbound message context available, no InResponse to added to response", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final Response response = outMsgCtx.getMessage();
         if (response == null) {
             log.debug("Action {}: no outbound message available, no InResponse to added to response", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         log.debug("Action {}: add in response to message ID {} to response {}", new Object[] {getId(), inMsgId,
                 response.getID(),});
         response.setInResponseTo(inMsgId);
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 
     /**

@@ -48,7 +48,7 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
                     "Basic message metadata subcontext does not a message issuer");
         }
 
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 
     /** A profile processing exception that occurs when the inbound message has no identified message issuer. */

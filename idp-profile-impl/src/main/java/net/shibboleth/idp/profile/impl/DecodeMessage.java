@@ -102,7 +102,7 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
 
             decoder.destroy();
 
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         } catch (MessageDecodingException e) {
             log.error("DecodeMessage {}: was unable to decode the incoming request", getId(), e);
             return ActionSupport.buildErrorEvent(this, e, "Unable to decode incoming message");

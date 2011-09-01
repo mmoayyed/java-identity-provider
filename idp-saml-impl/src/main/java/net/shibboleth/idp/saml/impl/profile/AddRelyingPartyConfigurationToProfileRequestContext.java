@@ -77,7 +77,7 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
                     getId());
             new RelyingPartyConfigurationSubcontext(profileRequestContext,
                     rpConfigResolver.getAnonymousRelyingPartyConfiguration());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         try {
@@ -88,7 +88,7 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
             }
 
             new RelyingPartyConfigurationSubcontext(profileRequestContext, config);
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         } catch (ResolverException e) {
             log.error("Action {}: error trying to resolve relying party configuration", getId(), e);
             return ActionSupport.buildErrorEvent(this, new NoRelyingPartyConfigurationException(e),

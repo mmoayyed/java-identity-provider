@@ -63,7 +63,7 @@ public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAc
                     + " is a replayed message");
         }
 
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
     
     /** Profile processing error that occurred because the given request was detected as a replay. */

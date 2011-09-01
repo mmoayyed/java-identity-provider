@@ -53,6 +53,6 @@ public class ResolveAttributes extends AbstractIdentityProviderAction {
             return ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, null);
         }
 
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 }

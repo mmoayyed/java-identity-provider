@@ -53,13 +53,13 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
         final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
         if (outMsgCtx == null) {
             log.debug("Action {}: no outbound message context available, no DoNotCache condition added", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final Response response = outMsgCtx.getMessage();
         if (response == null) {
             log.debug("Action {}: no outbound message available, no DoNotCache condition added", getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         final SAMLObjectBuilder<Conditions> conditionsBuilder =
@@ -72,7 +72,7 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
         if (assertions == null || assertions.isEmpty()) {
             log.debug("Action {}: no assertions present in response, nothing to add DoNotCache conditions to",
                     getId());
-            return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+            return ActionSupport.buildProceedEvent(this);
         }
 
         Conditions conditions;
@@ -95,6 +95,6 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
         }
 
         log.debug("Action {}: added DoNotCache condition to all assertions in response {}", getId(), response.getID());
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 }

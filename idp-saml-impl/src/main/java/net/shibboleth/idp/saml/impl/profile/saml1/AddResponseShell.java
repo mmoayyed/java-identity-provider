@@ -59,6 +59,6 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
 
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        return ActionSupport.buildEvent(this, ActionSupport.PROCEED_EVENT_ID, null);
+        return ActionSupport.buildProceedEvent(this);
     }
 }
