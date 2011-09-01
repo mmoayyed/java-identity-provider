@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
     
     <action-state id="InitializeProfileRequestContext">
-       <transition on="proceed" to="DecodeMessage" />
+       <transition on="proceed" to="DecodeIdpInitiatedSsoMessage" />
     </action-state>
     
     <action-state id="DecodeIdpInitiatedSsoMessage">
@@ -12,7 +12,7 @@
     </action-state>
     
     <action-state id="CheckRequestVersion">
-        <transition on="proceed" to="CheckMessageLifetime"/>
+        <transition on="proceed" to="CheckMandatoryIssuer"/>
         <transition on="error" to="GenerateErrorResponse" />
     </action-state>
     
