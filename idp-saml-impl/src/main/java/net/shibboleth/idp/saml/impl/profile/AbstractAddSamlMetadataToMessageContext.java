@@ -61,7 +61,7 @@ public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractId
                     getId());
             return ActionSupport.buildProceedEvent(this);
         }
-        EntityIdCriterion entiryIdCriterion = new EntityIdCriterion(msgMetadataCtx.getMessageIssuer());
+        EntityIdCriterion entityIdCriterion = new EntityIdCriterion(msgMetadataCtx.getMessageIssuer());
 
         SamlProtocolSubcontext protocolCtx = messageCtx.getSubcontext(SamlProtocolSubcontext.class, false);
         ProtocolCriterion protocolCriterion = null;
@@ -75,7 +75,7 @@ public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractId
             }
         }
 
-        CriteriaSet criteria = new CriteriaSet(entiryIdCriterion, protocolCriterion, roleCriterion);
+        CriteriaSet criteria = new CriteriaSet(entityIdCriterion, protocolCriterion, roleCriterion);
         try {
             EntityDescriptor entityMetadata = metadataResolver.resolveSingle(criteria);
 
