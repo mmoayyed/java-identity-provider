@@ -27,7 +27,6 @@ import javax.script.SimpleScriptContext;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.ComponentInitializationException;
@@ -79,7 +78,7 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
     /**
      * Initialize. Check parameters and try to compile the script {@inheritDoc}
      */
-    public synchronized void initialize() throws ComponentInitializationException {
+    public final synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
             throw new ComponentInitializationException("ScriptedCriterion: initialized multiple times.");
         }

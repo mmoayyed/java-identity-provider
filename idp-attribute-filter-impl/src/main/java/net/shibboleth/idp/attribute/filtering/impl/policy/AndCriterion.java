@@ -74,7 +74,7 @@ public class AndCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilt
     }
 
     /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
-    public synchronized void initialize() throws ComponentInitializationException {
+    public final synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
             throw new ComponentInitializationException("And Criterion being initialized multiple times");
         }

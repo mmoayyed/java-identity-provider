@@ -59,7 +59,7 @@ InitializableComponent, DestructableComponent, ValidatableComponent, Unmodifiabl
     }
 
     /** Mark the object as initialized having the child. {@inheritDoc}. */
-    public synchronized void initialize() throws ComponentInitializationException {
+    public final synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
             throw new ComponentInitializationException("Not Criterion being initialized multiple times");
         }
