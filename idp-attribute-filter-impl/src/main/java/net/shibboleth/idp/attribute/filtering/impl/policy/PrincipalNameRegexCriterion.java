@@ -26,14 +26,13 @@ import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 
 /**
- * Implement the AttributePrincipalNameStringPolicy activation criterion.
+ * Implement the AttributePrincipalNameRegexPolicy activation criterion.
  * 
- * If the supplied attribute name has any value which matches the provided string (according to the provided case
- * sensitivity criterion) then we return true.
+ * If the (sole) Principal matches the provided regex then we return true.
  */
 @ThreadSafe
-public class AttributePrincipalNameCriterion extends BaseStringCompare implements
-        EvaluableCriterion<AttributeFilterContext> {
+public class PrincipalNameRegexCriterion extends BaseRegexCompare implements 
+       EvaluableCriterion<AttributeFilterContext> {
 
     /**
      * {@inheritDoc}

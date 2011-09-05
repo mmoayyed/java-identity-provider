@@ -24,8 +24,8 @@ import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** tests for the {@link PrincipalNameStringCriterion}. */
-public class TestPrincipalNameString {
+/** tests for the {@link AttributeValueStringCriterion}. */
+public class TestPrincipalNameRegex {
 
     /**
      * Test principal name matching. Parameterization is tested in other tests.
@@ -37,36 +37,17 @@ public class TestPrincipalNameString {
     public void principalNameCriterionTest() throws EvaluationException, ComponentInitializationException {
 
         AttributeFilterContext filterContext = new AttributeFilterContext(new TestContextContainer());
-        PrincipalNameStringCriterion filter = new PrincipalNameStringCriterion();
-        filter.setMatchString("noMatch");
-        filter.setCaseSensitive(false);
+        PrincipalNameRegexCriterion filter = new PrincipalNameRegexCriterion();
+        String pattern = TestContextContainer.PRINCIPAL_NAME.substring(2);
+        filter.setRegularExpression(pattern);
         filter.initialize();
-        Assert.assertFalse(filter.evaluate(filterContext), "match against \"noMatch\"");
+        Assert.assertFalse(filter.evaluate(filterContext), "match against \"" + pattern + "\"");
 
         filterContext = new AttributeFilterContext(new TestContextContainer());
-        filter = new PrincipalNameStringCriterion();
-        filter.setMatchString(TestContextContainer.PRINCIPAL_NAME.toLowerCase());
-        filter.setCaseSensitive(false);
+        filter = new PrincipalNameRegexCriterion();
+        pattern = TestContextContainer.PRINCIPAL_NAME.substring(0, 3) + ".*";
+        filter.setRegularExpression(pattern);
         filter.initialize();
-        Assert.assertTrue(filter.evaluate(filterContext), "case insentitive match against "
-                + TestContextContainer.PRINCIPAL_NAME.toLowerCase());
-
-        filterContext = new AttributeFilterContext(new TestContextContainer());
-        filter = new PrincipalNameStringCriterion();
-        filter.setMatchString(TestContextContainer.PRINCIPAL_NAME.toLowerCase());
-        filter.setCaseSensitive(true);
-        filter.initialize();
-        Assert.assertFalse(filter.evaluate(filterContext), "case sentitive match against "
-                + TestContextContainer.PRINCIPAL_NAME.toLowerCase());
-
-        filterContext = new AttributeFilterContext(new TestContextContainer());
-        filter = new PrincipalNameStringCriterion();
-        filter.setMatchString(TestContextContainer.PRINCIPAL_NAME);
-        filter.setCaseSensitive(true);
-        filter.initialize();
-        Assert.assertTrue(filter.evaluate(filterContext), "case sentitive match against "
-                + TestContextContainer.PRINCIPAL_NAME);
-
+        Assert.assertTrue(filter.evaluate(filterContext), "match against \"" + pattern + "\"");
     }
-
 }
