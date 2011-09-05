@@ -26,13 +26,14 @@ import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 
 /**
- * Implement the PrincipalNameRegexPolicy activation criterion.
+ * Implement the AuthenticationMethodStringPolicy activation criterion.
  * 
- * If the (sole) Principal matches the provided regex then we return true.
+ * If the type of the (sole) authentication event matches the provided string (according to the provided case
+ * sensitivity criterion) then we return true.
  */
 @ThreadSafe
-public class PrincipalNameRegexCriterion extends BaseRegexCompare implements 
-       EvaluableCriterion<AttributeFilterContext> {
+public class AuthenticationMethodStringCriterion extends BaseStringCompare implements
+        EvaluableCriterion<AttributeFilterContext> {
 
     /**
      * {@inheritDoc}
@@ -45,8 +46,8 @@ public class PrincipalNameRegexCriterion extends BaseRegexCompare implements
                 ContextNavigationSupport.getAuthenticationEvent(filterContext,
                         ContextNavigationSupport.getIncomingIssuer(filterContext));
 
-        final String principal = event.getPrincipal().getName();
+        final String method = event.getAuthenticationWorkflow();
 
-        return isMatch(principal);
+        return isMatch(method);
     }
 }

@@ -24,11 +24,11 @@ import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** tests for the {@link PrincipalNameRegexCriterion}. */
-public class TestPrincipalNameRegex {
+/** tests for the {@link AuthenticationMethodStringCriterion}. */
+public class TestAuthenticationMethodString {
 
     /**
-     * Test principal name matching. Parameterization is tested in other tests.
+     * Test authentication method matching. Parameterization is tested in other tests.
      * 
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException never
@@ -37,17 +37,36 @@ public class TestPrincipalNameRegex {
     public void principalNameCriterionTest() throws EvaluationException, ComponentInitializationException {
 
         AttributeFilterContext filterContext = new AttributeFilterContext(new TestContextContainer());
-        PrincipalNameRegexCriterion filter = new PrincipalNameRegexCriterion();
-        String pattern = TestContextContainer.PRINCIPAL_NAME.substring(2);
-        filter.setRegularExpression(pattern);
+        AuthenticationMethodStringCriterion filter = new AuthenticationMethodStringCriterion();
+        String matcher = "noMatch";
+        filter.setMatchString(matcher);
+        filter.setCaseSensitive(false);
         filter.initialize();
-        Assert.assertFalse(filter.evaluate(filterContext), "match against \"" + pattern + "\"");
+        Assert.assertFalse(filter.evaluate(filterContext), "match against \"" + matcher + "\"");
 
         filterContext = new AttributeFilterContext(new TestContextContainer());
-        filter = new PrincipalNameRegexCriterion();
-        pattern = TestContextContainer.PRINCIPAL_NAME.substring(0, 3) + ".*";
-        filter.setRegularExpression(pattern);
+        filter = new AuthenticationMethodStringCriterion();
+        matcher = TestContextContainer.METHOD_NAME.toLowerCase();
+        filter.setMatchString(matcher);
+        filter.setCaseSensitive(false);
         filter.initialize();
-        Assert.assertTrue(filter.evaluate(filterContext), "match against \"" + pattern + "\"");
+        Assert.assertTrue(filter.evaluate(filterContext), "case insentitive match against " + matcher);
+
+        filterContext = new AttributeFilterContext(new TestContextContainer());
+        filter = new AuthenticationMethodStringCriterion();
+        filter.setMatchString(matcher);
+        filter.setCaseSensitive(true);
+        filter.initialize();
+        Assert.assertFalse(filter.evaluate(filterContext), "case sentitive match against " + matcher);
+
+        filterContext = new AttributeFilterContext(new TestContextContainer());
+        filter = new AuthenticationMethodStringCriterion();
+        matcher = TestContextContainer.METHOD_NAME;
+        filter.setMatchString(matcher);
+        filter.setCaseSensitive(true);
+        filter.initialize();
+        Assert.assertTrue(filter.evaluate(filterContext), "case sentitive match against " + matcher);
+
     }
+
 }

@@ -24,8 +24,8 @@ import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** tests for the {@link PrincipalNameRegexCriterion}. */
-public class TestPrincipalNameRegex {
+/** tests for the {@link AuthenticationMethodRegexCriterion}. */
+public class TestAuthenticationMethodRegex {
 
     /**
      * Test principal name matching. Parameterization is tested in other tests.
@@ -37,15 +37,15 @@ public class TestPrincipalNameRegex {
     public void principalNameCriterionTest() throws EvaluationException, ComponentInitializationException {
 
         AttributeFilterContext filterContext = new AttributeFilterContext(new TestContextContainer());
-        PrincipalNameRegexCriterion filter = new PrincipalNameRegexCriterion();
-        String pattern = TestContextContainer.PRINCIPAL_NAME.substring(2);
+        AuthenticationMethodRegexCriterion filter = new AuthenticationMethodRegexCriterion();
+        String pattern = TestContextContainer.METHOD_NAME.substring(2);
         filter.setRegularExpression(pattern);
         filter.initialize();
         Assert.assertFalse(filter.evaluate(filterContext), "match against \"" + pattern + "\"");
 
         filterContext = new AttributeFilterContext(new TestContextContainer());
-        filter = new PrincipalNameRegexCriterion();
-        pattern = TestContextContainer.PRINCIPAL_NAME.substring(0, 3) + ".*";
+        filter = new AuthenticationMethodRegexCriterion();
+        pattern = TestContextContainer.METHOD_NAME.substring(0, 3) + ".*";
         filter.setRegularExpression(pattern);
         filter.initialize();
         Assert.assertTrue(filter.evaluate(filterContext), "match against \"" + pattern + "\"");

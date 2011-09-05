@@ -64,8 +64,7 @@ public final class ContextNavigationSupport {
      * @return the relying party, never null or empty.
      * @throws EvaluationException if we get an error in traversal.
      */
-    public static String getIncomingIssuer(final AttributeFilterContext filterContext) 
-            throws EvaluationException {
+    public static String getIncomingIssuer(final AttributeFilterContext filterContext) throws EvaluationException {
         return getIssuer(filterContext, true);
     }
 
@@ -76,8 +75,7 @@ public final class ContextNavigationSupport {
      * @return the relying party, never null or empty.
      * @throws EvaluationException if we get an error in traversal.
      */
-    public static String getOutgoingIssuer(final AttributeFilterContext filterContext) 
-            throws EvaluationException {
+    public static String getOutgoingIssuer(final AttributeFilterContext filterContext) throws EvaluationException {
         return getIssuer(filterContext, false);
     }
 
@@ -89,7 +87,7 @@ public final class ContextNavigationSupport {
      * @return the relying party, never null or empty.
      * @throws EvaluationException if we get an error in traversal.
      */
-    public static String getIssuer(final AttributeFilterContext filterContext, final boolean useIncoming)
+    private static String getIssuer(final AttributeFilterContext filterContext, final boolean useIncoming)
             throws EvaluationException {
         final SubcontextContainer parent = filterContext.getOwner();
         if (!(parent instanceof InOutOperationContext)) {
@@ -129,8 +127,7 @@ public final class ContextNavigationSupport {
         }
         final String retVal = StringSupport.trimOrNull(messageMetadata.getMessageIssuer());
         if (null == retVal) {
-            LoggerFactory.getLogger(ContextNavigationSupport.class).error(
-                    "Attribute Filter:  entityId was empty.");
+            LoggerFactory.getLogger(ContextNavigationSupport.class).error("Attribute Filter:  entityId was empty.");
             throw new EvaluationException("Attribute Filter: entityId was empty.");
         }
         return retVal;
@@ -167,7 +164,7 @@ public final class ContextNavigationSupport {
             LoggerFactory.getLogger(ContextNavigationSupport.class).error(errMsg);
             throw new EvaluationException(errMsg);
         }
-        
+
         final AuthenticationEvent event = serviceSession.getAuthenticationEvent();
         if (null == event) {
             String errMsg = "Attribute Filter : No valid authentication even for " + relyingParty + ".";

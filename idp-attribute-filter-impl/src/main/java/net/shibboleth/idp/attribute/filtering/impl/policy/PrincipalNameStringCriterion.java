@@ -26,7 +26,7 @@ import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 
 /**
- * Implement the AttributePrincipalNameStringPolicy activation criterion.
+ * Implement the PrincipalNameStringPolicy activation criterion.
  * 
  * If the (sole) Principal matches the provided string (according to the provided case sensitivity criterion) then we
  * return true.
@@ -46,7 +46,7 @@ public class PrincipalNameStringCriterion extends BaseStringCompare implements
                 ContextNavigationSupport.getAuthenticationEvent(filterContext,
                         ContextNavigationSupport.getIncomingIssuer(filterContext));
 
-        String principal = event.getPrincipal().getName();
+        final String principal = event.getPrincipal().getName();
 
         return isMatch(principal);
     }
