@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * 
  * If the supplied attribute name has any value with a scope which matches the provided regex then we return true.
  */
-public class AttributeScopeRegexCriterion extends BaseRegexCompare implements
+public class AttributeScopeRegexCriterion extends BaseTargetedRegexCompare implements
         EvaluableCriterion<AttributeFilterContext> {
 
     /** Class logger. */

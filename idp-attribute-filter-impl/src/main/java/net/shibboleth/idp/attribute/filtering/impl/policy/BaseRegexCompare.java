@@ -32,10 +32,10 @@ import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 
 /**
- * The basis of all Regex-based Filter criteria.
+ * The basis of all Targetted Regex-based Filter criteria.
  * 
- * Just as for {@link BaseStringCompare} Principal, AttributeValue, AttributeScope regex criteria all extend this class.
- * This class's job is to just provide the match functor that they call and to police the constructor.
+ * Just as for {@link BaseStringCompare}, Principal, AttributeValue, AttributeScope regex criteria all extend this
+ * class. This class's job is to just provide the match functor that they call and to police the constructor.
  * 
  */
 @ThreadSafe
@@ -51,9 +51,6 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
     /** Initialization state. */
     private boolean initialized;
 
-    /** The name of the target attribute. */
-    private String attributeName;
-
     /**
      * Has initialize been called on this object. {@inheritDoc}.
      */
@@ -62,14 +59,21 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
     }
 
     /** Mark the object as initialized having checked parameters. {@inheritDoc}. */
-    public synchronized void initialize() throws ComponentInitializationException {
+    public final synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
             throw new ComponentInitializationException("Regexp comparison criterion being initialized multiple times");
         }
-        if (null == attributeName) {
-            throw new ComponentInitializationException(
-                    "Regexp comparison criterion being initialized without a valid attribute name being set");
-        }
+        doInitialize();
+        initialized = true;
+    }
+
+    /**
+     * Make any instantiation checks. Inherited classes should re-implement this and call the eponymous method in the
+     * super class. Called with the object locked.
+     * 
+     * @throws ComponentInitializationException if no pattern has been set.
+     */
+    public void doInitialize() throws ComponentInitializationException {
         if (null == patternText) {
             throw new ComponentInitializationException(
                     "Regexp comparison criterion being initialized without a valid match pattern being set");
@@ -79,7 +83,6 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
         } catch (PatternSyntaxException e) {
             throw new ComponentInitializationException(e);
         }
-        initialized = true;
     }
 
     /**
@@ -101,27 +104,6 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
      */
     public String getRegularExpression() {
         return patternText;
-    }
-
-    /**
-     * Sets the attribute name. Cannot be called after initialization.
-     * 
-     * @param theName the name of the attribute to user.
-     */
-    public synchronized void setAttributeName(final String theName) {
-        if (initialized) {
-            throw new UnmodifiableComponentException("Attempting to set the attribute name after class initialization");
-        }
-        attributeName = StringSupport.trimOrNull(theName);
-    }
-
-    /**
-     * Gets the name of the attribute under consideration.
-     * 
-     * @return the name of the attribute under consideration, never null or empty after initialization.
-     */
-    public String getAttributeName() {
-        return attributeName;
     }
 
     /**

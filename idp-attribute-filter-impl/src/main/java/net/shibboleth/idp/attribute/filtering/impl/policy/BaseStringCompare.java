@@ -50,9 +50,6 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
     /** Initialization state. */
     private boolean initialized;
 
-    /** The name of the target attribute. */
-    private String attributeName;
-
     /**
      * Has initialize been called on this object. {@inheritDoc}.
      */
@@ -61,10 +58,19 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
     }
 
     /** Mark the object as initialized having checked parameters. {@inheritDoc}. */
-    public synchronized void initialize() throws ComponentInitializationException {
+    public final synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
             throw new ComponentInitializationException("String comparison criterion being initialized multiple times");
         }
+        doInitialize();
+        initialized = true;
+    }
+    /**
+     * Make any instantiation checks.  Inherited classes should re-implement this and call the 
+     * eponymous method in the super class.  Called with the object locked.
+     * @throws ComponentInitializationException if something is not set up correctly.
+     */
+    public void doInitialize() throws ComponentInitializationException { 
         if (!caseSensitiveSet) {
             throw new ComponentInitializationException(
                     "String comparison criterion being initialized without case sensitivity being set");
@@ -73,11 +79,6 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
             throw new ComponentInitializationException(
                     "String comparison criterion being initialized without a valid match string being set");
         }
-        if (null == attributeName) {
-            throw new ComponentInitializationException(
-                    "String comparison criterion being initialized without a valid attribute name being set");
-        }
-        initialized = true;
     }
 
     /**
@@ -121,27 +122,6 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
      */
     public boolean isCaseSensitive() {
         return caseSensitive;
-    }
-
-    /**
-     * Sets the attribute name. Cannot be called after initialization.
-     * 
-     * @param theName the name of the attribute to user.
-     */
-    public synchronized void setAttributeName(final String theName) {
-        if (initialized) {
-            throw new UnmodifiableComponentException("Attempting to set the attribute name after class initialization");
-        }
-        attributeName = StringSupport.trimOrNull(theName);
-    }
-
-    /**
-     * Gets the name of the attribute under consideration.
-     * 
-     * @return the name of the attribute under consideration, never null or empty after initialization.
-     */
-    public String getAttributeName() {
-        return attributeName;
     }
 
     /**

@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * provided case sensitivity criterion) then we return true.
  */
 @ThreadSafe
-public class AttributeScopeStringCriterion extends BaseStringCompare implements
+public class AttributeScopeStringCriterion extends BaseTargetedStringCompare implements
         EvaluableCriterion<AttributeFilterContext> {
 
     /** Class logger. */

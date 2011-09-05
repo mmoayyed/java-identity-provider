@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * If the supplied attribute name has any value which matches the provided regex then we return true.
  */
 @ThreadSafe
-public class AttributeValueRegexCriterion extends BaseRegexCompare implements
+public class AttributeValueRegexCriterion extends BaseTargetedRegexCompare implements
         EvaluableCriterion<AttributeFilterContext> {
 
     /** Class logger. */
