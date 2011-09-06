@@ -28,13 +28,13 @@ import org.testng.annotations.Test;
 public class TestAuthenticationMethodRegex {
 
     /**
-     * Test principal name matching. Parameterization is tested in other tests.
+     * Test authentication method matching. Parameterization is tested in other tests.
      * 
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException never
      */
     @Test
-    public void principalNameCriterionTest() throws EvaluationException, ComponentInitializationException {
+    public void autheticationMethodRegexCriterionTest() throws EvaluationException, ComponentInitializationException {
 
         AttributeFilterContext filterContext = new AttributeFilterContext(new TestContextContainer());
         AuthenticationMethodRegexCriterion filter = new AuthenticationMethodRegexCriterion();

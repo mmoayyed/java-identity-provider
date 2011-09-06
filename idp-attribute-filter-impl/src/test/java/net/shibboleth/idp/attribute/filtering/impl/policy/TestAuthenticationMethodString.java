@@ -34,7 +34,7 @@ public class TestAuthenticationMethodString {
      * @throws ComponentInitializationException never
      */
     @Test
-    public void principalNameCriterionTest() throws EvaluationException, ComponentInitializationException {
+    public void autheticationMethodStringCriterionTest() throws EvaluationException, ComponentInitializationException {
 
         AttributeFilterContext filterContext = new AttributeFilterContext(new TestContextContainer());
         AuthenticationMethodStringCriterion filter = new AuthenticationMethodStringCriterion();
