@@ -79,7 +79,7 @@ class TestContextContainer extends AbstractSubcontextContainer implements InOutO
 
     /** Not used. */
     public MessageContext getOutboundMessageContext() {
-        return null;
+        return outbound;
     }
     
     
