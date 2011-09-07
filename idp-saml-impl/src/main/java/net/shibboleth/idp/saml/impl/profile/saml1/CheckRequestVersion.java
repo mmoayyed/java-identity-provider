@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -37,10 +40,11 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext,
-            ProfileRequestContext<RequestAbstractType, Response> profileRequestContext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<RequestAbstractType, Response> profileRequestContext) {
 
-        RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
+        final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
         if (ObjectSupport.equals(SAMLVersion.VERSION_10, request.getVersion())
                 || ObjectSupport.equals(SAMLVersion.VERSION_11, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);

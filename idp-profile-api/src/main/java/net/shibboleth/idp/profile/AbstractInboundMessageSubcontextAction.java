@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.Subcontext;
 import org.springframework.webflow.execution.Event;
@@ -37,19 +40,20 @@ public abstract class AbstractInboundMessageSubcontextAction<SubcontextType exte
      * 
      * {@inheritDoc}
      */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext)
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
             throws Throwable {
 
         if (profileRequestContext == null) {
             return ActionSupport.buildErrorEvent(this, null, "Profile request context is null");
         }
 
-        MessageContext<?> inboundMessageContext = profileRequestContext.getInboundMessageContext();
+        final MessageContext<?> inboundMessageContext = profileRequestContext.getInboundMessageContext();
         if (inboundMessageContext == null) {
             return ActionSupport.buildErrorEvent(this, null, "Inbound message context is null");
         }
 
-        SubcontextType messageSubcontext = inboundMessageContext.getSubcontext(getSubcontextType());
+        final SubcontextType messageSubcontext = inboundMessageContext.getSubcontext(getSubcontextType());
         if (messageSubcontext == null) {
             return ActionSupport.buildErrorEvent(this, null, "Message subcontext is null");
         }
@@ -75,6 +79,6 @@ public abstract class AbstractInboundMessageSubcontextAction<SubcontextType exte
      * 
      * @throws Throwable thrown if there is some problem with this action
      */
-    protected abstract Event doExecute(RequestContext springRequestContext,
-            ProfileRequestContext profileRequestContext, SubcontextType subcontext) throws Throwable;
+    protected abstract Event doExecute(final RequestContext springRequestContext,
+            final ProfileRequestContext profileRequestContext, final SubcontextType subcontext) throws Throwable;
 }

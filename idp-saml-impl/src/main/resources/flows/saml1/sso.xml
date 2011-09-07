@@ -8,10 +8,10 @@
     </action-state>
     
     <action-state id="DecodeIdpInitiatedSsoMessage">
-        <transition on="proceed" to="CheckRequestVersion"/>
+        <transition on="proceed" to="CheckSaml1IsRequest"/>
     </action-state>
     
-    <action-state id="CheckRequestVersion">
+    <action-state id="CheckSaml1IsRequest">
         <transition on="proceed" to="CheckMandatoryIssuer"/>
         <transition on="error" to="GenerateErrorResponse" />
     </action-state>

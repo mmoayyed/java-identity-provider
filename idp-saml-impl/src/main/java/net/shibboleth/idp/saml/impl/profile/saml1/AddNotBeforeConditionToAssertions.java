@@ -19,12 +19,13 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.joda.time.DateTime;
-import org.joda.time.chrono.ISOChronology;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Assertion;
@@ -47,7 +48,8 @@ public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderA
     private final Logger log = LoggerFactory.getLogger(AddNotBeforeConditionToAssertions.class);
 
     /** {@inheritDoc} */
-    public Event doExecute(final RequestContext springRequestContext,
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) {
         log.debug("Action {}: attempting to add NotBefore condition to every Assertion in outgoing Response", getId());
 

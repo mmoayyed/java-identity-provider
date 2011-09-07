@@ -44,8 +44,8 @@ public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAc
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
-            BasicMessageMetadataSubcontext messageSubcontext) {
+    public Event doExecute(final RequestContext springRequestContext,
+            final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
             return ActionSupport.buildErrorEvent(this, null,
@@ -65,7 +65,7 @@ public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAc
 
         return ActionSupport.buildProceedEvent(this);
     }
-    
+
     /** Profile processing error that occurred because the given request was detected as a replay. */
     public static class ReplayedMessageException extends ProfileException {
 

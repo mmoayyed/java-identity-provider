@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -74,23 +75,17 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext,
-            ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
         if (!isInitialized()) {
             throw new UninitializedComponentException("DecodeMessage " + getId()
                     + ": has not been initialized and can not yet be used.");
         }
 
         try {
-            HttpServletRequest httpRequest = profileRequestContext.getHttpRequest();
-            if (httpRequest == null) {
-                log.error("DecodeMessage {}: ProfileRequestContext did not contain the required HttpServletRequest",
-                        getId());
-                throw new MessageDecodingException("ProfileRequestContext did not contain an HttpServletRequest");
-            }
-
             log.debug("DecodeMessage {}: creating new message decoder", getId());
-            MessageDecoder<InboundMessageType> decoder =
+            final MessageDecoder<InboundMessageType> decoder =
                     decoderFactory.newDecoder(profileRequestContext.getHttpRequest());
 
             decoder.initialize();

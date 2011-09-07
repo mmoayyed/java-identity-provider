@@ -32,6 +32,12 @@ public class AuthenticationWorkflowDescriptor {
     /** Whether this workflow supports forced authentication. */
     private boolean supportsForced;
 
+    /** Maximum amount of time in milliseconds, since first usage, a workflow should be considered active. */
+    private long lifetime;
+
+    /** Maximum amount of time in milliseconds, since more recent usage, a workflow should be considered active. */
+    private long timeout;
+
     /**
      * Constructor.
      * 
@@ -85,6 +91,47 @@ public class AuthenticationWorkflowDescriptor {
      */
     public void setSupportsForced(boolean isSupported) {
         supportsForced = isSupported;
+    }
+
+    /**
+     * Gets the maximum amount of time in milliseconds, since first usage, a workflow should be considered active. A
+     * value of 0 indicates that their is no upper limit on the lifetime on an active workflow.
+     * 
+     * @return maximum amount of time in milliseconds a workflow should be considered active, never less than 0
+     */
+    public long getLifetime() {
+        return lifetime;
+    }
+
+    /**
+     * Sets the maximum amount of time in milliseconds, since first usage, a workflow should be considered active. A
+     * value of 0 indicates that their is no upper limit on the lifetime on an active workflow.
+     * 
+     * @param workflowLifetime the lifetime for the workflow, must be 0 or greater
+     */
+    public void setLifetime(long workflowLifetime) {
+        Assert.isGreaterThanOrEqual(0, workflowLifetime, "Lifetime must be greater than or equal to 0");
+        lifetime = workflowLifetime;
+    }
+
+    /**
+     * Gets the maximum amount of time in milliseconds, since more recent usage, a workflow should be considered active.
+     * A value of 0 indicates that their is no inactivity timeout on an active workflow.
+     * 
+     * @return Returns the duration.
+     */
+    public long getInactivityTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Sets the maximum amount of time in milliseconds, since more recent usage, a workflow should be considered active.
+     * A value of 0 indicates that their is no inactivity timeout on an active workflow.
+     * 
+     * @param inactivityTimeout the workflow timeout, must be 0 or greater
+     */
+    public void setInactivityTimeout(long inactivityTimeout) {
+        timeout = inactivityTimeout;
     }
 
     /** {@inheritDoc} */

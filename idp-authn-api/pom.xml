@@ -19,7 +19,7 @@
         <!-- Compile Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>idp-core</artifactId>
+            <artifactId>idp-profile-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

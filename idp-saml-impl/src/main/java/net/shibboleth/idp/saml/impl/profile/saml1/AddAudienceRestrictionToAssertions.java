@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -32,8 +35,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class AddAudienceRestrictionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext,
-            ProfileRequestContext<Object, Response> profileRequestContext) throws Throwable {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<Object, Response> profileRequestContext) throws Throwable {
         // TODO Auto-generated method stub
         return null;
     }

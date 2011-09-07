@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
@@ -62,17 +65,34 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
 
     /** {@inheritDoc} */
     public Event execute(final RequestContext springRequestContext) {
+        final HttpServletRequest httpRequest = ActionSupport.getHttpServletRequest(springRequestContext);
+        if (httpRequest == null) {
+            log.error("Action {}: HTTP Servlet request is not available", getId());
+            return ActionSupport.buildErrorEvent(this, new ProfileException(), "HTTP Servlet request is not available");
+        }
+
+        final HttpServletResponse httpResponse = ActionSupport.getHttpServletResponse(springRequestContext);
+        if (httpResponse == null) {
+            log.error("Action {}: HTTP Servlet response is not available", getId());
+            return ActionSupport
+                    .buildErrorEvent(this, new ProfileException(), "HTTP Servlet response is not available");
+        }
+
         final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
                 (ProfileRequestContext<InboundMessageType, OutboundMessageType>) springRequestContext
                         .getConversationScope().get(ProfileRequestContext.BINDING_KEY);
-        if (profileRequestContext != null) {
-            profileRequestContext.setHttpRequest(ActionSupport.getHttpServletRequest(springRequestContext));
-            profileRequestContext.setHttpResponse(ActionSupport.getHttpServletResponse(springRequestContext));
+        if (profileRequestContext == null) {
+            log.error("Action {}: IdP profile request context is not available", getId());
+            return ActionSupport.buildErrorEvent(this, new ProfileException(),
+                    "IdP profile request context is not available");
         }
+
+        profileRequestContext.setHttpRequest(httpRequest);
+        profileRequestContext.setHttpResponse(httpResponse);
 
         Event result;
         try {
-            result = doExecute(springRequestContext, profileRequestContext);
+            result = doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext);
         } catch (Throwable t) {
             result =
                     ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, new LocalAttributeMap(
@@ -95,6 +115,8 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
     /**
      * Performs this action.
      * 
+     * @param httpRequest current HTTP request
+     * @param httpResponse current HTTP response
      * @param springRequestContext current WebFlow request context, never null
      * @param profileRequestContext the current IdP profile request context, never null
      * 
@@ -102,7 +124,8 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
      * 
      * @throws Throwable thrown if there is some problem executing this action
      */
-    public abstract Event doExecute(final RequestContext springRequestContext,
+    public abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
             final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
             throws Throwable;
 

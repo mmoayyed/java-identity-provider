@@ -19,6 +19,9 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -57,8 +60,9 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
     private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext,
-            ProfileRequestContext<Object, Response> profileRequestContext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<Object, Response> profileRequestContext) {
         log.debug("Action {}: attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
         final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();

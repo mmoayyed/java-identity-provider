@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -37,7 +40,8 @@ public class AddNotOnOrAfterConditionToAssertions extends AbstractIdentityProvid
     private final Logger log = LoggerFactory.getLogger(AddNotOnOrAfterConditionToAssertions.class);
 
     /** {@inheritDoc} */
-    public Event doExecute(final RequestContext springRequestContext,
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) {
         // TODO Auto-generated method stub
         return null;

@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -39,11 +42,12 @@ public class ResolveAttributes extends AbstractIdentityProviderAction {
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
 
         // Get the resolution context from the profile request
         // this may already exist but if not, auto-create it
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 profileRequestContext.getSubcontext(AttributeResolutionContext.class, true);
 
         try {

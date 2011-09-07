@@ -19,6 +19,9 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -46,7 +49,8 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
     private final Logger log = LoggerFactory.getLogger(AddDoNotCacheConditionToAssertions.class);
 
     /** {@inheritDoc} */
-    public Event doExecute(final RequestContext springRequestContext,
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) {
         log.debug("Action {}: attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
@@ -70,8 +74,7 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions == null || assertions.isEmpty()) {
-            log.debug("Action {}: no assertions present in response, nothing to add DoNotCache conditions to",
-                    getId());
+            log.debug("Action {}: no assertions present in response, nothing to add DoNotCache conditions to", getId());
             return ActionSupport.buildProceedEvent(this);
         }
 

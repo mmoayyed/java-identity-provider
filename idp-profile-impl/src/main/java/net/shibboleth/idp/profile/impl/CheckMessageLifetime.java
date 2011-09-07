@@ -46,16 +46,16 @@ public final class CheckMessageLifetime extends AbstractInboundMessageSubcontext
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
-            BasicMessageMetadataSubcontext messageSubcontext) {
+    public Event doExecute(final RequestContext springRequestContext,
+            final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssueInstant() <= 0) {
             return ActionSupport.buildErrorEvent(this, null,
                     "Basic message metadata subcontext does not contain a message issue instant");
         }
 
-        long issueInstant = messageSubcontext.getMessageIssueInstant();
-        long currentTime = System.currentTimeMillis();
+        final long issueInstant = messageSubcontext.getMessageIssueInstant();
+        final long currentTime = System.currentTimeMillis();
 
         if (issueInstant < currentTime - clockskew) {
             return ActionSupport.buildErrorEvent(this, new PastMessageException(),

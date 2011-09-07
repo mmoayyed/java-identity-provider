@@ -40,8 +40,8 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
-            BasicMessageMetadataSubcontext messageSubcontext) {
+    public Event doExecute(final RequestContext springRequestContext,
+            final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
             return ActionSupport.buildErrorEvent(this, new NoMessageIssuerException(),

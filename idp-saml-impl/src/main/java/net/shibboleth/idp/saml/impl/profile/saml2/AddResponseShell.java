@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -38,8 +41,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class AddResponseShell extends AbstractIdentityProviderAction<Object, Response> {
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext,
-            ProfileRequestContext<Object, Response> profileRequestContext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<Object, Response> profileRequestContext) {
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =
                 (SAMLObjectBuilder<StatusCode>) Configuration.getBuilderFactory().getBuilder(StatusCode.TYPE_NAME);
         final SAMLObjectBuilder<Status> statusBuilder =

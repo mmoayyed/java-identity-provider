@@ -17,12 +17,15 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import org.opensaml.saml1.core.Response;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+
+import org.opensaml.saml1.core.Response;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  *
@@ -30,8 +33,9 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 public class AddSubjectToStatements extends AbstractIdentityProviderAction<Object, Response> {
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext,
-            ProfileRequestContext<Object, Response> profileRequestContext) throws Throwable {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<Object, Response> profileRequestContext) throws Throwable {
         // TODO Auto-generated method stub
         return null;
     }

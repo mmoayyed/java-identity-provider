@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -40,16 +43,18 @@ public class FilterAttributes extends AbstractIdentityProviderAction {
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
 
         // Get the resolution context from the profile request
         // this may already exist but if not, auto-create it
-        AttributeFilterContext filterContext = profileRequestContext.getSubcontext(AttributeFilterContext.class, true);
+        final AttributeFilterContext filterContext =
+                profileRequestContext.getSubcontext(AttributeFilterContext.class, true);
 
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the profile request context
         if (filterContext.getPrefilteredAttributes().isEmpty()) {
-            AttributeResolutionContext resolutionContext =
+            final AttributeResolutionContext resolutionContext =
                     profileRequestContext.getSubcontext(AttributeResolutionContext.class, false);
             if (resolutionContext == null) {
                 // TODO error

@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -38,7 +41,8 @@ public final class InitializeProfileRequestContext extends AbstractIdentityProvi
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
         springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, new ProfileRequestContext());
         return ActionSupport.buildProceedEvent(this);
     }

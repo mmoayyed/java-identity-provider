@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
@@ -67,8 +70,9 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext) {
-        SamlMetadataSubcontext metadataCtx =
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+        final SamlMetadataSubcontext metadataCtx =
                 profileRequestContext.getInboundMessageContext().getSubcontext(SamlMetadataSubcontext.class, false);
 
         if (metadataCtx == null || metadataCtx.getEntityDescriptor() == null) {
@@ -81,7 +85,7 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
         }
 
         try {
-            RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
+            final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
             if (config == null) {
                 return ActionSupport.buildErrorEvent(this, new NoRelyingPartyConfigurationException(),
                         "No relying party configuration availabe for this request");
