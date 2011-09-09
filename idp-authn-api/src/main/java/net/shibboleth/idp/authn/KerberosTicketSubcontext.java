@@ -17,55 +17,40 @@
 
 package net.shibboleth.idp.authn;
 
+import javax.security.auth.kerberos.KerberosTicket;
+
 import org.opensaml.messaging.context.AbstractSubcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 
 /**
- * Context, usually attached to {@link AuthenticationRequestContext}, that carries a username/password pair to be
+ * Context, usually attached to {@link AuthenticationRequestContext}, that carries a {@link KerberosTicket} to be
  * validated.
  */
-public class UsernamePasswordSubcontext extends AbstractSubcontext {
+public class KerberosTicketSubcontext extends AbstractSubcontext {
 
-    /** The username. */
-    private final String username;
-
-    /** The password associated with the username. */
-    private final String password;
+    /** Kerberos ticket to be validated. */
+    private final KerberosTicket ticket;
 
     /**
      * Constructor.
      * 
      * @param owner the context which owns this one, may be null
-     * @param user the username, can not be null or empty
-     * @param pass the password, can not be null or empty
+     * @param kerbTicket the Kerberos ticket to be validated, never null
      */
-    public UsernamePasswordSubcontext(final SubcontextContainer owner, final String user, final String pass) {
+    public KerberosTicketSubcontext(final SubcontextContainer owner, final KerberosTicket kerbTicket) {
         super(owner);
 
-        username = StringSupport.trimOrNull(user);
-        Assert.isNotNull(username, "Username can not be null");
-
-        password = StringSupport.trimOrNull(pass);
-        Assert.isNotNull(password, "Password can not be null");
+        ticket = kerbTicket;
+        Assert.isNotNull(kerbTicket, "Kerberos ticket can not be null");
     }
 
     /**
-     * Gets the username.
+     * Gets the Kerberos ticket to be validated.
      * 
-     * @return the username, never null or empty
+     * @return Kerberos ticket to be validated, never null
      */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Gets the password associated with the username.
-     * 
-     * @return password associated with the username, never null or empty
-     */
-    public String getPassword() {
-        return password;
+    public KerberosTicket getTicket() {
+        return ticket;
     }
 }
