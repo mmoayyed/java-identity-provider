@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.attribute.AttributeSubcontext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -52,6 +53,10 @@ public class ResolveAttributes extends AbstractIdentityProviderAction {
 
         try {
             attributeResolver.resolveAttributes(resolutionContext);
+            //TODO remove resolution context from request?
+            
+            final AttributeSubcontext attributeCtx = profileRequestContext.getSubcontext(AttributeSubcontext.class, true);
+            attributeCtx.setAttributes(resolutionContext.getResolvedAttributes().values());
         } catch (AttributeResolutionException e) {
             // TODO error
             return ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, null);

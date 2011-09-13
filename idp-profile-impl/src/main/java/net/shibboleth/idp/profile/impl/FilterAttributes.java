@@ -20,10 +20,10 @@ package net.shibboleth.idp.profile.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.attribute.AttributeSubcontext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -45,8 +45,10 @@ public class FilterAttributes extends AbstractIdentityProviderAction {
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+        
+        final AttributeSubcontext attributeCtx = profileRequestContext.getSubcontext(AttributeSubcontext.class, false);
 
-        // Get the resolution context from the profile request
+        // Get the filer context from the profile request
         // this may already exist but if not, auto-create it
         final AttributeFilterContext filterContext =
                 profileRequestContext.getSubcontext(AttributeFilterContext.class, true);
@@ -54,18 +56,19 @@ public class FilterAttributes extends AbstractIdentityProviderAction {
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the profile request context
         if (filterContext.getPrefilteredAttributes().isEmpty()) {
-            final AttributeResolutionContext resolutionContext =
-                    profileRequestContext.getSubcontext(AttributeResolutionContext.class, false);
-            if (resolutionContext == null) {
+            if (attributeCtx == null) {
                 // TODO error
                 return ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, null);
             }
 
-            filterContext.setPrefilteredAttributes(resolutionContext.getResolvedAttributes().values());
+            filterContext.setPrefilteredAttributes(attributeCtx.getAttributes().values());
         }
 
         try {
             filterEngine.filterAttributes(filterContext);
+            // TODO remove filter context from profile request context?
+
+            attributeCtx.setAttributes(filterContext.getFilteredAttributes().values());
         } catch (AttributeFilteringException e) {
             // TODO error
             return ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, null);
