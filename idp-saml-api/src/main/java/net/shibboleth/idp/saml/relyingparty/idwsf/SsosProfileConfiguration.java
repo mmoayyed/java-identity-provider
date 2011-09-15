@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.saml.relyingparty.idwsf;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
+import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.relyingparty.saml2.SsoProfileConfiguration;
 
-import org.opensaml.util.StringSupport;
+import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.Response;
+import org.opensaml.util.Assert;
+import org.opensaml.util.criteria.EvaluableCriterion;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 
 /** Configuration for constrained Liberty IDWSF SSOS requests. */
 public class SsosProfileConfiguration extends SsoProfileConfiguration {
@@ -35,12 +35,13 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
     /** Maximum number of times a given token is allowed to have been delegated. Default value: 0 */
     private int maximumTokenDelegationChainLength;
 
-    /** Entities to which a token may be delegated. Default value: no delegates */
-    private Set<String> allowedDelegates;
+    /** Criterion used to determine if a token may be delegated to a relying party. */
+    private EvaluableCriterion<ProfileRequestContext<RequestAbstractType, Response>> delegationCriterion;
 
     /** Constructor. */
     public SsosProfileConfiguration() {
         this(PROFILE_ID);
+        delegationCriterion = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
     }
 
     /**
@@ -48,10 +49,9 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
      * 
      * @param profileId unique ID for this profile
      */
-    protected SsosProfileConfiguration(String profileId) {
+    protected SsosProfileConfiguration(final String profileId) {
         super(profileId);
         maximumTokenDelegationChainLength = 0;
-        allowedDelegates = Collections.emptySet();
     }
 
     /**
@@ -68,43 +68,27 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
      * 
      * @param length maximum number of times a given token is allowed to have been delegated
      */
-    public void setMaximumTokenDelegationChainLength(int length) {
+    public void setMaximumTokenDelegationChainLength(final int length) {
         maximumTokenDelegationChainLength = length;
     }
 
     /**
-     * Get the unmodifiable set of allowed delegates.
+     * Gets criterion used to determine if a token may be delegated to a relying party.
      * 
-     * @return the set of allowed delegates, never null nor containing null entries
+     * @return criterion used to determine if a token may be delegated to a relying party, never null
      */
-    public Set<String> getAllowedDelegates() {
-        return allowedDelegates;
+    public EvaluableCriterion<ProfileRequestContext<RequestAbstractType, Response>> getDelegationCriterion() {
+        return delegationCriterion;
     }
 
     /**
-     * Get the set of allowed delegates.
+     * Sets the criterion used to determine if a token may be delegated to a relying party.
      * 
-     * @param delegates the new set of allowed delegates, may be null or include null elements
+     * @param criterion criterion used to determine if a token may be delegated to a relying party, never null
      */
-    public void setAllowedDelegates(Collection<String> delegates) {
-        if (delegates == null || delegates.isEmpty()) {
-            allowedDelegates = Collections.emptySet();
-            return;
-        }
-
-        HashSet<String> newDelegates = new HashSet<String>();
-        String trimmedDelegate;
-        for (String delegate : delegates) {
-            trimmedDelegate = StringSupport.trimOrNull(delegate);
-            if (trimmedDelegate != null) {
-                newDelegates.add(trimmedDelegate);
-            }
-        }
-
-        if (newDelegates.isEmpty()) {
-            allowedDelegates = Collections.emptySet();
-        } else {
-            allowedDelegates = Collections.unmodifiableSet(newDelegates);
-        }
+    public void setDelegationCriterion(
+            final EvaluableCriterion<ProfileRequestContext<RequestAbstractType, Response>> criterion) {
+        Assert.isNotNull(criterion, "Delegation criterion can not be null");
+        delegationCriterion = criterion;
     }
 }
