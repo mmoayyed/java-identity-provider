@@ -25,6 +25,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 
 import org.opensaml.common.SAMLObject;
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.UnmodifiableComponent;
@@ -40,14 +41,11 @@ import org.slf4j.LoggerFactory;
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
 // TODO display name and description
-public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObject, EncodedType> implements
-        AttributeEncoder<AttributeType>, UnmodifiableComponent, InitializableComponent {
+public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObject, EncodedType> extends
+        AbstractInitializableComponent implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractSamlAttributeEncoder.class);
-
-    /** Whether this encoder has been initialized. */
-    private boolean initialized;
 
     /** The name of the attribute. */
     private String name;
@@ -99,13 +97,14 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
         namespace = StringSupport.trimOrNull(attributeNamespace);
     }
 
-    /** {@inheritDoc} */
-    public final boolean isInitialized() {
-        return initialized;
-    }
-
-    /** {@inheritDoc} */
-    public final synchronized void initialize() throws ComponentInitializationException {
+    /**
+     * Ensures that the attribute name and namespace are not null.
+     * 
+     * {@inheritDoc}
+     */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
         if (name == null) {
             throw new ComponentInitializationException("Attribute name can not be null or empty");
         }
@@ -113,22 +112,6 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
         if (namespace == null) {
             throw new ComponentInitializationException("Attribute namespace can not be null or empty");
         }
-
-        doInitialize();
-
-        initialized = true;
-    }
-
-    /**
-     * Performs additional component initialization. This method is called after the checks ensuring the attribute name
-     * and namespace are populated.
-     * 
-     * Default implementation of this method is a no-op
-     * 
-     * @throws ComponentInitializationException thrown if there is a problem initializing this encoder
-     */
-    protected void doInitialize() throws ComponentInitializationException {
-
     }
 
     /** {@inheritDoc} */

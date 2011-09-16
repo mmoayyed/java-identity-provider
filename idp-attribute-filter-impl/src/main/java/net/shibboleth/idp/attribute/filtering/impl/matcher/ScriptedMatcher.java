@@ -34,8 +34,8 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
@@ -47,7 +47,8 @@ import org.slf4j.LoggerFactory;
  * This is just a scripting shim around {@link AttributeValueMatcher#getMatchingValues}.
  */
 @ThreadSafe
-public class ScriptedMatcher implements AttributeValueMatcher, InitializableComponent, UnmodifiableComponent {
+public class ScriptedMatcher extends AbstractInitializableComponent implements AttributeValueMatcher,
+        UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
@@ -64,48 +65,13 @@ public class ScriptedMatcher implements AttributeValueMatcher, InitializableComp
     /** The compiled form of the script, if the script engine supports compiling. */
     private CompiledScript compiledScript;
 
-    /** Initialization state. */
-    private boolean initialized;
-
-    /**
-     * Has initialize been called on this object. {@inheritDoc}.
-     * */
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     *  Initialize.  Check parameters and try to compile the script
-     * {@inheritDoc} 
-     */
-    public synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("ScriptedMatcher: initialized multiple times.");
-        }
-        
-        if (null == scriptLanguage) {
-            throw new ComponentInitializationException("ScriptedMatcher: No language set.");
-        }
-        
-        if (null == script) {
-            throw new ComponentInitializationException("ScriptedMatcher: No script set.");
-        }
-        
-        final ScriptEngineManager sem = new ScriptEngineManager();
-        scriptEngine = sem.getEngineByName(scriptLanguage);
-        if (null == scriptEngine) {
-            throw new ComponentInitializationException("ScriptedMatcher: No valid language set.");
-        }
-        compiledScript = compileScript();
-        initialized = true;
-    }
-
     /**
      * Set the language we are using.
+     * 
      * @param theLanguage what we use.
      */
     public synchronized void setLanguage(final String theLanguage) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("Scriptlet matcher has already been initialized");
         }
         scriptLanguage = StringSupport.trimOrNull(theLanguage);
@@ -120,18 +86,18 @@ public class ScriptedMatcher implements AttributeValueMatcher, InitializableComp
         return scriptLanguage;
     }
 
-    
     /**
      * Set the actual Script we will use.
+     * 
      * @param theScript what to use.
      */
     public synchronized void setScript(final String theScript) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("Scriptlet matcher has already been initialized");
         }
         script = StringSupport.trimOrNull(theScript);
     }
-    
+
     /**
      * Gets the script that will be executed.
      * 
@@ -160,24 +126,6 @@ public class ScriptedMatcher implements AttributeValueMatcher, InitializableComp
         return compiledScript;
     }
 
-    /**
-     * Compiles the script if the scripting engine supports it.
-     * 
-     * @return the compiled script.
-     */
-    private CompiledScript compileScript() {
-        try {
-            if (scriptEngine != null && scriptEngine instanceof Compilable) {
-                return ((Compilable) scriptEngine).compile(script);
-            }
-        } catch (ScriptException e) {
-            log.warn("ScriptedMatcher cannot compile {} even though the scripting engine"
-                    + " supports this functionality: {}", script, e.toString());
-            log.debug("Fails", e);
-        }
-        return null;
-    }
-
     /** {@inheritDoc} */
     public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
@@ -186,11 +134,11 @@ public class ScriptedMatcher implements AttributeValueMatcher, InitializableComp
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
         final Object result;
-        
+
         if (!isInitialized()) {
             throw new AttributeFilteringException("ScriptedMatcher has not been initialized");
         }
-        
+
         try {
             if (compiledScript != null) {
                 result = compiledScript.eval(scriptContext);
@@ -209,4 +157,42 @@ public class ScriptedMatcher implements AttributeValueMatcher, InitializableComp
         }
     }
 
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == scriptLanguage) {
+            throw new ComponentInitializationException("ScriptedMatcher: No language set.");
+        }
+
+        if (null == script) {
+            throw new ComponentInitializationException("ScriptedMatcher: No script set.");
+        }
+
+        final ScriptEngineManager sem = new ScriptEngineManager();
+        scriptEngine = sem.getEngineByName(scriptLanguage);
+        if (null == scriptEngine) {
+            throw new ComponentInitializationException("ScriptedMatcher: No valid language set.");
+        }
+
+        compiledScript = compileScript();
+    }
+
+    /**
+     * Compiles the script if the scripting engine supports it.
+     * 
+     * @return the compiled script.
+     */
+    private CompiledScript compileScript() {
+        try {
+            if (scriptEngine != null && scriptEngine instanceof Compilable) {
+                return ((Compilable) scriptEngine).compile(script);
+            }
+        } catch (ScriptException e) {
+            log.warn("ScriptedMatcher cannot compile {} even though the scripting engine"
+                    + " supports this functionality: {}", script, e.toString());
+            log.debug("Fails", e);
+        }
+        return null;
+    }
 }

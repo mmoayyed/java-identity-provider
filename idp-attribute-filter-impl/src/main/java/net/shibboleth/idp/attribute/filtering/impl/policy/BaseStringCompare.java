@@ -23,6 +23,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
@@ -53,28 +54,33 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
     /**
      * Has initialize been called on this object. {@inheritDoc}.
      */
-    public boolean isInitialized() {
+    public final boolean isInitialized() {
         return initialized;
     }
 
     /** Mark the object as initialized having checked parameters. {@inheritDoc}. */
     public final synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("String comparison criterion being initialized multiple times");
+        if (isInitialized()) {
+            return;
         }
+
         doInitialize();
+
         initialized = true;
     }
+
     /**
-     * Make any instantiation checks.  Inherited classes should re-implement this and call the 
-     * eponymous method in the super class.  Called with the object locked.
+     * Make any instantiation checks. Inherited classes should re-implement this and call the eponymous method in the
+     * super class. Called with the object locked.
+     * 
      * @throws ComponentInitializationException if something is not set up correctly.
      */
-    public void doInitialize() throws ComponentInitializationException { 
+    protected void doInitialize() throws ComponentInitializationException {
         if (!caseSensitiveSet) {
             throw new ComponentInitializationException(
                     "String comparison criterion being initialized without case sensitivity being set");
         }
+
         if (null == matchString) {
             throw new ComponentInitializationException(
                     "String comparison criterion being initialized without a valid match string being set");
@@ -87,7 +93,7 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
      * @param match the string we are matching against.
      */
     public synchronized void setMatchString(final String match) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("Attempting to set match string after class initialization");
         }
         matchString = StringSupport.trimOrNull(match);
@@ -108,7 +114,7 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
      * @param isCaseSensitive whether to do a case sensitive comparison.
      */
     public synchronized void setCaseSensitive(final boolean isCaseSensitive) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("Attempting to set case sensitivity after class initialization");
         }
         caseSensitive = isCaseSensitive;
@@ -135,7 +141,7 @@ public abstract class BaseStringCompare extends AbstractBiasedEvaluableCriterion
      */
     public Boolean isMatch(final Object value) throws EvaluationException {
         if (!isInitialized()) {
-            throw new EvaluationException("Class not initialized");
+            throw new UninitializedComponentException("Class not initialized");
         }
 
         if (caseSensitive) {

@@ -35,13 +35,13 @@ public abstract class BaseTargetedStringCompare extends BaseStringCompare {
     /** The name of the target attribute. */
     private String attributeName;
 
-    /** Check parameters. {@inheritDoc}. */
-    public void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        if (null == attributeName) {
-            throw new ComponentInitializationException(
-                    "String comparison criterion being initialized without a valid attribute name being set");
-        }
+    /**
+     * Gets the name of the attribute under consideration.
+     * 
+     * @return the name of the attribute under consideration, never null or empty after initialization.
+     */
+    public String getAttributeName() {
+        return attributeName;
     }
 
     /**
@@ -56,13 +56,12 @@ public abstract class BaseTargetedStringCompare extends BaseStringCompare {
         attributeName = StringSupport.trimOrNull(theName);
     }
 
-    /**
-     * Gets the name of the attribute under consideration.
-     * 
-     * @return the name of the attribute under consideration, never null or empty after initialization.
-     */
-    public String getAttributeName() {
-        return attributeName;
+    /** Check parameters. {@inheritDoc}. */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == attributeName) {
+            throw new ComponentInitializationException(
+                    "String comparison criterion being initialized without a valid attribute name being set");
+        }
     }
-
 }

@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
@@ -54,35 +55,19 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
     /**
      * Has initialize been called on this object. {@inheritDoc}.
      */
-    public boolean isInitialized() {
+    public final boolean isInitialized() {
         return initialized;
     }
 
     /** Mark the object as initialized having checked parameters. {@inheritDoc}. */
     public final synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("Regexp comparison criterion being initialized multiple times");
+        if (isInitialized()) {
+            return;
         }
-        doInitialize();
-        initialized = true;
-    }
 
-    /**
-     * Make any instantiation checks. Inherited classes should re-implement this and call the eponymous method in the
-     * super class. Called with the object locked.
-     * 
-     * @throws ComponentInitializationException if no pattern has been set.
-     */
-    public void doInitialize() throws ComponentInitializationException {
-        if (null == patternText) {
-            throw new ComponentInitializationException(
-                    "Regexp comparison criterion being initialized without a valid match pattern being set");
-        }
-        try {
-            regex = Pattern.compile(patternText);
-        } catch (PatternSyntaxException e) {
-            throw new ComponentInitializationException(e);
-        }
+        doInitialize();
+
+        initialized = true;
     }
 
     /**
@@ -91,7 +76,7 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
      * @param pattern the pattern we will use.
      */
     public synchronized void setRegularExpression(String pattern) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("Attempting to set the regexp patter after class initialization");
         }
         patternText = StringSupport.trimOrNull(pattern);
@@ -116,13 +101,33 @@ public abstract class BaseRegexCompare extends AbstractBiasedEvaluableCriterion<
      * @throws EvaluationException if we have not been initialized.
      */
     protected boolean isMatch(final Object value) throws EvaluationException {
-        if (!initialized) {
-            throw new EvaluationException("Class not initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Class not initialized");
         }
+
         if (regex.matcher(value.toString()).matches()) {
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Make any instantiation checks. Inherited classes should re-implement this and call the eponymous method in the
+     * super class. Called with the object locked.
+     * 
+     * @throws ComponentInitializationException if no pattern has been set.
+     */
+    protected void doInitialize() throws ComponentInitializationException {
+        if (null == patternText) {
+            throw new ComponentInitializationException(
+                    "Regexp comparison criterion being initialized without a valid match pattern being set");
+        }
+
+        try {
+            regex = Pattern.compile(patternText);
+        } catch (PatternSyntaxException e) {
+            throw new ComponentInitializationException(e);
+        }
     }
 }

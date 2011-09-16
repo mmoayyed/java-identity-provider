@@ -23,11 +23,11 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.component.ValidatableComponent;
@@ -36,14 +36,11 @@ import org.slf4j.LoggerFactory;
 
 /** Represents a value filtering rule for a particular attribute. */
 @ThreadSafe
-public class AttributeValueFilterPolicy implements InitializableComponent, ValidatableComponent, DestructableComponent,
-        UnmodifiableComponent {
+public class AttributeValueFilterPolicy extends AbstractInitializableComponent implements ValidatableComponent,
+        DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeValueFilterPolicy.class);
-
-    /** Whether this component has been initialized or not. */
-    private boolean initialized;
 
     /** Unique ID of the attribute this rule applies to. */
     private String attributeId;
@@ -132,30 +129,6 @@ public class AttributeValueFilterPolicy implements InitializableComponent, Valid
     }
 
     /** {@inheritDoc} */
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    /** {@inheritDoc} */
-    public final synchronized void initialize() throws ComponentInitializationException {
-        if (isInitialized()) {
-            return;
-        }
-
-        if (attributeId == null) {
-            throw new ComponentInitializationException("No attribute specified for this attribute value filter policy");
-        }
-
-        if (valueMatchingRule == null) {
-            throw new ComponentInitializationException("No value matching rule specified");
-        }
-
-        ComponentSupport.initialize(valueMatchingRule);
-
-        initialized = true;
-    }
-
-    /** {@inheritDoc} */
     public synchronized void destroy() {
         ComponentSupport.destroy(valueMatchingRule);
     }
@@ -193,5 +166,20 @@ public class AttributeValueFilterPolicy implements InitializableComponent, Valid
                     getAttributeId());
             filterContext.addDeniedAttributeValues(getAttributeId(), matchingValues);
         }
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (attributeId == null) {
+            throw new ComponentInitializationException("No attribute specified for this attribute value filter policy");
+        }
+
+        if (valueMatchingRule == null) {
+            throw new ComponentInitializationException("No value matching rule specified");
+        }
+
+        ComponentSupport.initialize(valueMatchingRule);
     }
 }

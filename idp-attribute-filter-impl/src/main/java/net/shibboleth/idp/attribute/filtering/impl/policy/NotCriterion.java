@@ -25,13 +25,13 @@ import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
-
 
 /**
  * Implement the NOT policy activation criterion.
@@ -40,7 +40,7 @@ import org.opensaml.util.criteria.EvaluationException;
  */
 @ThreadSafe
 public class NotCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilterContext> implements
-InitializableComponent, DestructableComponent, ValidatableComponent, UnmodifiableComponent {
+        InitializableComponent, DestructableComponent, ValidatableComponent, UnmodifiableComponent {
 
     /** The criterion we are NOT ing. */
     private EvaluableCriterion<AttributeFilterContext> criterion;
@@ -54,27 +54,29 @@ InitializableComponent, DestructableComponent, ValidatableComponent, Unmodifiabl
     /**
      * Has initialize been called on this object. {@inheritDoc}.
      */
-    public boolean isInitialized() {
+    public final boolean isInitialized() {
         return initialized;
     }
 
     /** Mark the object as initialized having the child. {@inheritDoc}. */
     public final synchronized void initialize() throws ComponentInitializationException {
         if (initialized) {
-            throw new ComponentInitializationException("Not Criterion being initialized multiple times");
+            return;
         }
+
         if (null == criterion) {
             throw new ComponentInitializationException("Not Criterion being initialized with no sub criterion");
         }
 
         ComponentSupport.initialize(criterion);
+
         initialized = true;
     }
 
     /** tear down the child criterion (if destructable). {@inheritDoc} */
     public void destroy() {
         destroyed = true;
-            ComponentSupport.destroy(criterion);
+        ComponentSupport.destroy(criterion);
         // Clear after the setting of the flag top avoid race with doEvaluate
         criterion = null;
     }
@@ -85,20 +87,19 @@ InitializableComponent, DestructableComponent, ValidatableComponent, Unmodifiabl
      * @throws ComponentValidationException if any of the child validates failed.
      */
     public void validate() throws ComponentValidationException {
-        if (!initialized) {
-            throw new ComponentValidationException("Not criterion not initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Not criterion not initialized");
         }
         ComponentSupport.validate(criterion);
     }
 
-    
     /**
      * Setter for the sub criterion.
      * 
      * @param theCriterion we are 'not'ing.
      */
     public synchronized void setSubCriterion(final EvaluableCriterion<AttributeFilterContext> theCriterion) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("Cannot modify a Not critrion");
         }
         criterion = theCriterion;
@@ -106,17 +107,21 @@ InitializableComponent, DestructableComponent, ValidatableComponent, Unmodifiabl
 
     /**
      * Return the criterion we are 'not'ing.
+     * 
      * @return the criterion
      */
     public EvaluableCriterion<AttributeFilterContext> getSubCriterion() {
         return criterion;
     }
 
-    /** {@inheritDoc} 
-     * @throws EvaluationException if a child throws. */
+    /**
+     * {@inheritDoc}
+     * 
+     * @throws EvaluationException if a child throws.
+     */
     public Boolean doEvaluate(final AttributeFilterContext target) throws EvaluationException {
-        if (!initialized) {
-            throw new EvaluationException("Not Criterion not initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Not Criterion not initialized");
         }
         EvaluableCriterion<AttributeFilterContext> theCriterion = criterion;
         if (destroyed) {

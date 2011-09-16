@@ -21,8 +21,9 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 
@@ -35,7 +36,7 @@ import org.opensaml.util.component.UnmodifiableComponentException;
  * attribute's values.
  */
 @ThreadSafe
-public abstract class BaseStringMatcher implements InitializableComponent, UnmodifiableComponent {
+public abstract class BaseStringMatcher extends AbstractInitializableComponent implements UnmodifiableComponent {
 
     /** String to match for a positive evaluation. */
     private String matchString;
@@ -46,37 +47,13 @@ public abstract class BaseStringMatcher implements InitializableComponent, Unmod
     /** Has case sensitivity been set? */
     private boolean caseSensitiveSet;
 
-    /** Initialized state. */
-    private boolean initialized;
-
-    /**
-     * Has initialize been called on this object. {@inheritDoc}.
-     * */
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    /** Mark the object as initialized. {@inheritDoc}. */
-    public synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("String Matcher being initialized multiple times");
-        }
-        if (null == matchString) {
-            throw new ComponentInitializationException("String Matcher has not had a valid string set");
-        }
-        if (!caseSensitiveSet) {
-            throw new ComponentInitializationException("String Matcher has not had case sentivity set");
-        }
-        initialized = true;
-    }
-
     /**
      * Set the match string.
      * 
      * @param match the string we are matching against.
      */
     public synchronized void setMatchString(final String match) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("String expression matcher has already been initialized");
         }
         matchString = StringSupport.trimOrNull(match);
@@ -97,7 +74,7 @@ public abstract class BaseStringMatcher implements InitializableComponent, Unmod
      * @param isCaseSensitive whether to do a case sensitive comparison.
      */
     public synchronized void setCaseSentitive(final boolean isCaseSensitive) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("String expression matcher has already been initialized");
         }
         caseSensitive = isCaseSensitive;
@@ -122,13 +99,27 @@ public abstract class BaseStringMatcher implements InitializableComponent, Unmod
      * @return true if the value matches the given match string, false if not
      */
     protected Boolean isMatch(final Object value) throws AttributeFilteringException {
-        if (!initialized) {
-            throw new AttributeFilteringException("String comparison performed on uninitialzed Matcher");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("String comparison performed on uninitialzed Matcher");
         }
+
         if (caseSensitive) {
             return matchString.equals(value.toString());
         } else {
             return matchString.equalsIgnoreCase(value.toString());
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == matchString) {
+            throw new ComponentInitializationException("String Matcher has not had a valid string set");
+        }
+
+        if (!caseSensitiveSet) {
+            throw new ComponentInitializationException("String Matcher has not had case sentivity set");
         }
     }
 }

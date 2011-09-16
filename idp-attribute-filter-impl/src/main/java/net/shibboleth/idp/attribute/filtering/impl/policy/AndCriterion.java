@@ -30,6 +30,7 @@ import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluableCriterion;
@@ -69,14 +70,14 @@ public class AndCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilt
     /**
      * Has initialize been called on this object. {@inheritDoc}.
      */
-    public boolean isInitialized() {
+    public final boolean isInitialized() {
         return initialized;
     }
 
     /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
     public final synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("And Criterion being initialized multiple times");
+        if (isInitialized()) {
+            return;
         }
 
         for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
@@ -101,8 +102,8 @@ public class AndCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilt
      * @throws ComponentValidationException if any of the child validates failed.
      */
     public void validate() throws ComponentValidationException {
-        if (!initialized) {
-            throw new ComponentValidationException("Object not initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Object not initialized");
         }
         for (EvaluableCriterion<AttributeFilterContext> criterion : criteria) {
             ComponentSupport.validate(criterion);
@@ -144,8 +145,8 @@ public class AndCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilt
      */
     public Boolean doEvaluate(final AttributeFilterContext target) throws EvaluationException {
 
-        if (!initialized) {
-            throw new EvaluationException("And Criterion has not been initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("And Criterion has not been initialized");
         }
         // NOTE capture the criteria to avoid race with setSubCriterion.
         // Do this before the test on destruction to avoid race with destroy code.

@@ -24,8 +24,9 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 
@@ -44,7 +45,7 @@ import org.opensaml.util.component.UnmodifiableComponentException;
  * 
  */
 @ThreadSafe
-public abstract class BaseRegexMatcher implements InitializableComponent, UnmodifiableComponent {
+public abstract class BaseRegexMatcher extends AbstractInitializableComponent implements UnmodifiableComponent {
 
     /** Regular expression to match. */
     private Pattern regex;
@@ -52,47 +53,17 @@ public abstract class BaseRegexMatcher implements InitializableComponent, Unmodi
     /** The text of the expression. */
     private String expressionAsText;
 
-    /** Initialized state. */
-    private boolean initialized;
-
     /**
      * Set the expression.
      * 
      * @param expression the regexp under consideration. Must not be null or empty
      */
     public synchronized void setRegularExpression(final String expression) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("Regular expression matcher has already been initialized");
         }
+
         expressionAsText = StringSupport.trimOrNull(expression);
-    }
-
-    /**
-     * Mark the regexp as initialized.
-     * 
-     * @throws ComponentInitializationException if we have been called already or the expression is bogus
-     */
-    public synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("Regexp Matcher is initialized multiple times");
-        }
-        if (null == expressionAsText) {
-            throw new ComponentInitializationException("No valid pattern provided to Regexp Matcher");
-        }
-        try {
-            regex = Pattern.compile(expressionAsText);
-        } catch (PatternSyntaxException e) {
-            throw new ComponentInitializationException("Regexp Matcher: Could not compile provided pattern "
-                    + expressionAsText, e);
-        }
-        initialized = true;
-    }
-
-    /**
-     * Has initialize been called on this object. {@inheritDoc}.
-     * */
-    public boolean isInitialized() {
-        return initialized;
     }
 
     /**
@@ -114,13 +85,30 @@ public abstract class BaseRegexMatcher implements InitializableComponent, Unmodi
      * @throws AttributeFilteringException if we haven't been initialized
      */
     protected boolean isMatch(final Object value) throws AttributeFilteringException {
-        if (!initialized) {
-            throw new AttributeFilteringException("Regexp Matcher has not been initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Regexp Matcher has not been initialized");
         }
+
         if (regex.matcher(value.toString()).matches()) {
             return true;
         }
 
         return false;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (null == expressionAsText) {
+            throw new ComponentInitializationException("No valid pattern provided to Regexp Matcher");
+        }
+
+        try {
+            regex = Pattern.compile(expressionAsText);
+        } catch (PatternSyntaxException e) {
+            throw new ComponentInitializationException("Regexp Matcher: Could not compile provided pattern "
+                    + expressionAsText, e);
+        }
     }
 }

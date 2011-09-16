@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
@@ -71,7 +72,7 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
     /**
      * Has initialize been called on this object. {@inheritDoc}.
      * */
-    public boolean isInitialized() {
+    public final boolean isInitialized() {
         return initialized;
     }
 
@@ -79,8 +80,8 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
      * Initialize. Check parameters and try to compile the script {@inheritDoc}
      */
     public final synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("ScriptedCriterion: initialized multiple times.");
+        if (isInitialized()) {
+            return;
         }
 
         if (null == scriptLanguage) {
@@ -102,15 +103,15 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
 
     /**
      * Set the language we are using.
+     * 
      * @param theLanguage what we use.
      */
     public synchronized void setLanguage(final String theLanguage) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("ScriptletCriterion has already been initialized");
         }
         scriptLanguage = StringSupport.trimOrNull(theLanguage);
     }
-
 
     /**
      * Gets the scripting language used.
@@ -122,18 +123,19 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
     }
 
     /**
-    * Set the actual Script we will use.
+     * Set the actual Script we will use.
+     * 
      * @param theScript what to use.
      */
     public synchronized void setScript(final String theScript) {
-        if (initialized) {
+        if (isInitialized()) {
             throw new UnmodifiableComponentException("ScriptletCriterion has already been initialized");
         }
         script = StringSupport.trimOrNull(theScript);
     }
-    
+
     /**
-      * Gets the script that will be executed.
+     * Gets the script that will be executed.
      * 
      * @return script that will be executed. This is never null or empty.
      */
@@ -183,11 +185,11 @@ public class ScriptedCriterion extends AbstractBiasedEvaluableCriterion<Attribut
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         final Boolean result;
-        
+
         if (!isInitialized()) {
-            throw new EvaluationException("ScriptedMatcher has not been initialized");
+            throw new UninitializedComponentException("ScriptedMatcher has not been initialized");
         }
-        
+
         try {
             if (compiledScript != null) {
                 result = (Boolean) compiledScript.eval(scriptContext);

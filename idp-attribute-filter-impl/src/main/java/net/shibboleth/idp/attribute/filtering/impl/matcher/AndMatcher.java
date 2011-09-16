@@ -31,11 +31,11 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
 import org.opensaml.util.collections.CollectionSupport;
+import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +49,11 @@ import org.slf4j.LoggerFactory;
  * However it seems likely that such a constraint is erroneous...
  */
 @ThreadSafe
-public class AndMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent,
+public class AndMatcher extends AbstractInitializableComponent implements AttributeValueMatcher, DestructableComponent,
         ValidatableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(OrMatcher.class);
-
-    /** Initialized state. */
-    private boolean initialized;
 
     /** Destructor state. */
     private boolean destroyed;
@@ -75,25 +72,6 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
         log.info("AND matcher as part of a Permit or Deny rule is likely to be a configuration error");
     }
 
-    /**
-     * Has initialize been called on this object. {@inheritDoc}.
-     * */
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    /** Mark the object as initialized having initialized any children. {@inheritDoc}. */
-    public synchronized void initialize() throws ComponentInitializationException {
-        if (initialized) {
-            throw new ComponentInitializationException("And Matcher being initialized multiple times");
-        }
-
-        for (AttributeValueMatcher matcher : matchers) {
-            ComponentSupport.initialize(matcher);
-        }
-        initialized = true;
-    }
-
     /** tear down any destructable children. {@inheritDoc} */
     public void destroy() {
         destroyed = true;
@@ -105,13 +83,12 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
     }
 
     /**
-     * Validate any validatable children. 
-     * {@inheritDoc}
+     * Validate any validatable children. {@inheritDoc}
      * 
      * @throws ComponentValidationException if any of the child validates failed.
      */
     public void validate() throws ComponentValidationException {
-        if (!initialized) {
+        if (!isInitialized()) {
             throw new ComponentValidationException("Object not initialized");
         }
         for (AttributeValueMatcher matcher : matchers) {
@@ -173,7 +150,7 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
     public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
 
-        if (!initialized) {
+        if (!isInitialized()) {
             throw new AttributeFilteringException("And Matcher has not been initialized");
         }
         // NOTE capture the matchers to avoid race with setSubMatchers.
@@ -206,4 +183,12 @@ public class AndMatcher implements AttributeValueMatcher, InitializableComponent
         return Collections.unmodifiableCollection(result);
     }
 
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        for (AttributeValueMatcher matcher : matchers) {
+            ComponentSupport.initialize(matcher);
+        }
+    }
 }

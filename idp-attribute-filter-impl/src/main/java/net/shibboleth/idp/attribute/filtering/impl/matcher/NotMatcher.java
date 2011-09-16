@@ -28,10 +28,11 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 
+import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.InitializableComponent;
+import org.opensaml.util.component.UninitializedComponentException;
 import org.opensaml.util.component.ValidatableComponent;
 
 /**
@@ -39,13 +40,10 @@ import org.opensaml.util.component.ValidatableComponent;
  * Anything returned from the sub matcher is removed from the attribute's list of values.
  */
 @ThreadSafe
-public class NotMatcher implements AttributeValueMatcher, InitializableComponent, ValidatableComponent {
+public class NotMatcher extends AbstractInitializableComponent implements AttributeValueMatcher, ValidatableComponent {
 
     /** The matcher we are NOT-ing. */
     private AttributeValueMatcher subMatcher;
-
-    /** Initialized state. */
-    private boolean initialized;
 
     /** Destructor state. */
     private boolean destroyed;
@@ -57,44 +55,25 @@ public class NotMatcher implements AttributeValueMatcher, InitializableComponent
     public NotMatcher() {
     }
 
-    /**
-     * Has initialize been called on this object. {@inheritDoc}.
-     * */
-    public boolean isInitialized() {
-        return initialized;
-    }
-
-    /**
-     * Mark the object as initialized, calling the child if appropriate {@inheritDoc}.
-     */
-    public synchronized void initialize() throws ComponentInitializationException {
-        if (null == subMatcher) {
-            throw new ComponentInitializationException("No child attribute specified");
-        }
-        ComponentSupport.initialize(subMatcher);
-        initialized = true;
-    }
-
     /** tear down the child is destructable. {@inheritDoc} */
     public void destroy() {
         destroyed = true;
         ComponentSupport.destroy(subMatcher);
         subMatcher = null;
     }
-    
+
     /**
-     * Validate the sub component. 
-     * {@inheritDoc}.
+     * Validate the sub component. {@inheritDoc}.
      * 
      * @throws ComponentValidationException if any of the child validates failed.
      */
     public void validate() throws ComponentValidationException {
-        if (!initialized) {
-            throw new ComponentValidationException("Not Matcher not initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Not Matcher not initialized");
         }
         ComponentSupport.validate(subMatcher);
     }
-   
+
     /**
      * Set the child matcher we are NOT ing.
      * 
@@ -117,14 +96,14 @@ public class NotMatcher implements AttributeValueMatcher, InitializableComponent
     public Collection<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
 
-        if (!initialized) {
-            throw new AttributeFilteringException("Not Matcher has not been initialized");
+        if (!isInitialized()) {
+            throw new UninitializedComponentException("Not Matcher has not been initialized");
         }
-        
+
         // capture the child to guarantee atomicity.
         final AttributeValueMatcher theSubMatcher = subMatcher;
         if (destroyed) {
-            throw new AttributeFilteringException("Not Matcher has been destroyed");            
+            throw new AttributeFilteringException("Not Matcher has been destroyed");
         }
 
         final Collection subMatcherResults = theSubMatcher.getMatchingValues(attribute, filterContext);
@@ -139,4 +118,10 @@ public class NotMatcher implements AttributeValueMatcher, InitializableComponent
         return Collections.unmodifiableCollection(result);
     }
 
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        ComponentSupport.initialize(subMatcher);
+    }
 }

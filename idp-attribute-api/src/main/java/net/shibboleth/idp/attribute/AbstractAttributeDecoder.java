@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.opensaml.util.StringSupport;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
@@ -37,45 +37,17 @@ import org.slf4j.LoggerFactory;
  * @param <DecodedType> type of data decoded
  * @param <ValueType> data type of attribute values
  */
-public abstract class AbstractAttributeDecoder<DecodedType, ValueType> implements AttributeDecoder<DecodedType>,
-        UnmodifiableComponent, InitializableComponent {
+public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends
+        AbstractIdentifiableInitializableComponent implements AttributeDecoder<DecodedType>, UnmodifiableComponent {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AbstractAttributeDecoder.class);
-
-    /** Whether this encoder has been initialized. */
-    private boolean initialized;
-
-    /** The ID of the IdP attribute. */
-    private String id;
 
     /** Localized human intelligible attribute names. */
     private Map<Locale, String> displayNames;
 
     /** Localized human readable descriptions of attribute. */
     private Map<Locale, String> displayDescriptions;
-
-    /**
-     * Gets the ID of the generated {@link Attribute}.
-     * 
-     * @return the ID of the generated IdP attribute
-     */
-    public final String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the ID of the generated {@link Attribute}.
-     * 
-     * @param attributeId the ID of the generated IdP attribute
-     */
-    public final synchronized void setId(final String attributeId) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException(
-                    "Attribute ID can not be changed after decoder has been initialized");
-        }
-        id = StringSupport.trimOrNull(attributeId);
-    }
 
     /**
      * Gets the unmodifiable collection of localized human readable name of the attribute. This collection never
@@ -171,30 +143,6 @@ public abstract class AbstractAttributeDecoder<DecodedType, ValueType> implement
         }
     }
 
-    /** {@inheritDoc} */
-    public final boolean isInitialized() {
-        return initialized;
-    }
-
-    /** {@inheritDoc} */
-    public final synchronized void initialize() throws ComponentInitializationException {
-        if (id == null) {
-            throw new ComponentInitializationException("Attribute ID can not be null or empty");
-        }
-
-        if (displayNames == null || displayNames.isEmpty()) {
-            displayNames = Collections.emptyMap();
-        }
-
-        if (displayDescriptions == null || displayDescriptions.isEmpty()) {
-            displayDescriptions = Collections.emptyMap();
-        }
-
-        doInitialize();
-
-        initialized = true;
-    }
-
     /**
      * Checks if this decoder has been initialized and if the given data is null, then creates the IdP attribute by
      * calling {@link #createAttribute(Object)}, sets its display names and descriptions, then delegates to
@@ -222,15 +170,18 @@ public abstract class AbstractAttributeDecoder<DecodedType, ValueType> implement
     };
 
     /**
-     * Performs additional component initialization. This method is called after the checks ensuring the attribute ID,
-     * name and namespace are populated.
+     * Initializes the display name and descriptors to empty collections if they are null.
      * 
-     * Default implementation of this method is a no-op
-     * 
-     * @throws ComponentInitializationException thrown if there is a problem initializing this encoder
+     * {@inheritDoc}
      */
     protected void doInitialize() throws ComponentInitializationException {
+        if (displayNames == null || displayNames.isEmpty()) {
+            displayNames = Collections.emptyMap();
+        }
 
+        if (displayDescriptions == null || displayDescriptions.isEmpty()) {
+            displayDescriptions = Collections.emptyMap();
+        }
     }
 
     /**
