@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
@@ -40,8 +43,9 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final RequestContext springRequestContext,
-            final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
+            final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
             return ActionSupport.buildErrorEvent(this, new NoMessageIssuerException(

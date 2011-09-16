@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
@@ -45,8 +48,9 @@ public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAc
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final RequestContext springRequestContext,
-            final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
+    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
+            final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
             return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(

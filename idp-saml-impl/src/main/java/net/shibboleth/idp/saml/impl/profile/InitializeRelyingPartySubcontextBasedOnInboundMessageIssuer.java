@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -46,7 +49,8 @@ public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
             BasicMessageMetadataSubcontext subcontext) {
         log.debug("Action {}: Attaching RelyingPartySubcontext with relying party ID {} to ProfileRequestContext",
                 getId(), subcontext.getMessageIssuer());
