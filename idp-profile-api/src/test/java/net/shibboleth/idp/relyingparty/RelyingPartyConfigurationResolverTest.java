@@ -33,9 +33,6 @@ public class RelyingPartyConfigurationResolverTest {
     public void testConstruction() {
         RelyingPartyConfigurationResolver resolver;
 
-        RelyingPartyConfiguration anonConfig =
-                new RelyingPartyConfiguration("anonymous", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
-
         ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
         rpConfigs.add(new RelyingPartyConfiguration("one", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
         rpConfigs.add(new RelyingPartyConfiguration("two", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null));
@@ -43,23 +40,18 @@ public class RelyingPartyConfigurationResolverTest {
 
         resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
-        resolver.setAnonymousRelyingPartyConfiguration(anonConfig);
         resolver.setRelyingPartyConfigurations(rpConfigs);
         Assert.assertEquals(resolver.getId(), "test");
-        Assert.assertSame(resolver.getAnonymousRelyingPartyConfiguration(), anonConfig);
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 3);
 
         resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
-        resolver.setAnonymousRelyingPartyConfiguration(anonConfig);
         Assert.assertEquals(resolver.getId(), "test");
-        Assert.assertSame(resolver.getAnonymousRelyingPartyConfiguration(), anonConfig);
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
 
         resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
-        Assert.assertNull(resolver.getAnonymousRelyingPartyConfiguration());
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
     }
 

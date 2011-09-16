@@ -25,17 +25,20 @@ import org.opensaml.util.StringSupport;
 public abstract class AbstractProfileConfiguration implements ProfileConfiguration {
 
     /** ID of the profile configured. */
-    private String id;
+    private final String id;
 
     /** Whether this profile is enabled. */
     private boolean enabled;
+
+    /** The security configuration for this profile. */
+    private SecurityConfiguration securityConfiguration;
 
     /**
      * Constructor.
      * 
      * @param profileId ID of the the communication profile, never null or empty
      */
-    public AbstractProfileConfiguration(String profileId) {
+    public AbstractProfileConfiguration(final String profileId) {
         String trimmedId = StringSupport.trimOrNull(profileId);
         Assert.isNotNull(trimmedId, "Profile identifier can not be null or empty");
         id = profileId;
@@ -60,6 +63,20 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      */
     public void setEnabled(boolean isEnabled) {
         enabled = isEnabled;
+    }
+
+    /** {@inheritDoc} */
+    public SecurityConfiguration getSecurityConfiguration() {
+        return securityConfiguration;
+    }
+
+    /**
+     * Sets the security configuration for this profile.
+     * 
+     * @param configuration security configuration for this profile
+     */
+    public void setSecurityConfiguration(SecurityConfiguration configuration) {
+        securityConfiguration = configuration;
     }
 
     /** {@inheritDoc} */

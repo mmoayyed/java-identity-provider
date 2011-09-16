@@ -29,7 +29,6 @@ import org.opensaml.util.StringSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
 
 /** The configuration that applies to given relying party. */
-// TODO probably need to track a default org.opensaml.xml.security.SecurityConfiguration here
 public class RelyingPartyConfiguration {
 
     /** Unique identifier for this configuration. */

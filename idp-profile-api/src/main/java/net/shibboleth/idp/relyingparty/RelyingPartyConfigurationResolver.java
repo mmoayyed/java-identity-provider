@@ -33,8 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Retrieves a per-relying party configuration for a given profile request based on the request. Also gives access to an
- * "anonymous" relying party configuration which is used when nothing is known about the relying party.
+ * Retrieves a per-relying party configuration for a given profile request based on the request.
  * 
  * Note, this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
  */
@@ -44,39 +43,12 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiedInitial
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(RelyingPartyConfigurationResolver.class);
 
-    /** Configuration used with anonymous relying parties. */
-    private RelyingPartyConfiguration anonymousRpConfiguration;
-
     /** Registered relying party configurations. */
     private List<RelyingPartyConfiguration> rpConfigurations = Collections.emptyList();
 
     /** {@inheritDoc} */
     public synchronized void setId(String componentId) {
         super.setId(componentId);
-    }
-
-    /**
-     * Gets the relying party configuration used for anonymous relying parties.
-     * 
-     * @return relying party configuration used for anonymous relying parties, may be null
-     */
-    public RelyingPartyConfiguration getAnonymousRelyingPartyConfiguration() {
-        return anonymousRpConfiguration;
-    }
-
-    /**
-     * Sets the relying party configuration used for anonymous relying parties.
-     * 
-     * This property may not be changed after the resolver is initialized.
-     * 
-     * @param config relying party configuration used for anonymous relying parties
-     */
-    public synchronized void setAnonymousRelyingPartyConfiguration(RelyingPartyConfiguration config) {
-        if (isInitialized()) {
-            return;
-        }
-
-        anonymousRpConfiguration = config;
     }
 
     /**
@@ -166,7 +138,7 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiedInitial
         log.debug("No relying party configurations are applicable to profile request {}", context.getId());
         return null;
     }
-    
+
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -179,6 +151,5 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiedInitial
             }
             configIds.add(config.getConfigurationId());
         }
-
     }
 }

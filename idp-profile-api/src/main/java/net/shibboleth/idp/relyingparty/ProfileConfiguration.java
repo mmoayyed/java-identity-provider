@@ -19,7 +19,6 @@ package net.shibboleth.idp.relyingparty;
 
 
 /** Represents the configuration of a particular Identity Provider communication profile. */
-//TODO probably need to allow for a profile-specific org.opensaml.xml.security.SecurityConfiguration here
 public interface ProfileConfiguration {
 
     /**
@@ -35,4 +34,11 @@ public interface ProfileConfiguration {
      * @return whether the this profile is enabled for use
      */
     public boolean isEnabled();
+    
+    /**
+     * Gets the security configuration to use with this profile.
+     * 
+     * @return security configuration to use with this profile, never null
+     */
+    public SecurityConfiguration getSecurityConfiguration();
 }
