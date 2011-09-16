@@ -24,15 +24,21 @@ import net.shibboleth.idp.attribute.AttributeSubcontext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** A stage which invokes the {@link AttributeResolver} for the current request. */
-public class ResolveAttributes extends AbstractIdentityProviderAction {
+public class ResolveAttributes extends AbstractProfileRequestSubcontextAction<RelyingPartySubcontext> {
+
+    /** Class logger. */
+    private Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
 
     /** Resolver used to fetch attributes. */
     private AttributeResolver attributeResolver;
@@ -43,8 +49,14 @@ public class ResolveAttributes extends AbstractIdentityProviderAction {
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+    protected Class<RelyingPartySubcontext> getSubcontextType() {
+        return RelyingPartySubcontext.class;
+    }
+
+    /** {@inheritDoc} */
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
+            final RelyingPartySubcontext relyingPartyContext) {
 
         // Get the resolution context from the profile request
         // this may already exist but if not, auto-create it
@@ -53,13 +65,13 @@ public class ResolveAttributes extends AbstractIdentityProviderAction {
 
         try {
             attributeResolver.resolveAttributes(resolutionContext);
-            //TODO remove resolution context from request?
-            
-            final AttributeSubcontext attributeCtx = profileRequestContext.getSubcontext(AttributeSubcontext.class, true);
+            profileRequestContext.removeSubcontext(resolutionContext);
+
+            final AttributeSubcontext attributeCtx = new AttributeSubcontext(relyingPartyContext);
             attributeCtx.setAttributes(resolutionContext.getResolvedAttributes().values());
         } catch (AttributeResolutionException e) {
-            // TODO error
-            return ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, null);
+            log.error("Action {}: Error resolving attributes", getId(), e);
+            return ActionSupport.buildErrorEvent(this, e);
         }
 
         return ActionSupport.buildProceedEvent(this);
