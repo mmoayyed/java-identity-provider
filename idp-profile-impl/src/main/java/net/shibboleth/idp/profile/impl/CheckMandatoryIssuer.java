@@ -44,8 +44,8 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
             final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
-            return ActionSupport.buildErrorEvent(this, new NoMessageIssuerException(),
-                    "Basic message metadata subcontext does not a message issuer");
+            return ActionSupport.buildErrorEvent(this, new NoMessageIssuerException(
+                    "Basic message metadata subcontext does not a message issuer"));
         }
 
         return ActionSupport.buildProceedEvent(this);

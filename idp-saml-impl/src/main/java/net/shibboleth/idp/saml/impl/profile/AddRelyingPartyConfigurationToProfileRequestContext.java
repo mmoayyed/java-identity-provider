@@ -22,12 +22,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationSubcontext;
-import net.shibboleth.idp.saml.profile.SamlMetadataSubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.UnmodifiableComponentException;
@@ -37,7 +37,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/** IdP action that adds the relying party configuration to the {@link ProfileRequestContext}. */
+/**
+ * This action attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the {@link RelyingPartySubcontext}
+ * located on the {@link ProfileRequestContext}.
+ */
 public final class AddRelyingPartyConfigurationToProfileRequestContext extends AbstractIdentityProviderAction {
 
     /** Class logger. */
@@ -72,26 +75,23 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
-        final SamlMetadataSubcontext metadataCtx =
-                profileRequestContext.getInboundMessageContext().getSubcontext(SamlMetadataSubcontext.class, false);
 
-        if (metadataCtx == null || metadataCtx.getEntityDescriptor() == null) {
-            log.debug(
-                    "Action {}: No metadata available for message issuer, using anonymous relying party configuration",
-                    getId());
-            new RelyingPartyConfigurationSubcontext(profileRequestContext,
-                    rpConfigResolver.getAnonymousRelyingPartyConfiguration());
-            return ActionSupport.buildProceedEvent(this);
+        final RelyingPartySubcontext relyingPartyCtx =
+                profileRequestContext.getSubcontext(RelyingPartySubcontext.class, false);
+        if (relyingPartyCtx == null) {
+            log.error("Action {}: ProfileRequestContext did not contain a RelyingPartySubcontext", getId());
+            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
+                    "ProfileRequestContext did not contain a RelyingPartySubcontext"));
         }
 
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
             if (config == null) {
-                return ActionSupport.buildErrorEvent(this, new NoRelyingPartyConfigurationException(),
-                        "No relying party configuration availabe for this request");
+                return ActionSupport.buildErrorEvent(this, new NoRelyingPartyConfigurationException(
+                        "No relying party configuration availabe for this request"));
             }
 
-            new RelyingPartyConfigurationSubcontext(profileRequestContext, config);
+            relyingPartyCtx.setRelyingPartyConfiguration(config);
             return ActionSupport.buildProceedEvent(this);
         } catch (ResolverException e) {
             log.error("Action {}: error trying to resolve relying party configuration", getId(), e);

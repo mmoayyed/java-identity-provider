@@ -34,8 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
 public final class ActionSupport {
 
     /**
-     * ID of an Event indicating that the action completed successfully and processing should move on to the next
-     * step.
+     * ID of an Event indicating that the action completed successfully and processing should move on to the next step.
      */
     public static final String PROCEED_EVENT_ID = "proceed";
 
@@ -65,12 +64,12 @@ public final class ActionSupport {
      * 
      * @return the current Servlet request or null if the given context, external context, or Servlet request is null
      */
-    public static HttpServletRequest getHttpServletRequest(RequestContext requestContext) {
+    public static HttpServletRequest getHttpServletRequest(final RequestContext requestContext) {
         if (requestContext == null) {
             return null;
         }
 
-        ExternalContext externalContext = requestContext.getExternalContext();
+        final ExternalContext externalContext = requestContext.getExternalContext();
         if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
             return null;
         }
@@ -85,19 +84,19 @@ public final class ActionSupport {
      * 
      * @return the current Servlet response or null if the given context, external context, or Servlet response is null
      */
-    public static HttpServletResponse getHttpServletResponse(RequestContext requestContext) {
+    public static HttpServletResponse getHttpServletResponse(final RequestContext requestContext) {
         if (requestContext == null) {
             return null;
         }
 
-        ExternalContext externalContext = requestContext.getExternalContext();
+        final ExternalContext externalContext = requestContext.getExternalContext();
         if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
             return null;
         }
 
         return (HttpServletResponse) externalContext.getNativeResponse();
     }
-    
+
     /**
      * Builds a {@link #PROCEED_EVENT_ID} event with no related attributes.
      * 
@@ -105,7 +104,7 @@ public final class ActionSupport {
      * 
      * @return the proceed event
      */
-    public static Event buildProceedEvent(IdentifiedComponent source){
+    public static Event buildProceedEvent(final IdentifiedComponent source) {
         return buildEvent(source, PROCEED_EVENT_ID, null);
     }
 
@@ -118,7 +117,8 @@ public final class ActionSupport {
      * 
      * @return the constructed {@link Event}
      */
-    public static Event buildEvent(IdentifiedComponent source, String eventId, AttributeMap eventAttributes) {
+    public static Event buildEvent(final IdentifiedComponent source, final String eventId,
+            final AttributeMap eventAttributes) {
         Assert.isNotNull(source, "Component may not be null");
 
         final String trimmedEventId = StringSupport.trimOrNull(eventId);
@@ -133,6 +133,20 @@ public final class ActionSupport {
 
     /**
      * Builds an error event. The event ID is {@link #ERROR_EVENT_ID} and includes in its attribute map the given
+     * exception, bound under {@link #ERROR_THROWABLE_ID}. If the given exception has a message it is bound under
+     * {@link #ERROR_MESSAGE_ID}.
+     * 
+     * @param source component that produced the error event
+     * @param error exception that represents the error, may be null
+     * 
+     * @return the constructed event
+     */
+    public static Event buildErrorEvent(final IdentifiedComponent source, final Throwable error) {
+        return buildErrorEvent(source, error, error.getMessage());
+    }
+
+    /**
+     * Builds an error event. The event ID is {@link #ERROR_EVENT_ID} and includes in its attribute map the given
      * exception, bound under {@link #ERROR_THROWABLE_ID} and the textual error message, bound under
      * {@link #ERROR_MESSAGE_ID}.
      * 
@@ -142,14 +156,14 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    public static Event buildErrorEvent(IdentifiedComponent source, Exception error, String message) {
+    public static Event buildErrorEvent(final IdentifiedComponent source, final Throwable error, final String message) {
         LocalAttributeMap eventAttributes = new LocalAttributeMap();
 
         if (error != null) {
             eventAttributes.put(ERROR_THROWABLE_ID, error);
         }
 
-        String trimmedMessage = StringSupport.trimOrNull(message);
+        final String trimmedMessage = StringSupport.trimOrNull(message);
         if (trimmedMessage != null) {
             eventAttributes.put(ERROR_MESSAGE_ID, trimmedMessage);
         }

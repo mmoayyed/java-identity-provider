@@ -35,7 +35,7 @@ public class SignAssertions extends AbstractIdentityProviderAction<Object, Respo
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws Throwable {
+            final ProfileRequestContext<Object, Response> profileRequestContext) {
         // TODO Auto-generated method stub
         return null;
     }

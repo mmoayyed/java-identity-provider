@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -50,8 +51,8 @@ public final class CheckMessageLifetime extends AbstractInboundMessageSubcontext
             final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssueInstant() <= 0) {
-            return ActionSupport.buildErrorEvent(this, null,
-                    "Basic message metadata subcontext does not contain a message issue instant");
+            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
+                    "Basic message metadata subcontext does not contain a message issue instant"));
         }
 
         final long issueInstant = messageSubcontext.getMessageIssueInstant();

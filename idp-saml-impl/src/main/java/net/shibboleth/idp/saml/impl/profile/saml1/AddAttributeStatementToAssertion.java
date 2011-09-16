@@ -17,13 +17,19 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeSubcontext;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
@@ -41,9 +47,32 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws Throwable {
-        // TODO Auto-generated method stub
-        // TODO need to add an assertion if it's not there already
+            final ProfileRequestContext<Object, Response> profileRequestContext) {
+
+        final AttributeSubcontext attributeCtx = null; // TODO get this from relying party context
+        if (attributeCtx == null) {
+            return ActionSupport.buildProceedEvent(this);
+        }
+
+        final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
+        // TODO check for null
+
+        final Response samlResponse = outboundMessageCtx.getMessage();
+        // TODO check for null
+
+        final List<Assertion> assertions = samlResponse.getAssertions();
+        if (assertions.isEmpty()) {
+            // TODO generate assertion
+        }
+
+        final Assertion assertion = assertions.get(0);
+
+        // TODO generate attribute statement and add to assertion
+
+        for (Attribute<?> attributes : attributeCtx.getAttributes().values()) {
+            // TODO encode attributes and add to statement
+        }
+
         return null;
     }
 

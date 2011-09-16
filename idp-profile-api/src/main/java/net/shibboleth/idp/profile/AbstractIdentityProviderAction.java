@@ -68,14 +68,13 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
         final HttpServletRequest httpRequest = ActionSupport.getHttpServletRequest(springRequestContext);
         if (httpRequest == null) {
             log.error("Action {}: HTTP Servlet request is not available", getId());
-            return ActionSupport.buildErrorEvent(this, new ProfileException(), "HTTP Servlet request is not available");
+            return ActionSupport.buildErrorEvent(this, new ProfileException("HTTP Servlet request is not available"));
         }
 
         final HttpServletResponse httpResponse = ActionSupport.getHttpServletResponse(springRequestContext);
         if (httpResponse == null) {
             log.error("Action {}: HTTP Servlet response is not available", getId());
-            return ActionSupport
-                    .buildErrorEvent(this, new ProfileException(), "HTTP Servlet response is not available");
+            return ActionSupport.buildErrorEvent(this, new ProfileException("HTTP Servlet response is not available"));
         }
 
         final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
@@ -83,8 +82,8 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
                         .getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         if (profileRequestContext == null) {
             log.error("Action {}: IdP profile request context is not available", getId());
-            return ActionSupport.buildErrorEvent(this, new ProfileException(),
-                    "IdP profile request context is not available");
+            return ActionSupport.buildErrorEvent(this, new ProfileException(
+                    "IdP profile request context is not available"));
         }
 
         profileRequestContext.setHttpRequest(httpRequest);
@@ -126,7 +125,6 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
      */
     public abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-            throws Throwable;
+            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext);
 
 }

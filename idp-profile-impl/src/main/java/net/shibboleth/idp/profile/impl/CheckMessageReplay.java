@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -48,13 +49,13 @@ public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAc
             final ProfileRequestContext profileRequestContext, final BasicMessageMetadataSubcontext messageSubcontext) {
 
         if (messageSubcontext.getMessageIssuer() == null) {
-            return ActionSupport.buildErrorEvent(this, null,
-                    "Basic message metadata subcontext does not contain a message issuer");
+            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
+                    "Basic message metadata subcontext does not contain a message issuer"));
         }
 
         if (messageSubcontext.getMessageId() == null) {
-            return ActionSupport.buildErrorEvent(this, null,
-                    "Basic message metadata subcontext does not contain a message ID");
+            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
+                    "Basic message metadata subcontext does not contain a message ID"));
         }
 
         if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
