@@ -33,8 +33,7 @@ public class ExtractKerberosTicketFromWssToken extends AbstractIdentityProviderA
 
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
-            throws Throwable {
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
         // TODO Auto-generated method stub
         return null;
     }
