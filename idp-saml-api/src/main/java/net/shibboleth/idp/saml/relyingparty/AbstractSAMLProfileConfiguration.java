@@ -24,6 +24,9 @@ import org.opensaml.util.Assert;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 
+//TODO fix name so that 'SAML' is 'Saml'
+//TODO should we allow for additional audiences?  probably
+
 /** Base class for SAML profile configurations. */
 public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration {
 

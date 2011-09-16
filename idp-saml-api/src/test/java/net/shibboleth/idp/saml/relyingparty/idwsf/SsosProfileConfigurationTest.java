@@ -17,10 +17,6 @@
 
 package net.shibboleth.idp.saml.relyingparty.idwsf;
 
-import java.util.ArrayList;
-
-import net.shibboleth.idp.saml.relyingparty.idwsf.SsosProfileConfiguration;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -42,37 +38,5 @@ public class SsosProfileConfigurationTest {
         
         config.setMaximumTokenDelegationChainLength(10);
         Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 10);
-    }
-    
-    @Test
-    public void testAllowedDelegates(){
-        SsosProfileConfiguration config = new SsosProfileConfiguration();
-        Assert.assertNotNull(config.getAllowedDelegates());
-        Assert.assertTrue(config.getAllowedDelegates().isEmpty());
-
-        config.setAllowedDelegates(null);
-        Assert.assertNotNull(config.getAllowedDelegates());
-        Assert.assertTrue(config.getAllowedDelegates().isEmpty());
-
-        ArrayList<String> delegates = new ArrayList<String>();
-        delegates.add("foo");
-        delegates.add(null);
-        delegates.add("");
-        delegates.add("foo");
-        delegates.add("bar");
-
-        config.setAllowedDelegates(delegates);
-        Assert.assertNotSame(config.getAllowedDelegates(), delegates);
-        Assert.assertNotNull(config.getAllowedDelegates());
-        Assert.assertEquals(config.getAllowedDelegates().size(), 2);
-        Assert.assertTrue(config.getAllowedDelegates().contains("foo"));
-        Assert.assertTrue(config.getAllowedDelegates().contains("bar"));
-
-        try {
-            config.getAllowedDelegates().add("baz");
-            Assert.fail();
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
     }
 }
