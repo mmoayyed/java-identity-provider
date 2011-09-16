@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.IdentifiedComponent;
+import org.opensaml.util.component.IdentifiableComponent;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
@@ -104,7 +104,7 @@ public final class ActionSupport {
      * 
      * @return the proceed event
      */
-    public static Event buildProceedEvent(final IdentifiedComponent source) {
+    public static Event buildProceedEvent(final IdentifiableComponent source) {
         return buildEvent(source, PROCEED_EVENT_ID, null);
     }
 
@@ -117,7 +117,7 @@ public final class ActionSupport {
      * 
      * @return the constructed {@link Event}
      */
-    public static Event buildEvent(final IdentifiedComponent source, final String eventId,
+    public static Event buildEvent(final IdentifiableComponent source, final String eventId,
             final AttributeMap eventAttributes) {
         Assert.isNotNull(source, "Component may not be null");
 
@@ -141,7 +141,7 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    public static Event buildErrorEvent(final IdentifiedComponent source, final Throwable error) {
+    public static Event buildErrorEvent(final IdentifiableComponent source, final Throwable error) {
         return buildErrorEvent(source, error, error.getMessage());
     }
 
@@ -156,7 +156,7 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    public static Event buildErrorEvent(final IdentifiedComponent source, final Throwable error, final String message) {
+    public static Event buildErrorEvent(final IdentifiableComponent source, final Throwable error, final String message) {
         LocalAttributeMap eventAttributes = new LocalAttributeMap();
 
         if (error != null) {

@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.criteria.CriteriaSet;
 import org.opensaml.util.resolver.Resolver;
 import org.opensaml.util.resolver.ResolverException;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @param <MetadataType> type of metadata returned by the resolver
  */
-public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiedInitializableComponent implements
+public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiableInitializableComponent implements
         Resolver<MetadataType, CriteriaSet> {
 
     /** Resolvers composed by this resolver. */

@@ -29,7 +29,7 @@ import net.shibboleth.idp.log.PerformanceEvent;
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 /** Base class for {@link Service} implementations. */
 @ThreadSafe
-public abstract class AbstractService extends AbstractIdentifiedInitializableComponent implements Service,
+public abstract class AbstractService extends AbstractIdentifiableInitializableComponent implements Service,
         ValidatableComponent {
 
     /** Suffix appended to service ID to form the starting performance event ID. Value: {@value} */

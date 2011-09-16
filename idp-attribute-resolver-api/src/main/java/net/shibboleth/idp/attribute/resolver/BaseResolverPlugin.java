@@ -25,7 +25,7 @@ import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifiedInitializableComponent implements
+public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifiableInitializableComponent implements
         ValidatableComponent, UnmodifiableComponent, DestructableComponent {
 
     /** Class logger. */

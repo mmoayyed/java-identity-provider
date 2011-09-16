@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ import org.springframework.webflow.execution.RequestContext;
 // TODO perf metrics
 @ThreadSafe
 public abstract class AbstractIdentityProviderAction<InboundMessageType, OutboundMessageType> extends
-        AbstractIdentifiedInitializableComponent implements ValidatableComponent, Action {
+        AbstractIdentifiableInitializableComponent implements ValidatableComponent, Action {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractIdentityProviderAction.class);

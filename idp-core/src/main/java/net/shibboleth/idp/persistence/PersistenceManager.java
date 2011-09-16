@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.persistence;
 
-import org.opensaml.util.component.IdentifiedComponent;
+import org.opensaml.util.component.IdentifiableComponent;
 import org.opensaml.util.component.ValidatableComponent;
 
 /**
@@ -25,7 +25,7 @@ import org.opensaml.util.component.ValidatableComponent;
  * 
  * @param <ItemType> type of item stored and managed
  */
-public interface PersistenceManager<ItemType> extends IdentifiedComponent, ValidatableComponent {
+public interface PersistenceManager<ItemType> extends IdentifiableComponent, ValidatableComponent {
 
     /**
      * Determines if an item with the given ID is exists within the persistence store.

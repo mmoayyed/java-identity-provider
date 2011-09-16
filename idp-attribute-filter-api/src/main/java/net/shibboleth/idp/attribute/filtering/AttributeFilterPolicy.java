@@ -26,7 +26,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.ComponentSupport;
 import org.opensaml.util.component.ComponentValidationException;
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * policies run this collection will contain the final result.
  */
 @ThreadSafe
-public class AttributeFilterPolicy extends AbstractIdentifiedInitializableComponent implements ValidatableComponent,
+public class AttributeFilterPolicy extends AbstractIdentifiableInitializableComponent implements ValidatableComponent,
         DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */

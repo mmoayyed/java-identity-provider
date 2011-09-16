@@ -30,7 +30,7 @@ import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazyMap;
 import org.opensaml.util.collections.LazySet;
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 /** A component that resolves the attributes for a particular subject. */
 @ThreadSafe
-public class AttributeResolver extends AbstractIdentifiedInitializableComponent implements ValidatableComponent,
+public class AttributeResolver extends AbstractIdentifiableInitializableComponent implements ValidatableComponent,
         DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */

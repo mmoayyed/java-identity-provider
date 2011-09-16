@@ -28,7 +28,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.IdentifiedComponent;
+import org.opensaml.util.component.IdentifiableComponent;
 
 /**
  * An identity provider session.
@@ -37,7 +37,7 @@ import org.opensaml.util.component.IdentifiedComponent;
  * session if you make any changes to its state.
  */
 @ThreadSafe
-public final class IdPSession extends AbstractSubcontextContainer implements IdentifiedComponent {
+public final class IdPSession extends AbstractSubcontextContainer implements IdentifiableComponent {
 
     /** Unique ID of this session. */
     private final String id;

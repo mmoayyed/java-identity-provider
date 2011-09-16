@@ -24,7 +24,7 @@ import java.util.List;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.resolver.Resolver;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * 
  * Note, this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
  */
-public class RelyingPartyConfigurationResolver extends AbstractIdentifiedInitializableComponent implements
+public class RelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
         Resolver<RelyingPartyConfiguration, ProfileRequestContext> {
 
     /** Class logger. */

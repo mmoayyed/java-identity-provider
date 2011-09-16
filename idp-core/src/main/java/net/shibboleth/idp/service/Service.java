@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.service;
 
-import org.opensaml.util.component.IdentifiedComponent;
+import org.opensaml.util.component.IdentifiableComponent;
 import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.ValidatableComponent;
 
 /** A service extends the notion of a component with the concept of a lifecycle. */
-public interface Service extends IdentifiedComponent, InitializableComponent, ValidatableComponent {
+public interface Service extends IdentifiableComponent, InitializableComponent, ValidatableComponent {
 
     /** Indicates the service object has been created but not yet started. */
     public static final String STATE_NEW = "new";

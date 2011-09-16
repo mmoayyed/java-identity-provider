@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.session;
 
-import org.opensaml.util.component.IdentifiedComponent;
+import org.opensaml.util.component.IdentifiableComponent;
 import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.resolver.Resolver;
 
 /** A resolver that is capable of finding sessions that meet certain criteria. */
-public interface SessionResolver extends IdentifiedComponent, ValidatableComponent,
+public interface SessionResolver extends IdentifiableComponent, ValidatableComponent,
         Resolver<IdPSession, EvaluableCriterion<IdPSession>> {
 
 }

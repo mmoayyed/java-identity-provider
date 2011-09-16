@@ -28,7 +28,7 @@ import org.opensaml.util.StringSupport;
 import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazySet;
-import org.opensaml.util.component.AbstractIdentifiedInitializableComponent;
+import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.DestructableComponent;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 /** Services that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public class AttributeFilteringEngine extends AbstractIdentifiedInitializableComponent implements ValidatableComponent,
+public class AttributeFilteringEngine extends AbstractIdentifiableInitializableComponent implements ValidatableComponent,
         DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */
