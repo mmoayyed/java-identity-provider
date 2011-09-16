@@ -120,8 +120,6 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
      * @param profileRequestContext the current IdP profile request context, never null
      * 
      * @return the result of this action, never null
-     * 
-     * @throws Throwable thrown if there is some problem executing this action
      */
     public abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
