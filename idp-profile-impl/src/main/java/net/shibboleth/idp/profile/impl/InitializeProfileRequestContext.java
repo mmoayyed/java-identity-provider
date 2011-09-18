@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.springframework.webflow.execution.Event;
@@ -41,8 +42,9 @@ public final class InitializeProfileRequestContext extends AbstractIdentityProvi
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
         springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, new ProfileRequestContext());
         return ActionSupport.buildProceedEvent(this);
     }

@@ -21,8 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.messaging.context.Subcontext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,13 +28,12 @@ import org.springframework.webflow.execution.RequestContext;
  * A base class for actions which check or use the information from a {@link Subcontext} of the
  * {@link ProfileRequestContext}.
  * 
+ * @param <InboundMessageType> type of in-bound message
+ * @param <OutboundMessageType> type of out-bound messag
  * @param <SubcontextType> the subcontext type upon which this action operates
  */
-public abstract class AbstractProfileRequestSubcontextAction<SubcontextType extends Subcontext> extends
-        AbstractIdentityProviderAction {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractProfileRequestSubcontextAction.class);
+public abstract class AbstractProfileRequestSubcontextAction<InboundMessageType, OutboundMessageType, SubcontextType extends Subcontext>
+        extends AbstractIdentityProviderAction<InboundMessageType, OutboundMessageType> {
 
     /**
      * Retrieves the profile request subcontext specified by {@link #getSubcontextType()}. If no subcontext is available
@@ -44,17 +41,12 @@ public abstract class AbstractProfileRequestSubcontextAction<SubcontextType exte
      * 
      * {@inheritDoc}
      */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+            throws ProfileException {
 
-        final Class<SubcontextType> subcontxtType = getSubcontextType();
-        final SubcontextType subcontext = profileRequestContext.getSubcontext(subcontxtType, false);
-        if (subcontext == null) {
-            log.error("Action {}: ProfileRequestContext does contain a subcontext of type {}", getId(),
-                    subcontxtType.getName());
-            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
-                    "ProfileRequestContext does contain a subcontext of type " + subcontxtType.getName()));
-        }
+        final SubcontextType subcontext = ActionSupport.getSubcontext(this, profileRequestContext, getSubcontextType());
 
         return doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext, subcontext);
     }
@@ -76,8 +68,11 @@ public abstract class AbstractProfileRequestSubcontextAction<SubcontextType exte
      * @param subcontext subcontext upon which this action operates, never null
      * 
      * @return the result of this action
+     * 
+     * @throws ProfileException thrown if there is a probleme executing the profile action
      */
     protected abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final SubcontextType subcontext);
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
+            final SubcontextType subcontext) throws ProfileException;
 }

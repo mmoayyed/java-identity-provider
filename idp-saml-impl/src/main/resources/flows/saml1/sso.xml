@@ -2,7 +2,7 @@
 
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-    
+        
     <action-state id="InitializeProfileRequestContext">
        <transition on="proceed" to="DecodeIdpInitiatedSsoMessage" />
     </action-state>
@@ -11,7 +11,7 @@
         <transition on="proceed" to="CheckSaml1IsRequest"/>
     </action-state>
     
-    <action-state id="CheckSaml1IsRequest">
+    <action-state id="CheckIsSaml1Request">
         <transition on="proceed" to="CheckMandatoryIssuer"/>
         <transition on="error" to="GenerateErrorResponse" />
     </action-state>
@@ -158,5 +158,5 @@
     </view-state>
     
     <end-state id="done" />
-        
+
 </flow>

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SamlMetadataSubcontext;
 import net.shibboleth.idp.saml.profile.SamlProtocolSubcontext;
@@ -50,8 +51,8 @@ public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractId
     private Resolver<EntityDescriptor, CriteriaSet> metadataResolver;
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) throws ProfileException {
         MessageContext messageCtx = getMessageContext(profileRequestContext);
         if (messageCtx == null) {
             log.debug("Action {}: appropriate message context not available, skipping this action.", getId());

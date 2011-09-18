@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.common.SAMLVersion;
@@ -40,9 +41,9 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<RequestAbstractType, Response> profileRequestContext) {
+            final ProfileRequestContext<RequestAbstractType, Response> profileRequestContext) throws ProfileException {
 
         final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
         if (ObjectSupport.equals(SAMLVersion.VERSION_10, request.getVersion())

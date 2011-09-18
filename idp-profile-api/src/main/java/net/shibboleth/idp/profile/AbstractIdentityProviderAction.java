@@ -27,7 +27,8 @@ import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -65,13 +66,19 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
 
     /** {@inheritDoc} */
     public Event execute(final RequestContext springRequestContext) {
-        final HttpServletRequest httpRequest = ActionSupport.getHttpServletRequest(springRequestContext);
+        final ExternalContext externalContext = springRequestContext.getExternalContext();
+        if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
+            log.error("Action {}: Spring RequestContext did not contain a ServletExternalContext", getId());
+            return ActionSupport.buildErrorEvent(this, new ProfileException("Invalid Spring ExternalContext"));
+        }
+        
+        final HttpServletRequest httpRequest = (HttpServletRequest) externalContext.getNativeRequest();
         if (httpRequest == null) {
             log.error("Action {}: HTTP Servlet request is not available", getId());
             return ActionSupport.buildErrorEvent(this, new ProfileException("HTTP Servlet request is not available"));
         }
 
-        final HttpServletResponse httpResponse = ActionSupport.getHttpServletResponse(springRequestContext);
+        final HttpServletResponse httpResponse = (HttpServletResponse) externalContext.getNativeResponse();
         if (httpResponse == null) {
             log.error("Action {}: HTTP Servlet response is not available", getId());
             return ActionSupport.buildErrorEvent(this, new ProfileException("HTTP Servlet response is not available"));
@@ -93,9 +100,7 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
         try {
             result = doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext);
         } catch (Throwable t) {
-            result =
-                    ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, new LocalAttributeMap(
-                            ActionSupport.ERROR_THROWABLE_ID, t));
+            result = ActionSupport.buildErrorEvent(this, t);
         }
 
         if (ActionSupport.ERROR_EVENT_ID.equals(result.getId())) {
@@ -120,9 +125,11 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
      * @param profileRequestContext the current IdP profile request context, never null
      * 
      * @return the result of this action, never null
+     * 
+     * @throws ProfileException thrown if there is a problem executing the profile action
      */
-    public abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    protected abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext);
-
+            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+            throws ProfileException;
 }

@@ -17,16 +17,14 @@
 
 package net.shibboleth.idp.profile;
 
-/**
- * Exception thrown if certain information was expected to be found in the {@link ProfileRequestContext} but was not.
- */
-public class InvalidProfileRequestContextStateException extends ProfileException {
+/** Exception thrown if a subcontext is missing or contains invalid data. */
+public class InvalidSubcontextException extends ProfileException {
 
     /** Serial version UID. */
-    private static final long serialVersionUID = -8780123708261128750L;
+    private static final long serialVersionUID = -7790416852475273971L;
 
     /** Constructor. */
-    public InvalidProfileRequestContextStateException() {
+    public InvalidSubcontextException() {
         super();
     }
 
@@ -35,7 +33,7 @@ public class InvalidProfileRequestContextStateException extends ProfileException
      * 
      * @param message exception message
      */
-    public InvalidProfileRequestContextStateException(String message) {
+    public InvalidSubcontextException(String message) {
         super(message);
     }
 
@@ -44,7 +42,7 @@ public class InvalidProfileRequestContextStateException extends ProfileException
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public InvalidProfileRequestContextStateException(Exception wrappedException) {
+    public InvalidSubcontextException(Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -54,7 +52,7 @@ public class InvalidProfileRequestContextStateException extends ProfileException
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public InvalidProfileRequestContextStateException(String message, Exception wrappedException) {
+    public InvalidSubcontextException(String message, Exception wrappedException) {
         super(message, wrappedException);
     }
 }

@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.Subcontext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -36,33 +34,21 @@ import org.springframework.webflow.execution.RequestContext;
 public abstract class AbstractInboundMessageSubcontextAction<SubcontextType extends Subcontext> extends
         AbstractIdentityProviderAction {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractInboundMessageSubcontextAction.class);
-
     /**
      * Retrieves the incoming message subcontext specified by {@link #getSubcontextType()}. If no incoming message
      * context or the specified subcontext is not available an error is returned.
      * 
      * {@inheritDoc}
      */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
 
-        final MessageContext<?> inboundMessageContext = profileRequestContext.getInboundMessageContext();
-        if (inboundMessageContext == null) {
-            log.error("Action {}: ProfileRequestContext does not contain an inbound message context", getId());
-            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
-                    "ProfileRequestContext does not contain an inbound message context"));
-        }
+        final MessageContext<?> inboundMessageContext =
+                ActionSupport.getInboundMessageContext(this, profileRequestContext);
 
-        final Class<SubcontextType> subcontxtType = getSubcontextType();
-        final SubcontextType messageSubcontext = inboundMessageContext.getSubcontext(subcontxtType, false);
-        if (messageSubcontext == null) {
-            log.error("Action {}: Inbound MessageContext does contain a subcontext of type {}", getId(),
-                    subcontxtType.getName());
-            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
-                    "Inbound MessageContext does contain a subcontext of type " + subcontxtType.getName()));
-        }
+        final SubcontextType messageSubcontext =
+                ActionSupport.getSubcontext(this, inboundMessageContext, getSubcontextType());
 
         return doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext, messageSubcontext);
     }
@@ -84,8 +70,10 @@ public abstract class AbstractInboundMessageSubcontextAction<SubcontextType exte
      * @param subcontext subcontext upon which this action operates, never null
      * 
      * @return the result of this action
+     * 
+     * @throws ProfileException thrown if there is a problem executing the profile actions
      */
     protected abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final SubcontextType subcontext);
+            final SubcontextType subcontext) throws ProfileException;
 }

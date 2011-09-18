@@ -17,63 +17,176 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeSubcontext;
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
+import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
 
-import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.saml1.core.Response;
+import org.opensaml.xml.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-//TODO need attributes to be encoded
 
 /**
  * Builds an {@link AttributeStatement} and adds it to the {@link Response} set as the message of the
  * {@link ProfileRequestContext#getOutboundMessageContext()}. The {@link Attribute} set to be encoded is drawn from the
- * ...
+ * {@link AttributeSubcontext} located on the {@link RelyingPartySubcontext} located on the
+ * {@link ProfileRequestContext}.
  */
-public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAction<Object, Response> {
+public class AddAttributeStatementToAssertion extends
+        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) {
+    protected Class<RelyingPartySubcontext> getSubcontextType() {
+        return RelyingPartySubcontext.class;
+    }
 
-        final AttributeSubcontext attributeCtx = null; // TODO get this from relying party context
+    /** {@inheritDoc} */
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final RequestContext springRequestContext,
+            final ProfileRequestContext<Object, Response> profileRequestContext,
+            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
+        log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
+
+        final AttributeSubcontext attributeCtx = relyingPartyContext.getSubcontext(AttributeSubcontext.class, false);
         if (attributeCtx == null) {
+            log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
+                    relyingPartyContext.getRelyingPartyId());
             return ActionSupport.buildProceedEvent(this);
         }
 
-        final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
-        // TODO check for null
-
-        final Response samlResponse = outboundMessageCtx.getMessage();
-        // TODO check for null
-
-        final List<Assertion> assertions = samlResponse.getAssertions();
-        if (assertions.isEmpty()) {
-            // TODO generate assertion
+        final AttributeStatement statement = buildAttributeStatement(attributeCtx.getAttributes().values());
+        if (statement == null) {
+            log.debug("Action {}: No AttributeStatement was built, nothing left to do", getId());
+            return ActionSupport.buildProceedEvent(this);
         }
 
-        final Assertion assertion = assertions.get(0);
+        final Assertion assertion =
+                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext).get(0);
 
-        // TODO generate attribute statement and add to assertion
+        log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
+        assertion.getAttributeStatements().add(statement);
 
-        for (Attribute<?> attributes : attributeCtx.getAttributes().values()) {
-            // TODO encode attributes and add to statement
+        return ActionSupport.buildProceedEvent(this);
+    }
+
+    /**
+     * Builds an attribute statement from a collection of attributes.
+     * 
+     * @param attributes the collection of attributes, may be null or contain null elements
+     * 
+     * @return the attribute statement or null if no attributes can be encoded
+     * 
+     * @throws UnableToEncodeAttributeException thrown if there is a problem encoding an attribute
+     */
+    private AttributeStatement buildAttributeStatement(Collection<Attribute<?>> attributes)
+            throws UnableToEncodeAttributeException {
+        if (attributes == null || attributes.isEmpty()) {
+            log.debug("Action {}: No attributes available to be encoded, nothing left to do");
+            return null;
         }
 
+        ArrayList<org.opensaml.saml1.core.Attribute> encodedAttributes =
+                new ArrayList<org.opensaml.saml1.core.Attribute>(attributes.size());
+        org.opensaml.saml1.core.Attribute encodedAttribute = null;
+        for (Attribute<?> attribute : attributes) {
+            encodedAttribute = encodeAttribute(attribute);
+            if (encodedAttribute != null) {
+                encodedAttributes.add(encodedAttribute);
+            }
+        }
+
+        if (encodedAttributes.isEmpty()) {
+            log.debug("Action {}: No attributes were encoded as SAML 1 Attributes, nothing futher to do");
+            return null;
+        }
+
+        SAMLObjectBuilder<AttributeStatement> statementBuilder =
+                (SAMLObjectBuilder<AttributeStatement>) Configuration.getBuilderFactory().getBuilder(
+                        AttributeStatement.TYPE_NAME);
+
+        AttributeStatement statement = statementBuilder.buildObject();
+        statement.getAttributes().addAll(encodedAttributes);
+        return statement;
+    }
+
+    /**
+     * Encodes a {@link Attribute} into a {@link org.opensaml.saml1.core.Attribute} if a proper encoder is available.
+     * 
+     * @param attribute the attribute to be encoded, may be null
+     * 
+     * @return the encoded attribute of null if the attribute could not be encoded
+     * 
+     * @throws UnableToEncodeAttributeException thrown if there is a problem encoding an attribute
+     */
+    private org.opensaml.saml1.core.Attribute encodeAttribute(Attribute<?> attribute)
+            throws UnableToEncodeAttributeException {
+        if (attribute == null) {
+            return null;
+        }
+
+        log.debug("Action {}: Attempting to encode attribute {} as a SAML 1 Attribute", getId(), attribute.getId());
+        final Set<AttributeEncoder<?>> encoders = attribute.getEncoders();
+
+        if (encoders.isEmpty()) {
+            log.debug("Action {}: Attribute {} does not have any encoders, nothing to do", getId(), attribute.getId());
+            return null;
+        }
+
+        for (AttributeEncoder<?> encoder : encoders) {
+            if (SAMLConstants.SAML11P_NS.equals(encoder.getProtocol())
+                    && encoder instanceof AbstractSaml1AttributeEncoder) {
+                log.debug("Action {}: Encoding attribute {} as a SAML 1 Attribute", getId(), attribute.getId());
+                try {
+                    return (org.opensaml.saml1.core.Attribute) encoder.encode(attribute);
+                } catch (AttributeEncodingException e) {
+                    throw new UnableToEncodeAttributeException(attribute, e);
+                }
+            }
+        }
+
+        log.debug("Action {}: Attribute {} did not have a SAML 1 Attribute encoder associated with it, nothing to do",
+                getId(), attribute.getId());
         return null;
     }
 
+    /** Exception thrown if there is a problem encoding an attribute. */
+    public class UnableToEncodeAttributeException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = 3915220535913429394L;
+
+        /**
+         * Constructor.
+         * 
+         * @param attribute the attribute that could not be encoded
+         * @param e the exception that occured when attempting to encode the attribute
+         */
+        public UnableToEncodeAttributeException(Attribute<?> attribute, AttributeEncodingException e) {
+            super("Action " + getId() + ": Unable to encode attribute " + attribute.getId(), e);
+        }
+    }
 }

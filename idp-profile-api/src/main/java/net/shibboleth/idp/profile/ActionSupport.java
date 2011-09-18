@@ -17,18 +17,15 @@
 
 package net.shibboleth.idp.profile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.Subcontext;
+import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.IdentifiableComponent;
-import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /** Helper class for {@link org.springframework.webflow.execution.Action} operations. */
 public final class ActionSupport {
@@ -58,43 +55,114 @@ public final class ActionSupport {
     }
 
     /**
-     * Gets the current {@link HttpServletRequest} from the current WebFlow request context.
+     * Gets the inbound message context.
      * 
-     * @param requestContext current request context, may be null
+     * @param <T> the inbound message type
+     * @param action action attempting to retrieve the message context, never null
+     * @param profileRequestContext current profile request context, never null
      * 
-     * @return the current Servlet request or null if the given context, external context, or Servlet request is null
+     * @return the inbound message context, never null
+     * 
+     * @throws InvalidInboundMessageContextException thrown if no inbound message context is available
      */
-    public static HttpServletRequest getHttpServletRequest(final RequestContext requestContext) {
-        if (requestContext == null) {
-            return null;
+    public static <T> MessageContext<T> getInboundMessageContext(final AbstractIdentityProviderAction action,
+            final ProfileRequestContext<T, Object> profileRequestContext) throws InvalidInboundMessageContextException {
+        final MessageContext<T> messageContext = profileRequestContext.getInboundMessageContext();
+        if (messageContext == null) {
+            throw new InvalidInboundMessageContextException("Action " + action.getId()
+                    + ": Inbound message context does not exist");
         }
 
-        final ExternalContext externalContext = requestContext.getExternalContext();
-        if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
-            return null;
-        }
-
-        return (HttpServletRequest) externalContext.getNativeRequest();
+        return messageContext;
     }
 
     /**
-     * Gets the current {@link HttpServletResponse} from the current WebFlow request context.
+     * Gets the inbound message from the inbound message context.
      * 
-     * @param requestContext current request context, may be null
+     * @param <T> the message type
+     * @param action action attempting to retrieve the message context
+     * @param messageContext the message context, never null
      * 
-     * @return the current Servlet response or null if the given context, external context, or Servlet response is null
+     * @return the message, never null
+     * 
+     * @throws InvalidInboundMessageContextException thrown if the message context does not contain a message
      */
-    public static HttpServletResponse getHttpServletResponse(final RequestContext requestContext) {
-        if (requestContext == null) {
-            return null;
+    public static <T> T getInboundMessage(final AbstractIdentityProviderAction action,
+            final MessageContext<T> messageContext) throws InvalidInboundMessageContextException {
+        final T message = messageContext.getMessage();
+        if (message == null) {
+            throw new InvalidInboundMessageContextException("Action " + action.getId()
+                    + ": Inbound message context does not contain a message");
         }
 
-        final ExternalContext externalContext = requestContext.getExternalContext();
-        if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
-            return null;
+        return message;
+    }
+
+    /**
+     * Gets the outbound message context.
+     * 
+     * @param <T> the outbound message type
+     * @param action action attempting to retrieve the message context
+     * @param profileRequestContext current profile request context, never null
+     * 
+     * @return the outbound message context, never null
+     * 
+     * @throws InvalidInboundMessageContextException thrown if no outbound message context is available
+     */
+    public static <T> MessageContext<T> getOutboundMessageContext(final AbstractIdentityProviderAction action,
+            final ProfileRequestContext<Object, T> profileRequestContext) throws InvalidInboundMessageContextException {
+        final MessageContext<T> messageContext = profileRequestContext.getOutboundMessageContext();
+        if (messageContext == null) {
+            throw new InvalidInboundMessageContextException("Action " + action.getId()
+                    + ": Outbound message context does not exist");
         }
 
-        return (HttpServletResponse) externalContext.getNativeResponse();
+        return messageContext;
+    }
+
+    /**
+     * Gets the outbound message from the outbound message context.
+     * 
+     * @param <T> the message type
+     * @param action action attempting to retrieve the message context
+     * @param messageContext the message context, never null
+     * 
+     * @return the message, never null
+     * 
+     * @throws InvalidOutboundMessageContextException thrown if the message context does not contain a message
+     */
+    public static <T> T getOutboundMessage(final AbstractIdentityProviderAction action,
+            final MessageContext<T> messageContext) throws InvalidOutboundMessageContextException {
+        final T message = messageContext.getMessage();
+        if (message == null) {
+            throw new InvalidOutboundMessageContextException("Action " + action.getId()
+                    + ": Outbound message context does not contain a message");
+        }
+
+        return message;
+    }
+
+    /**
+     * Gets a subcontext from the container. The subcontext is not auto-created if it does not exist.
+     * 
+     * @param <T> the subcontext type
+     * @param action action attempting to retrieve the message context
+     * @param container container for the subcontext
+     * @param subcontextType the type of the subcontext
+     * 
+     * @return the subcontext
+     * 
+     * @throws InvalidSubcontextException thrown if the required subcontext does not exist.
+     */
+    public static <T extends Subcontext> T getSubcontext(final AbstractIdentityProviderAction action,
+            SubcontextContainer container, Class<T> subcontextType) throws InvalidSubcontextException {
+        final T subcontext = container.getSubcontext(subcontextType, false);
+        if (subcontext == null) {
+            throw new InvalidSubcontextException("Action " + action.getId() + ": " + container.getClass().getName()
+                    + " does not contain a subcontext of type " + subcontextType.getName());
+        }
+
+        return subcontext;
     }
 
     /**
@@ -156,7 +224,8 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    public static Event buildErrorEvent(final IdentifiableComponent source, final Throwable error, final String message) {
+    public static Event
+            buildErrorEvent(final IdentifiableComponent source, final Throwable error, final String message) {
         LocalAttributeMap eventAttributes = new LocalAttributeMap();
 
         if (error != null) {

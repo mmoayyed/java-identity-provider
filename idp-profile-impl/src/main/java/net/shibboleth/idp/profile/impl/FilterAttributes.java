@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
@@ -35,7 +36,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** A stage which invokes the {@link AttributeFilteringEngine} for the current request. */
-public class FilterAttributes extends AbstractProfileRequestSubcontextAction<RelyingPartySubcontext> {
+public class FilterAttributes extends AbstractProfileRequestSubcontextAction<Object, Object, RelyingPartySubcontext> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
@@ -56,9 +57,9 @@ public class FilterAttributes extends AbstractProfileRequestSubcontextAction<Rel
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
             RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
-            RelyingPartySubcontext relyingPartyContext) {
+            RelyingPartySubcontext relyingPartyContext) throws ProfileException {
 
-        final AttributeSubcontext attributeContext =
+        AttributeSubcontext attributeContext =
                 relyingPartyContext.getSubcontext(AttributeSubcontext.class, false);
 
         // Get the filer context from the profile request
@@ -81,12 +82,56 @@ public class FilterAttributes extends AbstractProfileRequestSubcontextAction<Rel
             filterEngine.filterAttributes(filterContext);
             profileRequestContext.removeSubcontext(filterContext);
 
+            if(attributeContext == null){
+                attributeContext = new AttributeSubcontext(relyingPartyContext);
+            }
+            
             attributeContext.setAttributes(filterContext.getFilteredAttributes().values());
         } catch (AttributeFilteringException e) {
             log.error("Action {}: Error encountered while filtering attributes", getId(), e);
-            return ActionSupport.buildErrorEvent(this, e);
+            throw new UnableToFilterAttributesException(e);
         }
 
         return ActionSupport.buildProceedEvent(this);
+    }
+
+    /** Exception thrown if there is a problem filtering attributes. */
+    public static class UnableToFilterAttributesException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = 4198028709026788847L;
+
+        /** Constructor. */
+        public UnableToFilterAttributesException() {
+            super();
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public UnableToFilterAttributesException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public UnableToFilterAttributesException(Exception wrappedException) {
+            super(wrappedException);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public UnableToFilterAttributesException(String message, Exception wrappedException) {
+            super(message, wrappedException);
+        }
     }
 }

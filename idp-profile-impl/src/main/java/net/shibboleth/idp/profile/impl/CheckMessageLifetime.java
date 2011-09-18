@@ -26,9 +26,12 @@ import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+//TODO get clock skew from profile configuration's security config
 
 /** An action that checks that the inbound message should be considered valid based upon when it was issued. */
 public final class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
@@ -52,24 +55,22 @@ public final class CheckMessageLifetime extends AbstractInboundMessageSubcontext
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final BasicMessageMetadataSubcontext messageSubcontext) {
+            final BasicMessageMetadataSubcontext messageSubcontext) throws ProfileException {
 
         if (messageSubcontext.getMessageIssueInstant() <= 0) {
-            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
-                    "Basic message metadata subcontext does not contain a message issue instant"));
+            throw new InvalidProfileRequestContextStateException(
+                    "Basic message metadata subcontext does not contain a message issue instant");
         }
 
         final long issueInstant = messageSubcontext.getMessageIssueInstant();
         final long currentTime = System.currentTimeMillis();
 
         if (issueInstant < currentTime - clockskew) {
-            return ActionSupport.buildErrorEvent(this, new PastMessageException(),
-                    "Message " + messageSubcontext.getMessageId() + " was expired");
+            throw new PastMessageException(messageSubcontext.getMessageId(), issueInstant);
         }
 
         if (issueInstant > currentTime + messageLifetime + clockskew) {
-            return ActionSupport.buildErrorEvent(this, new FutureMessageException(),
-                    "Message " + messageSubcontext.getMessageId() + " is not yet valid");
+            throw new FutureMessageException(messageSubcontext.getMessageId(), issueInstant);
         }
 
         return ActionSupport.buildProceedEvent(this);
@@ -79,42 +80,20 @@ public final class CheckMessageLifetime extends AbstractInboundMessageSubcontext
      * A profile processing exception that occurs when the inbound message was issued from a point in time to far in the
      * future.
      */
-    public static class FutureMessageException extends ProfileException {
+    public class FutureMessageException extends ProfileException {
 
         /** Serial version UID. */
-        private static final long serialVersionUID = 342762836397375458L;
-
-        /** Constructor. */
-        public FutureMessageException() {
-            super();
-        }
+        private static final long serialVersionUID = -6474772810189615621L;
 
         /**
          * Constructor.
          * 
-         * @param message exception message
+         * @param messageId the ID of the message, never null
+         * @param instant the issue instant of the message in milliseconds since the epoch
          */
-        public FutureMessageException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public FutureMessageException(Exception wrappedException) {
-            super(wrappedException);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public FutureMessageException(String message, Exception wrappedException) {
-            super(message, wrappedException);
+        public FutureMessageException(String messageId, long instant) {
+            super("Action " + getId() + ": Message " + messageId + " was issued on " + new DateTime(instant).toString()
+                    + " and is not yet valid.");
         }
     }
 
@@ -122,42 +101,20 @@ public final class CheckMessageLifetime extends AbstractInboundMessageSubcontext
      * A profile processing exception that occurs when the inbound message was issued from a point in time to far in the
      * past.
      */
-    public static class PastMessageException extends ProfileException {
+    public class PastMessageException extends ProfileException {
 
         /** Serial version UID. */
-        private static final long serialVersionUID = -4635709969472487859L;
-
-        /** Constructor. */
-        public PastMessageException() {
-            super();
-        }
+        private static final long serialVersionUID = 18935109782906635L;
 
         /**
          * Constructor.
          * 
-         * @param message exception message
+         * @param messageId the ID of the message, never null
+         * @param instant the issue instant of the message in milliseconds since the epoch
          */
-        public PastMessageException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public PastMessageException(Exception wrappedException) {
-            super(wrappedException);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public PastMessageException(String message, Exception wrappedException) {
-            super(message, wrappedException);
+        public PastMessageException(String messageId, long instant) {
+            super("Action " + getId() + ": Message " + messageId + " was issued on " + new DateTime(instant).toString()
+                    + " is now considered expired.");
         }
     }
 }

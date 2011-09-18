@@ -50,64 +50,40 @@ public final class CheckMessageReplay extends AbstractInboundMessageSubcontextAc
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final BasicMessageMetadataSubcontext messageSubcontext) {
+            final BasicMessageMetadataSubcontext messageSubcontext) throws ProfileException {
 
         if (messageSubcontext.getMessageIssuer() == null) {
-            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
-                    "Basic message metadata subcontext does not contain a message issuer"));
+            throw new InvalidProfileRequestContextStateException(
+                    "Basic message metadata subcontext does not contain a message issuer");
         }
 
         if (messageSubcontext.getMessageId() == null) {
-            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
-                    "Basic message metadata subcontext does not contain a message ID"));
+            throw new InvalidProfileRequestContextStateException(
+                    "Basic message metadata subcontext does not contain a message ID");
         }
 
         if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
-            return ActionSupport.buildErrorEvent(this, new ReplayedMessageException(), "Message ID "
-                    + messageSubcontext.getMessageId() + " from issuer " + messageSubcontext.getMessageIssuer()
-                    + " is a replayed message");
+            throw new ReplayedMessageException(messageSubcontext.getMessageId(), messageSubcontext.getMessageIssuer());
         }
 
         return ActionSupport.buildProceedEvent(this);
     }
 
     /** Profile processing error that occurred because the given request was detected as a replay. */
-    public static class ReplayedMessageException extends ProfileException {
+    public class ReplayedMessageException extends ProfileException {
 
         /** Serial version UID. */
-        private static final long serialVersionUID = -7832608050308498183L;
-
-        /** Constructor. */
-        public ReplayedMessageException() {
-            super();
-        }
+        private static final long serialVersionUID = -7358811994922990143L;
 
         /**
          * Constructor.
          * 
-         * @param message exception message
+         * @param messageId ID of the message, never null
+         * @param messageIssuer issuer of the message, never null
          */
-        public ReplayedMessageException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public ReplayedMessageException(Exception wrappedException) {
-            super(wrappedException);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public ReplayedMessageException(String message, Exception wrappedException) {
-            super(message, wrappedException);
+        public ReplayedMessageException(String messageId, String messageIssuer) {
+            super("Action " + getId() + ": Message ID " + messageId + " from issuer " + messageIssuer
+                    + " is a replayed message");
         }
     }
 }

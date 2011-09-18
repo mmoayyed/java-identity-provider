@@ -45,53 +45,24 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final BasicMessageMetadataSubcontext messageSubcontext) {
+            final BasicMessageMetadataSubcontext messageSubcontext) throws ProfileException {
 
         if (messageSubcontext.getMessageIssuer() == null) {
-            return ActionSupport.buildErrorEvent(this, new NoMessageIssuerException(
-                    "Basic message metadata subcontext does not a message issuer"));
+            throw new NoMessageIssuerException();
         }
 
         return ActionSupport.buildProceedEvent(this);
     }
 
     /** A profile processing exception that occurs when the inbound message has no identified message issuer. */
-    public static class NoMessageIssuerException extends ProfileException {
+    public class NoMessageIssuerException extends ProfileException {
 
         /** Serial version UID. */
-        private static final long serialVersionUID = 8451917927885322986L;
+        private static final long serialVersionUID = -1485366995695842339L;
 
         /** Constructor. */
         public NoMessageIssuerException() {
-            super();
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         */
-        public NoMessageIssuerException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public NoMessageIssuerException(Exception wrappedException) {
-            super(wrappedException);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public NoMessageIssuerException(String message, Exception wrappedException) {
-            super(message, wrappedException);
+            super("Action " + getId() + ": Inbound message basic message metadata does not contain a message issuer");
         }
     }
 }

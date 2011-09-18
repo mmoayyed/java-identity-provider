@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.saml1.core.Response;
@@ -35,9 +36,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class AddRecipientToResponse extends AbstractIdentityProviderAction<Object, Response> {
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) {
+            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         // TODO Auto-generated method stub
         return null;
     }

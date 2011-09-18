@@ -17,16 +17,14 @@
 
 package net.shibboleth.idp.profile;
 
-/**
- * Exception thrown if certain information was expected to be found in the {@link ProfileRequestContext} but was not.
- */
-public class InvalidProfileRequestContextStateException extends ProfileException {
+/** Exception thrown if the inbound message context was missing or contains invalid information. */
+public class InvalidInboundMessageContextException extends ProfileException {
 
     /** Serial version UID. */
-    private static final long serialVersionUID = -8780123708261128750L;
+    private static final long serialVersionUID = 6823004133079557088L;
 
     /** Constructor. */
-    public InvalidProfileRequestContextStateException() {
+    public InvalidInboundMessageContextException() {
         super();
     }
 
@@ -35,7 +33,7 @@ public class InvalidProfileRequestContextStateException extends ProfileException
      * 
      * @param message exception message
      */
-    public InvalidProfileRequestContextStateException(String message) {
+    public InvalidInboundMessageContextException(String message) {
         super(message);
     }
 
@@ -44,7 +42,7 @@ public class InvalidProfileRequestContextStateException extends ProfileException
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public InvalidProfileRequestContextStateException(Exception wrappedException) {
+    public InvalidInboundMessageContextException(Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -54,7 +52,7 @@ public class InvalidProfileRequestContextStateException extends ProfileException
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public InvalidProfileRequestContextStateException(String message, Exception wrappedException) {
+    public InvalidInboundMessageContextException(String message, Exception wrappedException) {
         super(message, wrappedException);
     }
 }

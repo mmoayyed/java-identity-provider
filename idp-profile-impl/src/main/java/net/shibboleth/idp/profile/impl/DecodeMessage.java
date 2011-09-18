@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.messaging.decoder.MessageDecoder;
@@ -75,9 +76,11 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+            throws ProfileException {
+
         if (!isInitialized()) {
             throw new UninitializedComponentException("DecodeMessage " + getId()
                     + ": has not been initialized and can not yet be used.");
@@ -100,10 +103,10 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
             return ActionSupport.buildProceedEvent(this);
         } catch (MessageDecodingException e) {
             log.error("DecodeMessage {}: was unable to decode the incoming request", getId(), e);
-            return ActionSupport.buildErrorEvent(this, e, "Unable to decode incoming message");
+            throw new UnableToDecodeMessageException("Unable to decode incoming message");
         } catch (ComponentInitializationException e) {
             log.error("DecodeMessage {}: error initializing the message decoder", getId(), e);
-            return ActionSupport.buildErrorEvent(this, e, "Unable to decode incoming message");
+            throw new UnableToDecodeMessageException("Unable to decode incoming message");
         }
     }
 
@@ -113,6 +116,46 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
 
         if (decoderFactory == null) {
             throw new ComponentInitializationException("Message decoder factory can not be null");
+        }
+    }
+
+    /** Exception thrown if there is a problem decoding the incoming message. */
+    public static class UnableToDecodeMessageException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = -7866899349347664342L;
+
+        /** Constructor. */
+        public UnableToDecodeMessageException() {
+            super();
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public UnableToDecodeMessageException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public UnableToDecodeMessageException(Exception wrappedException) {
+            super(wrappedException);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         * @param wrappedException exception to be wrapped by this one
+         */
+        public UnableToDecodeMessageException(String message, Exception wrappedException) {
+            super(message, wrappedException);
         }
     }
 }

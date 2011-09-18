@@ -22,68 +22,67 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
 
 import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Audience;
 import org.opensaml.saml1.core.AudienceRestrictionCondition;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.xml.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 //TODO need access to the profile configuration
 
-/**
- *
- */
-public class AddAudienceRestrictionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
+/** Adds an {@link AudienceRestrictionCondition} to every {@link Assertion} contained on the {@link Response}. */
+public class AddAudienceRestrictionToAssertions extends
+        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AddAudienceRestrictionToAssertions.class);
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    protected Class<RelyingPartySubcontext> getSubcontextType() {
+        return RelyingPartySubcontext.class;
+    }
+
+    /** {@inheritDoc} */
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) {
+            final ProfileRequestContext<Object, Response> profileRequestContext,
+            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
 
-        final RelyingPartySubcontext relyingPartyCtx =
-                profileRequestContext.getSubcontext(RelyingPartySubcontext.class, false);
-        if (relyingPartyCtx == null) {
-            // TODO error
-        }
+        log.debug("Action {}: Attempting to add an AudienceRestrictionCondition to outgoing assertions", getId());
 
-        final MessageContext<Response> outboundMsgCtx = profileRequestContext.getOutboundMessageContext();
-        if (outboundMsgCtx == null) {
-            // TODO error
-        }
-
-        final Response response = outboundMsgCtx.getMessage();
-        if (response == null) {
-            // TODO error
-        }
-
-        final List<Assertion> assertions = response.getAssertions();
-        if (assertions == null || assertions.isEmpty()) {
-            // TODO add assertion
-        }
+        final List<Assertion> assertions =
+                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext);
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = assertion.getConditions();
-            if (conditions == null) {
-                // TODO build conditions
-            }
-
-            conditions.getAudienceRestrictionConditions().add(buildAudienceRestriction(relyingPartyCtx));
+            conditions = Saml1Support.getConditionsFromAssertion(this, assertion);
+            conditions.getAudienceRestrictionConditions().add(buildAudienceRestriction(relyingPartyContext));
+            log.debug("Action {}: Added AudienceRestrictionCondition to Assertion {}", getId(), assertion.getID());
         }
 
         return ActionSupport.buildProceedEvent(this);
     }
 
+    /**
+     * Creates an {@link AudienceRestrictionCondition}.
+     * 
+     * @param relyingPartyCtx current relying party configuration
+     * 
+     * @return the constructed {@link AudienceRestrictionCondition}
+     */
     private AudienceRestrictionCondition buildAudienceRestriction(RelyingPartySubcontext relyingPartyCtx) {
         final SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
                 (SAMLObjectBuilder<AudienceRestrictionCondition>) Configuration.getBuilderFactory().getBuilder(
