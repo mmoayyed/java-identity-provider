@@ -22,13 +22,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
 
 import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.DoNotCacheCondition;
@@ -44,61 +45,46 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link ProfileRequestContext#getOutboundMessageContext()}. If no {@link Conditions} is present on the
  * {@link Assertion} one will be created.
  */
-public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
+public class AddDoNotCacheConditionToAssertions extends
+        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddDoNotCacheConditionToAssertions.class);
 
     /** {@inheritDoc} */
+    protected Class<RelyingPartySubcontext> getSubcontextType() {
+        return RelyingPartySubcontext.class;
+    }
+
+    /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        log.debug("Action {}: attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
+            final ProfileRequestContext<Object, Response> profileRequestContext,
+            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
 
-        final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
-        if (outMsgCtx == null) {
-            log.debug("Action {}: no outbound message context available, no DoNotCache condition added", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
+        log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
-        final Response response = outMsgCtx.getMessage();
-        if (response == null) {
-            log.debug("Action {}: no outbound message available, no DoNotCache condition added", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
+        final List<Assertion> assertions =
+                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext);
 
-        final SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         final SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
                 (SAMLObjectBuilder<DoNotCacheCondition>) Configuration.getBuilderFactory().getBuilder(
                         DoNotCacheCondition.TYPE_NAME);
 
-        final List<Assertion> assertions = response.getAssertions();
-        if (assertions == null || assertions.isEmpty()) {
-            log.debug("Action {}: no assertions present in response, nothing to add DoNotCache conditions to", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
-
         Conditions conditions;
         List<DoNotCacheCondition> dncConditions;
         for (Assertion assertion : assertions) {
-            conditions = assertion.getConditions();
-            if (conditions == null) {
-                conditions = conditionsBuilder.buildObject();
-                assertion.setConditions(conditions);
-            }
-
+            conditions = Saml1Support.getConditionsFromAssertion(this, assertion);
             dncConditions = conditions.getDoNotCacheConditions();
             if (!dncConditions.isEmpty()) {
-                log.debug("Action {}: assertion {} already contained DoNotCache condition, another was not added",
+                log.debug("Action {}: Assertion {} already contained DoNotCache condition, another was not added",
                         getId(), assertion.getID());
             }
 
-            log.debug("Action {}: added DoNotCache condition to assertion {}", getId(), assertion.getID());
             dncConditions.add(dncConditionBuilder.buildObject());
+            log.debug("Action {}: Added DoNotCache condition to Assertion {}", getId(), assertion.getID());
         }
 
-        log.debug("Action {}: added DoNotCache condition to all assertions in response {}", getId(), response.getID());
         return ActionSupport.buildProceedEvent(this);
     }
 }

@@ -22,17 +22,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
 
-import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -43,51 +43,39 @@ import org.springframework.webflow.execution.RequestContext;
  * the {@link ProfileRequestContext#getOutboundMessageContext()}. If no {@link Conditions} is present on and
  * {@link Assertion} one will be created.
  */
-public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
+public class AddNotBeforeConditionToAssertions extends
+        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddNotBeforeConditionToAssertions.class);
 
     /** {@inheritDoc} */
+    protected Class<RelyingPartySubcontext> getSubcontextType() {
+        return RelyingPartySubcontext.class;
+    }
+
+    /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        log.debug("Action {}: attempting to add NotBefore condition to every Assertion in outgoing Response", getId());
+            final ProfileRequestContext<Object, Response> profileRequestContext,
+            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
+        log.debug("Action {}: Attempting to add NotBefore condition to every Assertion in outgoing Response", getId());
 
-        final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
-        if (outMsgCtx == null) {
-            log.debug("Action {}: no outbound message context available, no NotBefore condition added", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
+        final MessageContext<Response> messageContext =
+                ActionSupport.getOutboundMessageContext(this, profileRequestContext);
 
-        final Response response = outMsgCtx.getMessage();
-        if (response == null) {
-            log.debug("Action {}: no outbound message available,no NotBefore condition added", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
+        final Response response = ActionSupport.getOutboundMessage(this, messageContext);
 
-        final SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
-
-        final List<Assertion> assertions = response.getAssertions();
-        if (assertions == null || assertions.isEmpty()) {
-            log.debug("Action {}: no assertions present in response, nothing to add NotBefore conditions to", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
+        final List<Assertion> assertions =
+                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext);
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = assertion.getConditions();
-            if (conditions == null) {
-                conditions = conditionsBuilder.buildObject();
-                assertion.setConditions(conditions);
-            }
-
-            log.debug("Action {}: added NotBefore condition to assertion {}", getId(), assertion.getID());
+            conditions = Saml1Support.getConditionsFromAssertion(this, assertion);
+            log.debug("Action {}: Added NotBefore condition to Assertion {}", getId(), assertion.getID());
             conditions.setNotBefore(response.getIssueInstant());
         }
 
-        log.debug("Action {}: added NotBefore condition to all assertions in response {}", getId(), response.getID());
         return ActionSupport.buildProceedEvent(this);
     }
 }

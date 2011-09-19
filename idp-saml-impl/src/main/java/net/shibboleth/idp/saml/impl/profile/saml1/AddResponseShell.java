@@ -28,6 +28,7 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Status;
 import org.opensaml.saml1.core.StatusCode;
@@ -45,6 +46,10 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+
+        final MessageContext<Response> outboundMessageCtx =
+                ActionSupport.getOutboundMessageContext(this, profileRequestContext);
+
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =
                 (SAMLObjectBuilder<StatusCode>) Configuration.getBuilderFactory().getBuilder(StatusCode.TYPE_NAME);
         final SAMLObjectBuilder<Status> statusBuilder =
@@ -62,7 +67,7 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
         response.setIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
         response.setStatus(status);
 
-        profileRequestContext.getOutboundMessageContext().setMessage(response);
+        outboundMessageCtx.setMessage(response);
 
         return ActionSupport.buildProceedEvent(this);
     }

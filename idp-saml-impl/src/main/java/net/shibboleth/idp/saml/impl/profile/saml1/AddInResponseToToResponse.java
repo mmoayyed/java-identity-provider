@@ -48,28 +48,20 @@ public class AddInResponseToToResponse extends AbstractIdentityProviderAction<Ob
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        log.debug("Action {}: attempting to add InResponseTo to outgoing Response", getId());
+        log.debug("Action {}: Attempting to add InResponseTo to outgoing Response", getId());
 
         final String inMsgId = getInboundMessageId(profileRequestContext);
         if (inMsgId == null) {
-            log.debug("Action {}: inbound message did not have an ID, no InResponse to added to response", getId());
+            log.debug("Action {}: Inbound message did not have an ID, no InResponse to added to Response", getId());
             return ActionSupport.buildProceedEvent(this);
         }
 
-        final MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
-        if (outMsgCtx == null) {
-            log.debug("Action {}: no outbound message context available, no InResponse to added to response", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
+        final MessageContext<Response> messageContext =
+                ActionSupport.getOutboundMessageContext(this, profileRequestContext);
+        final Response response = ActionSupport.getOutboundMessage(this, messageContext);
 
-        final Response response = outMsgCtx.getMessage();
-        if (response == null) {
-            log.debug("Action {}: no outbound message available, no InResponse to added to response", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
-
-        log.debug("Action {}: add in response to message ID {} to response {}", new Object[] {getId(), inMsgId,
-                response.getID(),});
+        log.debug("Action {}: Add InResponseTo message ID {} to Response {}",
+                new Object[] {getId(), inMsgId, response.getID(),});
         response.setInResponseTo(inMsgId);
         return ActionSupport.buildProceedEvent(this);
     }
