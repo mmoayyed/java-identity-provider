@@ -20,10 +20,10 @@ package net.shibboleth.idp.saml.impl.xmlobject;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.Scope;
 
+import org.opensaml.util.xml.ElementSupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.util.XMLHelper;
 import org.w3c.dom.Element;
 
 /** Marshaller for {@link Scope}. */
@@ -44,6 +44,6 @@ public class ScopeMarshaller extends AbstractXMLObjectMarshaller {
     protected void marshallElementContent(XMLObject xmlObject, Element domElement) throws MarshallingException {
         Scope shibMDScope = (Scope) xmlObject;
 
-        XMLHelper.appendTextContent(domElement, shibMDScope.getValue());
+        ElementSupport.appendTextContent(domElement, shibMDScope.getValue());
     }
 }

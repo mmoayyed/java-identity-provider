@@ -64,11 +64,8 @@ public class SecurityConfiguration {
      * @param generator the identifier generator, must not be null
      */
     public SecurityConfiguration(int skew, IdentifierGenerator generator) {
-        Assert.isGreaterThan(0, skew, "Clock skew must be greater than 0");
-        clockSkew = skew;
-
-        Assert.isNotNull(generator, "Identifier generator can not be null");
-        idGenerator = generator;
+        clockSkew = (int) Assert.isGreaterThan(0, skew, "Clock skew must be greater than 0");
+        idGenerator = Assert.isNotNull(generator, "Identifier generator can not be null");
     }
 
     /**

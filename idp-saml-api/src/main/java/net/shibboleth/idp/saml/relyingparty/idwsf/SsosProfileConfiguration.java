@@ -88,7 +88,6 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
      */
     public void setDelegationCriterion(
             final EvaluableCriterion<ProfileRequestContext<RequestAbstractType, Response>> criterion) {
-        Assert.isNotNull(criterion, "Delegation criterion can not be null");
-        delegationCriterion = criterion;
+        delegationCriterion = Assert.isNotNull(criterion, "Delegation criterion can not be null");;
     }
 }

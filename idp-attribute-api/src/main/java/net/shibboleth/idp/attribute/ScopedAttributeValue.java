@@ -40,11 +40,8 @@ public class ScopedAttributeValue {
      * @param valueScope scope of the value, never null
      */
     public ScopedAttributeValue(final String attributeValue, final String valueScope) {
-        value = StringSupport.trimOrNull(attributeValue);
-        Assert.isNotNull(value, "Attribute value may not be null or empty");
-
-        scope = StringSupport.trimOrNull(valueScope);
-        Assert.isNotNull(scope, "Attribute value scope may not be null or empty");
+        value = Assert.isNotNull(StringSupport.trimOrNull(attributeValue), "Attribute value may not be null or empty");
+        scope = Assert.isNotNull(StringSupport.trimOrNull(valueScope), "Attribute value scope may not be null or empty");
     }
 
     /**

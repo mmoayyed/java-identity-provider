@@ -62,15 +62,14 @@ public class IdpInitatedSsoRequest {
      *            indicates not time was given by the service provider.
      */
     public IdpInitatedSsoRequest(String newEntityId, String newAcsUrl, String newTarget, long newTime) {
-        entityId = StringSupport.trimOrNull(newEntityId);
-        Assert.isNotNull(entityId, "Service provider ID can not be null or empty");
+        entityId =
+                Assert.isNotNull(StringSupport.trimOrNull(newEntityId), "Service provider ID can not be null or empty");
 
         acsUrl = StringSupport.trimOrNull(newAcsUrl);
 
         relayState = StringSupport.trimOrNull(newTarget);
 
-        time = newTime;
-        Assert.isGreaterThanOrEqual(0, time, "Time must be greater than or equal to 0");
+        time = Assert.isGreaterThanOrEqual(0, newTime, "Time must be greater than or equal to 0");
     }
 
     /**

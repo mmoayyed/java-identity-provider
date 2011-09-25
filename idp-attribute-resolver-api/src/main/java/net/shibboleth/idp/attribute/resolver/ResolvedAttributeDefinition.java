@@ -55,10 +55,8 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * @param definition attribute definition that was resolved to produce the given attribute, may not be null
      * @param attribute attribute produced by the given attribute definition, may be null
      */
-    public ResolvedAttributeDefinition(BaseAttributeDefinition definition, Attribute<?> attribute) {
-        Assert.isNotNull(definition, "Wrapped attribute definition may not be null");
-        resolvedDefinition = definition;
-
+    public ResolvedAttributeDefinition(BaseAttributeDefinition definition, Attribute<?> attribute) {        
+        resolvedDefinition = Assert.isNotNull(definition, "Wrapped attribute definition may not be null");
         resolvedAttribute = attribute;
     }
 

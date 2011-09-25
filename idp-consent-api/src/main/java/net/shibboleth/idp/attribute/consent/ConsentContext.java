@@ -75,8 +75,7 @@ public final class ConsentContext implements Subcontext {
      * @param attributes attributes about the user that are to be released with the user's consent, defensively copied
      */
     public ConsentContext(SubcontextContainer superContext, Map<String, Attribute<?>> attributes) {
-        Assert.isNotNull(superContext, "Owning super context may not be null");
-        owner = superContext;
+        owner = Assert.isNotNull(superContext, "Owning super context may not be null");
 
         userAttributes = Collections.unmodifiableMap(new HashMap<String, Attribute<?>>(attributes));
         consentedAttributes = new HashMap<String, Attribute<?>>();

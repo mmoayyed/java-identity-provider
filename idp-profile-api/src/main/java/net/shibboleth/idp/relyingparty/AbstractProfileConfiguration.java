@@ -39,10 +39,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * @param profileId ID of the the communication profile, never null or empty
      */
     public AbstractProfileConfiguration(final String profileId) {
-        String trimmedId = StringSupport.trimOrNull(profileId);
-        Assert.isNotNull(trimmedId, "Profile identifier can not be null or empty");
-        id = profileId;
-
+        id = Assert.isNotNull(StringSupport.trimOrNull(profileId), "Profile identifier can not be null or empty");
         enabled = true;
     }
 

@@ -40,9 +40,7 @@ public class X509CertificateSubcontext extends AbstractSubcontext {
      */
     public X509CertificateSubcontext(final SubcontextContainer owner, final X509Certificate cert) {
         super(owner);
-
-        certificate = cert;
-        Assert.isNotNull(certificate, "X.509 certificate can not be null");
+        certificate = Assert.isNotNull(cert, "X.509 certificate can not be null");
     }
 
     /**

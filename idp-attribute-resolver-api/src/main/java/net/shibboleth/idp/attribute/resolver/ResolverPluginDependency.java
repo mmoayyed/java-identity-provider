@@ -44,8 +44,8 @@ public class ResolverPluginDependency {
      *            dependent plugin
      */
     public ResolverPluginDependency(final String pluginId, final String attributeId) {
-        dependencyPluginId = StringSupport.trimOrNull(pluginId);
-        Assert.isNotNull(dependencyPluginId, "Dependency plugin ID may not be null or empty");
+        dependencyPluginId =
+                Assert.isNotNull(StringSupport.trimOrNull(pluginId), "Dependency plugin ID may not be null or empty");
 
         dependencyAttributeId = StringSupport.trimOrNull(attributeId);
     }

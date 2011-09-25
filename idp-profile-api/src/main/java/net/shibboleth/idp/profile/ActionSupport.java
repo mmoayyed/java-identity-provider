@@ -189,13 +189,14 @@ public final class ActionSupport {
             final AttributeMap eventAttributes) {
         Assert.isNotNull(source, "Component may not be null");
 
-        final String trimmedEventId = StringSupport.trimOrNull(eventId);
-        Assert.isNotNull(trimmedEventId, "ID of event for action " + source.getId() + " may not be null");
+        final String trimmedEventId =
+                Assert.isNotNull(StringSupport.trimOrNull(eventId), "ID of event for action " + source.getId()
+                        + " may not be null");
 
         if (eventAttributes == null || eventAttributes.isEmpty()) {
-            return new Event(source.getId(), eventId);
+            return new Event(source.getId(), trimmedEventId);
         } else {
-            return new Event(source.getId(), eventId, eventAttributes);
+            return new Event(source.getId(), trimmedEventId, eventAttributes);
         }
     }
 

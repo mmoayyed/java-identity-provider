@@ -43,12 +43,8 @@ public class UsernamePasswordSubcontext extends AbstractSubcontext {
      */
     public UsernamePasswordSubcontext(final SubcontextContainer owner, final String user, final String pass) {
         super(owner);
-
-        username = StringSupport.trimOrNull(user);
-        Assert.isNotNull(username, "Username can not be null");
-
-        password = StringSupport.trimOrNull(pass);
-        Assert.isNotNull(password, "Password can not be null");
+        username = Assert.isNotNull(StringSupport.trimOrNull(user), "Username can not be null");
+        password = Assert.isNotNull(StringSupport.trimOrNull(pass), "Password can not be null");
     }
 
     /**

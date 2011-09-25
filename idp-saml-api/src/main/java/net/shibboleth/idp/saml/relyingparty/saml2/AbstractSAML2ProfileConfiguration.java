@@ -102,8 +102,9 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param criteria criteria used to determine name identifiers should be encrypted, never null
      */
     public void setEncryptNameIDsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
-        Assert.isNotNull(criteria, "Criteria to determine if name identifiers should be encrypted can not be null");
-        encryptNameIDsCriteria = criteria;
+        encryptNameIDsCriteria =
+                Assert.isNotNull(criteria,
+                        "Criteria to determine if name identifiers should be encrypted can not be null");;
     }
 
     /**
@@ -121,8 +122,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param criteria criteria used to determine assertions should be encrypted, never null
      */
     public void setEncryptAssertionsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
-        Assert.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");
-        encryptAssertionsCriteria = criteria;
+        encryptAssertionsCriteria =
+                Assert.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");;
     }
 
     /**

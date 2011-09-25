@@ -51,12 +51,11 @@ public class RelyingPartyConfiguration {
     public RelyingPartyConfiguration(final String configurationId,
             final EvaluableCriterion<ProfileRequestContext> criteria,
             final Collection<ProfileConfiguration> configurations) {
-        String trimmedId = StringSupport.trimOrNull(configurationId);
-        Assert.isNotNull(trimmedId, "Relying party configuration ID can not be null or empty");
-        id = trimmedId;
+        id =
+                Assert.isNotNull(StringSupport.trimOrNull(configurationId),
+                        "Relying party configuration ID can not be null or empty");
 
-        Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");
-        activationCriteria = criteria;
+        activationCriteria = Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");;
 
         if (configurations == null || configurations.isEmpty()) {
             profileConfigurations = Collections.emptyMap();
@@ -66,8 +65,9 @@ public class RelyingPartyConfiguration {
         final HashMap<String, ProfileConfiguration> configMap = new HashMap<String, ProfileConfiguration>();
         for (ProfileConfiguration config : configurations) {
             if (config != null) {
-                trimmedId = StringSupport.trimOrNull(config.getProfileId());
-                Assert.isNotNull(trimmedId, "ID of profile class " + config.getClass().getName() + " can not be null");
+                final String trimmedId =
+                        Assert.isNotNull(StringSupport.trimOrNull(config.getProfileId()), "ID of profile class "
+                                + config.getClass().getName() + " can not be null");
                 configMap.put(trimmedId, config);
             }
         }

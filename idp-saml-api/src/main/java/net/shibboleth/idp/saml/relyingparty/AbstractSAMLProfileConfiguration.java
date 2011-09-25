@@ -69,8 +69,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * @param criteria criteria used to determine if the generated assertion should be signed, never null
      */
     public void setSignAssertionsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
-        Assert.isNotNull(criteria, "Criteria to determine if assertions should be signed can not be null");
-        signAssertionsCriteria = criteria;
+        signAssertionsCriteria =
+                Assert.isNotNull(criteria, "Criteria to determine if assertions should be signed can not be null");;
     }
 
     /**
@@ -88,8 +88,9 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * @param criteria criteria used to determine if the received assertion should be signed, never null
      */
     public void setSignedRequestsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
-        Assert.isNotNull(criteria, "Criteria to determine if received requests should be signed can not be null");
-        signedRequestsCriteria = criteria;
+        signedRequestsCriteria =
+                Assert.isNotNull(criteria,
+                        "Criteria to determine if received requests should be signed can not be null");;
     }
 
     /**
@@ -107,7 +108,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * @param criteria criteria used to determine if the generated response should be signed, never null
      */
     public void setSignResponsesCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
-        Assert.isNotNull(criteria, "Criteria to determine if responses should be signed can not be null");
-        signResponsesCriteria = criteria;
+        signResponsesCriteria =
+                Assert.isNotNull(criteria, "Criteria to determine if responses should be signed can not be null");;
     }
 }

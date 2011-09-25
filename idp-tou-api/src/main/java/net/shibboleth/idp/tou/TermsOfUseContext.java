@@ -57,9 +57,7 @@ public final class TermsOfUseContext implements Subcontext {
      * @param superContext owner of this context
      */
     public TermsOfUseContext(final SubcontextContainer superContext) {
-        Assert.isNotNull(superContext, "Owning super context may not be null");
-        owner = superContext;
-
+        owner = Assert.isNotNull(superContext, "Owning super context may not be null");;
         termsOfUseDecision = Decision.UNSPECIFIED;
     }
 

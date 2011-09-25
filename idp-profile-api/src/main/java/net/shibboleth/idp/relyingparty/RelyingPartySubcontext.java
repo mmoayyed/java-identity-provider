@@ -50,8 +50,7 @@ public final class RelyingPartySubcontext extends AbstractSubcontextContainer im
     public RelyingPartySubcontext(SubcontextContainer owner, String rpId) {
         super();
 
-        relyingPartyId = StringSupport.trimOrNull(rpId);
-        Assert.isNotNull(relyingPartyId, "Relying party ID can not be null or empty");
+        relyingPartyId = Assert.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
 
         if (owner != null) {
             parent = owner;

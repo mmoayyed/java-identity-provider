@@ -44,8 +44,7 @@ public class AuthenticationWorkflowDescriptor {
      * @param id unique ID of this workflow, can not be null or empty
      */
     public AuthenticationWorkflowDescriptor(String id) {
-        workflowId = StringSupport.trimOrNull(id);
-        Assert.isNotNull(workflowId, "Workflow ID can not be null or empty");
+        workflowId = Assert.isNotNull(StringSupport.trimOrNull(id), "Workflow ID can not be null or empty");
     }
 
     /**
@@ -110,8 +109,7 @@ public class AuthenticationWorkflowDescriptor {
      * @param workflowLifetime the lifetime for the workflow, must be 0 or greater
      */
     public void setLifetime(long workflowLifetime) {
-        Assert.isGreaterThanOrEqual(0, workflowLifetime, "Lifetime must be greater than or equal to 0");
-        lifetime = workflowLifetime;
+        lifetime = Assert.isGreaterThanOrEqual(0, workflowLifetime, "Lifetime must be greater than or equal to 0");
     }
 
     /**

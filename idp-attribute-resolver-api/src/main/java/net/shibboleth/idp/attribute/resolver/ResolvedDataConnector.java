@@ -52,8 +52,7 @@ public class ResolvedDataConnector extends BaseDataConnector {
      * @param attributes attributes produced by the resolved data connector, may be null
      */
     public ResolvedDataConnector(BaseDataConnector connector, Map<String, Attribute<?>> attributes) {
-        Assert.isNotNull(connector, "Resolved data connector can not be null");
-        resolvedConnector = connector;
+        resolvedConnector = Assert.isNotNull(connector, "Resolved data connector can not be null");
         resolvedAttributes = attributes;
     }
 

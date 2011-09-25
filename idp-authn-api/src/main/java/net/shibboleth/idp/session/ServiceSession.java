@@ -46,9 +46,7 @@ public final class ServiceSession extends AbstractSubcontextContainer {
      * @param id the identifier of the service associated with this session, can not be null or empty
      */
     public ServiceSession(String id) {
-        serviceId = StringSupport.trimOrNull(id);
-        Assert.isNotNull(serviceId, "Service ID can not be null nor empty");
-
+        serviceId = Assert.isNotNull(StringSupport.trimOrNull(id), "Service ID can not be null nor empty");
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
     }
@@ -86,8 +84,7 @@ public final class ServiceSession extends AbstractSubcontextContainer {
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
     public void setLastActivityInstant(long instant) {
-        Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
-        lastActivityInstant = instant;
+        lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**

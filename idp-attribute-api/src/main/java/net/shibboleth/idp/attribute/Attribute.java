@@ -67,8 +67,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
      * @param attributeId unique identifier of the attribute
      */
     public Attribute(final String attributeId) {
-        id = StringSupport.trimOrNull(attributeId);
-        Assert.isNotNull(id, "Attribute ID may not be null");
+        id = Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
 
         values = new LazyList<ValueType>();
         displayNames = new LazyMap<Locale, String>();
@@ -124,8 +123,8 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
     public String addDisplayName(final Locale locale, final String name) {
         Assert.isNotNull(locale, "Display name locale can not be null");
 
-        final String trimmedName = StringSupport.trimOrNull(name);
-        Assert.isNotNull(trimmedName, "Display name can not be null or empty");
+        final String trimmedName =
+                Assert.isNotNull(StringSupport.trimOrNull(name), "Display name can not be null or empty");
 
         return displayNames.put(locale, trimmedName);
     }
@@ -184,8 +183,8 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
     public String addDisplayDescription(final Locale locale, final String description) {
         Assert.isNotNull(locale, "Display description locale can not be null");
 
-        final String trimmedDescription = StringSupport.trimOrNull(description);
-        Assert.isNotNull(trimmedDescription, "Display description can not be null or empty");
+        final String trimmedDescription =
+                Assert.isNotNull(StringSupport.trimOrNull(description), "Display description can not be null or empty");
 
         return displayDescriptions.put(locale, trimmedDescription);
     }
@@ -296,7 +295,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
 
     /**
      * Clones an attribute. The clone will contains defensive copies of this objects display descriptions and names,
-     * encoders, and values.  The elements of each collection, however, are not themselves cloned.
+     * encoders, and values. The elements of each collection, however, are not themselves cloned.
      * 
      * {@inheritDoc}
      */

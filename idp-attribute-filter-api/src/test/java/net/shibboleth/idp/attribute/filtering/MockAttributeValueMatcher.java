@@ -41,8 +41,7 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher {
      * @param id ID of the attribute to which this matcher applies
      */
     public void setMatchingAttribute(String id) {
-        matchingAttribute = StringSupport.trimOrNull(id);
-        Assert.isNotNull(matchingAttribute, "attribute ID can not be null or empty");
+        matchingAttribute = Assert.isNotNull(StringSupport.trimOrNull(id), "attribute ID can not be null or empty");
     }
 
     /**

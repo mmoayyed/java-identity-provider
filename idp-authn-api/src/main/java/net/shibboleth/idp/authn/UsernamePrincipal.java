@@ -34,8 +34,7 @@ public final class UsernamePrincipal implements Principal {
      * @param user the username, can not be null or empty
      */
     public UsernamePrincipal(final String user) {
-        username = StringSupport.trimOrNull(user);
-        Assert.isNotNull(username, "Username can not be null or empty");
+        username = Assert.isNotNull(StringSupport.trimOrNull(user), "Username can not be null or empty");
     }
 
     /** {@inheritDoc} */

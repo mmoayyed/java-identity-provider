@@ -20,10 +20,10 @@ package net.shibboleth.idp.saml.impl.xmlobject;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 
+import org.opensaml.util.StringSupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
-import org.opensaml.xml.util.DatatypeHelper;
 import org.w3c.dom.Attr;
 
 /** Unmarshaller for {@link ScopedValue} objects. */
@@ -34,7 +34,7 @@ public class ScopedValueUnmarshaller extends AbstractXMLObjectUnmarshaller {
     protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
         ScopedValue sv = (ScopedValue) xmlObject;
 
-        if (DatatypeHelper.isEmpty(sv.getScopeAttributeName())) {
+        if (StringSupport.isNullOrEmpty(sv.getScopeAttributeName())) {
             sv.setScopeAttributeName(attribute.getName());
             sv.setScope(attribute.getValue());
         }

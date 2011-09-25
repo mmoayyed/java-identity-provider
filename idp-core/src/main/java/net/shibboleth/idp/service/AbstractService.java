@@ -65,7 +65,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
     public synchronized void setId(String componentId) {
         super.setId(componentId);
     }
-    
+
     /** {@inheritDoc} */
     public final String getCurrentState() {
         return currentState;
@@ -164,8 +164,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * @param state current state of the service
      */
     protected final void setCurrentState(final String state) {
-        currentState = StringSupport.trimOrNull(state);
-        Assert.isNotNull(currentState, "State indicator may not be null or empty");
+        currentState = Assert.isNotNull(StringSupport.trimOrNull(state), "State indicator may not be null or empty");
     }
 
     /**

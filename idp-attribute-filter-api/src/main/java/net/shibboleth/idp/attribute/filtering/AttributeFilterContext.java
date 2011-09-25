@@ -149,8 +149,8 @@ public final class AttributeFilterContext implements Subcontext {
      * @param attributeValues values for the attribute that are permitted to be released, may be null or empty
      */
     public void addPermittedAttributeValues(String attributeId, Collection<?> attributeValues) {
-        String trimmedAttributeId = StringSupport.trimOrNull(attributeId);
-        Assert.isNotNull(trimmedAttributeId, "Attribute ID can not be null or empty");
+        String trimmedAttributeId =
+                Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
                 + trimmedAttributeId + " exsists in the pre-filtered attribute set");
 
@@ -197,8 +197,8 @@ public final class AttributeFilterContext implements Subcontext {
      * @param attributeValues values for the attribute that are not permitted to be released, may be null or empty
      */
     public void addDeniedAttributeValues(String attributeId, Collection<?> attributeValues) {
-        String trimmedAttributeId = StringSupport.trimOrNull(attributeId);
-        Assert.isNotNull(trimmedAttributeId, "Attribute ID can not be null or empty");
+        String trimmedAttributeId =
+                Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
                 + trimmedAttributeId + " exsists in the pre-filtered attribute set");
 

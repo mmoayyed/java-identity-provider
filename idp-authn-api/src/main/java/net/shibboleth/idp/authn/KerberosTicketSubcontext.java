@@ -40,9 +40,7 @@ public class KerberosTicketSubcontext extends AbstractSubcontext {
      */
     public KerberosTicketSubcontext(final SubcontextContainer owner, final KerberosTicket kerbTicket) {
         super(owner);
-
-        ticket = kerbTicket;
-        Assert.isNotNull(kerbTicket, "Kerberos ticket can not be null");
+        ticket = Assert.isNotNull(kerbTicket, "Kerberos ticket can not be null");
     }
 
     /**

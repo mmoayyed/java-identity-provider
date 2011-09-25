@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.spring;
 
-import org.opensaml.xml.util.XMLHelper;
+import org.opensaml.util.xml.DomTypeSupport;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
@@ -91,8 +91,8 @@ public class SchemaTypeAwareXMLBeanDefinitionReader extends XmlBeanDefinitionRea
         /** {@inheritDoc} */
         public BeanDefinition parseCustomElement(Element element, BeanDefinition containingBd) {
             String namespaceUri = element.getNamespaceURI();
-            if (XMLHelper.hasXSIType(element)) {
-                namespaceUri = XMLHelper.getXSIType(element).getNamespaceURI();
+            if (DomTypeSupport.hasXSIType(element)) {
+                namespaceUri = DomTypeSupport.getXSIType(element).getNamespaceURI();
             }
 
             NamespaceHandler handler = getReaderContext().getNamespaceHandlerResolver().resolve(namespaceUri);

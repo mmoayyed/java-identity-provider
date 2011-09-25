@@ -32,9 +32,9 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 
 import org.apache.velocity.app.VelocityEngine;
+import org.opensaml.util.collections.LazyList;
 import org.opensaml.util.collections.LazySet;
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.xml.util.LazyList;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

@@ -67,8 +67,7 @@ public final class IdPSession extends AbstractSubcontextContainer implements Ide
      * @param sessionSecret secrete for this session, can not be null
      */
     public IdPSession(String sessionId, byte[] sessionSecret) {
-        id = StringSupport.trimOrNull(sessionId);
-        Assert.isNotNull(id, "Session ID can not be null or empty");
+        id = Assert.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID can not be null or empty");
 
         Assert.isNotNull(sessionSecret, "Session secret can not be null");
         secret = new byte[sessionSecret.length];
@@ -120,8 +119,7 @@ public final class IdPSession extends AbstractSubcontextContainer implements Ide
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
     public void setLastActivityInstant(long instant) {
-        Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
-        lastActivityInstant = instant;
+        lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**

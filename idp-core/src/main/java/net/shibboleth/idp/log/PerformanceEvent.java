@@ -59,8 +59,8 @@ public class PerformanceEvent extends BaseEvent {
      * @param operationId unique ID of the operation, must never be null or empty
      */
     public PerformanceEvent(String operationId) {
-        operation = StringSupport.trimOrNull(operationId);
-        Assert.isNotNull(operation, "Operation identifier may not be null or empty");
+        operation = Assert.isNotNull(StringSupport.trimOrNull(operationId), 
+                "Operation identifier may not be null or empty");
 
         successfulOperation = false;
         startTime = -1;
@@ -149,17 +149,17 @@ public class PerformanceEvent extends BaseEvent {
         entry.append(getStartTime()).append(FIELD_SEPERATOR);
         entry.append(getStopTime()).append(FIELD_SEPERATOR);
         entry.append(getElapsedTime()).append(FIELD_SEPERATOR);
-        
-        if(isOperationSuccessful()){
+
+        if (isOperationSuccessful()) {
             entry.append(1).append(FIELD_SEPERATOR);
-        }else{
+        } else {
             entry.append(0).append(FIELD_SEPERATOR);
         }
-        
-        if(getMessage() != null){
+
+        if (getMessage() != null) {
             entry.append(getMessage());
         }
-        
+
         return entry.toString();
     }
 }

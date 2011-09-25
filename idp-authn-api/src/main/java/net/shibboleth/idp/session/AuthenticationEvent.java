@@ -49,11 +49,10 @@ public final class AuthenticationEvent extends AbstractSubcontextContainer {
      * @param principal the principal that was authenticated, can not be null
      */
     public AuthenticationEvent(String workflow, Principal principal) {
-        authenticationWorkflow = StringSupport.trimOrNull(workflow);
-        Assert.isNotNull(authenticationWorkflow, "Authentication method can not be null nor empty");
-
-        Assert.isNotNull(principal, "Authenticationed princpal can not be null");
-        authenticatedPrincipal = principal;
+        authenticationWorkflow =
+                Assert.isNotNull(StringSupport.trimOrNull(workflow), "Authentication method can not be null nor empty");
+        
+        authenticatedPrincipal = Assert.isNotNull(principal, "Authenticationed princpal can not be null");;
 
         authenticationInstant = System.currentTimeMillis();
         lastActivityInstant = authenticationInstant;
@@ -101,8 +100,7 @@ public final class AuthenticationEvent extends AbstractSubcontextContainer {
      * @param instant last activity instant, in milliseconds since the epoch, for this event, must be greater than 0
      */
     public void setLastActivityInstant(long instant) {
-        Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
-        lastActivityInstant = instant;
+        lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**
