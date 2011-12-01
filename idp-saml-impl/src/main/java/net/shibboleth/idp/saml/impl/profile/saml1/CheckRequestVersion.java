@@ -26,14 +26,13 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.common.SAMLVersion;
-import org.opensaml.saml2.core.RequestAbstractType;
-import org.opensaml.saml2.core.Response;
+import org.opensaml.saml1.core.RequestAbstractType;
 import org.opensaml.util.ObjectSupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** Checks whether the inbound SAML request has the appropriate version. */
-public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestAbstractType, Response> {
+public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestAbstractType, Object> {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckRequestVersion() {
@@ -43,16 +42,44 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<RequestAbstractType, Response> profileRequestContext) throws ProfileException {
+            final ProfileRequestContext<RequestAbstractType, Object> profileRequestContext) throws ProfileException {
 
         final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
+        if (request == null) {
+            return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(
+                    "Request did not contain a message"));
+        }
+
         if (ObjectSupport.equals(SAMLVersion.VERSION_10, request.getVersion())
                 || ObjectSupport.equals(SAMLVersion.VERSION_11, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
         }
 
-        // TODO Error
-        return ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, null);
+        return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(request.getVersion()));
     }
 
+    /** Exception thrown when the incoming message was not an expected SAML version. */
+    public static class InvalidMessageVersionException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = -872917446217307755L;
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public InvalidMessageVersionException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param messageVersion SAML version of the message
+         */
+        public InvalidMessageVersionException(SAMLVersion messageVersion) {
+            super("Message SAML version was " + messageVersion.toString() + ", expected 1.0 or 1.1");
+        }
+    }
 }

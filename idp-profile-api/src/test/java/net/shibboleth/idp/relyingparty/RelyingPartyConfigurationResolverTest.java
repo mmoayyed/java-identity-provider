@@ -34,9 +34,12 @@ public class RelyingPartyConfigurationResolverTest {
         RelyingPartyConfigurationResolver resolver;
 
         ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
-        rpConfigs.add(new RelyingPartyConfiguration("one", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
-        rpConfigs.add(new RelyingPartyConfiguration("two", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null));
-        rpConfigs.add(new RelyingPartyConfiguration("three", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
+        rpConfigs
+                .add(new RelyingPartyConfiguration("one", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
+        rpConfigs
+                .add(new RelyingPartyConfiguration("two", "foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null));
+        rpConfigs.add(new RelyingPartyConfiguration("three", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE,
+                null));
 
         resolver = new RelyingPartyConfigurationResolver();
         resolver.setId("test");
@@ -60,11 +63,11 @@ public class RelyingPartyConfigurationResolverTest {
         ProfileRequestContext requestContext = new ProfileRequestContext();
 
         RelyingPartyConfiguration config1 =
-                new RelyingPartyConfiguration("one", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
+                new RelyingPartyConfiguration("one", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
         RelyingPartyConfiguration config2 =
-                new RelyingPartyConfiguration("two", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
+                new RelyingPartyConfiguration("two", "foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
         RelyingPartyConfiguration config3 =
-                new RelyingPartyConfiguration("three", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
+                new RelyingPartyConfiguration("three", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
 
         ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
         rpConfigs.add(config1);

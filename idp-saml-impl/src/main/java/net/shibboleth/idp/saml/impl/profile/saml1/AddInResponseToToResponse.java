@@ -53,12 +53,11 @@ public class AddInResponseToToResponse extends AbstractIdentityProviderAction<Ob
         final String inMsgId = getInboundMessageId(profileRequestContext);
         if (inMsgId == null) {
             log.debug("Action {}: Inbound message did not have an ID, no InResponse to added to Response", getId());
+            //TODO throw error
             return ActionSupport.buildProceedEvent(this);
         }
 
-        final MessageContext<Response> messageContext =
-                ActionSupport.getOutboundMessageContext(this, profileRequestContext);
-        final Response response = ActionSupport.getOutboundMessage(this, messageContext);
+        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
 
         log.debug("Action {}: Add InResponseTo message ID {} to Response {}",
                 new Object[] {getId(), inMsgId, response.getID(),});

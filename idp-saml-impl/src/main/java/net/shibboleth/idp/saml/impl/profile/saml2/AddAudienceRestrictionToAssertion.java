@@ -28,6 +28,8 @@ import org.opensaml.saml2.core.Response;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+//TODO have an option that controls, if a restriction condition already exists, if a new one is added or if the audiences are just added the existing condition
+
 /**
  *
  */

@@ -52,10 +52,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      */
     public AbstractSAML2ProfileConfiguration(String profileId) {
         super(profileId);
-        encryptNameIDsCriteria =
-                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE;
-        encryptAssertionsCriteria =
-                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.TRUE_RESPONSE;
+        encryptNameIDsCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+        encryptAssertionsCriteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
         proxyCount = 0;
         proxyAudiences = Collections.emptySet();
     }
@@ -104,7 +102,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     public void setEncryptNameIDsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
         encryptNameIDsCriteria =
                 Assert.isNotNull(criteria,
-                        "Criteria to determine if name identifiers should be encrypted can not be null");;
+                        "Criteria to determine if name identifiers should be encrypted can not be null");
     }
 
     /**
@@ -123,7 +121,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      */
     public void setEncryptAssertionsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
         encryptAssertionsCriteria =
-                Assert.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");;
+                Assert.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");
     }
 
     /**

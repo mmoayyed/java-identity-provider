@@ -32,14 +32,18 @@ public class RelyingPartyConfigurationTest {
         RelyingPartyConfiguration config;
 
         config =
-                new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE,
-                        Collections.EMPTY_LIST);
+                new RelyingPartyConfiguration("foo", "http://idp.example.org",
+                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, Collections.EMPTY_LIST);
         Assert.assertEquals(config.getConfigurationId(), "foo");
+        Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
         Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
-        config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
+        config =
+                new RelyingPartyConfiguration("foo", "http://idp.example.org",
+                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
         Assert.assertEquals(config.getConfigurationId(), "foo");
+        Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
         Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
@@ -48,14 +52,35 @@ public class RelyingPartyConfigurationTest {
         profileConfigs.add(null);
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
-        config = new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
+        config =
+                new RelyingPartyConfiguration("foo", "http://idp.example.org",
+                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
         Assert.assertEquals(config.getConfigurationId(), "foo");
+        Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
         Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
         Assert.assertEquals(config.getProfileConfigurations().size(), 2);
 
         try {
             config =
-                    new RelyingPartyConfiguration(null, StaticResponseEvaluableCriterion.FALSE_RESPONSE,
+                    new RelyingPartyConfiguration(null, "http://idp.example.org",
+                            StaticResponseEvaluableCriterion.FALSE_RESPONSE, Collections.EMPTY_LIST);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // expected this
+        }
+
+        try {
+            config =
+                    new RelyingPartyConfiguration("", "http://idp.example.org",
+                            StaticResponseEvaluableCriterion.FALSE_RESPONSE, Collections.EMPTY_LIST);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // expected this
+        }
+
+        try {
+            config =
+                    new RelyingPartyConfiguration("foo", null, StaticResponseEvaluableCriterion.FALSE_RESPONSE,
                             Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
@@ -64,7 +89,7 @@ public class RelyingPartyConfigurationTest {
 
         try {
             config =
-                    new RelyingPartyConfiguration("", StaticResponseEvaluableCriterion.FALSE_RESPONSE,
+                    new RelyingPartyConfiguration("foo", null, StaticResponseEvaluableCriterion.FALSE_RESPONSE,
                             Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
@@ -72,7 +97,7 @@ public class RelyingPartyConfigurationTest {
         }
 
         try {
-            config = new RelyingPartyConfiguration("foo", null, Collections.EMPTY_LIST);
+            config = new RelyingPartyConfiguration("foo", "http://idp.example.org", null, Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
@@ -86,7 +111,8 @@ public class RelyingPartyConfigurationTest {
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
         RelyingPartyConfiguration config =
-                new RelyingPartyConfiguration("foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
+                new RelyingPartyConfiguration("foo", "http://idp.example.org",
+                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
         Assert.assertNotNull(config.getProfileConfiguration("foo"));
         Assert.assertNotNull(config.getProfileConfiguration("bar"));
         Assert.assertNull(config.getProfileConfiguration("baz"));

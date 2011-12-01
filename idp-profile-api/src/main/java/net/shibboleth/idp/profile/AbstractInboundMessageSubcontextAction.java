@@ -45,10 +45,10 @@ public abstract class AbstractInboundMessageSubcontextAction<SubcontextType exte
             throws ProfileException {
 
         final MessageContext<?> inboundMessageContext =
-                ActionSupport.getInboundMessageContext(this, profileRequestContext);
+                ActionSupport.getRequiredInboundMessageContext(this, profileRequestContext);
 
         final SubcontextType messageSubcontext =
-                ActionSupport.getSubcontext(this, inboundMessageContext, getSubcontextType());
+                ActionSupport.getRequiredSubcontext(this, inboundMessageContext, getSubcontextType());
 
         return doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext, messageSubcontext);
     }

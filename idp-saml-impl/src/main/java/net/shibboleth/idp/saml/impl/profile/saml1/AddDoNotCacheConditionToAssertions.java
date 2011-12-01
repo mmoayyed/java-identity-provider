@@ -22,12 +22,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
+import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.saml1.core.Assertion;
@@ -44,9 +45,11 @@ import org.springframework.webflow.execution.RequestContext;
  * Adds a {@link DoNotCacheCondition} to every {@link Assertion} in the outgoing {@link Response} retrieved from the
  * {@link ProfileRequestContext#getOutboundMessageContext()}. If no {@link Conditions} is present on the
  * {@link Assertion} one will be created.
+ * 
+ * This action requires that the outbound message context to contain a {@link Response} with one, or more,
+ * {@link Assertion}.
  */
-public class AddDoNotCacheConditionToAssertions extends
-        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
+public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddDoNotCacheConditionToAssertions.class);
@@ -57,15 +60,18 @@ public class AddDoNotCacheConditionToAssertions extends
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext,
-            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
-
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
-        final List<Assertion> assertions =
-                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext);
+        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
+
+        final List<Assertion> assertions = response.getAssertions();
+        if (assertions.isEmpty()) {
+            log.error("Action {}: Unable to add DoNotCacheCondition, outbound Response does not contain any Asertions");
+            throw new InvalidOutboundMessageException("No Assertion available within the Response");
+        }
 
         final SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
                 (SAMLObjectBuilder<DoNotCacheCondition>) Configuration.getBuilderFactory().getBuilder(
@@ -74,7 +80,7 @@ public class AddDoNotCacheConditionToAssertions extends
         Conditions conditions;
         List<DoNotCacheCondition> dncConditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml1Support.getConditionsFromAssertion(this, assertion);
+            conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
             dncConditions = conditions.getDoNotCacheConditions();
             if (!dncConditions.isEmpty()) {
                 log.debug("Action {}: Assertion {} already contained DoNotCache condition, another was not added",

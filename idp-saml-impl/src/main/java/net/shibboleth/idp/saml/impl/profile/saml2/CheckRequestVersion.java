@@ -46,12 +46,40 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
             final ProfileRequestContext<RequestAbstractType, Response> profileRequestContext) throws ProfileException {
 
         final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
+        if (request == null) {
+            return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(
+                    "Request did not contain a message"));
+        }
+
         if (ObjectSupport.equals(SAMLVersion.VERSION_20, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
         }
 
-        // TODO Error
-        return ActionSupport.buildEvent(this, ActionSupport.ERROR_EVENT_ID, null);
+        return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(request.getVersion()));
     }
 
+    /** Exception thrown when the incoming message was not an expected SAML version. */
+    public static class InvalidMessageVersionException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = -872917446217307755L;
+
+        /**
+         * Constructor.
+         * 
+         * @param message exception message
+         */
+        public InvalidMessageVersionException(String message) {
+            super(message);
+        }
+
+        /**
+         * Constructor.
+         * 
+         * @param messageVersion SAML version of the message
+         */
+        public InvalidMessageVersionException(SAMLVersion messageVersion) {
+            super("Message SAML version was " + messageVersion.toString() + ", expected 2.0");
+        }
+    }
 }

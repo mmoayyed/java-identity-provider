@@ -22,16 +22,16 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
+import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.idp.saml.relyingparty.saml1.AbstractSAML1ProfileConfiguration;
 
 import org.joda.time.DateTime;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
@@ -40,13 +40,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-//TODO profile config needs to carry assertion l
-
 /**
- *
+ * Sets the NotOnOrAfter attribute on the {@link Conditions} in every {@link Assertion} in the outgoing {@link Response}
+ * retrieved from the {@link ProfileRequestContext#getOutboundMessageContext()}. If no {@link Conditions} is present on
+ * the {@link Assertion} one will be created.
+ * 
+ * This action requires that the outbound message context to contain a {@link Response} with one, or more,
+ * {@link Assertion}.
  */
-public class AddNotOnOrAfterConditionToAssertions extends
-        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
+public class AddNotOnOrAfterConditionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddNotOnOrAfterConditionToAssertions.class);
@@ -57,35 +59,33 @@ public class AddNotOnOrAfterConditionToAssertions extends
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext,
-            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
         log.debug("Action {}: Attempting to add NotOnOrAfter condition to every Assertion in outgoing Response",
                 getId());
 
-        final MessageContext<Response> messageContext =
-                ActionSupport.getOutboundMessageContext(this, profileRequestContext);
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
-        final Response response = ActionSupport.getOutboundMessage(this, messageContext);
+        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
 
-        final List<Assertion> assertions =
-                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext);
-
-        if (!(relyingPartyContext.getProfileConfig() instanceof AbstractSAML1ProfileConfiguration)) {
-            // TODO error
+        final List<Assertion> assertions = response.getAssertions();
+        if (assertions.isEmpty()) {
+            log.error("Action {}: Unable to add Conditions, outbound Response does not contain any Asertions");
+            throw new InvalidOutboundMessageException("No Assertion available within the Response");
         }
 
         final AbstractSAML1ProfileConfiguration profileConfig =
-                (AbstractSAML1ProfileConfiguration) relyingPartyContext.getProfileConfig();
+                (AbstractSAML1ProfileConfiguration) relyingPartyCtx.getProfileConfig();
 
         Conditions conditions;
-        DateTime expiration = new DateTime(response.getIssueInstant()); // TODO add assertion lifetime
+        DateTime expiration = new DateTime(response.getIssueInstant()).plus(profileConfig.getAssertionLifetime());
         for (Assertion assertion : assertions) {
-            conditions = Saml1Support.getConditionsFromAssertion(this, assertion);
+            conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
             log.debug(
-                    "Action {}: Added NotOnOrAfter condition, to Assertion {}, that indicates Assertione expiration of {}",
-                    new Object[] {getId(), assertion.getID(), expiration});
+                    "Action {}: Added NotOnOrAfter condition, indicating an expiration instant of {}, to Assertion {}",
+                    new Object[] {getId(), expiration, assertion.getID()});
             conditions.setNotOnOrAfter(expiration);
         }
 

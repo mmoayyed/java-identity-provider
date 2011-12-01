@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.AttributeSubcontext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** A stage which invokes the {@link AttributeFilteringEngine} for the current request. */
-public class FilterAttributes extends AbstractProfileRequestSubcontextAction<Object, Object, RelyingPartySubcontext> {
+public class FilterAttributes extends AbstractIdentityProviderAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
@@ -56,11 +56,12 @@ public class FilterAttributes extends AbstractProfileRequestSubcontextAction<Obj
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
-            RelyingPartySubcontext relyingPartyContext) throws ProfileException {
+            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        AttributeSubcontext attributeContext =
-                relyingPartyContext.getSubcontext(AttributeSubcontext.class, false);
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+
+        AttributeSubcontext attributeContext = relyingPartyCtx.getSubcontext(AttributeSubcontext.class, false);
 
         // Get the filer context from the profile request
         // this may already exist but if not, auto-create it
@@ -82,10 +83,10 @@ public class FilterAttributes extends AbstractProfileRequestSubcontextAction<Obj
             filterEngine.filterAttributes(filterContext);
             profileRequestContext.removeSubcontext(filterContext);
 
-            if(attributeContext == null){
-                attributeContext = new AttributeSubcontext(relyingPartyContext);
+            if (attributeContext == null) {
+                attributeContext = new AttributeSubcontext(relyingPartyCtx);
             }
-            
+
             attributeContext.setAttributes(filterContext.getFilteredAttributes().values());
         } catch (AttributeFilteringException e) {
             log.error("Action {}: Error encountered while filtering attributes", getId(), e);

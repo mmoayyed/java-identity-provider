@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
-import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
+import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;
@@ -52,8 +52,7 @@ import org.springframework.webflow.execution.RequestContext;
  * The constructed {@link AuthenticationStatement} will have its authentication instant and method properties set. This
  * information is retrieved from the {@link AuthenticationRequestContext} on the {@link ProfileRequestContext}.
  */
-public class AddAuthenticationStatementToAssertion extends
-        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
+public class AddAuthenticationStatementToAssertion extends AbstractIdentityProviderAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
@@ -64,12 +63,13 @@ public class AddAuthenticationStatementToAssertion extends
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext,
-            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
-
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
         log.debug("Action {}: Attempting to add an AuthenticationStatement to outgoing Response", getId());
+
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
         final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext);
         if (statement == null) {
@@ -78,11 +78,33 @@ public class AddAuthenticationStatementToAssertion extends
         }
 
         final Assertion assertion =
-                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext).get(0);
-
+                getStatementAssertion(relyingPartyCtx,
+                        ActionSupport.getRequiredOutboundMessage(this, profileRequestContext));
         assertion.getAuthenticationStatements().add(statement);
+
         log.debug("Action {}: Added AuthenticationStatement to assertion {}", getId(), assertion.getID());
         return ActionSupport.buildProceedEvent(this);
+    }
+
+    /**
+     * Gets the assertion to which the authentication statement will be added.
+     * 
+     * @param relyingPartyContext current relying party information
+     * @param response current response
+     * 
+     * @return the assertion to which the attribute statement will be added
+     */
+    private Assertion getStatementAssertion(RelyingPartySubcontext relyingPartyContext, Response response) {
+        // TODO allow for a configuration option that forces the statement in to its own assertion
+
+        final Assertion assertion;
+        if (response.getAssertions().isEmpty()) {
+            assertion = Saml1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
+        } else {
+            assertion = response.getAssertions().get(0);
+        }
+
+        return assertion;
     }
 
     /**

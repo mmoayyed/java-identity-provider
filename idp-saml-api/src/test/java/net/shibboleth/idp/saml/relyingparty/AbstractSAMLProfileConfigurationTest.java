@@ -17,8 +17,12 @@
 
 package net.shibboleth.idp.saml.relyingparty;
 
+import java.util.Collections;
+import java.util.Set;
+
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
@@ -76,6 +80,58 @@ public class AbstractSAMLProfileConfigurationTest {
         } catch (IllegalArgumentException e) {
             // excepted this
         }
+    }
+
+    @Test
+    public void testAssertionLifetime() {
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        Assert.assertTrue(config.getAssertionLifetime() > 0);
+
+        config.setAssertionLifetime(100);
+        Assert.assertEquals(config.getAssertionLifetime(), 100);
+
+        try {
+            config.setAssertionLifetime(0);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // expected this
+        }
+
+        try {
+            config.setAssertionLifetime(-100);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // expected this
+        }
+    }
+
+    @Test
+    public void testAdditionalAudiencesForAssertion() {
+        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
+        Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
+        
+        config.setAdditionalAudienceForAssertion(null);
+        Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
+        Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
+
+        config.setAdditionalAudienceForAssertion(CollectionSupport.toList("", null, " foo"));
+
+        Set<String> audiences = config.getAdditionalAudiencesForAssertion();
+        Assert.assertNotNull(audiences);
+        Assert.assertEquals(audiences.size(), 1);
+        Assert.assertTrue(audiences.contains("foo"));
+
+        try {
+            audiences.add("bar");
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+            // expected this
+        }
+        
+        config.setAdditionalAudienceForAssertion(Collections.EMPTY_LIST);
+        Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
+        Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
     }
 
     /** Mock class for test {@link AbstractSAMLProfileConfiguration}. */

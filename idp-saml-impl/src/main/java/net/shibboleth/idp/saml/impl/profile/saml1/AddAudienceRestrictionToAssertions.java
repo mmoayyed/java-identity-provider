@@ -22,12 +22,15 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
+import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
+import net.shibboleth.idp.saml.relyingparty.AbstractSAMLProfileConfiguration;
+import net.shibboleth.idp.saml.relyingparty.saml1.AbstractSAML1ProfileConfiguration;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.saml1.core.Assertion;
@@ -41,11 +44,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-//TODO need access to the profile configuration
+//TODO have an option that controls, if a restriction condition already exists, if a new one is added or if the audiences are just added the existing condition
 
 /** Adds an {@link AudienceRestrictionCondition} to every {@link Assertion} contained on the {@link Response}. */
-public class AddAudienceRestrictionToAssertions extends
-        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
+public class AddAudienceRestrictionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAudienceRestrictionToAssertions.class);
@@ -56,20 +58,26 @@ public class AddAudienceRestrictionToAssertions extends
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext,
-            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
-
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
         log.debug("Action {}: Attempting to add an AudienceRestrictionCondition to outgoing assertions", getId());
 
-        final List<Assertion> assertions =
-                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext);
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+        
+        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
+
+        final List<Assertion> assertions = response.getAssertions();
+        if (assertions.isEmpty()) {
+            log.error("Action {}: Unable to add DoNotCacheCondition, outbound Response does not contain any Asertions");
+            throw new InvalidOutboundMessageException("No Assertion available within the Response");
+        }
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml1Support.getConditionsFromAssertion(this, assertion);
-            conditions.getAudienceRestrictionConditions().add(buildAudienceRestriction(relyingPartyContext));
+            conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions.getAudienceRestrictionConditions().add(buildAudienceRestriction(relyingPartyCtx));
             log.debug("Action {}: Added AudienceRestrictionCondition to Assertion {}", getId(), assertion.getID());
         }
 
@@ -97,7 +105,15 @@ public class AddAudienceRestrictionToAssertions extends
         audience.setUri(relyingPartyCtx.getRelyingPartyId());
         condition.getAudiences().add(audience);
 
-        // TODO add additional audiences if AbstractSamlProfileConfiguration carries them
+        if (relyingPartyCtx.getProfileConfig() instanceof AbstractSAML1ProfileConfiguration) {
+            AbstractSAMLProfileConfiguration profileConfig =
+                    (AbstractSAMLProfileConfiguration) relyingPartyCtx.getProfileConfig();
+            for (String audienceId : profileConfig.getAdditionalAudiencesForAssertion()) {
+                audience = audienceBuilder.buildObject();
+                audience.setUri(audienceId);
+                condition.getAudiences().add(audience);
+            }
+        }
 
         return condition;
     }

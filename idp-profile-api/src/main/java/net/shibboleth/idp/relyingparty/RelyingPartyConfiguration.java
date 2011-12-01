@@ -33,6 +33,9 @@ public class RelyingPartyConfiguration {
 
     /** Unique identifier for this configuration. */
     private final String id;
+    
+    /** The entity ID of the IdP. */
+    private final String responderEntityId;
 
     /** Criterion that must be met for this configuration to be active for a given request. */
     private final EvaluableCriterion<ProfileRequestContext> activationCriteria;
@@ -49,13 +52,16 @@ public class RelyingPartyConfiguration {
      * @param configurations communication profile configurations for this relying party, may be null or empty
      */
     public RelyingPartyConfiguration(final String configurationId,
+            final String entityId,
             final EvaluableCriterion<ProfileRequestContext> criteria,
             final Collection<ProfileConfiguration> configurations) {
         id =
                 Assert.isNotNull(StringSupport.trimOrNull(configurationId),
                         "Relying party configuration ID can not be null or empty");
+        
+        responderEntityId = Assert.isNotNull(StringSupport.trimOrNull(entityId), "Responder entity ID can not be null");
 
-        activationCriteria = Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");;
+        activationCriteria = Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");
 
         if (configurations == null || configurations.isEmpty()) {
             profileConfigurations = Collections.emptyMap();
@@ -86,6 +92,15 @@ public class RelyingPartyConfiguration {
      */
     public String getConfigurationId() {
         return id;
+    }
+    
+    /**
+     * Gets the ID of the entity responding to requests.
+     * 
+     * @return ID of the entity responding to requests
+     */
+    public String getResponderEntityId(){
+        return responderEntityId;
     }
 
     /**

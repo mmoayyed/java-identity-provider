@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.AttributeSubcontext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** A stage which invokes the {@link AttributeResolver} for the current request. */
-public class ResolveAttributes extends AbstractProfileRequestSubcontextAction<Object, Object, RelyingPartySubcontext> {
+public class ResolveAttributes extends AbstractIdentityProviderAction {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
@@ -55,9 +55,11 @@ public class ResolveAttributes extends AbstractProfileRequestSubcontextAction<Ob
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
         // Get the resolution context from the profile request
         // this may already exist but if not, auto-create it
@@ -68,7 +70,7 @@ public class ResolveAttributes extends AbstractProfileRequestSubcontextAction<Ob
             attributeResolver.resolveAttributes(resolutionContext);
             profileRequestContext.removeSubcontext(resolutionContext);
 
-            final AttributeSubcontext attributeCtx = new AttributeSubcontext(relyingPartyContext);
+            final AttributeSubcontext attributeCtx = new AttributeSubcontext(relyingPartyCtx);
             attributeCtx.setAttributes(resolutionContext.getResolvedAttributes().values());
         } catch (AttributeResolutionException e) {
             log.error("Action {}: Error resolving attributes", getId(), e);

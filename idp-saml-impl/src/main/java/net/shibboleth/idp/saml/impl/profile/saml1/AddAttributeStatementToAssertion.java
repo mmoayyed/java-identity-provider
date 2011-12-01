@@ -28,13 +28,13 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeSubcontext;
-import net.shibboleth.idp.profile.AbstractProfileRequestSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
-import net.shibboleth.idp.saml.profile.saml1.Saml1Support;
+import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.xml.SAMLConstants;
@@ -53,8 +53,7 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link AttributeSubcontext} located on the {@link RelyingPartySubcontext} located on the
  * {@link ProfileRequestContext}.
  */
-public class AddAttributeStatementToAssertion extends
-        AbstractProfileRequestSubcontextAction<Object, Response, RelyingPartySubcontext> {
+public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
@@ -67,14 +66,16 @@ public class AddAttributeStatementToAssertion extends
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext,
-            final RelyingPartySubcontext relyingPartyContext) throws ProfileException {
+            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
 
-        final AttributeSubcontext attributeCtx = relyingPartyContext.getSubcontext(AttributeSubcontext.class, false);
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+
+        final AttributeSubcontext attributeCtx = relyingPartyCtx.getSubcontext(AttributeSubcontext.class, false);
         if (attributeCtx == null) {
             log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
-                    relyingPartyContext.getRelyingPartyId());
+                    relyingPartyCtx.getRelyingPartyId());
             return ActionSupport.buildProceedEvent(this);
         }
 
@@ -85,12 +86,33 @@ public class AddAttributeStatementToAssertion extends
         }
 
         final Assertion assertion =
-                Saml1Support.getAssertionsFromResponse(this, profileRequestContext, relyingPartyContext).get(0);
-
-        log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
+                getStatementAssertion(relyingPartyCtx,
+                        ActionSupport.getRequiredOutboundMessage(this, profileRequestContext));
         assertion.getAttributeStatements().add(statement);
 
+        log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
         return ActionSupport.buildProceedEvent(this);
+    }
+
+    /**
+     * Gets the assertion to which the attribute statement will be added.
+     * 
+     * @param relyingPartyContext current relying party information
+     * @param response current response
+     * 
+     * @return the assertion to which the attribute statement will be added
+     */
+    private Assertion getStatementAssertion(RelyingPartySubcontext relyingPartyContext, Response response) {
+        // TODO allow for a configuration option that forces the statement in to its own assertion
+
+        final Assertion assertion;
+        if (response.getAssertions().isEmpty()) {
+            assertion = Saml1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
+        } else {
+            assertion = response.getAssertions().get(0);
+        }
+
+        return assertion;
     }
 
     /**
