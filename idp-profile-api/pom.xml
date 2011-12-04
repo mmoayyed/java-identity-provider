@@ -38,6 +38,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-xmlsec-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-webflow</artifactId>
         </dependency>
@@ -48,7 +53,6 @@
 
         <!-- Test Dependencies -->
 
-        <!-- Managed Dependencies -->
     </dependencies>
 
 </project>

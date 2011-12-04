@@ -27,13 +27,18 @@
             <artifactId>idp-metadata-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+        
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
 
-        <!-- Managed Dependencies -->
     </dependencies>
+    
 </project>

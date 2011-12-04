@@ -22,17 +22,17 @@
             <artifactId>idp-profile-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+        </dependency>
 
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
-
-        <!-- Managed Dependencies -->
-        <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-webflow</artifactId>
-        </dependency>
+        
     </dependencies>
+    
 </project>
