@@ -15,20 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.saml.profile.config.saml2;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+/** Configuration for SAML 2 attribute query requests. */
+public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
+    /** ID for this profile configuration. */
+    public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/query/attribute";
+
+    /** Constructor. */
+    public AttributeQueryProfileConfiguration() {
+        this(PROFILE_ID);
+    }
 
     /**
      * Constructor.
      * 
-     * @param id ID of this profile
+     * @param profileId unique ID for this profile
      */
-    public MockProfileConfiguration(String id) {
-        super(id);
+    protected AttributeQueryProfileConfiguration(String profileId) {
+        super(profileId);
     }
 }

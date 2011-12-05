@@ -15,20 +15,6 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+/** Profile configurations for Liberty IDWSF requests. */
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
-
-    /**
-     * Constructor.
-     * 
-     * @param id ID of this profile
-     */
-    public MockProfileConfiguration(String id) {
-        super(id);
-    }
-}
+package net.shibboleth.idp.saml.profile.config.idwsf;

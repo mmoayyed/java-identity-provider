@@ -15,20 +15,10 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+/** 
+ * Classes pertaining to request-time profile configuration options.   The classes representing the request-time 
+ * configuration options for a given profile generally hang off of a 
+ * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} but some profile handlers may do this differently.
+ */
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
-
-    /**
-     * Constructor.
-     * 
-     * @param id ID of this profile
-     */
-    public MockProfileConfiguration(String id) {
-        super(id);
-    }
-}
+package net.shibboleth.idp.profile.config;

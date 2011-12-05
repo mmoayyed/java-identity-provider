@@ -15,20 +15,30 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.profile.config;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
 
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
+/** Represents the configuration of a particular Identity Provider communication profile. */
+public interface ProfileConfiguration {
 
     /**
-     * Constructor.
+     * Gets the unique identifier of the profile.
      * 
-     * @param id ID of this profile
+     * @return unique identifier of the profile
      */
-    public MockProfileConfiguration(String id) {
-        super(id);
-    }
+    public String getProfileId();
+    
+    /**
+     * Gets whether the this profile is enabled for use.
+     * 
+     * @return whether the this profile is enabled for use
+     */
+    public boolean isEnabled();
+    
+    /**
+     * Gets the security configuration to use with this profile.
+     * 
+     * @return security configuration to use with this profile, never null
+     */
+    public SecurityConfiguration getSecurityConfiguration();
 }

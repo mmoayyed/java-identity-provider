@@ -20,14 +20,14 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.shibboleth.idp.relyingparty.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.relyingparty.SecurityConfiguration;
 import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
-import net.shibboleth.idp.saml.relyingparty.saml1.ArtifactResolutionProfileConfiguration;
-import net.shibboleth.idp.saml.relyingparty.saml1.AttributeQueryProfileConfiguration;
-import net.shibboleth.idp.saml.relyingparty.saml1.SsoProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
 
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;

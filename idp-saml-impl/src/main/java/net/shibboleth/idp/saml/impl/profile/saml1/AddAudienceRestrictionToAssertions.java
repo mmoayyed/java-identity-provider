@@ -28,9 +28,9 @@ import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml1.AbstractSAML1ProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
-import net.shibboleth.idp.saml.relyingparty.AbstractSAMLProfileConfiguration;
-import net.shibboleth.idp.saml.relyingparty.saml1.AbstractSAML1ProfileConfiguration;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.saml1.core.Assertion;
@@ -106,8 +106,8 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
         condition.getAudiences().add(audience);
 
         if (relyingPartyCtx.getProfileConfig() instanceof AbstractSAML1ProfileConfiguration) {
-            AbstractSAMLProfileConfiguration profileConfig =
-                    (AbstractSAMLProfileConfiguration) relyingPartyCtx.getProfileConfig();
+            AbstractSamlProfileConfiguration profileConfig =
+                    (AbstractSamlProfileConfiguration) relyingPartyCtx.getProfileConfig();
             for (String audienceId : profileConfig.getAdditionalAudiencesForAssertion()) {
                 audience = audienceBuilder.buildObject();
                 audience.setUri(audienceId);

@@ -15,20 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.saml.profile.config.saml2;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+/** Configuration for SAML 2 ECP requests. */
+public class EcpProfileConfiguration extends SsoProfileConfiguration {
 
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
+    /** ID for this profile configuration. */
+    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:ecp";
+
+    /** Constructor. */
+    public EcpProfileConfiguration() {
+        this(PROFILE_ID);
+    }
 
     /**
      * Constructor.
      * 
-     * @param id ID of this profile
+     * @param profileId unique ID for this profile
      */
-    public MockProfileConfiguration(String id) {
-        super(id);
+    protected EcpProfileConfiguration(String profileId) {
+        super(profileId);
     }
 }

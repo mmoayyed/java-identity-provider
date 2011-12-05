@@ -15,42 +15,30 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.saml.profile.config.idwsf;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.idwsf.SsosProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link AbstractProfileConfiguration}. */
-public class AbstractProfileConfigurationTest {
+/** Unit test for {@link SsosProfileConfiguration}. */
+public class SsosProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertEquals(config.getProfileId(), "mock");
+        Assert.assertEquals(SsosProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/liberty/ssos");
 
-        try {
-            config = new MockProfileConfiguration(null);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-
-        }
-
-        try {
-            config = new MockProfileConfiguration("");
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-
-        }
+        SsosProfileConfiguration config = new SsosProfileConfiguration();
+        Assert.assertEquals(config.getProfileId(), SsosProfileConfiguration.PROFILE_ID);
     }
-
+    
     @Test
-    public void testEnabled() {
-        MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertTrue(config.isEnabled());
-
-        config.setEnabled(false);
-        Assert.assertFalse(config.isEnabled());
+    public void testMaximumTokenDelegationChainLength(){
+        SsosProfileConfiguration config = new SsosProfileConfiguration();
+        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 0);
+        
+        config.setMaximumTokenDelegationChainLength(10);
+        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 10);
     }
 }

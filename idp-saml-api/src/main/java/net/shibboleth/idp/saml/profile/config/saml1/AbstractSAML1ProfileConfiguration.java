@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.saml.profile.config.saml1;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
 
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
+/** Base class for SAML 1 profile configurations. */
+public abstract class AbstractSAML1ProfileConfiguration extends AbstractSamlProfileConfiguration {
 
     /**
      * Constructor.
      * 
-     * @param id ID of this profile
+     * @param profileId ID of the the communication profile, never null or empty
      */
-    public MockProfileConfiguration(String id) {
-        super(id);
+    public AbstractSAML1ProfileConfiguration(String profileId) {
+        super(profileId);
     }
 }

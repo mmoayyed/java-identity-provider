@@ -15,42 +15,30 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.saml.profile.config.saml1;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link AbstractProfileConfiguration}. */
-public class AbstractProfileConfigurationTest {
+/** Unit test for {@link SsoProfileConfiguration}. */
+public class SsoProfileConfigurationTest {
 
     @Test
     public void testProfileId() {
-        MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertEquals(config.getProfileId(), "mock");
+        Assert.assertEquals(SsoProfileConfiguration.PROFILE_ID, "http://shibboleth.net/ns/profiles/saml1/sso");
 
-        try {
-            config = new MockProfileConfiguration(null);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-
-        }
-
-        try {
-            config = new MockProfileConfiguration("");
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-
-        }
+        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        Assert.assertEquals(config.getProfileId(), SsoProfileConfiguration.PROFILE_ID);
     }
-
+    
     @Test
-    public void testEnabled() {
-        MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertTrue(config.isEnabled());
-
-        config.setEnabled(false);
-        Assert.assertFalse(config.isEnabled());
+    public void testIncludeAttributeStatement(){
+        SsoProfileConfiguration config = new SsoProfileConfiguration();
+        Assert.assertFalse(config.includeAttributeStatement());
+        
+        config.setIncludeAttributeStatement(true);
+        Assert.assertTrue(config.includeAttributeStatement());
     }
 }

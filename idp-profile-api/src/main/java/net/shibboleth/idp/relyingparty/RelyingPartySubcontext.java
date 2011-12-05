@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.relyingparty;
 
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;

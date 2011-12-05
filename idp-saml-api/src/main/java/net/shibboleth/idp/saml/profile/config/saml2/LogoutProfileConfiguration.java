@@ -15,20 +15,16 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.saml.profile.config.saml2;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+/** Configuration for SAML 2 Single Logout requests. */
+public class LogoutProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
+    /** ID for this profile configuration. */
+    public static final String PROFILE_ID = "urn:mace:shibboleth:2.0:profiles:saml2:slo";
 
-    /**
-     * Constructor.
-     * 
-     * @param id ID of this profile
-     */
-    public MockProfileConfiguration(String id) {
-        super(id);
+    /** Constructor. */
+    public LogoutProfileConfiguration() {
+        super(PROFILE_ID);
     }
 }

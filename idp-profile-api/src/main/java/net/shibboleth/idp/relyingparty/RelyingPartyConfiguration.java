@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 
 import org.opensaml.util.Assert;
 import org.opensaml.util.StringSupport;

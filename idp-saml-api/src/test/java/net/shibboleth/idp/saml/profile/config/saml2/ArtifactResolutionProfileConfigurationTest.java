@@ -15,20 +15,22 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.saml.profile.config.saml2;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.saml2.ArtifactResolutionProfileConfiguration;
 
-/** Mock implementation of {@link ProfileConfiguration}. */
-public class MockProfileConfiguration extends AbstractProfileConfiguration {
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-    /**
-     * Constructor.
-     * 
-     * @param id ID of this profile
-     */
-    public MockProfileConfiguration(String id) {
-        super(id);
+/** Unit test for {@link ArtifactResolutionProfileConfiguration}. */
+public class ArtifactResolutionProfileConfigurationTest {
+
+    @Test
+    public void testProfileId() {
+        Assert.assertEquals(ArtifactResolutionProfileConfiguration.PROFILE_ID,
+                "http://shibboleth.net/ns/profiles/saml2/query/artifact");
+
+        ArtifactResolutionProfileConfiguration config = new ArtifactResolutionProfileConfiguration();
+        Assert.assertEquals(config.getProfileId(), ArtifactResolutionProfileConfiguration.PROFILE_ID);
     }
 }

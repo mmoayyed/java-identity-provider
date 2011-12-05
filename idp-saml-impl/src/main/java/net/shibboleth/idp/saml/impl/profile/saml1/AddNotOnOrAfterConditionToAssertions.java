@@ -28,8 +28,8 @@ import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.saml.profile.config.saml1.AbstractSAML1ProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
-import net.shibboleth.idp.saml.relyingparty.saml1.AbstractSAML1ProfileConfiguration;
 
 import org.joda.time.DateTime;
 import org.opensaml.saml1.core.Assertion;

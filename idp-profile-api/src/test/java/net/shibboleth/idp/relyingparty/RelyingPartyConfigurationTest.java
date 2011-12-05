@@ -20,6 +20,8 @@ package net.shibboleth.idp.relyingparty;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
+
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;

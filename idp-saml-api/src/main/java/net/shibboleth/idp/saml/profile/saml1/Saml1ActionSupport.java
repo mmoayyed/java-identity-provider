@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.profile.saml1;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.relyingparty.SecurityConfiguration;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
@@ -44,7 +44,7 @@ public final class Saml1ActionSupport {
      * follows:
      * <ul>
      * <li>its ID is generated via the {@link org.opensaml.util.IdentifierGenerator} located on the
-     * {@link SecurityConfiguration} located on the {@link net.shibboleth.idp.relyingparty.ProfileConfiguration} of the
+     * {@link SecurityConfiguration} located on the {@link net.shibboleth.idp.profile.config.ProfileConfiguration} of the
      * {@link RelyingPartySubcontext}</li>
      * <li>its issue instant is set to the issue instant of the given {@link Response}</li>
      * <li>its issuer is set to the responder entity ID given by the
