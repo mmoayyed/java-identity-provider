@@ -22,6 +22,8 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
 
 import org.opensaml.common.SAMLVersion;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Status;
@@ -29,20 +31,30 @@ import org.opensaml.saml1.core.StatusCode;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link AddResponseShell} unit test. */
 public class AddResponseShellTest {
 
+    @BeforeSuite()
+    public void initOpenSAML() throws InitializationException {
+        InitializationService.initialize();
+    }
+    
     @Test
     public void testAddResponse() throws Exception {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
+        
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddResponseShell action = new AddResponseShell();
+        action.setId("test");
+        action.initialize();
         Event result = action.execute(springRequestContext);
         Assert.assertEquals(result.getId(), ActionSupport.PROCEED_EVENT_ID);
 
@@ -65,7 +77,8 @@ public class AddResponseShellTest {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
 
-        profileRequestContext.getOutboundMessageContext().setMessage(Saml1ActionTestingSupport.buildResponse());
+        Response response = Saml1ActionTestingSupport.buildResponse();
+        profileRequestContext.getOutboundMessageContext().setMessage(response);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);

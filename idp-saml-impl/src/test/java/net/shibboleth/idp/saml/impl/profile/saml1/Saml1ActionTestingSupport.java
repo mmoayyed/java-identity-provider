@@ -17,17 +17,31 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import net.shibboleth.idp.relyingparty.ProfileConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.SecurityConfiguration;
 import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
+import net.shibboleth.idp.saml.relyingparty.saml1.ArtifactResolutionProfileConfiguration;
+import net.shibboleth.idp.saml.relyingparty.saml1.AttributeQueryProfileConfiguration;
+import net.shibboleth.idp.saml.relyingparty.saml1.SsoProfileConfiguration;
 
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
+import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Subject;
+import org.opensaml.util.StringSupport;
+import org.opensaml.util.constraint.documented.NotNull;
 import org.opensaml.util.constraint.documented.Null;
+import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.opensaml.xml.Configuration;
 
 /**
@@ -41,6 +55,67 @@ public final class Saml1ActionTestingSupport {
 
     /** ID used for all generated {@link Assertion} objects. */
     public final static String ASSERTION_ID = "assertion";
+
+    /**
+     * Builds a {@link RelyingPartySubcontext} that is a child of the given parent context. The build subcontext
+     * contains:
+     * <ul>
+     * <li>a {@link RelyingPartyConfiguration} whose ID is the given relying party ID or
+     * {@link SamlActionTestingSupport#INBOUND_MSG_ISSUER} if none is given</li>
+     * <li>the set of {@link ProfileConfiguration} created by {@link #buildProfileConfigurations()}</li>
+     * <li>the {@link SsoProfileConfiguration} set as the active profile configuration</li>
+     * </ul>
+     * 
+     * @param parent the parent of the created subcontext
+     * @param relyingPartyId the ID of the relying party
+     * @param activeProfileConfig the active profile configuration
+     * 
+     * @return the constructed subcontext
+     */
+    public static RelyingPartySubcontext buildRelyingPartySubcontext(@NotNull final SubcontextContainer parent,
+            @Null final String relyingPartyId) {
+
+        String id = StringSupport.trimOrNull(relyingPartyId);
+        if (id == null) {
+            id = SamlActionTestingSupport.INBOUND_MSG_ISSUER;
+        }
+
+        final RelyingPartyConfiguration rpConfig =
+                new RelyingPartyConfiguration(id, SamlActionTestingSupport.OUTBOUND_MSG_ISSUER,
+                        StaticResponseEvaluableCriterion.TRUE_RESPONSE, buildProfileConfigurations());
+
+        RelyingPartySubcontext subcontext = new RelyingPartySubcontext(parent, id);
+        subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(SsoProfileConfiguration.PROFILE_ID));
+        subcontext.setRelyingPartyConfiguration(rpConfig);
+
+        return subcontext;
+    }
+
+    /**
+     * Builds a {@link ProfileConfiguration} collection containing a {@link ArtifactResolutionProfileConfiguration},
+     * {@link AttributeQueryProfileConfiguration}, and {@link ArtifactResolutionProfileConfiguration}.
+     * 
+     * @return the constructed {@link ProfileConfiguration}
+     */
+    public static Collection<ProfileConfiguration> buildProfileConfigurations() {
+        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
+
+        SecurityConfiguration securityConfig = new SecurityConfiguration();
+
+        ArtifactResolutionProfileConfiguration artifactConfig = new ArtifactResolutionProfileConfiguration();
+        artifactConfig.setSecurityConfiguration(securityConfig);
+        profileConfigs.add(artifactConfig);
+
+        AttributeQueryProfileConfiguration attributeConfig = new AttributeQueryProfileConfiguration();
+        attributeConfig.setSecurityConfiguration(securityConfig);
+        profileConfigs.add(attributeConfig);
+
+        SsoProfileConfiguration ssoConfig = new SsoProfileConfiguration();
+        ssoConfig.setSecurityConfiguration(securityConfig);
+        profileConfigs.add(ssoConfig);
+
+        return profileConfigs;
+    }
 
     /**
      * Builds an empty response. The ID of the message is {@link SamlActionTestingSupport#OUTBOUND_MSG_ID}, the issues
@@ -116,7 +191,7 @@ public final class Saml1ActionTestingSupport {
                 (SAMLObjectBuilder<AttributeQuery>) Configuration.getBuilderFactory().getBuilder(
                         AttributeQuery.TYPE_NAME);
         final AttributeQuery query = queryBuilder.buildObject();
-        
+
         if (subject != null) {
             query.setSubject(subject);
         }

@@ -36,15 +36,13 @@ import org.testng.annotations.Test;
 /** {@link AddDoNotCacheConditionToAssertions} unit test. */
 public class AddDoNotCacheConditionToAssertionsTest {
 
-    // TODO need to init OpenSAML
-
     /** Test that action errors out properly if there is no response. */
     @Test
     public void testNoResponse() {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -64,7 +62,7 @@ public class AddDoNotCacheConditionToAssertionsTest {
         
         profileRequestContext.getOutboundMessageContext().setMessage(Saml1ActionTestingSupport.buildResponse());
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -91,7 +89,7 @@ public class AddDoNotCacheConditionToAssertionsTest {
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -133,7 +131,7 @@ public class AddDoNotCacheConditionToAssertionsTest {
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -169,7 +167,7 @@ public class AddDoNotCacheConditionToAssertionsTest {
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -194,7 +192,7 @@ public class AddDoNotCacheConditionToAssertionsTest {
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);

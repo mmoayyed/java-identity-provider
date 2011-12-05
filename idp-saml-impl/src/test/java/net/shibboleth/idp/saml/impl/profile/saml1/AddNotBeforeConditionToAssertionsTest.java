@@ -43,7 +43,7 @@ public class AddNotBeforeConditionToAssertionsTest {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -63,7 +63,7 @@ public class AddNotBeforeConditionToAssertionsTest {
 
         profileRequestContext.getOutboundMessageContext().setMessage(Saml1ActionTestingSupport.buildResponse());
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -90,7 +90,7 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -125,7 +125,7 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
@@ -150,7 +150,7 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        SamlActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, "http://example.org", null);
+        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
         RequestContext springRequestContext =
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);

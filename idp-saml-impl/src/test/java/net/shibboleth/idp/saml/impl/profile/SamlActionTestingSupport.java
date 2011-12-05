@@ -20,18 +20,9 @@ package net.shibboleth.idp.saml.impl.profile;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.ProfileConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.opensaml.messaging.context.BasicMessageContext;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
-import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.constraint.documented.NotEmpty;
-import org.opensaml.util.constraint.documented.NotNull;
-import org.opensaml.util.constraint.documented.Null;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -137,33 +128,5 @@ public final class SamlActionTestingSupport {
         when(context.getConversationScope()).thenReturn(scope);
 
         return context;
-    }
-
-    /**
-     * Builds a {@link RelyingPartySubcontext} that is a child of the given parent context. The build subcontext
-     * contains:
-     * <ul>
-     * <li>a {@link RelyingPartyConfiguration} whose ID is the given relying party ID and contains the given active
-     * profile configuration</li>
-     * <li>a {@link ProfileConfiguration} set to the given profile configuration</li>
-     * </ul>
-     * 
-     * @param parent the parent of the created subcontext
-     * @param relyingPartyId the ID of the relying party
-     * @param activeProfileConfig the active profile configuration
-     * 
-     * @return the constructed subcontext
-     */
-    public static RelyingPartySubcontext buildRelyingPartySubcontext(@NotNull SubcontextContainer parent,
-            @NotNull @NotEmpty String relyingPartyId, @Null ProfileConfiguration activeProfileConfig) {
-        RelyingPartyConfiguration rpConfig =
-                new RelyingPartyConfiguration(relyingPartyId, OUTBOUND_MSG_ISSUER,
-                        StaticResponseEvaluableCriterion.TRUE_RESPONSE, CollectionSupport.toList(activeProfileConfig));
-
-        RelyingPartySubcontext subcontext = new RelyingPartySubcontext(parent, relyingPartyId);
-        subcontext.setProfileConfiguration(activeProfileConfig);
-        subcontext.setRelyingPartyConfiguration(rpConfig);
-
-        return subcontext;
     }
 }
