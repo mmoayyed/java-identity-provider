@@ -17,83 +17,18 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
-import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
 import net.shibboleth.idp.saml.impl.profile.saml1.CheckRequestVersion;
-import net.shibboleth.idp.saml.impl.profile.saml1.Saml1ActionTestingSupport;
-import net.shibboleth.idp.saml.impl.profile.saml1.CheckRequestVersion.InvalidMessageVersionException;
 
-import org.opensaml.messaging.context.BasicMessageContext;
-import org.opensaml.saml1.core.AttributeQuery;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-//TODO convert to SAML 2 authn requests
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
+import org.testng.annotations.BeforeSuite;
 
 /** {@link CheckRequestVersion} unit test. */
 public class CheckRequestVersionTest {
 
-    /** Test the action errors out properly when there is a null message */
-    @Test
-    public void testNullMessage() {
-        ProfileRequestContext<AttributeQuery, Object> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
-        CheckRequestVersion action = new CheckRequestVersion();
-        Event result = action.execute(springRequestContext);
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.getId(), ActionSupport.ERROR_EVENT_ID);
-
-        Object error = result.getAttributes().get(ActionSupport.ERROR_THROWABLE_ID);
-        Assert.assertNotNull(error);
-        Assert.assertTrue(CheckRequestVersion.InvalidMessageVersionException.class.isInstance(error));
+    @BeforeSuite()
+    public void initOpenSAML() throws InitializationException {
+        InitializationService.initialize();
     }
 
-    /** Test that the action accepts SAML 1.0 and 1.1 messages. */
-    @Test
-    public void testSaml1Message() {
-        ProfileRequestContext<AttributeQuery, Object> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
-        BasicMessageContext<AttributeQuery> inMsgCtx =
-                (BasicMessageContext<AttributeQuery>) profileRequestContext.getInboundMessageContext();
-        inMsgCtx.setMessage(Saml1ActionTestingSupport.buildAttributeQuery(null));
-
-        CheckRequestVersion action = new CheckRequestVersion();
-        Event result = action.execute(springRequestContext);
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.getId(), ActionSupport.PROCEED_EVENT_ID);
-    }
-
-    /** Test that the action errors out on SAML 2 messages. */
-    @Test
-    public void testSaml2Message() {
-        ProfileRequestContext<AttributeQuery, Object> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
-        BasicMessageContext<AttributeQuery> inMsgCtx =
-                (BasicMessageContext<AttributeQuery>) profileRequestContext.getInboundMessageContext();
-        inMsgCtx.setMessage(Saml1ActionTestingSupport.buildAttributeQuery(null));
-
-        CheckRequestVersion action = new CheckRequestVersion();
-        Event result = action.execute(springRequestContext);
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(result.getId(), ActionSupport.ERROR_EVENT_ID);
-
-        Object error = result.getAttributes().get(ActionSupport.ERROR_THROWABLE_ID);
-        Assert.assertNotNull(error);
-        Assert.assertTrue(CheckRequestVersion.InvalidMessageVersionException.class.isInstance(error));
-    }
 }

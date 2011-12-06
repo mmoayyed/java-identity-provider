@@ -44,18 +44,14 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
             final RequestContext springRequestContext,
             final ProfileRequestContext<RequestAbstractType, Object> profileRequestContext) throws ProfileException {
 
-        final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
-        if (request == null) {
-            return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(
-                    "Request did not contain a message"));
-        }
+        final RequestAbstractType request = ActionSupport.getRequiredInboundMessage(this, profileRequestContext);
 
         if (ObjectSupport.equals(SAMLVersion.VERSION_10, request.getVersion())
                 || ObjectSupport.equals(SAMLVersion.VERSION_11, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
+        }else{
+            throw new InvalidMessageVersionException(request.getVersion());
         }
-
-        return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(request.getVersion()));
     }
 
     /** Exception thrown when the incoming message was not an expected SAML version. */
@@ -79,7 +75,7 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
          * @param messageVersion SAML version of the message
          */
         public InvalidMessageVersionException(SAMLVersion messageVersion) {
-            super("Message SAML version was " + messageVersion.toString() + ", expected 1.0 or 1.1");
+            super("SAML message version was " + messageVersion.toString() + ", expected 1.0 or 1.1");
         }
     }
 }

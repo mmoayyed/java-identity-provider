@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidOutboundMessageException;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.DoNotCacheCondition;
@@ -31,14 +32,20 @@ import org.opensaml.xml.Configuration;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link AddAudienceRestrictionToAssertions} unit test. */
 public class AddAudienceRestrictionToAssertionsTest {
 
+    @BeforeSuite()
+    public void initOpenSAML() throws InitializationException {
+        InitializationService.initialize();
+    }
+
     /** Test that action errors out properly if there is no response. */
     @Test
-    public void testNoResponse() {
+    public void testNoResponse() throws Exception {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
 
@@ -48,18 +55,23 @@ public class AddAudienceRestrictionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
-        Event result = action.execute(springRequestContext);
-        
-        Assert.assertEquals(result.getId(), ActionSupport.ERROR_EVENT_ID);
-        Assert.assertTrue(InvalidOutboundMessageException.class.isInstance(ActionSupport.getEventError(result)));
+        action.setId("test");
+        action.initialize();
+
+        try {
+            action.execute(springRequestContext);
+            Assert.fail();
+        } catch (ProfileException e) {
+            // expected this
+        }
     }
-    
+
     /** Test that action errors out properly if there is no assertion in the response. */
     @Test
-    public void testNoAssertion() {
+    public void testNoAssertion() throws Exception {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
-        
+
         profileRequestContext.getOutboundMessageContext().setMessage(Saml1ActionTestingSupport.buildResponse());
 
         Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
@@ -68,10 +80,15 @@ public class AddAudienceRestrictionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
-        Event result = action.execute(springRequestContext);
-        
-        Assert.assertEquals(result.getId(), ActionSupport.ERROR_EVENT_ID);
-        Assert.assertTrue(InvalidOutboundMessageException.class.isInstance(ActionSupport.getEventError(result)));
+        action.setId("test");
+        action.initialize();
+
+        try {
+            action.execute(springRequestContext);
+            Assert.fail();
+        } catch (ProfileException e) {
+            // expected this
+        }
     }
 
     /**
@@ -79,12 +96,12 @@ public class AddAudienceRestrictionToAssertionsTest {
      * response.
      */
     @Test
-    public void testSingleAssertion() {        
+    public void testSingleAssertion() throws Exception {
         Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
 
         Response response = Saml1ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
-        
+
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
@@ -95,14 +112,18 @@ public class AddAudienceRestrictionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
-        action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
+
+        Event result = action.execute(springRequestContext);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(response.getAssertions());
         Assert.assertEquals(response.getAssertions().size(), 1);
 
         Assert.assertNotNull(assertion.getConditions());
-        Assert.assertNotNull(assertion.getConditions().getDoNotCacheConditions());
-        Assert.assertEquals(assertion.getConditions().getDoNotCacheConditions().size(), 1);
+        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
+        Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
     }
 
     /**
@@ -110,7 +131,7 @@ public class AddAudienceRestrictionToAssertionsTest {
      * response.
      */
     @Test
-    public void testSingleAssertionWithExistingCondition() {
+    public void testSingleAssertionWithExistingCondition() throws Exception {
         SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
                 (SAMLObjectBuilder<DoNotCacheCondition>) Configuration.getBuilderFactory().getBuilder(
                         DoNotCacheCondition.TYPE_NAME);
@@ -137,16 +158,20 @@ public class AddAudienceRestrictionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
-        action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
+
+        Event result = action.execute(springRequestContext);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(assertion.getConditions());
-        Assert.assertNotNull(assertion.getConditions().getDoNotCacheConditions());
-        Assert.assertEquals(assertion.getConditions().getDoNotCacheConditions().size(), 1);
+        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
+        Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
     }
 
     /** Test that an addition DoNotCache is not added if an assertion already contains one. */
     @Test
-    public void testSingleAssertionWithExistingDoNotCondition() {
+    public void testSingleAssertionWithExistingDoNotCondition() throws Exception {
         SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
                 (SAMLObjectBuilder<DoNotCacheCondition>) Configuration.getBuilderFactory().getBuilder(
                         DoNotCacheCondition.TYPE_NAME);
@@ -173,16 +198,20 @@ public class AddAudienceRestrictionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
-        action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
+
+        Event result = action.execute(springRequestContext);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(assertion.getConditions());
-        Assert.assertNotNull(assertion.getConditions().getDoNotCacheConditions());
-        Assert.assertEquals(assertion.getConditions().getDoNotCacheConditions().size(), 1);
+        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
+        Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
     }
-    
+
     /** Test that the condition is properly added if there are multiple assertions in the response. */
     @Test
-    public void testMultipleAssertion() {
+    public void testMultipleAssertion() throws Exception {
         Response response = Saml1ActionTestingSupport.buildResponse();
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
@@ -198,15 +227,19 @@ public class AddAudienceRestrictionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
-        action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
+
+        Event result = action.execute(springRequestContext);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(response.getAssertions());
         Assert.assertEquals(response.getAssertions().size(), 3);
 
         for (Assertion assertion : response.getAssertions()) {
             Assert.assertNotNull(assertion.getConditions());
-            Assert.assertNotNull(assertion.getConditions().getDoNotCacheConditions());
-            Assert.assertEquals(assertion.getConditions().getDoNotCacheConditions().size(), 1);
+            Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
+            Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
         }
     }
 }

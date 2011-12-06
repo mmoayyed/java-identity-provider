@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 public class InitializeProfileRequestContextTest {
 
     @Test
-    public void testExecute() {
+    public void testExecute() throws Exception{
         MockRequestContext springContext = new MockRequestContext();
 
         InitializeProfileRequestContext action = new InitializeProfileRequestContext();

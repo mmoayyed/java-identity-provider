@@ -28,10 +28,11 @@ import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+//TODO perf metrics
 
 /**
  * Base class for IdP profile processing steps.
@@ -42,16 +43,11 @@ import org.springframework.webflow.execution.RequestContext;
  * <li>ensure current {@link javax.servlet.http.HttpServletRequest} and {@link javax.servlet.http.HttpServletResponse}
  * is available on the {@link ProfileRequestContext}</li>
  * <li>tracking performance metrics for the action</li>
- * <li>providing convenience method for building the {@link Event} objects returned by this action</li>
- * <li>catching any {@link Throwable} thrown by {@link #doExecute(ProfileRequestContext)} and constructing an error
- * {@link Event} from it</li>
  * </ul>
  * 
  * @param <InboundMessageType> type of in-bound message
  * @param <OutboundMessageType> type of out-bound message
  */
-
-// TODO perf metrics
 @ThreadSafe
 public abstract class AbstractIdentityProviderAction<InboundMessageType, OutboundMessageType> extends
         AbstractIdentifiableInitializableComponent implements ValidatableComponent, Action {
@@ -65,50 +61,29 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
     }
 
     /** {@inheritDoc} */
-    public Event execute(final RequestContext springRequestContext) {
-        final ExternalContext externalContext = springRequestContext.getExternalContext();
-        if (externalContext == null || !(externalContext instanceof ServletExternalContext)) {
-            log.error("Action {}: Spring RequestContext did not contain a ServletExternalContext", getId());
-            return ActionSupport.buildErrorEvent(this, new ProfileException("Invalid Spring ExternalContext"));
-        }
-        
-        final HttpServletRequest httpRequest = (HttpServletRequest) externalContext.getNativeRequest();
-        if (httpRequest == null) {
-            log.error("Action {}: HTTP Servlet request is not available", getId());
-            return ActionSupport.buildErrorEvent(this, new ProfileException("HTTP Servlet request is not available"));
+    public Event execute(final RequestContext springRequestContext) throws ProfileException {
+        if (!isInitialized()) {
+            throw new UninitializedActionException(this);
         }
 
+        // we assume Spring set up its request context properly, if we needed to check this we would put a
+        // checking action anywhere in a flow where a request would be (re-)entering a flow
+        final ExternalContext externalContext = springRequestContext.getExternalContext();
+        final HttpServletRequest httpRequest = (HttpServletRequest) externalContext.getNativeRequest();
         final HttpServletResponse httpResponse = (HttpServletResponse) externalContext.getNativeResponse();
-        if (httpResponse == null) {
-            log.error("Action {}: HTTP Servlet response is not available", getId());
-            return ActionSupport.buildErrorEvent(this, new ProfileException("HTTP Servlet response is not available"));
-        }
 
         final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext =
                 (ProfileRequestContext<InboundMessageType, OutboundMessageType>) springRequestContext
                         .getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         if (profileRequestContext == null) {
             log.error("Action {}: IdP profile request context is not available", getId());
-            return ActionSupport.buildErrorEvent(this, new ProfileException(
-                    "IdP profile request context is not available"));
+            throw new InvalidProfileRequestContextStateException("IdP profile request context is not available");
         }
 
         profileRequestContext.setHttpRequest(httpRequest);
         profileRequestContext.setHttpResponse(httpResponse);
 
-        Event result;
-        try {
-            result = doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext);
-        } catch (Throwable t) {
-            result = ActionSupport.buildErrorEvent(this, t);
-        }
-
-        if (ActionSupport.ERROR_EVENT_ID.equals(result.getId())) {
-            log.debug("Action {}: failed with error message {}", getId(),
-                    result.getAttributes().get(ActionSupport.ERROR_MESSAGE_ID));
-        }
-
-        return result;
+        return doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext);
     }
 
     /** {@inheritDoc} */
@@ -132,4 +107,20 @@ public abstract class AbstractIdentityProviderAction<InboundMessageType, Outboun
             final RequestContext springRequestContext,
             final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
             throws ProfileException;
+
+    /** Thrown if an action has not been initialized before its execute method is called. */
+    public static class UninitializedActionException extends ProfileException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = -4147656158860902409L;
+
+        /**
+         * Constructor.
+         * 
+         * @param action the action that was not initialized before use
+         */
+        public UninitializedActionException(AbstractIdentityProviderAction action) {
+            super("Profile action " + action.getId() + " was not initialized prior to use");
+        }
+    }
 }

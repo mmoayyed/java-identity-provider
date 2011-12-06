@@ -65,12 +65,14 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
 
         final RelyingPartySubcontext relyingPartyCtx =
                 ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
-        
+
         final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
-            log.error("Action {}: Unable to add DoNotCacheCondition, outbound Response does not contain any Asertions");
+            log.error(
+                    "Action {}: Unable to add AudienceRestrictionCondition, Response does not contain an Asertion",
+                    getId());
             throw new InvalidOutboundMessageException("No Assertion available within the Response");
         }
 

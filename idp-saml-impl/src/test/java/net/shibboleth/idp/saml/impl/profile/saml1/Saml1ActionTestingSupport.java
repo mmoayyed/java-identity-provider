@@ -36,6 +36,7 @@ import org.opensaml.messaging.context.SubcontextContainer;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml1.core.Request;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Subject;
 import org.opensaml.util.StringSupport;
@@ -49,6 +50,9 @@ import org.opensaml.xml.Configuration;
  * objects they are always objects that have been created via Mockito unless otherwise noted.
  */
 public final class Saml1ActionTestingSupport {
+
+    /** ID used for all generated {@link Response} objects. */
+    public final static String REQUEST_ID = "request";
 
     /** ID used for all generated {@link Response} objects. */
     public final static String RESPONSE_ID = "response";
@@ -125,7 +129,8 @@ public final class Saml1ActionTestingSupport {
      */
     public static Response buildResponse() {
         final SAMLObjectBuilder<Response> responseBuilder =
-                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(Response.TYPE_NAME);
+                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(
+                        Response.DEFAULT_ELEMENT_NAME);
 
         final Response response = responseBuilder.buildObject();
         response.setID(SamlActionTestingSupport.OUTBOUND_MSG_ID);
@@ -179,14 +184,14 @@ public final class Saml1ActionTestingSupport {
     }
 
     /**
-     * Builds an {@link AttributeQuery}. If a {@link Subject} is given, it will be added to the constructed
-     * {@link AttributeQuery}.
+     * Builds a {@link Request} containing an {@link AttributeQuery}. If a {@link Subject} is given, it will be added to
+     * the constructed {@link AttributeQuery}.
      * 
      * @param subject the subject to add to the query
      * 
      * @return the built query
      */
-    public static AttributeQuery buildAttributeQuery(final @Null Subject subject) {
+    public static Request buildAttributeQueryRequest(final @Null Subject subject) {
         final SAMLObjectBuilder<AttributeQuery> queryBuilder =
                 (SAMLObjectBuilder<AttributeQuery>) Configuration.getBuilderFactory().getBuilder(
                         AttributeQuery.TYPE_NAME);
@@ -196,6 +201,14 @@ public final class Saml1ActionTestingSupport {
             query.setSubject(subject);
         }
 
-        return query;
+        SAMLObjectBuilder<Request> requestBuilder =
+                (SAMLObjectBuilder<Request>) Configuration.getBuilderFactory().getBuilder(Request.DEFAULT_ELEMENT_NAME);
+        Request request = requestBuilder.buildObject();
+        request.setID(REQUEST_ID);
+        request.setIssueInstant(new DateTime(0));
+        request.setQuery(query);
+        request.setVersion(SAMLVersion.VERSION_11);
+
+        return request;
     }
 }

@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.impl.CheckMandatoryIssuer;
+import net.shibboleth.idp.profile.impl.CheckMandatoryIssuer.NoMessageIssuerException;
 
 import org.opensaml.messaging.context.BasicMessageContext;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
@@ -32,7 +33,7 @@ import org.testng.annotations.Test;
 public class CheckMandatoryIssuerTest {
 
     @Test
-    public void testExecute() {
+    public void testWithIssuer() throws Exception {
         BasicMessageContext messageContext = new BasicMessageContext();
         BasicMessageMetadataSubcontext messageSubcontext = new BasicMessageMetadataSubcontext(messageContext);
         messageSubcontext.setMessageIssuer("foo");
@@ -44,15 +45,34 @@ public class CheckMandatoryIssuerTest {
         springContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, requestContext);
 
         CheckMandatoryIssuer action = new CheckMandatoryIssuer();
+        action.setId("test");
+        action.initialize();
 
         Event result = action.execute(springContext);
         Assert.assertEquals(result.getSource(), action.getId());
         Assert.assertEquals(ActionSupport.PROCEED_EVENT_ID, result.getId());
+    }
 
-        messageSubcontext.setMessageIssuer(null);
-        result = action.execute(springContext);
-        Assert.assertEquals(result.getSource(), action.getId());
-        Assert.assertEquals(ActionSupport.ERROR_EVENT_ID, result.getId());
-        Assert.assertNotNull(result.getAttributes().get(ActionSupport.ERROR_MESSAGE_ID));
+    @Test
+    public void testNoIssuer() throws Exception {
+        BasicMessageContext messageContext = new BasicMessageContext();
+        new BasicMessageMetadataSubcontext(messageContext);
+
+        ProfileRequestContext requestContext = new ProfileRequestContext();
+        requestContext.setInboundMessageContext(messageContext);
+
+        MockRequestContext springContext = new MockRequestContext();
+        springContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, requestContext);
+
+        CheckMandatoryIssuer action = new CheckMandatoryIssuer();
+        action.setId("test");
+        action.initialize();
+
+        try {
+            action.execute(springContext);
+            Assert.fail();
+        } catch (NoMessageIssuerException e) {
+            // expected this
+        }
     }
 }

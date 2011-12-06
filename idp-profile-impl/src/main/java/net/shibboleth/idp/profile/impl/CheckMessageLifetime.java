@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
 //TODO get clock skew from profile configuration's security config
 
 /** An action that checks that the inbound message should be considered valid based upon when it was issued. */
-public final class CheckMessageLifetime extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+public final class CheckMessageLifetime extends AbstractIdentityProviderAction {
 
     /** Allowed clock skew, in milliseconds. */
     private long clockskew;
@@ -53,9 +53,11 @@ public final class CheckMessageLifetime extends AbstractInboundMessageSubcontext
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final BasicMessageMetadataSubcontext messageSubcontext) throws ProfileException {
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        final BasicMessageMetadataSubcontext messageSubcontext =
+                ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
 
         if (messageSubcontext.getMessageIssueInstant() <= 0) {
             throw new InvalidProfileRequestContextStateException(

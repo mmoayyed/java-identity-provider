@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -74,29 +73,25 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
 
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) {
+            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
+            throws ProfileException {
 
         final RelyingPartySubcontext relyingPartyCtx =
-                profileRequestContext.getSubcontext(RelyingPartySubcontext.class, false);
-        if (relyingPartyCtx == null) {
-            log.error("Action {}: ProfileRequestContext did not contain a RelyingPartySubcontext", getId());
-            return ActionSupport.buildErrorEvent(this, new InvalidProfileRequestContextStateException(
-                    "ProfileRequestContext did not contain a RelyingPartySubcontext"));
-        }
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+        profileRequestContext.getSubcontext(RelyingPartySubcontext.class, false);
 
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
             if (config == null) {
-                return ActionSupport.buildErrorEvent(this, new NoRelyingPartyConfigurationException(
-                        "No relying party configuration availabe for this request"));
+                throw new NoRelyingPartyConfigurationException(
+                        "No relying party configuration availabe for this request");
             }
 
             relyingPartyCtx.setRelyingPartyConfiguration(config);
             return ActionSupport.buildProceedEvent(this);
         } catch (ResolverException e) {
             log.error("Action {}: error trying to resolve relying party configuration", getId(), e);
-            return ActionSupport.buildErrorEvent(this, new NoRelyingPartyConfigurationException(e),
-                    "Error trying to resolve relying party configuration");
+            throw new NoRelyingPartyConfigurationException("Error trying to resolve relying party configuration", e);
         }
     }
 

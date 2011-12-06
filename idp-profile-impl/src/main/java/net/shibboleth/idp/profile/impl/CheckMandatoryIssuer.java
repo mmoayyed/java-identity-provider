@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** Checks that the incoming message has an issuer. */
-public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+public final class CheckMandatoryIssuer extends AbstractIdentityProviderAction {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckMandatoryIssuer() {
@@ -43,9 +43,11 @@ public final class CheckMandatoryIssuer extends AbstractInboundMessageSubcontext
     }
 
     /** {@inheritDoc} */
-    public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext,
-            final BasicMessageMetadataSubcontext messageSubcontext) throws ProfileException {
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        final BasicMessageMetadataSubcontext messageSubcontext =
+                ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
 
         if (messageSubcontext.getMessageIssuer() == null) {
             throw new NoMessageIssuerException();

@@ -17,12 +17,13 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidOutboundMessageException;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
@@ -30,16 +31,20 @@ import org.opensaml.xml.Configuration;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link AddNotBeforeConditionToAssertions} unit test. */
 public class AddNotBeforeConditionToAssertionsTest {
 
-    // TODO need to init OpenSAML
+    @BeforeSuite()
+    public void initOpenSAML() throws InitializationException {
+        InitializationService.initialize();
+    }
 
     /** Test that action errors out properly if there is no response. */
     @Test
-    public void testNoResponse() {
+    public void testNoResponse() throws Exception {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
 
@@ -49,15 +54,20 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
-        Event result = action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
 
-        Assert.assertEquals(result.getId(), ActionSupport.ERROR_EVENT_ID);
-        Assert.assertTrue(InvalidOutboundMessageException.class.isInstance(ActionSupport.getEventError(result)));
+        try {
+            action.execute(springRequestContext);
+            Assert.fail();
+        } catch (ProfileException e) {
+            // expected this
+        }
     }
 
     /** Test that action errors out properly if there is no assertion in the response. */
     @Test
-    public void testNoAssertion() {
+    public void testNoAssertion() throws Exception {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
 
@@ -69,10 +79,15 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
-        Event result = action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
 
-        Assert.assertEquals(result.getId(), ActionSupport.ERROR_EVENT_ID);
-        Assert.assertTrue(InvalidOutboundMessageException.class.isInstance(ActionSupport.getEventError(result)));
+        try {
+            action.execute(springRequestContext);
+            Assert.fail();
+        } catch (ProfileException e) {
+            // expected this
+        }
     }
 
     /**
@@ -80,7 +95,7 @@ public class AddNotBeforeConditionToAssertionsTest {
      * response.
      */
     @Test
-    public void testSingleAssertion() {
+    public void testSingleAssertion() throws Exception {
         Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
 
         Response response = Saml1ActionTestingSupport.buildResponse();
@@ -96,7 +111,11 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
-        action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
+
+        Event result = action.execute(springRequestContext);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(response.getAssertions());
         Assert.assertEquals(response.getAssertions().size(), 1);
@@ -110,7 +129,7 @@ public class AddNotBeforeConditionToAssertionsTest {
      * response.
      */
     @Test
-    public void testSingleAssertionWithExistingConditions() {
+    public void testSingleAssertionWithExistingConditions() throws Exception {
         SAMLObjectBuilder<Conditions> conditionsBuilder =
                 (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
@@ -131,7 +150,11 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
-        action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
+
+        Event result = action.execute(springRequestContext);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(assertion.getConditions());
         Assert.assertSame(assertion.getConditions(), conditions);
@@ -140,7 +163,7 @@ public class AddNotBeforeConditionToAssertionsTest {
 
     /** Test that the condition is properly added if there are multiple assertions in the response. */
     @Test
-    public void testMultipleAssertion() {
+    public void testMultipleAssertion() throws Exception {
         Response response = Saml1ActionTestingSupport.buildResponse();
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
@@ -156,7 +179,11 @@ public class AddNotBeforeConditionToAssertionsTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
-        action.execute(springRequestContext);
+        action.setId("test");
+        action.initialize();
+
+        Event result = action.execute(springRequestContext);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(response.getAssertions());
         Assert.assertEquals(response.getAssertions().size(), 3);

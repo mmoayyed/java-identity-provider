@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile;
 
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
+import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
@@ -28,7 +29,6 @@ import org.opensaml.util.component.IdentifiableComponent;
 import org.opensaml.util.constraint.documented.NotNull;
 import org.opensaml.util.constraint.documented.Null;
 import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 
 /** Helper class for {@link org.springframework.webflow.execution.Action} operations. */
@@ -38,21 +38,6 @@ public final class ActionSupport {
      * ID of an Event indicating that the action completed successfully and processing should move on to the next step.
      */
     public static final String PROCEED_EVENT_ID = "proceed";
-
-    /**
-     * ID of an Event indicating that the action encountered an error and that the profile request processing is
-     * complete and an error should be sent back to the requester.
-     */
-    public static final String ERROR_EVENT_ID = "error";
-
-    /**
-     * Event attribute name under which the {@link Throwable} thrown by the {@link #doExecute(ProfileRequestContext)}
-     * method is stored.
-     */
-    public static final String ERROR_THROWABLE_ID = "errorException";
-
-    /** Event attribute name under a message describing the error is stored. */
-    public static final String ERROR_MESSAGE_ID = "errorMessage";
 
     /** Constructor. */
     private ActionSupport() {
@@ -72,7 +57,7 @@ public final class ActionSupport {
     @NotNull
     public static <T> MessageContext<T> getRequiredInboundMessageContext(
             @NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext<T, Object> profileRequestContext)
+            @NotNull final ProfileRequestContext<T, ?> profileRequestContext)
             throws InvalidInboundMessageContextException {
         final MessageContext<T> messageContext = profileRequestContext.getInboundMessageContext();
         if (messageContext == null) {
@@ -81,6 +66,52 @@ public final class ActionSupport {
         }
 
         return messageContext;
+    }
+
+    /**
+     * Gets the {@link BasicMessageMetadataSubcontext} associated with the given inbound message context.
+     * 
+     * @param action the action attempting to do this
+     * @param messageContext the inbound message context
+     * 
+     * @return the {@link BasicMessageMetadataSubcontext} associated with the context
+     * 
+     * @throws InvalidInboundMessageContextException thrown if the inbound message context does not contain a
+     *             {@link BasicMessageMetadataSubcontext}
+     */
+    @NotNull
+    public static BasicMessageMetadataSubcontext getRequiredInboundMessageMetadata(
+            @NotNull final AbstractIdentityProviderAction action, @NotNull final MessageContext messageContext)
+            throws InvalidInboundMessageContextException {
+        final BasicMessageMetadataSubcontext ctx =
+                messageContext.getSubcontext(BasicMessageMetadataSubcontext.class, false);
+        if (ctx == null) {
+            throw new InvalidInboundMessageContextException("Action " + action.getId()
+                    + ": Inbound message context does not contain a BasicMessageMetadataSubcontext");
+        }
+
+        return ctx;
+    }
+
+    /**
+     * A convenience method that combines
+     * {@link #getRequiredInboundMessageContext(AbstractIdentityProviderAction, ProfileRequestContext)} and
+     * {@link #getRequiredInboundMessageMetadata(AbstractIdentityProviderAction, MessageContext)}.
+     * 
+     * @param action the action attempting to do this
+     * @param profileRequestContext the current profile request
+     * 
+     * @return the {@link BasicMessageMetadataSubcontext} associated with the context
+     * 
+     * @throws InvalidInboundMessageContextException throw if there is no inbound {@link MessageContext} or if it does
+     *             not contain a {@link BasicMessageMetadataSubcontext}
+     */
+    @NotNull
+    public static BasicMessageMetadataSubcontext getRequiredInboundMessageMetadata(
+            @NotNull final AbstractIdentityProviderAction action,
+            @NotNull final ProfileRequestContext profileRequestContext) throws InvalidInboundMessageContextException {
+        return getRequiredInboundMessageMetadata(action,
+                getRequiredInboundMessageContext(action, profileRequestContext));
     }
 
     /**
@@ -122,7 +153,7 @@ public final class ActionSupport {
      */
     @NotNull
     public static <T> T getRequiredInboundMessage(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext<T, Object> profileRequestContext)
+            @NotNull final ProfileRequestContext<T, ?> profileRequestContext)
             throws InvalidInboundMessageContextException {
         return getRequiredInboundMessage(action, getRequiredInboundMessageContext(action, profileRequestContext));
     }
@@ -150,6 +181,52 @@ public final class ActionSupport {
         }
 
         return messageContext;
+    }
+
+    /**
+     * Gets the {@link BasicMessageMetadataSubcontext} associated with the given outbound message context.
+     * 
+     * @param action the action attempting to do this
+     * @param messageContext the outbound message context
+     * 
+     * @return the {@link BasicMessageMetadataSubcontext} associated with the context
+     * 
+     * @throws InvalidOutboundMessageContextException thrown if the outbound message context does not contain a
+     *             {@link BasicMessageMetadataSubcontext}
+     */
+    @NotNull
+    public static BasicMessageMetadataSubcontext getRequiredOutboundMessageMetadata(
+            @NotNull final AbstractIdentityProviderAction action, @NotNull final MessageContext messageContext)
+            throws InvalidOutboundMessageContextException {
+        final BasicMessageMetadataSubcontext ctx =
+                messageContext.getSubcontext(BasicMessageMetadataSubcontext.class, false);
+        if (ctx == null) {
+            throw new InvalidOutboundMessageContextException("Action " + action.getId()
+                    + ": Outbound message context does not contain a BasicMessageMetadataSubcontext");
+        }
+
+        return ctx;
+    }
+
+    /**
+     * A convenience method that combines
+     * {@link #getRequiredInboundMessageContext(AbstractIdentityProviderAction, ProfileRequestContext)} and
+     * {@link #getRequiredInboundMessageMetadata(AbstractIdentityProviderAction, MessageContext)}.
+     * 
+     * @param action the action attempting to do this
+     * @param profileRequestContext the current profile request
+     * 
+     * @return the {@link BasicMessageMetadataSubcontext} associated with the context
+     * 
+     * @throws InvalidOutboundMessageContextException throw if there is no outbound {@link MessageContext} or if it does
+     *             not contain a {@link BasicMessageMetadataSubcontext}
+     */
+    @NotNull
+    public static BasicMessageMetadataSubcontext getRequiredOutboundMessageMetadata(
+            @NotNull final AbstractIdentityProviderAction action,
+            @NotNull final ProfileRequestContext profileRequestContext) throws InvalidOutboundMessageContextException {
+        return getRequiredOutboundMessageMetadata(action,
+                getRequiredOutboundMessageContext(action, profileRequestContext));
     }
 
     /**
@@ -252,49 +329,6 @@ public final class ActionSupport {
     }
 
     /**
-     * Builds an error event. The event ID is {@link #ERROR_EVENT_ID} and includes in its attribute map the given
-     * exception, bound under {@link #ERROR_THROWABLE_ID}. If the given exception has a message it is bound under
-     * {@link #ERROR_MESSAGE_ID}.
-     * 
-     * @param source component that produced the error event
-     * @param error exception that represents the error, may be null
-     * 
-     * @return the constructed event
-     */
-    @NotNull
-    public static Event buildErrorEvent(@NotNull final IdentifiableComponent source, @NotNull final Throwable error) {
-        return buildErrorEvent(source, error, error.getMessage());
-    }
-
-    /**
-     * Builds an error event. The event ID is {@link #ERROR_EVENT_ID} and includes in its attribute map the given
-     * exception, bound under {@link #ERROR_THROWABLE_ID} and the textual error message, bound under
-     * {@link #ERROR_MESSAGE_ID}.
-     * 
-     * @param source component that produced the error event
-     * @param error exception that represents the error, may be null
-     * @param message textual error message, may be null
-     * 
-     * @return the constructed event
-     */
-    @NotNull
-    public static Event buildErrorEvent(@NotNull final IdentifiableComponent source, @NotNull final Throwable error,
-            @NotNull final String message) {
-        LocalAttributeMap eventAttributes = new LocalAttributeMap();
-
-        if (error != null) {
-            eventAttributes.put(ERROR_THROWABLE_ID, error);
-        }
-
-        final String trimmedMessage = StringSupport.trimOrNull(message);
-        if (trimmedMessage != null) {
-            eventAttributes.put(ERROR_MESSAGE_ID, trimmedMessage);
-        }
-
-        return buildEvent(source, ERROR_EVENT_ID, eventAttributes);
-    }
-
-    /**
      * Builds an event, to be returned by the given component.
      * 
      * @param source IdP component that will return the constructed event, never null
@@ -317,38 +351,5 @@ public final class ActionSupport {
         } else {
             return new Event(source.getId(), trimmedEventId, eventAttributes);
         }
-    }
-
-    /**
-     * Get the {@link Throwable} associated with an error event.
-     * 
-     * @param event the event
-     * 
-     * @return the {@link Throwable} that resulted in the error
-     */
-    @Null
-    public static Throwable getEventError(@NotNull final Event event) {
-        return (Throwable) event.getAttributes().get(ERROR_THROWABLE_ID);
-    }
-
-    /**
-     * Gets the error message associated with an error event. This method will first check to see if an explicit error
-     * message was associated with the event if not it will return the message from the {@link Throwable} associated
-     * with the event, if there is one.
-     * 
-     * @param event the event
-     * 
-     * @return the error message associated with an error event
-     */
-    @Null
-    public static String getEventErrorMessage(@NotNull final Event event) {
-        AttributeMap attributes = event.getAttributes();
-        if (attributes.contains(ERROR_MESSAGE_ID)) {
-            return (String) attributes.get(ERROR_MESSAGE_ID);
-        } else if (attributes.contains(ERROR_THROWABLE_ID)) {
-            return ((Throwable) attributes.get(ERROR_THROWABLE_ID)).getMessage();
-        }
-
-        return null;
     }
 }

@@ -69,7 +69,7 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
-            log.error("Action {}: Unable to add DoNotCacheCondition, outbound Response does not contain any Asertions");
+            log.error("Action {}: Unable to add DoNotCacheCondition, Response does not contain an Asertion", getId());
             throw new InvalidOutboundMessageException("No Assertion available within the Response");
         }
 
@@ -82,13 +82,14 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
         for (Assertion assertion : assertions) {
             conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
             dncConditions = conditions.getDoNotCacheConditions();
-            if (!dncConditions.isEmpty()) {
+            if (dncConditions.isEmpty()) {
+                dncConditions.add(dncConditionBuilder.buildObject());
+                log.debug("Action {}: Added DoNotCache condition to Assertion {}", getId(), assertion.getID());
+            } else {
                 log.debug("Action {}: Assertion {} already contained DoNotCache condition, another was not added",
                         getId(), assertion.getID());
             }
 
-            dncConditions.add(dncConditionBuilder.buildObject());
-            log.debug("Action {}: Added DoNotCache condition to Assertion {}", getId(), assertion.getID());
         }
 
         return ActionSupport.buildProceedEvent(this);

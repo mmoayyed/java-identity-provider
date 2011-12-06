@@ -27,13 +27,12 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.saml2.core.RequestAbstractType;
-import org.opensaml.saml2.core.Response;
 import org.opensaml.util.ObjectSupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** Checks whether the inbound SAML request has the appropriate version. */
-public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestAbstractType, Response> {
+public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestAbstractType, Object> {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckRequestVersion() {
@@ -43,19 +42,15 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
-            final ProfileRequestContext<RequestAbstractType, Response> profileRequestContext) throws ProfileException {
+            final ProfileRequestContext<RequestAbstractType, Object> profileRequestContext) throws ProfileException {
 
-        final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
-        if (request == null) {
-            return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(
-                    "Request did not contain a message"));
-        }
+        final RequestAbstractType request = ActionSupport.getRequiredInboundMessage(this, profileRequestContext);
 
         if (ObjectSupport.equals(SAMLVersion.VERSION_20, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
+        } else {
+            throw new InvalidMessageVersionException(request.getVersion());
         }
-
-        return ActionSupport.buildErrorEvent(this, new InvalidMessageVersionException(request.getVersion()));
     }
 
     /** Exception thrown when the incoming message was not an expected SAML version. */

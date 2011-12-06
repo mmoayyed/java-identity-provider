@@ -56,7 +56,7 @@ public class AddResponseShellTest {
         action.setId("test");
         action.initialize();
         Event result = action.execute(springRequestContext);
-        Assert.assertEquals(result.getId(), ActionSupport.PROCEED_EVENT_ID);
+        SamlActionTestingSupport.assertProceedEvent(result);
 
         MessageContext<Response> outMsgCtx = ActionSupport.getRequiredOutboundMessageContext(action, profileRequestContext);
         Response response = outMsgCtx.getMessage();
@@ -73,7 +73,7 @@ public class AddResponseShellTest {
     }
 
     @Test
-    public void testAddResponseWhenResponseAlreadyExist() {
+    public void testAddResponseWhenResponseAlreadyExist() throws Exception{
         ProfileRequestContext<Object, Response> profileRequestContext =
                 SamlActionTestingSupport.buildProfileRequestContext();
 
@@ -84,6 +84,9 @@ public class AddResponseShellTest {
                 SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddResponseShell action = new AddResponseShell();
+        action.setId("test");
+        action.initialize();
+
         try{
             action.execute(springRequestContext);
             Assert.fail();

@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.impl.profile;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.messaging.context.BasicMessageContext;
@@ -27,7 +28,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
 
 /**
  * Helper methods for creating/testing objects within profile action tests. When methods herein refer to mock objects
@@ -47,6 +50,18 @@ public final class SamlActionTestingSupport {
     /** Issuer of the outbound message. */
     public final static String OUTBOUND_MSG_ISSUER = "http://idp.example.org";
 
+    /**
+     * Checks that the given event is a proceed event.  That is, that the event is not null,
+     * that its source is not null, and that its ID is {@link ActionSupport#PROCEED_EVENT_ID}.
+     * 
+     * @param event the event to check
+     */
+    public static void assertProceedEvent(Event event){
+        Assert.assertNotNull(event);
+        Assert.assertNotNull(event.getSource());
+        Assert.assertEquals(event.getId(), ActionSupport.PROCEED_EVENT_ID);
+    }
+    
     /**
      * Builds a {@link BasicMessageContext} with a {@link BasicMessageMetadataSubcontext}. The subcontext has a message
      * ID of {@link #INBOUND_MSG_ID}, an issue instant of 1970-01-01T00:00:00Z, and an issuer of

@@ -20,8 +20,9 @@ package net.shibboleth.idp.saml.impl.profile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractInboundMessageSubcontextAction;
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
@@ -36,8 +37,7 @@ import org.springframework.webflow.execution.RequestContext;
  * to be the inbound message issuer as determined by the {@link BasicMessageMetadataSubcontext#getMessageIssuer()}
  * located on the {@link ProfileRequestContext#getInboundMessageContext()}.
  */
-public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends
-        AbstractInboundMessageSubcontextAction<BasicMessageMetadataSubcontext> {
+public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends AbstractIdentityProviderAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory
@@ -49,12 +49,15 @@ public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext profileRequestContext,
-            BasicMessageMetadataSubcontext subcontext) {
+    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        final BasicMessageMetadataSubcontext messageSubcontext =
+                ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
+
         log.debug("Action {}: Attaching RelyingPartySubcontext with relying party ID {} to ProfileRequestContext",
-                getId(), subcontext.getMessageIssuer());
-        new RelyingPartySubcontext(profileRequestContext, subcontext.getMessageIssuer());
+                getId(), messageSubcontext.getMessageIssuer());
+        new RelyingPartySubcontext(profileRequestContext, messageSubcontext.getMessageIssuer());
 
         return ActionSupport.buildProceedEvent(this);
     }

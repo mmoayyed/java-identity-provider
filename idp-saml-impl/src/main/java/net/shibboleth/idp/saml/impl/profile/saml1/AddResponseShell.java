@@ -58,7 +58,7 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
         final MessageContext<Response> outboundMessageCtx =
                 ActionSupport.getRequiredOutboundMessageContext(this, profileRequestContext);
         if (outboundMessageCtx.getMessage() != null) {
-            log.error("Action {}: Outbound message context already contains a Response");
+            log.error("Action {}: Outbound message context already contains a Response", getId());
             throw new InvalidOutboundMessageException("Outbound message context already contains a Response");
         }
 
@@ -70,7 +70,8 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
         final SAMLObjectBuilder<Status> statusBuilder =
                 (SAMLObjectBuilder<Status>) Configuration.getBuilderFactory().getBuilder(Status.TYPE_NAME);
         final SAMLObjectBuilder<Response> responseBuilder =
-                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(Response.TYPE_NAME);
+                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(
+                        Response.DEFAULT_ELEMENT_NAME);
 
         final StatusCode statusCode = statusCodeBuilder.buildObject();
         statusCode.setValue(StatusCode.SUCCESS);
