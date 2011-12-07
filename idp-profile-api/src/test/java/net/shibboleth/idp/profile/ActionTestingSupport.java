@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile;
+package net.shibboleth.idp.profile;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.messaging.context.BasicMessageContext;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
@@ -36,7 +34,7 @@ import org.testng.Assert;
  * Helper methods for creating/testing objects within profile action tests. When methods herein refer to mock objects
  * they are always objects that have been created via Mockito unless otherwise noted.
  */
-public final class SamlActionTestingSupport {
+public class ActionTestingSupport {
 
     /** ID of the inbound message. */
     public final static String INBOUND_MSG_ID = "inbound";

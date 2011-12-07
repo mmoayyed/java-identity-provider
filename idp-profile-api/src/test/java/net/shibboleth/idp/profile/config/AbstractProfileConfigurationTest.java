@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.profile.config;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -52,5 +53,15 @@ public class AbstractProfileConfigurationTest {
 
         config.setEnabled(false);
         Assert.assertFalse(config.isEnabled());
+    }
+    
+    @Test
+    public void testSecurityConfiguration(){
+        MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        Assert.assertNull(config.getSecurityConfiguration());
+        
+        SecurityConfiguration securityConfig = new SecurityConfiguration();
+        config.setSecurityConfiguration(securityConfig);
+        Assert.assertSame(config.getSecurityConfiguration(), securityConfig);
     }
 }

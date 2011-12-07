@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.InvalidInboundMessageContextException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
 import net.shibboleth.idp.saml.impl.profile.saml1.CheckRequestVersion.InvalidMessageVersionException;
 
 import org.opensaml.common.SAMLVersion;
@@ -45,9 +45,8 @@ public class CheckRequestVersionTest {
     @Test
     public void testNullMessage() throws Exception {
         ProfileRequestContext<Request, Object> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+                ActionTestingSupport.buildProfileRequestContext();
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         CheckRequestVersion action = new CheckRequestVersion();
         action.setId("test");
@@ -65,9 +64,8 @@ public class CheckRequestVersionTest {
     @Test
     public void testSaml1Message() throws Exception {
         ProfileRequestContext<Request, Object> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+                ActionTestingSupport.buildProfileRequestContext();
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         BasicMessageContext<Request> inMsgCtx =
                 (BasicMessageContext<Request>) profileRequestContext.getInboundMessageContext();
@@ -79,16 +77,15 @@ public class CheckRequestVersionTest {
 
         Event result = action.execute(springRequestContext);
 
-        SamlActionTestingSupport.assertProceedEvent(result);
+        ActionTestingSupport.assertProceedEvent(result);
     }
 
     /** Test that the action errors out on SAML 2 messages. */
     @Test
     public void testSaml2Message() throws Exception {
         ProfileRequestContext<Request, Object> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+                ActionTestingSupport.buildProfileRequestContext();
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         BasicMessageContext<Request> inMsgCtx =
                 (BasicMessageContext<Request>) profileRequestContext.getInboundMessageContext();

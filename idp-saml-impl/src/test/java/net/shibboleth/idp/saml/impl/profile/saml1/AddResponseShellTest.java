@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
 
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.core.config.InitializationException;
@@ -41,24 +41,24 @@ public class AddResponseShellTest {
     public void initOpenSAML() throws InitializationException {
         InitializationService.initialize();
     }
-    
+
     @Test
     public void testAddResponse() throws Exception {
         ProfileRequestContext<Object, Response> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
-        
+                ActionTestingSupport.buildProfileRequestContext();
+
         Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
 
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");
         action.initialize();
         Event result = action.execute(springRequestContext);
-        SamlActionTestingSupport.assertProceedEvent(result);
+        ActionTestingSupport.assertProceedEvent(result);
 
-        MessageContext<Response> outMsgCtx = ActionSupport.getRequiredOutboundMessageContext(action, profileRequestContext);
+        MessageContext<Response> outMsgCtx =
+                ActionSupport.getRequiredOutboundMessageContext(action, profileRequestContext);
         Response response = outMsgCtx.getMessage();
 
         Assert.assertNotNull(response);
@@ -73,21 +73,20 @@ public class AddResponseShellTest {
     }
 
     @Test
-    public void testAddResponseWhenResponseAlreadyExist() throws Exception{
+    public void testAddResponseWhenResponseAlreadyExist() throws Exception {
         ProfileRequestContext<Object, Response> profileRequestContext =
-                SamlActionTestingSupport.buildProfileRequestContext();
+                ActionTestingSupport.buildProfileRequestContext();
 
         Response response = Saml1ActionTestingSupport.buildResponse();
         profileRequestContext.getOutboundMessageContext().setMessage(response);
 
-        RequestContext springRequestContext =
-                SamlActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");
         action.initialize();
 
-        try{
+        try {
             action.execute(springRequestContext);
             Assert.fail();
         } catch (Exception e) {

@@ -34,7 +34,7 @@ public class RelyingPartyConfiguration {
 
     /** Unique identifier for this configuration. */
     private final String id;
-    
+
     /** The entity ID of the IdP. */
     private final String responderEntityId;
 
@@ -48,19 +48,20 @@ public class RelyingPartyConfiguration {
      * Constructor.
      * 
      * @param configurationId unique ID for this configuration
+     * @param responderId the ID by which the responder is known by this relying party
      * @param criteria criteria that must be met in order for this relying party configuration to apply to a given
      *            profile request, never null
      * @param configurations communication profile configurations for this relying party, may be null or empty
      */
-    public RelyingPartyConfiguration(final String configurationId,
-            final String entityId,
+    public RelyingPartyConfiguration(final String configurationId, final String responderId,
             final EvaluableCriterion<ProfileRequestContext> criteria,
             final Collection<ProfileConfiguration> configurations) {
         id =
                 Assert.isNotNull(StringSupport.trimOrNull(configurationId),
                         "Relying party configuration ID can not be null or empty");
-        
-        responderEntityId = Assert.isNotNull(StringSupport.trimOrNull(entityId), "Responder entity ID can not be null");
+
+        responderEntityId =
+                Assert.isNotNull(StringSupport.trimOrNull(responderId), "Responder entity ID can not be null");
 
         activationCriteria = Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");
 
@@ -94,13 +95,13 @@ public class RelyingPartyConfiguration {
     public String getConfigurationId() {
         return id;
     }
-    
+
     /**
      * Gets the ID of the entity responding to requests.
      * 
      * @return ID of the entity responding to requests
      */
-    public String getResponderEntityId(){
+    public String getResponderEntityId() {
         return responderEntityId;
     }
 

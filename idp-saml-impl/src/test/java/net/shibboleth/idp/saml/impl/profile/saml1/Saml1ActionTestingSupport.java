@@ -20,11 +20,11 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.saml.impl.profile.SamlActionTestingSupport;
 import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
@@ -81,11 +81,11 @@ public final class Saml1ActionTestingSupport {
 
         String id = StringSupport.trimOrNull(relyingPartyId);
         if (id == null) {
-            id = SamlActionTestingSupport.INBOUND_MSG_ISSUER;
+            id = ActionTestingSupport.INBOUND_MSG_ISSUER;
         }
 
         final RelyingPartyConfiguration rpConfig =
-                new RelyingPartyConfiguration(id, SamlActionTestingSupport.OUTBOUND_MSG_ISSUER,
+                new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER,
                         StaticResponseEvaluableCriterion.TRUE_RESPONSE, buildProfileConfigurations());
 
         RelyingPartySubcontext subcontext = new RelyingPartySubcontext(parent, id);
@@ -133,7 +133,7 @@ public final class Saml1ActionTestingSupport {
                         Response.DEFAULT_ELEMENT_NAME);
 
         final Response response = responseBuilder.buildObject();
-        response.setID(SamlActionTestingSupport.OUTBOUND_MSG_ID);
+        response.setID(ActionTestingSupport.OUTBOUND_MSG_ID);
         response.setIssueInstant(new DateTime(0));
         response.setVersion(SAMLVersion.VERSION_11);
 

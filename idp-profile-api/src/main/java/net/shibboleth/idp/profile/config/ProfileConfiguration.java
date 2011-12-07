@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.config;
 
+//TODO should this be an identifiable component?
+//TODO should this be immutable after initialization?
 
 /** Represents the configuration of a particular Identity Provider communication profile. */
 public interface ProfileConfiguration {

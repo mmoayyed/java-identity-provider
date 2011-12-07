@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.config;
 
-
 import org.opensaml.util.Assert;
 import org.opensaml.util.ObjectSupport;
 import org.opensaml.util.StringSupport;
