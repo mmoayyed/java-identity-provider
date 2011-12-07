@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,26 +27,23 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.util.component.UnmodifiableComponentException;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-//TODO get clock skew from profile configuration's security config
 
 /** An action that checks that the inbound message should be considered valid based upon when it was issued. */
 public final class CheckMessageLifetime extends AbstractIdentityProviderAction {
 
-    /** Allowed clock skew, in milliseconds. */
-    private long clockskew;
-
-    /** Amount of time, in milliseconds, for which a message is valid. */
+    /** Amount of time, in milliseconds, for which a message is valid. Default value: 5 minutes */
     private long messageLifetime;
 
-    /** Constructor. The ID of this component is set to the name of this class. */
+    /** Constructor. */
     public CheckMessageLifetime() {
-        setId(CheckMessageLifetime.class.getName());
+        messageLifetime = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
     }
 
     /** {@inheritDoc} */
@@ -52,9 +51,35 @@ public final class CheckMessageLifetime extends AbstractIdentityProviderAction {
         return BasicMessageMetadataSubcontext.class;
     }
 
+    /**
+     * Gets the amount of time, in milliseconds, for which a message is valid.
+     * 
+     * @return amount of time, in milliseconds, for which a message is valid
+     */
+    public long getMessageLifetime() {
+        return messageLifetime;
+    }
+
+    /**
+     * Sets the amount of time, in milliseconds, for which a message is valid.
+     * 
+     * @param lifetime amount of time, in milliseconds, for which a message is valid
+     */
+    public synchronized void setMessageLifetime(long lifetime) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException("Action " + getId()
+                    + ": Message liftime can not be changed after action has been initialized");
+        }
+
+        messageLifetime = lifetime;
+    }
+
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
             RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
         final BasicMessageMetadataSubcontext messageSubcontext =
                 ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
@@ -64,6 +89,7 @@ public final class CheckMessageLifetime extends AbstractIdentityProviderAction {
                     "Basic message metadata subcontext does not contain a message issue instant");
         }
 
+        final long clockskew = relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getClockSkew();
         final long issueInstant = messageSubcontext.getMessageIssueInstant();
         final long currentTime = System.currentTimeMillis();
 

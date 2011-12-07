@@ -17,9 +17,23 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.impl.CheckMessageReplay;
+import org.testng.annotations.Test;
 
 /** Unit test for {@link CheckMessageReplay}. */
 public class CheckMessageReplayTest {
 
+    @Test
+    public void testReplayCache() {
+
+    }
+
+    @Test
+    public void testNonreplayedMessage() {
+
+    }
+
+    @Test
+    public void testReplayedMessage() {
+
+    }
 }

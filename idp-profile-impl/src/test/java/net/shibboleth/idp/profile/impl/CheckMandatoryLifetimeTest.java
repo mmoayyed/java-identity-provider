@@ -17,9 +17,120 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.impl.CheckMessageLifetime;
+import java.util.concurrent.TimeUnit;
+
+import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.impl.CheckMessageLifetime.FutureMessageException;
+import net.shibboleth.idp.profile.impl.CheckMessageLifetime.PastMessageException;
+import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+
+import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.util.component.UnmodifiableComponentException;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /** Unit test for {@link CheckMessageLifetime}. */
 public class CheckMandatoryLifetimeTest {
 
+    @Test
+    public void testMessageLifetime() throws Exception {
+        CheckMessageLifetime action = new CheckMessageLifetime();
+        action.setId("mock");
+
+        Assert.assertEquals(action.getMessageLifetime(), TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES));
+
+        action.setMessageLifetime(500);
+        Assert.assertEquals(action.getMessageLifetime(), 500);
+
+        try {
+            action.initialize();
+            action.setMessageLifetime(100);
+            Assert.fail();
+        } catch (UnmodifiableComponentException e) {
+            Assert.assertEquals(action.getMessageLifetime(), 500);
+        }
+    }
+
+    @Test
+    public void testValidMessage() throws Exception {
+        MockProfileConfiguration profileConfig = new MockProfileConfiguration("mock");
+        profileConfig.setSecurityConfiguration(new SecurityConfiguration());
+
+        ProfileRequestContext profileRequestContext = ActionTestingSupport.buildProfileRequestContext();
+        RelyingPartySubcontext rpCtx = new RelyingPartySubcontext(profileRequestContext, "mock");
+        rpCtx.setProfileConfiguration(profileConfig);
+        
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+
+        CheckMessageLifetime action = new CheckMessageLifetime();
+        action.setId("mock");
+        action.initialize();
+
+        BasicMessageMetadataSubcontext messageMetadata =
+                ActionSupport.getRequiredInboundMessageMetadata(action, profileRequestContext);
+        messageMetadata.setMessageIssueInstant(System.currentTimeMillis());
+
+        Event result = action.execute(springRequestContext);
+        ActionTestingSupport.assertProceedEvent(result);
+    }
+
+    @Test
+    public void testFutureMessage() throws Exception {
+        MockProfileConfiguration profileConfig = new MockProfileConfiguration("mock");
+        profileConfig.setSecurityConfiguration(new SecurityConfiguration());
+
+        ProfileRequestContext profileRequestContext = ActionTestingSupport.buildProfileRequestContext();
+        RelyingPartySubcontext rpCtx = new RelyingPartySubcontext(profileRequestContext, "mock");
+        rpCtx.setProfileConfiguration(profileConfig);
+
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+
+        CheckMessageLifetime action = new CheckMessageLifetime();
+        action.setId("mock");
+        action.initialize();
+
+        BasicMessageMetadataSubcontext messageMetadata =
+                ActionSupport.getRequiredInboundMessageMetadata(action, profileRequestContext);
+        messageMetadata.setMessageIssueInstant(System.currentTimeMillis() + 10000000);
+
+        try {
+            action.execute(springRequestContext);
+            Assert.fail();
+        } catch (FutureMessageException e) {
+            // expected this
+        }
+    }
+
+    @Test
+    public void testPastMessage() throws Exception {
+        MockProfileConfiguration profileConfig = new MockProfileConfiguration("mock");
+        profileConfig.setSecurityConfiguration(new SecurityConfiguration());
+
+        ProfileRequestContext profileRequestContext = ActionTestingSupport.buildProfileRequestContext();
+        RelyingPartySubcontext rpCtx = new RelyingPartySubcontext(profileRequestContext, "mock");
+        rpCtx.setProfileConfiguration(profileConfig);
+
+        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+
+        CheckMessageLifetime action = new CheckMessageLifetime();
+        action.setId("mock");
+        action.initialize();
+
+        BasicMessageMetadataSubcontext messageMetadata =
+                ActionSupport.getRequiredInboundMessageMetadata(action, profileRequestContext);
+        messageMetadata.setMessageIssueInstant(System.currentTimeMillis() - 10000000);
+
+        try {
+            action.execute(springRequestContext);
+            Assert.fail();
+        } catch (PastMessageException e) {
+            // expected this
+        }
+    }
 }
