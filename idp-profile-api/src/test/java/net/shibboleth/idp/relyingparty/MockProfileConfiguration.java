@@ -19,6 +19,7 @@ package net.shibboleth.idp.relyingparty;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 
 /** Mock implementation of {@link ProfileConfiguration}. */
 public class MockProfileConfiguration extends AbstractProfileConfiguration {
@@ -30,5 +31,6 @@ public class MockProfileConfiguration extends AbstractProfileConfiguration {
      */
     public MockProfileConfiguration(String id) {
         super(id);
+        setSecurityConfiguration(new SecurityConfiguration());
     }
 }

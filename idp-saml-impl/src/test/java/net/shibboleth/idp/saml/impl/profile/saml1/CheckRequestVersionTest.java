@@ -19,13 +19,12 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.InvalidInboundMessageContextException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.profile.saml1.CheckRequestVersion.InvalidMessageVersionException;
 
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
-import org.opensaml.messaging.context.BasicMessageContext;
 import org.opensaml.saml1.core.Request;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -44,16 +43,12 @@ public class CheckRequestVersionTest {
     /** Test the action errors out properly when there is a null message */
     @Test
     public void testNullMessage() throws Exception {
-        ProfileRequestContext<Request, Object> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
         CheckRequestVersion action = new CheckRequestVersion();
         action.setId("test");
         action.initialize();
 
         try {
-            action.execute(springRequestContext);
+            action.execute(new RequestContextBuilder().buildRequestContext());
             Assert.fail();
         } catch (InvalidInboundMessageContextException e) {
             // expected this
@@ -63,13 +58,11 @@ public class CheckRequestVersionTest {
     /** Test that the action accepts SAML 1.0 and 1.1 messages. */
     @Test
     public void testSaml1Message() throws Exception {
-        ProfileRequestContext<Request, Object> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
-        BasicMessageContext<Request> inMsgCtx =
-                (BasicMessageContext<Request>) profileRequestContext.getInboundMessageContext();
-        inMsgCtx.setMessage(Saml1ActionTestingSupport.buildAttributeQueryRequest(null));
+        RequestContext springRequestContext =
+                new RequestContextBuilder()
+                        .setInboundMessage(Saml1ActionTestingSupport.buildAttributeQueryRequest(null))
+                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         CheckRequestVersion action = new CheckRequestVersion();
         action.setId("test");
@@ -83,15 +76,13 @@ public class CheckRequestVersionTest {
     /** Test that the action errors out on SAML 2 messages. */
     @Test
     public void testSaml2Message() throws Exception {
-        ProfileRequestContext<Request, Object> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
-        BasicMessageContext<Request> inMsgCtx =
-                (BasicMessageContext<Request>) profileRequestContext.getInboundMessageContext();
         Request request = Saml1ActionTestingSupport.buildAttributeQueryRequest(null);
         request.setVersion(SAMLVersion.VERSION_20);
-        inMsgCtx.setMessage(request);
+
+        RequestContext springRequestContext =
+                new RequestContextBuilder().setInboundMessage(request)
+                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         CheckRequestVersion action = new CheckRequestVersion();
         action.setId("test");

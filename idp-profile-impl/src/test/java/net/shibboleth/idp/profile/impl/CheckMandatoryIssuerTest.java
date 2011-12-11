@@ -17,14 +17,11 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.impl.CheckMandatoryIssuer.NoMessageIssuerException;
 
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,31 +30,22 @@ public class CheckMandatoryIssuerTest {
 
     @Test
     public void testWithIssuer() throws Exception {
-        ProfileRequestContext profileRequestContext = ActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
         CheckMandatoryIssuer action = new CheckMandatoryIssuer();
         action.setId("test");
         action.initialize();
 
-        Event result = action.execute(springRequestContext);
+        Event result = action.execute(new RequestContextBuilder().buildRequestContext());
         ActionTestingSupport.assertProceedEvent(result);
     }
 
     @Test
     public void testNoIssuer() throws Exception {
-        ProfileRequestContext profileRequestContext = ActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);        
-
         CheckMandatoryIssuer action = new CheckMandatoryIssuer();
         action.setId("test");
         action.initialize();
-        
-        BasicMessageMetadataSubcontext messageMetadata = ActionSupport.getRequiredInboundMessageMetadata(action, profileRequestContext);
-        messageMetadata.setMessageIssuer(null);
 
-        try{
-        action.execute(springRequestContext);
+        try {
+            action.execute(new RequestContextBuilder().setInboundMessageIssuer(null).buildRequestContext());
             Assert.fail();
         } catch (NoMessageIssuerException e) {
             // expected this

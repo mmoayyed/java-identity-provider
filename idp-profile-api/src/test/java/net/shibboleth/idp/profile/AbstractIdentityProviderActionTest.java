@@ -68,39 +68,38 @@ public class AbstractIdentityProviderActionTest {
         action.setId("foo");
         Assert.assertEquals(action.getId(), "mock");
     }
-    
+
     @Test
-    public void testActionExecution() throws Exception{
-        ProfileRequestContext profileRequestContext = ActionTestingSupport.buildProfileRequestContext();
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-        
+    public void testActionExecution() throws Exception {
+        RequestContext springRequestContext = new RequestContextBuilder().buildRequestContext();
+
         MockIdentityProviderAction action = new MockIdentityProviderAction(null);
         action.setId("mock");
         action.initialize();
-        
+
         Event result = action.execute(springRequestContext);
         Assert.assertTrue(action.isExecuted());
         ActionTestingSupport.assertProceedEvent(result);
-        
+
         action = new MockIdentityProviderAction(new ProfileException());
         action.setId("mock");
         action.initialize();
-        
-        try{
+
+        try {
             action.execute(springRequestContext);
             Assert.fail();
-        }catch(ProfileException e){
-            //expected this
+        } catch (ProfileException e) {
+            // expected this
         }
-        
+
         action = new MockIdentityProviderAction(new ProfileException());
         action.setId("mock");
-        
-        try{
+
+        try {
             action.execute(springRequestContext);
             Assert.fail();
-        }catch(UninitializedActionException e){
-            //expected this
+        } catch (UninitializedActionException e) {
+            // expected this
         }
     }
 

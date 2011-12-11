@@ -55,7 +55,7 @@ public class RelyingPartyConfiguration {
      */
     public RelyingPartyConfiguration(final String configurationId, final String responderId,
             final EvaluableCriterion<ProfileRequestContext> criteria,
-            final Collection<ProfileConfiguration> configurations) {
+            final Collection<? extends ProfileConfiguration> configurations) {
         id =
                 Assert.isNotNull(StringSupport.trimOrNull(configurationId),
                         "Relying party configuration ID can not be null or empty");

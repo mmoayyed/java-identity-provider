@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.core.config.InitializationException;
@@ -44,12 +45,9 @@ public class AddResponseShellTest {
 
     @Test
     public void testAddResponse() throws Exception {
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-
-        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
-
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+        RequestContext springRequestContext =
+                new RequestContextBuilder().setRelyingPartyProfileConfigurations(
+                        Saml1ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");
@@ -57,6 +55,9 @@ public class AddResponseShellTest {
         Event result = action.execute(springRequestContext);
         ActionTestingSupport.assertProceedEvent(result);
 
+        ProfileRequestContext<Object, Response> profileRequestContext =
+                (ProfileRequestContext<Object, Response>) springRequestContext.getConversationScope().get(
+                        ProfileRequestContext.BINDING_KEY);
         MessageContext<Response> outMsgCtx =
                 ActionSupport.getRequiredOutboundMessageContext(action, profileRequestContext);
         Response response = outMsgCtx.getMessage();
@@ -74,13 +75,9 @@ public class AddResponseShellTest {
 
     @Test
     public void testAddResponseWhenResponseAlreadyExist() throws Exception {
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-
-        Response response = Saml1ActionTestingSupport.buildResponse();
-        profileRequestContext.getOutboundMessageContext().setMessage(response);
-
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+        RequestContext springRequestContext = new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                .buildRequestContext();
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");

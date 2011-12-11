@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.core.config.InitializationException;
@@ -45,19 +45,12 @@ public class AddNotBeforeConditionToAssertionsTest {
     /** Test that action errors out properly if there is no response. */
     @Test
     public void testNoResponse() throws Exception {
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-
-        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
-
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
-
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
         action.setId("test");
         action.initialize();
 
         try {
-            action.execute(springRequestContext);
+            action.execute(new RequestContextBuilder().buildRequestContext());
             Assert.fail();
         } catch (ProfileException e) {
             // expected this
@@ -67,14 +60,10 @@ public class AddNotBeforeConditionToAssertionsTest {
     /** Test that action errors out properly if there is no assertion in the response. */
     @Test
     public void testNoAssertion() throws Exception {
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-
-        profileRequestContext.getOutboundMessageContext().setMessage(Saml1ActionTestingSupport.buildResponse());
-
-        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
-
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+        RequestContext springRequestContext =
+                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
         action.setId("test");
@@ -99,13 +88,10 @@ public class AddNotBeforeConditionToAssertionsTest {
         Response response = Saml1ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-        profileRequestContext.getOutboundMessageContext().setMessage(response);
-
-        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
-
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+        RequestContext springRequestContext =
+                new RequestContextBuilder().setOutboundMessage(response)
+                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
         action.setId("test");
@@ -137,14 +123,10 @@ public class AddNotBeforeConditionToAssertionsTest {
         Response response = Saml1ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-        profileRequestContext.getOutboundMessageContext().setMessage(response);
-
-        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
-
         RequestContext springRequestContext =
-                ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+                new RequestContextBuilder().setOutboundMessage(response)
+                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
         action.setId("test");
@@ -166,13 +148,10 @@ public class AddNotBeforeConditionToAssertionsTest {
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
 
-        ProfileRequestContext<Object, Response> profileRequestContext =
-                ActionTestingSupport.buildProfileRequestContext();
-        profileRequestContext.getOutboundMessageContext().setMessage(response);
-
-        Saml1ActionTestingSupport.buildRelyingPartySubcontext(profileRequestContext, null);
-
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(profileRequestContext);
+        RequestContext springRequestContext =
+                new RequestContextBuilder().setOutboundMessage(response)
+                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         AddNotBeforeConditionToAssertions action = new AddNotBeforeConditionToAssertions();
         action.setId("test");

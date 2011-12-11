@@ -17,19 +17,15 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.impl.CheckSpringRequestContext.InvalidSpringRequestContextException;
 
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -42,7 +38,7 @@ public class CheckSpringRequestContextTest {
      */
     @Test
     public void checkServletExternalContext() throws Exception {
-        final RequestContext springRequestContext = mock(RequestContext.class);
+        final MockRequestContext springRequestContext = new MockRequestContext();
 
         CheckSpringRequestContext action = new CheckSpringRequestContext();
         action.setId("mock");
@@ -54,44 +50,8 @@ public class CheckSpringRequestContextTest {
         } catch (InvalidSpringRequestContextException e) {
             // expected this
         }
-    }
 
-    /**
-     * Checks that the action fails if the there is not request associated with the context or if it's not an
-     * {@link HttpServletRequest}.
-     */
-    @Test
-    public void checkHttpSerlvetRequest() throws Exception {
-        final RequestContext springRequestContext = mock(RequestContext.class);
-        final ServletExternalContext externalContext = mock(ServletExternalContext.class);
-        when(springRequestContext.getExternalContext()).thenReturn(externalContext);
-
-        CheckSpringRequestContext action = new CheckSpringRequestContext();
-        action.setId("mock");
-        action.initialize();
-
-        try {
-            action.execute(springRequestContext);
-            Assert.fail();
-        } catch (InvalidSpringRequestContextException e) {
-            // expected this
-        }
-    }
-
-    /**
-     * Checks that the action fails if the there is not request associated with the context or if it's not an
-     * {@link HttpServletResponse}.
-     */
-    @Test
-    public void checkHttpSerlvetResponse() throws Exception {
-        final RequestContext springRequestContext = mock(RequestContext.class);
-        final ServletExternalContext externalContext = mock(ServletExternalContext.class);
-        when(externalContext.getNativeRequest()).thenReturn(new MockHttpServletRequest());
-        when(springRequestContext.getExternalContext()).thenReturn(externalContext);
-
-        CheckSpringRequestContext action = new CheckSpringRequestContext();
-        action.setId("mock");
-        action.initialize();
+        springRequestContext.setExternalContext(new MockExternalContext());
 
         try {
             action.execute(springRequestContext);
@@ -104,7 +64,7 @@ public class CheckSpringRequestContextTest {
     /** Checks that a properly set up {@link RequestContext} passes. */
     @Test
     public void checkProperRequestContext() throws Exception {
-        RequestContext springRequestContext = ActionTestingSupport.buildMockSpringRequestContext(null);
+        RequestContext springRequestContext = new RequestContextBuilder().buildRequestContext();
 
         CheckSpringRequestContext action = new CheckSpringRequestContext();
         action.setId("mock");
