@@ -28,7 +28,7 @@ import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
-import net.shibboleth.idp.saml.profile.config.saml1.AbstractSAML1ProfileConfiguration;
+import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.joda.time.DateTime;
@@ -76,8 +76,8 @@ public class AddNotOnOrAfterConditionToAssertions extends AbstractIdentityProvid
             throw new InvalidOutboundMessageException("No Assertion available within the Response");
         }
 
-        final AbstractSAML1ProfileConfiguration profileConfig =
-                (AbstractSAML1ProfileConfiguration) relyingPartyCtx.getProfileConfig();
+        final AbstractSamlProfileConfiguration profileConfig =
+                (AbstractSamlProfileConfiguration) relyingPartyCtx.getProfileConfig();
 
         Conditions conditions;
         DateTime expiration = new DateTime(response.getIssueInstant()).plus(profileConfig.getAssertionLifetime());

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml1;
+package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -27,9 +27,9 @@ import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.Status;
-import org.opensaml.saml1.core.StatusCode;
+import org.opensaml.saml2.core.Response;
+import org.opensaml.saml2.core.Status;
+import org.opensaml.saml2.core.StatusCode;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -48,7 +48,7 @@ public class AddResponseShellTest {
     public void testAddResponse() throws Exception {
         RequestContext springRequestContext =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
-                        Saml1ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
+                        Saml2ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");
@@ -71,7 +71,7 @@ public class AddResponseShellTest {
         Status status = response.getStatus();
         Assert.assertNotNull(status);
         Assert.assertNotNull(status.getStatusCode());
-        Assert.assertEquals(status.getStatusCode().getValue(), StatusCode.SUCCESS);
+        Assert.assertEquals(status.getStatusCode().getValue(), StatusCode.SUCCESS_URI);
         
         BasicMessageMetadataSubcontext messageMetadata = outMsgCtx.getSubcontext(BasicMessageMetadataSubcontext.class, false);
         Assert.assertNotNull(messageMetadata);
@@ -81,9 +81,10 @@ public class AddResponseShellTest {
 
     @Test
     public void testAddResponseWhenResponseAlreadyExist() throws Exception {
-        RequestContext springRequestContext = new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
-                .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
-                .buildRequestContext();
+        RequestContext springRequestContext =
+                new RequestContextBuilder().setOutboundMessage(Saml2ActionTestingSupport.buildResponse())
+                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");

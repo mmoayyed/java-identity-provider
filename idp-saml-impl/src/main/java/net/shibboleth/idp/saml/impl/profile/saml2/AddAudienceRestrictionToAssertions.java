@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml1;
+package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import java.util.List;
 
@@ -29,14 +29,14 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
-import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
+import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.saml1.core.Assertion;
-import org.opensaml.saml1.core.Audience;
-import org.opensaml.saml1.core.AudienceRestrictionCondition;
-import org.opensaml.saml1.core.Conditions;
-import org.opensaml.saml1.core.Response;
+import org.opensaml.saml2.core.Assertion;
+import org.opensaml.saml2.core.Audience;
+import org.opensaml.saml2.core.AudienceRestriction;
+import org.opensaml.saml2.core.Conditions;
+import org.opensaml.saml2.core.Response;
 import org.opensaml.xml.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 //TODO have an option that controls, if a restriction condition already exists, if a new one is added or if the audiences are just added the existing condition
 
-/** Adds an {@link AudienceRestrictionCondition} to every {@link Assertion} contained on the {@link Response}. */
+/** Adds an {@link AudienceRestriction} to every {@link Assertion} contained on the {@link Response}. */
 public class AddAudienceRestrictionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
 
     /** Class logger. */
@@ -60,7 +60,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        log.debug("Action {}: Attempting to add an AudienceRestrictionCondition to outgoing assertions", getId());
+        log.debug("Action {}: Attempting to add an AudienceRestriction to outgoing assertions", getId());
 
         final RelyingPartySubcontext relyingPartyCtx =
                 ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
@@ -69,16 +69,14 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
-            log.error("Action {}: Unable to add AudienceRestrictionCondition, Response does not contain an Asertion",
-                    getId());
+            log.error("Action {}: Unable to add AudienceRestriction, Response does not contain an Asertion", getId());
             throw new InvalidOutboundMessageException("No Assertion available within the Response");
         }
 
         Conditions conditions;
         for (Assertion assertion : assertions) {
-            conditions = Saml1ActionSupport.addConditionsToAssertion(this, assertion);
+            conditions = Saml2ActionSupport.addConditionsToAssertion(this, assertion);
             addAudienceRestriction(conditions, relyingPartyCtx);
-            log.debug("Action {}: Added AudienceRestrictionCondition to Assertion {}", getId(), assertion.getID());
         }
 
         return ActionSupport.buildProceedEvent(this);
@@ -86,44 +84,43 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
 
     /**
      * Adds the {@link RelyingPartySubcontext#getRelyingPartyId()} and any additional audiences configured in the active
-     * {@link AbstractSamlProfileConfiguration} as {@link Audience} to the {@link AudienceRestrictionCondition}. If no
-     * {@link AudienceRestrictionCondition} exists on the given {@link Conditions} one is created and added.
+     * {@link AbstractSamlProfileConfiguration} as {@link Audience} to the {@link AudienceRestriction}. If no
+     * {@link AudienceRestriction} exists on the given {@link Conditions} one is created and added.
      * 
-     * @param conditions condition that has, or will received the created, {@link AudienceRestrictionCondition}
+     * @param conditions condition that has, or will received the created, {@link AudienceRestriction}
      * @param relyingPartyCtx information about the current relying party
      */
     private void addAudienceRestriction(final Conditions conditions, final RelyingPartySubcontext relyingPartyCtx) {
-        final AudienceRestrictionCondition condition;
-        if (conditions.getAudienceRestrictionConditions().isEmpty()) {
-            final SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                    (SAMLObjectBuilder<AudienceRestrictionCondition>) Configuration.getBuilderFactory().getBuilder(
-                            AudienceRestrictionCondition.TYPE_NAME);
-            log.debug("Action {}: Conditions did not contain an AudienceRestrictionCondition, adding one", getId());
+        final AudienceRestriction condition;
+        if (conditions.getAudienceRestrictions().isEmpty()) {
+            final SAMLObjectBuilder<AudienceRestriction> conditionBuilder =
+                    (SAMLObjectBuilder<AudienceRestriction>) Configuration.getBuilderFactory().getBuilder(
+                            AudienceRestriction.TYPE_NAME);
+            log.debug("Action {}: Conditions did not contain an AudienceRestriction, adding one", getId());
             condition = conditionBuilder.buildObject();
-            conditions.getAudienceRestrictionConditions().add(condition);
+            conditions.getAudienceRestrictions().add(condition);
         } else {
-            log.debug("Action {}: Conditions already contained an AudienceRestrictionCondition, using it", getId());
-            condition = conditions.getAudienceRestrictionConditions().get(0);
+            log.debug("Action {}: Conditions already contained an AudienceRestriction, using it", getId());
+            condition = conditions.getAudienceRestrictions().get(0);
         }
 
         final SAMLObjectBuilder<Audience> audienceBuilder =
                 (SAMLObjectBuilder<Audience>) Configuration.getBuilderFactory().getBuilder(
                         Audience.DEFAULT_ELEMENT_NAME);
 
-        log.debug("Action {}: Adding {} as an Audience of the AudienceRestrictionCondition", getId(),
+        log.debug("Action {}: Adding {} as an Audience of the AudienceRestriction", getId(),
                 relyingPartyCtx.getRelyingPartyId());
         Audience audience = audienceBuilder.buildObject();
-        audience.setUri(relyingPartyCtx.getRelyingPartyId());
+        audience.setAudienceURI(relyingPartyCtx.getRelyingPartyId());
         condition.getAudiences().add(audience);
 
         if (relyingPartyCtx.getProfileConfig() instanceof AbstractSamlProfileConfiguration) {
             final AbstractSamlProfileConfiguration profileConfig =
                     (AbstractSamlProfileConfiguration) relyingPartyCtx.getProfileConfig();
             for (String audienceId : profileConfig.getAdditionalAudiencesForAssertion()) {
-                log.debug("Action {}: Adding {} as an Audience of the AudienceRestrictionCondition", getId(),
-                        audienceId);
+                log.debug("Action {}: Adding {} as an Audience of the AudienceRestriction", getId(), audienceId);
                 audience = audienceBuilder.buildObject();
-                audience.setUri(audienceId);
+                audience.setAudienceURI(audienceId);
                 condition.getAudiences().add(audience);
             }
         }

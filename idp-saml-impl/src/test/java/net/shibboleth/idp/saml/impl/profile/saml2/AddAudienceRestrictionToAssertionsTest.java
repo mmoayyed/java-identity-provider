@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml1;
+package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileException;
@@ -24,10 +24,10 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
-import org.opensaml.saml1.core.Assertion;
-import org.opensaml.saml1.core.AudienceRestrictionCondition;
-import org.opensaml.saml1.core.Conditions;
-import org.opensaml.saml1.core.Response;
+import org.opensaml.saml2.core.Assertion;
+import org.opensaml.saml2.core.AudienceRestriction;
+import org.opensaml.saml2.core.Conditions;
+import org.opensaml.saml2.core.Response;
 import org.opensaml.xml.Configuration;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -62,8 +62,8 @@ public class AddAudienceRestrictionToAssertionsTest {
     @Test
     public void testNoAssertion() throws Exception {
         RequestContext springRequestContext =
-                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                new RequestContextBuilder().setOutboundMessage(Saml2ActionTestingSupport.buildResponse())
+                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
@@ -84,14 +84,14 @@ public class AddAudienceRestrictionToAssertionsTest {
      */
     @Test
     public void testSingleAssertion() throws Exception {
-        Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
+        Assertion assertion = Saml2ActionTestingSupport.buildAssertion();
 
-        Response response = Saml1ActionTestingSupport.buildResponse();
+        Response response = Saml2ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
@@ -105,8 +105,8 @@ public class AddAudienceRestrictionToAssertionsTest {
         Assert.assertEquals(response.getAssertions().size(), 1);
 
         Assert.assertNotNull(assertion.getConditions());
-        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
-        Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
+        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictions());
+        Assert.assertEquals(assertion.getConditions().getAudienceRestrictions().size(), 1);
     }
 
     /**
@@ -114,26 +114,26 @@ public class AddAudienceRestrictionToAssertionsTest {
      * response.
      */
     @Test
-    public void testSingleAssertionWithExistingCondition() throws Exception {
-        SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                (SAMLObjectBuilder<AudienceRestrictionCondition>) Configuration.getBuilderFactory().getBuilder(
-                        AudienceRestrictionCondition.TYPE_NAME);
-        AudienceRestrictionCondition condition = conditionBuilder.buildObject();
+    public void testSingleAssertionWithExistingConditions() throws Exception {
+        SAMLObjectBuilder<AudienceRestriction> conditionBuilder =
+                (SAMLObjectBuilder<AudienceRestriction>) Configuration.getBuilderFactory().getBuilder(
+                        AudienceRestriction.TYPE_NAME);
+        AudienceRestriction audienceCondition = conditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
                 (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
-        conditions.getAudienceRestrictionConditions().add(condition);
+        conditions.getAudienceRestrictions().add(audienceCondition);
 
-        Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
+        Assertion assertion = Saml2ActionTestingSupport.buildAssertion();
         assertion.setConditions(conditions);
 
-        Response response = Saml1ActionTestingSupport.buildResponse();
+        Response response = Saml2ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
@@ -144,32 +144,32 @@ public class AddAudienceRestrictionToAssertionsTest {
         ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(assertion.getConditions());
-        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
-        Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
+        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictions());
+        Assert.assertEquals(assertion.getConditions().getAudienceRestrictions().size(), 1);
     }
 
-    /** Test that an addition DoNotCache is not added if an assertion already contains one. */
+    /** Test that an addition AudienceRestriction is not added if an assertion already contains one. */
     @Test
-    public void testSingleAssertionWithExistingDoNotCondition() throws Exception {
-        SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                (SAMLObjectBuilder<AudienceRestrictionCondition>) Configuration.getBuilderFactory().getBuilder(
-                        AudienceRestrictionCondition.TYPE_NAME);
-        AudienceRestrictionCondition condition = conditionBuilder.buildObject();
+    public void testSingleAssertionWithExistingAudienceRestriction() throws Exception {
+        SAMLObjectBuilder<AudienceRestriction> conditionBuilder =
+                (SAMLObjectBuilder<AudienceRestriction>) Configuration.getBuilderFactory().getBuilder(
+                        AudienceRestriction.TYPE_NAME);
+        AudienceRestriction audienceCondition = conditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
                 (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
-        conditions.getAudienceRestrictionConditions().add(condition);
+        conditions.getAudienceRestrictions().add(audienceCondition);
 
-        Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
+        Assertion assertion = Saml2ActionTestingSupport.buildAssertion();
         assertion.setConditions(conditions);
 
-        Response response = Saml1ActionTestingSupport.buildResponse();
+        Response response = Saml2ActionTestingSupport.buildResponse();
         response.getAssertions().add(assertion);
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
@@ -180,21 +180,21 @@ public class AddAudienceRestrictionToAssertionsTest {
         ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(assertion.getConditions());
-        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
-        Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
+        Assert.assertNotNull(assertion.getConditions().getAudienceRestrictions());
+        Assert.assertEquals(assertion.getConditions().getAudienceRestrictions().size(), 1);
     }
 
     /** Test that the condition is properly added if there are multiple assertions in the response. */
     @Test
     public void testMultipleAssertion() throws Exception {
-        Response response = Saml1ActionTestingSupport.buildResponse();
-        response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
-        response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
-        response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
+        Response response = Saml2ActionTestingSupport.buildResponse();
+        response.getAssertions().add(Saml2ActionTestingSupport.buildAssertion());
+        response.getAssertions().add(Saml2ActionTestingSupport.buildAssertion());
+        response.getAssertions().add(Saml2ActionTestingSupport.buildAssertion());
 
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(response)
-                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .setRelyingPartyProfileConfigurations(Saml2ActionTestingSupport.buildProfileConfigurations())
                         .buildRequestContext();
 
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
@@ -209,8 +209,8 @@ public class AddAudienceRestrictionToAssertionsTest {
 
         for (Assertion assertion : response.getAssertions()) {
             Assert.assertNotNull(assertion.getConditions());
-            Assert.assertNotNull(assertion.getConditions().getAudienceRestrictionConditions());
-            Assert.assertEquals(assertion.getConditions().getAudienceRestrictionConditions().size(), 1);
+            Assert.assertNotNull(assertion.getConditions().getAudienceRestrictions());
+            Assert.assertEquals(assertion.getConditions().getAudienceRestrictions().size(), 1);
         }
     }
 }

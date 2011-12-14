@@ -390,9 +390,13 @@ public class RequestContextBuilder {
      * 
      * @return the constructed {@link BasicMessageMetadataSubcontext}
      */
-    @NotNull
+    @Null
     protected BasicMessageMetadataSubcontext buildInboudMessageMetadataContext(
             @NotNull final MessageContext inboundMsgCtx) {
+        if(ObjectSupport.equals(NO_VAL, inboundMessageId) && ObjectSupport.equals(NO_VAL, inboundMessageIssuer)){
+            return null;
+        }
+        
         final BasicMessageMetadataSubcontext metadataCtx = new BasicMessageMetadataSubcontext(inboundMsgCtx);
 
         if (ObjectSupport.equals(NO_VAL, inboundMessageId)) {
@@ -453,8 +457,12 @@ public class RequestContextBuilder {
     @NotNull
     protected BasicMessageMetadataSubcontext buildOutboundMessageMetadataContext(
             @NotNull final MessageContext outboundMsgCtx) {
-        final BasicMessageMetadataSubcontext metadataCtx = new BasicMessageMetadataSubcontext(outboundMsgCtx);
+        if(ObjectSupport.equals(NO_VAL, outboundMessageId) && ObjectSupport.equals(NO_VAL, outboundMessageIssuer)){
+            return null;
+        }
 
+        final BasicMessageMetadataSubcontext metadataCtx = new BasicMessageMetadataSubcontext(outboundMsgCtx);
+        
         if (ObjectSupport.equals(NO_VAL, outboundMessageId)) {
             metadataCtx.setMessageId(ActionTestingSupport.OUTBOUND_MSG_ID);
         } else {

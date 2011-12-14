@@ -31,6 +31,7 @@ import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
+import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Status;
@@ -88,6 +89,10 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
         response.setVersion(SAMLVersion.VERSION_11);
 
         outboundMessageCtx.setMessage(response);
+        
+        BasicMessageMetadataSubcontext messageMetadata = new BasicMessageMetadataSubcontext(outboundMessageCtx);
+        messageMetadata.setMessageId(response.getID());
+        messageMetadata.setMessageIssueInstant(response.getIssueInstant().getMillis());
 
         return ActionSupport.buildProceedEvent(this);
     }

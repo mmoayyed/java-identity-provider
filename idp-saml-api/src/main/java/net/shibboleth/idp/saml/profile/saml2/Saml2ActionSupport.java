@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.saml1;
+package net.shibboleth.idp.saml.profile.saml2;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
@@ -23,19 +23,20 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
-import org.opensaml.saml1.core.Assertion;
-import org.opensaml.saml1.core.Conditions;
-import org.opensaml.saml1.core.Response;
+import org.opensaml.saml2.core.Assertion;
+import org.opensaml.saml2.core.Conditions;
+import org.opensaml.saml2.core.Issuer;
+import org.opensaml.saml2.core.Response;
 import org.opensaml.util.constraint.documented.NotNull;
 import org.opensaml.xml.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Helper methods for SAML 1 IdP actions. */
-public final class Saml1ActionSupport {
+/** Helper methods for SAML 2 IdP actions. */
+public final class Saml2ActionSupport {
 
     /** Constructor. */
-    private Saml1ActionSupport() {
+    private Saml2ActionSupport() {
 
     }
 
@@ -65,12 +66,18 @@ public final class Saml1ActionSupport {
         final SAMLObjectBuilder<Assertion> assertionBuilder =
                 (SAMLObjectBuilder<Assertion>) Configuration.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
 
+        final SAMLObjectBuilder<Issuer> issuerBuilder =
+                (SAMLObjectBuilder<Issuer>) Configuration.getBuilderFactory().getBuilder(Issuer.TYPE_NAME);
+
         final SecurityConfiguration securityConfig = relyingPartyContext.getProfileConfig().getSecurityConfiguration();
+
+        final Issuer issuer = issuerBuilder.buildObject();
+        issuer.setValue(relyingPartyContext.getConfiguration().getResponderEntityId());
 
         final Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(securityConfig.getIdGenerator().generateIdentifier());
         assertion.setIssueInstant(response.getIssueInstant());
-        assertion.setIssuer(relyingPartyContext.getConfiguration().getResponderEntityId());
+        assertion.setIssuer(issuer);
         assertion.setVersion(SAMLVersion.VERSION_11);
 
         getLogger().debug("Action {}: Added Assertion {} to Response {}",
@@ -114,6 +121,6 @@ public final class Saml1ActionSupport {
      * @return logger for this class, never null
      */
     private static Logger getLogger() {
-        return LoggerFactory.getLogger(Saml1ActionSupport.class);
+        return LoggerFactory.getLogger(Saml2ActionSupport.class);
     }
 }

@@ -27,7 +27,6 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
@@ -53,11 +52,6 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddDoNotCacheConditionToAssertions.class);
-
-    /** {@inheritDoc} */
-    protected Class<RelyingPartySubcontext> getSubcontextType() {
-        return RelyingPartySubcontext.class;
-    }
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,

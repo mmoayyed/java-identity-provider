@@ -22,35 +22,57 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
 import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.common.SAMLVersion;
+import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.core.Status;
 import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.xml.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * A profile action that creates a {@link Response}, adds a {@link StatusCode#SUCCESS} status to it, and sets it as the
- * message for the {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * A profile action that creates a {@link Response}, adds a {@link StatusCode#SUCCESS_URI} status to it, and sets it as
+ * the message for the {@link ProfileRequestContext#getOutboundMessageContext()}.
  */
 public class AddResponseShell extends AbstractIdentityProviderAction<Object, Response> {
+
+    /** Class logger. */
+    private Logger log = LoggerFactory.getLogger(AddResponseShell.class);
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+
+        final MessageContext<Response> outboundMessageCtx =
+                ActionSupport.getRequiredOutboundMessageContext(this, profileRequestContext);
+        if (outboundMessageCtx.getMessage() != null) {
+            log.error("Action {}: Outbound message context already contains a Response", getId());
+            throw new InvalidOutboundMessageException("Outbound message context already contains a Response");
+        }
+
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =
                 (SAMLObjectBuilder<StatusCode>) Configuration.getBuilderFactory().getBuilder(StatusCode.TYPE_NAME);
         final SAMLObjectBuilder<Status> statusBuilder =
                 (SAMLObjectBuilder<Status>) Configuration.getBuilderFactory().getBuilder(Status.TYPE_NAME);
         final SAMLObjectBuilder<Response> responseBuilder =
-                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(Response.TYPE_NAME);
+                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(
+                        Response.DEFAULT_ELEMENT_NAME);
 
         final StatusCode statusCode = statusCodeBuilder.buildObject();
         statusCode.setValue(StatusCode.SUCCESS_URI);
@@ -59,10 +81,18 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
         status.setStatusCode(statusCode);
 
         final Response response = responseBuilder.buildObject();
+        // TODO check for nulls
+        response.setID(relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator()
+                .generateIdentifier());
         response.setIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
         response.setStatus(status);
+        response.setVersion(SAMLVersion.VERSION_11);
 
-        profileRequestContext.getOutboundMessageContext().setMessage(response);
+        outboundMessageCtx.setMessage(response);
+        
+        BasicMessageMetadataSubcontext messageMetadata = new BasicMessageMetadataSubcontext(outboundMessageCtx);
+        messageMetadata.setMessageId(response.getID());
+        messageMetadata.setMessageIssueInstant(response.getIssueInstant().getMillis());
 
         return ActionSupport.buildProceedEvent(this);
     }
