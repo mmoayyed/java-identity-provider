@@ -31,7 +31,7 @@ public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<byt
 
     /** {@inheritDoc} */
     protected boolean canEncodeValue(net.shibboleth.idp.attribute.Attribute attribute, Object value) {
-        return value instanceof String;
+        return value instanceof byte[];
     }
 
     /** {@inheritDoc} */
