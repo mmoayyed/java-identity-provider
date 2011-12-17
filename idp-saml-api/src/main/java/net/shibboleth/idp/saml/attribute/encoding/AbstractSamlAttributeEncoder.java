@@ -138,7 +138,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
             if (!canEncodeValue(attribute, o)) {
                 log.debug("Skipping value of attribute {}; it can not be encoded by this encoder.", attributeId, o
                         .getClass().getName());
-                return null;
+                continue;
             }
 
             attributeValue = (EncodedType) o;
