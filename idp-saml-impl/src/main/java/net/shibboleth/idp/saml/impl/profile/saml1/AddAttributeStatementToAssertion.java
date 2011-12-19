@@ -54,7 +54,7 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link ProfileRequestContext}.
  */
 public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAction<Object, Response> {
-
+// TODO unit tests
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
 
@@ -205,7 +205,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
          * Constructor.
          * 
          * @param attribute the attribute that could not be encoded
-         * @param e the exception that occured when attempting to encode the attribute
+         * @param e the exception that occurred when attempting to encode the attribute
          */
         public UnableToEncodeAttributeException(Attribute<?> attribute, AttributeEncodingException e) {
             super("Action " + getId() + ": Unable to encode attribute " + attribute.getId(), e);

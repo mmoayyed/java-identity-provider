@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
 
 import org.opensaml.xml.XMLObject;
@@ -28,7 +28,7 @@ import org.opensaml.xml.XMLObject;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
  * {@link net.shibboleth.idp.attribute.Attribute} that contains {@link XMLObject} values.
  */
-public class Saml2XmlObjectAttributeEncoder extends AbstractSaml1AttributeEncoder<XMLObject> {
+public class Saml2XmlObjectAttributeEncoder extends AbstractSaml2AttributeEncoder<XMLObject> {
 
     /** {@inheritDoc} */
     protected boolean canEncodeValue(Attribute<?> attribute, Object value) {
