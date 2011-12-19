@@ -38,6 +38,6 @@ public class Saml2XmlObjectAttributeEncoder extends AbstractSaml1AttributeEncode
     /** {@inheritDoc} */
     protected XMLObject encodeValue(Attribute<?> attribute, XMLObject value) throws AttributeEncodingException {
         return SamlEncoderSupport.encodeXmlObjectValue(attribute,
-                org.opensaml.saml2.core.Attribute.DEFAULT_ELEMENT_NAME, value);
+                org.opensaml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
     }
 }

@@ -37,7 +37,7 @@ public class Saml1StringAttributeEncoder extends AbstractSaml1AttributeEncoder<S
 
     /** {@inheritDoc} */
     protected XMLObject encodeValue(Attribute<?> attribute, String value) throws AttributeEncodingException {
-        return SamlEncoderSupport.encodeStringValue(attribute, org.opensaml.saml1.core.Attribute.DEFAULT_ELEMENT_NAME,
+        return SamlEncoderSupport.encodeStringValue(attribute, org.opensaml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 value);
     }
 }
