@@ -27,7 +27,6 @@ import org.opensaml.common.SAMLObject;
 import org.opensaml.util.StringSupport;
 import org.opensaml.util.component.AbstractInitializableComponent;
 import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.InitializableComponent;
 import org.opensaml.util.component.UnmodifiableComponent;
 import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.xml.XMLObject;

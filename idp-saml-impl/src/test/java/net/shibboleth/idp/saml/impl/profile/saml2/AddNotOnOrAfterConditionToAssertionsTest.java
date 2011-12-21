@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.core.config.InitializationException;

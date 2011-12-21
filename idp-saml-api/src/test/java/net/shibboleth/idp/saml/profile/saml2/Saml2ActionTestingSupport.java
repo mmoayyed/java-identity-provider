@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml2;
+package net.shibboleth.idp.saml.profile.saml2;
 
 import java.util.ArrayList;
 import java.util.Collection;

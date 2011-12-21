@@ -21,6 +21,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.core.config.InitializationException;
