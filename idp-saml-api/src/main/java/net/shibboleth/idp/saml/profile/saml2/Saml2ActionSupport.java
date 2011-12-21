@@ -67,7 +67,7 @@ public final class Saml2ActionSupport {
                 (SAMLObjectBuilder<Assertion>) Configuration.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
 
         final SAMLObjectBuilder<Issuer> issuerBuilder =
-                (SAMLObjectBuilder<Issuer>) Configuration.getBuilderFactory().getBuilder(Issuer.TYPE_NAME);
+                (SAMLObjectBuilder<Issuer>) Configuration.getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
 
         final SecurityConfiguration securityConfig = relyingPartyContext.getProfileConfig().getSecurityConfiguration();
 
