@@ -17,11 +17,15 @@
 
 package net.shibboleth.idp.attribute;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
+import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import com.google.common.base.Objects;
 
 /** An attribute value with an associated scope. */
 @ThreadSafe
@@ -39,9 +43,10 @@ public class ScopedAttributeValue {
      * @param attributeValue value of the attribute, never null
      * @param valueScope scope of the value, never null
      */
-    public ScopedAttributeValue(final String attributeValue, final String valueScope) {
-        value = Assert.isNotNull(StringSupport.trimOrNull(attributeValue), "Attribute value may not be null or empty");
-        scope = Assert.isNotNull(StringSupport.trimOrNull(valueScope), "Attribute value scope may not be null or empty");
+    public ScopedAttributeValue(@Nonnull @NotEmpty final String attributeValue,
+            @Nonnull @NotEmpty final String valueScope) {
+        value = Assert.isNotNull(StringSupport.trimOrNull(attributeValue), "Value may not be null or empty");
+        scope = Assert.isNotNull(StringSupport.trimOrNull(valueScope), "Scope may not be null or empty");
     }
 
     /**
@@ -49,7 +54,7 @@ public class ScopedAttributeValue {
      * 
      * @return value of the attribute
      */
-    public String getValue() {
+    @Nonnull @NotEmpty public String getValue() {
         return value;
     }
 
@@ -58,26 +63,22 @@ public class ScopedAttributeValue {
      * 
      * @return scope of the value
      */
-    public String getScope() {
+    @Nonnull @NotEmpty public String getScope() {
         return scope;
     }
 
     /** {@inheritDoc} */
-    public String toString() {
-        return value;
+    @Nonnull @NotEmpty public String toString() {
+        return Objects.toStringHelper(this).add("value", value).add("scope", scope).toString();
     }
 
     /** {@inheritDoc} */
     public int hashCode() {
-        int hash = 1;
-        hash = hash * 31 + value.hashCode();
-        hash = hash * 31 + scope.hashCode();
-
-        return hash;
+        return Objects.hashCode(value, scope);
     }
 
     /** {@inheritDoc} */
-    public boolean equals(final Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -87,7 +88,6 @@ public class ScopedAttributeValue {
         }
 
         ScopedAttributeValue otherValue = (ScopedAttributeValue) obj;
-        return ObjectSupport.equals(getValue(), otherValue.getValue())
-                && ObjectSupport.equals(getScope(), otherValue.getScope());
+        return Objects.equal(getValue(), otherValue.getValue()) && Objects.equal(getScope(), otherValue.getScope());
     }
 }

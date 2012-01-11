@@ -17,7 +17,11 @@
 
 package net.shibboleth.idp.attribute;
 
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /** Indicates a problem during the encoding of an attribute. */
+@ThreadSafe
 public class AttributeEncodingException extends AttributeException {
 
     /** Serial version UID. */
@@ -33,7 +37,7 @@ public class AttributeEncodingException extends AttributeException {
      * 
      * @param message exception message
      */
-    public AttributeEncodingException(final String message) {
+    public AttributeEncodingException(@Nullable final String message) {
         super(message);
     }
 
@@ -42,7 +46,7 @@ public class AttributeEncodingException extends AttributeException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeEncodingException(final Exception wrappedException) {
+    public AttributeEncodingException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -52,7 +56,7 @@ public class AttributeEncodingException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeEncodingException(final String message, final Exception wrappedException) {
+    public AttributeEncodingException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

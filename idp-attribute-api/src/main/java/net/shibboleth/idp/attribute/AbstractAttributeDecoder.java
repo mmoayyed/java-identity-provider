@@ -18,18 +18,28 @@
 package net.shibboleth.idp.attribute;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponent;
-import org.opensaml.util.component.UnmodifiableComponentException;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Objects;
 
 /**
  * Base class for {@link AttributeDecoder} implementations.
@@ -37,8 +47,9 @@ import org.slf4j.LoggerFactory;
  * @param <DecodedType> type of data decoded
  * @param <ValueType> data type of attribute values
  */
-public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends
-        AbstractIdentifiableInitializableComponent implements AttributeDecoder<DecodedType>, UnmodifiableComponent {
+@ThreadSafe
+public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends AbstractInitializableComponent implements
+        AttributeDecoder<DecodedType>, UnmodifiableComponent {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AbstractAttributeDecoder.class);
@@ -50,59 +61,36 @@ public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends
     private Map<Locale, String> displayDescriptions;
 
     /**
-     * Gets the unmodifiable collection of localized human readable name of the attribute. This collection never
-     * contains entries whose key or value are null.
+     * Gets the unmodifiable collection of localized human readable name of the attribute.
      * 
-     * @return human readable name of the attribute, never null
+     * @return human readable name of the attribute
      */
-    public final Map<Locale, String> getDisplayNames() {
+    @Nonnull @NonnullElements @Unmodifiable public final Map<Locale, String> getDisplayNames() {
         return displayNames;
     }
 
     /**
      * Sets he display names for this attribute with the given ones.
      * 
-     * @param newNames the new names for this attribute, may be null
+     * @param newNames the new names for this attribute
      */
-    public final synchronized void setDisplayNames(final Map<Locale, String> newNames) {
+    public final synchronized void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> newNames) {
         if (isInitialized()) {
             throw new UnmodifiableComponentException(
                     "Attribute display names can not be changed after decoder has been initialized");
         }
 
-        if (newNames == null || newNames.isEmpty()) {
-            return;
-        }
-
-        HashMap<Locale, String> checkedNames = new HashMap<Locale, String>();
-        for (Entry<Locale, String> entry : newNames.entrySet()) {
-            Locale locale = entry.getKey();
-            if (locale == null) {
-                continue;
-            }
-
-            final String trimmedName = StringSupport.trimOrNull(entry.getValue());
-            if (trimmedName == null) {
-                continue;
-            }
-
-            checkedNames.put(locale, trimmedName);
-        }
-
-        if (checkedNames == null || checkedNames.isEmpty()) {
-            displayNames = Collections.emptyMap();
-        } else {
-            displayNames = Collections.unmodifiableMap(checkedNames);
-        }
+        displayNames =
+                new TransformedInputMapBuilder<Locale, String>().valuePreprocessor(TrimOrNullStringFunction.INSTANCE)
+                        .putAll(newNames).buildImmutableMap();
     }
 
     /**
-     * Gets the unmodifiable localized human readable description of attribute. This collection never contains entries
-     * whose key or value are null.
+     * Gets the localized human readable description of attribute.
      * 
-     * @return human readable description of attribute, never null
+     * @return human readable description of attribute
      */
-    public final Map<Locale, String> getDisplayDescriptions() {
+    @Nonnull @NonnullElements @Unmodifiable public final Map<Locale, String> getDisplayDescriptions() {
         return displayDescriptions;
     }
 
@@ -111,36 +99,16 @@ public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends
      * 
      * @param newDescriptions the new descriptions for this attribute, may be null
      */
-    public final synchronized void setDisplayDescriptions(final Map<Locale, String> newDescriptions) {
+    public final synchronized void setDisplayDescriptions(
+            @Nullable @NullableElements final Map<Locale, String> newDescriptions) {
         if (isInitialized()) {
             throw new UnmodifiableComponentException(
                     "Attribute display descriptions can not be changed after decoder has been initialized");
         }
 
-        if (newDescriptions == null || newDescriptions.isEmpty()) {
-            return;
-        }
-
-        HashMap<Locale, String> checkedDescriptions = new HashMap<Locale, String>();
-        for (Entry<Locale, String> entry : newDescriptions.entrySet()) {
-            Locale locale = entry.getKey();
-            if (locale == null) {
-                continue;
-            }
-
-            final String trimmedDescription = StringSupport.trimOrNull(entry.getValue());
-            if (trimmedDescription == null) {
-                continue;
-            }
-
-            checkedDescriptions.put(locale, trimmedDescription);
-        }
-
-        if (checkedDescriptions == null || checkedDescriptions.isEmpty()) {
-            displayDescriptions = Collections.emptyMap();
-        } else {
-            displayDescriptions = Collections.unmodifiableMap(checkedDescriptions);
-        }
+        displayDescriptions =
+                new TransformedInputMapBuilder<Locale, String>().valuePreprocessor(TrimOrNullStringFunction.INSTANCE)
+                        .putAll(newDescriptions).buildImmutableMap();
     }
 
     /**
@@ -150,7 +118,7 @@ public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends
      * 
      * {@inheritDoc}
      */
-    public final Attribute decode(final DecodedType data) throws AttributeDecodingException {
+    @Nullable public final Attribute decode(@Nullable final DecodedType data) throws AttributeDecodingException {
         if (!isInitialized()) {
             throw new AttributeDecodingException("Decoder has not been initialized and so can not be used");
         }
@@ -159,15 +127,47 @@ public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends
             return null;
         }
 
-        log.debug("Decoding IdP attribute {}", getId());
+        log.debug("Decoding IdP attribute {}", getDecodedAttributeId());
         final Attribute<ValueType> attribute = createAttribute(data);
-        attribute.setDisplayNames(getDisplayNames());
+        assert attribute != null : "createAttribute() returned a null Attribute";
+        attribute.setDisplayNames(displayNames);
         attribute.setDisplayDescriptions(displayDescriptions);
 
         doDecode(attribute, data);
 
         return attribute;
-    };
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getProtocol(), getDecodedAttributeId());
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (obj instanceof AttributeDecoder) {
+            AttributeDecoder other = (AttributeDecoder) obj;
+            return Objects.equal(getProtocol(), other.getProtocol())
+                    && Objects.equal(getDecodedAttributeId(), other.getDecodedAttributeId());
+        }
+
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull @NotEmpty public String toString() {
+        return Objects.toStringHelper(this).add("protocol", getProtocol())
+                .add("decodedAttributeId", getDecodedAttributeId()).add("displayNames", displayNames)
+                .add("displayDescriptions", displayDescriptions).toString();
+    }
 
     /**
      * Initializes the display name and descriptors to empty collections if they are null.
@@ -186,29 +186,29 @@ public abstract class AbstractAttributeDecoder<DecodedType, ValueType> extends
 
     /**
      * Creates the attribute that will receive the decoded values. The created attributed is a {@link Attribute} whose
-     * ID, display name, and display descriptions are set to {@link #getId()}, {@link #getDisplayNames()} and
-     * {@link #getDisplayDescriptions()}, respectively.
+     * ID, display name, and display descriptions are set to {@link #getDecodedAttributeId()},
+     * {@link #getDisplayNames()} and {@link #getDisplayDescriptions()}, respectively.
      * 
-     * @param data SAML attribute to be decoded, never null
+     * @param data SAML attribute to be decoded
      * 
-     * @return the attribute that will receive the decoded values, never null
+     * @return the attribute that will receive the decoded values
      * 
      * @throws AttributeDecodingException thrown if there is a problem creating the IdP attribute from the given SAML
      *             attribute
      */
-    protected Attribute createAttribute(final DecodedType data) throws AttributeDecodingException {
-        return new Attribute<ValueType>(getId());
+    @Nonnull protected Attribute createAttribute(@Nonnull final DecodedType data) throws AttributeDecodingException {
+        return new Attribute<ValueType>(getDecodedAttributeId());
     }
 
     /**
      * Decodes the data in to the constructed IdP attribute. At this point the encoder is guaranteed to be initialized
      * and the IdP attribute contains its ID, display names, and display descriptions.
      * 
-     * @param attribute the IdP attribute that will receive the decoded data, never null
-     * @param data the data to decode, never null
+     * @param attribute the IdP attribute that will receive the decoded data
+     * @param data the data to decode
      * 
      * @throws AttributeDecodingException thrown if there is a problem decoding the data in to the IdP attribute
      */
-    protected abstract void doDecode(final Attribute<ValueType> attribute, final DecodedType data)
+    protected abstract void doDecode(@Nonnull final Attribute<ValueType> attribute, @Nonnull final DecodedType data)
             throws AttributeDecodingException;
 }

@@ -17,8 +17,12 @@
 
 package net.shibboleth.idp.attribute;
 
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 /** Base class for attribute related exceptions. */
-public class AttributeException extends Exception{
+@ThreadSafe
+public class AttributeException extends Exception {
 
     /** Serial version UID. */
     private static final long serialVersionUID = 3335848105089747720L;
@@ -33,7 +37,7 @@ public class AttributeException extends Exception{
      * 
      * @param message exception message
      */
-    public AttributeException(final String message) {
+    public AttributeException(@Nullable final String message) {
         super(message);
     }
 
@@ -42,7 +46,7 @@ public class AttributeException extends Exception{
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeException(final Exception wrappedException) {
+    public AttributeException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -52,7 +56,7 @@ public class AttributeException extends Exception{
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeException(final String message, final Exception wrappedException) {
+    public AttributeException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

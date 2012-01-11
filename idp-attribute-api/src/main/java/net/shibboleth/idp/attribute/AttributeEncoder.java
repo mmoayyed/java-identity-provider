@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.attribute;
 
+import javax.annotation.Nonnull;
+
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Attribute encoders convert {@link Attribute}s into protocol specific representations.
@@ -28,17 +31,16 @@ import net.jcip.annotations.ThreadSafe;
  */
 @ThreadSafe
 public interface AttributeEncoder<EncodedType> {
-    
+
     /**
-     * Gets the identifier of the protocol targeted by this encoder.  Note, some protocols
-     * may have different types of encoders that are used to encode attributes in to different
-     * parts of the protocol message.  This identifier should not be used to distinguish between
-     * the different message structure, it should only identify the protocol itself.
+     * Gets the identifier of the protocol targeted by this encoder. Note, some protocols may have different types of
+     * encoders that are used to encode attributes in to different parts of the protocol message. This identifier should
+     * not be used to distinguish between the different message structure, it should only identify the protocol itself.
      * 
      * @return identifier of the protocol targeted by this encounter
      */
-    public String getProtocol();
-        
+    @Nonnull @NotEmpty public String getProtocol();
+
     /**
      * Encodes the attribute into a protocol specific representations.
      * 
@@ -48,5 +50,5 @@ public interface AttributeEncoder<EncodedType> {
      * 
      * @throws AttributeEncodingException if unable to successfully encode attribute
      */
-    public EncodedType encode(final Attribute<?> attribute) throws AttributeEncodingException;
+    @Nonnull public EncodedType encode(@Nonnull final Attribute<?> attribute) throws AttributeEncodingException;
 }

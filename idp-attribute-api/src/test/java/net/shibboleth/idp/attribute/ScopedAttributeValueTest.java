@@ -29,35 +29,33 @@ public class ScopedAttributeValueTest {
         ScopedAttributeValue value = new ScopedAttributeValue(" foo ", " bar ");
 
         Assert.assertEquals(value.getValue(), "foo");
-        Assert.assertEquals(value.toString(), "foo");
-
         Assert.assertEquals(value.getScope(), "bar");
 
         try {
             new ScopedAttributeValue(null, "bar");
             Assert.fail("able to set null attribute value");
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected this
         }
 
         try {
             new ScopedAttributeValue("", "bar");
             Assert.fail("able to set empty attribute value");
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected this
         }
 
         try {
             new ScopedAttributeValue("foo", null);
             Assert.fail("able to set null attribute scope");
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected this
         }
 
         try {
             new ScopedAttributeValue("foo", "");
             Assert.fail("able to set empty attribute scope");
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected this
         }
     }

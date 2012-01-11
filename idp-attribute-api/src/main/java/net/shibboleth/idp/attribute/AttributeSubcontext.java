@@ -19,8 +19,16 @@ package net.shibboleth.idp.attribute;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 
 import org.opensaml.messaging.context.AbstractSubcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
@@ -37,46 +45,44 @@ public class AttributeSubcontext extends AbstractSubcontext {
     /**
      * Constructor.
      * 
-     * @param parent the owner of this subcontext, may be null
+     * @param parent the owner of this subcontext
      */
-    public AttributeSubcontext(SubcontextContainer parent) {
+    public AttributeSubcontext(@Nullable final SubcontextContainer parent) {
         super(parent);
         attributes = Collections.emptyMap();
     }
 
     /**
-     * Gets the unmodifiable collection of attributes, indexed by attribute ID, tracked by this context.
+     * Gets the collection of attributes, indexed by attribute ID, tracked by this context.
      * 
-     * @return the collection of attributes indexed by attribute ID; never null nor containing null elements
+     * @return the collection of attributes indexed by attribute ID
      */
-    public Map<String, Attribute<?>> getAttributes() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Attribute<?>> getAttributes() {
         return attributes;
     }
 
     /**
      * Sets the attributes tracked by this context.
      * 
-     * @param newAttributes the attributes; may be null or contain null elements
+     * @param newAttributes the attributes
      */
-    public void setAttributes(Collection<Attribute<?>> newAttributes) {
-        if (newAttributes == null || newAttributes.isEmpty()) {
+    public void setAttributes(@Nullable @NullableElements Collection<Attribute<?>> newAttributes) {
+        if (newAttributes == null) {
             attributes = Collections.emptyMap();
             return;
         }
 
-        HashMap<String, Attribute<?>> checkedAttributes = new HashMap<String, Attribute<?>>();
+        TransformedInputMapBuilder<String, Attribute<?>> mapBuilder =
+                new TransformedInputMapBuilder<String, Attribute<?>>()
+                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
         for (Attribute attribute : newAttributes) {
             if (attribute == null) {
                 continue;
             }
 
-            checkedAttributes.put(attribute.getId(), attribute);
+            mapBuilder.put(attribute.getId(), attribute);
         }
 
-        if (checkedAttributes.isEmpty()) {
-            attributes = Collections.emptyMap();
-        } else {
-            attributes = Collections.unmodifiableMap(checkedAttributes);
-        }
+        attributes = mapBuilder.buildImmutableMap();
     }
 }

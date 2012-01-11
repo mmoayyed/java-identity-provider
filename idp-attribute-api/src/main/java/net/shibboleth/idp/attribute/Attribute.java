@@ -18,21 +18,24 @@
 package net.shibboleth.idp.attribute;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazyList;
-import org.opensaml.util.collections.LazyMap;
-import org.opensaml.util.collections.LazySet;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import com.google.common.base.Objects;
 
 /**
  * Each attribute represents one piece of information about a user and has associated encoders used to turn that
@@ -66,13 +69,16 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
      * 
      * @param attributeId unique identifier of the attribute
      */
-    public Attribute(final String attributeId) {
+    public Attribute(@Nonnull @NotEmpty final String attributeId) {
         id = Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
 
-        values = new LazyList<ValueType>();
-        displayNames = new LazyMap<Locale, String>();
-        displayDescriptions = new LazyMap<Locale, String>();
-        encoders = new LazySet<AttributeEncoder<?>>();
+        TransformedInputMapBuilder<Locale, String> mapBuilder =
+                new TransformedInputMapBuilder<Locale, String>().valuePreprocessor(TrimOrNullStringFunction.INSTANCE);
+        displayNames = mapBuilder.buildMap();
+        displayDescriptions = mapBuilder.buildMap();
+
+        values = new TransformedInputCollectionBuilder<ValueType>().buildList();
+        encoders = new TransformedInputCollectionBuilder<AttributeEncoder<?>>().buildSet();
     }
 
     /**
@@ -80,212 +86,84 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
      * 
      * @return unique ID of the attribute
      */
-    public String getId() {
+    @Nonnull @NotEmpty public String getId() {
         return id;
     }
 
     /**
-     * Gets the unmodifiable collection of localized human readable name of the attribute. This collection never
-     * contains entries whose key or value are null.
+     * Gets the localized human readable name of the attribute.
      * 
-     * @return human readable name of the attribute, never null
+     * @return human readable name of the attribute
      */
-    public Map<Locale, String> getDisplayNames() {
-        return Collections.unmodifiableMap(displayNames);
+    @Nonnull @NonnullElements public Map<Locale, String> getDisplayNames() {
+        return displayNames;
     }
 
     /**
-     * Replaces the existing display names for this attribute with the given ones. If the given collection is null the
-     * existing display names are cleared and no new ones are added.
+     * Replaces the existing display names for this attribute with the given ones.
      * 
-     * @param newNames the new names for this attribute, may be null
+     * @param newNames the new names for this attribute
      */
-    public void setDisplayNames(final Map<Locale, String> newNames) {
-        displayNames.clear();
-
-        if (newNames == null) {
-            return;
-        }
-
-        for (Entry<Locale, String> entry : newNames.entrySet()) {
-            addDisplayName(entry.getKey(), entry.getValue());
-        }
+    public void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> newNames) {
+        displayNames =
+                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE).putAll(newNames)
+                        .buildMap();
     }
 
     /**
-     * Adds a display name to this attribute.
+     * Gets the localized human readable description of attribute.
      * 
-     * @param locale local of the display name, never null
-     * @param name the display name, never null or empty
-     * 
-     * @return the value that was replaced for the given locale or null if no value was replaced
+     * @return human readable description of attribute
      */
-    public String addDisplayName(final Locale locale, final String name) {
-        Assert.isNotNull(locale, "Display name locale can not be null");
-
-        final String trimmedName =
-                Assert.isNotNull(StringSupport.trimOrNull(name), "Display name can not be null or empty");
-
-        return displayNames.put(locale, trimmedName);
+    @Nonnull @NonnullElements public Map<Locale, String> getDisplayDescriptions() {
+        return displayDescriptions;
     }
 
     /**
-     * Removes the display name for the given locale.
+     * Replaces the existing display descriptions for this attribute with the given ones.
      * 
-     * @param locale locale whose display name will be removed, may be null
-     * 
-     * @return the removed value or null if no value existed for the given locale
+     * @param newDescriptions the new descriptions for this attribute
      */
-    public String removeDisplayName(final Locale locale) {
-        if (locale == null) {
-            return null;
-        }
-
-        return displayNames.remove(locale);
+    public void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> newDescriptions) {
+        displayDescriptions =
+                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE)
+                        .putAll(newDescriptions).buildMap();
     }
 
     /**
-     * Gets the unmodifiable localized human readable description of attribute. This collection never contains entries
-     * whose key or value are null.
+     * Gets the unordered, unmodifiable collection of values of the attribute.
      * 
-     * @return human readable description of attribute, never null
+     * @return values of the attribute
      */
-    public Map<Locale, String> getDisplayDescriptions() {
-        return Collections.unmodifiableMap(displayDescriptions);
+    @Nonnull @NonnullElements public Collection<ValueType> getValues() {
+        return values;
     }
 
     /**
-     * Replaces the existing display descriptions for this attribute with the given ones. If the given collection is
-     * null the existing display descriptions are cleared and no new ones are added.
+     * Replaces the existing values for this attribute with the given values.
      * 
-     * @param newDescriptions the new descriptions for this attribute, may be null
+     * @param newValues the new values for this attribute
      */
-    public void setDisplayDescriptions(final Map<Locale, String> newDescriptions) {
-        displayDescriptions.clear();
-
-        if (newDescriptions == null) {
-            return;
-        }
-
-        for (Entry<Locale, String> entry : newDescriptions.entrySet()) {
-            addDisplayDescription(entry.getKey(), entry.getValue());
-        }
+    public void setValues(@Nullable @NullableElements final Collection<ValueType> newValues) {
+        values = new TransformedInputCollectionBuilder().addAll(newValues).buildSet();
     }
 
     /**
-     * Adds a display description to this attribute.
+     * Gets the list of attribute encoders usable with this attribute.
      * 
-     * @param locale local of the display name, never null
-     * @param description the display description, never null or empty
-     * 
-     * @return the value that was replaced for the given locale or null if no value was replaced
+     * @return attribute encoders usable with this attribute
      */
-    public String addDisplayDescription(final Locale locale, final String description) {
-        Assert.isNotNull(locale, "Display description locale can not be null");
-
-        final String trimmedDescription =
-                Assert.isNotNull(StringSupport.trimOrNull(description), "Display description can not be null or empty");
-
-        return displayDescriptions.put(locale, trimmedDescription);
+    @Nonnull @NonnullElements public Set<AttributeEncoder<?>> getEncoders() {
+        return encoders;
     }
 
     /**
-     * Removes the display description for the given locale.
+     * Replaces the existing encoders for this attribute with the given encoders.
      * 
-     * @param locale locale whose display description will be removed, may be null
-     * 
-     * @return the removed value or null if no value existed for the given locale
+     * @param newEncoders the new encoders for this attribute
      */
-    public String removeDisplayDescription(final Locale locale) {
-        if (locale == null) {
-            return null;
-        }
-
-        return displayDescriptions.remove(locale);
-    }
-
-    /**
-     * Gets the unordered, unmodifiable collection of values of the attribute. This collection never contains null
-     * values.
-     * 
-     * @return values of the attribute, never null
-     */
-    public Collection<ValueType> getValues() {
-        return Collections.unmodifiableCollection(values);
-    }
-
-    /**
-     * Replaces the existing values for this attribute with the given values. If the given collection is null the
-     * existing values are cleared and no new values are added.
-     * 
-     * @param newValues the new values for this attribute, may be null
-     */
-    public void setValues(final Collection<ValueType> newValues) {
-        CollectionSupport.nonNullReplace(newValues, values);
-    }
-
-    /**
-     * Adds a value to this attribute.
-     * 
-     * @param value value to be added, may be null but null values are discarded
-     * 
-     * @return true if a value was added, false otherwise
-     */
-    public boolean addValue(final ValueType value) {
-        return CollectionSupport.nonNullAdd(values, value);
-    }
-
-    /**
-     * Removes a value from this attribute.
-     * 
-     * @param value value to be removed, may be null
-     * 
-     * @return true if a value was removed, false otherwise
-     */
-    public boolean removeValue(final Object value) {
-        return CollectionSupport.nonNullRemove(values, value);
-    }
-
-    /**
-     * Gets the unmodifiable list of attribute encoders usable with this attribute. This collection never contains null
-     * values.
-     * 
-     * @return attribute encoders usable with this attribute, never null
-     */
-    public Set<AttributeEncoder<?>> getEncoders() {
-        return Collections.unmodifiableSet(encoders);
-    }
-
-    /**
-     * Replaces the existing encoders for this attribute with the given encoders. If the given collection is null the
-     * existing encoders are cleared and no new ones are added.
-     * 
-     * @param newEncoders the new encoders for this attribute, may be null
-     */
-    public void setEncoders(final Set<AttributeEncoder<?>> newEncoders) {
-        CollectionSupport.nonNullReplace(newEncoders, encoders);
-    }
-
-    /**
-     * Adds an encoder for this attribute.
-     * 
-     * @param encoder the encode to be added, may be null but null values will be discarded
-     * 
-     * @return true if an encoder was added, false otherwise
-     */
-    public boolean addEncoder(final AttributeEncoder<?> encoder) {
-        return CollectionSupport.nonNullAdd(encoders, encoder);
-    }
-
-    /**
-     * Removes an encoder from this attribute.
-     * 
-     * @param encoder encoder to be removed, may be null
-     * 
-     * @return true if an encoder was removed, false otherwise
-     */
-    public boolean removeEncoder(final AttributeEncoder<?> encoder) {
-        return CollectionSupport.nonNullRemove(encoders, encoder);
+    public void setEncoders(@Nullable @NullableElements final Set<AttributeEncoder<?>> newEncoders) {
+        encoders = new TransformedInputCollectionBuilder().addAll(newEncoders).buildSet();
     }
 
     /** {@inheritDoc} */
@@ -306,7 +184,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
             clone.setDisplayNames(getDisplayNames());
             clone.setEncoders(getEncoders());
             clone.setValues(getValues());
-            return (Attribute) super.clone();
+            return clone;
         } catch (CloneNotSupportedException e) {
             // nothing to do, all Attribute's must support clone
             return null;
@@ -315,11 +193,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
 
     /** {@inheritDoc} */
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ObjectSupport.hashCode(id);
-        result = prime * result + ObjectSupport.hashCode(values);
-        return result;
+        return Objects.hashCode(id, values);
     }
 
     /** {@inheritDoc} */
@@ -337,11 +211,12 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
         }
 
         Attribute other = (Attribute) obj;
-        return ObjectSupport.equals(id, other.getId());
+        return Objects.equal(id, other.getId());
     }
 
     /** {@inheritDoc} */
     public String toString() {
-        return "Attribute:" + getId();
+        return Objects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
+                .add("displayDescriptions", displayDescriptions).add("encoders", encoders).toString();
     }
 }
