@@ -23,15 +23,14 @@ import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentSupport;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
-import org.opensaml.util.component.UninitializedComponentException;
-import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;

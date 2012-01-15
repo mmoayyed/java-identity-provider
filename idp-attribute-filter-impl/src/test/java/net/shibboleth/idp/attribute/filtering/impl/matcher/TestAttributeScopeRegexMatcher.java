@@ -22,12 +22,13 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponentException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * Rest for the {@link AttributeScopeRegexMatcher} class.
@@ -72,7 +73,7 @@ public class TestAttributeScopeRegexMatcher {
         ScopedAttributeValue aAtfoobar = new ScopedAttributeValue("a", "fooobar");
         ScopedAttributeValue aAtflo = new ScopedAttributeValue("a", "flo");
         ScopedAttributeValue fooAta = new ScopedAttributeValue("foo", "a");
-        final Collection values = CollectionSupport.toList((Object) "foo", aAtfoo, aAtfoobar, aAtflo, fooAta);
+        final Collection values = Lists.newArrayList((Object) "foo", aAtfoo, aAtfoobar, aAtflo, fooAta);
         attribute.setValues(values);
 
         thrown = false;

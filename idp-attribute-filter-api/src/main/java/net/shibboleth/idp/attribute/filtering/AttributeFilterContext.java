@@ -21,15 +21,23 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.LazyList;
-import org.opensaml.util.collections.LazyMap;
 
 /** Context used to collect data as attributes are filtered. */
 @NotThreadSafe
@@ -55,7 +63,7 @@ public final class AttributeFilterContext implements Subcontext {
      * 
      * @param parent the parent of this context
      */
-    public AttributeFilterContext(final SubcontextContainer parent) {
+    public AttributeFilterContext(@Nullable final SubcontextContainer parent) {
         if (parent != null) {
             parentContext = parent;
             parent.addSubcontext(this);
@@ -63,79 +71,53 @@ public final class AttributeFilterContext implements Subcontext {
             parentContext = null;
         }
 
-        prefilteredAttributes = new LazyMap<String, Attribute<?>>();
-        permittedValues = new LazyMap<String, Collection<?>>();
-        deniedValues = new LazyMap<String, Collection<?>>();
-        filteredAttributes = new LazyMap<String, Attribute<?>>();
+        TransformedInputMapBuilder mapBuilder =
+                new TransformedInputMapBuilder().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+        prefilteredAttributes = mapBuilder.buildMap();
+        permittedValues = mapBuilder.buildMap();
+        deniedValues = mapBuilder.buildMap();
+        filteredAttributes = mapBuilder.buildMap();
     }
 
     /** {@inheritDoc} */
-    public SubcontextContainer getOwner() {
+    @Nullable public SubcontextContainer getOwner() {
         return parentContext;
     }
 
     /**
-     * Gets the unmodifiable collection of attributes that are to be filtered, indexed by attribute ID. The returned
-     * collection is never null nor does it contain any null keys or values.
+     * Gets the collection of attributes that are to be filtered, indexed by attribute ID.
      * 
-     * @return attributes to be filtered, never null
+     * @return attributes to be filtered
      */
-    public Map<String, Attribute<?>> getPrefilteredAttributes() {
-        return Collections.unmodifiableMap(prefilteredAttributes);
+    @Nonnull @NonnullElements public Map<String, Attribute<?>> getPrefilteredAttributes() {
+        return prefilteredAttributes;
     }
 
     /**
      * Sets the attributes which are to be filtered.
      * 
-     * @param attributes attributes which are to be filtered, may be or contain null
+     * @param attributes attributes which are to be filtered
      */
-    public void setPrefilteredAttributes(final Collection<Attribute<?>> attributes) {
-        prefilteredAttributes.clear();
+    public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<Attribute<?>> attributes) {
+        TransformedInputMapBuilder<String, Attribute<?>> mapBuilder =
+                new TransformedInputMapBuilder<String, Attribute<?>>()
+                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
 
         if (attributes != null) {
             for (Attribute<?> attribute : attributes) {
-                addPrefilteredAttribute(attribute);
+                mapBuilder.put(attribute.getId(), attribute);
             }
         }
+
+        prefilteredAttributes = mapBuilder.buildMap();
     }
 
     /**
-     * Adds an attribute to be filtered.
+     * Gets the collection of attribute values, indexed by ID, that are permitted to be released.
      * 
-     * @param attribute attribute to be filtered, may be null
-     * 
-     * @return the attribute replaced by the newly added attribute, or null if no attribute was replaced
+     * @return collection of attribute values, indexed by ID, that are permitted to be released,
      */
-    public Attribute<?> addPrefilteredAttribute(final Attribute<?> attribute) {
-        if (attribute == null) {
-            return null;
-        }
-
-        return prefilteredAttributes.put(attribute.getId(), attribute);
-    }
-
-    /**
-     * Removes an attribute to be filtered.
-     * 
-     * @param attributeId ID of the attribute to be removed
-     * 
-     * @return the attribute that was removed or null if no attribute with the given identifier was to be filtered
-     */
-    public Attribute<?> removePrefilteredAttribute(final String attributeId) {
-        final String trimmedId = StringSupport.trimOrNull(attributeId);
-        if (trimmedId == null) {
-            return null;
-        }
-
-        return prefilteredAttributes.remove(trimmedId);
-    }
-
-    /**
-     * Gets the unmodifiable collection of attribute values, indexed by ID, that are permitted to be released.
-     * 
-     * @return collection of attribute values, indexed by ID, that are permitted to be released, never null
-     */
-    public Map<String, Collection<?>> getPermittedAttributeValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection<?>> getPermittedAttributeValues() {
         return Collections.unmodifiableMap(permittedValues);
     }
 
@@ -145,10 +127,11 @@ public final class AttributeFilterContext implements Subcontext {
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
      * {@link Attribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 
-     * @param attributeId ID of the attribute whose values are permitted to be released, can not be null or empty
-     * @param attributeValues values for the attribute that are permitted to be released, may be null or empty
+     * @param attributeId ID of the attribute whose values are permitted to be released
+     * @param attributeValues values for the attribute that are permitted to be released
      */
-    public void addPermittedAttributeValues(String attributeId, Collection<?> attributeValues) {
+    public void addPermittedAttributeValues(@Nonnull @NotEmpty String attributeId,
+            @Nullable @NullableElements Collection<?> attributeValues) {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
@@ -160,7 +143,7 @@ public final class AttributeFilterContext implements Subcontext {
 
         Collection permittedAttributeValues = permittedValues.get(trimmedAttributeId);
         if (permittedAttributeValues == null) {
-            permittedAttributeValues = new LazyList();
+            permittedAttributeValues = new TransformedInputCollectionBuilder().buildList();
             permittedValues.put(trimmedAttributeId, permittedAttributeValues);
         }
 
@@ -181,9 +164,9 @@ public final class AttributeFilterContext implements Subcontext {
     /**
      * Gets the unmodifiable collection of attribute values, indexed by ID, that are not permitted to be released.
      * 
-     * @return collection of attribute values, indexed by ID, that are not permitted to be released, never null
+     * @return collection of attribute values, indexed by ID, that are not permitted to be released
      */
-    public Map<String, Collection<?>> getDeniedAttributeValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection<?>> getDeniedAttributeValues() {
         return Collections.unmodifiableMap(deniedValues);
     }
 
@@ -193,10 +176,11 @@ public final class AttributeFilterContext implements Subcontext {
      * {@link IllegalArgumentException}. Attempting to add an attribute value that is not a member of
      * {@link Attribute#getValues()} will result in an {@link IllegalArgumentException}.
      * 
-     * @param attributeId ID of the attribute whose values are not permitted to be released, can not be null or empty
-     * @param attributeValues values for the attribute that are not permitted to be released, may be null or empty
+     * @param attributeId ID of the attribute whose values are not permitted to be released
+     * @param attributeValues values for the attribute that are not permitted to be released
      */
-    public void addDeniedAttributeValues(String attributeId, Collection<?> attributeValues) {
+    public void addDeniedAttributeValues(@Nonnull @NotEmpty String attributeId,
+            @Nullable @NullableElements Collection<?> attributeValues) {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
@@ -208,7 +192,7 @@ public final class AttributeFilterContext implements Subcontext {
 
         Collection deniedAttributeValues = deniedValues.get(trimmedAttributeId);
         if (deniedAttributeValues == null) {
-            deniedAttributeValues = new LazyList();
+            deniedAttributeValues = new TransformedInputCollectionBuilder().buildList();
             deniedValues.put(trimmedAttributeId, deniedAttributeValues);
         }
 
@@ -227,58 +211,30 @@ public final class AttributeFilterContext implements Subcontext {
     }
 
     /**
-     * Gets the unmodifiable collection of attributes, indexed by ID, left after the filtering process has run. The
-     * returned collection is never null nor does it contain any null keys or values.
+     * Gets the collection of attributes, indexed by ID, left after the filtering process has run.
      * 
-     * @return attributes left after the filtering process has run, never null
+     * @return attributes left after the filtering process has run
      */
-    public Map<String, Attribute<?>> getFilteredAttributes() {
-        return Collections.unmodifiableMap(filteredAttributes);
+    @Nonnull @NonnullElements public Map<String, Attribute<?>> getFilteredAttributes() {
+        return filteredAttributes;
     }
 
     /**
      * Sets the attributes that have been filtered.
      * 
-     * @param attributes attributes that have been filtered, may be or contain null
+     * @param attributes attributes that have been filtered
      */
-    public void setFilteredAttributes(final Collection<Attribute<?>> attributes) {
-        filteredAttributes.clear();
+    public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute<?>> attributes) {
+        TransformedInputMapBuilder<String, Attribute<?>> mapBuilder =
+                new TransformedInputMapBuilder<String, Attribute<?>>()
+                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
 
         if (attributes != null) {
             for (Attribute<?> attribute : attributes) {
-                addFilteredAttribute(attribute);
+                mapBuilder.put(attribute.getId(), attribute);
             }
         }
-    }
 
-    /**
-     * Adds an attribute that has been filtered.
-     * 
-     * @param attribute attribute that has been filtered, may be null
-     * 
-     * @return the attribute replaced by the newly added attribute, or null if no attribute was replaced
-     */
-    public Attribute<?> addFilteredAttribute(final Attribute<?> attribute) {
-        if (attribute == null) {
-            return null;
-        }
-
-        return filteredAttributes.put(attribute.getId(), attribute);
-    }
-
-    /**
-     * Removes an attribute that has been filtered.
-     * 
-     * @param attributeId ID of the attribute to be removed
-     * 
-     * @return the attribute that was removed or null if no attribute with the given identifier had been filtered
-     */
-    public Attribute<?> removeFilteredAttribute(final String attributeId) {
-        final String trimmedId = StringSupport.trimOrNull(attributeId);
-        if (trimmedId == null) {
-            return null;
-        }
-
-        return filteredAttributes.remove(trimmedId);
+        filteredAttributes = mapBuilder.buildMap();
     }
 }

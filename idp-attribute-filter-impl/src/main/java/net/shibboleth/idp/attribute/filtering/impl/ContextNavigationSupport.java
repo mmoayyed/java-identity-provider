@@ -23,12 +23,12 @@ import net.shibboleth.idp.session.AuthenticationEvent;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.IdPSessionSubcontext;
 import net.shibboleth.idp.session.ServiceSession;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.StringSupport;
 import org.opensaml.util.criteria.EvaluationException;
 import org.slf4j.LoggerFactory;
 

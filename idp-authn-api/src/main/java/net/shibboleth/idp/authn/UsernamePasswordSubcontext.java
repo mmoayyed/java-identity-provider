@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.authn;
 
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import org.opensaml.messaging.context.AbstractSubcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 
 /**
  * Context, usually attached to {@link AuthenticationRequestContext}, that carries a username/password pair to be

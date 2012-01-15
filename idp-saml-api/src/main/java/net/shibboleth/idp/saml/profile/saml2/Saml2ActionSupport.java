@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.saml2;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
@@ -27,7 +29,6 @@ import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Conditions;
 import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.Response;
-import org.opensaml.util.constraint.documented.NotNull;
 import org.opensaml.xml.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,8 @@ public final class Saml2ActionSupport {
      * 
      * @return the assertion that was added to the response
      */
-    @NotNull
-    public static Assertion addAssertionToResponse(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final RelyingPartySubcontext relyingPartyContext, @NotNull final Response response) {
+    @Nonnull public static Assertion addAssertionToResponse(@Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final RelyingPartySubcontext relyingPartyContext, @Nonnull final Response response) {
 
         final SAMLObjectBuilder<Assertion> assertionBuilder =
                 (SAMLObjectBuilder<Assertion>) Configuration.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
@@ -96,9 +96,8 @@ public final class Saml2ActionSupport {
      * 
      * @return the {@link Conditions} that already existed on, or the one that was added to, the {@link Assertion}
      */
-    @NotNull
-    public static Conditions addConditionsToAssertion(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final Assertion assertion) {
+    @Nonnull public static Conditions addConditionsToAssertion(@Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final Assertion assertion) {
         Conditions conditions = assertion.getConditions();
         if (conditions == null) {
             final SAMLObjectBuilder<Conditions> conditionsBuilder =

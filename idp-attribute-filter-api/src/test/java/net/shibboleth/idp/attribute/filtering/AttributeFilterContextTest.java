@@ -18,20 +18,20 @@
 package net.shibboleth.idp.attribute.filtering;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.shibboleth.idp.attribute.Attribute;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazyList;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterContextTest {
 
     /** Test that post-construction state is what is expected. */
-    @Test
-    public void testPostConstructionState() {
+    @Test public void testPostConstructionState() {
         AttributeFilterContext context = new AttributeFilterContext(null);
         Assert.assertNotNull(context.getFilteredAttributes());
         Assert.assertTrue(context.getFilteredAttributes().isEmpty());
@@ -45,19 +45,18 @@ public class AttributeFilterContextTest {
     }
 
     /** Test methods related to prefiltered attributes. */
-    @Test
-    public void testPrefilteredAttributes() {
+    @Test public void testPrefilteredAttributes() {
         AttributeFilterContext context = new AttributeFilterContext(null);
 
         Attribute<?> attribute1 = new Attribute<String>("attribute1");
-        context.addPrefilteredAttribute(attribute1);
+        context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 1);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
 
         Attribute<?> attribute2 = new Attribute<String>("attribute2");
         Attribute<?> attribute3 = new Attribute<String>("attribute3");
-        LazyList<Attribute<?>> attributes = CollectionSupport.toList(attribute2, attribute3);
+        List<Attribute<?>> attributes = Lists.newArrayList(attribute2, attribute3);
         context.setPrefilteredAttributes(attributes);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
         Assert.assertFalse(context.getPrefilteredAttributes().containsKey("attribute1"));
@@ -66,7 +65,7 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
 
-        context.addPrefilteredAttribute(attribute1);
+        context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 3);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
@@ -75,7 +74,7 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
 
-        context.removePrefilteredAttribute("attribute2");
+        context.getPrefilteredAttributes().remove("attribute2");
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
@@ -83,14 +82,21 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
 
-        context.addPrefilteredAttribute(null);
+        context.getPrefilteredAttributes().put(null, new Attribute("foo"));
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
 
-        context.removePrefilteredAttribute(null);
+        context.getPrefilteredAttributes().put("foo", null);
+        Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
+        Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
+        Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
+        Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
+        Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
+
+        context.getPrefilteredAttributes().remove(null);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
@@ -100,29 +106,21 @@ public class AttributeFilterContextTest {
         context.setPrefilteredAttributes(null);
         Assert.assertNotNull(context.getPrefilteredAttributes());
         Assert.assertTrue(context.getPrefilteredAttributes().isEmpty());
-
-        try {
-            context.getPrefilteredAttributes().put(attribute2.getId(), attribute2);
-            Assert.fail();
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
     }
 
     /** Test methods related to filtered attributes. */
-    @Test
-    public void testFilteredAttributes() {
+    @Test public void testFilteredAttributes() {
         AttributeFilterContext context = new AttributeFilterContext(null);
 
         Attribute<?> attribute1 = new Attribute<String>("attribute1");
-        context.addFilteredAttribute(attribute1);
+        context.getFilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getFilteredAttributes().size(), 1);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
 
         Attribute<?> attribute2 = new Attribute<String>("attribute2");
         Attribute<?> attribute3 = new Attribute<String>("attribute3");
-        LazyList<Attribute<?>> attributes = CollectionSupport.toList(attribute2, attribute3);
+        List<Attribute<?>> attributes = Lists.newArrayList(attribute2, attribute3);
         context.setFilteredAttributes(attributes);
         Assert.assertEquals(context.getFilteredAttributes().size(), 2);
         Assert.assertFalse(context.getFilteredAttributes().containsKey("attribute1"));
@@ -131,7 +129,7 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
 
-        context.addFilteredAttribute(attribute1);
+        context.getFilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getFilteredAttributes().size(), 3);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
@@ -140,7 +138,7 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
 
-        context.removeFilteredAttribute("attribute2");
+        context.getFilteredAttributes().remove("attribute2");
         Assert.assertEquals(context.getFilteredAttributes().size(), 2);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
@@ -148,14 +146,21 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
 
-        context.addFilteredAttribute(null);
+        context.getFilteredAttributes().put(null, new Attribute("foo"));
         Assert.assertEquals(context.getFilteredAttributes().size(), 2);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
 
-        context.removeFilteredAttribute(null);
+        context.getFilteredAttributes().put("foo", null);
+        Assert.assertEquals(context.getFilteredAttributes().size(), 2);
+        Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
+        Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
+        Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
+        Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
+
+        context.getFilteredAttributes().remove(null);
         Assert.assertEquals(context.getFilteredAttributes().size(), 2);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
@@ -165,114 +170,105 @@ public class AttributeFilterContextTest {
         context.setFilteredAttributes(null);
         Assert.assertNotNull(context.getFilteredAttributes());
         Assert.assertTrue(context.getFilteredAttributes().isEmpty());
-
-        try {
-            context.getFilteredAttributes().put(attribute2.getId(), attribute2);
-            Assert.fail();
-        } catch (UnsupportedOperationException e) {
-            // expected this
-        }
     }
-    
-    /** Testing getting and adding permitted attribute values. */ 
-    @Test
-    public void testPermittedAttributeValues() {
+
+    /** Testing getting and adding permitted attribute values. */
+    @Test public void testPermittedAttributeValues() {
         AttributeFilterContext context = new AttributeFilterContext(null);
-        
+
         Attribute attribute1 = new Attribute<String>("one");
-        attribute1.addValue("a");
-        attribute1.addValue("b");
-        context.addPrefilteredAttribute(attribute1);
-        
-        context.addPermittedAttributeValues("one", CollectionSupport.toList("a"));
+        attribute1.getValues().add("a");
+        attribute1.getValues().add("b");
+        context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+
+        context.addPermittedAttributeValues("one", Lists.newArrayList("a"));
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
 
         context.addPermittedAttributeValues("one", null);
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
-        
+
         context.addPermittedAttributeValues("one", new ArrayList<String>());
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
-        
-        context.addPermittedAttributeValues("one", CollectionSupport.toList("b"));
+
+        context.addPermittedAttributeValues("one", Lists.newArrayList("b"));
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 2);
-        
-        try{
-            context.addPermittedAttributeValues(null, CollectionSupport.toList("a"));
+
+        try {
+            context.addPermittedAttributeValues(null, Lists.newArrayList("a"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (AssertionError e) {
+            // expected this
         }
-        
-        try{
-            context.addPermittedAttributeValues("", CollectionSupport.toList("a"));
+
+        try {
+            context.addPermittedAttributeValues("", Lists.newArrayList("a"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (AssertionError e) {
+            // expected this
         }
-        
-        try{
-            context.addPermittedAttributeValues("two", CollectionSupport.toList("a"));
+
+        try {
+            context.addPermittedAttributeValues("two", Lists.newArrayList("a"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (AssertionError e) {
+            // expected this
         }
-        
-        try{
-            context.addPermittedAttributeValues("one", CollectionSupport.toList("c"));
+
+        try {
+            context.addPermittedAttributeValues("one", Lists.newArrayList("c"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (IllegalArgumentException e) {
+            // expected this
         }
     }
-    
-    /** Testing getting and adding denied attribute values. */ 
-    @Test
-    public void testDeniedAttributeValues() {
+
+    /** Testing getting and adding denied attribute values. */
+    @Test public void testDeniedAttributeValues() {
         AttributeFilterContext context = new AttributeFilterContext(null);
-        
+
         Attribute attribute1 = new Attribute<String>("one");
-        attribute1.addValue("a");
-        attribute1.addValue("b");
-        context.addPrefilteredAttribute(attribute1);
-        
-        context.addDeniedAttributeValues("one", CollectionSupport.toList("a"));
+        attribute1.getValues().add("a");
+        attribute1.getValues().add("b");
+        context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+
+        context.addDeniedAttributeValues("one", Lists.newArrayList("a"));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
-        
+
         context.addDeniedAttributeValues("one", null);
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
-        
+
         context.addDeniedAttributeValues("one", new ArrayList<String>());
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
-        
-        context.addDeniedAttributeValues("one", CollectionSupport.toList("b"));
+
+        context.addDeniedAttributeValues("one", Lists.newArrayList("b"));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 2);
-        
-        try{
-            context.addDeniedAttributeValues(null, CollectionSupport.toList("a"));
+
+        try {
+            context.addDeniedAttributeValues(null, Lists.newArrayList("a"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (AssertionError e) {
+            // expected this
         }
-        
-        try{
-            context.addDeniedAttributeValues("", CollectionSupport.toList("a"));
+
+        try {
+            context.addDeniedAttributeValues("", Lists.newArrayList("a"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (AssertionError e) {
+            // expected this
         }
-        
-        try{
-            context.addDeniedAttributeValues("two", CollectionSupport.toList("a"));
+
+        try {
+            context.addDeniedAttributeValues("two", Lists.newArrayList("a"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (AssertionError e) {
+            // expected this
         }
-        
-        try{
-            context.addDeniedAttributeValues("one", CollectionSupport.toList("c"));
+
+        try {
+            context.addDeniedAttributeValues("one", Lists.newArrayList("c"));
             Assert.fail();
-        }catch(IllegalArgumentException e){
-            //expected this
+        } catch (IllegalArgumentException e) {
+            // expected this
         }
     }
 }

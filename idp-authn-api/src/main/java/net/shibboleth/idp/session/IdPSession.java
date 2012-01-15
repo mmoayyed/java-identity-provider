@@ -24,11 +24,11 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.IdentifiableComponent;
 
 /**
  * An identity provider session.

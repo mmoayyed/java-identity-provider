@@ -17,18 +17,20 @@
 
 package net.shibboleth.idp.metadata;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazyList;
-import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.resolver.Resolver;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
+
 import org.opensaml.util.criteria.CriteriaSet;
-import org.opensaml.util.resolver.Resolver;
-import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * A {@link MetadataResolver} implementation that answers requests by composing the answers of child
@@ -48,14 +50,9 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiabl
      * @param composedResolvers resolvers composed by this resolver, may be null or contain null elements
      */
     public CompositeMetadataResolver(final List<Resolver<MetadataType, CriteriaSet>> composedResolvers) {
-        if (composedResolvers == null || composedResolvers.isEmpty()) {
-            resolvers = Collections.emptyList();
-        } else {
-            LazyList<Resolver<MetadataType, CriteriaSet>> checkedResolvers =
-                    CollectionSupport
-                            .addNonNull(composedResolvers, new LazyList<Resolver<MetadataType, CriteriaSet>>());
-            resolvers = Collections.unmodifiableList(checkedResolvers);
-        }
+        resolvers =
+                ImmutableList.<Resolver<MetadataType, CriteriaSet>> builder()
+                        .addAll(Iterables.filter(composedResolvers, Predicates.notNull())).build();
     }
 
     /** {@inheritDoc} */
@@ -113,14 +110,9 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiabl
          */
         public CompositeMetadataResolverIterable(final List<Resolver<MetadataType, CriteriaSet>> composedResolvers,
                 final CriteriaSet metadataCritiera) {
-            if (composedResolvers == null || composedResolvers.isEmpty()) {
-                resolvers = Collections.emptyList();
-            } else {
-                LazyList<Resolver<MetadataType, CriteriaSet>> checkedResolvers =
-                        CollectionSupport.addNonNull(composedResolvers,
-                                new LazyList<Resolver<MetadataType, CriteriaSet>>());
-                resolvers = Collections.unmodifiableList(checkedResolvers);
-            }
+            resolvers =
+                    ImmutableList.<Resolver<MetadataType, CriteriaSet>> builder()
+                            .addAll(Iterables.filter(composedResolvers, Predicates.notNull())).build();
 
             criteria = CollectionSupport.addNonNull(metadataCritiera, new CriteriaSet());
 

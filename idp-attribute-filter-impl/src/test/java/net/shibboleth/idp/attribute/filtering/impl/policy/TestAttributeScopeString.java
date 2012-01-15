@@ -17,17 +17,18 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
-import java.util.Set;
+import java.util.List;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** tests for the Attribute Scope String criterion. */
 public class TestAttributeScopeString {
@@ -41,8 +42,7 @@ public class TestAttributeScopeString {
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException if the only non bracketed initialize throws an error
      */
-    @Test
-    public void attributeScopeStringCriterionBadParamsTest() throws EvaluationException,
+    @Test public void attributeScopeStringCriterionBadParamsTest() throws EvaluationException,
             ComponentInitializationException {
         AttributeScopeStringCriterion filter;
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
@@ -107,16 +107,14 @@ public class TestAttributeScopeString {
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void attributeScopeStringCriterionTest() throws EvaluationException, ComponentInitializationException {
+    @Test public void attributeScopeStringCriterionTest() throws EvaluationException, ComponentInitializationException {
         Attribute<Object> attribute = new Attribute<Object>(ATTR_NAME);
 
-        attribute.setValues(CollectionSupport.toSet("val1", new ScopedAttributeValue("foo", "bar"),
+        attribute.setValues(Lists.newArrayList("val1", new ScopedAttributeValue("foo", "bar"),
                 new ScopedAttributeValue("BAR", "foo")));
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
 
-        Set s = CollectionSupport.toSet(attribute);
-        filterContext.setPrefilteredAttributes(s);
+        filterContext.setPrefilteredAttributes((List) Lists.newArrayList(attribute));
 
         AttributeScopeStringCriterion filter = new AttributeScopeStringCriterion();
         filter.setMatchString("FRED");

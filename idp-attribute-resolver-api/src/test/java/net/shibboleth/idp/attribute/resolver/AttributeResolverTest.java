@@ -21,13 +21,14 @@ import java.util.Collections;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.collection.LazyList;
+import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazyList;
-import org.opensaml.util.collections.LazySet;
-import org.opensaml.util.component.ComponentValidationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 //TODO test during resolve: failover, requested attributes, bad pluginIDs, plugin throwing error, error propagation
 
@@ -35,8 +36,7 @@ import org.testng.annotations.Test;
 public class AttributeResolverTest {
 
     /** Test post-instantiation state. */
-    @Test
-    public void testInstantiation() throws Exception {
+    @Test public void testInstantiation() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
         resolver.initialize();
@@ -49,8 +49,7 @@ public class AttributeResolverTest {
     }
 
     /** Test getting, setting, overwriting, defensive collection copy. */
-    @Test
-    public void testSetAttributeDefinitions() throws Exception {
+    @Test public void testSetAttributeDefinitions() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -82,8 +81,7 @@ public class AttributeResolverTest {
     }
 
     /** Test getting, setting, overwriting, defensive collection copy. */
-    @Test
-    public void testSetDataConnectors() throws Exception {
+    @Test public void testSetDataConnectors() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -115,8 +113,7 @@ public class AttributeResolverTest {
     }
 
     /** Test that a simple resolve returns the expected results. */
-    @Test
-    public void testResolve() throws Exception {
+    @Test public void testResolve() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -136,8 +133,7 @@ public class AttributeResolverTest {
     }
 
     /** Test that resolve w/ dependencies returns the expected results. */
-    @Test
-    public void testResolveWithDependencies() throws Exception {
+    @Test public void testResolveWithDependencies() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -145,14 +141,14 @@ public class AttributeResolverTest {
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
-        ad1.setDependencies(CollectionSupport.toList(dep1));
+        ad1.setDependencies(Lists.newArrayList(dep1));
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute<String>("test"));
 
         ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1", null);
         ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2", null);
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
-        ad0.setDependencies(CollectionSupport.toList(dep2, dep3));
+        ad0.setDependencies(Lists.newArrayList(dep2, dep3));
 
         LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
         connectors.add(dc1);
@@ -178,8 +174,7 @@ public class AttributeResolverTest {
      * Test that after resolution attribute definitions which returned null values don't have their results show up in
      * the resolved attribute set.
      */
-    @Test
-    public void testResolveCleanNullAttributes() throws Exception {
+    @Test public void testResolveCleanNullAttributes() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -198,8 +193,7 @@ public class AttributeResolverTest {
      * Test that after resolution attribute definitions which are marked as dependency only don't have their results
      * show up in the resolved attribute set.
      */
-    @Test
-    public void testResolveCleanDependencyOnly() throws Exception {
+    @Test public void testResolveCleanDependencyOnly() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -221,8 +215,7 @@ public class AttributeResolverTest {
     }
 
     /** Test that after resolution that the values for a resolved attribute are deduped. */
-    @Test
-    public void testResolveCleanDuplicateValues() throws Exception {
+    @Test public void testResolveCleanDuplicateValues() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -251,8 +244,7 @@ public class AttributeResolverTest {
      * Test that after resolution attribute definitions whose resultant attribute contains no value don't have their
      * results show up in the resolved attribute set.
      */
-    @Test
-    public void testResolveCleanEmptyValueAttributes() throws Exception {
+    @Test public void testResolveCleanEmptyValueAttributes() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -274,8 +266,7 @@ public class AttributeResolverTest {
     }
 
     /** Test a simple, expected-to-be-valid, configuration. */
-    @Test
-    public void testSimpleValidate() throws Exception {
+    @Test public void testSimpleValidate() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -283,14 +274,14 @@ public class AttributeResolverTest {
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
-        ad1.setDependencies(CollectionSupport.toList(dep1));
+        ad1.setDependencies(Lists.newArrayList(dep1));
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute<String>("test"));
 
         ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1", null);
         ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2", null);
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
-        ad0.setDependencies(CollectionSupport.toList(dep2, dep3));
+        ad0.setDependencies(Lists.newArrayList(dep2, dep3));
 
         LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
         connectors.add(dc1);
@@ -306,8 +297,7 @@ public class AttributeResolverTest {
     }
 
     /** Test validation when a plugin throws a validation exception. */
-    @Test
-    public void testInvalidPluginValidate() throws Exception {
+    @Test public void testInvalidPluginValidate() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -329,8 +319,7 @@ public class AttributeResolverTest {
     }
 
     /** Tests that an invalid data connector fails over to the failover connector if its invalid. */
-    @Test
-    public void testDataConnectorFailoverDuringValidate() throws Exception {
+    @Test public void testDataConnectorFailoverDuringValidate() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
@@ -348,18 +337,17 @@ public class AttributeResolverTest {
     }
 
     /** Test that validation fails when a plugin depends on a non-existent plugin. */
-    @Test
-    public void testBadPluginIdValidate() throws Exception {
+    @Test public void testBadPluginIdValidate() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
-        ad1.setDependencies(CollectionSupport.toList(dep1));
+        ad1.setDependencies(Lists.newArrayList(dep1));
 
         ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1", null);
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
-        ad0.setDependencies(CollectionSupport.toList(dep2));
+        ad0.setDependencies(Lists.newArrayList(dep2));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
         definitions.add(ad0);
@@ -375,7 +363,7 @@ public class AttributeResolverTest {
 
         ResolverPluginDependency dep3 = new ResolverPluginDependency("ad0", null);
         ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
-        ad0.setDependencies(CollectionSupport.toList(dep3));
+        ad0.setDependencies(Lists.newArrayList(dep3));
         definitions = new LazySet<BaseAttributeDefinition>();
         definitions.add(ad0);
         resolver.setAttributeDefinition(definitions);
@@ -389,13 +377,12 @@ public class AttributeResolverTest {
     }
 
     /** Test that validation fails when there are circular dependencies between plugins. */
-    @Test
-    public void testCircularDependencyValidation() throws Exception {
+    @Test public void testCircularDependencyValidation() throws Exception {
         AttributeResolver resolver = new AttributeResolver();
         resolver.setId(" foo ");
 
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
-        ad1.setDependencies(CollectionSupport.toList(new ResolverPluginDependency("ad1", null)));
+        ad1.setDependencies(Lists.newArrayList(new ResolverPluginDependency("ad1", null)));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
         definitions.add(ad1);
@@ -409,17 +396,17 @@ public class AttributeResolverTest {
         }
 
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
-        dc1.setDependencies(CollectionSupport.toList(new ResolverPluginDependency("ad0", null)));
+        dc1.setDependencies(Lists.newArrayList(new ResolverPluginDependency("ad0", null)));
 
         ad1 = new MockAttributeDefinition("ad1", new Attribute<String>("test"));
-        ad1.setDependencies(CollectionSupport.toList(new ResolverPluginDependency("dc1", null)));
+        ad1.setDependencies(Lists.newArrayList(new ResolverPluginDependency("dc1", null)));
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute<String>("test"));
-        ad2.setDependencies(CollectionSupport.toList(new ResolverPluginDependency("dc1", null)));
+        ad2.setDependencies(Lists.newArrayList(new ResolverPluginDependency("dc1", null)));
 
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute<String>("test"));
-        ad0.setDependencies(CollectionSupport.toList(new ResolverPluginDependency("ad1", null),
-                new ResolverPluginDependency("ad2", null)));
+        ad0.setDependencies(Lists.newArrayList(new ResolverPluginDependency("ad1", null), new ResolverPluginDependency(
+                "ad2", null)));
 
         LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
         connectors.add(dc1);

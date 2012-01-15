@@ -24,12 +24,13 @@ import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeValue;
-import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * {@link Saml1ByteAttributeEncoder} Unit test.
@@ -47,13 +48,11 @@ public class Saml2StringAttributeEncoderTest {
     /** A second test value. */
     private final static String STRING_2 = "Second string the value is";
 
-    @BeforeSuite()
-    public void initOpenSAML() throws InitializationException {
+    @BeforeSuite() public void initOpenSAML() throws InitializationException {
         InitializationService.initialize();
     }
 
-    @Test
-    public void testEmpty() throws Exception {
+    @Test public void testEmpty() throws Exception {
         final Saml2StringAttributeEncoder encoder = new Saml2StringAttributeEncoder();
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
 
@@ -64,11 +63,10 @@ public class Saml2StringAttributeEncoderTest {
         Assert.assertNull(outputAttribute, "Encoding the empty set should yield a null attribute");
     }
 
-    @Test
-    public void testInappropriate() throws Exception {
+    @Test public void testInappropriate() throws Exception {
         final Saml2StringAttributeEncoder encoder = new Saml2StringAttributeEncoder();
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<Object> values = CollectionSupport.toSet(new Integer(3), new Object(), intArray);
+        final Collection<Object> values = Lists.newArrayList(new Integer(3), new Object(), intArray);
 
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -78,10 +76,9 @@ public class Saml2StringAttributeEncoderTest {
         Assert.assertNull(outputAttribute, "Encoding a series of invalid inputs should yield a null attribute");
     }
 
-    @Test
-    public void testSingle() throws Exception {
+    @Test public void testSingle() throws Exception {
         final Saml2StringAttributeEncoder encoder = new Saml2StringAttributeEncoder();
-        final Collection<Object> values = CollectionSupport.toSet(new Object(), STRING_1);
+        final Collection<Object> values = Lists.newArrayList(new Object(), STRING_1);
 
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -107,10 +104,9 @@ public class Saml2StringAttributeEncoderTest {
         Assert.assertEquals(childAsString.getValue(), STRING_1, "Input equals output");
     }
 
-    @Test
-    public void testMulti() throws Exception {
+    @Test public void testMulti() throws Exception {
         final Saml2StringAttributeEncoder encoder = new Saml2StringAttributeEncoder();
-        final Collection<Object> values = CollectionSupport.toSet(new Object(), STRING_1, STRING_2);
+        final Collection<Object> values = Lists.newArrayList(new Object(), STRING_1, STRING_2);
 
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);

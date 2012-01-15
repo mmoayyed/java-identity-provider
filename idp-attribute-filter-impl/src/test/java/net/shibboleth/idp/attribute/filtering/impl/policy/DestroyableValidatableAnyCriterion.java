@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
-import org.opensaml.util.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /**
  *

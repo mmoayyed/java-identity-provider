@@ -24,14 +24,13 @@ import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.collection.LazyMap;
+import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazyMap;
-import org.opensaml.util.collections.LazySet;
 
 /** A context which carries and collects information through an attribute resolution. */
 @NotThreadSafe

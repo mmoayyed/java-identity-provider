@@ -27,14 +27,15 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazySet;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /**
  * Implementation of Mapped Attributes.
@@ -144,7 +145,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
                     + " is being initialized, without value maps being set");
         }
         // Check configuration
-        if (passThru && !StringSupport.isNullOrEmpty(defaultValue)) {
+        if (passThru && !Strings.isNullOrEmpty(defaultValue)) {
             throw new ComponentInitializationException("Mapped Attribute definition " + getId()
                             + ") must not have a DefaultValue string with passThru enabled.");
         }
@@ -206,7 +207,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         final LazySet<String> mappedValues = new LazySet<String>();
         boolean valueMapMatch = false;
 
-        if (!StringSupport.isNullOrEmpty(value)) {
+        if (!Strings.isNullOrEmpty(value)) {
             for (ValueMap valueMap : valueMaps) {
                 mappedValues.addAll(valueMap.evaluate(value));
                 if (!mappedValues.isEmpty()) {

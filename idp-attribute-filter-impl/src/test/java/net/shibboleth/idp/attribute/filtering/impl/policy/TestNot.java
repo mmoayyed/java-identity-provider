@@ -18,8 +18,8 @@
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;

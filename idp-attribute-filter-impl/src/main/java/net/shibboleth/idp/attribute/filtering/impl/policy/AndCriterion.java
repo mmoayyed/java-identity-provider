@@ -17,26 +17,28 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentSupport;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
-import org.opensaml.util.component.UninitializedComponentException;
-import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * Implementation of the AND policy activation criterion.
@@ -116,15 +118,11 @@ public class AndCriterion extends AbstractBiasedEvaluableCriterion<AttributeFilt
      * @param theCriteria sub criteria to use.
      */
     public void setSubCriteria(final List<EvaluableCriterion<AttributeFilterContext>> theCriteria) {
-
-        List<EvaluableCriterion<AttributeFilterContext>> workingCriteriaList;
-        workingCriteriaList =
-                CollectionSupport.addNonNull(theCriteria, new ArrayList<EvaluableCriterion<AttributeFilterContext>>());
-        if (workingCriteriaList.isEmpty()) {
+        criteria =
+                ImmutableList.<EvaluableCriterion<AttributeFilterContext>> builder()
+                        .addAll(Iterables.filter(theCriteria, Predicates.notNull())).build();
+        if (criteria.isEmpty()) {
             log.warn("No sub-criteria provided to AND PolicyRequirementRule, this always returns FALSE");
-            criteria = Collections.EMPTY_LIST;
-        } else {
-            criteria = Collections.unmodifiableList(workingCriteriaList);
         }
     }
 

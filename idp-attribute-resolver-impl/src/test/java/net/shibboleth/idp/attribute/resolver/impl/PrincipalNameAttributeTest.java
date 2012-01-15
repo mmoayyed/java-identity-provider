@@ -23,12 +23,13 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.SimpleAttribute}. */
 public class PrincipalNameAttributeTest {
@@ -42,8 +43,7 @@ public class PrincipalNameAttributeTest {
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      * @throws InterruptedException never.
      */
-    @Test
-    public void testSinglePrincipalAttributeNameDefinition() throws ComponentInitializationException,
+    @Test public void testSinglePrincipalAttributeNameDefinition() throws ComponentInitializationException,
             InterruptedException {
 
         final BaseAttributeDefinition attrDefn = new PrincipalNameAttributeDefinition();
@@ -52,7 +52,7 @@ public class PrincipalNameAttributeTest {
 
         final AttributeResolver resolver = new AttributeResolver();
         resolver.setId("foo");
-        resolver.setAttributeDefinition(CollectionSupport.toSet(attrDefn));
+        resolver.setAttributeDefinition(Lists.newArrayList(attrDefn));
         resolver.initialize();
 
         final SubcontextContainer container =

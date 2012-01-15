@@ -24,9 +24,9 @@ import java.util.Map;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
 
 /** The configuration that applies to given relying party. */

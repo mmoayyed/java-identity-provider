@@ -27,7 +27,6 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
 import org.opensaml.saml2.core.Assertion;
@@ -47,11 +46,6 @@ public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderA
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddNotBeforeConditionToAssertions.class);
-
-    /** {@inheritDoc} */
-    protected Class<RelyingPartySubcontext> getSubcontextType() {
-        return RelyingPartySubcontext.class;
-    }
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,

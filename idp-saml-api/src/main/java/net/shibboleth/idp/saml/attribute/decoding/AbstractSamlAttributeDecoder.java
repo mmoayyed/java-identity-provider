@@ -21,11 +21,11 @@ import java.util.List;
 
 import net.shibboleth.idp.attribute.AbstractAttributeDecoder;
 import net.shibboleth.idp.attribute.AttributeDecodingException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.common.SAMLObject;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,11 +117,11 @@ public abstract class AbstractSamlAttributeDecoder<DecodedType extends SAMLObjec
             throws AttributeDecodingException {
         final List<XMLObject> attributeValues = data.getOrderedChildren();
         if (attributeValues == null || attributeValues.isEmpty()) {
-            log.debug("SAML attribute contained no values, no values decoded in to IdP attribute {}", getId());
+            log.debug("SAML attribute contained no values, no values decoded in to IdP attribute {}", getDecodedAttributeId());
             return;
         }
 
-        log.debug("Decoding {} SAML attribute values into IdP attribute {}", attributeValues.size(), getId());
+        log.debug("Decoding {} SAML attribute values into IdP attribute {}", attributeValues.size(), getDecodedAttributeId());
         ValueType decodedValue;
         for (XMLObject attributeValue : attributeValues) {
             if (attributeValue == null) {

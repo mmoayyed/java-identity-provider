@@ -26,9 +26,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazySet;
+import net.shibboleth.utilities.java.support.collection.LazySet;
 
 /**
  * A Simple Attribute definition. Basically it copies all inputs to outputs.

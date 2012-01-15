@@ -19,7 +19,8 @@ package net.shibboleth.idp.spring;
 
 import java.util.List;
 
-import org.opensaml.util.resource.Resource;
+import net.shibboleth.utilities.java.support.resource.Resource;
+
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;

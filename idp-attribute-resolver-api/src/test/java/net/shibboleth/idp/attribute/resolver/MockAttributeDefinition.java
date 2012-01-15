@@ -19,8 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
-
-import org.opensaml.util.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe

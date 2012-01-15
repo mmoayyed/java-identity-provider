@@ -26,8 +26,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-
-import org.opensaml.util.collections.LazySet;
+import net.shibboleth.utilities.java.support.collection.LazySet;
 
 /**
  * Implement the Attribute String Value Matcher. <br />

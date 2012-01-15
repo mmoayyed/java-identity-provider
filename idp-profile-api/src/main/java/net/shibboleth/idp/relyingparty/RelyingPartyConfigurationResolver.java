@@ -22,15 +22,18 @@ import java.util.Collections;
 import java.util.List;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.resolver.Resolver;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
-import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
-import org.opensaml.util.resolver.Resolver;
-import org.opensaml.util.resolver.ResolverException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request.
@@ -72,13 +75,10 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
             return;
         }
 
-        ArrayList<RelyingPartyConfiguration> checkedConfigs =
-                CollectionSupport.addNonNull(configs, new ArrayList<RelyingPartyConfiguration>());
-        if (checkedConfigs.isEmpty()) {
-            rpConfigurations = Collections.emptyList();
-        } else {
-            rpConfigurations = Collections.unmodifiableList(checkedConfigs);
-        }
+        rpConfigurations =
+                ImmutableList.<RelyingPartyConfiguration> builder()
+                        .addAll(Iterables.filter(configs, Predicates.notNull())).build();
+
     }
 
     /** {@inheritDoc} */

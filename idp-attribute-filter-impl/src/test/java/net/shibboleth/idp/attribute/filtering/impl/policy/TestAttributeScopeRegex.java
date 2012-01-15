@@ -17,17 +17,18 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
-import java.util.Set;
+import java.util.List;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** tests for the Attribute Scope Regex criterion. */
 public class TestAttributeScopeRegex {
@@ -41,8 +42,7 @@ public class TestAttributeScopeRegex {
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void attributeScopeRegexCriterionBadParamsTest() throws EvaluationException,
+    @Test public void attributeScopeRegexCriterionBadParamsTest() throws EvaluationException,
             ComponentInitializationException {
         boolean threw = false;
         try {
@@ -93,20 +93,18 @@ public class TestAttributeScopeRegex {
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void attributeScopeStringCriterionTest() throws EvaluationException, ComponentInitializationException {
+    @Test public void attributeScopeStringCriterionTest() throws EvaluationException, ComponentInitializationException {
         Attribute<Object> attribute = new Attribute<Object>(ATTR_NAME);
 
         // Attribute values "foo", "foo@bar", "BAR@three".
         // should not match foo
         // should not match t.e
         // should match t.* e
-        attribute.setValues(CollectionSupport.toSet("foo", new ScopedAttributeValue("foo", "two"),
-                new ScopedAttributeValue("BAR", "three")));
+        attribute.setValues(Lists.newArrayList("foo", new ScopedAttributeValue("foo", "two"), new ScopedAttributeValue(
+                "BAR", "three")));
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
 
-        Set s = CollectionSupport.toSet(attribute);
-        filterContext.setPrefilteredAttributes(s);
+        filterContext.setPrefilteredAttributes((List) Lists.newArrayList(attribute));
 
         AttributeScopeRegexCriterion filter = new AttributeScopeRegexCriterion();
         filter.setRegularExpression("foo");

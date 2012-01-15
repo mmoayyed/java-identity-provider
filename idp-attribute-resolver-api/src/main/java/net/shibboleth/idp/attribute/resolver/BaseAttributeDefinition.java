@@ -28,15 +28,13 @@ import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
-
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.InitializableComponent;
-import org.opensaml.util.component.UnmodifiableComponentException;
-import org.opensaml.util.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
@@ -194,7 +192,18 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     }
 
     /** {@inheritDoc} */
-    public synchronized void destroy() {
+    public void validate() throws ComponentValidationException {
+        super.validate();
+
+        for (AttributeEncoder encoder : encoders) {
+            if (encoder instanceof ValidatableComponent) {
+                ((ValidatableComponent) encoder).validate();
+            }
+        }
+    }
+    
+    /** {@inheritDoc} */
+    protected void doDestroy() {
 
         for (AttributeEncoder encoder : encoders) {
             if (encoder instanceof DestructableComponent) {
@@ -207,17 +216,6 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         displayNames = Collections.emptyMap();
 
         super.destroy();
-    }
-
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        super.validate();
-
-        for (AttributeEncoder encoder : encoders) {
-            if (encoder instanceof ValidatableComponent) {
-                ((ValidatableComponent) encoder).validate();
-            }
-        }
     }
 
     /** {@inheritDoc} */

@@ -18,19 +18,19 @@
 package net.shibboleth.idp.attribute.filtering;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.UnmodifiableComponentException;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
 
 /** Unit test for {@link AttributeFilteringEngine}. */
 public class AttributeFilteringEngineTest {
 
     /** Test that post-construction state is what is expected. */
-    @Test
-    public void testPostConstructionState() throws Exception {
+    @Test public void testPostConstructionState() throws Exception {
         AttributeFilteringEngine engine = new AttributeFilteringEngine();
         engine.setId("engine");
         engine.initialize();
@@ -42,24 +42,22 @@ public class AttributeFilteringEngineTest {
     }
 
     /** Test setting and retrieving filter policies. */
-    @Test
-    public void testFilterPolicies() throws Exception {
-
+    @Test public void testFilterPolicies() throws Exception {
         AttributeFilterPolicy policy1 = new AttributeFilterPolicy();
         policy1.setId("policy1");
-        policy1.setActivationCriteria(StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        policy1.setActivationCriteria(Predicates.<AttributeFilterContext> alwaysFalse());
 
         AttributeFilterPolicy policy2 = new AttributeFilterPolicy();
         policy2.setId("policy2");
-        policy2.setActivationCriteria(StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        policy2.setActivationCriteria(Predicates.<AttributeFilterContext> alwaysFalse());
 
         AttributeFilterPolicy policy3 = new AttributeFilterPolicy();
         policy3.setId("policy3");
-        policy3.setActivationCriteria(StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        policy3.setActivationCriteria(Predicates.<AttributeFilterContext> alwaysFalse());
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine();
         engine.setId("engine");
-        engine.setFilterPolicies(CollectionSupport.toList(policy1, policy1, policy2));
+        engine.setFilterPolicies(Lists.newArrayList(policy1, policy1, policy2));
         engine.initialize();
 
         Assert.assertTrue(engine.isInitialized());
@@ -73,9 +71,9 @@ public class AttributeFilteringEngineTest {
 
         engine = new AttributeFilteringEngine();
         engine.setId("engine");
-        engine.setFilterPolicies(CollectionSupport.toList(policy2, policy3));
+        engine.setFilterPolicies(Lists.newArrayList(policy2, policy3));
         engine.initialize();
-        
+
         Assert.assertEquals(engine.getFilterPolicies().size(), 2);
         Assert.assertFalse(engine.getFilterPolicies().contains(policy1));
         Assert.assertTrue(engine.getFilterPolicies().contains(policy2));
@@ -93,7 +91,7 @@ public class AttributeFilteringEngineTest {
         } catch (UnmodifiableComponentException e) {
             // expected this
         }
-        
+
         try {
             engine.setFilterPolicies(null);
         } catch (UnmodifiableComponentException e) {
@@ -102,8 +100,7 @@ public class AttributeFilteringEngineTest {
     }
 
     /** Test filtering attributes. */
-    @Test
-    public void testFilterAttributes() throws Exception {
+    @Test public void testFilterAttributes() throws Exception {
         MockAttributeValueMatcher attribute1Matcher = new MockAttributeValueMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
@@ -114,22 +111,22 @@ public class AttributeFilteringEngineTest {
 
         AttributeFilterPolicy policy = new AttributeFilterPolicy();
         policy.setId("attribute1Policy");
-        policy.setActivationCriteria(StaticResponseEvaluableCriterion.TRUE_RESPONSE);
-        policy.setAttributeValuePolicies(CollectionSupport.toList(attribute1Policy));
+        policy.setActivationCriteria(Predicates.<AttributeFilterContext> alwaysTrue());
+        policy.setAttributeValuePolicies(Lists.newArrayList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
 
         Attribute<String> attribute1 = new Attribute<String>("attribute1");
-        attribute1.setValues(CollectionSupport.toList("one", "two"));
-        filterContext.addPrefilteredAttribute(attribute1);
+        attribute1.setValues(Lists.newArrayList("one", "two"));
+        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         Attribute<String> attribute2 = new Attribute<String>("attribute2");
-        attribute2.setValues(CollectionSupport.toList("a", "b"));
-        filterContext.addPrefilteredAttribute(attribute2);
+        attribute2.setValues(Lists.newArrayList("a", "b"));
+        filterContext.getPrefilteredAttributes().put(attribute2.getId(), attribute2);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine();
         engine.setId("engine");
-        engine.setFilterPolicies(CollectionSupport.toList(policy));
+        engine.setFilterPolicies(Lists.newArrayList(policy));
         engine.initialize();
 
         engine.filterAttributes(filterContext);

@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.spring;
 
-import org.opensaml.util.xml.DomTypeSupport;
+import net.shibboleth.utilities.java.support.xml.DomTypeSupport;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;

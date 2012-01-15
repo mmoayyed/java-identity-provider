@@ -26,12 +26,13 @@ import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml1.core.Attribute;
 import org.opensaml.saml1.core.AttributeValue;
-import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * {@link Saml1ByteAttributeEncoder} Unit test.
@@ -61,7 +62,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
-        inputAttribute.setValues(CollectionSupport.toSet((Object) value));
+        inputAttribute.setValues(Lists.newArrayList((Object) value));
         try {
             return encoder.encode(inputAttribute);
         } catch (AttributeEncodingException e) {
@@ -93,13 +94,11 @@ public class Saml1XmlObjectAttributeEncoderTest {
         Assert.assertTrue(false, "No potential matched matched");
     }
 
-    @BeforeSuite()
-    public void initOpenSAML() throws InitializationException {
+    @BeforeSuite() public void initOpenSAML() throws InitializationException {
         InitializationService.initialize();
     }
 
-    @Test
-    public void testEmpty() throws Exception {
+    @Test public void testEmpty() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
 
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
@@ -109,11 +108,10 @@ public class Saml1XmlObjectAttributeEncoderTest {
         Assert.assertNull(outputAttribute, "Encoding the empty set should yield a null attribute");
     }
 
-    @Test
-    public void testInappropriate() throws Exception {
+    @Test public void testInappropriate() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<Object> values = CollectionSupport.toSet(new Integer(3), STRING_1, new Object(), intArray);
+        final Collection<Object> values = Lists.newArrayList(new Integer(3), STRING_1, new Object(), intArray);
 
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -123,10 +121,9 @@ public class Saml1XmlObjectAttributeEncoderTest {
         Assert.assertNull(outputAttribute, "Encoding a series of invalid inputs should yield a null attribute");
     }
 
-    @Test
-    public void testSingle() throws Exception {
+    @Test public void testSingle() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
-        final Collection<Object> values = CollectionSupport.toSet(new Object(), ObjectFor(STRING_1));
+        final Collection<Object> values = Lists.newArrayList(new Object(), ObjectFor(STRING_1));
 
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -145,11 +142,9 @@ public class Saml1XmlObjectAttributeEncoderTest {
         CheckValues(children.get(0).getOrderedChildren().get(0), STRING_1);
     }
 
-    @Test
-    public void testMulti() throws Exception {
+    @Test public void testMulti() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
-        final Collection<Object> values =
-                CollectionSupport.toSet(new Object(), ObjectFor(STRING_1), ObjectFor(STRING_2));
+        final Collection<Object> values = Lists.newArrayList(new Object(), ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);

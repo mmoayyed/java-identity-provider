@@ -24,9 +24,9 @@ import java.util.Set;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 

@@ -23,9 +23,9 @@ import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.springframework.expression.Expression;
 

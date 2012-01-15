@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.profile.config;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 
 import org.testng.Assert;

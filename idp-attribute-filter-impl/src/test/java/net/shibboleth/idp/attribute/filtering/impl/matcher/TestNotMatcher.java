@@ -22,12 +22,13 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** Test the {@link NotMatcher} matcher. */
 public class TestNotMatcher {
@@ -39,10 +40,10 @@ public class TestNotMatcher {
      * @throws ComponentInitializationException if initialize fails when we didn't exdpect it to
      * @throws ComponentValidationException never
      */
-    @Test
-    public void notMatcherTest() throws AttributeFilteringException, ComponentInitializationException, ComponentValidationException {
+    @Test public void notMatcherTest() throws AttributeFilteringException, ComponentInitializationException,
+            ComponentValidationException {
         final Attribute<String> attribute = new Attribute<String>("attribute");
-        final Collection<String> values = CollectionSupport.toSet("zero", "one", "two", "three");
+        final Collection<String> values = Lists.newArrayList("zero", "one", "two", "three");
         attribute.setValues(values);
 
         NotMatcher not = new NotMatcher();
@@ -66,32 +67,33 @@ public class TestNotMatcher {
 
         // starrt with a new one
         not = new NotMatcher();
-        not.setSubMatcher(new AnyMatcher());
+        not.setSubMatcher(AttributeValueMatcher.MATCHES_ALL);
         not.initialize();
 
         Assert.assertTrue(not.getMatchingValues(attribute, null).isEmpty(), "Not of everything is nothing");
 
         final OrMatcher or = new OrMatcher();
-        or.setSubMatchers(CollectionSupport.toList(
+        or.setSubMatchers(Lists.newArrayList(
                 (AttributeValueMatcher) DestroyableValidatableAttributeValueStringMatcher.newMatcher("zero", true),
                 DestroyableValidatableAttributeValueStringMatcher.newMatcher("two", true)));
         not.setSubMatcher(or);
         not.initialize();
 
-        Collection<String> expected = CollectionSupport.toSet("one", "three");
+        Collection<String> expected = Lists.newArrayList("one", "three");
         Assert.assertEquals(not.getMatchingValues(attribute, null), expected, "simple not");
 
-        expected = CollectionSupport.toSet("zero", "two");
+        expected = Lists.newArrayList("zero", "two");
         NotMatcher notNot = new NotMatcher();
         // Play a trick to stop the submatcher being reinitialized.
-        notNot.setSubMatcher(new AnyMatcher());
+        notNot.setSubMatcher(AttributeValueMatcher.MATCHES_ALL);
         notNot.initialize();
         notNot.setSubMatcher(not);
         Assert.assertEquals(notNot.getMatchingValues(attribute, null), expected, "not of not");
 
-        DestroyableValidatableAttributeValueStringMatcher destroyTester = DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false);
+        DestroyableValidatableAttributeValueStringMatcher destroyTester =
+                DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false);
         not.setSubMatcher(destroyTester);
-        
+
         Assert.assertFalse(destroyTester.isValidated(), "Has validate not yet been passed down");
         not.validate();
         Assert.assertTrue(destroyTester.isValidated(), "Has validate been passed down");

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.log;
 
-import org.opensaml.util.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** 
  * An event to be logged. 

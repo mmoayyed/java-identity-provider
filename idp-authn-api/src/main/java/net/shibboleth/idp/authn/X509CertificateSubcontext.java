@@ -19,9 +19,10 @@ package net.shibboleth.idp.authn;
 
 import java.security.cert.X509Certificate;
 
+import net.shibboleth.utilities.java.support.logic.Assert;
+
 import org.opensaml.messaging.context.AbstractSubcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
 
 /**
  * Context, usually attached to {@link AuthenticationRequestContext}, that carries an {@link X509Certificate} to be

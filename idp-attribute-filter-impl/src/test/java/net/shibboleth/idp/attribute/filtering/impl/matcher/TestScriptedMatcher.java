@@ -19,15 +19,16 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import java.util.Collection;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponentException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** Tests for the {@link ScriptedMatcher} class. */
 @ThreadSafe
@@ -134,7 +135,7 @@ public class TestScriptedMatcher {
                 "Result of trivial script");
 
         Attribute<String> attribute = new Attribute<String>("attribute");
-        attribute.setValues(CollectionSupport.toList("zero", "one", "two", "three", "four", "five"));
+        attribute.setValues(Lists.newArrayList("zero", "one", "two", "three", "four", "five"));
 
         matcher = new ScriptedMatcher();
         matcher.setLanguage(TEST_SCRIPT_LANGUAGE);

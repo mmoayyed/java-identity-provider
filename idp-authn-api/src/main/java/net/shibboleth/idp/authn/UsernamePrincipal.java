@@ -19,8 +19,8 @@ package net.shibboleth.idp.authn;
 
 import java.security.Principal;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Principal based on a username. */
 public final class UsernamePrincipal implements Principal {

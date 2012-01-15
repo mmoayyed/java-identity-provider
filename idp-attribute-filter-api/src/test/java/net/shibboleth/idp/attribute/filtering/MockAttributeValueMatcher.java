@@ -20,11 +20,11 @@ package net.shibboleth.idp.attribute.filtering;
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.collection.LazyList;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.LazyList;
+import com.google.common.base.Objects;
 
 /** A simple, mock implementation of {@link AttributeValueMatcher}. */
 public class MockAttributeValueMatcher implements AttributeValueMatcher {
@@ -57,7 +57,7 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher {
     /** {@inheritDoc} */
     public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        if (!ObjectSupport.equals(attribute.getId(), matchingAttribute)) {
+        if (!Objects.equal(attribute.getId(), matchingAttribute)) {
             return null;
         }
 

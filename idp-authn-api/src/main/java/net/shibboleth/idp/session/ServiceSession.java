@@ -18,11 +18,12 @@
 package net.shibboleth.idp.session;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
+
+import com.google.common.base.Objects;
 
 /** Describes a session with a service associated with an {@link IdPSession}. */
 @ThreadSafe
@@ -128,7 +129,7 @@ public final class ServiceSession extends AbstractSubcontextContainer {
         }
 
         if (obj instanceof ServiceSession) {
-            return ObjectSupport.equals(serviceId, ((ServiceSession) obj).getServiceId());
+            return Objects.equal(serviceId, ((ServiceSession) obj).getServiceId());
         }
 
         return false;

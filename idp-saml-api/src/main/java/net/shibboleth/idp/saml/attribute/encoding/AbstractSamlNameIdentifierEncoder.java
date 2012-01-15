@@ -18,8 +18,7 @@
 package net.shibboleth.idp.saml.attribute.encoding;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
-
-import org.opensaml.util.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Base class for attribute encoders that produce SAML name identifiers.

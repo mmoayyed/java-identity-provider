@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.profile.config;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import com.google.common.base.Objects;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
 public abstract class AbstractProfileConfiguration implements ProfileConfiguration {
@@ -96,6 +97,6 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         }
 
         AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
-        return ObjectSupport.equals(id, other.getProfileId());
+        return Objects.equal(id, other.getProfileId());
     }
 }

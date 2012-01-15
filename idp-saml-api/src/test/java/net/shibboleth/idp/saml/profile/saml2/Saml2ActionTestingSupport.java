@@ -20,6 +20,9 @@ package net.shibboleth.idp.saml.profile.saml2;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
@@ -28,6 +31,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;
@@ -39,9 +43,6 @@ import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.core.Subject;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.constraint.documented.NotNull;
-import org.opensaml.util.constraint.documented.Null;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.opensaml.xml.Configuration;
 
@@ -76,8 +77,8 @@ public final class Saml2ActionTestingSupport {
      * 
      * @return the constructed subcontext
      */
-    public static RelyingPartySubcontext buildRelyingPartySubcontext(@NotNull final SubcontextContainer parent,
-            @Null final String relyingPartyId) {
+    public static RelyingPartySubcontext buildRelyingPartySubcontext(@Nonnull final SubcontextContainer parent,
+            @Nullable final String relyingPartyId) {
 
         String id = StringSupport.trimOrNull(relyingPartyId);
         if (id == null) {
@@ -159,14 +160,14 @@ public final class Saml2ActionTestingSupport {
     }
 
     /**
-     * Builds a {@link Subject}. If a principal name is given a {@link NameID}, whose value is the given
-     * principal name, will be created and added to the {@link Subject}.
+     * Builds a {@link Subject}. If a principal name is given a {@link NameID}, whose value is the given principal name,
+     * will be created and added to the {@link Subject}.
      * 
      * @param principalName the principal name to add to the subject
      * 
      * @return the built subject
      */
-    public static Subject buildSubject(final @Null String principalName) {
+    public static Subject buildSubject(final @Nullable String principalName) {
         final SAMLObjectBuilder<Subject> subjectBuilder =
                 (SAMLObjectBuilder<Subject>) Configuration.getBuilderFactory().getBuilder(Subject.TYPE_NAME);
         final Subject subject = subjectBuilder.buildObject();
@@ -190,7 +191,7 @@ public final class Saml2ActionTestingSupport {
      * 
      * @return the built query
      */
-    public static AttributeQuery buildAttributeQueryRequest(final @Null Subject subject) {
+    public static AttributeQuery buildAttributeQueryRequest(final @Nullable Subject subject) {
         final SAMLObjectBuilder<Issuer> issuerBuilder =
                 (SAMLObjectBuilder<Issuer>) Configuration.getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
 

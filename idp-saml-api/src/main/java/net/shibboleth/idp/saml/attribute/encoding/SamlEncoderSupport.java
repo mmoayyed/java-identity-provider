@@ -20,16 +20,17 @@ package net.shibboleth.idp.saml.attribute.encoding;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
 
 import org.opensaml.Configuration;
-import org.opensaml.util.Base64;
-import org.opensaml.util.StringSupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.XMLObjectBuilder;
 import org.opensaml.xml.schema.XSAny;
 import org.opensaml.xml.schema.XSString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 /** Support class for encoding IdP Attributes and their value. */
 public final class SamlEncoderSupport {
@@ -53,7 +54,7 @@ public final class SamlEncoderSupport {
      */
     public static XMLObject encodeStringValue(final Attribute<?> attribute, final QName attributeValueElementName,
             final String value) {
-        if (StringSupport.isNullOrEmpty(value)) {
+        if (Strings.isNullOrEmpty(value)) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
@@ -88,7 +89,7 @@ public final class SamlEncoderSupport {
 
         final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
 
-        samlAttributeValue.setValue(Base64.encodeBytes(value));
+        samlAttributeValue.setValue(Base64Support.encode(value, Base64Support.UNCHUNKED));
         return samlAttributeValue;
     }
 

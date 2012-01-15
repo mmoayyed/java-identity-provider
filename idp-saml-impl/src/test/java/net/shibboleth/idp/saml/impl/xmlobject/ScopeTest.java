@@ -70,7 +70,7 @@ public class ScopeTest extends BaseShibObjectProviderTestCase {
 
         Assert.assertNotNull(scope, "Unmarshalled object was null");
         Assert.assertEquals(expectedContent, scope.getValue(), "Scope value");
-        Assert.assertEquals("Regexp attribute value", Boolean.FALSE, scope.getRegexp());
+        Assert.assertEquals(Boolean.FALSE, scope.getRegexp(),"Regexp attribute value");
     }
 
     /** {@inheritDoc} */

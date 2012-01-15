@@ -19,10 +19,10 @@ package net.shibboleth.idp.saml.profile.config.idwsf;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.config.saml2.SsoProfileConfiguration;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.opensaml.saml2.core.RequestAbstractType;
 import org.opensaml.saml2.core.Response;
-import org.opensaml.util.Assert;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 

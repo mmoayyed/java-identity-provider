@@ -27,9 +27,10 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.common.SAMLVersion;
 import org.opensaml.saml2.core.RequestAbstractType;
-import org.opensaml.util.ObjectSupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import com.google.common.base.Objects;
 
 /** Checks whether the inbound SAML request has the appropriate version. */
 public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestAbstractType, Object> {
@@ -46,7 +47,7 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
 
         final RequestAbstractType request = ActionSupport.getRequiredInboundMessage(this, profileRequestContext);
 
-        if (ObjectSupport.equals(SAMLVersion.VERSION_20, request.getVersion())) {
+        if (Objects.equal(SAMLVersion.VERSION_20, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
         } else {
             throw new InvalidMessageVersionException(request.getVersion());

@@ -19,8 +19,8 @@ package net.shibboleth.idp.saml.impl.xmlobject;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.Scope;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.opensaml.util.xml.ElementSupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.xml.io.MarshallingException;

@@ -18,13 +18,37 @@
 package net.shibboleth.idp.attribute.filtering;
 
 import java.util.Collection;
+import java.util.Collections;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /** A function that gets the values of an attribute that meets this matchers requirements. */
 @ThreadSafe
 public interface AttributeValueMatcher {
+
+    /** A {@link AttributeValueMatcher} that returns all attribute values as matched. */
+    public static final AttributeValueMatcher MATCHES_ALL = new AttributeValueMatcher() {
+
+        /** {@inheritDoc} */
+        public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+                throws AttributeFilteringException {
+            return attribute.getValues();
+        }
+    };
+
+    /** A {@link AttributeValueMatcher} that returns no attribute values as matched. */
+    public static final AttributeValueMatcher MATCHES_NONE = new AttributeValueMatcher() {
+
+        /** {@inheritDoc} */
+        public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+                throws AttributeFilteringException {
+            return Collections.emptyList();
+        }
+    };
 
     /**
      * Determines the values, for the given attribute, that satisfies the requirements of this rule. Note, the value set
@@ -38,6 +62,7 @@ public interface AttributeValueMatcher {
      * @throws AttributeFilteringException thrown is there is a problem evaluating one or more attribute values against
      *             this rule's criteria
      */
-    public Collection<?> getMatchingValues(final Attribute<?> attribute, final AttributeFilterContext filterContext)
-            throws AttributeFilteringException;
+    @Nonnull @NonnullElements public Collection<?> getMatchingValues(@Nonnull final Attribute<?> attribute,
+            @Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException;
+
 }

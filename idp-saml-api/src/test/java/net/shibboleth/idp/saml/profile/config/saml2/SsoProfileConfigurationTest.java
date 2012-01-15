@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.profile.config.saml2;
 
-import net.shibboleth.idp.saml.profile.config.saml2.SsoProfileConfiguration;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

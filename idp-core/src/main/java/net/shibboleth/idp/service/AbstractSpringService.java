@@ -17,21 +17,23 @@
 
 package net.shibboleth.idp.service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.utilities.java.support.resource.Resource;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * A service whose Spring beans are loaded into a service specific {@link ApplicationContext} that is a child of the
@@ -109,12 +111,8 @@ public abstract class AbstractSpringService extends AbstractService {
             return;
         }
 
-        ArrayList<Resource> checkedConfigs = CollectionSupport.addNonNull(configs, new ArrayList<Resource>());
-        if (checkedConfigs.isEmpty()) {
-            serviceConfigurations = Collections.emptyList();
-        } else {
-            serviceConfigurations = checkedConfigs;
-        }
+        serviceConfigurations =
+                ImmutableList.<Resource> builder().addAll(Iterables.filter(configs, Predicates.notNull())).build();
     }
 
     /**

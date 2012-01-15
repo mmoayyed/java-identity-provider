@@ -19,9 +19,10 @@ package net.shibboleth.idp.saml.profile;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import org.opensaml.messaging.context.AbstractSubcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.StringSupport;
 
 /**
  * Subcontext that carries information about the ongoing SAML protocol. This context usually appears as a subcontext of

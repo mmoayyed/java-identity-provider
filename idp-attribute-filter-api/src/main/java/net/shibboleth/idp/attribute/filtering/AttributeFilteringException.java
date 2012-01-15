@@ -17,9 +17,13 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.AttributeException;
 
 /** Indicates that an error has occurred during an attribute filtering process. */
+@ThreadSafe
 public class AttributeFilteringException extends AttributeException {
 
     /** Serial version UID. */
@@ -35,7 +39,7 @@ public class AttributeFilteringException extends AttributeException {
      * 
      * @param message exception message
      */
-    public AttributeFilteringException(final String message) {
+    public AttributeFilteringException(@Nullable final String message) {
         super(message);
     }
 
@@ -44,7 +48,7 @@ public class AttributeFilteringException extends AttributeException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeFilteringException(final Exception wrappedException) {
+    public AttributeFilteringException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -54,7 +58,7 @@ public class AttributeFilteringException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeFilteringException(final String message, final Exception wrappedException) {
+    public AttributeFilteringException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

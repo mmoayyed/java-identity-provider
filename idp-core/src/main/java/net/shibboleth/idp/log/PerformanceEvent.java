@@ -18,9 +18,8 @@
 package net.shibboleth.idp.log;
 
 import net.jcip.annotations.NotThreadSafe;
-
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * An event recording the performance of some operation.

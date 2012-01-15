@@ -54,11 +54,6 @@ public class AddNotOnOrAfterConditionToAssertions extends AbstractIdentityProvid
     private final Logger log = LoggerFactory.getLogger(AddNotOnOrAfterConditionToAssertions.class);
 
     /** {@inheritDoc} */
-    protected Class<RelyingPartySubcontext> getSubcontextType() {
-        return RelyingPartySubcontext.class;
-    }
-
-    /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
             RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
             throws ProfileException {

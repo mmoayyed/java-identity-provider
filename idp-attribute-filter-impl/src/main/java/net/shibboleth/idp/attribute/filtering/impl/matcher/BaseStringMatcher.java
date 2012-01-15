@@ -19,13 +19,12 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.AbstractInitializableComponent;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UninitializedComponentException;
-import org.opensaml.util.component.UnmodifiableComponent;
-import org.opensaml.util.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * The basis of all String-based Filter matchers.

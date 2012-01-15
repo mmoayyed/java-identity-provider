@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.persistence;
 
-import org.opensaml.util.component.IdentifiableComponent;
-import org.opensaml.util.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /**
  * Interface describing behavior for IdP components that persist and manage a particular type of stored data.

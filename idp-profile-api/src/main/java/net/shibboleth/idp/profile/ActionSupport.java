@@ -17,17 +17,18 @@
 
 package net.shibboleth.idp.profile;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.IdentifiableComponent;
-import org.opensaml.util.constraint.documented.NotNull;
-import org.opensaml.util.constraint.documented.Null;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.execution.Event;
 
@@ -54,10 +55,10 @@ public final class ActionSupport {
      * 
      * @throws InvalidInboundMessageContextException thrown if no inbound message context is available
      */
-    @NotNull
+    @Nonnull
     public static <T> MessageContext<T> getRequiredInboundMessageContext(
-            @NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext<T, ?> profileRequestContext)
+            @Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final ProfileRequestContext<T, ?> profileRequestContext)
             throws InvalidInboundMessageContextException {
         final MessageContext<T> messageContext = profileRequestContext.getInboundMessageContext();
         if (messageContext == null) {
@@ -79,9 +80,9 @@ public final class ActionSupport {
      * @throws InvalidInboundMessageContextException thrown if the inbound message context does not contain a
      *             {@link BasicMessageMetadataSubcontext}
      */
-    @NotNull
+    @Nonnull
     public static BasicMessageMetadataSubcontext getRequiredInboundMessageMetadata(
-            @NotNull final AbstractIdentityProviderAction action, @NotNull final MessageContext messageContext)
+            @Nonnull final AbstractIdentityProviderAction action, @Nonnull final MessageContext messageContext)
             throws InvalidInboundMessageContextException {
         final BasicMessageMetadataSubcontext ctx =
                 messageContext.getSubcontext(BasicMessageMetadataSubcontext.class, false);
@@ -106,10 +107,10 @@ public final class ActionSupport {
      * @throws InvalidInboundMessageContextException throw if there is no inbound {@link MessageContext} or if it does
      *             not contain a {@link BasicMessageMetadataSubcontext}
      */
-    @NotNull
+    @Nonnull
     public static BasicMessageMetadataSubcontext getRequiredInboundMessageMetadata(
-            @NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext profileRequestContext) throws InvalidInboundMessageContextException {
+            @Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws InvalidInboundMessageContextException {
         return getRequiredInboundMessageMetadata(action,
                 getRequiredInboundMessageContext(action, profileRequestContext));
     }
@@ -125,9 +126,9 @@ public final class ActionSupport {
      * 
      * @throws InvalidInboundMessageContextException thrown if the message context does not contain a message
      */
-    @NotNull
-    public static <T> T getRequiredInboundMessage(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final MessageContext<T> messageContext) throws InvalidInboundMessageContextException {
+    @Nonnull
+    public static <T> T getRequiredInboundMessage(@Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final MessageContext<T> messageContext) throws InvalidInboundMessageContextException {
         final T message = messageContext.getMessage();
         if (message == null) {
             throw new InvalidInboundMessageContextException("Action " + action.getId()
@@ -151,9 +152,9 @@ public final class ActionSupport {
      * @throws InvalidInboundMessageContextException thrown if no inbound message context is available or the message
      *             context does not contain a message
      */
-    @NotNull
-    public static <T> T getRequiredInboundMessage(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext<T, ?> profileRequestContext)
+    @Nonnull
+    public static <T> T getRequiredInboundMessage(@Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final ProfileRequestContext<T, ?> profileRequestContext)
             throws InvalidInboundMessageContextException {
         return getRequiredInboundMessage(action, getRequiredInboundMessageContext(action, profileRequestContext));
     }
@@ -169,10 +170,10 @@ public final class ActionSupport {
      * 
      * @throws InvalidOutboundMessageContextException thrown if no outbound message context is available
      */
-    @NotNull
+    @Nonnull
     public static <T> MessageContext<T> getRequiredOutboundMessageContext(
-            @NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext<Object, T> profileRequestContext)
+            @Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final ProfileRequestContext<Object, T> profileRequestContext)
             throws InvalidOutboundMessageContextException {
         final MessageContext<T> messageContext = profileRequestContext.getOutboundMessageContext();
         if (messageContext == null) {
@@ -194,9 +195,9 @@ public final class ActionSupport {
      * @throws InvalidOutboundMessageContextException thrown if the outbound message context does not contain a
      *             {@link BasicMessageMetadataSubcontext}
      */
-    @NotNull
+    @Nonnull
     public static BasicMessageMetadataSubcontext getRequiredOutboundMessageMetadata(
-            @NotNull final AbstractIdentityProviderAction action, @NotNull final MessageContext messageContext)
+            @Nonnull final AbstractIdentityProviderAction action, @Nonnull final MessageContext messageContext)
             throws InvalidOutboundMessageContextException {
         final BasicMessageMetadataSubcontext ctx =
                 messageContext.getSubcontext(BasicMessageMetadataSubcontext.class, false);
@@ -221,10 +222,10 @@ public final class ActionSupport {
      * @throws InvalidOutboundMessageContextException throw if there is no outbound {@link MessageContext} or if it does
      *             not contain a {@link BasicMessageMetadataSubcontext}
      */
-    @NotNull
+    @Nonnull
     public static BasicMessageMetadataSubcontext getRequiredOutboundMessageMetadata(
-            @NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext profileRequestContext) throws InvalidOutboundMessageContextException {
+            @Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws InvalidOutboundMessageContextException {
         return getRequiredOutboundMessageMetadata(action,
                 getRequiredOutboundMessageContext(action, profileRequestContext));
     }
@@ -240,9 +241,9 @@ public final class ActionSupport {
      * 
      * @throws InvalidOutboundMessageContextException thrown if the message context does not contain a message
      */
-    @NotNull
-    public static <T> T getRequiredOutboundMessage(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final MessageContext<T> messageContext) throws InvalidOutboundMessageContextException {
+    @Nonnull
+    public static <T> T getRequiredOutboundMessage(@Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final MessageContext<T> messageContext) throws InvalidOutboundMessageContextException {
         final T message = messageContext.getMessage();
         if (message == null) {
             throw new InvalidOutboundMessageContextException("Action " + action.getId()
@@ -266,9 +267,9 @@ public final class ActionSupport {
      * @throws InvalidOutboundMessageContextException thrown if no outbound message context is available or the message
      *             context does not contain a message
      */
-    @NotNull
-    public static <T> T getRequiredOutboundMessage(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext<Object, T> profileRequestContext)
+    @Nonnull
+    public static <T> T getRequiredOutboundMessage(@Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final ProfileRequestContext<Object, T> profileRequestContext)
             throws InvalidOutboundMessageContextException {
         return getRequiredOutboundMessage(action, getRequiredOutboundMessageContext(action, profileRequestContext));
     }
@@ -284,10 +285,10 @@ public final class ActionSupport {
      * @throws InvalidSubcontextException thrown if the {@link ProfileRequestContext} does not contain a
      *             {@link RelyingPartySubcontext}
      */
-    @Null
+    @Nullable
     public static RelyingPartySubcontext getRequiredRelyingPartyContext(
-            @NotNull final AbstractIdentityProviderAction action,
-            @NotNull final ProfileRequestContext profileRequestContext) throws InvalidSubcontextException {
+            @Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws InvalidSubcontextException {
         return getRequiredSubcontext(action, profileRequestContext, RelyingPartySubcontext.class);
     }
 
@@ -303,9 +304,9 @@ public final class ActionSupport {
      * 
      * @throws InvalidSubcontextException thrown if the required subcontext does not exist.
      */
-    @NotNull
-    public static <T extends Subcontext> T getRequiredSubcontext(@NotNull final AbstractIdentityProviderAction action,
-            @NotNull final SubcontextContainer container, @NotNull final Class<T> subcontextType)
+    @Nonnull
+    public static <T extends Subcontext> T getRequiredSubcontext(@Nonnull final AbstractIdentityProviderAction action,
+            @Nonnull final SubcontextContainer container, @Nonnull final Class<T> subcontextType)
             throws InvalidSubcontextException {
         final T subcontext = container.getSubcontext(subcontextType, false);
         if (subcontext == null) {
@@ -323,8 +324,8 @@ public final class ActionSupport {
      * 
      * @return the proceed event
      */
-    @NotNull
-    public static Event buildProceedEvent(@NotNull final IdentifiableComponent source) {
+    @Nonnull
+    public static Event buildProceedEvent(@Nonnull final IdentifiableComponent source) {
         return buildEvent(source, PROCEED_EVENT_ID, null);
     }
 
@@ -337,9 +338,9 @@ public final class ActionSupport {
      * 
      * @return the constructed {@link Event}
      */
-    @NotNull
-    public static Event buildEvent(@NotNull final IdentifiableComponent source, @NotNull final String eventId,
-            @NotNull final AttributeMap eventAttributes) {
+    @Nonnull
+    public static Event buildEvent(@Nonnull final IdentifiableComponent source, @Nonnull final String eventId,
+            @Nonnull final AttributeMap eventAttributes) {
         Assert.isNotNull(source, "Component may not be null");
 
         final String trimmedEventId =

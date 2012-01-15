@@ -24,11 +24,11 @@ import java.util.concurrent.locks.Lock;
 
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
-import org.opensaml.util.Assert;
-import org.opensaml.util.component.ComponentInitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

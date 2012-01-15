@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.profile.config.saml2;
 import java.util.ArrayList;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.saml.profile.config.saml2.AbstractSAML2ProfileConfiguration;
 
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;

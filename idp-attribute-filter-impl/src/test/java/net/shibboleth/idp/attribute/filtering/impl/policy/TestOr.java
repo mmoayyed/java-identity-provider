@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;

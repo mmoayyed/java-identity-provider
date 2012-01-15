@@ -20,6 +20,9 @@ package net.shibboleth.idp.saml.profile.saml1;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
@@ -28,6 +31,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;
@@ -39,9 +43,6 @@ import org.opensaml.saml1.core.NameIdentifier;
 import org.opensaml.saml1.core.Request;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Subject;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.constraint.documented.NotNull;
-import org.opensaml.util.constraint.documented.Null;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.opensaml.xml.Configuration;
 
@@ -76,8 +77,8 @@ public final class Saml1ActionTestingSupport {
      * 
      * @return the constructed subcontext
      */
-    public static RelyingPartySubcontext buildRelyingPartySubcontext(@NotNull final SubcontextContainer parent,
-            @Null final String relyingPartyId) {
+    public static RelyingPartySubcontext buildRelyingPartySubcontext(@Nonnull final SubcontextContainer parent,
+            @Nullable final String relyingPartyId) {
 
         String id = StringSupport.trimOrNull(relyingPartyId);
         if (id == null) {
@@ -166,7 +167,7 @@ public final class Saml1ActionTestingSupport {
      * 
      * @return the built subject
      */
-    public static Subject buildSubject(final @Null String principalName) {
+    public static Subject buildSubject(final @Nullable String principalName) {
         final SAMLObjectBuilder<Subject> subjectBuilder =
                 (SAMLObjectBuilder<Subject>) Configuration.getBuilderFactory().getBuilder(Subject.TYPE_NAME);
         final Subject subject = subjectBuilder.buildObject();
@@ -191,7 +192,7 @@ public final class Saml1ActionTestingSupport {
      * 
      * @return the built query
      */
-    public static Request buildAttributeQueryRequest(final @Null Subject subject) {
+    public static Request buildAttributeQueryRequest(final @Nullable Subject subject) {
         final SAMLObjectBuilder<AttributeQuery> queryBuilder =
                 (SAMLObjectBuilder<AttributeQuery>) Configuration.getBuilderFactory().getBuilder(
                         AttributeQuery.TYPE_NAME);

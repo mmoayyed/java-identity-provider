@@ -17,16 +17,17 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
-import java.util.Set;
+import java.util.List;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** tests for the {@link AttributeValueStringCriterion}. */
 public class TestAttributeValueString {
@@ -40,8 +41,7 @@ public class TestAttributeValueString {
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void attributeValueStringCriterionBadParamsTest() throws EvaluationException,
+    @Test public void attributeValueStringCriterionBadParamsTest() throws EvaluationException,
             ComponentInitializationException {
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
         AttributeValueStringCriterion filter = new AttributeValueStringCriterion();
@@ -101,15 +101,13 @@ public class TestAttributeValueString {
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void attributeValueCriterionStringTest() throws EvaluationException, ComponentInitializationException {
+    @Test public void attributeValueCriterionStringTest() throws EvaluationException, ComponentInitializationException {
         Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
 
-        attribute.setValues(CollectionSupport.toSet("val1", "val2", "VAL3"));
+        attribute.setValues(Lists.newArrayList("val1", "val2", "VAL3"));
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
 
-        Set s = CollectionSupport.toSet(attribute);
-        filterContext.setPrefilteredAttributes(s);
+        filterContext.setPrefilteredAttributes((List) Lists.newArrayList(attribute));
 
         AttributeValueStringCriterion filter = new AttributeValueStringCriterion();
         filter.setMatchString("match");

@@ -26,12 +26,13 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * Tests for class {@link OrMatcher}.
@@ -43,13 +44,13 @@ public class TestOrMatcher {
      * test {@link OrMatcher}.
      * 
      * @throws AttributeFilteringException if anything dies horribly.
-     * @throws ComponentInitializationException  if the initialize fails
+     * @throws ComponentInitializationException if the initialize fails
      * @throws ComponentValidationException never
      */
-    @Test
-    public void orMatcherTest() throws AttributeFilteringException, ComponentInitializationException, ComponentValidationException {
+    @Test public void orMatcherTest() throws AttributeFilteringException, ComponentInitializationException,
+            ComponentValidationException {
         final Attribute<String> attribute = new Attribute<String>("attribute");
-        final Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
+        final Collection<String> values = Lists.newArrayList("zero", "one", "two", "three");
         attribute.setValues(values);
 
         OrMatcher filter = new OrMatcher();
@@ -71,7 +72,7 @@ public class TestOrMatcher {
         Assert.assertTrue(filter.getSubMatchers().isEmpty(), "empty elements are nulled out");
         Assert.assertTrue(filter.getMatchingValues(attribute, null).isEmpty(), "empty filter gives empty result");
 
-        filter.setSubMatchers(CollectionSupport.toList((AttributeValueMatcher) new AnyMatcher()));
+        filter.setSubMatchers(Lists.newArrayList(AttributeValueMatcher.MATCHES_ALL));
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), values.size(), "or of ANY is ANY");
 
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false));
@@ -81,13 +82,14 @@ public class TestOrMatcher {
         filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 2, "Match OR of two element values");
 
-        DestroyableValidatableAttributeValueStringMatcher destroyTester = DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false);
+        DestroyableValidatableAttributeValueStringMatcher destroyTester =
+                DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false);
         list.clear();
         list.add(destroyTester);
-        list.add(new AnyMatcher());
+        list.add(AttributeValueMatcher.MATCHES_ALL);
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("ONE", false));
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("three", true));
-        
+
         filter = new OrMatcher();
         filter.setSubMatchers(list);
         filter.initialize();

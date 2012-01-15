@@ -21,10 +21,10 @@ import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
+import com.google.common.base.Objects;
 
 /** Represents the dependency of one {@link BaseResolverPlugin} upon the attribute values produced by another plugin. */
 @ThreadSafe
@@ -123,8 +123,8 @@ public class ResolverPluginDependency {
         }
 
         ResolverPluginDependency other = (ResolverPluginDependency) obj;
-        if (ObjectSupport.equals(getDependencyPluginId(), other.getDependencyPluginId())
-                && ObjectSupport.equals(getDependencyAttributeId(), other.getDependencyAttributeId())) {
+        if (Objects.equal(getDependencyPluginId(), other.getDependencyPluginId())
+                && Objects.equal(getDependencyAttributeId(), other.getDependencyAttributeId())) {
             return true;
         }
 

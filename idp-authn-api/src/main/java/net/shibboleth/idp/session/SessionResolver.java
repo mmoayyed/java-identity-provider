@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.session;
 
-import org.opensaml.util.component.IdentifiableComponent;
-import org.opensaml.util.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.resolver.Resolver;
+
 import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.resolver.Resolver;
 
 /** A resolver that is capable of finding sessions that meet certain criteria. */
 public interface SessionResolver extends IdentifiableComponent, ValidatableComponent,

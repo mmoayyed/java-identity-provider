@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.profile.impl.InitializeProfileRequestContext;
 
 import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;

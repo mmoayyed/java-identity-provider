@@ -18,12 +18,12 @@
 package net.shibboleth.idp.relyingparty;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
 
 /**
  * {@link org.opensaml.messaging.context.Subcontext} containing relying party specific information. This is usually a

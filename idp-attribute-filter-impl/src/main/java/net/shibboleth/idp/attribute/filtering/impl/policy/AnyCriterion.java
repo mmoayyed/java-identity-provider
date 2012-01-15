@@ -18,8 +18,8 @@
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.Component;
 
-import org.opensaml.util.component.Component;
 import org.opensaml.util.criteria.AbstractBiasedEvaluableCriterion;
 
 /**

@@ -23,8 +23,8 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.impl.CheckMessageLifetime.FutureMessageException;
 import net.shibboleth.idp.profile.impl.CheckMessageLifetime.PastMessageException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.opensaml.util.component.UnmodifiableComponentException;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.Test;

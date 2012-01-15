@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.service;
 
-import org.opensaml.util.component.IdentifiableComponent;
-import org.opensaml.util.component.InitializableComponent;
-import org.opensaml.util.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /** A service extends the notion of a component with the concept of a lifecycle. */
 public interface Service extends IdentifiableComponent, InitializableComponent, ValidatableComponent {

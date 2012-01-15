@@ -28,10 +28,10 @@ import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
-import org.opensaml.util.component.UnmodifiableComponentException;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

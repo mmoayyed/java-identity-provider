@@ -22,11 +22,12 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * Test the {@link AttributeValueRegexMatcher} class.
@@ -39,8 +40,8 @@ public class TestAttributeValueRegexpMatcher {
      * @throws AttributeFilteringException if the filter fails
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void attributeValueRegexMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+    @Test public void attributeValueRegexMatcherTest() throws AttributeFilteringException,
+            ComponentInitializationException {
 
         // Initialize testing in implemented in the base class and tested in @link(TestAttributeScopeRegexMatcher)
 
@@ -48,7 +49,7 @@ public class TestAttributeValueRegexpMatcher {
         // set up "X", "fot", "a@foo", "foobar", "foo", "foo@a"
         ScopedAttributeValue aAtfoo = new ScopedAttributeValue("a", "foo");
         ScopedAttributeValue fooAta = new ScopedAttributeValue("foo", "a");
-        final Collection values = CollectionSupport.toList((Object) "X", "fot", aAtfoo, "foobar", "foo", fooAta);
+        final Collection values = Lists.newArrayList((Object) "X", "fot", aAtfoo, "foobar", "foo", fooAta);
         attribute.setValues(values);
 
         AttributeValueRegexMatcher filter = new AttributeValueRegexMatcher();

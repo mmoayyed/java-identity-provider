@@ -20,12 +20,12 @@ package net.shibboleth.idp.saml.impl.profile;
 import javax.servlet.http.HttpServletRequest;
 
 import net.jcip.annotations.NotThreadSafe;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BasicMessageContext;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
-import org.opensaml.util.StringSupport;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
 @NotThreadSafe

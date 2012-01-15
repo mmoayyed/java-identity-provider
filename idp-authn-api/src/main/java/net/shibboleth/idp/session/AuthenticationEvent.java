@@ -20,11 +20,12 @@ package net.shibboleth.idp.session;
 import java.security.Principal;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
+
+import com.google.common.base.Objects;
 
 /** Describes an authentication event that took place within the scope of an {@link IdPSession}. */
 @ThreadSafe
@@ -130,7 +131,7 @@ public final class AuthenticationEvent extends AbstractSubcontextContainer {
 
         if (obj instanceof AuthenticationEvent) {
             AuthenticationEvent other = (AuthenticationEvent) obj;
-            return ObjectSupport.equals(getAuthenticationWorkflow(), other.getAuthenticationWorkflow());
+            return Objects.equal(getAuthenticationWorkflow(), other.getAuthenticationWorkflow());
         }
 
         return false;

@@ -52,11 +52,6 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
     private final Logger log = LoggerFactory.getLogger(AddAudienceRestrictionToAssertions.class);
 
     /** {@inheritDoc} */
-    protected Class<RelyingPartySubcontext> getSubcontextType() {
-        return RelyingPartySubcontext.class;
-    }
-
-    /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {

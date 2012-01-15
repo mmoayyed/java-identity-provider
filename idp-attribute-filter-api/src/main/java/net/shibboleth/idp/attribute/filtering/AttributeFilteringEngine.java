@@ -19,80 +19,106 @@ package net.shibboleth.idp.attribute.filtering;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.LazyList;
+import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.collections.LazyList;
-import org.opensaml.util.collections.LazySet;
-import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.UnmodifiableComponent;
-import org.opensaml.util.component.UnmodifiableComponentException;
-import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 //TODO perf metrics
 
 /** Services that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public class AttributeFilteringEngine extends AbstractIdentifiableInitializableComponent implements ValidatableComponent,
-        DestructableComponent, UnmodifiableComponent {
+public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableInitializableComponent implements
+        ValidatableComponent, DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilteringEngine.class);
 
     /** Filter policies used by this engine. */
-    private Set<AttributeFilterPolicy> filterPolicies = Collections.EMPTY_SET;
+    private Set<AttributeFilterPolicy> filterPolicies;
+
+    /** Constructor. */
+    public AttributeFilteringEngine() {
+        filterPolicies = new TransformedInputCollectionBuilder().buildImmutableSet();
+    }
 
     /** {@inheritDoc} */
-    public synchronized void setId(final String componentId) {
+    public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
         super.setId(componentId);
     }
 
     /**
      * Gets the immutable collection of filter policies.
      * 
-     * @return immutable collection of filter policies, never null or containing null elements
+     * @return immutable collection of filter policies
      */
-    public Set<AttributeFilterPolicy> getFilterPolicies() {
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeFilterPolicy> getFilterPolicies() {
         return filterPolicies;
     }
 
     /**
      * Sets the new policies for the filtering engine.
      * 
-     * @param policies new policies for the filtering engine, may be null or contain null elements
+     * @param policies new policies for the filtering engine
      */
-    public synchronized void setFilterPolicies(final Collection<AttributeFilterPolicy> policies) {
+    public synchronized void setFilterPolicies(
+            @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
         if (isInitialized()) {
             throw new UnmodifiableComponentException("Attribute filter egine " + getId()
                     + " has already been initialized, its filter policies can not be changed.");
         }
 
-        LazySet<AttributeFilterPolicy> newPolicies =
-                CollectionSupport.addNonNull(policies, new LazySet<AttributeFilterPolicy>());
-        filterPolicies = Collections.unmodifiableSet(newPolicies);
+        if (isDestroyed()) {
+            throw new DestroyedComponentException(this);
+        }
+
+        filterPolicies = new TransformedInputCollectionBuilder().addAll(policies).buildImmutableSet();
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
+        if (!isInitialized()) {
+            throw new ComponentValidationException(getId() + " has not yet been initialized");
+        }
+
+        if (isDestroyed()) {
+            throw new ComponentValidationException(getId() + " has been destroyed");
+        }
+
         final LazyList<String> invalidPolicyIds = new LazyList<String>();
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
             try {
-                log.debug("Attribute filtering engine {}: checking if policy {} is valid", getId(), policy.getId());
+                log.debug("Attribute filtering engine '{}': checking if policy '{}' is valid", getId(), policy.getId());
                 policy.validate();
-                log.debug("Attribute filtering engine {}: policy {} is valid", getId(), policy.getId());
+                log.debug("Attribute filtering engine '{}': policy '{}' is valid", getId(), policy.getId());
             } catch (ComponentValidationException e) {
-                log.warn("Attribute filtering engine {}: filter policy {} is not valid", new Object[] {this.getId(),
-                        policy.getId(), e,});
+                log.warn("Attribute filtering engine '{}': filter policy '{}' is not valid", new Object[] {
+                        this.getId(), policy.getId(), e,});
                 invalidPolicyIds.add(policy.getId());
             }
         }
@@ -101,16 +127,6 @@ public class AttributeFilteringEngine extends AbstractIdentifiableInitializableC
             throw new ComponentValidationException("The following attribute filter policies were invalid: "
                     + StringSupport.listToStringValue(invalidPolicyIds, ", "));
         }
-    }
-
-    /** {@inheritDoc} */
-    public synchronized void destroy() {
-        final Set<AttributeFilterPolicy> policies = getFilterPolicies();
-        for (AttributeFilterPolicy policy : policies) {
-            policy.destroy();
-        }
-
-        filterPolicies = Collections.emptySet();
     }
 
     /**
@@ -122,32 +138,42 @@ public class AttributeFilteringEngine extends AbstractIdentifiableInitializableC
      * @throws AttributeFilteringException thrown if there is a problem retrieving or applying the attribute filter
      *             policy
      */
-    public void filterAttributes(final AttributeFilterContext filterContext) throws AttributeFilteringException {
+    public void filterAttributes(@Nonnull final AttributeFilterContext filterContext)
+            throws AttributeFilteringException {
+        assert filterContext != null : "Attribute filter context can not be null";
+
         if (!isInitialized()) {
             throw new AttributeFilteringException("Attribute filtering engine " + getId()
                     + " has not be initialized and can not yet be used");
         }
 
+        if (isDestroyed()) {
+            throw new DestroyedComponentException(this);
+        }
+
+        Map<String, Attribute<?>> prefilteredAttributes = filterContext.getPrefilteredAttributes();
+
+        log.debug("Attribute filter engine '{}': beginning process of filter the following {} attributes: {}",
+                new Object[] {getId(), prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
+
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
             if (!policy.isApplicable(filterContext)) {
-                log.debug("Attribute filtering engine {}: filter policy {} is not applicable", getId(), policy.getId());
+                log.debug("Attribute filtering engine '{}': filter policy '{}' is not applicable", getId(),
+                        policy.getId());
             }
 
-            log.debug("Attribute filtering engine {}: applying filter policy {}", getId(), policy.getId());
             policy.apply(filterContext);
-            log.debug("Attribute filtering engine {}: attributes available after applying filter policy {}: {}",
-                    new Object[] {getId(), policy.getId(), filterContext.getFilteredAttributes()});
         }
 
-        Collection<?> filteredAttributeValues;
+        Optional<Collection<?>> filteredAttributeValues;
         Attribute filteredAttribute;
         for (String attributeId : filterContext.getPermittedAttributeValues().keySet()) {
             filteredAttributeValues = getFilteredValues(attributeId, filterContext);
-            if (filteredAttributeValues != null) {
-                filteredAttribute = filterContext.getPrefilteredAttributes().get(attributeId).clone();
-                filteredAttribute.setValues(filteredAttributeValues);
-                filterContext.addFilteredAttribute(filteredAttribute);
+            if (filteredAttributeValues.isPresent() && !filteredAttributeValues.get().isEmpty()) {
+                filteredAttribute = prefilteredAttributes.get(attributeId).clone();
+                filteredAttribute.setValues(filteredAttributeValues.get());
+                filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
             }
         }
     }
@@ -160,32 +186,56 @@ public class AttributeFilteringEngine extends AbstractIdentifiableInitializableC
      * @param attributeId ID of the attribute whose values are to be retrieved
      * @param filterContext current attribute filter context
      * 
-     * @return the values which are permitted to be released and not denied or null if no values are allowed to be
-     *         released
+     * @return {@link Optional#absent()} if not values were permitted to be released, {@link Optional} containing an
+     *         empty collection if values were permitted but then all were removed by deny policies, or {@link Optional}
+     *         with a collection containing permitted values
      */
-    protected Collection<?> getFilteredValues(final String attributeId, final AttributeFilterContext filterContext) {
+    protected Optional<Collection<?>> getFilteredValues(@Nonnull @NotEmpty final String attributeId,
+            @Nonnull final AttributeFilterContext filterContext) {
+        assert attributeId != null : "attributeId can not be null";
+        assert filterContext != null : "filterContext can not be null";
+
         final Collection<?> filteredAttributeValues = filterContext.getPermittedAttributeValues().get(attributeId);
+
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
-            return null;
+            log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),
+                    attributeId);
+            return Optional.absent();
         }
 
         if (filterContext.getDeniedAttributeValues().containsKey(attributeId)) {
             filteredAttributeValues.removeAll(filterContext.getDeniedAttributeValues().get(attributeId));
         }
 
-        if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
-            return null;
+        if (filteredAttributeValues.isEmpty()) {
+            log.debug("Attribute filtering engine '{}': deny policies filtered out all values for attribute '{}'",
+                    getId(), attributeId);
+        } else {
+            log.debug("Attribute filtering engine '{}': {} values for attribute '{}' remained after filtering",
+                    new Object[] {getId(), filteredAttributeValues.size(), attributeId,});
         }
 
-        return filteredAttributeValues;
+        return Optional.<Collection<?>> of(filteredAttributeValues);
     }
-    
+
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
-        for(AttributeFilterPolicy policy : filterPolicies){
+
+        for (AttributeFilterPolicy policy : filterPolicies) {
             policy.initialize();
         }
+    }
+
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        final Set<AttributeFilterPolicy> policies = getFilterPolicies();
+        for (AttributeFilterPolicy policy : policies) {
+            policy.destroy();
+        }
+
+        filterPolicies = Collections.emptySet();
+
+        super.doDestroy();
     }
 }

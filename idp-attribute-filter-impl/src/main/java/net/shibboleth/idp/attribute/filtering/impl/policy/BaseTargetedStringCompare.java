@@ -18,10 +18,9 @@
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
 import net.jcip.annotations.ThreadSafe;
-
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * The basis of all String-based Filter criteria.

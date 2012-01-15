@@ -21,12 +21,13 @@ import java.util.Collection;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponentException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * Test for {@link AttributeValueStringMatcher}.
@@ -36,12 +37,14 @@ public class TestAttributeValueStringMatcher {
     /** name used throughout the tests for the attribute. */
     private static final String ATTR_NAME = "attributeName";
 
-    /** Test the getMatchingValue. 
+    /**
+     * Test the getMatchingValue.
+     * 
      * @throws AttributeFilteringException if the filter fails
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void attributeValueStringMatcherTest() throws AttributeFilteringException, ComponentInitializationException {
+    @Test public void attributeValueStringMatcherTest() throws AttributeFilteringException,
+            ComponentInitializationException {
         AttributeValueStringMatcher filter;
         boolean thrown = false;
         // Bad Parameters
@@ -82,7 +85,7 @@ public class TestAttributeValueStringMatcher {
         Assert.assertTrue(thrown, "testing bad constructor (missing initialize): usual case");
 
         final Attribute<String> attribute = new Attribute<String>(ATTR_NAME);
-        final Collection<String> values = CollectionSupport.toList("zero", "one", "two", "three");
+        final Collection<String> values = Lists.newArrayList("zero", "one", "two", "three");
         attribute.setValues(values);
 
         thrown = false;
@@ -103,19 +106,19 @@ public class TestAttributeValueStringMatcher {
         filter.setMatchString("one");
         filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 1, "counts of 'one' (case sensitive)");
-        
+
         filter = new AttributeValueStringMatcher();
         filter.setCaseSentitive(false);
         filter.setMatchString("one");
         filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 1, "counts of 'one' (case insensitive)");
-        
+
         filter = new AttributeValueStringMatcher();
         filter.setCaseSentitive(true);
         filter.setMatchString("ONE");
         filter.initialize();
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 0, "counts of 'ONE' (case sensitive)");
-        
+
         filter = new AttributeValueStringMatcher();
         filter.setCaseSentitive(false);
         filter.setMatchString("TWO");
@@ -123,6 +126,5 @@ public class TestAttributeValueStringMatcher {
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), 1, "counts of 'TWO' (case insensitive)");
 
     }
-
 
 }

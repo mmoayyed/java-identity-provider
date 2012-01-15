@@ -21,9 +21,8 @@ import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
-
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe

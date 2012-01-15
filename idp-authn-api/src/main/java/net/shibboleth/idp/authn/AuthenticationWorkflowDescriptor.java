@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.StringSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** A descriptor of an authentication workflow. */
 public class AuthenticationWorkflowDescriptor {

@@ -22,11 +22,12 @@ import java.util.Set;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.util.collections.CollectionSupport;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** Unit test for {@link AbstractSamlProfileConfiguration}. */
 public class AbstractSamlProfileConfigurationTest {
@@ -115,7 +116,7 @@ public class AbstractSamlProfileConfigurationTest {
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
 
-        config.setAdditionalAudienceForAssertion(CollectionSupport.toList("", null, " foo"));
+        config.setAdditionalAudienceForAssertion(Lists.newArrayList("", null, " foo"));
 
         Set<String> audiences = config.getAdditionalAudiencesForAssertion();
         Assert.assertNotNull(audiences);

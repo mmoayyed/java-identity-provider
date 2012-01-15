@@ -22,10 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
 
 
 /** Context used to collect data about the user's consent to release information. */

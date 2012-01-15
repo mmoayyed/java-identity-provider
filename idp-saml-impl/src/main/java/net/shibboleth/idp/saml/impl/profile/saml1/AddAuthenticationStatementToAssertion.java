@@ -58,11 +58,6 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
     private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
 
     /** {@inheritDoc} */
-    protected Class<RelyingPartySubcontext> getSubcontextType() {
-        return RelyingPartySubcontext.class;
-    }
-
-    /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
             RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
             throws ProfileException {

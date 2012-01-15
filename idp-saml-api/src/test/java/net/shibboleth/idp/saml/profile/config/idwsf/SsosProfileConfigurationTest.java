@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.profile.config.idwsf;
 
-import net.shibboleth.idp.saml.profile.config.idwsf.SsosProfileConfiguration;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

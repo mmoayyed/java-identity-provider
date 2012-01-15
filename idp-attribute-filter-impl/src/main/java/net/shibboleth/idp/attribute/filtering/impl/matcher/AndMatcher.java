@@ -20,33 +20,36 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.AbstractInitializableComponent;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentSupport;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.ValidatableComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implement the AND matcher.
+ * Implement the composition of matchers, that is a logic AND.
  * 
  * This is a difficult concept. We implement AND by saying that if a particular value occurs in the results returned by
  * all the child rules then it will be returned. (the the value was OK'd by matcher one AND the value was OK'd by
  * matcher2 AND .... <br />
- * However it seems likely that such a constraint is erroneous...
  */
 @ThreadSafe
 public class AndMatcher extends AbstractInitializableComponent implements AttributeValueMatcher, DestructableComponent,
@@ -58,22 +61,21 @@ public class AndMatcher extends AbstractInitializableComponent implements Attrib
     /** Destructor state. */
     private boolean destroyed;
 
-    /**
-     * The supplied matchers to be ORed together.
-     * 
-     * This list in unmodifiable.
-     */
-    private List<AttributeValueMatcher> matchers = Collections.emptyList();
+    /** The supplied matchers to be ORed together. */
+    private List<AttributeValueMatcher> matchers;
 
-    /**
-     * Constructor.
-     */
+    /** Constructor. */
     public AndMatcher() {
-        log.info("AND matcher as part of a Permit or Deny rule is likely to be a configuration error");
+        matchers = Collections.emptyList();
+    }
+    
+    /** {@inheritDoc} */
+    public boolean isDestroyed() {
+        return destroyed;
     }
 
-    /** tear down any destructable children. {@inheritDoc} */
-    public void destroy() {
+    /** {@inheritDoc} */
+    public synchronized void destroy() {
         destroyed = true;
         for (AttributeValueMatcher matcher : matchers) {
             ComponentSupport.destroy(matcher);
@@ -82,54 +84,66 @@ public class AndMatcher extends AbstractInitializableComponent implements Attrib
         matchers = null;
     }
 
-    /**
-     * Validate any validatable children. {@inheritDoc}
-     * 
-     * @throws ComponentValidationException if any of the child validates failed.
-     */
+    /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         if (!isInitialized()) {
-            throw new ComponentValidationException("Object not initialized");
+            throw new ComponentValidationException("Matcher not initialized");
         }
+        
+        if(isDestroyed()){
+            throw new ComponentValidationException("Matcher has been destroyed");
+        }
+        
         for (AttributeValueMatcher matcher : matchers) {
             ComponentSupport.validate(matcher);
         }
     }
 
     /**
-     * Get the sub matchers which are to be AND'd.
+     * Get the sub matchers which are to be AND'ed.
      * 
-     * @return the sub matchers. This is never null or empty,
+     * @return the composed matchers
      */
-    public List<AttributeValueMatcher> getSubMatchers() {
+    @Nonnull @NonnullElements public List<AttributeValueMatcher> getComposedMatchers() {
         return matchers;
     }
 
     /**
-     * Set the sub matchers which will be anded together.
+     * Set the sub matchers which will be AND'ed together.
      * 
-     * @param newMatchers what to set.
+     * @param composedMatchers the composed matchers
      */
-    public synchronized void setSubMatchers(final List<AttributeValueMatcher> newMatchers) {
-        final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
-        CollectionSupport.addNonNull(newMatchers, workingMatcherList);
-        if (workingMatcherList.isEmpty()) {
+    public synchronized void setComposedMatchers(
+            @Nullable @NullableElements final List<AttributeValueMatcher> composedMatchers) {
+        if(isInitialized()){
+            //TODO
+        }
+        
+        if(isDestroyed()){
+            //TODO
+        }
+        
+        matchers =
+                new TransformedInputCollectionBuilder<AttributeValueMatcher>().addAll(composedMatchers)
+                        .buildImmutableList();
+        if (matchers.isEmpty()) {
             log.warn("No sub-matchers provided to AND Value Matcher, this always returns no results");
         }
-        matchers = Collections.unmodifiableList(workingMatcherList);
     }
 
     /**
-     * Computer the logical "And" of the set of values.<br />
+     * Computer the logical "AND" of the set of values.<br />
      * Check each value against all the matchers. <br />
      * Rather than start with all values and compare against all matchers we'll start with the values allowed by the
      * first matcher and compare against all the others, bailing out as soon as we see a failure. <br />
      * 
-     * @param valueSets the array of sets of child attributes.
-     * @return the "logical and" of the results (all values which are in all sets(
+     * @param valueSets the array of sets of child attributes
+     * 
+     * @return the "logical and" of the results (all values which are in all sets)
      */
-    private Collection<?> computeAnd(List<Collection> valueSets) {
-        final Set result = new HashSet();
+    @Nonnull @NonnullElements private Collection<?> computeAnd(
+            @Nullable @NullableElements final List<Collection> valueSets) {
+        final Set result = new TransformedInputCollectionBuilder().buildSet();
 
         for (Object value : valueSets.get(0)) {
             // Compare in all the other sets
@@ -143,20 +157,24 @@ public class AndMatcher extends AbstractInitializableComponent implements Attrib
                 result.add(value);
             }
         }
+
         return result;
     }
 
     /** {@inheritDoc} */
-    public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
-            throws AttributeFilteringException {
+    @Nonnull @NonnullElements public Collection<?> getMatchingValues(@Nonnull final Attribute<?> attribute,
+            @Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
+        assert attribute != null : "Attribute to be filtered can not be null";
+        assert filterContext != null : "Attribute filter contet can not be null";
 
         if (!isInitialized()) {
             throw new AttributeFilteringException("And Matcher has not been initialized");
         }
+        
         // NOTE capture the matchers to avoid race with setSubMatchers.
         // Do this before the test on destruction to avoid
         // race with destroy code.
-        final List<AttributeValueMatcher> theMatchers = getSubMatchers();
+        final List<AttributeValueMatcher> theMatchers = getComposedMatchers();
         if (destroyed) {
             throw new AttributeFilteringException("And Matcher has been destroyed");
         }

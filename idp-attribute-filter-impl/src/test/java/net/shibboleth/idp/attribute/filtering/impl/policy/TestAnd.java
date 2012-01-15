@@ -21,14 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** tests for the AND criterion. */
 public class TestAnd {
@@ -39,8 +40,7 @@ public class TestAnd {
      * @throws EvaluationException if a child throws
      * @throws ComponentInitializationException never
      */
-    @Test
-    public void andCriterionWithNullTest() throws EvaluationException, ComponentInitializationException {
+    @Test public void andCriterionWithNullTest() throws EvaluationException, ComponentInitializationException {
         AndCriterion and = new AndCriterion();
 
         Assert.assertEquals(and.getSubCriteria().size(), 0, "null list");
@@ -82,14 +82,14 @@ public class TestAnd {
      * @throws ComponentInitializationException never
      * @throws ComponentValidationException never
      */
-    @Test
-    public void andCriterionTest() throws EvaluationException, ComponentInitializationException, ComponentValidationException {
+    @Test public void andCriterionTest() throws EvaluationException, ComponentInitializationException,
+            ComponentValidationException {
         EvaluableCriterion<AttributeFilterContext> t = new AnyCriterion();
         DestroyableValidatableAnyCriterion d = new DestroyableValidatableAnyCriterion();
         NotCriterion f = new NotCriterion();
         f.setSubCriterion(d);
 
-        List<EvaluableCriterion<AttributeFilterContext>> list = CollectionSupport.toList(t, t, t);
+        List<EvaluableCriterion<AttributeFilterContext>> list = Lists.newArrayList(t, t, t);
         AndCriterion and = new AndCriterion();
         and.initialize();
         and.setSubCriteria(list);
@@ -99,7 +99,7 @@ public class TestAnd {
         Assert.assertTrue(and.evaluate(null), "list is unmodifiable");
 
         and = new AndCriterion();
-        
+
         Assert.assertFalse(d.isInitialized(), "initialization of subcriteria should not have happened yet");
         and.setSubCriteria(list);
         and.initialize();
@@ -108,13 +108,13 @@ public class TestAnd {
         Assert.assertFalse(d.isValidated(), "validation of subcriteria should not have happened yet");
         and.validate();
         Assert.assertTrue(d.isValidated(), "validation of subcriteria should have happened");
-        
+
         Assert.assertFalse(and.evaluate(null), "and(FALSE, TRUE, TRUE");
 
         Assert.assertFalse(d.isDestroyed(), "destruction of subcriteria should not have happened yet");
         and.destroy();
         Assert.assertTrue(d.isDestroyed(), "destruction of subcretia should have happened");
-        
+
         boolean thrown = false;
         try {
             and.evaluate(null);

@@ -24,19 +24,20 @@ import java.util.List;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * Tests for class {@link AndMatcher}.
  * 
  */
 public class TestAndMatcher {
-    
+
     /**
      * test {@link AndMatcher}.
      * 
@@ -44,10 +45,10 @@ public class TestAndMatcher {
      * @throws ComponentInitializationException init initialize fails
      * @throws ComponentValidationException if validate fails (it shouldn't).
      */
-    @Test
-    public void andMatcherTest() throws AttributeFilteringException, ComponentInitializationException, ComponentValidationException {
+    @Test public void andMatcherTest() throws AttributeFilteringException, ComponentInitializationException,
+            ComponentValidationException {
         final Attribute<String> attribute = new Attribute<String>("attribute");
-        final Collection<String> values = CollectionSupport.toList("a", "b", "c", "d");
+        final Collection<String> values = Lists.newArrayList("a", "b", "c", "d");
         attribute.setValues(values);
 
         AndMatcher filter = new AndMatcher();
@@ -66,14 +67,14 @@ public class TestAndMatcher {
         final List<AttributeValueMatcher> list = new ArrayList<AttributeValueMatcher>(1);
         list.add((AttributeValueMatcher) null);
 
-        filter.setSubMatchers(list);
-        
-        Assert.assertTrue(filter.getSubMatchers().isEmpty(), "empty elements are nulled out");
+        filter.setComposedMatchers(list);
+
+        Assert.assertTrue(filter.getComposedMatchers().isEmpty(), "empty elements are nulled out");
         Assert.assertTrue(filter.getMatchingValues(attribute, null).isEmpty(), "empty filter gives empty result");
 
-        filter.setSubMatchers(CollectionSupport.toList((AttributeValueMatcher) new AnyMatcher()));
+        filter.setComposedMatchers(Lists.newArrayList(AttributeValueMatcher.MATCHES_ALL));
         Assert.assertEquals(filter.getMatchingValues(attribute, null).size(), values.size(), "AND of ANY is ANY");
-        
+
         // Construct three or filters to give {"a","b","c"}, {"b", "c"}, {"a", "b", "d"}
 
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("a", false));
@@ -82,7 +83,7 @@ public class TestAndMatcher {
         OrMatcher or1 = new OrMatcher();
         or1.setSubMatchers(list);
         or1.initialize();
-        
+
         list.clear();
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("c", false));
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("b", true));
@@ -93,21 +94,22 @@ public class TestAndMatcher {
         list.clear();
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("a", false));
         list.add(DestroyableValidatableAttributeValueStringMatcher.newMatcher("b", true));
-        DestroyableValidatableAttributeValueStringMatcher destroyTester = DestroyableValidatableAttributeValueStringMatcher.newMatcher("d", true);
+        DestroyableValidatableAttributeValueStringMatcher destroyTester =
+                DestroyableValidatableAttributeValueStringMatcher.newMatcher("d", true);
         list.add(destroyTester);
         OrMatcher or3 = new OrMatcher();
         or3.setSubMatchers(list);
         or3.initialize();
 
-        filter.setSubMatchers(CollectionSupport.toList((AttributeValueMatcher)or1, or2, or3));
+        filter.setComposedMatchers(Lists.newArrayList((AttributeValueMatcher) or1, or2, or3));
         Collection c = filter.getMatchingValues(attribute, null);
         Assert.assertEquals(c.size(), 1, "Match complex AND");
         Assert.assertTrue(c.contains("b"));
-        
+
         Assert.assertFalse(destroyTester.isValidated(), "Has validate not yet been passed down");
         filter.validate();
         Assert.assertTrue(destroyTester.isValidated(), "Has validate been passed down");
-                
+
         Assert.assertFalse(destroyTester.isDestroyed(), "Has destroy not yet been passed down");
         filter.destroy();
         Assert.assertTrue(destroyTester.isDestroyed(), "Has destroy been passed down");
@@ -120,6 +122,6 @@ public class TestAndMatcher {
             threw = true;
         }
         Assert.assertTrue(threw, "unreachable code (destroy)");
-        
+
     }
 }

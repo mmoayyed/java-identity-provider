@@ -19,9 +19,10 @@ package net.shibboleth.idp.profile.config;
 
 import java.util.concurrent.TimeUnit;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.IdentifierGenerator;
-import org.opensaml.util.SecureRandomIdentifierGenerator;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
+
 import org.opensaml.xml.security.DecryptionConfiguration;
 import org.opensaml.xml.security.EncryptionConfiguration;
 import org.opensaml.xml.security.SignatureSigningConfiguration;
@@ -34,7 +35,7 @@ public class SecurityConfiguration {
     private final long clockSkew;
 
     /** Generator used to generate various secure IDs (e.g., message identifiers). */
-    private final IdentifierGenerator idGenerator;
+    private final IdentifierGenerationStrategy idGenerator;
 
     /** Configuration used when validating protocol message signatures. */
     private SignatureValidationConfiguration sigValidateConfig;
@@ -54,7 +55,7 @@ public class SecurityConfiguration {
      */
     public SecurityConfiguration() {
         clockSkew = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
-        idGenerator = new SecureRandomIdentifierGenerator();
+        idGenerator = new RandomIdentifierGenerationStrategy();
     }
 
     /**
@@ -63,7 +64,7 @@ public class SecurityConfiguration {
      * @param skew the clock skew, must be greater than 0
      * @param generator the identifier generator, must not be null
      */
-    public SecurityConfiguration(int skew, IdentifierGenerator generator) {
+    public SecurityConfiguration(int skew, IdentifierGenerationStrategy generator) {
         clockSkew = (int) Assert.isGreaterThan(0, skew, "Clock skew must be greater than 0");
         idGenerator = Assert.isNotNull(generator, "Identifier generator can not be null");
     }
@@ -82,7 +83,7 @@ public class SecurityConfiguration {
      * 
      * @return generator used to generate secure identifiers, never null
      */
-    public IdentifierGenerator getIdGenerator() {
+    public IdentifierGenerationStrategy getIdGenerator() {
         return idGenerator;
     }
 

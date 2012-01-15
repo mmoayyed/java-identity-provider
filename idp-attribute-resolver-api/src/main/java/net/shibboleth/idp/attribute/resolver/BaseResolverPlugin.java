@@ -23,16 +23,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.AbstractIdentifiableInitializableComponent;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentSupport;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.UnmodifiableComponent;
-import org.opensaml.util.component.UnmodifiableComponentException;
-import org.opensaml.util.component.ValidatableComponent;
 import org.opensaml.util.criteria.EvaluableCriterion;
 import org.opensaml.util.criteria.EvaluationException;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
@@ -51,6 +50,9 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
 
+    /** Whether this plugin has been destroyed. */
+    private boolean isDestroyed;
+
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions;
 
@@ -67,7 +69,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
             throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
                     + " has already been initialized, plugin ID can not be changed.");
         }
-        
+
         super.setId(componentId);
     }
 
@@ -196,6 +198,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
                     + " has not be initialized and can not yet be used");
         }
 
+        if (!isDestroyed) {
+            throw new AttributeResolutionException("Resolver plugin" + getId()
+                    + " has been destroyed and can no longer be used");
+        }
+
         if (!isApplicable(resolutionContext)) {
             return null;
         }
@@ -217,10 +224,22 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
     }
 
     /** {@inheritDoc} */
-    public synchronized void destroy() {
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    /** {@inheritDoc} */
+    public final synchronized void destroy() {
+        doDestroy();
         ComponentSupport.destroy(activationCriteria);
         activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
         dependencies = Collections.emptySet();
+        isDestroyed = true;
+    }
+
+    /** Performs plugin implementation specific destruction logic. */
+    protected void doDestroy() {
+
     }
 
     /** {@inheritDoc} */

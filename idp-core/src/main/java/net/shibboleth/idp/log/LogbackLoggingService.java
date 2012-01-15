@@ -24,12 +24,11 @@ import java.util.HashMap;
 
 import net.shibboleth.idp.service.AbstractReloadableService;
 import net.shibboleth.idp.service.ServiceException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.resource.Resource;
+import net.shibboleth.utilities.java.support.resource.ResourceException;
 
-import org.opensaml.util.CloseableSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.resource.Resource;
-import org.opensaml.util.resource.ResourceException;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.LoggerContext;
@@ -38,6 +37,8 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.status.InfoStatus;
 import ch.qos.logback.core.status.StatusManager;
+
+import com.google.common.io.Closeables;
 
 /**
  * Simple logging service that watches for logback configuration file changes and reloads the file when a change occurs.
@@ -123,7 +124,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
             ins = configurationResource.getInputStream();
             loadLoggingConfiguration(ins);
         } catch (Exception e) {
-            CloseableSupport.closeQuietly(ins);
+            Closeables.closeQuietly(ins);
             statusManager.add(new ErrorStatus("Error loading logging configuration file: "
                     + configurationResource.getLocation(), this, e));
             try {
@@ -131,12 +132,12 @@ public class LogbackLoggingService extends AbstractReloadableService {
                 ins = fallbackConfiguraiton.openStream();
                 loadLoggingConfiguration(ins);
             } catch (IOException ioe) {
-                CloseableSupport.closeQuietly(ins);
+                Closeables.closeQuietly(ins);
                 statusManager.add(new ErrorStatus("Error loading fallback logging configuration", this, e));
                 throw new ServiceException("Unable to load fallback logging configuration");
             }
         } finally {
-            CloseableSupport.closeQuietly(ins);
+            Closeables.closeQuietly(ins);
         }
     }
 

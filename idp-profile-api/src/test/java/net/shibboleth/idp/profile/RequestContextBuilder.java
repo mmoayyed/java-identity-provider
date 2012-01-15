@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,10 +35,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import org.opensaml.messaging.context.BasicMessageContext;
 import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.constraint.documented.NotNull;
-import org.opensaml.util.constraint.documented.Null;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -45,6 +43,11 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * Builder used to construct {@link RequestContext} used in {@link org.springframework.webflow.execution.Action}
@@ -75,7 +78,7 @@ public class RequestContextBuilder {
 
     /** The inbound message. */
     private Object inboundMessage;
-    
+
     /** The ID of the outbound message. */
     private String outboundMessageId = NO_VAL;
 
@@ -84,7 +87,7 @@ public class RequestContextBuilder {
 
     /** The issuer of the outbound message. */
     private String outboundMessageIssuer = NO_VAL;
-    
+
     /** The outbound message. */
     private Object outboundMessage;
 
@@ -113,7 +116,7 @@ public class RequestContextBuilder {
         outboundMessageIssueInstant = prototype.outboundMessageIssueInstant;
         outboundMessageIssuer = prototype.outboundMessageIssuer;
         outboundMessage = prototype.outboundMessage;
-        
+
         if (prototype.relyingPartyProfileConfigurations != null) {
             relyingPartyProfileConfigurations =
                     new ArrayList<ProfileConfiguration>(prototype.relyingPartyProfileConfigurations);
@@ -127,8 +130,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setServletContext(@Null final ServletContext context) {
+    @Nonnull public RequestContextBuilder setServletContext(@Nullable final ServletContext context) {
         servletContext = context;
         return this;
     }
@@ -140,8 +142,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setHttpRequest(@Null final HttpServletRequest request) {
+    @Nonnull public RequestContextBuilder setHttpRequest(@Nullable final HttpServletRequest request) {
         httpRequest = request;
         return this;
     }
@@ -153,8 +154,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setHttpResponse(@Null final HttpServletResponse response) {
+    @Nonnull public RequestContextBuilder setHttpResponse(@Nullable final HttpServletResponse response) {
         httpResponse = response;
         return this;
     }
@@ -166,8 +166,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setInboundMessageId(@Null final String id) {
+    @Nonnull public RequestContextBuilder setInboundMessageId(@Nullable final String id) {
         inboundMessageId = id;
         return this;
     }
@@ -179,8 +178,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setInboundMessageIssueInstant(final long instant) {
+    @Nonnull public RequestContextBuilder setInboundMessageIssueInstant(final long instant) {
         inboundMessageIssueInstant = instant;
         return this;
     }
@@ -192,12 +190,11 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setInboundMessageIssuer(@Null final String issuer) {
+    @Nonnull public RequestContextBuilder setInboundMessageIssuer(@Nullable final String issuer) {
         inboundMessageIssuer = issuer;
         return this;
     }
-    
+
     /**
      * Sets the inbound message.
      * 
@@ -205,12 +202,11 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setInboundMessage(@Null final Object message){
+    @Nonnull public RequestContextBuilder setInboundMessage(@Nullable final Object message) {
         inboundMessage = message;
         return this;
     }
-    
+
     /**
      * Sets the ID of the outbound message.
      * 
@@ -218,8 +214,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setOutboundMessageId(@Null final String id) {
+    @Nonnull public RequestContextBuilder setOutboundMessageId(@Nullable final String id) {
         outboundMessageId = id;
         return this;
     }
@@ -231,8 +226,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setOutboundMessageIssueInstant(final long instant) {
+    @Nonnull public RequestContextBuilder setOutboundMessageIssueInstant(final long instant) {
         outboundMessageIssueInstant = instant;
         return this;
     }
@@ -244,11 +238,11 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    public RequestContextBuilder setOutboundMessageIssuer(@Null final String issuer) {
+    public RequestContextBuilder setOutboundMessageIssuer(@Nullable final String issuer) {
         outboundMessageIssuer = issuer;
         return this;
     }
-    
+
     /**
      * Sets the outbound message.
      * 
@@ -256,8 +250,7 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setOutboundMessage(@Null final Object message){
+    @Nonnull public RequestContextBuilder setOutboundMessage(@Nullable final Object message) {
         outboundMessage = message;
         return this;
     }
@@ -269,9 +262,8 @@ public class RequestContextBuilder {
      * 
      * @return this builder
      */
-    @NotNull
-    public RequestContextBuilder setRelyingPartyProfileConfigurations(
-            @Null final Collection<ProfileConfiguration> configs) {
+    @Nonnull public RequestContextBuilder setRelyingPartyProfileConfigurations(
+            @Nullable final Collection<ProfileConfiguration> configs) {
         relyingPartyProfileConfigurations = configs;
         return this;
     }
@@ -289,8 +281,7 @@ public class RequestContextBuilder {
      * 
      * @return the constructed {@link MockRequestContext}
      */
-    @NotNull
-    public RequestContext buildRequestContext() {
+    @Nonnull public RequestContext buildRequestContext() {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(buildServletExternalContext());
 
@@ -344,8 +335,7 @@ public class RequestContextBuilder {
      * @return the constructed {@link ProfileRequestContext
 
      */
-    @NotNull
-    protected ProfileRequestContext buildProfileRequestContext() {
+    @Nonnull protected ProfileRequestContext buildProfileRequestContext() {
         final ProfileRequestContext profileContext = new ProfileRequestContext();
         profileContext.setInboundMessageContext(buildInboundMessageContext());
         profileContext.setOutboundMessageContext(buildOutboundMessageContext());
@@ -359,13 +349,13 @@ public class RequestContextBuilder {
      * The default implementation builds a {@link MessageContext} that contains:
      * <ul>
      * <li>the message provided by {@link #setInboundMessage(Object)}</li>
-     * <li> a {@link BasicMessageMetadataSubcontext} created by {@link #buildInboudMessageMetadataContext(MessageContext)}</li>
+     * <li>a {@link BasicMessageMetadataSubcontext} created by
+     * {@link #buildInboudMessageMetadataContext(MessageContext)}</li>
      * </ul>
      * 
      * @return the constructed {@link MessageContext}
      */
-    @NotNull
-    protected MessageContext buildInboundMessageContext() {
+    @Nonnull protected MessageContext buildInboundMessageContext() {
         final BasicMessageContext context = new BasicMessageContext();
         context.setMessage(inboundMessage);
         buildInboudMessageMetadataContext(context);
@@ -390,16 +380,15 @@ public class RequestContextBuilder {
      * 
      * @return the constructed {@link BasicMessageMetadataSubcontext}
      */
-    @Null
-    protected BasicMessageMetadataSubcontext buildInboudMessageMetadataContext(
-            @NotNull final MessageContext inboundMsgCtx) {
-        if(ObjectSupport.equals(NO_VAL, inboundMessageId) && ObjectSupport.equals(NO_VAL, inboundMessageIssuer)){
+    @Nullable protected BasicMessageMetadataSubcontext buildInboudMessageMetadataContext(
+            @Nonnull final MessageContext inboundMsgCtx) {
+        if (Objects.equal(NO_VAL, inboundMessageId) && Objects.equal(NO_VAL, inboundMessageIssuer)) {
             return null;
         }
-        
+
         final BasicMessageMetadataSubcontext metadataCtx = new BasicMessageMetadataSubcontext(inboundMsgCtx);
 
-        if (ObjectSupport.equals(NO_VAL, inboundMessageId)) {
+        if (Objects.equal(NO_VAL, inboundMessageId)) {
             metadataCtx.setMessageId(ActionTestingSupport.OUTBOUND_MSG_ID);
         } else {
             metadataCtx.setMessageId(inboundMessageId);
@@ -407,7 +396,7 @@ public class RequestContextBuilder {
 
         metadataCtx.setMessageIssueInstant(inboundMessageIssueInstant);
 
-        if (ObjectSupport.equals(NO_VAL, inboundMessageIssuer)) {
+        if (Objects.equal(NO_VAL, inboundMessageIssuer)) {
             metadataCtx.setMessageIssuer(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         } else {
             metadataCtx.setMessageIssuer(inboundMessageIssuer);
@@ -422,13 +411,13 @@ public class RequestContextBuilder {
      * The default implementation builds a {@link MessageContext} that contains:
      * <ul>
      * <li>the message provided by {@link #setOutboundMessage(Object)}</li>
-     * <li> a {@link BasicMessageMetadataSubcontext} created by {@link #buildOutboudMessageMetadataContext(MessageContext)}</li>
+     * <li>a {@link BasicMessageMetadataSubcontext} created by
+     * {@link #buildOutboudMessageMetadataContext(MessageContext)}</li>
      * </ul>
      * 
      * @return the constructed {@link MessageContext}
      */
-    @NotNull
-    protected MessageContext buildOutboundMessageContext() {
+    @Nonnull protected MessageContext buildOutboundMessageContext() {
         final BasicMessageContext context = new BasicMessageContext();
         context.setMessage(outboundMessage);
         buildInboudMessageMetadataContext(context);
@@ -454,16 +443,15 @@ public class RequestContextBuilder {
      * 
      * @return the constructed {@link BasicMessageMetadataSubcontext}
      */
-    @NotNull
-    protected BasicMessageMetadataSubcontext buildOutboundMessageMetadataContext(
-            @NotNull final MessageContext outboundMsgCtx) {
-        if(ObjectSupport.equals(NO_VAL, outboundMessageId) && ObjectSupport.equals(NO_VAL, outboundMessageIssuer)){
+    @Nonnull protected BasicMessageMetadataSubcontext buildOutboundMessageMetadataContext(
+            @Nonnull final MessageContext outboundMsgCtx) {
+        if (Objects.equal(NO_VAL, outboundMessageId) && Objects.equal(NO_VAL, outboundMessageIssuer)) {
             return null;
         }
 
         final BasicMessageMetadataSubcontext metadataCtx = new BasicMessageMetadataSubcontext(outboundMsgCtx);
-        
-        if (ObjectSupport.equals(NO_VAL, outboundMessageId)) {
+
+        if (Objects.equal(NO_VAL, outboundMessageId)) {
             metadataCtx.setMessageId(ActionTestingSupport.OUTBOUND_MSG_ID);
         } else {
             metadataCtx.setMessageId(outboundMessageId);
@@ -471,7 +459,7 @@ public class RequestContextBuilder {
 
         metadataCtx.setMessageIssueInstant(outboundMessageIssueInstant);
 
-        if (ObjectSupport.equals(NO_VAL, outboundMessageIssuer)) {
+        if (Objects.equal(NO_VAL, outboundMessageIssuer)) {
             metadataCtx.setMessageIssuer(ActionTestingSupport.OUTBOUND_MSG_ISSUER);
         } else {
             metadataCtx.setMessageIssuer(outboundMessageIssuer);
@@ -494,11 +482,10 @@ public class RequestContextBuilder {
      * 
      * @return the constructed {@link RelyingPartySubcontext}
      */
-    @NotNull
-    protected RelyingPartySubcontext
-            buildRelyingPartyContext(@NotNull final ProfileRequestContext profileRequestContext) {
+    @Nonnull protected RelyingPartySubcontext buildRelyingPartyContext(
+            @Nonnull final ProfileRequestContext profileRequestContext) {
         final RelyingPartySubcontext rpCtx;
-        if (ObjectSupport.equals(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
+        if (Objects.equal(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
             rpCtx = new RelyingPartySubcontext(profileRequestContext, ActionTestingSupport.INBOUND_MSG_ISSUER);
         } else {
             rpCtx = new RelyingPartySubcontext(profileRequestContext, inboundMessageIssuer);
@@ -526,17 +513,16 @@ public class RequestContextBuilder {
      * 
      * @return the constructed {@link RelyingPartyConfiguration}
      */
-    @NotNull
-    protected RelyingPartyConfiguration buildRelyingPartyConfiguration() {
+    @Nonnull protected RelyingPartyConfiguration buildRelyingPartyConfiguration() {
         String responderId;
-        if (ObjectSupport.equals(NO_VAL, outboundMessageIssuer) || outboundMessageIssuer == null) {
+        if (Objects.equal(NO_VAL, outboundMessageIssuer) || outboundMessageIssuer == null) {
             responderId = ActionTestingSupport.OUTBOUND_MSG_ISSUER;
         } else {
             responderId = outboundMessageIssuer;
         }
 
-        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
-        CollectionSupport.addNonNull(relyingPartyProfileConfigurations, profileConfigs);
+        ArrayList<ProfileConfiguration> profileConfigs =
+                Lists.newArrayList(Iterables.filter(relyingPartyProfileConfigurations, Predicates.notNull()));
         if (profileConfigs.isEmpty()) {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }
@@ -555,9 +541,8 @@ public class RequestContextBuilder {
      * 
      * @return the active {@link ProfileConfiguration}
      */
-    @Null
-    protected ProfileConfiguration selectProfileConfiguration(
-            @NotNull final Map<String, ProfileConfiguration> rpProfileConfigs) {
+    @Nullable protected ProfileConfiguration selectProfileConfiguration(
+            @Nonnull final Map<String, ProfileConfiguration> rpProfileConfigs) {
         return rpProfileConfigs.values().iterator().next();
     }
 }

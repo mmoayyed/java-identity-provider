@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.tou;
 
+import net.shibboleth.utilities.java.support.logic.Assert;
+
 import org.opensaml.messaging.context.Subcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
 
 /** Context used to collect data about the terms of use acceptance. */
 public final class TermsOfUseContext implements Subcontext {

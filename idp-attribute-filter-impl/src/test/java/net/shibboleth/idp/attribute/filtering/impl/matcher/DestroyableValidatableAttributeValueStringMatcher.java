@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.component.DestructableComponent;
-import org.opensaml.util.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 /**
  * Simple class to test destruction.

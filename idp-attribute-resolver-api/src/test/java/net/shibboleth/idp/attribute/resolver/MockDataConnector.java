@@ -21,8 +21,7 @@ import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
-
-import org.opensaml.util.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe

@@ -20,11 +20,16 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.attribute.AttributeSubcontext;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.opensaml.saml1.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,11 +38,28 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class AddSubjectToStatements extends AbstractIdentityProviderAction<Object, Response> {
 
+    /** Class Logger. */
+    private Logger log = LoggerFactory.getLogger(AddSubjectToStatements.class);
+    
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        // TODO Auto-generated method stub
+        
+        log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
+
+        final RelyingPartySubcontext relyingPartyCtx =
+                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+
+        final AttributeSubcontext attributeCtx = relyingPartyCtx.getSubcontext(AttributeSubcontext.class, false);
+        if (attributeCtx == null) {
+            log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
+                    relyingPartyCtx.getRelyingPartyId());
+            return ActionSupport.buildProceedEvent(this);
+        }
+        
+        
+        
         return null;
     }
 

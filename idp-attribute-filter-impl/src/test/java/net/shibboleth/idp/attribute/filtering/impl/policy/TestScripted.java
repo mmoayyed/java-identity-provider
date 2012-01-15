@@ -17,19 +17,19 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.policy;
 
-import java.util.Set;
+import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.opensaml.util.collections.CollectionSupport;
-import org.opensaml.util.component.ComponentInitializationException;
-import org.opensaml.util.component.UnmodifiableComponentException;
 import org.opensaml.util.criteria.EvaluationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /**
  * Tests for {@link ScriptedCriterion}.
@@ -68,8 +68,7 @@ public class TestScripted {
      * @throws EvaluationException to keep the compiler happy.
      * @throws ComponentInitializationException e
      */
-    @Test
-    public void scriptedCriterionTest() throws EvaluationException, ComponentInitializationException {
+    @Test public void scriptedCriterionTest() throws EvaluationException, ComponentInitializationException {
 
         AttributeFilterContext filterContext = new AttributeFilterContext(null);
         ScriptedCriterion criterion;
@@ -82,13 +81,12 @@ public class TestScripted {
             threw = true;
         }
         Assert.assertTrue(threw, "evaluate of an unitialized should throw");
-        
-        
+
         criterion.setScript(TEST_INVALID_SCRIPT);
         threw = false;
         try {
             criterion.initialize();
-       } catch (ComponentInitializationException e) {
+        } catch (ComponentInitializationException e) {
             threw = true;
         }
         Assert.assertTrue(threw, "empty language should throw an initialization exception");
@@ -130,7 +128,7 @@ public class TestScripted {
             threw = true;
         }
         Assert.assertTrue(threw, "post initialize setting should fail");
-        
+
         criterion = new ScriptedCriterion();
         criterion.setLanguage(TEST_SCRIPT_LANGUAGE);
         criterion.setScript(TEST_TRIVIAL_SCRIPT);
@@ -139,9 +137,9 @@ public class TestScripted {
 
         Attribute<String> attribute = new Attribute<String>("attribute");
 
-        attribute.setValues(CollectionSupport.toSet("val1", KNOWN_VALUE, "VAL3"));
+        attribute.setValues(Lists.newArrayList("val1", KNOWN_VALUE, "VAL3"));
 
-        filterContext.setPrefilteredAttributes((Set) CollectionSupport.toSet(attribute));
+        filterContext.setPrefilteredAttributes((List) Lists.newArrayList(attribute));
 
         criterion = new ScriptedCriterion();
         criterion.setLanguage(TEST_SCRIPT_LANGUAGE);

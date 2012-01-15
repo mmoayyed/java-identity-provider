@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.dom.DOMSource;
@@ -28,10 +29,9 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidInboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.component.ComponentValidationException;
-import org.opensaml.util.constraint.documented.NotNull;
 import org.opensaml.xml.Configuration;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.Marshaller;
@@ -66,7 +66,7 @@ public class SchemaValidateXmlMessage extends AbstractIdentityProviderAction<XML
      * 
      * @param schema schema used to validate incoming messages
      */
-    public synchronized void setValidationSchema(@NotNull final Schema schema) {
+    public synchronized void setValidationSchema(@Nonnull final Schema schema) {
         if (isInitialized()) {
             return;
         }

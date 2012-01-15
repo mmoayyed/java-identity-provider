@@ -23,10 +23,9 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
-
-import org.opensaml.util.collections.LazyMap;
-import org.opensaml.util.collections.LazySet;
-import org.opensaml.util.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.collection.LazyMap;
+import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {

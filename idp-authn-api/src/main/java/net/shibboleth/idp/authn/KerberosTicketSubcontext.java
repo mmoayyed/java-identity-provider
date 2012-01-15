@@ -19,9 +19,10 @@ package net.shibboleth.idp.authn;
 
 import javax.security.auth.kerberos.KerberosTicket;
 
+import net.shibboleth.utilities.java.support.logic.Assert;
+
 import org.opensaml.messaging.context.AbstractSubcontext;
 import org.opensaml.messaging.context.SubcontextContainer;
-import org.opensaml.util.Assert;
 
 /**
  * Context, usually attached to {@link AuthenticationRequestContext}, that carries a {@link KerberosTicket} to be

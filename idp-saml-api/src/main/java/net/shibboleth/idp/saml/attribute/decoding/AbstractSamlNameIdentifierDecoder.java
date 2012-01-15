@@ -18,10 +18,10 @@
 package net.shibboleth.idp.saml.attribute.decoding;
 
 import net.shibboleth.idp.attribute.AbstractAttributeDecoder;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.common.SAMLObject;
-import org.opensaml.util.StringSupport;
-import org.opensaml.util.component.UnmodifiableComponentException;
 
 /**
  * Base class for decoders that read SAML name identifiers and create IdP attributes.

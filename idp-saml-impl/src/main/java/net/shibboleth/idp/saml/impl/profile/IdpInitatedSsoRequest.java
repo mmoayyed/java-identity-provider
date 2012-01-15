@@ -18,10 +18,10 @@
 package net.shibboleth.idp.saml.impl.profile;
 
 import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.Assert;
-import org.opensaml.util.ObjectSupport;
-import org.opensaml.util.StringSupport;
+import com.google.common.base.Objects;
 
 /**
  * Object representing a Shibboleth Authentication Request message.
@@ -166,7 +166,7 @@ public class IdpInitatedSsoRequest {
         }
 
         IdpInitatedSsoRequest other = (IdpInitatedSsoRequest) obj;
-        return ObjectSupport.equals(entityId, other.entityId) && ObjectSupport.equals(acsUrl, other.acsUrl)
-                && ObjectSupport.equals(relayState, other.relayState) && time == other.time;
+        return Objects.equal(entityId, other.entityId) && Objects.equal(acsUrl, other.acsUrl)
+                && Objects.equal(relayState, other.relayState) && time == other.time;
     }
 }
