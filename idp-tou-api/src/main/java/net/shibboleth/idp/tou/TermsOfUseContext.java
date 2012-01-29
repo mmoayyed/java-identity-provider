@@ -17,13 +17,10 @@
 
 package net.shibboleth.idp.tou;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
-
-import org.opensaml.messaging.context.Subcontext;
-import org.opensaml.messaging.context.SubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 
 /** Context used to collect data about the terms of use acceptance. */
-public final class TermsOfUseContext implements Subcontext {
+public final class TermsOfUseContext extends BaseContext {
 
     /** Indicates the result of the terms of use engine's attempt to gain user acceptance. */
     public static enum Decision {
@@ -46,25 +43,12 @@ public final class TermsOfUseContext implements Subcontext {
         DECLINED
     }
 
-    /** Owner of this consent context. */
-    private final SubcontextContainer owner;
-
     /** The decision determined by the terms of use engine. */
     private Decision termsOfUseDecision;
 
-    /**
-     * Constructor.
-     * 
-     * @param superContext owner of this context
-     */
-    public TermsOfUseContext(final SubcontextContainer superContext) {
-        owner = Assert.isNotNull(superContext, "Owning super context may not be null");;
+    /** Constructor. */
+    public TermsOfUseContext() {
         termsOfUseDecision = Decision.UNSPECIFIED;
-    }
-
-    /** {@inheritDoc} */
-    public SubcontextContainer getOwner() {
-        return owner;
     }
 
     /**
