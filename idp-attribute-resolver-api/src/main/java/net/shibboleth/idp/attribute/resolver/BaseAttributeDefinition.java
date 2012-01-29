@@ -18,33 +18,41 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+
+import com.google.common.base.Optional;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
-public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribute<?>> {
+public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribute> {
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
 
     /** Attribute encoders associated with this definition. */
-    private Set<AttributeEncoder> encoders = Collections.emptySet();
+    private Set<AttributeEncoder<?>> encoders = Collections.emptySet();
 
     /** Localized human intelligible attribute name. */
     private Map<Locale, String> displayNames = Collections.emptyMap();
@@ -69,21 +77,18 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param isDependencyOnly whether this attribute definition is only a dependency
      */
     public synchronized void setDependencyOnly(final boolean isDependencyOnly) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, dependency only status can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         dependencyOnly = isDependencyOnly;
     }
 
     /**
-     * Gets the unmodifiable localized human readable descriptions of attribute. The returned collection is never null
-     * nor does it contain any null keys or values.
+     * Gets the localized human readable descriptions of attribute.
      * 
-     * @return human readable descriptions of attribute, never null
+     * @return human readable descriptions of attribute
      */
-    public Map<Locale, String> getDisplayDescriptions() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions() {
         return displayDescriptions;
     }
 
@@ -92,40 +97,21 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public synchronized void setDisplayDescriptions(final Map<Locale, String> descriptions) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, display descriptions can not be changed.");
-        }
+    public synchronized void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> descriptions) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        HashMap<Locale, String> checkedDescriptions = new HashMap<Locale, String>();
-
-        String trimmedDescription;
-        for (Locale locale : descriptions.keySet()) {
-            if (locale == null) {
-                continue;
-            }
-
-            trimmedDescription = StringSupport.trimOrNull(descriptions.get(locale));
-            if (trimmedDescription != null) {
-                checkedDescriptions.put(locale, trimmedDescription);
-            }
-        }
-
-        if (checkedDescriptions.isEmpty()) {
-            displayDescriptions = Collections.emptyMap();
-        } else {
-            displayDescriptions = Collections.unmodifiableMap(descriptions);
-        }
+        displayDescriptions =
+                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE)
+                        .putAll(descriptions).buildImmutableMap();
     }
 
     /**
-     * Gets the unmodifiable localized human readable names of the attribute. The returned collection is never null nor
-     * does it contain any null keys or values.
+     * Gets the localized human readable names of the attribute.
      * 
      * @return human readable names of the attribute
      */
-    public Map<Locale, String> getDisplayNames() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames() {
         return displayNames;
     }
 
@@ -134,31 +120,13 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param names localized human readable names of the attribute
      */
-    public synchronized void setDisplayNames(final Map<Locale, String> names) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, display names can not be changed.");
-        }
+    public synchronized void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> names) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        HashMap<Locale, String> checkedNames = new HashMap<Locale, String>();
-
-        String trimmedName;
-        for (Locale locale : names.keySet()) {
-            if (locale == null) {
-                continue;
-            }
-
-            trimmedName = StringSupport.trimOrNull(names.get(locale));
-            if (trimmedName != null) {
-                checkedNames.put(locale, trimmedName);
-            }
-        }
-
-        if (checkedNames.isEmpty()) {
-            displayNames = Collections.emptyMap();
-        } else {
-            displayNames = Collections.unmodifiableMap(checkedNames);
-        }
+        displayNames =
+                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE).putAll(names)
+                        .buildImmutableMap();
     }
 
     /**
@@ -167,7 +135,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @return encoders used to encode the values of this attribute in to protocol specific formats, never null
      */
-    public Set<AttributeEncoder> getAttributeEncoders() {
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeEncoder<?>> getAttributeEncoders() {
         return encoders;
     }
 
@@ -176,19 +144,12 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
      */
-    public void setAttributeEncoders(final List<AttributeEncoder> attributeEncoders) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, attribute encoders can not be changed.");
-        }
+    public synchronized void setAttributeEncoders(
+            @Nullable @NullableElements final List<AttributeEncoder<?>> attributeEncoders) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        HashSet<AttributeEncoder> checkedEncoders =
-                CollectionSupport.addNonNull(attributeEncoders, new HashSet<AttributeEncoder>());
-        if (checkedEncoders.isEmpty()) {
-            encoders = Collections.emptySet();
-        } else {
-            encoders = Collections.unmodifiableSet(checkedEncoders);
-        }
+        encoders = new TransformedInputCollectionBuilder().addAll(attributeEncoders).buildImmutableSet();
     }
 
     /** {@inheritDoc} */
@@ -201,10 +162,9 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void doDestroy() {
-
         for (AttributeEncoder encoder : encoders) {
             if (encoder instanceof DestructableComponent) {
                 ((DestructableComponent) encoder).destroy();
@@ -233,25 +193,26 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * {@inheritDoc}
      * 
      * This method delegates the actual resolution of the attribute's values to the
-     * {@link #doResolve(AttributeResolutionContext)} method. Afterwards this method will attach the registered display
-     * names, descriptions, and encoders to the resultant attribute.
+     * {@link #doResolve(AttributeResolutionContext)} method. Afterwards, if {@link Optional#absent()} was not returned,
+     * this method will attach the registered display names, descriptions, and encoders to the resultant attribute.
      */
-    protected Attribute<?> doResolve(final AttributeResolutionContext resolutionContext)
+    @Nonnull protected Optional<Attribute> doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
         if (!isInitialized()) {
             throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
                     + " has not been initialized and can not yet be used.");
         }
 
-        final Attribute resolvedAttribute = doAttributeResolution(resolutionContext);
+        final Optional<Attribute> resolvedAttribute = doAttributeResolution(resolutionContext);
+        assert resolvedAttribute != null : "return of doAttributeResolution was null";
 
-        if (resolvedAttribute == null) {
-            return null;
+        if (!resolvedAttribute.isPresent()) {
+            return resolvedAttribute;
         }
 
-        resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
-        resolvedAttribute.setDisplayNames(getDisplayNames());
-        resolvedAttribute.setEncoders(getAttributeEncoders());
+        resolvedAttribute.get().setDisplayDescriptions(getDisplayDescriptions());
+        resolvedAttribute.get().setDisplayNames(getDisplayNames());
+        resolvedAttribute.get().setEncoders(getAttributeEncoders());
 
         return resolvedAttribute;
     }
@@ -267,6 +228,6 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving and creating the attribute
      */
-    protected abstract Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException;
+    @Nonnull protected abstract Optional<Attribute> doAttributeResolution(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
 }

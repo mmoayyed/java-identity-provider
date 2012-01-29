@@ -22,14 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.messaging.context.Subcontext;
-import org.opensaml.messaging.context.SubcontextContainer;
-
+import org.opensaml.messaging.context.BaseContext;
 
 /** Context used to collect data about the user's consent to release information. */
-public final class ConsentContext implements Subcontext {
+public final class ConsentContext extends BaseContext {
 
     /** Indicates the result of the consent engine's attempt to gain user consent. */
     public static enum Consent {
@@ -56,36 +53,25 @@ public final class ConsentContext implements Subcontext {
         DENIED
     }
 
-    /** Owner of this consent context. */
-    private SubcontextContainer owner;
-
     /** Attributes about the user that are to be released with the user's consent. */
-    private Map<String, Attribute<?>> userAttributes;
+    private Map<String, Attribute> userAttributes;
 
     /** The decision determined by the consent engine. */
     private Consent consentDecision;
 
     /** The attributes the consent engine has determined may be released. */
-    private Map<String, Attribute<?>> consentedAttributes;
+    private Map<String, Attribute> consentedAttributes;
 
     /**
      * Constructor.
      * 
-     * @param superContext owner of this context
      * @param attributes attributes about the user that are to be released with the user's consent, defensively copied
      */
-    public ConsentContext(SubcontextContainer superContext, Map<String, Attribute<?>> attributes) {
-        owner = Assert.isNotNull(superContext, "Owning super context may not be null");
+    public ConsentContext(Map<String, Attribute> attributes) {
+        userAttributes = Collections.unmodifiableMap(new HashMap<String, Attribute>(attributes));
+        consentedAttributes = new HashMap<String, Attribute>();
 
-        userAttributes = Collections.unmodifiableMap(new HashMap<String, Attribute<?>>(attributes));
-        consentedAttributes = new HashMap<String, Attribute<?>>();
-        
         consentDecision = Consent.UNSPECIFIED;
-    }
-
-    /** {@inheritDoc} */
-    public SubcontextContainer getOwner() {
-        return owner;
     }
 
     /**
@@ -111,7 +97,7 @@ public final class ConsentContext implements Subcontext {
      * 
      * @return unmodifiable map representing the information to be released about the user
      */
-    public Map<String, Attribute<?>> getUserAttributes() {
+    public Map<String, Attribute> getUserAttributes() {
         return userAttributes;
     }
 
@@ -120,7 +106,7 @@ public final class ConsentContext implements Subcontext {
      * 
      * @return attributes that may be released with the user's consent, never null
      */
-    public Map<String, Attribute<?>> getConsentedAttributes() {
+    public Map<String, Attribute> getConsentedAttributes() {
         return consentedAttributes;
     }
 }

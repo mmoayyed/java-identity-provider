@@ -21,18 +21,13 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
-import org.opensaml.messaging.context.Subcontext;
-import org.opensaml.messaging.context.SubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 
 /**
  * {@link org.opensaml.messaging.context.Subcontext} containing relying party specific information. This is usually a
  * subcontext of a {@link net.shibboleth.idp.profile.ProfileRequestContext}.
  */
-public final class RelyingPartySubcontext extends AbstractSubcontextContainer implements Subcontext {
-
-    /** The parent of this context. */
-    private SubcontextContainer parent;
+public final class RelyingPartySubcontext extends BaseContext {
 
     /** The identifier for the relying party. */
     private final String relyingPartyId;
@@ -46,23 +41,10 @@ public final class RelyingPartySubcontext extends AbstractSubcontextContainer im
     /**
      * Constructor.
      * 
-     * @param owner owner of this context, may be null
      * @param rpId the relying party identifier, can not be null or empty
      */
-    public RelyingPartySubcontext(SubcontextContainer owner, String rpId) {
-        super();
-
+    public RelyingPartySubcontext(String rpId) {
         relyingPartyId = Assert.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
-
-        if (owner != null) {
-            parent = owner;
-            owner.addSubcontext(this);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public SubcontextContainer getOwner() {
-        return parent;
     }
 
     /**

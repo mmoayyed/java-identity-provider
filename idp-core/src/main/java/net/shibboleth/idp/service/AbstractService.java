@@ -29,11 +29,12 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
-import net.shibboleth.utilities.java.support.primitive.ObjectSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableSet;
 
 /** Base class for {@link Service} implementations. */
 @ThreadSafe
@@ -48,6 +49,14 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractService.class);
+
+    /** Set containing {@link Service#STATE_STARTING} and {@link Service#STATE_STARTED}. */
+    private final ImmutableSet<String> startStates = new ImmutableSet.Builder<String>().add(STATE_STARTING)
+            .add(STATE_STARTED).build();
+
+    /** Set containing {@link Service#STATE_STOPPING} and {@link Service#STATE_STOPPED}. */
+    private final ImmutableSet<String> stopStates = new ImmutableSet.Builder<String>().add(STATE_STOPPING)
+            .add(STATE_STOPPED).build();
 
     /** The current state of the service. */
     private String currentState;
@@ -77,7 +86,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * This implementation will check to see if the service is already started or starting, if so it simply returns. If
      * the service is not currently starting or started the start will be set to {@link Service#STATE_STARTING} and then
      * {@link #doPreStart()}, {@link #doStart()} and {@link #doPostStart()} will be invoked in that order. Finally,
-     * assuming no {@link ServiceException} is thrown, the service's state will be set {@link Service#STATE_RUNNING}. If
+     * assuming no {@link ServiceException} is thrown, the service's state will be set {@link Service#STATE_STARTED}. If
      * an exception is thrown the service state is set to {@link Service#STATE_STOPPED} and the exception is rethrown.
      * All startup work is performed within a service write lock. A startup performance event will be recorded.
      */
@@ -90,7 +99,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
         try {
             serviceWriteLock.lock();
 
-            if (ObjectSupport.equalsAny(getCurrentState(), STATE_STARTING, STATE_RUNNING)) {
+            if (startStates.contains(getCurrentState())) {
                 return;
             }
             setCurrentState(STATE_STARTING);
@@ -99,7 +108,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
             doStart(context);
             doPostStart(context);
 
-            setCurrentState(STATE_RUNNING);
+            setCurrentState(STATE_STARTED);
             perfEvent.stopTime(true);
         } catch (ServiceException e) {
             setCurrentState(STATE_STOPPED);
@@ -130,7 +139,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
         try {
             serviceWriteLock.lock();
 
-            if (ObjectSupport.equalsAny(getCurrentState(), STATE_STOPPING, STATE_STOPPED)) {
+            if (stopStates.contains(getCurrentState())) {
                 return;
             }
             setCurrentState(STATE_STOPPING);
@@ -182,7 +191,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * @throws ServiceException thrown if the service is stopped or stopping
      */
     protected void doPreStart(final HashMap context) throws ServiceException {
-        if (ObjectSupport.equalsAny(getCurrentState(), STATE_STOPPING, STATE_STOPPED)) {
+        if (stopStates.contains(getCurrentState())) {
             throw new ServiceException(getId() + " service has been stopped, it may not be started again.");
         }
         log.debug("Loading configuration for service '{}'", getId());

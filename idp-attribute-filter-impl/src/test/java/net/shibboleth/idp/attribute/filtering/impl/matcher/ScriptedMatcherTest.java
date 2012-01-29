@@ -1,0 +1,146 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.attribute.filtering.impl.matcher;
+
+import java.util.Set;
+
+import net.jcip.annotations.ThreadSafe;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+/** {@link ScriptedMatcher} unit test. */
+@ThreadSafe
+public class ScriptedMatcherTest extends AbstractMatcherTest {
+
+    /** A script that returns a set that contains the one of values the attribute. */
+    private EvaluableScript returnOneValueScript;
+
+    /** A script that returns null. */
+    private EvaluableScript nullReturnScript;
+
+    /** A script that returns an object other than a set. */
+    private EvaluableScript invalidReturnObjectScript;
+
+    /** A script that returns a set contain values that were not attribute values. */
+    private EvaluableScript addedValuesScript;
+
+    @BeforeTest public void setup() throws Exception {
+        super.setUp();
+
+        filterContext = new AttributeFilterContext();
+
+        returnOneValueScript =
+                new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
+                        .append("filterContext.getPrefilteredAttributes();").append("x = new HashSet();")
+                        .append("x.add(attribute.getValues().iterator().next());").append("x;").toString());
+
+        nullReturnScript = new EvaluableScript("JavaScript", "null;");
+
+        invalidReturnObjectScript = new EvaluableScript("JavaScript", "new java.lang.String();");
+
+        addedValuesScript =
+                new EvaluableScript("JavaScript", new StringBuilder().append("importPackage(Packages.java.util);")
+                        .append("filterContext.getPrefilteredAttributes();").append("x = new HashSet();")
+                        .append("x.add(attribute.getValues().iterator().next());")
+                        .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));").append("x;")
+                        .toString());
+    }
+
+    @Test public void testGetMatcher() throws Exception {
+        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        matcher.initialize();
+
+        Assert.assertNotNull(matcher.getScript());
+    }
+
+    @Test public void testNullArguments() throws Exception {
+        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        matcher.initialize();
+
+        try {
+            matcher.getMatchingValues(null, filterContext);
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected this
+        }
+
+        try {
+            matcher.getMatchingValues(attribute, null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected this
+        }
+
+        try {
+            matcher.getMatchingValues(null, null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected this
+        }
+    }
+
+    @Test public void testValidScript() throws Exception {
+        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        matcher.initialize();
+
+        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.size(), 1);
+        Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
+    }
+
+    @Test public void testNullReturnScript() throws Exception {
+        ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
+        matcher.initialize();
+
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+            Assert.fail();
+        } catch (AttributeFilteringException e) {
+            // expected this
+        }
+    }
+
+    @Test public void testInvalidReturnObjectScript() throws Exception {
+        ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
+        matcher.initialize();
+
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+            Assert.fail();
+        } catch (AttributeFilteringException e) {
+            // expected this
+        }
+    }
+
+    @Test public void testAddedValuesScript() throws Exception {
+        ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
+        matcher.initialize();
+
+        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.size(), 1);
+        Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
+    }
+}

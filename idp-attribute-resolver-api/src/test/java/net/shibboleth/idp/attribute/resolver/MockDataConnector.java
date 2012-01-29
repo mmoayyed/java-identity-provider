@@ -23,6 +23,8 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
+import com.google.common.base.Optional;
+
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
 public class MockDataConnector extends BaseDataConnector {
@@ -31,7 +33,7 @@ public class MockDataConnector extends BaseDataConnector {
     private boolean invalid;
 
     /** Static collection of values returned by this connector. */
-    private Map<String, Attribute<?>> values;
+    private Optional<Map<String, Attribute>> values;
 
     /** Exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}. */
     private AttributeResolutionException resolutionException;
@@ -42,9 +44,9 @@ public class MockDataConnector extends BaseDataConnector {
      * @param id unique ID for this data connector
      * @param connectorValues static collection of values returned by this connector
      */
-    public MockDataConnector(String id, Map<String, Attribute<?>> connectorValues) {
+    public MockDataConnector(String id, Map<String, Attribute> connectorValues) {
         setId(id);
-        values = connectorValues;
+        values = Optional.<Map<String, Attribute>> fromNullable(connectorValues);
     }
 
     /**
@@ -69,7 +71,7 @@ public class MockDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    protected Map<String, Attribute<?>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
+    protected Optional<Map<String, Attribute>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
         if (resolutionException != null) {
             throw resolutionException;

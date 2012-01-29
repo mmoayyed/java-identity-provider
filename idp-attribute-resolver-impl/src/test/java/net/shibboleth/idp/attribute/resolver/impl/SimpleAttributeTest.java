@@ -51,7 +51,7 @@ public class SimpleAttributeTest {
         simple.setId(TEST_ATTRIBUTE_NAME);
         simple.initialize();
 
-        final Attribute<?> result = simple.doAttributeResolution(null);
+        final Attribute result = simple.doAttributeResolution(null);
 
         Assert.assertNotNull(result.getValues());
     }
@@ -88,7 +88,7 @@ public class SimpleAttributeTest {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -130,7 +130,7 @@ public class SimpleAttributeTest {
         resolver.setAttributeDefinition(am);
         resolver.initialize();
 
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -179,7 +179,7 @@ public class SimpleAttributeTest {
         resolver.setAttributeDefinition(attrDefinitions);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {

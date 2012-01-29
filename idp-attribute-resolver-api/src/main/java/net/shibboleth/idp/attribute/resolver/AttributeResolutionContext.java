@@ -22,28 +22,31 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import net.jcip.annotations.NotThreadSafe;
-import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.utilities.java.support.collection.LazyMap;
-import net.shibboleth.utilities.java.support.collection.LazySet;
-import net.shibboleth.utilities.java.support.logic.Assert;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 
-import org.opensaml.messaging.context.Subcontext;
-import org.opensaml.messaging.context.SubcontextContainer;
+import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+
+import org.opensaml.messaging.context.BaseContext;
+
+import com.google.common.base.Optional;
 
 /** A context which carries and collects information through an attribute resolution. */
 @NotThreadSafe
-public class AttributeResolutionContext implements Subcontext {
-
-    /** Context which acts as the owner or parent of this context. */
-    private final SubcontextContainer parentContext;
+public class AttributeResolutionContext extends BaseContext {
 
     /** Attributes that have been requested to be resolved. */
-    private Set<Attribute<?>> requestedAttributes;
+    private Set<Attribute> requestedAttributes;
 
     /** Attributes which were resolved and released by the attribute resolver. */
-    private Map<String, Attribute<?>> resolvedAttributes;
+    private Map<String, Attribute> resolvedAttributes;
 
     /** Attribute definitions that have been resolved and the resultant attribute. */
     private final Map<String, ResolvedAttributeDefinition> resolvedAttributeDefinitions;
@@ -51,36 +54,24 @@ public class AttributeResolutionContext implements Subcontext {
     /** Data connectors that have been resolved and the resultant attributes. */
     private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
 
-    /**
-     * Constructor.
-     * 
-     * @param parent the parent of this context
-     */
-    public AttributeResolutionContext(final SubcontextContainer parent) {
-        parentContext = parent;
+    /** Constructor. */
+    public AttributeResolutionContext() {
+        requestedAttributes = new TransformedInputCollectionBuilder().buildSet();
 
-        if (parent != null) {
-            parent.addSubcontext(this);
-        }
-
-        requestedAttributes = new LazySet<Attribute<?>>();
-        resolvedAttributes = new LazyMap<String, Attribute<?>>();
-        resolvedAttributeDefinitions = new LazyMap<String, ResolvedAttributeDefinition>();
-        resolvedDataConnectors = new LazyMap<String, ResolvedDataConnector>();
-    }
-
-    /** {@inheritDoc} */
-    public SubcontextContainer getOwner() {
-        return parentContext;
+        TransformedInputMapBuilder mapBuilder =
+                new TransformedInputMapBuilder().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+        resolvedAttributes = mapBuilder.buildMap();
+        resolvedAttributeDefinitions = mapBuilder.buildMap();
+        resolvedDataConnectors = mapBuilder.buildMap();
     }
 
     /**
-     * Gets the unmodifiable set of attributes requested to be resolved.
+     * Gets the set of attributes requested to be resolved.
      * 
-     * @return set of attributes requested to be resolved, never null nor containing null elements
+     * @return set of attributes requested to be resolved
      */
-    public Set<Attribute<?>> getRequestedAttributes() {
-        return Collections.unmodifiableSet(requestedAttributes);
+    @Nonnull @NonnullElements public Set<Attribute> getRequestedAttributes() {
+        return requestedAttributes;
     }
 
     /**
@@ -88,42 +79,17 @@ public class AttributeResolutionContext implements Subcontext {
      * 
      * @param attributes attributes requested to be resolved
      */
-    public void setRequestedAttributes(final Set<Attribute<?>> attributes) {
-        CollectionSupport.nonNullReplace(attributes, requestedAttributes);
+    public void setRequestedAttributes(@Nullable @NullableElements final Set<Attribute> attributes) {
+        requestedAttributes = new TransformedInputCollectionBuilder().addAll(attributes).buildSet();
     }
 
     /**
-     * Adds an attribute that is requested to be resolved.
+     * Gets the collection of resolved attributes.
      * 
-     * @param attribute attribute to be added to the requested list, may be null
-     * 
-     * @return true if attribute was added, false otherwise (because the attribute was null or already existed in the
-     *         requested attribute set)
+     * @return set of resolved attributes
      */
-    public boolean addRequestedAttribute(final Attribute<?> attribute) {
-        return CollectionSupport.nonNullAdd(requestedAttributes, attribute);
-    }
-
-    /**
-     * Removes an attribute that is requested to be resolved.
-     * 
-     * @param attribute attribute to be removed from the requested list, may be null
-     * 
-     * @return true if attribute was removed, false otherwise (because the attribute was null or did not exist in the
-     *         requested attribute set)
-     */
-    public boolean removeRequestedAttribute(final Attribute<?> attribute) {
-        return CollectionSupport.nonNullRemove(requestedAttributes, attribute);
-    }
-
-    /**
-     * Gets the unmodifiable collection of resolved attributes. The returned collection is never null nor does it
-     * contain any null keys or values.
-     * 
-     * @return unmodifiable set of resolved attributes
-     */
-    public Map<String, Attribute<?>> getResolvedAttributes() {
-        return Collections.unmodifiableMap(resolvedAttributes);
+    @Nonnull @NonnullElements public Map<String, Attribute> getResolvedAttributes() {
+        return resolvedAttributes;
     }
 
     /**
@@ -131,71 +97,29 @@ public class AttributeResolutionContext implements Subcontext {
      * 
      * @param attributes set of resolved attributes, may be null, empty or contain null values
      */
-    public void setResolvedAttributes(final Collection<Attribute<?>> attributes) {
-        resolvedAttributes.clear();
+    public void setResolvedAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
+        TransformedInputMapBuilder<String, Attribute> mapBuilder =
+                new TransformedInputMapBuilder<String, Attribute>().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
 
         if (attributes != null) {
-            for (Attribute<?> attribute : attributes) {
-                addResolvedAttribute(attribute);
+            for (Attribute attribute : attributes) {
+                if (attribute != null) {
+                    mapBuilder.put(attribute.getId(), attribute);
+                }
             }
         }
+
+        resolvedAttributes = mapBuilder.buildMap();
     }
 
     /**
-     * Adds a resolved attribute.
-     * 
-     * @param attribute attribute to be added, may be null
-     * 
-     * @return that {@link Attribute} that was replaced with the given attribute, null otherwise
-     */
-    public Attribute<?> addResolvedAttribute(final Attribute<?> attribute) {
-        if (attribute == null) {
-            return null;
-        }
-
-        return resolvedAttributes.put(attribute.getId(), attribute);
-    }
-
-    /**
-     * Removes a resolved attribute.
-     * 
-     * @param attributeId ID of the attribute to be removed, may be null
-     * 
-     * @return the {@link Attribute} that was removed, null otherwise
-     */
-    public Attribute<?> removeResolvedAttribute(final String attributeId) {
-        if (attributeId == null) {
-            return null;
-        }
-
-        return resolvedAttributes.remove(attributeId);
-    }
-
-    /**
-     * Gets the resolved attribute definitions that been recorded. The returned collection is never null nor does it
-     * contain any null keys or values.
+     * Gets the resolved attribute definitions that been recorded.
      * 
      * @return resolved attribute definitions that been recorded
      */
-    public Map<String, ResolvedAttributeDefinition> getResolvedAttributeDefinitions() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedAttributeDefinition>
+            getResolvedAttributeDefinitions() {
         return Collections.unmodifiableMap(resolvedAttributeDefinitions);
-    }
-
-    /**
-     * Gets the resolved attribute definition.
-     * 
-     * @param definitionId the ID of the attribute definition, may be null/empty
-     * 
-     * @return the resolved attribute definition, may be null if the given ID was null/empty or the attribute definition
-     *         has not yet be resolved
-     */
-    public ResolvedAttributeDefinition getResolvedAttributeDefinition(final String definitionId) {
-        final String trimmedId = StringSupport.trimOrNull(definitionId);
-        if (trimmedId == null) {
-            return null;
-        }
-
-        return resolvedAttributeDefinitions.get(trimmedId);
     }
 
     /**
@@ -207,9 +131,10 @@ public class AttributeResolutionContext implements Subcontext {
      * @throws AttributeResolutionException thrown if a result of a resolution for the given attribute definition have
      *             already been recorded
      */
-    public void recordAttributeDefinitionResolution(final BaseAttributeDefinition definition,
-            final Attribute<?> attribute) throws AttributeResolutionException {
-        Assert.isNotNull(definition, "Resolved attribute definition may not be null");
+    public void recordAttributeDefinitionResolution(@Nonnull final BaseAttributeDefinition definition,
+            @Nonnull final Optional<Attribute> attribute) throws AttributeResolutionException {
+        assert definition != null : "Resolver attribute definition can not be null";
+        assert attribute != null : "Resolved attribute can not be null";
 
         if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
             throw new AttributeResolutionException("The resolution of attribute definition " + definition.getId()
@@ -221,30 +146,12 @@ public class AttributeResolutionContext implements Subcontext {
     }
 
     /**
-     * Gets the resolved data connectors that been recorded. The returned collection is never null nor does it contain
-     * any null keys or values.
+     * Gets the resolved data connectors that been recorded.
      * 
      * @return resolved data connectors that been recorded
      */
-    public Map<String, ResolvedDataConnector> getResolvedDataConnectors() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedDataConnector> getResolvedDataConnectors() {
         return Collections.unmodifiableMap(resolvedDataConnectors);
-    }
-
-    /**
-     * Gets the resolved data connector.
-     * 
-     * @param connectorId the ID of the data connector, may be null/empty
-     * 
-     * @return the resolved data connector, may be null if the given ID was null/empty or the data connector has not yet
-     *         be resolved
-     */
-    public ResolvedDataConnector getResolvedDataConnector(final String connectorId) {
-        final String trimmedId = StringSupport.trimOrNull(connectorId);
-        if (trimmedId == null) {
-            return null;
-        }
-
-        return resolvedDataConnectors.get(trimmedId);
     }
 
     /**
@@ -256,9 +163,10 @@ public class AttributeResolutionContext implements Subcontext {
      * @throws AttributeResolutionException thrown if a result of a resolution for the given data connector has already
      *             been recorded
      */
-    public void recordDataConnectorResolution(final BaseDataConnector connector,
-            final Map<String, Attribute<?>> attributes) throws AttributeResolutionException {
-        Assert.isNotNull(connector, "Resolved data connector may not be null");
+    public void recordDataConnectorResolution(@Nonnull final BaseDataConnector connector,
+            @Nonnull final Optional<Map<String, Attribute>> attributes) throws AttributeResolutionException {
+        assert connector != null : "Resolver data connector can not be null";
+        assert attributes != null : "Resolved attributes can not be null";
 
         if (resolvedDataConnectors.containsKey(connector.getId())) {
             throw new AttributeResolutionException("The resolution of data connector " + connector.getId()

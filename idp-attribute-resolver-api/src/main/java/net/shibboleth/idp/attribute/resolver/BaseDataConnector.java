@@ -19,17 +19,21 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Map;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import com.google.common.base.Optional;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
-public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, Attribute<?>>> {
+public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, Attribute>> {
 
     /** ID of the data connector to use if this one fails. */
-    private String failoverDataConnectorId;
+    private Optional<String> failoverDataConnectorId;
 
     /**
      * Gets the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
@@ -38,7 +42,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @return ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    public String getFailoverDataConnectorId() {
+    public Optional<String> getFailoverDataConnectorId() {
         return failoverDataConnectorId;
     }
 
@@ -49,13 +53,11 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @param id ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
-    public synchronized void setFailoverDataConnectorId(final String id) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, failover connector can not be changed.");
-        }
+    public synchronized void setFailoverDataConnectorId(@Nullable final String id) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        failoverDataConnectorId = StringSupport.trimOrNull(id);
+        failoverDataConnectorId = Optional.fromNullable(StringSupport.trimOrNull(id));
     }
 
     /**
@@ -64,20 +66,20 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * This method delegates to {@link #doDataConnectorResolve(AttributeResolutionContext)}. It serves as a future
      * extension point for introducing new common behavior.
      */
-    public final Map<String, Attribute<?>> doResolve(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+    @Nonnull public final Optional<Map<String, Attribute>> doResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         return doDataConnectorResolve(resolutionContext);
     }
 
     /**
      * Retrieves a collection of attributes from some data source.
      * 
-     * @param resolutionContext current resolution context
+     * @param resolutionContext current resolution context, guaranteed not to be bull
      * 
      * @return collected attributes indexed by attribute ID
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes
      */
-    protected abstract Map<String, Attribute<?>> doDataConnectorResolve(
-            final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
+    @Nonnull protected abstract Optional<Map<String, Attribute>> doDataConnectorResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
 }

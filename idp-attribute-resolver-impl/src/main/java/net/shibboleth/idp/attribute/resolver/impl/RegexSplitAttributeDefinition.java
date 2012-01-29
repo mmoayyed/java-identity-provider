@@ -31,11 +31,12 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 /**
  * A Regexp Attribute definition.
@@ -63,10 +64,9 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
      * @param isCaseSensitive the case sensitivity flag.
      */
     public synchronized void setCaseSensitive(final boolean isCaseSensitive) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Regexp Split Attribute definition " + getId()
-                    + " has already been initialized, case sensitvity can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         caseSensitive = new Boolean(isCaseSensitive);
     }
 
@@ -85,10 +85,9 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
      * @param newRegExp the pattern.
      */
     public synchronized void setRegExp(final String newRegExp) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Regexp Split Attribute definition " + getId()
-                    + " has already been initialized, regexp can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         regExp = StringSupport.trimOrNull(newRegExp);
     }
 
@@ -135,7 +134,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
         final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
@@ -144,7 +143,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
 
         final Collection<Object> results = new LazySet<Object>();
         for (ResolverPluginDependency dep : depends) {
-            Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
                 for (Object value : dependentAttribute.getValues()) {
                     if (value instanceof String) {
@@ -162,8 +161,8 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
                 }
             }
         }
-        Attribute<Object> resultantAttribute = new Attribute<Object>(getId());
+        Attribute resultantAttribute = new Attribute(getId());
         resultantAttribute.setValues(results);
-        return resultantAttribute;
+        return Optional.of(resultantAttribute);
     }
 }

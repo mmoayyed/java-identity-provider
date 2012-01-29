@@ -28,6 +28,8 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+
 /**
  * Unit test for {@link BaseAttributeDefinition}. This test does not test any methods inherited from
  * {@link BaseResolverPlugin}, those are covered in {@link BaseResolverPluginTest}.
@@ -76,7 +78,7 @@ public class BaseAttributeDefinitionTest {
         MockAttributeEncoder enc1 = new MockAttributeEncoder(null, null);
         MockAttributeEncoder enc2 = new MockAttributeEncoder(null, null);
 
-        ArrayList<AttributeEncoder> encoders = new ArrayList<AttributeEncoder>();
+        ArrayList<AttributeEncoder<?>> encoders = new ArrayList<AttributeEncoder<?>>();
 
         definition.setAttributeEncoders(null);
         Assert.assertNotNull(definition.getAttributeEncoders());
@@ -133,7 +135,7 @@ public class BaseAttributeDefinitionTest {
         try {
             descriptions.put(enbr, "british");
             Assert.fail("able to add description to unmodifable map");
-        } catch (IllegalArgumentException e) {
+        } catch (UnsupportedOperationException e) {
             // expected this
         }
     }
@@ -159,7 +161,7 @@ public class BaseAttributeDefinitionTest {
         try {
             names.put(enbr, "british");
             Assert.fail("able to add name to unmodifable map");
-        } catch (IllegalArgumentException e) {
+        } catch (UnsupportedOperationException e) {
             // expected this
         }
     }
@@ -167,16 +169,17 @@ public class BaseAttributeDefinitionTest {
     /** Test resolve an attribute. */
     @Test
     public void testResolve() throws Exception {
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+        AttributeResolutionContext context = new AttributeResolutionContext();
 
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute) null);
+        definition.initialize();
         Assert.assertNull(definition.resolve(context));
 
-        Attribute<?> attribute = new Attribute<String>("foo");
+        Attribute attribute = new Attribute("foo");
         definition = new MockAttributeDefinition("foo", attribute);
         Assert.assertEquals(definition.resolve(context), attribute);
 
-        Attribute resolvedAttribute = definition.resolve(context);
+        Optional<Attribute> resolvedAttribute = definition.resolve(context);
         Assert.assertEquals(resolvedAttribute, attribute);
         
     }
@@ -188,7 +191,7 @@ public class BaseAttributeDefinitionTest {
     private static final class MockBaseAttributeDefinition extends BaseAttributeDefinition {
 
         /** Static attribute value returned from resolution. */
-        private Attribute staticAttribute;
+        private Optional<Attribute> staticAttribute;
 
         /**
          * Constructor.
@@ -196,13 +199,13 @@ public class BaseAttributeDefinitionTest {
          * @param id id of the attribute definition, never null or empty
          * @param attribute value returned from the resolution of this attribute, may be null
          */
-        public MockBaseAttributeDefinition(String id, Attribute<?> attribute) {
+        public MockBaseAttributeDefinition(String id, Attribute attribute) {
             setId(id);
-            staticAttribute = attribute;
+            staticAttribute = Optional.<Attribute>fromNullable(attribute);
         }
 
         /** {@inheritDoc} */
-        protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
+        protected Optional<Attribute> doAttributeResolution(AttributeResolutionContext resolutionContext)
                 throws AttributeResolutionException {
             return staticAttribute;
         }

@@ -22,11 +22,11 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.session.AuthenticationEvent;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.IdPSessionSubcontext;
+import net.shibboleth.idp.session.IdPSessionContext;
 import net.shibboleth.idp.session.ServiceSession;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.SubcontextContainer;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * <li>Have associated with this, a valid {@link MessageContext} at getInboundMessageContext which in turn
  *  <em>must</em>:
  * <ul>
- * <li>Contain a {@link BasicMessageMetadataSubcontext} to provide the relying party name.</li>
+ * <li>Contain a {@link BasicMessageMetadataContext} to provide the relying party name.</li>
  * </ul>
  * </ul>
  * 
@@ -76,8 +76,8 @@ public abstract class AbstractPrincipalAttributeDefinition extends BaseAttribute
             return null;
         }
 
-        final BasicMessageMetadataSubcontext messageMetadata =
-                inboundContext.getSubcontext(BasicMessageMetadataSubcontext.class, false);
+        final BasicMessageMetadataContext messageMetadata =
+                inboundContext.getSubcontext(BasicMessageMetadataContext.class, false);
         if (null == messageMetadata) {
             log.error("Attribute Defintion {}: No Message Metadata context presentt.", getId());
             return null;
@@ -102,12 +102,12 @@ public abstract class AbstractPrincipalAttributeDefinition extends BaseAttribute
             return null;
         }
 
-        if (!parent.containsSubcontext(IdPSessionSubcontext.class)) {
+        if (!parent.containsSubcontext(IdPSessionContext.class)) {
             log.error("Attribute Defintion {}: Could not locate IdPSessionSubcontext.", getId());
             return null;
         }
 
-        final IdPSession idpSession = parent.getSubcontext(IdPSessionSubcontext.class).getIdPSession();
+        final IdPSession idpSession = parent.getSubcontext(IdPSessionContext.class).getIdPSession();
         final ServiceSession serviceSession = idpSession.getServiceSession(relyingParty);
         if (null == serviceSession) {
             log.error("Attribute Defintion {}: Could not locate service session for {}.", getId(), relyingParty);

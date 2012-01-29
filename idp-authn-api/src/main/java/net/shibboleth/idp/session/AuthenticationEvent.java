@@ -23,13 +23,13 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
 
 /** Describes an authentication event that took place within the scope of an {@link IdPSession}. */
 @ThreadSafe
-public final class AuthenticationEvent extends AbstractSubcontextContainer {
+public final class AuthenticationEvent extends BaseContext {
 
     /** The principal established by the authentication event. */
     private Principal authenticatedPrincipal;
@@ -53,7 +53,7 @@ public final class AuthenticationEvent extends AbstractSubcontextContainer {
         authenticationWorkflow =
                 Assert.isNotNull(StringSupport.trimOrNull(workflow), "Authentication method can not be null nor empty");
         
-        authenticatedPrincipal = Assert.isNotNull(principal, "Authenticationed princpal can not be null");;
+        authenticatedPrincipal = Assert.isNotNull(principal, "Authenticationed princpal can not be null");
 
         authenticationInstant = System.currentTimeMillis();
         lastActivityInstant = authenticationInstant;

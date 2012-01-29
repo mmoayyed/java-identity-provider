@@ -17,138 +17,79 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.Objects;
 
 /**
- * Implement the OR matcher.
- * 
- * All elements from all child matchers are combined into the resultant set.
+ * {@link AttributeValueMatcher} that implements the disjunction of matchers. That is, a given attribute value is
+ * considered to have matched if it is returned by any of the composed {@link AttributeValueMatcher}.
  */
 @ThreadSafe
-public class OrMatcher extends AbstractInitializableComponent implements AttributeValueMatcher, DestructableComponent,
-        ValidatableComponent {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(OrMatcher.class);
-
-    /** Destructor state. */
-    private boolean destroyed;
-
-    /**
-     * The supplied matchers to be ORed together.
-     * 
-     * This list in unmodifiable.
-     */
-    private List<AttributeValueMatcher> matchers = Collections.emptyList();
-
-    /** Constructor. */
-    public OrMatcher() {
-    }
+public class OrMatcher extends AbstractComposedMatcher implements AttributeValueMatcher, ValidatableComponent {
 
     /** {@inheritDoc} */
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-    
-    /** tear down any destructable children. {@inheritDoc} */
-    public void destroy() {
-        destroyed = true;
-        for (AttributeValueMatcher matcher : matchers) {
-            ComponentSupport.destroy(matcher);
-        }
-        matchers = null;
-    }
-
-    /**
-     * Validate any validatable children. {@inheritDoc}
-     * 
-     * @throws ComponentValidationException if any of the child validates failed.
-     */
-    public void validate() throws ComponentValidationException {
-        if (!isInitialized()) {
-            throw new UninitializedComponentException("Object not initialized");
-        }
-        for (AttributeValueMatcher matcher : matchers) {
-            ComponentSupport.validate(matcher);
-        }
-    }
-
-    /**
-     * Set the sub-matchers.
-     * 
-     * @param theMatchers a list of sub matchers.
-     */
-    public synchronized void setSubMatchers(final List<AttributeValueMatcher> theMatchers) {
-        final List<AttributeValueMatcher> workingMatcherList = new ArrayList<AttributeValueMatcher>();
-
-        CollectionSupport.addNonNull(theMatchers, workingMatcherList);
-        if (workingMatcherList.isEmpty()) {
-            log.warn("No sub-matchers provided to OR Value Matcher, this always returns no results");
-        }
-        matchers = Collections.unmodifiableList(workingMatcherList);
-    }
-
-    /**
-     * Get the sub matchers which are to be OR'd.
-     * 
-     * @return the sub matchers. This is never null or empty,
-     */
-    public List<AttributeValueMatcher> getSubMatchers() {
-        return matchers;
-    }
-
-    /** {@inheritDoc} */
-    public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+    public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
+        assert attribute != null : "Attribute to be filtered can not be null";
+        assert filterContext != null : "Attribute filter contet can not be null";
 
-        if (!isInitialized()) {
-            throw new UninitializedComponentException("Or Matcher has not been initialized");
-        }
-        // Capture submatchers. Where we do this is important - after the initialized
-        // test and before the destroyed test.
-        final List<AttributeValueMatcher> theMatchers = getSubMatchers();
-        if (destroyed) {
-            throw new AttributeFilteringException("Or Matcher has been destroyed");
-        }
+        // Capture the matchers to avoid race with setComposedMatchers
+        // Do this before the test on destruction to avoid race with destroy code
+        final Set<AttributeValueMatcher> currentMatchers = getComposedMatchers();
+        ifNotInitializedThrowUninitializedComponentException();
+        ifDestroyedThrowDestroyedComponentException();
 
-        final Set result = new HashSet();
-
-        for (AttributeValueMatcher matcher : theMatchers) {
-            result.addAll(matcher.getMatchingValues(attribute, filterContext));
-        }
-        if (result.isEmpty()) {
+        if (currentMatchers.isEmpty()) {
             return Collections.emptySet();
         }
-        return Collections.unmodifiableCollection(result);
+        Iterator<AttributeValueMatcher> matcherItr = currentMatchers.iterator();
+
+        Set<AttributeValue> matchingValues = matcherItr.next().getMatchingValues(attribute, filterContext);
+        while (matcherItr.hasNext()) {
+            matchingValues.addAll(matcherItr.next().getMatchingValues(attribute, filterContext));
+            if (matchingValues.isEmpty()) {
+                return Collections.emptySet();
+            }
+        }
+
+        return Collections.unmodifiableSet(matchingValues);
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        for (AttributeValueMatcher matcher : matchers) {
-            ComponentSupport.initialize(matcher);
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof OrMatcher)) {
+            return false;
+        }
+
+        return Objects.equal(getComposedMatchers(), ((OrMatcher) obj).getComposedMatchers());
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return getComposedMatchers().hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("composedMatchers", getComposedMatchers()).toString();
     }
 }

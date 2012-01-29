@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.ScopedAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -48,8 +48,7 @@ public class PrecscopedAtributeTest {
      * @throws AttributeResolutionException on resolution issues.
      * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
-    @Test
-    public void testPreScoped() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testPreScoped() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -75,13 +74,13 @@ public class PrecscopedAtributeTest {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
         final Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(new ScopedAttributeValue("at1", "Data")));
-        Assert.assertTrue(f.contains(new ScopedAttributeValue("at1", "Connector")));
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Data")));
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("at1", "Connector")));
     }
 
     /**
@@ -90,8 +89,7 @@ public class PrecscopedAtributeTest {
      * @throws AttributeResolutionException if resolution fails.
      * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
-    @Test
-    public void testPreScopedNoValues() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testPreScopedNoValues() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -117,10 +115,10 @@ public class PrecscopedAtributeTest {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        final Attribute<?> resultAttribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
+        final Attribute resultAttribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
         Assert.assertNull(resultAttribute);
     }
 }

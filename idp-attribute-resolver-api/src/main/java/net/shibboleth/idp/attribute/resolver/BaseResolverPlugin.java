@@ -19,24 +19,26 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.criteria.EvaluationException;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
@@ -44,31 +46,22 @@ import org.slf4j.LoggerFactory;
  * @param <ResolvedType> object type this plug-in resolves to
  */
 @ThreadSafe
-public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifiableInitializableComponent implements
-        ValidatableComponent, UnmodifiableComponent, DestructableComponent {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
-
-    /** Whether this plugin has been destroyed. */
-    private boolean isDestroyed;
+public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucableIdentifiableInitializableComponent
+        implements ValidatableComponent, UnmodifiableComponent, DestructableComponent {
 
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions;
 
     /** Criterion that must be met for this plugin to be active for the given request. */
-    private EvaluableCriterion<AttributeResolutionContext> activationCriteria =
-            StaticResponseEvaluableCriterion.TRUE_RESPONSE;
+    private Predicate<AttributeResolutionContext> activationCriteria = Predicates.alwaysTrue();
 
     /** IDs of the {@link ResolutionPlugIn}s this plug-in depends on. */
     private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
 
     /** {@inheritDoc} */
     public synchronized void setId(final String componentId) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, plugin ID can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         super.setId(componentId);
     }
@@ -90,10 +83,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
      * @param propagate true if {@link AttributeResolutionException}s are propagated, false if not
      */
     public synchronized void setPropagateResolutionExceptions(final boolean propagate) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, resolution exception propagation can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         propagateResolutionExceptions = propagate;
     }
@@ -103,7 +94,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
      * 
      * @return criteria that must be met for this plugin to be active for a given request, never null
      */
-    public EvaluableCriterion<AttributeResolutionContext> getActivationCriteria() {
+    @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
         return activationCriteria;
     }
 
@@ -112,17 +103,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
      * 
      * @param criteria criteria that must be met for this plugin to be active for a given request
      */
-    public synchronized void setActivationCriteria(final EvaluableCriterion<AttributeResolutionContext> criteria) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, resolution exception propagation can not be changed.");
-        }
+    public synchronized void setActivationCriteria(@Nonnull final Predicate<AttributeResolutionContext> criteria) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        if (criteria == null) {
-            activationCriteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
-        } else {
-            activationCriteria = criteria;
-        }
+        activationCriteria = Assert.isNotNull(criteria, "Activiation criteria can not be null");
     }
 
     /**
@@ -130,7 +115,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
      * 
      * @return unmodifiable list of dependencies for this plugin, never null
      */
-    public Set<ResolverPluginDependency> getDependencies() {
+    @Nonnull @NonnullElements @Unmodifiable public Set<ResolverPluginDependency> getDependencies() {
         return dependencies;
     }
 
@@ -140,106 +125,61 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
      * @param pluginDependencies unmodifiable list of dependencies for this plugin
      */
     public synchronized void setDependencies(final Collection<ResolverPluginDependency> pluginDependencies) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has already been initialized, resolution exception propagation can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        HashSet<ResolverPluginDependency> checkedDependencies =
-                CollectionSupport.addNonNull(pluginDependencies, new HashSet<ResolverPluginDependency>());
-        if (checkedDependencies.isEmpty()) {
-            dependencies = Collections.emptySet();
-        } else {
-            dependencies = Collections.unmodifiableSet(checkedDependencies);
-        }
-    }
-
-    /**
-     * Checks to see if the current resolution context meets the evaluation condition for this plugin. If it does the
-     * plugin should be resolved for this request, if it does not the plugin should not be resolved for this request.
-     * 
-     * If no evaluation condition is set for this plugin this method return true.
-     * 
-     * @param resolutionContext current resolution context
-     * 
-     * @return true if the current resolution context meets the requirements for this plugin, false if not
-     */
-    public boolean isApplicable(final AttributeResolutionContext resolutionContext) {
-        try {
-            if (activationCriteria.evaluate(resolutionContext)) {
-                return true;
-            }
-        } catch (EvaluationException e) {
-            log.warn("Error evaluating plugin applicability criteria", e);
-        }
-
-        return false;
+        dependencies = new TransformedInputCollectionBuilder().addAll(pluginDependencies).buildImmutableSet();
     }
 
     /**
      * Performs the attribute resolution for this plugin.
      * 
-     * If {@link #isApplicable(AttributeResolutionContext)} returns false this method returns null. Otherwise
-     * {@link #doResolve(AttributeResolutionContext)} is invoked. If an exception is thrown and
+     * <p>
+     * This method first checks to see if this plugin has been initialized and has not be destroyed. Then it checks if
+     * the plugins activation criterion has been met. Finally it delegates to
+     * {@link #doResolve(AttributeResolutionContext)}. If an exception is thrown and
      * {@link #isPropagateResolutionExceptions()} is false the exception is logged but not re-thrown, otherwise it is
      * re-thrown.
+     * </p>
      * 
-     * @param resolutionContext the context for the resolution
+     * @param resolutionContext current attribute resolution context
      * 
-     * @return the attributes made available by the resolution, or null if no attributes were resolved
+     * @return the attributes made available by the resolution, or {@link Optional#absent()} if no attributes were
+     *         resolved
      * 
-     * @throws AttributeResolutionException thrown if there was an error checking the evaluation condition, if one
-     *             exists, or if there was a problem resolving the attributes
+     * @throws AttributeResolutionException thrown if there was a problem resolving the attributes
      */
-    public final ResolvedType resolve(final AttributeResolutionContext resolutionContext)
+    @Nonnull public final Optional<ResolvedType> resolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        if (!isInitialized()) {
-            throw new AttributeResolutionException("Resolver plugin" + getId()
-                    + " has not be initialized and can not yet be used");
-        }
+        assert resolutionContext != null : "Attribute resolution context can not be null";
 
-        if (!isDestroyed) {
-            throw new AttributeResolutionException("Resolver plugin" + getId()
-                    + " has been destroyed and can no longer be used");
-        }
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        if (!isApplicable(resolutionContext)) {
-            return null;
+        if (!activationCriteria.apply(resolutionContext)) {
+            Optional.absent();
         }
 
         try {
-            return doResolve(resolutionContext);
+            Optional<ResolvedType> resolvedData = doResolve(resolutionContext);
+            assert resolvedData != null : "Result of doResolve for resolver plugin " + getId() + " was null";
+            return resolvedData;
         } catch (AttributeResolutionException e) {
             if (propagateResolutionExceptions) {
                 throw e;
             } else {
-                return null;
+                return Optional.absent();
             }
         }
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        ComponentSupport.validate(activationCriteria);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isDestroyed() {
-        return isDestroyed;
-    }
-
-    /** {@inheritDoc} */
-    public final synchronized void destroy() {
-        doDestroy();
-        ComponentSupport.destroy(activationCriteria);
-        activationCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
-        dependencies = Collections.emptySet();
-        isDestroyed = true;
-    }
-
-    /** Performs plugin implementation specific destruction logic. */
     protected void doDestroy() {
+        ComponentSupport.destroy(activationCriteria);
+        activationCriteria = Predicates.alwaysFalse();
+        dependencies = Collections.emptySet();
 
+        super.destroy();
     }
 
     /** {@inheritDoc} */
@@ -249,10 +189,15 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
         ComponentSupport.initialize(activationCriteria);
     }
 
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        ComponentSupport.validate(activationCriteria);
+    }
+
     /**
      * Perform the actual resolution. The resolved attribute(s) should not be recorded in the resolution context.
      * 
-     * @param resolutionContext current resolution context
+     * @param resolutionContext current resolution context, guaranteed not to be bull
      * 
      * @return the resolved attributes or null if no attributes were resolved
      * 
@@ -260,6 +205,6 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractIdentifia
      * 
      * @see BaseResolverPlugin#resolve(AttributeResolutionContext)
      */
-    protected abstract ResolvedType doResolve(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException;
+    @Nonnull protected abstract Optional<ResolvedType> doResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
 }

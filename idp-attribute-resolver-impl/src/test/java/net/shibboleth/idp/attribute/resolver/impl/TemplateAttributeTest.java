@@ -86,8 +86,7 @@ public class TemplateAttributeTest {
      * @throws AttributeResolutionException id resolution fails
      * @throws ComponentInitializationException only if bad things thingas
      */
-    @Test
-    public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "1";
         final TemplateAttributeDefinition attr = new TemplateAttributeDefinition();
@@ -97,7 +96,7 @@ public class TemplateAttributeTest {
         attr.setTemplateSource(TEST_ATTRIBUTES_TEMPLATE);
         attr.setSourceAttributes(Collections.EMPTY_LIST);
         attr.initialize();
-        final Attribute<?> val = attr.doAttributeResolution(new AttributeResolutionContext(null));
+        final Attribute val = attr.doAttributeResolution(new AttributeResolutionContext());
         final Collection<?> results = val.getValues();
 
         Assert.assertEquals(results.size(), 0, "Templated value count");
@@ -109,8 +108,7 @@ public class TemplateAttributeTest {
      * @throws AttributeResolutionException if resolution fails
      * @throws ComponentInitializationException only if things go wrong
      */
-    @Test
-    public void testSimpleWithValues() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimpleWithValues() throws AttributeResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "2";
         final List<String> sources = new LazyList<String>();
@@ -137,11 +135,11 @@ public class TemplateAttributeTest {
         resolver.setId("foo");
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.initialize();
         resolver.resolveAttributes(context);
 
-        Attribute<?> a = context.getResolvedAttributes().get(name);
+        Attribute a = context.getResolvedAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 1, "Templated value count");
         Assert.assertTrue(results.contains(SIMPLE_VALUE), "Single value context is correct");
@@ -154,8 +152,7 @@ public class TemplateAttributeTest {
      * @throws AttributeResolutionException if it goes wrong.
      * @throws ComponentInitializationException if it goes wrong.
      */
-    @Test
-    public void testTemplateWithValues() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testTemplateWithValues() throws AttributeResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
         final List<String> sources = new LazyList<String>();
@@ -186,12 +183,12 @@ public class TemplateAttributeTest {
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.initialize();
 
         resolver.resolveAttributes(context);
 
-        final Attribute<?> a = context.getResolvedAttributes().get(name);
+        final Attribute a = context.getResolvedAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 2, "Templated value count");
         String s = "Att " + TestSources.COMMON_ATTRIBUTE_VALUE + "-" + TestSources.SECOND_ATTRIBUTE_VALUES[0];

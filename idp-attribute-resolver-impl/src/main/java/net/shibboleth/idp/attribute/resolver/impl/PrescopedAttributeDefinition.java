@@ -22,22 +22,23 @@ import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.ScopedAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 /**
- * An attribute definition that creates {@link ScopedAttributeValue}s by taking a source attribute value splitting it at
- * a delimiter. The first atom becomes the attribute value and the second value becomes the scope.
+ * An attribute definition that creates {@link ScopedStringAttributeValue}s by taking a source attribute value splitting
+ * it at a delimiter. The first atom becomes the attribute value and the second value becomes the scope.
  */
 @ThreadSafe
 public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
@@ -54,10 +55,9 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
      * @param newScopeDelimiter what to set.
      */
     public synchronized void setScopeDelimiter(final String newScopeDelimiter) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("PreScoped Attribute definition " + getId()
-                    + " has already been initialized, scope delimiter can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         scopeDelimiter = StringSupport.trimOrNull(newScopeDelimiter);
     }
 
@@ -69,7 +69,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     public String getScopeDelimiter() {
         return scopeDelimiter;
     }
-    
+
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -81,7 +81,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Attribute<ScopedAttributeValue> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
         final Set<ResolverPluginDependency> depends = getDependencies();
@@ -90,9 +90,9 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
             return null;
         }
 
-        final Collection<ScopedAttributeValue> resultingValues = new LazySet<ScopedAttributeValue>();
+        final Collection<ScopedStringAttributeValue> resultingValues = new LazySet<ScopedStringAttributeValue>();
         for (ResolverPluginDependency dep : depends) {
-            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null == dependentAttribute) {
                 log.error("Dependency of PrescopedAttribute " + getId() + " returned null dependent attribute");
                 continue;
@@ -121,16 +121,16 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
                             scopeDelimiter);
                     throw new AttributeResolutionException("Input attribute value can not be split.");
                 }
-                resultingValues.add(new ScopedAttributeValue(stringValues[0], stringValues[1]));
+                resultingValues.add(new ScopedStringAttributeValue(stringValues[0], stringValues[1]));
             }
         }
         if (resultingValues.isEmpty()) {
             log.debug("Prescoped definition " + getId() + " returned no values");
         }
 
-        final Attribute<ScopedAttributeValue> resultantAttribute = new Attribute<ScopedAttributeValue>(getId());
+        final Attribute resultantAttribute = new Attribute(getId());
         resultantAttribute.setValues(resultingValues);
-        return resultantAttribute;
+        return Optional.of(resultantAttribute);
     }
 
 }

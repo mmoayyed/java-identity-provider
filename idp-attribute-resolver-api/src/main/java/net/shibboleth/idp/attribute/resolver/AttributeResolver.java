@@ -23,132 +23,138 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
-import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.collection.LazySet;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO perf metrics
+import com.google.common.base.Optional;
+
+//TODO(lajoie) perf metrics
+//TODO(lajoie) need to deal with thread safety issue where attribute definitions/data connectors might change in the midst of a resolution
 
 /** A component that resolves the attributes for a particular subject. */
 @ThreadSafe
-public class AttributeResolver extends AbstractIdentifiableInitializableComponent implements ValidatableComponent,
-        DestructableComponent, UnmodifiableComponent {
+public class AttributeResolver extends AbstractDestrucableIdentifiableInitializableComponent implements
+        ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeResolver.class);
 
     /** Attribute definitions defined for this resolver. */
-    private Map<String, BaseAttributeDefinition> attributeDefinitions = Collections.emptyMap();
+    private Map<String, BaseAttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
-    private Map<String, BaseDataConnector> dataConnectors = Collections.emptyMap();
+    private Map<String, BaseDataConnector> dataConnectors;
 
-    /** {@inheritDoc} */
-    public synchronized void setId(final String componentId) {
-        super.setId(componentId);
+    /**
+     * Constructor.
+     * 
+     * @param resolverId ID of this resolver
+     */
+    public AttributeResolver(@Nonnull @NotEmpty String resolverId) {
+        setId(resolverId);
+        attributeDefinitions = Collections.emptyMap();
+        dataConnectors = Collections.emptyMap();
     }
 
     /**
-     * Gets the unmodifiable collection of attribute definitions for this resolver. This collection is never null nor
-     * contains any null elements.
+     * Gets the collection of attribute definitions for this resolver.
      * 
      * @return attribute definitions loaded in to this resolver
      */
-    public Map<String, BaseAttributeDefinition> getAttributeDefinitions() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, BaseAttributeDefinition> getAttributeDefinitions() {
         return attributeDefinitions;
     }
 
     /**
      * Sets the collection of attribute definitions for this resolver.
      * 
-     * @param definitions definition to set, may be null or contain null elements
+     * @param definitions definition to set
      */
-    public synchronized void setAttributeDefinition(final Collection<BaseAttributeDefinition> definitions) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver " + getId()
-                    + " has already been initialized, attribute definitions can not be changed.");
-        }
+    public synchronized void setAttributeDefinition(
+            @Nullable @NullableElements final Collection<BaseAttributeDefinition> definitions) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        if (definitions == null || definitions.isEmpty()) {
-            attributeDefinitions = Collections.emptyMap();
-            return;
-        }
+        TransformedInputMapBuilder<String, BaseAttributeDefinition> mapBuilder =
+                new TransformedInputMapBuilder<String, BaseAttributeDefinition>()
+                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
 
-        final LazyMap<String, BaseAttributeDefinition> newDefinitions = new LazyMap<String, BaseAttributeDefinition>();
-        for (BaseAttributeDefinition definition : definitions) {
-            if (definition != null) {
-                newDefinitions.put(definition.getId(), definition);
+        if (definitions != null) {
+            for (BaseAttributeDefinition definition : definitions) {
+                if (definition != null) {
+                    mapBuilder.put(definition.getId(), definition);
+                }
             }
         }
 
-        if (newDefinitions.isEmpty()) {
-            attributeDefinitions = Collections.emptyMap();
-        } else {
-            attributeDefinitions = Collections.unmodifiableMap(newDefinitions);
-        }
+        attributeDefinitions = mapBuilder.buildImmutableMap();
     }
 
     /**
-     * Gets the unmodifiable collection of data connectors for this resolver. This collection is never null nor contains
-     * any null elements.
+     * Gets the unmodifiable collection of data connectors for this resolver.
      * 
      * @return data connectors loaded in to this resolver
      */
-    public Map<String, BaseDataConnector> getDataConnectors() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, BaseDataConnector> getDataConnectors() {
         return dataConnectors;
     }
 
     /**
      * Sets the collection of data connectors for this resolver.
      * 
-     * @param connectors connectors to set, may be null or contain null elements
+     * @param connectors connectors to set
      */
-    public synchronized void setDataConnectors(final Collection<BaseDataConnector> connectors) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver " + getId()
-                    + " has already been initialized, data connectors can not be changed.");
-        }
+    public synchronized void setDataConnectors(
+            @Nullable @NullableElements final Collection<BaseDataConnector> connectors) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        if (connectors == null || connectors.isEmpty()) {
-            dataConnectors = Collections.emptyMap();
-            return;
-        }
+        TransformedInputMapBuilder<String, BaseDataConnector> mapBuilder =
+                new TransformedInputMapBuilder<String, BaseDataConnector>()
+                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
 
-        final LazyMap<String, BaseDataConnector> newConnectors = new LazyMap<String, BaseDataConnector>();
-        for (BaseDataConnector connector : connectors) {
-            if (connector != null) {
-                newConnectors.put(connector.getId(), connector);
+        if (connectors != null) {
+            for (BaseDataConnector connector : connectors) {
+                if (connector != null) {
+                    mapBuilder.put(connector.getId(), connector);
+                }
             }
         }
 
-        if (newConnectors.isEmpty()) {
-            dataConnectors = Collections.emptyMap();
-        } else {
-            dataConnectors = Collections.unmodifiableMap(newConnectors);
-        }
+        dataConnectors = mapBuilder.buildImmutableMap();
     }
 
     /**
-     * {@inheritDoc}
-     * 
      * This method checks if each registered data connector and attribute definition is valid (via
      * {@link BaseResolverPlugin#validate()} and checks to see if there are any loops in the dependency for all
      * registered plugins.
+     * 
+     * {@inheritDoc}
      */
     public void validate() throws ComponentValidationException {
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         final LazyList<String> invalidDataConnectors = new LazyList<String>();
         for (BaseDataConnector plugin : dataConnectors.values()) {
             log.debug("Attribute resolver {}: checking if data connector {} is valid", getId(), plugin.getId());
@@ -177,20 +183,6 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
         }
     }
 
-    /** {@inheritDoc} */
-    public synchronized void destroy() {
-        for (BaseResolverPlugin plugin : attributeDefinitions.values()) {
-            plugin.destroy();
-        }
-
-        for (BaseResolverPlugin plugin : dataConnectors.values()) {
-            plugin.destroy();
-        }
-
-        attributeDefinitions = Collections.emptyMap();
-        dataConnectors = Collections.emptyMap();
-    }
-
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
      * {@link AttributeResolutionContext#getRequestedAttributes()}, the resolver will <strong>not</strong> fail if they
@@ -202,12 +194,12 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
      */
-    public void resolveAttributes(final AttributeResolutionContext resolutionContext)
+    public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        if (!isInitialized()) {
-            throw new AttributeResolutionException("Attribute resolver " + getId()
-                    + " has not be initialized and can not yet be used");
-        }
+        assert resolutionContext != null : "Attribute resolution context can not be null";
+
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         log.debug("Attribute Resolver {}: initiating attribute resolution", getId());
 
@@ -229,7 +221,22 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
 
         log.debug("Attribute Resolver {}: final resolved attribute collection: {}", getId(), resolutionContext
                 .getResolvedAttributes().keySet());
+
         return;
+    }
+
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        for (BaseResolverPlugin plugin : attributeDefinitions.values()) {
+            plugin.destroy();
+        }
+
+        for (BaseResolverPlugin plugin : dataConnectors.values()) {
+            plugin.destroy();
+        }
+
+        attributeDefinitions = Collections.emptyMap();
+        dataConnectors = Collections.emptyMap();
     }
 
     /**
@@ -241,10 +248,12 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @return list of attributes, identified by IDs, that should be resolved
      */
-    protected Collection<String> getToBeResolvedAttributes(final AttributeResolutionContext resolutionContext) {
-        final Collection<String> attributeIds = new LazyList<String>();
+    @Nonnull @NonnullElements protected Collection<String> getToBeResolvedAttributes(
+            @Nonnull final AttributeResolutionContext resolutionContext) {
+        assert resolutionContext != null : "Attribute resolution context can not be null";
 
-        for (Attribute<?> requestedAttribute : resolutionContext.getRequestedAttributes()) {
+        final Collection<String> attributeIds = new LazyList<String>();
+        for (Attribute requestedAttribute : resolutionContext.getRequestedAttributes()) {
             attributeIds.add(requestedAttribute.getId());
         }
 
@@ -266,8 +275,11 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @throws AttributeResolutionException if unable to resolve the requested attribute definition
      */
-    protected void resolveAttributeDefinition(final String attributeId,
-            final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+    protected void resolveAttributeDefinition(@Nonnull final String attributeId,
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert attributeId != null : "Attribute ID can not be null";
+        assert resolutionContext != null : "Attribute resolution context can not be null";
+
         log.debug("Attribute Resolver {}: beginning to resolve attribute definition {}", getId(), attributeId);
 
         if (resolutionContext.getResolvedAttributeDefinitions().containsKey(attributeId)) {
@@ -285,7 +297,7 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
 
         resolveDependencies(definition, resolutionContext);
 
-        Attribute resolvedAttribute = null;
+        Optional<Attribute> resolvedAttribute = Optional.absent();
 
         try {
             log.debug("Attribute Resolver {}: resolving attribute definition {}", getId(), attributeId);
@@ -299,12 +311,13 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
             }
         }
 
-        if (resolvedAttribute == null) {
+        if (!resolvedAttribute.isPresent()) {
             log.debug("Attribute Resolver {}: attribute definition {} produced no attribute", getId(), attributeId);
         } else {
             log.debug("Attribute Resolver {}: attribute definition {} produced an attribute with {} values",
-                    new Object[] {getId(), attributeId, resolvedAttribute.getValues().size()});
+                    new Object[] {getId(), attributeId, resolvedAttribute.get().getValues().size()});
         }
+
         resolutionContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
     }
 
@@ -318,8 +331,11 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @throws AttributeResolutionException if unable to resolve the requested connector
      */
-    protected void resolveDataConnector(final String connectorId, final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+    protected void resolveDataConnector(@Nonnull final String connectorId,
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert connectorId != null : "Data connector ID can not be null";
+        assert resolutionContext != null : "Attribute resolution context can not be null";
+
         log.debug("Attribute Resolver {}: beginning to resolve data connector {}", getId(), connectorId);
 
         if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
@@ -337,14 +353,18 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
 
         resolveDependencies(connector, resolutionContext);
 
-        Map<String, Attribute<?>> resolvedAttributes = null;
+        Optional<Map<String, Attribute>> resolvedAttributes = Optional.absent();
         try {
             log.debug("Attribute Resolver {}: resolving data connector {}", getId(), connectorId);
             resolvedAttributes = connector.resolve(resolutionContext);
         } catch (AttributeResolutionException e) {
-            final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
-            if (failoverDataConnectorId != null) {
-                resolveDataConnector(failoverDataConnectorId, resolutionContext);
+            final Optional<String> failoverDataConnectorId = connector.getFailoverDataConnectorId();
+            if (failoverDataConnectorId.isPresent()) {
+                log.debug(
+                        "Attribute Resolver {}: data connector {} failed to resolve, invoking failover data connector {}.  Reason for the failure was: {}",
+                        new Object[] {getId(), connectorId, failoverDataConnectorId.get(), e});
+                resolveDataConnector(failoverDataConnectorId.get(), resolutionContext);
+                return;
             } else {
                 if (connector.isPropagateResolutionExceptions()) {
                     log.debug("Attribute Resolver {}: data connector {} produced the"
@@ -356,11 +376,11 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
             }
         }
 
-        if (resolvedAttributes == null) {
-            log.debug("Attribute Resolver {}: data connector {} produced no attributes", getId(), connectorId);
-        } else {
+        if (resolvedAttributes.isPresent()) {
             log.debug("Attribute Resolver {}: data connector {} resolved the following attributes {}", new Object[] {
-                    getId(), connectorId, resolvedAttributes.keySet(),});
+                    getId(), connectorId, resolvedAttributes.get().keySet(),});
+        } else {
+            log.debug("Attribute Resolver {}: data connector {} produced no attributes", getId(), connectorId);
         }
         resolutionContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
@@ -373,8 +393,10 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving a dependency
      */
-    protected void resolveDependencies(final BaseResolverPlugin<?> plugin,
-            final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+    protected void resolveDependencies(@Nonnull final BaseResolverPlugin<?> plugin,
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert plugin != null : "Plugin dependency can not be null";
+        assert resolutionContext != null : "Attribute resolution context can not be null";
 
         if (plugin.getDependencies().isEmpty()) {
             return;
@@ -391,7 +413,7 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
                 resolveDataConnector(pluginId, resolutionContext);
             } else {
                 throw new AttributeResolutionException("Plugin " + plugin.getId() + " contains a depedency on plugin "
-                        + pluginId + " and that plugin does not exist.");
+                        + pluginId + " which does not exist.");
             }
         }
 
@@ -405,15 +427,17 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @param resolutionContext current resolution context
      */
-    protected void finalizeResolvedAttributes(final AttributeResolutionContext resolutionContext) {
-        final LazySet<Attribute<?>> resolvedAttributes = new LazySet<Attribute<?>>();
+    protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
+        assert resolutionContext != null : "Attribute resolution context can not be null";
 
-        Attribute<?> resolvedAttribute;
+        final LazySet<Attribute> resolvedAttributes = new LazySet<Attribute>();
+
+        Optional<Attribute> resolvedAttribute;
         for (ResolvedAttributeDefinition definition : resolutionContext.getResolvedAttributeDefinitions().values()) {
             resolvedAttribute = definition.getResolvedAttribute();
 
             // remove nulls
-            if (resolvedAttribute == null) {
+            if (!resolvedAttribute.isPresent()) {
                 log.debug("Attribute Resolver {}: removing result of attribute definition {}, it's null", getId(),
                         definition.getId());
                 continue;
@@ -427,16 +451,16 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
             }
 
             // remove any nulls or duplicate attribute values
-            cleanResolvedAttributeValues(resolvedAttribute);
+            cleanResolvedAttributeValues(resolvedAttribute.get());
 
             // remove value-less attributes
-            if (resolvedAttribute.getValues().size() == 0) {
+            if (resolvedAttribute.get().getValues().size() == 0) {
                 log.debug("Attribute Resolver {}: removing result of attribute definition {},"
                         + " it's attribute contains no values", getId(), definition.getId());
                 continue;
             }
 
-            resolvedAttributes.add(resolvedAttribute);
+            resolvedAttributes.add(resolvedAttribute.get());
         }
 
         resolutionContext.setResolvedAttributes(resolvedAttributes);
@@ -447,12 +471,15 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @param attribute attribute whose values will be cleaned
      */
-    protected void cleanResolvedAttributeValues(final Attribute<?> attribute) {
+    protected void cleanResolvedAttributeValues(@Nonnull final Attribute attribute) {
+        assert attribute != null : "Attribute can not be null";
+
         final Collection<?> values = attribute.getValues();
         if (values.isEmpty()) {
             return;
         }
 
+        // TODO(lajoie) this possibly changes the type of value collection for the attribute, should it?
         final LazySet cleanedValues = new LazySet<Object>();
         for (Object value : values) {
             if (value != null) {
@@ -471,7 +498,8 @@ public class AttributeResolver extends AbstractIdentifiableInitializableComponen
      * 
      * @return whether the given data connector is valid
      */
-    protected boolean validateDataConnector(BaseDataConnector connector, LazyList<String> invalidDataConnectors) {
+    protected boolean validateDataConnector(@Nonnull BaseDataConnector connector,
+            @Nonnull LazyList<String> invalidDataConnectors) {
         try {
             connector.validate();
             log.debug("Attribute resolver {}: data connector {} is valid", getId(), connector.getId());

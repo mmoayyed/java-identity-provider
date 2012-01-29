@@ -19,11 +19,7 @@ package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Set;
 
-import javax.script.Compilable;
-import javax.script.CompiledScript;
 import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
@@ -34,11 +30,12 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 /**
  * An attribute definition that computes the attribute definition by executing a script written in some JSR-223
@@ -50,102 +47,42 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinition.class);
 
-    /** The scripting language. */
-    private String scriptLanguage;
-
-    /** The script to execute. */
-    private String script;
-
-    /** The script engine to execute the script. */
-    private ScriptEngine scriptEngine;
-
-    /** The compiled form of the script, if the script engine supports compiling. */
-    private CompiledScript compiledScript;
+    /** Script to be evaluated. */
+    private EvaluableScript script;
 
     /**
-     * The the language.
+     * Gets the script to be evaluated.
      * 
-     * @param theLanguage which language the script is in
+     * @return the script to be evaluated
      */
-    public synchronized void setScriptLanguage(final String theLanguage) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Scrpited Attribute definition " + getId()
-                    + " has already been initialized, language value can not be changed.");
-        }
-        scriptLanguage = StringSupport.trimOrNull(theLanguage);
-    }
-
-    /**
-     * Gets the scripting language used.
-     * 
-     * @return scripting language used. After initialization, this is always a valid language
-     */
-    public String getScriptLanguage() {
-        return scriptLanguage;
-    }
-
-    /**
-     * Set the actual script.
-     * 
-     * @param theScript the text of the script
-     */
-    public synchronized void setScript(final String theScript) {
-        script = StringSupport.trimOrNull(theScript);
-    }
-
-    /**
-     * Gets the script that will be executed.
-     * 
-     * @return script that will be executed. After initialization, this is never null or empty.
-     */
-    public String getScript() {
+    public EvaluableScript getScript() {
         return script;
     }
 
     /**
-     * Get this resolver's script engine.
+     * Sets the script to be evaluated.
      * 
-     * @return the engine. After initialization, this is never null.
+     * @param matcherScript the script to be evaluated
      */
-    public ScriptEngine getScriptEngine() {
-        return scriptEngine;
-    }
+    public synchronized void setScript(EvaluableScript matcherScript) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-    /**
-     * Get the compiled script for this engine. Note that this will be null if the language does not support
-     * compilation. Only valid after initialization.
-     * 
-     * @return the compiled script.
-     */
-    public CompiledScript getCompiledScript() {
-        return compiledScript;
+        script = matcherScript;
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == scriptLanguage) {
-            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
-                    + " is being initialized, without a language being set");
-        }
-
-        final ScriptEngineManager sem = new ScriptEngineManager();
-        scriptEngine = sem.getEngineByName(scriptLanguage);
-        if (null == scriptEngine) {
-            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
-                    + ". Unable to create scripting engine for the language:  " + getScriptLanguage());
-        }
-        
         if (null == script) {
-            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
-                    + " is being initialized, without a script being set");
+            throw new ComponentInitializationException("Attribute definition " + getId()
+                    + " no script has been provided");
         }
-        compiledScript = compileScript();
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
         final Set<ResolverPluginDependency> depends = getDependencies();
@@ -156,37 +93,14 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
         final ScriptContext context = getScriptContext(resolutionContext);
         try {
-            if (compiledScript != null) {
-                compiledScript.eval(context);
-            } else {
-                scriptEngine.eval(script, context);
-            }
-
+            script.eval(context);
         } catch (ScriptException e) {
             final String message = "ScriptletAttributeDefinition " + getId() + " unable to execute script";
             log.error(message, e);
             throw new AttributeResolutionException(message, e);
         }
 
-        return (Attribute<?>) context.getAttribute(getId());
-    }
-
-    /**
-     * Compiles the script if the scripting engine supports it.
-     * 
-     * @return the compiled script.
-     */
-    protected CompiledScript compileScript() {
-        try {
-            if (scriptEngine != null && scriptEngine instanceof Compilable) {
-                return ((Compilable) scriptEngine).compile(script);
-            }
-        } catch (ScriptException e) {
-            log.warn("{} unable to compile even though the scripting engine supports this functionality: {}", getId(),
-                    e.toString());
-            log.debug("Fails", e);
-        }
-        return null;
+        return Optional.fromNullable((Attribute) context.getAttribute(getId()));
     }
 
     /**
@@ -209,7 +123,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         scriptContext.setAttribute("requestContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
 
         for (ResolverPluginDependency dep : getDependencies()) {
-            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
                 scriptContext.setAttribute(dependentAttribute.getId(), dependentAttribute, ScriptContext.ENGINE_SCOPE);
             }

@@ -35,9 +35,7 @@ import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdenti
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
@@ -47,7 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-//TODO performance metrics
+//TODO(lajoie) performance metrics
 
 /**
  * A policy describing if a set of attribute value filters is applicable.
@@ -98,14 +96,8 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
      * @param criteria criteria that must be met for this policy to be active for a given request
      */
     public synchronized void setActivationCriteria(@Nonnull final Predicate<AttributeFilterContext> criteria) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute filter policy " + getId()
-                    + " has already been initialized, its activiation criteria can not be changed.");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         activationCriteria = Assert.isNull(criteria, "Activitation criteria can not be null");
     }
@@ -126,14 +118,8 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
      */
     public synchronized void setAttributeValuePolicies(
             @Nullable @NullableElements final List<AttributeValueFilterPolicy> policies) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute filter policy " + getId()
-                    + " has already been initialized, its attribute value filter policies can not be changed.");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         valuePolicies = new TransformedInputCollectionBuilder().addAll(policies).buildImmutableList();
     }
@@ -160,14 +146,8 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
         assert filterContext != null : "Attribute filter context can not be null";
 
-        if (!isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute filter policy " + getId()
-                    + " has not been initialized and can not be used yet");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
@@ -194,20 +174,14 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     public void apply(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
         assert filterContext != null : "Attribute filter context can not be null";
 
-        if (!isInitialized()) {
-            throw new AttributeFilteringException("Attribute filtering policy " + getId()
-                    + " has not be initialized and can not yet be used");
-        }
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
-
-        final Map<String, Attribute<?>> attributes = filterContext.getPrefilteredAttributes();
+        final Map<String, Attribute> attributes = filterContext.getPrefilteredAttributes();
         log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getId(),
                 attributes.keySet());
 
-        Attribute<?> attribute;
+        Attribute attribute;
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
             attribute = attributes.get(valuePolicy.getAttributeId());
             if (attribute != null) {

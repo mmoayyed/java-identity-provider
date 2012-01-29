@@ -23,32 +23,34 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+
+import com.google.common.base.Optional;
 
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
 public class StaticAttributeDefinition extends BaseAttributeDefinition {
 
     /** Static value returned by this definition. */
-    private Attribute<?> value;
+    private Attribute value;
 
     /**
      * Set the attribute value we are returning.
+     * 
      * @param newAttrribute what to set.
      */
-    public synchronized void setAttribute(Attribute<?> newAttrribute) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Static Attribute definition " + getId()
-                    + " has already been initialized, attribute can not be changed.");
-        }
+    public synchronized void setAttribute(Attribute newAttrribute) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         value = newAttrribute;
     }
 
     /**
      * Return the static attribute we are returning.
+     * 
      * @return the attribute.
      */
-    public Attribute<?> getValue() {
+    public Attribute getValue() {
         return value;
     }
 
@@ -63,8 +65,8 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        return value;
+        return Optional.of(value);
     }
 }

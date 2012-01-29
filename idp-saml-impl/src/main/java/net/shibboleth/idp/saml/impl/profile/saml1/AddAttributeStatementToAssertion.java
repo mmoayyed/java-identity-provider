@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeSubcontext;
+import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
@@ -50,7 +50,7 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Builds an {@link AttributeStatement} and adds it to the {@link Response} set as the message of the
  * {@link ProfileRequestContext#getOutboundMessageContext()}. The {@link Attribute} set to be encoded is drawn from the
- * {@link AttributeSubcontext} located on the {@link RelyingPartySubcontext} located on the
+ * {@link AttributeContext} located on the {@link RelyingPartySubcontext} located on the
  * {@link ProfileRequestContext}.
  */
 public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAction<Object, Response> {
@@ -67,7 +67,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
         final RelyingPartySubcontext relyingPartyCtx =
                 ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
-        final AttributeSubcontext attributeCtx = relyingPartyCtx.getSubcontext(AttributeSubcontext.class, false);
+        final AttributeContext attributeCtx = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
         if (attributeCtx == null) {
             log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
                     relyingPartyCtx.getRelyingPartyId());
@@ -119,7 +119,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
      * 
      * @throws UnableToEncodeAttributeException thrown if there is a problem encoding an attribute
      */
-    private AttributeStatement buildAttributeStatement(Collection<Attribute<?>> attributes)
+    private AttributeStatement buildAttributeStatement(Collection<Attribute> attributes)
             throws UnableToEncodeAttributeException {
         if (attributes == null || attributes.isEmpty()) {
             log.debug("Action {}: No attributes available to be encoded, nothing left to do");
@@ -129,7 +129,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
         ArrayList<org.opensaml.saml1.core.Attribute> encodedAttributes =
                 new ArrayList<org.opensaml.saml1.core.Attribute>(attributes.size());
         org.opensaml.saml1.core.Attribute encodedAttribute = null;
-        for (Attribute<?> attribute : attributes) {
+        for (Attribute attribute : attributes) {
             encodedAttribute = encodeAttribute(attribute);
             if (encodedAttribute != null) {
                 encodedAttributes.add(encodedAttribute);
@@ -159,7 +159,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
      * 
      * @throws UnableToEncodeAttributeException thrown if there is a problem encoding an attribute
      */
-    private org.opensaml.saml1.core.Attribute encodeAttribute(Attribute<?> attribute)
+    private org.opensaml.saml1.core.Attribute encodeAttribute(Attribute attribute)
             throws UnableToEncodeAttributeException {
         if (attribute == null) {
             return null;
@@ -202,7 +202,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
          * @param attribute the attribute that could not be encoded
          * @param e the exception that occurred when attempting to encode the attribute
          */
-        public UnableToEncodeAttributeException(Attribute<?> attribute, AttributeEncodingException e) {
+        public UnableToEncodeAttributeException(Attribute attribute, AttributeEncodingException e) {
             super("Action " + getId() + ": Unable to encode attribute " + attribute.getId(), e);
         }
     }

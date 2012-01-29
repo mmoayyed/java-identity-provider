@@ -46,7 +46,7 @@ import org.springframework.webflow.execution.RequestContext;
  * first {@link Assertion} in the {@link Response}.
  * 
  * A constructed {@link Assertion} will have its ID, issue instant, issuer, and version properties set. The issuer is
- * retrieved from the {@link org.opensaml.messaging.context.BasicMessageMetadataSubcontext} on the
+ * retrieved from the {@link org.opensaml.messaging.context.BasicMessageMetadataContext} on the
  * {@link ProfileRequestContext#getOutboundMessageContext()}.
  * 
  * The constructed {@link AuthenticationStatement} will have its authentication instant and method properties set. This

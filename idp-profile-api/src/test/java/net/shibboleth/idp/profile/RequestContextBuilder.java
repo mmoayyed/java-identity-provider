@@ -32,8 +32,7 @@ import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
-import org.opensaml.messaging.context.BasicMessageContext;
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -349,23 +348,22 @@ public class RequestContextBuilder {
      * The default implementation builds a {@link MessageContext} that contains:
      * <ul>
      * <li>the message provided by {@link #setInboundMessage(Object)}</li>
-     * <li>a {@link BasicMessageMetadataSubcontext} created by
-     * {@link #buildInboudMessageMetadataContext(MessageContext)}</li>
+     * <li>a {@link BasicMessageMetadataContext} created by {@link #buildInboudMessageMetadataContext(MessageContext)}</li>
      * </ul>
      * 
      * @return the constructed {@link MessageContext}
      */
     @Nonnull protected MessageContext buildInboundMessageContext() {
-        final BasicMessageContext context = new BasicMessageContext();
+        final MessageContext context = new MessageContext();
         context.setMessage(inboundMessage);
         buildInboudMessageMetadataContext(context);
         return context;
     }
 
     /**
-     * Builds a {@link BasicMessageMetadataSubcontext} and adds it to the given inbound {@link MessageContext}.
+     * Builds a {@link BasicMessageMetadataContext} and adds it to the given inbound {@link MessageContext}.
      * 
-     * The default implementation builds a {@link BasicMessageMetadataSubcontext} that contains:
+     * The default implementation builds a {@link BasicMessageMetadataContext} that contains:
      * <ul>
      * <li>a message ID provided by {@link #setInboundMessageId(String)} or {@link ActionTestingSupport#INBOUND_MSG_ID}
      * if none is given</li>
@@ -375,18 +373,19 @@ public class RequestContextBuilder {
      * {@link ActionTestingSupport#INBOUND_MSG_ISSUER} if none is given
      * </ul>
      * 
-     * @param inboundMsgCtx the inbound message context to which the constructed {@link BasicMessageMetadataSubcontext}
-     *            is added
+     * @param inboundMsgCtx the inbound message context to which the constructed {@link BasicMessageMetadataContext} is
+     *            added
      * 
-     * @return the constructed {@link BasicMessageMetadataSubcontext}
+     * @return the constructed {@link BasicMessageMetadataContext}
      */
-    @Nullable protected BasicMessageMetadataSubcontext buildInboudMessageMetadataContext(
+    @Nullable protected BasicMessageMetadataContext buildInboudMessageMetadataContext(
             @Nonnull final MessageContext inboundMsgCtx) {
         if (Objects.equal(NO_VAL, inboundMessageId) && Objects.equal(NO_VAL, inboundMessageIssuer)) {
             return null;
         }
 
-        final BasicMessageMetadataSubcontext metadataCtx = new BasicMessageMetadataSubcontext(inboundMsgCtx);
+        final BasicMessageMetadataContext metadataCtx = new BasicMessageMetadataContext();
+        inboundMsgCtx.addSubcontext(metadataCtx);
 
         if (Objects.equal(NO_VAL, inboundMessageId)) {
             metadataCtx.setMessageId(ActionTestingSupport.OUTBOUND_MSG_ID);
@@ -411,14 +410,13 @@ public class RequestContextBuilder {
      * The default implementation builds a {@link MessageContext} that contains:
      * <ul>
      * <li>the message provided by {@link #setOutboundMessage(Object)}</li>
-     * <li>a {@link BasicMessageMetadataSubcontext} created by
-     * {@link #buildOutboudMessageMetadataContext(MessageContext)}</li>
+     * <li>a {@link BasicMessageMetadataContext} created by {@link #buildOutboudMessageMetadataContext(MessageContext)}</li>
      * </ul>
      * 
      * @return the constructed {@link MessageContext}
      */
     @Nonnull protected MessageContext buildOutboundMessageContext() {
-        final BasicMessageContext context = new BasicMessageContext();
+        final MessageContext context = new MessageContext();
         context.setMessage(outboundMessage);
         buildInboudMessageMetadataContext(context);
         return context;
@@ -426,9 +424,9 @@ public class RequestContextBuilder {
     }
 
     /**
-     * Builds a {@link BasicMessageMetadataSubcontext} and adds it to the given outbound {@link MessageContext}.
+     * Builds a {@link BasicMessageMetadataContext} and adds it to the given outbound {@link MessageContext}.
      * 
-     * The default implementation builds a {@link BasicMessageMetadataSubcontext} that contains:
+     * The default implementation builds a {@link BasicMessageMetadataContext} that contains:
      * <ul>
      * <li>a message ID provided by {@link #setOutboundMessageId(String)} or {@link ActionTestingSupport#INBOUND_MSG_ID}
      * if none is given</li>
@@ -438,18 +436,19 @@ public class RequestContextBuilder {
      * {@link ActionTestingSupport#INBOUND_MSG_ISSUER} if none is given
      * </ul>
      * 
-     * @param outboundMsgCtx the outbound message context to which the constructed
-     *            {@link BasicMessageMetadataSubcontext} is added
+     * @param outboundMsgCtx the outbound message context to which the constructed {@link BasicMessageMetadataContext}
+     *            is added
      * 
-     * @return the constructed {@link BasicMessageMetadataSubcontext}
+     * @return the constructed {@link BasicMessageMetadataContext}
      */
-    @Nonnull protected BasicMessageMetadataSubcontext buildOutboundMessageMetadataContext(
+    @Nonnull protected BasicMessageMetadataContext buildOutboundMessageMetadataContext(
             @Nonnull final MessageContext outboundMsgCtx) {
         if (Objects.equal(NO_VAL, outboundMessageId) && Objects.equal(NO_VAL, outboundMessageIssuer)) {
             return null;
         }
 
-        final BasicMessageMetadataSubcontext metadataCtx = new BasicMessageMetadataSubcontext(outboundMsgCtx);
+        final BasicMessageMetadataContext metadataCtx = new BasicMessageMetadataContext();
+        outboundMsgCtx.addSubcontext(metadataCtx);
 
         if (Objects.equal(NO_VAL, outboundMessageId)) {
             metadataCtx.setMessageId(ActionTestingSupport.OUTBOUND_MSG_ID);
@@ -486,10 +485,11 @@ public class RequestContextBuilder {
             @Nonnull final ProfileRequestContext profileRequestContext) {
         final RelyingPartySubcontext rpCtx;
         if (Objects.equal(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
-            rpCtx = new RelyingPartySubcontext(profileRequestContext, ActionTestingSupport.INBOUND_MSG_ISSUER);
+            rpCtx = new RelyingPartySubcontext(ActionTestingSupport.INBOUND_MSG_ISSUER);
         } else {
-            rpCtx = new RelyingPartySubcontext(profileRequestContext, inboundMessageIssuer);
+            rpCtx = new RelyingPartySubcontext(inboundMessageIssuer);
         }
+        profileRequestContext.addSubcontext(rpCtx);
 
         final RelyingPartyConfiguration rpConfig = buildRelyingPartyConfiguration();
         rpCtx.setRelyingPartyConfiguration(rpConfig);

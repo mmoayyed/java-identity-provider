@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filtering;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.testng.Assert;
@@ -114,14 +115,14 @@ public class AttributeFilteringEngineTest {
         policy.setActivationCriteria(Predicates.<AttributeFilterContext> alwaysTrue());
         policy.setAttributeValuePolicies(Lists.newArrayList(attribute1Policy));
 
-        AttributeFilterContext filterContext = new AttributeFilterContext(null);
+        AttributeFilterContext filterContext = new AttributeFilterContext();
 
-        Attribute<String> attribute1 = new Attribute<String>("attribute1");
-        attribute1.setValues(Lists.newArrayList("one", "two"));
+        Attribute attribute1 = new Attribute("attribute1");
+        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
-        Attribute<String> attribute2 = new Attribute<String>("attribute2");
-        attribute2.setValues(Lists.newArrayList("a", "b"));
+        Attribute attribute2 = new Attribute("attribute2");
+        attribute2.setValues(Lists.newArrayList(new StringAttributeValue("a"), new StringAttributeValue("b")));
         filterContext.getPrefilteredAttributes().put(attribute2.getId(), attribute2);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine();

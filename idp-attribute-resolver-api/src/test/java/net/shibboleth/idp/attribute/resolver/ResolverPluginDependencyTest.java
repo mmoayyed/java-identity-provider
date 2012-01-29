@@ -17,11 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.shibboleth.idp.attribute.Attribute;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,8 +24,7 @@ import org.testng.annotations.Test;
 public class ResolverPluginDependencyTest {
 
     /** Tests the state of a newly instantiated object. */
-    @Test
-    public void testInstantiation() {
+    @Test public void testInstantiation() {
         ResolverPluginDependency dep = new ResolverPluginDependency(" foo ", " bar ");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
         Assert.assertEquals(dep.getDependencyAttributeId(), "bar");
@@ -56,45 +50,5 @@ public class ResolverPluginDependencyTest {
         } catch (IllegalArgumentException e) {
             // expected this
         }
-    }
-    
-    /** Test getting a dependent attribute from a resolution context. */
-    @Test
-    public void testGetDependentAttribute() throws Exception {
-        MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute)null);
-        MockDataConnector connector = new MockDataConnector("bar", (Map<String, Attribute<?>>)null);
-        
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
-        context.recordAttributeDefinitionResolution(definition, null);
-        context.recordDataConnectorResolution(connector, null);
-        
-        ResolverPluginDependency dep = new ResolverPluginDependency("foo", null);
-        Assert.assertNull(dep.getDependentAttribute(context));
-        
-        dep = new ResolverPluginDependency("bar", null);
-        Assert.assertNull(dep.getDependentAttribute(context));
-        
-        
-        Attribute<String> attribute = new Attribute<String>("foo");
-        definition = new MockAttributeDefinition("foo", attribute);
-        context = new AttributeResolutionContext(null);
-        context.recordAttributeDefinitionResolution(definition, attribute);
-        
-        dep = new ResolverPluginDependency("foo", null);
-        Assert.assertTrue(dep.getDependentAttribute(context) == attribute);
-        
-        attribute = new Attribute<String>("foo");
-        HashMap<String, Attribute<?>> values = new HashMap<String, Attribute<?>>();
-        values.put(attribute.getId(), attribute);
-        
-        connector = new MockDataConnector("bar", values);
-        context = new AttributeResolutionContext(null);
-        context.recordDataConnectorResolution(connector, values);
-        
-        dep = new ResolverPluginDependency("bar", "foo");
-        Assert.assertTrue(dep.getDependentAttribute(context) == attribute);
-        
-        dep = new ResolverPluginDependency("bar", "baz");
-        Assert.assertNull(dep.getDependentAttribute(context));
     }
 }

@@ -25,16 +25,11 @@ import java.util.List;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.session.AuthenticationEvent;
 
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
-import org.opensaml.messaging.context.Subcontext;
-import org.opensaml.messaging.context.SubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 
 /** A context representing the state of an authentication attempt. */
 @ThreadSafe
-public final class AuthenticationRequestContext extends AbstractSubcontextContainer implements Subcontext {
-
-    /** The owner of this subcontext. */
-    private final SubcontextContainer owner;
+public final class AuthenticationRequestContext extends BaseContext {
 
     /** Time, in milliseconds since the epoch, when the authentication process started. */
     private final long initiationInstant;
@@ -57,28 +52,12 @@ public final class AuthenticationRequestContext extends AbstractSubcontextContai
     /** Time, in milliseconds since the epoch, when authentication process completed. */
     private long completionInstant;
 
-    /**
-     * Constructor.
-     * 
-     * @param parent context that owns this context
-     */
-    public AuthenticationRequestContext(final SubcontextContainer parent) {
+    /** Constructor. */
+    public AuthenticationRequestContext() {
         super();
-
-        if (parent != null) {
-            owner = parent;
-            parent.addSubcontext(this);
-        } else {
-            owner = null;
-        }
 
         initiationInstant = System.currentTimeMillis();
         requestedWorkflows = Collections.emptyList();
-    }
-
-    /** {@inheritDoc} */
-    public SubcontextContainer getOwner() {
-        return owner;
     }
 
     /**

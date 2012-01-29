@@ -17,182 +17,128 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
-import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.script.Compilable;
-import javax.script.CompiledScript;
+import javax.annotation.Nonnull;
 import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.base.Optional;
 
 /**
- * Implementation of the Script permit or deny matcher.
+ * A {@link AttributeValueMatcher} that delegates to a JSR-223 script for its actual processing.
  * 
- * This is just a scripting shim around {@link AttributeValueMatcher#getMatchingValues}.
+ * <p>
+ * When the script is evaluated, the following properties will be available via the {@link ScriptContext}:
+ * <ul>
+ * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
+ * <li><code>attribute</code> - the attribute whose values are to be evaluated
+ * </ul>
+ * The script <strong>MUST</strong> return a {@link Set} containing the {@link AttributeValue} objects that were
+ * matched.
+ * </p>
  */
 @ThreadSafe
-public class ScriptedMatcher extends AbstractInitializableComponent implements AttributeValueMatcher,
+public class ScriptedMatcher extends AbstractDestructableInitializableComponent implements AttributeValueMatcher,
         UnmodifiableComponent {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
-
-    /** The scripting language. */
-    private String scriptLanguage;
-
-    /** The script to execute. */
-    private String script;
-
-    /** The script engine to execute the script. */
-    private ScriptEngine scriptEngine;
-
-    /** The compiled form of the script, if the script engine supports compiling. */
-    private CompiledScript compiledScript;
+    /** Script to be evaluated. */
+    private EvaluableScript script;
 
     /**
-     * Set the language we are using.
-     * 
-     * @param theLanguage what we use.
+     * Constructor.
+     *
+     * @param matchingScript script used to determine matching attibute values
      */
-    public synchronized void setLanguage(final String theLanguage) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Scriptlet matcher has already been initialized");
-        }
-        scriptLanguage = StringSupport.trimOrNull(theLanguage);
+    public ScriptedMatcher(@Nonnull EvaluableScript matchingScript){
+        setScript(matchingScript);
     }
-
+    
     /**
-     * Gets the scripting language used.
+     * Gets the script to be evaluated.
      * 
-     * @return scripting language used. This is always a valid language.
+     * @return the script to be evaluated
      */
-    public String getScriptLanguage() {
-        return scriptLanguage;
-    }
-
-    /**
-     * Set the actual Script we will use.
-     * 
-     * @param theScript what to use.
-     */
-    public synchronized void setScript(final String theScript) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Scriptlet matcher has already been initialized");
-        }
-        script = StringSupport.trimOrNull(theScript);
-    }
-
-    /**
-     * Gets the script that will be executed.
-     * 
-     * @return script that will be executed. This is never null or empty.
-     */
-    public String getScript() {
+    public EvaluableScript getScript() {
         return script;
     }
 
     /**
-     * Get this resolver's script engine.
+     * Sets the script to be evaluated.
      * 
-     * @return the engine. Never null.
+     * @param matcherScript the script to be evaluated
      */
-    public ScriptEngine getScriptEngine() {
-        return scriptEngine;
-    }
+    protected void setScript(@Nonnull EvaluableScript matcherScript) {
+        if (isInitialized()) {
+            throw new UnmodifiableComponentException();
+        }
 
-    /**
-     * Get the compiled script for this engine. Note that this will be null if the language does not support
-     * compilation.
-     * 
-     * @return the compiled script.
-     */
-    public CompiledScript getCompiledScript() {
-        return compiledScript;
+        script = Assert.isNotNull(matcherScript, "Attribute value matching script can not be null");
     }
 
     /** {@inheritDoc} */
-    public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
-            throws AttributeFilteringException {
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
+            @Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
+        assert attribute != null : "Attribute to be filtered can not be null";
+        assert filterContext != null : "Attribute filter contet can not be null";
+
+        final EvaluableScript currentScript = script;
+        ifNotInitializedThrowUninitializedComponentException();
+        ifDestroyedThrowDestroyedComponentException();
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
-        final Object result;
-
-        if (!isInitialized()) {
-            throw new AttributeFilteringException("ScriptedMatcher has not been initialized");
-        }
 
         try {
-            if (compiledScript != null) {
-                result = compiledScript.eval(scriptContext);
-            } else {
-                result = scriptEngine.eval(script, scriptContext);
+            final Optional<Object> optionalResult = currentScript.eval(scriptContext);
+            if (!optionalResult.isPresent()) {
+                throw new AttributeFilteringException("Matcher script did not return a result");
             }
 
-            if (result instanceof Collection) {
-                return (Collection) result;
+            final Object result = optionalResult.get();
+            if (result instanceof Set) {
+                HashSet<AttributeValue> returnValues = new HashSet<AttributeValue>(attribute.getValues());
+                returnValues.retainAll((Set) result);
+                return Collections.unmodifiableSet(returnValues);
             } else {
                 throw new AttributeFilteringException("Matcher script did not return a Collection");
             }
-
         } catch (ScriptException e) {
-            throw new AttributeFilteringException("Unable to execute match functor script", e);
+            throw new AttributeFilteringException("Error while executing value matching script", e);
         }
+    }
+
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        script = null;
+        super.doDestroy();
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == scriptLanguage) {
-            throw new ComponentInitializationException("ScriptedMatcher: No language set.");
-        }
-
         if (null == script) {
-            throw new ComponentInitializationException("ScriptedMatcher: No script set.");
+            throw new ComponentInitializationException("No script has been provided");
         }
-
-        final ScriptEngineManager sem = new ScriptEngineManager();
-        scriptEngine = sem.getEngineByName(scriptLanguage);
-        if (null == scriptEngine) {
-            throw new ComponentInitializationException("ScriptedMatcher: No valid language set.");
-        }
-
-        compiledScript = compileScript();
-    }
-
-    /**
-     * Compiles the script if the scripting engine supports it.
-     * 
-     * @return the compiled script.
-     */
-    private CompiledScript compileScript() {
-        try {
-            if (scriptEngine != null && scriptEngine instanceof Compilable) {
-                return ((Compilable) scriptEngine).compile(script);
-            }
-        } catch (ScriptException e) {
-            log.warn("ScriptedMatcher cannot compile {} even though the scripting engine"
-                    + " supports this functionality: {}", script, e.toString());
-            log.debug("Fails", e);
-        }
-        return null;
     }
 }

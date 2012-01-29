@@ -17,16 +17,25 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
-/** A function that gets the values of an attribute that meets this matchers requirements. */
+/**
+ * A function that gets the values of an attribute that meets this matchers requirements.
+ * 
+ * <p>
+ * Implementations of this interface <strong>MUST</strong> implementation appropriate {@link Object#equals(Object)} and
+ * {@link Object#hashCode()} methods.
+ * </p>
+ */
 @ThreadSafe
 public interface AttributeValueMatcher {
 
@@ -34,7 +43,7 @@ public interface AttributeValueMatcher {
     public static final AttributeValueMatcher MATCHES_ALL = new AttributeValueMatcher() {
 
         /** {@inheritDoc} */
-        public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
                 throws AttributeFilteringException {
             return attribute.getValues();
         }
@@ -44,9 +53,9 @@ public interface AttributeValueMatcher {
     public static final AttributeValueMatcher MATCHES_NONE = new AttributeValueMatcher() {
 
         /** {@inheritDoc} */
-        public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+        public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
                 throws AttributeFilteringException {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
     };
 
@@ -62,7 +71,8 @@ public interface AttributeValueMatcher {
      * @throws AttributeFilteringException thrown is there is a problem evaluating one or more attribute values against
      *             this rule's criteria
      */
-    @Nonnull @NonnullElements public Collection<?> getMatchingValues(@Nonnull final Attribute<?> attribute,
-            @Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException;
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(
+            @Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
+            throws AttributeFilteringException;
 
 }

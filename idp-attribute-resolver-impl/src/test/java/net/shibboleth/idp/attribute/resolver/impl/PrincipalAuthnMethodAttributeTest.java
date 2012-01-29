@@ -25,7 +25,6 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.messaging.context.SubcontextContainer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -55,11 +54,7 @@ public class PrincipalAuthnMethodAttributeTest {
         resolver.setAttributeDefinition(Lists.newArrayList(attrDefn));
         resolver.initialize();
 
-        final SubcontextContainer container =
-                new TestContextContainer(TestSources.TEST_RELYING_PARTY, TestSources.TEST_PRINCIPAL,
-                        TestSources.TEST_AUTHN_METHOD);
-
-        AttributeResolutionContext context = new AttributeResolutionContext(container);
+        AttributeResolutionContext context = new AttributeResolutionContext();
 
         try {
             resolver.resolveAttributes(context);

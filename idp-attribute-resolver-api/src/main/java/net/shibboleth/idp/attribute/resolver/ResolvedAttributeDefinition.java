@@ -17,21 +17,22 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.utilities.java.support.collection.LazyList;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
-import org.springframework.expression.Expression;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * A proxy which wraps a resolved attribute definition and always returns the same attribute. The goal being that once
@@ -41,33 +42,29 @@ import org.springframework.expression.Expression;
  * This proxy is immutable so all setter methods simply return.
  */
 @ThreadSafe
-public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
+public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
 
     /** The attribute definition that was resolved to produce the attribute. */
     private final BaseAttributeDefinition resolvedDefinition;
 
     /** The attribute produced by the resolved attribute definition. */
-    private final Attribute<?> resolvedAttribute;
+    private final Optional<Attribute> resolvedAttribute;
 
     /**
      * Constructor.
      * 
-     * @param definition attribute definition that was resolved to produce the given attribute, may not be null
-     * @param attribute attribute produced by the given attribute definition, may be null
+     * @param definition attribute definition that was resolved to produce the given attribute
+     * @param attribute attribute produced by the given attribute definition
      */
-    public ResolvedAttributeDefinition(BaseAttributeDefinition definition, Attribute<?> attribute) {        
-        resolvedDefinition = Assert.isNotNull(definition, "Wrapped attribute definition may not be null");
-        resolvedAttribute = attribute;
+    public ResolvedAttributeDefinition(@Nonnull BaseAttributeDefinition definition,
+            @Nonnull Optional<Attribute> attribute) {
+        resolvedDefinition = Assert.isNotNull(definition, "Resolved attribute definition can not be null");
+        resolvedAttribute = Assert.isNotNull(attribute, "Resolved attribute can not be null");
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        return resolvedAttribute;
-    }
-
-    /** {@inheritDoc} */
-    protected Attribute<?> doResolve(AttributeResolutionContext resolutionContext) {
+    @Nonnull protected Optional<Attribute> doAttributeResolution(
+            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         return resolvedAttribute;
     }
 
@@ -77,32 +74,32 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public Set<AttributeEncoder> getAttributeEncoders() {
+    @Nonnull @NonnullElements public Set<AttributeEncoder<?>> getAttributeEncoders() {
         return resolvedDefinition.getAttributeEncoders();
     }
 
     /** {@inheritDoc} */
-    public Set<ResolverPluginDependency> getDependencies() {
+    @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
         return resolvedDefinition.getDependencies();
     }
 
     /** {@inheritDoc} */
-    public Map<Locale, String> getDisplayDescriptions() {
-        return resolvedAttribute.getDisplayDescriptions();
+    @Nonnull @NonnullElements public Map<Locale, String> getDisplayDescriptions() {
+        return resolvedDefinition.getDisplayDescriptions();
     }
 
     /** {@inheritDoc} */
-    public Map<Locale, String> getDisplayNames() {
+    @Nonnull @NonnullElements public Map<Locale, String> getDisplayNames() {
         return resolvedDefinition.getDisplayNames();
     }
 
     /** {@inheritDoc} */
-    public EvaluableCriterion<AttributeResolutionContext> getActivationCriteria() {
-        return StaticResponseEvaluableCriterion.TRUE_RESPONSE;
+    @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
+        return Predicates.alwaysTrue();
     }
 
     /** {@inheritDoc} */
-    public String getId() {
+    @Nonnull public String getId() {
         return resolvedDefinition.getId();
     }
 
@@ -111,18 +108,13 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return resolved attribute, or null
      */
-    public Attribute<?> getResolvedAttribute() {
+    @Nonnull public Optional<Attribute> getResolvedAttribute() {
         return resolvedAttribute;
     }
 
     /** {@inheritDoc} */
     public int hashCode() {
         return resolvedDefinition.hashCode();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isApplicable(AttributeResolutionContext resolutionContext) {
-        return true;
     }
 
     /** {@inheritDoc} */
@@ -133,16 +125,6 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     public boolean isPropagateResolutionExceptions() {
         return resolvedDefinition.isPropagateResolutionExceptions();
-    }
-
-    /** {@inheritDoc} */
-    public void setAttributeEncoders(LazyList<AttributeEncoder> attributeEncoders) {
-        return;
-    }
-
-    /** {@inheritDoc} */
-    public void setDependencies(List<ResolverPluginDependency> pluginDependencies) {
-        return;
     }
 
     /** {@inheritDoc} */
@@ -161,22 +143,12 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public void setEvaluationCondition(Expression condition) {
-        return;
-    }
-
-    /** {@inheritDoc} */
-    public void setPropagateEvaluationConditionExceptions(boolean propagate) {
-        return;
-    }
-
-    /** {@inheritDoc} */
     public void setPropagateResolutionExceptions(boolean propagate) {
         return;
     }
 
     /** {@inheritDoc} */
-    public String toString() {
+    @Nonnull public String toString() {
         return resolvedDefinition.toString();
     }
 
@@ -185,7 +157,7 @@ public class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the resolved attribute definition
      */
-    public BaseAttributeDefinition unwrap() {
+    @Nonnull public BaseAttributeDefinition unwrap() {
         return resolvedDefinition;
     }
 

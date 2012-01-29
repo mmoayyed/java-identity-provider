@@ -68,7 +68,7 @@ public final class ToUHelper {
      * @param context The current terms of use context.
      * @return A collection of attribute which are releases to the relying party.
      */
-    public static Collection<Attribute<?>> getUserAttributes(final TermsOfUseContext context) {
+    public static Collection<Attribute> getUserAttributes(final TermsOfUseContext context) {
         // TODO retrieve user attributes from one of the contexts
         return null;
     }
@@ -83,8 +83,8 @@ public final class ToUHelper {
      */
     // TODO: Method is duplicated in ConsentHelper
     public static final String findUserId(final String userIdAttribute,
-            final Collection<Attribute<?>> releasedAttributes) {
-        for (final Attribute<?> releasedAttribute : releasedAttributes) {
+            final Collection<Attribute> releasedAttributes) {
+        for (final Attribute releasedAttribute : releasedAttributes) {
             if (releasedAttribute.getId().equals(userIdAttribute)) {
                 final Collection<?> userIdAttributeValues = releasedAttribute.getValues();
                 if (userIdAttributeValues.isEmpty()) {

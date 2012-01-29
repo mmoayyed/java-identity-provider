@@ -24,13 +24,12 @@ import org.testng.annotations.Test;
 
 public class AuthenticationRequestContextTest {
 
-    @Test
-    public void testInstantation() throws Exception {
+    @Test public void testInstantation() throws Exception {
         long start = System.currentTimeMillis();
         // this is here to allow the context's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        AuthenticationRequestContext ctx = new AuthenticationRequestContext(null);
+        AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         Assert.assertNull(ctx.getAttemptedWorkflow());
         Assert.assertNull(ctx.getAuthenticatedPrincipal());
         Assert.assertEquals(ctx.getCompletionInstant(), 0);
@@ -41,11 +40,10 @@ public class AuthenticationRequestContextTest {
         Assert.assertTrue(ctx.getRequestedWorkflows().isEmpty());
     }
 
-    @Test
-    public void testAttemptedWorkflow() {
+    @Test public void testAttemptedWorkflow() {
         AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
 
-        AuthenticationRequestContext ctx = new AuthenticationRequestContext(null);
+        AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setAttemptedWorkflow(descriptor);
         Assert.assertEquals(ctx.getAttemptedWorkflow(), descriptor);
 
@@ -53,11 +51,10 @@ public class AuthenticationRequestContextTest {
         Assert.assertNull(ctx.getAttemptedWorkflow());
     }
 
-    @Test
-    public void testAuthenticatedPrincipal() {
+    @Test public void testAuthenticatedPrincipal() {
         UsernamePrincipal principal = new UsernamePrincipal("bob");
 
-        AuthenticationRequestContext ctx = new AuthenticationRequestContext(null);
+        AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setAuthenticatedPrincipal(principal);
         Assert.assertEquals(ctx.getAuthenticatedPrincipal(), principal);
 
@@ -65,9 +62,8 @@ public class AuthenticationRequestContextTest {
         Assert.assertNull(ctx.getAuthenticatedPrincipal());
     }
 
-    @Test
-    public void testCompletionInstant() throws Exception {
-        AuthenticationRequestContext ctx = new AuthenticationRequestContext(null);
+    @Test public void testCompletionInstant() throws Exception {
+        AuthenticationRequestContext ctx = new AuthenticationRequestContext();
 
         long now = System.currentTimeMillis();
         // this is here to allow the context's completion time to deviate from the 'now' time
@@ -77,11 +73,10 @@ public class AuthenticationRequestContextTest {
         Assert.assertTrue(ctx.getCompletionInstant() > now);
     }
 
-    @Test
-    public void testDefaultAuthenticationMethod() {
+    @Test public void testDefaultAuthenticationMethod() {
         AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
 
-        AuthenticationRequestContext ctx = new AuthenticationRequestContext(null);
+        AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setDefaultWorfklow(descriptor);
         Assert.assertEquals(ctx.getDefaultAuthenticationWorfklow(), descriptor);
 
@@ -89,9 +84,8 @@ public class AuthenticationRequestContextTest {
         Assert.assertNull(ctx.getDefaultAuthenticationWorfklow());
     }
 
-    @Test
-    public void testForcingAuthentication() {
-        AuthenticationRequestContext ctx = new AuthenticationRequestContext(null);
+    @Test public void testForcingAuthentication() {
+        AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setForcingAuthentication(true);
         Assert.assertTrue(ctx.isForcingAuthentication());
 
@@ -99,15 +93,14 @@ public class AuthenticationRequestContextTest {
         Assert.assertFalse(ctx.isForcingAuthentication());
     }
 
-    @Test
-    public void testRequestedWorkflows() {
+    @Test public void testRequestedWorkflows() {
         ArrayList<AuthenticationWorkflowDescriptor> descriptors = new ArrayList<AuthenticationWorkflowDescriptor>();
         descriptors.add(new AuthenticationWorkflowDescriptor("foo"));
         descriptors.add(new AuthenticationWorkflowDescriptor("bar"));
         descriptors.add(new AuthenticationWorkflowDescriptor("foo"));
         descriptors.add(null);
 
-        AuthenticationRequestContext ctx = new AuthenticationRequestContext(null);
+        AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setRequestedWorkflows(descriptors);
         Assert.assertTrue(ctx.getRequestedWorkflows() != descriptors);
         Assert.assertNotNull(ctx.getRequestedWorkflows());

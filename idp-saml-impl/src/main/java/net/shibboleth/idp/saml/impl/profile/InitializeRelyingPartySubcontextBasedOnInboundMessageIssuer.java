@@ -26,7 +26,7 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -34,8 +34,8 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Adds a {@link RelyingPartySubcontext} to the current {@link ProfileRequestContext}. The relying party ID is assumed
- * to be the inbound message issuer as determined by the {@link BasicMessageMetadataSubcontext#getMessageIssuer()}
- * located on the {@link ProfileRequestContext#getInboundMessageContext()}.
+ * to be the inbound message issuer as determined by the {@link BasicMessageMetadataContext#getMessageIssuer()} located
+ * on the {@link ProfileRequestContext#getInboundMessageContext()}.
  */
 public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends AbstractIdentityProviderAction {
 
@@ -44,20 +44,21 @@ public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends
             .getLogger(InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer.class);
 
     /** {@inheritDoc} */
-    protected Class<BasicMessageMetadataSubcontext> getSubcontextType() {
-        return BasicMessageMetadataSubcontext.class;
+    protected Class<BasicMessageMetadataContext> getSubcontextType() {
+        return BasicMessageMetadataContext.class;
     }
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
             RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        final BasicMessageMetadataSubcontext messageSubcontext =
+        final BasicMessageMetadataContext messageSubcontext =
                 ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
 
         log.debug("Action {}: Attaching RelyingPartySubcontext with relying party ID {} to ProfileRequestContext",
                 getId(), messageSubcontext.getMessageIssuer());
-        new RelyingPartySubcontext(profileRequestContext, messageSubcontext.getMessageIssuer());
+
+        profileRequestContext.addSubcontext(new RelyingPartySubcontext(messageSubcontext.getMessageIssuer()));
 
         return ActionSupport.buildProceedEvent(this);
     }

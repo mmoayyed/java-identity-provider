@@ -34,7 +34,7 @@ public class AttributeTest {
 
     /** Tests that the attribute has its expected state after instantiation. */
     @Test public void testInstantiation() {
-        Attribute<String> attrib = new Attribute<String>("foo");
+        Attribute attrib = new Attribute("foo");
 
         Assert.assertEquals(attrib.getId(), "foo");
 
@@ -52,7 +52,7 @@ public class AttributeTest {
 
         Assert.assertNotNull(attrib.hashCode());
 
-        Assert.assertTrue(attrib.equals(new Attribute<String>("foo")));
+        Assert.assertTrue(attrib.equals(new Attribute("foo")));
     }
 
     /** Tests that null/empty IDs aren't accepted. */
@@ -84,7 +84,7 @@ public class AttributeTest {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
-        Attribute attrib = new Attribute<String>("foo");
+        Attribute attrib = new Attribute("foo");
         Map<Locale, String> diplayNames = attrib.getDisplayNames();
 
         // test adding one entry
@@ -175,7 +175,7 @@ public class AttributeTest {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
-        Attribute attrib = new Attribute<String>("foo");
+        Attribute attrib = new Attribute("foo");
         Map<Locale, String> descriptions = attrib.getDisplayDescriptions();
 
         // test adding one entry
@@ -263,10 +263,10 @@ public class AttributeTest {
 
     /** Tests that values are properly added and modified. */
     @Test public void testValues() {
-        String value1 = "value1";
-        String value2 = "value2";
+        LocalizedStringAttributeValue value1 = new LocalizedStringAttributeValue("value1", null);
+        LocalizedStringAttributeValue value2 = new LocalizedStringAttributeValue("value2", null);
 
-        Attribute attrib = new Attribute<String>("foo");
+        Attribute attrib = new Attribute("foo");
         Collection attribValues = attrib.getValues();
 
         // test adding one entry
@@ -289,42 +289,35 @@ public class AttributeTest {
         Assert.assertTrue(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
-        // test adding an existing value (now have two value2s)
-        Assert.assertTrue(attribValues.add(value2));
+        // test adding an existing value
+        Assert.assertFalse(attribValues.add(value2));
         Assert.assertFalse(attrib.getValues().isEmpty());
-        Assert.assertEquals(attrib.getValues().size(), 3);
+        Assert.assertEquals(attrib.getValues().size(), 2);
         Assert.assertTrue(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test removing an entry
         Assert.assertTrue(attribValues.remove(value1));
         Assert.assertFalse(attrib.getValues().isEmpty());
-        Assert.assertEquals(attrib.getValues().size(), 2);
+        Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test removing the same entry
         Assert.assertFalse(attribValues.remove(value1));
         Assert.assertFalse(attrib.getValues().isEmpty());
-        Assert.assertEquals(attrib.getValues().size(), 2);
+        Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test removing null
         Assert.assertFalse(attribValues.remove(null));
         Assert.assertFalse(attrib.getValues().isEmpty());
-        Assert.assertEquals(attrib.getValues().size(), 2);
-        Assert.assertFalse(attrib.getValues().contains(value1));
-        Assert.assertTrue(attrib.getValues().contains(value2));
-
-        // test removing the second entry (first value2 entry)
-        Assert.assertTrue(attribValues.remove(value2));
-        Assert.assertFalse(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
-        // test removing the second entry (second value2 entry)
+        // test removing the second entry
         Assert.assertTrue(attribValues.remove(value2));
         Assert.assertTrue(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 0);
@@ -339,7 +332,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getValues().contains(value2));
 
         // test replacing all entries
-        Collection<String> values = new ArrayList<String>();
+        Collection<LocalizedStringAttributeValue> values = new ArrayList<LocalizedStringAttributeValue>();
         values.add(value2);
         attrib.setValues(values);
         Assert.assertFalse(attrib.getValues().isEmpty());
@@ -353,7 +346,7 @@ public class AttributeTest {
         AttributeEncoder<String> enc1 = new MockEncoder<String>();
         AttributeEncoder<String> enc2 = new MockEncoder<String>();
 
-        Attribute attrib = new Attribute<String>("foo");
+        Attribute attrib = new Attribute("foo");
         Set<AttributeEncoder<?>> attribEncoders = attrib.getEncoders();
 
         // test adding one entry

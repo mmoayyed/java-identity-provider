@@ -25,7 +25,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,15 +38,15 @@ public final class CheckMandatoryIssuer extends AbstractIdentityProviderAction {
     }
 
     /** {@inheritDoc} */
-    public Class<BasicMessageMetadataSubcontext> getSubcontextType() {
-        return BasicMessageMetadataSubcontext.class;
+    public Class<BasicMessageMetadataContext> getSubcontextType() {
+        return BasicMessageMetadataContext.class;
     }
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
             RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        final BasicMessageMetadataSubcontext messageSubcontext =
+        final BasicMessageMetadataContext messageSubcontext =
                 ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
 
         if (messageSubcontext.getMessageIssuer() == null) {

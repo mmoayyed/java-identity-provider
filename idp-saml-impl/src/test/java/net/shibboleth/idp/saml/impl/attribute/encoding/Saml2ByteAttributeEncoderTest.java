@@ -55,7 +55,7 @@ public class Saml2ByteAttributeEncoderTest {
 
     @Test public void testEmpty() throws Exception {
         final Saml2ByteAttributeEncoder encoder = new Saml2ByteAttributeEncoder();
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
@@ -68,7 +68,7 @@ public class Saml2ByteAttributeEncoderTest {
         final Saml2ByteAttributeEncoder encoder = new Saml2ByteAttributeEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<Object> values = Lists.newArrayList(new Integer(3), "1234", new Object(), intArray);
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -81,7 +81,7 @@ public class Saml2ByteAttributeEncoderTest {
     @Test public void testSingle() throws Exception {
         final Saml2ByteAttributeEncoder encoder = new Saml2ByteAttributeEncoder();
         final Collection<Object> values = Lists.newArrayList(new Object(), BYTE_ARRAY_1);
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -110,7 +110,7 @@ public class Saml2ByteAttributeEncoderTest {
         final Saml2ByteAttributeEncoder encoder = new Saml2ByteAttributeEncoder();
         final Collection<Object> values = Lists.newArrayList((Object) BYTE_ARRAY_1, BYTE_ARRAY_2);
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 

@@ -114,7 +114,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
     }
 
     /** {@inheritDoc} */
-    public AttributeType encode(final net.shibboleth.idp.attribute.Attribute<?> attribute)
+    public AttributeType encode(final net.shibboleth.idp.attribute.Attribute attribute)
             throws AttributeEncodingException {
         final String attributeId = attribute.getId();
         log.debug("Beginning to encode attribute {}", attributeId);
@@ -167,7 +167,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @return true if the encoder can encoder this value, false if not
      */
-    protected abstract boolean canEncodeValue(final net.shibboleth.idp.attribute.Attribute<?> attribute,
+    protected abstract boolean canEncodeValue(final net.shibboleth.idp.attribute.Attribute attribute,
             final Object value);
 
     /**
@@ -180,7 +180,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @throws AttributeEncodingException thrown if there is a problem encoding the attribute value
      */
-    protected abstract XMLObject encodeValue(final net.shibboleth.idp.attribute.Attribute<?> attribute,
+    protected abstract XMLObject encodeValue(final net.shibboleth.idp.attribute.Attribute attribute,
             final EncodedType value) throws AttributeEncodingException;
 
     /**
@@ -193,6 +193,6 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @throws AttributeEncodingException thrown if there is a problem constructing the SAML attribute
      */
-    protected abstract AttributeType buildAttribute(final net.shibboleth.idp.attribute.Attribute<?> attribute,
+    protected abstract AttributeType buildAttribute(final net.shibboleth.idp.attribute.Attribute attribute,
             final List<XMLObject> attributeValues) throws AttributeEncodingException;
 }

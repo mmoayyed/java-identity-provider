@@ -47,7 +47,7 @@ public class MockAttributeEncoder implements AttributeEncoder<String> {
     }
 
     /** {@inheritDoc} */
-    public String encode(Attribute<?> attribute) throws AttributeEncodingException {
+    public String encode(Attribute attribute) throws AttributeEncodingException {
         return staticValue;
     }
 }

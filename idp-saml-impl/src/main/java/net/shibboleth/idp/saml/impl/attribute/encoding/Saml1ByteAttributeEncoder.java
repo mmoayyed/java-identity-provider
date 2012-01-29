@@ -31,12 +31,12 @@ import org.opensaml.xml.XMLObject;
 public class Saml1ByteAttributeEncoder extends AbstractSaml1AttributeEncoder<byte[]> {
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(Attribute<?> attribute, Object value) {
+    protected boolean canEncodeValue(Attribute attribute, Object value) {
         return value instanceof byte[];
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(Attribute<?> attribute, byte[] value) throws AttributeEncodingException {
+    protected XMLObject encodeValue(Attribute attribute, byte[] value) throws AttributeEncodingException {
         return SamlEncoderSupport.encodeByteArrayValue(attribute,
                 org.opensaml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
     }

@@ -37,7 +37,7 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIdentif
     private final Logger log = LoggerFactory.getLogger(Saml2XmlObjectSubjectNameIDEncoder.class);
 
     /** {@inheritDoc} */
-    public NameID encode(Attribute<?> attribute) throws AttributeEncodingException {
+    public NameID encode(Attribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<?> attributeValues = attribute.getValues();

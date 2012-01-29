@@ -20,7 +20,7 @@ package net.shibboleth.idp;
 /** Class for getting and printing the version of the IdP. */
 public final class Version {
     
-    /** Name of {@link org.slf4j.MDC} attribute that holds the IdP's version string: {@value}. */
+    /** Name of {@link org.slf4j.MDC} attribute that holds the IdP's version string: <code>idp.version</code>. */
     public static final String MDC_ATTRIBUTE = "idp.version";
 
     /** IdP version. */

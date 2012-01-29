@@ -59,7 +59,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
      */
     private static XMLObject ObjectFor(final String value) {
         final Saml1StringAttributeEncoder encoder = new Saml1StringAttributeEncoder();
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(Lists.newArrayList((Object) value));
@@ -101,7 +101,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
     @Test public void testEmpty() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
         final Attribute outputAttribute = encoder.encode(inputAttribute);
@@ -113,7 +113,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<Object> values = Lists.newArrayList(new Integer(3), STRING_1, new Object(), intArray);
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -125,7 +125,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
         final Collection<Object> values = Lists.newArrayList(new Object(), ObjectFor(STRING_1));
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -146,7 +146,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
         final Collection<Object> values = Lists.newArrayList(new Object(), ObjectFor(STRING_1), ObjectFor(STRING_2));
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 

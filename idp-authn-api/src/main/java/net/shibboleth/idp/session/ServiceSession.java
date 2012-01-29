@@ -21,13 +21,13 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
 
 /** Describes a session with a service associated with an {@link IdPSession}. */
 @ThreadSafe
-public final class ServiceSession extends AbstractSubcontextContainer {
+public final class ServiceSession extends BaseContext {
 
     /** The unique identifier of the service. */
     private String serviceId;

@@ -25,15 +25,15 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
+import com.google.common.base.Optional;
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
 public class StaticDataConnector extends BaseDataConnector {
 
     /** Static collection of values returned by this connector. */
-    private Map<String, Attribute<?>> values;
+    private Map<String, Attribute> values;
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -47,27 +47,29 @@ public class StaticDataConnector extends BaseDataConnector {
 
     /**
      * Set the values used.
+     * 
      * @param newValues what to set.
      */
-    public synchronized void setValues(Map<String, Attribute<?>> newValues) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Static Data Connector " + getId()
-                    + " has already been initialized, values can not be changed.");
-        }
+    public synchronized void setValues(Map<String, Attribute> newValues) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         values = newValues;
     }
-    
+
     /**
      * Get our values.
+     * 
      * @return the values we return.
      */
-    public Map<String, Attribute<?>> getValues() {
+    public Map<String, Attribute> getValues() {
         return values;
     }
-    
+
     /** {@inheritDoc} */
-    protected Map<String, Attribute<?>> doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        return values;
+    protected Optional<Map<String, Attribute>>
+            doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
+                    throws AttributeResolutionException {
+        return Optional.of(values);
     }
 }

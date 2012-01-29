@@ -28,7 +28,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 
 /**
  * An identity provider session.
@@ -37,8 +37,11 @@ import org.opensaml.messaging.context.AbstractSubcontextContainer;
  * session if you make any changes to its state.
  */
 @ThreadSafe
-public final class IdPSession extends AbstractSubcontextContainer implements IdentifiableComponent {
+public final class IdPSession extends BaseContext implements IdentifiableComponent {
 
+    /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
+    public static final String MDC_ATTRIBUTE = "idp.session.id";
+    
     /** Unique ID of this session. */
     private final String id;
 

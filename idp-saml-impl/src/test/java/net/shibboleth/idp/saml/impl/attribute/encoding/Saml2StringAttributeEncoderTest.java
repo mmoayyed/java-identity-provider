@@ -54,7 +54,7 @@ public class Saml2StringAttributeEncoderTest {
 
     @Test public void testEmpty() throws Exception {
         final Saml2StringAttributeEncoder encoder = new Saml2StringAttributeEncoder();
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
@@ -68,7 +68,7 @@ public class Saml2StringAttributeEncoderTest {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<Object> values = Lists.newArrayList(new Integer(3), new Object(), intArray);
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -80,7 +80,7 @@ public class Saml2StringAttributeEncoderTest {
         final Saml2StringAttributeEncoder encoder = new Saml2StringAttributeEncoder();
         final Collection<Object> values = Lists.newArrayList(new Object(), STRING_1);
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
@@ -108,7 +108,7 @@ public class Saml2StringAttributeEncoderTest {
         final Saml2StringAttributeEncoder encoder = new Saml2StringAttributeEncoder();
         final Collection<Object> values = Lists.newArrayList(new Object(), STRING_1, STRING_2);
 
-        final net.shibboleth.idp.attribute.Attribute<Object> inputAttribute;
+        final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 

@@ -18,9 +18,11 @@
 package net.shibboleth.idp.attribute.filtering;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.utilities.java.support.collection.LazyList;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -55,7 +57,7 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher {
     }
 
     /** {@inheritDoc} */
-    public Collection<?> getMatchingValues(Attribute<?> attribute, AttributeFilterContext filterContext)
+    public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
         if (!Objects.equal(attribute.getId(), matchingAttribute)) {
             return null;
@@ -65,8 +67,8 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher {
             return attribute.getValues();
         }
 
-        LazyList<Object> values = new LazyList<Object>();
-        for (Object value : attribute.getValues()) {
+        HashSet<AttributeValue> values = new HashSet<AttributeValue>();
+        for (AttributeValue value : attribute.getValues()) {
             if (matchingValues.contains(value)) {
                 values.add(value);
             }

@@ -22,15 +22,14 @@ import org.testng.annotations.Test;
 
 public class IdPSessionSubcontextTest {
 
-    @Test
-    public void testInstantiation() {
+    @Test public void testInstantiation() {
         IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
-        IdPSessionSubcontext ctx = new IdPSessionSubcontext(null, session);
+        IdPSessionContext ctx = new IdPSessionContext(session);
 
         Assert.assertEquals(ctx.getIdPSession(), session);
 
         try {
-            new IdPSessionSubcontext(null, null);
+            new IdPSessionContext(null);
             Assert.fail();
         } catch (IllegalArgumentException e) {
 

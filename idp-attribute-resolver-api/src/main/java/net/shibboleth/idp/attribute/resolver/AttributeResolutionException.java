@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.AttributeException;
 
 /** An exception indicating a problem resolving attribute data. */
@@ -35,7 +37,7 @@ public class AttributeResolutionException extends AttributeException {
      * 
      * @param message exception message
      */
-    public AttributeResolutionException(final String message) {
+    public AttributeResolutionException(@Nullable final String message) {
         super(message);
     }
 
@@ -44,7 +46,7 @@ public class AttributeResolutionException extends AttributeException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(final Exception wrappedException) {
+    public AttributeResolutionException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -54,7 +56,7 @@ public class AttributeResolutionException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(final String message, final Exception wrappedException) {
+    public AttributeResolutionException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

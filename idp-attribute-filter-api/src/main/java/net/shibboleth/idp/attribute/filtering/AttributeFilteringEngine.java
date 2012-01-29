@@ -36,10 +36,8 @@ import net.shibboleth.utilities.java.support.collection.TransformedInputCollecti
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -48,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
-//TODO perf metrics
+//TODO(lajoie) perf metrics
 
 /** Services that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
@@ -87,28 +85,17 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
      */
     public synchronized void setFilterPolicies(
             @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute filter egine " + getId()
-                    + " has already been initialized, its filter policies can not be changed.");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         filterPolicies = new TransformedInputCollectionBuilder().addAll(policies).buildImmutableSet();
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        if (!isInitialized()) {
-            throw new ComponentValidationException(getId() + " has not yet been initialized");
-        }
-
-        if (isDestroyed()) {
-            throw new ComponentValidationException(getId() + " has been destroyed");
-        }
-
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+        
         final LazyList<String> invalidPolicyIds = new LazyList<String>();
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
@@ -142,16 +129,10 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
             throws AttributeFilteringException {
         assert filterContext != null : "Attribute filter context can not be null";
 
-        if (!isInitialized()) {
-            throw new AttributeFilteringException("Attribute filtering engine " + getId()
-                    + " has not be initialized and can not yet be used");
-        }
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
-
-        Map<String, Attribute<?>> prefilteredAttributes = filterContext.getPrefilteredAttributes();
+        Map<String, Attribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
 
         log.debug("Attribute filter engine '{}': beginning process of filter the following {} attributes: {}",
                 new Object[] {getId(), prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
@@ -166,7 +147,7 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
             policy.apply(filterContext);
         }
 
-        Optional<Collection<?>> filteredAttributeValues;
+        Optional<Collection> filteredAttributeValues;
         Attribute filteredAttribute;
         for (String attributeId : filterContext.getPermittedAttributeValues().keySet()) {
             filteredAttributeValues = getFilteredValues(attributeId, filterContext);
@@ -190,12 +171,12 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
      *         empty collection if values were permitted but then all were removed by deny policies, or {@link Optional}
      *         with a collection containing permitted values
      */
-    protected Optional<Collection<?>> getFilteredValues(@Nonnull @NotEmpty final String attributeId,
+    protected Optional<Collection> getFilteredValues(@Nonnull @NotEmpty final String attributeId,
             @Nonnull final AttributeFilterContext filterContext) {
         assert attributeId != null : "attributeId can not be null";
         assert filterContext != null : "filterContext can not be null";
 
-        final Collection<?> filteredAttributeValues = filterContext.getPermittedAttributeValues().get(attributeId);
+        final Collection filteredAttributeValues = filterContext.getPermittedAttributeValues().get(attributeId);
 
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),
@@ -215,7 +196,7 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
                     new Object[] {getId(), filteredAttributeValues.size(), attributeId,});
         }
 
-        return Optional.<Collection<?>> of(filteredAttributeValues);
+        return Optional.of(filteredAttributeValues);
     }
 
     /** {@inheritDoc} */

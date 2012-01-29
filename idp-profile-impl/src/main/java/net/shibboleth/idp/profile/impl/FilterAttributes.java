@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.attribute.AttributeSubcontext;
+import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
@@ -61,7 +61,7 @@ public class FilterAttributes extends AbstractIdentityProviderAction {
         final RelyingPartySubcontext relyingPartyCtx =
                 ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
-        AttributeSubcontext attributeContext = relyingPartyCtx.getSubcontext(AttributeSubcontext.class, false);
+        AttributeContext attributeContext = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
 
         // Get the filer context from the profile request
         // this may already exist but if not, auto-create it
@@ -84,7 +84,8 @@ public class FilterAttributes extends AbstractIdentityProviderAction {
             profileRequestContext.removeSubcontext(filterContext);
 
             if (attributeContext == null) {
-                attributeContext = new AttributeSubcontext(relyingPartyCtx);
+                attributeContext = new AttributeContext();
+                relyingPartyCtx.addSubcontext(attributeContext);
             }
 
             attributeContext.setAttributes(filterContext.getFilteredAttributes().values());

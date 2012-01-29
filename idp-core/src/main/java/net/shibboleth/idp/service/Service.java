@@ -31,7 +31,7 @@ public interface Service extends IdentifiableComponent, InitializableComponent, 
     public static final String STATE_STARTING = "starting";
 
     /** Indicates that the service is ready for use. */
-    public static final String STATE_RUNNING = "running";
+    public static final String STATE_STARTED = "started";
 
     /** Indicates that the service is stopping and is not available for use. */
     public static final String STATE_STOPPING = "stopping";

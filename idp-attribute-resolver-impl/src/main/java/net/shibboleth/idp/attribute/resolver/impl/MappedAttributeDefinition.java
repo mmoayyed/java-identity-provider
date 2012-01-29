@@ -29,12 +29,13 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.util.collections.CollectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 
 /**
@@ -67,10 +68,8 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      */
 
     public synchronized void setValueMaps(final Collection<ValueMap> maps) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Mapped Attribute definition " + getId()
-                    + " has already been initialized, Value maps can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
 
         final Set<ValueMap> working = CollectionSupport.addNonNull(maps, new LazySet<ValueMap>());
 
@@ -98,10 +97,9 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * @param defaultVal the default value to apply (if any)
      */
     public synchronized void setDefaultValue(final String defaultVal) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Mapped Attribute definition " + getId()
-                    + " has already been initialized, default value can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         defaultValue = StringSupport.trimOrNull(defaultVal);
     }
 
@@ -120,15 +118,14 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * @param passThruParm whether to pass unmatched values through or not.
      */
     public synchronized void setPassThru(final boolean passThruParm) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Mapped Attribute definition " + getId()
-                    + " has already been initialized, passThru value can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         passThru = passThruParm;
     }
 
     /**
-     * Returns whether passThru (sic) is set for this version of this resolver. Defaults to false.
+     * Returns whether passThru is set for this version of this resolver. Defaults to false.
      * 
      * @return the value of passThru.
      */
@@ -147,12 +144,12 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         // Check configuration
         if (passThru && !Strings.isNullOrEmpty(defaultValue)) {
             throw new ComponentInitializationException("Mapped Attribute definition " + getId()
-                            + ") must not have a DefaultValue string with passThru enabled.");
+                    + ") must not have a DefaultValue string with passThru enabled.");
         }
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
         final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
@@ -161,23 +158,23 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
         final Collection<Object> unmappedResults = new LazySet<Object>();
         for (ResolverPluginDependency dep : depends) {
-            Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
                 CollectionSupport.addNonNull(dependentAttribute.getValues(), unmappedResults);
             }
         }
 
         // Bucket for results
-        final Attribute<Object> resultAttribute = new Attribute<Object>(getId());
+        final Attribute resultAttribute = new Attribute(getId());
 
         if (unmappedResults.isEmpty()) {
             log.debug("Attribute Definition {}: No values from dependency attributes", getId());
             if (null != getDefaultValue()) {
                 log.debug("Attribute Definition {}: Default value "
                         + "is not empty, adding it as the value for this attribute", getId());
-                resultAttribute.addValue(getDefaultValue());
+                resultAttribute.getValues().add(getDefaultValue());
             }
-            return resultAttribute;
+            return Optional.of(resultAttribute);
         }
 
         final Collection<Object> mappedValues = new LazySet<Object>();
@@ -191,7 +188,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         }
 
         resultAttribute.setValues(mappedValues);
-        return resultAttribute;
+        return Optional.of(resultAttribute);
     }
 
     /**

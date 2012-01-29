@@ -31,7 +31,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.joda.time.DateTime;
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -47,8 +47,8 @@ public final class CheckMessageLifetime extends AbstractIdentityProviderAction {
     }
 
     /** {@inheritDoc} */
-    public Class<BasicMessageMetadataSubcontext> getSubcontextType() {
-        return BasicMessageMetadataSubcontext.class;
+    public Class<BasicMessageMetadataContext> getSubcontextType() {
+        return BasicMessageMetadataContext.class;
     }
 
     /**
@@ -81,7 +81,7 @@ public final class CheckMessageLifetime extends AbstractIdentityProviderAction {
         final RelyingPartySubcontext relyingPartyCtx =
                 ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
-        final BasicMessageMetadataSubcontext messageSubcontext =
+        final BasicMessageMetadataContext messageSubcontext =
                 ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
 
         if (messageSubcontext.getMessageIssueInstant() <= 0) {

@@ -22,22 +22,23 @@ import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.ScopedAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
+
 /**
- * An attribute definition that creates {@link ScopedAttributeValue}s by taking a source attribute value and applying a
- * static scope to each.
+ * An attribute definition that creates {@link ScopedStringAttributeValue}s by taking a source attribute value and
+ * applying a static scope to each.
  */
 @ThreadSafe
 public class ScopedAttributeDefinition extends BaseAttributeDefinition {
@@ -54,10 +55,9 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
      * @param newScope what to set.
      */
     public synchronized void setScope(final String newScope) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Scoped Attribute definition " + getId()
-                    + " has already been initialized, scope can not be changed.");
-        }
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         scope = StringSupport.trimOrNull(newScope);
     }
 
@@ -81,7 +81,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Attribute<ScopedAttributeValue> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
         final Set<ResolverPluginDependency> depends = getDependencies();
@@ -90,10 +90,10 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
             return null;
         }
 
-        final Collection<ScopedAttributeValue> resultingValues = new LazySet<ScopedAttributeValue>();
+        final Collection<ScopedStringAttributeValue> resultingValues = new LazySet<ScopedStringAttributeValue>();
         for (ResolverPluginDependency dep : depends) {
 
-            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null == dependentAttribute) {
                 log.error("Dependency of ScopedAttribute " + getId() + " returned null dependent attribute");
                 continue;
@@ -111,15 +111,15 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
                 continue;
             }
             for (Object value : values) {
-                resultingValues.add(new ScopedAttributeValue(value.toString(), scope));
+                resultingValues.add(new ScopedStringAttributeValue(value.toString(), scope));
             }
         }
         if (resultingValues.isEmpty()) {
             log.debug("Scoped definition " + getId() + " returned no values");
         }
 
-        final Attribute<ScopedAttributeValue> resultantAttribute = new Attribute<ScopedAttributeValue>(getId());
+        final Attribute resultantAttribute = new Attribute(getId());
         resultantAttribute.setValues(resultingValues);
-        return resultantAttribute;
+        return Optional.of(resultantAttribute);
     }
 }

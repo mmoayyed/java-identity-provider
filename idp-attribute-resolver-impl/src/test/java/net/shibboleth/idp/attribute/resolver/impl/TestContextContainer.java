@@ -4,12 +4,12 @@ import java.security.Principal;
 
 import net.shibboleth.idp.session.AuthenticationEvent;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.IdPSessionSubcontext;
+import net.shibboleth.idp.session.IdPSessionContext;
 import net.shibboleth.idp.session.ServiceSession;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.AbstractSubcontextContainer;
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 
@@ -24,7 +24,7 @@ class TestContextContainer extends AbstractSubcontextContainer implements InOutO
         setAutoCreateSubcontexts(false);
         inbound = new MyMessageContext();
         
-        final BasicMessageMetadataSubcontext basic = new BasicMessageMetadataSubcontext(inbound);
+        final BasicMessageMetadataContext basic = new BasicMessageMetadataContext(inbound);
         basic.setMessageIssuer(relyingParty);
         
         AuthenticationEvent event = new AuthenticationEvent(authnMethod, new Principal() {   
@@ -38,7 +38,7 @@ class TestContextContainer extends AbstractSubcontextContainer implements InOutO
         serviceSession.setAuthenticationEvent(event);
         idpSession.addServiceSession(serviceSession);
         
-        new IdPSessionSubcontext(this, idpSession);
+        new IdPSessionContext(this, idpSession);
     }
 
     public TestContextContainer() {

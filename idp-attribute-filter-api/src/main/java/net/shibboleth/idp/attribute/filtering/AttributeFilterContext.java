@@ -36,41 +36,26 @@ import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.Subcontext;
-import org.opensaml.messaging.context.SubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 
 /** Context used to collect data as attributes are filtered. */
 @NotThreadSafe
-public final class AttributeFilterContext implements Subcontext {
-
-    /** Context which acts as the owner or parent of this context. */
-    private final SubcontextContainer parentContext;
+public final class AttributeFilterContext extends BaseContext {
 
     /** Attributes which are to be filtered. */
-    private Map<String, Attribute<?>> prefilteredAttributes;
+    private Map<String, Attribute> prefilteredAttributes;
 
     /** Values, for a given attribute, that are permitted to be released. */
-    private Map<String, Collection<?>> permittedValues;
+    private Map<String, Collection> permittedValues;
 
     /** Values, for a given attribute, that are not permitted to be released. */
-    private Map<String, Collection<?>> deniedValues;
+    private Map<String, Collection> deniedValues;
 
     /** Attributes which have been filtered. */
-    private Map<String, Attribute<?>> filteredAttributes;
+    private Map<String, Attribute> filteredAttributes;
 
-    /**
-     * Constructor.
-     * 
-     * @param parent the parent of this context
-     */
-    public AttributeFilterContext(@Nullable final SubcontextContainer parent) {
-        if (parent != null) {
-            parentContext = parent;
-            parent.addSubcontext(this);
-        } else {
-            parentContext = null;
-        }
-
+    /** Constructor. */
+    public AttributeFilterContext() {
         TransformedInputMapBuilder mapBuilder =
                 new TransformedInputMapBuilder().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
         prefilteredAttributes = mapBuilder.buildMap();
@@ -79,17 +64,12 @@ public final class AttributeFilterContext implements Subcontext {
         filteredAttributes = mapBuilder.buildMap();
     }
 
-    /** {@inheritDoc} */
-    @Nullable public SubcontextContainer getOwner() {
-        return parentContext;
-    }
-
     /**
      * Gets the collection of attributes that are to be filtered, indexed by attribute ID.
      * 
      * @return attributes to be filtered
      */
-    @Nonnull @NonnullElements public Map<String, Attribute<?>> getPrefilteredAttributes() {
+    @Nonnull @NonnullElements public Map<String, Attribute> getPrefilteredAttributes() {
         return prefilteredAttributes;
     }
 
@@ -98,13 +78,12 @@ public final class AttributeFilterContext implements Subcontext {
      * 
      * @param attributes attributes which are to be filtered
      */
-    public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<Attribute<?>> attributes) {
-        TransformedInputMapBuilder<String, Attribute<?>> mapBuilder =
-                new TransformedInputMapBuilder<String, Attribute<?>>()
-                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+    public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
+        TransformedInputMapBuilder<String, Attribute> mapBuilder =
+                new TransformedInputMapBuilder<String, Attribute>().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
 
         if (attributes != null) {
-            for (Attribute<?> attribute : attributes) {
+            for (Attribute attribute : attributes) {
                 mapBuilder.put(attribute.getId(), attribute);
             }
         }
@@ -117,7 +96,7 @@ public final class AttributeFilterContext implements Subcontext {
      * 
      * @return collection of attribute values, indexed by ID, that are permitted to be released,
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection<?>> getPermittedAttributeValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection> getPermittedAttributeValues() {
         return Collections.unmodifiableMap(permittedValues);
     }
 
@@ -131,7 +110,7 @@ public final class AttributeFilterContext implements Subcontext {
      * @param attributeValues values for the attribute that are permitted to be released
      */
     public void addPermittedAttributeValues(@Nonnull @NotEmpty String attributeId,
-            @Nullable @NullableElements Collection<?> attributeValues) {
+            @Nullable @NullableElements Collection attributeValues) {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
@@ -166,7 +145,7 @@ public final class AttributeFilterContext implements Subcontext {
      * 
      * @return collection of attribute values, indexed by ID, that are not permitted to be released
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection<?>> getDeniedAttributeValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection> getDeniedAttributeValues() {
         return Collections.unmodifiableMap(deniedValues);
     }
 
@@ -180,7 +159,7 @@ public final class AttributeFilterContext implements Subcontext {
      * @param attributeValues values for the attribute that are not permitted to be released
      */
     public void addDeniedAttributeValues(@Nonnull @NotEmpty String attributeId,
-            @Nullable @NullableElements Collection<?> attributeValues) {
+            @Nullable @NullableElements Collection attributeValues) {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
@@ -215,7 +194,7 @@ public final class AttributeFilterContext implements Subcontext {
      * 
      * @return attributes left after the filtering process has run
      */
-    @Nonnull @NonnullElements public Map<String, Attribute<?>> getFilteredAttributes() {
+    @Nonnull @NonnullElements public Map<String, Attribute> getFilteredAttributes() {
         return filteredAttributes;
     }
 
@@ -224,13 +203,12 @@ public final class AttributeFilterContext implements Subcontext {
      * 
      * @param attributes attributes that have been filtered
      */
-    public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute<?>> attributes) {
-        TransformedInputMapBuilder<String, Attribute<?>> mapBuilder =
-                new TransformedInputMapBuilder<String, Attribute<?>>()
-                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+    public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
+        TransformedInputMapBuilder<String, Attribute> mapBuilder =
+                new TransformedInputMapBuilder<String, Attribute>().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
 
         if (attributes != null) {
-            for (Attribute<?> attribute : attributes) {
+            for (Attribute attribute : attributes) {
                 mapBuilder.put(attribute.getId(), attribute);
             }
         }

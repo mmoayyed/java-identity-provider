@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl;
 import java.util.Collection;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.ScopedAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -50,8 +50,7 @@ public class ScopedAttributeTest {
      * @throws AttributeResolutionException if resolution failed.
      * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
-    @Test
-    public void testScopes() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testScopes() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -77,16 +76,16 @@ public class ScopedAttributeTest {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
         final Collection<?> f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(new ScopedAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
                 "looking for COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(new ScopedAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
                 "looking for CONNECTOR_ATTRIBUTE_VALUE");
 
     }

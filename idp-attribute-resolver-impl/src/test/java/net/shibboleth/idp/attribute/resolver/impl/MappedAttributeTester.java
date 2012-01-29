@@ -45,8 +45,7 @@ public class MappedAttributeTester {
      * 
      * @throws ComponentInitializationException only in an error situation.
      */
-    @Test
-    public void testEmptyMap() throws ComponentInitializationException {
+    @Test public void testEmptyMap() throws ComponentInitializationException {
         final MappedAttributeDefinition mapped = new MappedAttributeDefinition();
         mapped.setId(TEST_ATTRIBUTE_NAME);
 
@@ -81,7 +80,7 @@ public class MappedAttributeTester {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -96,8 +95,7 @@ public class MappedAttributeTester {
      * 
      * @throws ComponentInitializationException only in the case of a test failure.
      */
-    @Test
-    public void testNoMapDefault() throws ComponentInitializationException {
+    @Test public void testNoMapDefault() throws ComponentInitializationException {
         final String mapResult = "result";
 
         // Set the dependency on the data connector
@@ -124,7 +122,7 @@ public class MappedAttributeTester {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -142,8 +140,7 @@ public class MappedAttributeTester {
      * 
      * @throws ComponentInitializationException only in case of error
      */
-    @Test
-    public void testNoMapPassThru() throws ComponentInitializationException {
+    @Test public void testNoMapPassThru() throws ComponentInitializationException {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
@@ -167,7 +164,7 @@ public class MappedAttributeTester {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -187,8 +184,7 @@ public class MappedAttributeTester {
      * 
      * @throws ComponentInitializationException only in case of error.
      */
-    @Test
-    public void testMap() throws ComponentInitializationException {
+    @Test public void testMap() throws ComponentInitializationException {
         final String mapResult = "result";
         final Collection<ValueMap> map = new LazySet<ValueMap>();
         final HashSet<ValueMap.SourceValue> valueSet = new HashSet<ValueMap.SourceValue>();
@@ -220,7 +216,7 @@ public class MappedAttributeTester {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -237,8 +233,7 @@ public class MappedAttributeTester {
      * 
      * @throws ComponentInitializationException
      */
-    @Test
-    public void testMultiMap() throws ComponentInitializationException {
+    @Test public void testMultiMap() throws ComponentInitializationException {
         Collection<ValueMap> map = new HashSet<ValueMap>();
         final String mapResult1 = "result1";
         final String mapResult2 = "result2";
@@ -276,7 +271,7 @@ public class MappedAttributeTester {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {

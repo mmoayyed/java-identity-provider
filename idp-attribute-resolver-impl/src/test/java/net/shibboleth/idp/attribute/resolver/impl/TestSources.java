@@ -80,20 +80,20 @@ public final class TestSources {
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
     protected static BaseDataConnector populatedStaticConnectior() throws ComponentInitializationException {
-        Map<String, Attribute<?>> values;
-        Attribute<String> attr;
+        Map<String, Attribute> values;
+        Attribute attr;
         Set<String> valuesSet;
 
-        values = new LazyMap<String, Attribute<?>>();
+        values = new LazyMap<String, Attribute>();
         valuesSet = new LazySet<String>();
 
         valuesSet.add(COMMON_ATTRIBUTE_VALUE);
         valuesSet.add(CONNECTOR_ATTRIBUTE_VALUE);
-        attr = new Attribute<String>(DEPENDS_ON_ATTRIBUTE_NAME);
+        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME);
         attr.setValues(valuesSet);
         values.put(DEPENDS_ON_ATTRIBUTE_NAME, attr);
 
-        attr = new Attribute<String>(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
+        attr = new Attribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
         valuesSet = new LazySet<String>();
         valuesSet.add(SECOND_ATTRIBUTE_VALUES[0]);
         valuesSet.add(SECOND_ATTRIBUTE_VALUES[1]);
@@ -116,14 +116,14 @@ public final class TestSources {
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
     protected static BaseAttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
-        Attribute<String> attr;
+        Attribute attr;
         Set<String> valuesSet;
 
         valuesSet = new LazySet<String>();
 
         valuesSet.add(COMMON_ATTRIBUTE_VALUE);
         valuesSet.add(ATTRIBUTE_ATTRIBUTE_VALUE);
-        attr = new Attribute<String>(DEPENDS_ON_ATTRIBUTE_NAME);
+        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME);
         attr.setValues(valuesSet);
         
         StaticAttributeDefinition definition = new StaticAttributeDefinition();

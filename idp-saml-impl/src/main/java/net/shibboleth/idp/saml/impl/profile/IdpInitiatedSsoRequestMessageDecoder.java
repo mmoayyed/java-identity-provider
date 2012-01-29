@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.BasicMessageContext;
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
 
@@ -65,14 +65,16 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
                 new IdpInitatedSsoRequest(getEntityId(getHttpServletRequest()), getAcsUrl(getHttpServletRequest()),
                         getTarget(getHttpServletRequest()), getTime(getHttpServletRequest()));
 
-        BasicMessageContext<IdpInitatedSsoRequest> messageContext = new BasicMessageContext<IdpInitatedSsoRequest>();
+        MessageContext<IdpInitatedSsoRequest> messageContext = new MessageContext<IdpInitatedSsoRequest>();
         messageContext.setMessage(authnRequest);
 
-        BasicMessageMetadataSubcontext msgMetadata = new BasicMessageMetadataSubcontext(messageContext);
+        BasicMessageMetadataContext msgMetadata = new BasicMessageMetadataContext();
         // TODO need to generate a message ID, probably need to base it off of the conversation ID
         // msgMetadata.setMessageId(messageId);
         msgMetadata.setMessageIssueInstant(authnRequest.getTime());
         msgMetadata.setMessageIssuer(authnRequest.getEntityId());
+        
+        messageContext.addSubcontext(msgMetadata);
 
         setMessageContext(messageContext);
     }

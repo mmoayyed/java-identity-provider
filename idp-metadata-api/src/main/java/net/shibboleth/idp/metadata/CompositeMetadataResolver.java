@@ -114,8 +114,8 @@ public class CompositeMetadataResolver<MetadataType> extends AbstractIdentifiabl
                     ImmutableList.<Resolver<MetadataType, CriteriaSet>> builder()
                             .addAll(Iterables.filter(composedResolvers, Predicates.notNull())).build();
 
-            criteria = CollectionSupport.addNonNull(metadataCritiera, new CriteriaSet());
-
+            // TODO(lajoie) fix this up when CriteriaSet is removed
+            criteria = null;
         }
 
         /** {@inheritDoc} */

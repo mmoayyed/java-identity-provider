@@ -26,7 +26,7 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.BasicMessageMetadataSubcontext;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Response;
 import org.slf4j.Logger;
@@ -79,8 +79,8 @@ public class AddInResponseToToResponse extends AbstractIdentityProviderAction<Ob
             return null;
         }
 
-        final BasicMessageMetadataSubcontext inMsgMetadataCtx =
-                inMsgCtx.getSubcontext(BasicMessageMetadataSubcontext.class);
+        final BasicMessageMetadataContext inMsgMetadataCtx =
+                inMsgCtx.getSubcontext(BasicMessageMetadataContext.class);
         if (inMsgMetadataCtx == null) {
             log.debug("Action {}: no inbound message metadata context available", getId());
             return null;

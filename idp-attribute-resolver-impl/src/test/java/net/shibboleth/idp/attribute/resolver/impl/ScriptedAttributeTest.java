@@ -69,8 +69,7 @@ public class ScriptedAttributeTest {
      * 
      * @throws ComponentInitializationException only if bad things happens
      */
-    @Test
-    public void testInvalid() throws ComponentInitializationException {
+    @Test public void testInvalid() throws ComponentInitializationException {
 
         boolean threw = false;
 
@@ -90,7 +89,7 @@ public class ScriptedAttributeTest {
         attr.setScript("badSyntox.");
         attr.initialize();
         try {
-            attr.doAttributeResolution(new AttributeResolutionContext(null));
+            attr.doAttributeResolution(new AttributeResolutionContext());
         } catch (AttributeResolutionException e) {
             threw = true;
         }
@@ -104,10 +103,9 @@ public class ScriptedAttributeTest {
      * @throws AttributeResolutionException
      * @throws ComponentInitializationException only if the test will fail
      */
-    @Test
-    public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
 
-        final Attribute<String> test = new Attribute<String>(TEST_ATTRIBUTE_NAME);
+        final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
         test.addValue(SIMPLE_VALUE);
 
@@ -117,7 +115,7 @@ public class ScriptedAttributeTest {
         attr.setScript(TEST_SIMPLE_SCRIPT);
         attr.initialize();
 
-        final Attribute<?> val = attr.doAttributeResolution(new AttributeResolutionContext(null));
+        final Attribute val = attr.doAttributeResolution(new AttributeResolutionContext());
         final Collection<?> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -131,8 +129,7 @@ public class ScriptedAttributeTest {
      * @throws AttributeResolutionException if the resolve fails
      * @throws ComponentInitializationException only if things go wrong
      */
-    @Test
-    public void testWithAttributes() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testWithAttributes() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
@@ -158,13 +155,13 @@ public class ScriptedAttributeTest {
         resolver.setAttributeDefinition(attrDefinitions);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Attribute<?> attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
+        final Attribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
         final Collection values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
@@ -180,8 +177,7 @@ public class ScriptedAttributeTest {
      * @throws AttributeResolutionException if the resolve fails
      * @throws ComponentInitializationException only if the test has gone wrong
      */
-    @Test
-    public void testRequestContext() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testRequestContext() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
@@ -208,7 +204,7 @@ public class ScriptedAttributeTest {
         resolver.setAttributeDefinition(attrDefinitions);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(new TestContextContainer());
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -217,7 +213,7 @@ public class ScriptedAttributeTest {
 
         // The script just put the resolution context in as the attribute value. Yea it makes
         // no sense but it is easy to test.
-        final Attribute<?> attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
+        final Attribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
         final Collection values = attribute.getValues();
 
         Assert.assertTrue(values.contains(context), "looking for context");

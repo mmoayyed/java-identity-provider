@@ -21,31 +21,33 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
+import com.google.common.base.Optional;
+
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
 public class MockAttributeDefinition extends BaseAttributeDefinition {
-    
+
     /** Whether this connector fails validation. */
     private boolean invalid;
 
     /** Static value returned by this definition. */
-    private Attribute<?> staticValue;
-    
+    private Optional<Attribute> staticValue;
+
     /** Exception thrown by {@link #doAttributeResolution(AttributeResolutionContext))}. */
     private AttributeResolutionException resolutionException;
-    
+
     /**
      * Constructor.
      * 
      * @param id unique ID of this attribute definition
      * @param value static value returned by this definition
      */
-    public MockAttributeDefinition(final String id, final Attribute<?> value) {
+    public MockAttributeDefinition(final String id, final Attribute value) {
         setId(id);
         invalid = false;
-        staticValue = value;
+        staticValue = Optional.<Attribute> fromNullable(value);
     }
-    
+
     /**
      * Constructor.
      * 
@@ -57,7 +59,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition {
         invalid = false;
         resolutionException = exception;
     }
-    
+
     /**
      * Sets whether this data connector is considered invalid.
      * 
@@ -68,18 +70,18 @@ public class MockAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        if(resolutionException != null){
+        if (resolutionException != null) {
             throw resolutionException;
         }
-        
+
         return staticValue;
     }
-    
+
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        if(invalid){
+        if (invalid) {
             throw new ComponentValidationException();
         }
     }

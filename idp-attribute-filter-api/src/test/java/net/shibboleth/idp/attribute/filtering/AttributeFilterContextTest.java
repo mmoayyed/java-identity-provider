@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ public class AttributeFilterContextTest {
 
     /** Test that post-construction state is what is expected. */
     @Test public void testPostConstructionState() {
-        AttributeFilterContext context = new AttributeFilterContext(null);
+        AttributeFilterContext context = new AttributeFilterContext();
         Assert.assertNotNull(context.getFilteredAttributes());
         Assert.assertTrue(context.getFilteredAttributes().isEmpty());
-        Assert.assertNull(context.getOwner());
+        Assert.assertNull(context.getParent());
         Assert.assertNotNull(context.getPrefilteredAttributes());
         Assert.assertTrue(context.getPrefilteredAttributes().isEmpty());
         Assert.assertNotNull(context.getPermittedAttributeValues());
@@ -46,17 +47,17 @@ public class AttributeFilterContextTest {
 
     /** Test methods related to prefiltered attributes. */
     @Test public void testPrefilteredAttributes() {
-        AttributeFilterContext context = new AttributeFilterContext(null);
+        AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute<?> attribute1 = new Attribute<String>("attribute1");
+        Attribute attribute1 = new Attribute("attribute1");
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 1);
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
 
-        Attribute<?> attribute2 = new Attribute<String>("attribute2");
-        Attribute<?> attribute3 = new Attribute<String>("attribute3");
-        List<Attribute<?>> attributes = Lists.newArrayList(attribute2, attribute3);
+        Attribute attribute2 = new Attribute("attribute2");
+        Attribute attribute3 = new Attribute("attribute3");
+        List<Attribute> attributes = Lists.newArrayList(attribute2, attribute3);
         context.setPrefilteredAttributes(attributes);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
         Assert.assertFalse(context.getPrefilteredAttributes().containsKey("attribute1"));
@@ -110,17 +111,17 @@ public class AttributeFilterContextTest {
 
     /** Test methods related to filtered attributes. */
     @Test public void testFilteredAttributes() {
-        AttributeFilterContext context = new AttributeFilterContext(null);
+        AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute<?> attribute1 = new Attribute<String>("attribute1");
+        Attribute attribute1 = new Attribute("attribute1");
         context.getFilteredAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getFilteredAttributes().size(), 1);
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
 
-        Attribute<?> attribute2 = new Attribute<String>("attribute2");
-        Attribute<?> attribute3 = new Attribute<String>("attribute3");
-        List<Attribute<?>> attributes = Lists.newArrayList(attribute2, attribute3);
+        Attribute attribute2 = new Attribute("attribute2");
+        Attribute attribute3 = new Attribute("attribute3");
+        List<Attribute> attributes = Lists.newArrayList(attribute2, attribute3);
         context.setFilteredAttributes(attributes);
         Assert.assertEquals(context.getFilteredAttributes().size(), 2);
         Assert.assertFalse(context.getFilteredAttributes().containsKey("attribute1"));
@@ -174,11 +175,11 @@ public class AttributeFilterContextTest {
 
     /** Testing getting and adding permitted attribute values. */
     @Test public void testPermittedAttributeValues() {
-        AttributeFilterContext context = new AttributeFilterContext(null);
+        AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute<String>("one");
-        attribute1.getValues().add("a");
-        attribute1.getValues().add("b");
+        Attribute attribute1 = new Attribute("one");
+        attribute1.getValues().add(new StringAttributeValue("a"));
+        attribute1.getValues().add(new StringAttributeValue("b"));
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         context.addPermittedAttributeValues("one", Lists.newArrayList("a"));
@@ -224,11 +225,11 @@ public class AttributeFilterContextTest {
 
     /** Testing getting and adding denied attribute values. */
     @Test public void testDeniedAttributeValues() {
-        AttributeFilterContext context = new AttributeFilterContext(null);
+        AttributeFilterContext context = new AttributeFilterContext();
 
-        Attribute attribute1 = new Attribute<String>("one");
-        attribute1.getValues().add("a");
-        attribute1.getValues().add("b");
+        Attribute attribute1 = new Attribute("one");
+        attribute1.getValues().add(new StringAttributeValue("a"));
+        attribute1.getValues().add(new StringAttributeValue("b"));
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         context.addDeniedAttributeValues("one", Lists.newArrayList("a"));

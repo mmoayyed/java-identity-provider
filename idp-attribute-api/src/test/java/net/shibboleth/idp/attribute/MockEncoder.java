@@ -52,7 +52,7 @@ public class MockEncoder<ValueType> implements AttributeEncoder<ValueType> {
     }
 
     /** {@inheritDoc} */
-    public ValueType encode(Attribute<?> attribute) throws AttributeEncodingException {
+    public ValueType encode(Attribute attribute) throws AttributeEncodingException {
         return encodedValue;
     }
 }

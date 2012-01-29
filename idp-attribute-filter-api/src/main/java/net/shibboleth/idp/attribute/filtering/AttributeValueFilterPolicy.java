@@ -24,12 +24,11 @@ import javax.annotation.Nonnull;
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
@@ -41,14 +40,11 @@ import org.slf4j.LoggerFactory;
 
 /** Represents a value filtering rule for a particular attribute. */
 @ThreadSafe
-public class AttributeValueFilterPolicy extends AbstractInitializableComponent implements DestructableComponent,
+public class AttributeValueFilterPolicy extends AbstractDestructableInitializableComponent implements
         ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeValueFilterPolicy.class);
-
-    /** Whether this policy has been destroyed. */
-    private boolean isDestroyed;
 
     /** Unique ID of the attribute this rule applies to. */
     private String attributeId;
@@ -59,25 +55,15 @@ public class AttributeValueFilterPolicy extends AbstractInitializableComponent i
      */
     private boolean matchingPermittedValues = true;
 
-    /** 
-     * Filter that permits the release of attribute values. Default value: {@link AttributeValueMatcher#MATCHES_NONE} 
+    /**
+     * Filter that permits the release of attribute values. Default value: {@link AttributeValueMatcher#MATCHES_NONE}
      */
     private AttributeValueMatcher valueMatchingRule;
-    
+
     /** Constructor. */
-    public AttributeValueFilterPolicy(){
+    public AttributeValueFilterPolicy() {
         matchingPermittedValues = true;
         valueMatchingRule = AttributeValueMatcher.MATCHES_NONE;
-    }
-
-    /** {@inheritDoc} */
-    public boolean isDestroyed() {
-        return isDestroyed;
-    }
-
-    /** {@inheritDoc} */
-    public synchronized void destroy() {
-        ComponentSupport.destroy(valueMatchingRule);
     }
 
     /**
@@ -179,7 +165,7 @@ public class AttributeValueFilterPolicy extends AbstractInitializableComponent i
      * 
      * @throws AttributeFilteringException thrown if there is a problem applying this rule to the current filter context
      */
-    public void apply(@Nonnull final Attribute<?> attribute, @Nonnull final AttributeFilterContext filterContext)
+    public void apply(@Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
         assert attribute != null : "To-be-filtered attribute can not be null";
         assert filterContext != null : "Attribute filter context can not be null";
@@ -196,7 +182,7 @@ public class AttributeValueFilterPolicy extends AbstractInitializableComponent i
         log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
                 .getValues().size());
 
-        Collection<?> matchingValues = valueMatchingRule.getMatchingValues(attribute, filterContext);
+        Collection matchingValues = valueMatchingRule.getMatchingValues(attribute, filterContext);
         if (matchingPermittedValues) {
             log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
                     getAttributeId());
@@ -206,6 +192,12 @@ public class AttributeValueFilterPolicy extends AbstractInitializableComponent i
                     getAttributeId());
             filterContext.addDeniedAttributeValues(getAttributeId(), matchingValues);
         }
+    }
+
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        ComponentSupport.destroy(valueMatchingRule);
+        super.destroy();
     }
 
     /** {@inheritDoc} */

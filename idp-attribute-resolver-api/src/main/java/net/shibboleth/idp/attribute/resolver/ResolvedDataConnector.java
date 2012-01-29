@@ -17,17 +17,20 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.springframework.expression.Expression;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * A proxy which wraps a resolved data connector and always returns the same attributes. The goal being that once a data
@@ -37,28 +40,29 @@ import org.springframework.expression.Expression;
  * This proxy is immutable so all setter methods simply return.
  */
 @ThreadSafe
-public class ResolvedDataConnector extends BaseDataConnector {
+public final class ResolvedDataConnector extends BaseDataConnector {
 
     /** The data connector that was resolved to produce the attributes. */
     private final BaseDataConnector resolvedConnector;
 
     /** The attributes produced by the resolved data connector. */
-    private final Map<String, Attribute<?>> resolvedAttributes;
+    private final Optional<Map<String, Attribute>> resolvedAttributes;
 
     /**
      * Constructor.
      * 
-     * @param connector data connector that was resolved to produce the attributes, never null
-     * @param attributes attributes produced by the resolved data connector, may be null
+     * @param connector data connector that was resolved to produce the attributes
+     * @param attributes attributes produced by the resolved data connector
      */
-    public ResolvedDataConnector(BaseDataConnector connector, Map<String, Attribute<?>> attributes) {
+    public ResolvedDataConnector(@Nonnull BaseDataConnector connector,
+            @Nonnull Optional<Map<String, Attribute>> attributes) {
         resolvedConnector = Assert.isNotNull(connector, "Resolved data connector can not be null");
-        resolvedAttributes = attributes;
+        resolvedAttributes = Assert.isNotNull(attributes, "Resolved attributes can not be null");
     }
 
     /** {@inheritDoc} */
-    protected Map<String, Attribute<?>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+    @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+            AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         return resolvedAttributes;
     }
 
@@ -68,22 +72,22 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public Set<ResolverPluginDependency> getDependencies() {
+    @Nonnull @NonnullElements public Set<ResolverPluginDependency> getDependencies() {
         return resolvedConnector.getDependencies();
     }
 
     /** {@inheritDoc} */
-    public EvaluableCriterion<AttributeResolutionContext> getActivationCriteria() {
-        return null;
+    @Nonnull public Predicate<AttributeResolutionContext> getActivationCriteria() {
+        return Predicates.alwaysTrue();
     }
 
     /** {@inheritDoc} */
-    public String getFailoverDataConnectorId() {
-        return resolvedConnector.getFailoverDataConnectorId();
+    @Nonnull public Optional<String> getFailoverDataConnectorId() {
+        return Optional.absent();
     }
 
     /** {@inheritDoc} */
-    public String getId() {
+    @Nonnull public String getId() {
         return resolvedConnector.getId();
     }
 
@@ -93,32 +97,12 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public boolean isApplicable(AttributeResolutionContext resolutionContext) {
-        return true;
-    }
-
-    /** {@inheritDoc} */
     public boolean isPropagateResolutionExceptions() {
         return resolvedConnector.isPropagateResolutionExceptions();
     }
 
     /** {@inheritDoc} */
-    public void setDependencies(List<ResolverPluginDependency> pluginDependencies) {
-        return;
-    }
-
-    /** {@inheritDoc} */
-    public void setEvaluationCondition(Expression condition) {
-        return;
-    }
-
-    /** {@inheritDoc} */
     public void setFailoverDataConnectorId(String id) {
-        return;
-    }
-
-    /** {@inheritDoc} */
-    public void setPropagateEvaluationConditionExceptions(boolean propagate) {
         return;
     }
 
@@ -128,7 +112,7 @@ public class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public String toString() {
+    @Nonnull public String toString() {
         return resolvedConnector.toString();
     }
 
@@ -137,7 +121,7 @@ public class ResolvedDataConnector extends BaseDataConnector {
      * 
      * @return the resolved data connector
      */
-    public BaseDataConnector unwrap() {
+    @Nonnull public BaseDataConnector unwrap() {
         return resolvedConnector;
     }
 

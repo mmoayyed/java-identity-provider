@@ -28,6 +28,10 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 
+import org.opensaml.util.collections.CollectionSupport;
+
+import com.google.common.base.Optional;
+
 /**
  * A Simple Attribute definition. Basically it copies all inputs to outputs.
  * 
@@ -38,7 +42,7 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
         final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
@@ -47,15 +51,15 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
         final Collection<Object> resultValues = new LazySet<Object>();
         for (ResolverPluginDependency dep : depends) {
-            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null != dependentAttribute) {
                 CollectionSupport.addNonNull(dependentAttribute.getValues(), resultValues);
             }
         }
 
-        final Attribute<Object> result = new Attribute<Object>(getId());
+        final Attribute result = new Attribute(getId());
         result.setValues(resultValues);
-        return result;
+        return Optional.of(result);
     }
 
 }

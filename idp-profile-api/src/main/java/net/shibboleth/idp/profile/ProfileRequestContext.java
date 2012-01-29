@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.opensaml.messaging.context.BasicInOutOperationContext;
+import org.opensaml.messaging.context.InOutOperationContext;
 
 /**
  * Context that holds the ongoing state of a profile request.
@@ -32,7 +32,7 @@ import org.opensaml.messaging.context.BasicInOutOperationContext;
  */
 @ThreadSafe
 public final class ProfileRequestContext<InboundMessageType, OutboundMessageType> extends
-        BasicInOutOperationContext<InboundMessageType, OutboundMessageType> {
+        InOutOperationContext<InboundMessageType, OutboundMessageType> {
 
     /** ID under which this context is stored, for example, within maps or sessions. */
     public static final String BINDING_KEY = ProfileRequestContext.class.getPackage().getName()
@@ -72,7 +72,7 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
     public void setPassiveProfile(final boolean isPassive) {
         passiveProfile = isPassive;
     }
-    
+
     /**
      * Gets the current HTTP request if available.
      * 

@@ -36,7 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
-import org.opensaml.messaging.context.SubcontextContainer;
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.Issuer;
@@ -77,7 +77,7 @@ public final class Saml2ActionTestingSupport {
      * 
      * @return the constructed subcontext
      */
-    public static RelyingPartySubcontext buildRelyingPartySubcontext(@Nonnull final SubcontextContainer parent,
+    public static RelyingPartySubcontext buildRelyingPartySubcontext(@Nonnull final BaseContext parent,
             @Nullable final String relyingPartyId) {
 
         String id = StringSupport.trimOrNull(relyingPartyId);
@@ -89,9 +89,11 @@ public final class Saml2ActionTestingSupport {
                 new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER,
                         StaticResponseEvaluableCriterion.TRUE_RESPONSE, buildProfileConfigurations());
 
-        RelyingPartySubcontext subcontext = new RelyingPartySubcontext(parent, id);
+        RelyingPartySubcontext subcontext = new RelyingPartySubcontext(id);
         subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(SsoProfileConfiguration.PROFILE_ID));
         subcontext.setRelyingPartyConfiguration(rpConfig);
+
+        parent.addSubcontext(subcontext);
 
         return subcontext;
     }

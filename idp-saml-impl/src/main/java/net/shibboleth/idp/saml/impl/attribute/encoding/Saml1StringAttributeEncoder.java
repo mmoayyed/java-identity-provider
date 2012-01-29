@@ -31,13 +31,13 @@ import org.opensaml.xml.XMLObject;
 public class Saml1StringAttributeEncoder extends AbstractSaml1AttributeEncoder<String> {
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(Attribute<?> attribute, Object value) {
+    protected boolean canEncodeValue(Attribute attribute, Object value) {
         return value instanceof String;
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(Attribute<?> attribute, String value) throws AttributeEncodingException {
-        return SamlEncoderSupport.encodeStringValue(attribute, org.opensaml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
-                value);
+    protected XMLObject encodeValue(Attribute attribute, String value) throws AttributeEncodingException {
+        return SamlEncoderSupport.encodeStringValue(attribute,
+                org.opensaml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
     }
 }

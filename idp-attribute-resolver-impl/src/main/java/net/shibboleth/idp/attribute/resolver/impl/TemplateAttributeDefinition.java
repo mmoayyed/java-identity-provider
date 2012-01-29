@@ -41,8 +41,11 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
+import org.opensaml.util.collections.CollectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 /**
  * An attribute definition that constructs its values based on the values of its dependencies using the Velocity
@@ -84,6 +87,9 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * @param engine velocity engine used to parse template.
      */
     public synchronized void setVelocityEngine(final VelocityEngine engine) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         velocity = engine;
     }
 
@@ -112,6 +118,9 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * @param template the template we use.
      */
     public synchronized void setTemplateSource(final String template) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         templateSource = StringSupport.trimOrNull(template);
     }
 
@@ -130,6 +139,9 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * @param attributes the attributes.
      */
     public synchronized void setSourceAttributes(final List<String> attributes) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
         Set<String> attributesSet = CollectionSupport.addNonNull(attributes, new HashSet<String>());
         if (attributesSet.isEmpty()) {
             sourceAttributes = Collections.EMPTY_SET;
@@ -195,7 +207,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         final Set<String> unresolvedAttributes = new HashSet<String>(sourceAttributes);
 
         for (ResolverPluginDependency dep : depends) {
-            final Attribute<?> dependentAttribute = dep.getDependentAttribute(resolutionContext);
+            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
             if (null == dependentAttribute) {
                 log.warn("Dependency of TemplateAttribute " + getId() + " returned null dependent attribute");
                 continue;
@@ -237,10 +249,10 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
 
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
-        final Attribute<String> resultantAttribute = new Attribute<String>(getId());
+        final Attribute resultantAttribute = new Attribute(getId());
         final Map<String, Iterator> sourceValues = new LazyMap<String, Iterator>();
         final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
 
@@ -279,6 +291,6 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             }
         }
 
-        return resultantAttribute;
+        return Optional.of(resultantAttribute);
     }
 }

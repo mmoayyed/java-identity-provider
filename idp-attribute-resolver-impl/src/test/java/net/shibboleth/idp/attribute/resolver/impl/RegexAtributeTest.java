@@ -46,8 +46,7 @@ public class RegexAtributeTest {
      * @throws AttributeResolutionException on resolution issues.
      * @throws ComponentInitializationException only if things went bad.
      */
-    @Test
-    public void testRegex() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testRegex() throws AttributeResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -72,7 +71,7 @@ public class RegexAtributeTest {
         resolver.setAttributeDefinition(attributeSet);
         resolver.initialize();
 
-        final AttributeResolutionContext context = new AttributeResolutionContext(null);
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
         Collection f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 

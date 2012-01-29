@@ -19,29 +19,43 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
 
 /** Unit test for {@link BaseResolverPlugin}. */
 public class BaseResolverPluginTest {
 
     /** Test an instantiated object has the proper state. */
-    @Test
-    public void testInstantiation() {
+    @Test public void testInstantiation() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
 
         Assert.assertEquals(plugin.getId(), "foo");
         Assert.assertFalse(plugin.isPropagateResolutionExceptions());
-        Assert.assertNull(plugin.getActivationCriteria());
+        Assert.assertEquals(plugin.getActivationCriteria(), Predicates.alwaysTrue());
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
     }
 
+    /** Test get/set activation criteria. */
+    @Test public void testActivationCriteria() {
+        MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
+
+        plugin.setActivationCriteria(Predicates.<AttributeResolutionContext> alwaysFalse());
+        Assert.assertEquals(plugin.getActivationCriteria(), Predicates.alwaysFalse());
+
+        try {
+            plugin.setActivationCriteria(null);
+            Assert.fail("Able to set a null activiation criteria");
+        } catch (AssertionError e) {
+            // expected this
+        }
+    }
+
     /** Test setters to {@link BaseResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
-    @Test
-    public void testPropogateSetters() {
+    @Test public void testPropogateSetters() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
 
         plugin.setPropagateResolutionExceptions(true);
@@ -54,34 +68,8 @@ public class BaseResolverPluginTest {
         Assert.assertFalse(plugin.isPropagateResolutionExceptions());
     }
 
-    /** Testing setting and evaluating expression conditions. */
-    @Test
-    public void testExpressionCondition() {
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
-
-        MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
-        Assert.assertTrue(plugin.isApplicable(context));
-
-        EvaluableCriterion<AttributeResolutionContext> criteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
-        plugin.setActivationCriteria(criteria);
-        Assert.assertNotNull(plugin.getActivationCriteria());
-        Assert.assertEquals(plugin.getActivationCriteria(), criteria);
-        Assert.assertFalse(plugin.isApplicable(context));
-
-        criteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
-        plugin.setActivationCriteria(criteria);
-        Assert.assertNotNull(plugin.getActivationCriteria());
-        Assert.assertEquals(plugin.getActivationCriteria(), criteria);
-        Assert.assertTrue(plugin.isApplicable(context));
-
-        plugin.setActivationCriteria(null);
-        Assert.assertNull(plugin.getActivationCriteria());
-        Assert.assertTrue(plugin.isApplicable(context));
-    }
-
     /** Test add, removing, setting dependencies. */
-    @Test
-    public void testDependencies() {
+    @Test public void testDependencies() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
 
         plugin.setDependencies(null);
@@ -118,12 +106,12 @@ public class BaseResolverPluginTest {
     }
 
     /** Test {@link BaseResolverPlugin#resolve(AttributeResolutionContext)}. */
-    @Test
-    public void testResolver() throws Exception {
-        AttributeResolutionContext context = new AttributeResolutionContext(null);
+    @Test public void testResolver() throws Exception {
+        AttributeResolutionContext context = new AttributeResolutionContext();
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
+        plugin.initialize();
 
-        Assert.assertEquals(plugin.resolve(context), "bar");
+        Assert.assertEquals(plugin.resolve(context), Optional.fromNullable("bar"));
     }
 
     /**
@@ -133,7 +121,7 @@ public class BaseResolverPluginTest {
     private static final class MockBaseResolverPlugin extends BaseResolverPlugin<String> {
 
         /** Static value return by {@link #doResolve(AttributeResolutionContext)}. */
-        private String resolverValue;
+        private Optional<String> resolverValue;
 
         /**
          * Constructor.
@@ -143,11 +131,12 @@ public class BaseResolverPluginTest {
          */
         public MockBaseResolverPlugin(String id, String value) {
             setId(id);
-            resolverValue = value;
+            resolverValue = Optional.fromNullable(value);
         }
 
         /** {@inheritDoc} */
-        protected String doResolve(AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        protected Optional<String> doResolve(AttributeResolutionContext resolutionContext)
+                throws AttributeResolutionException {
             return resolverValue;
         }
     }

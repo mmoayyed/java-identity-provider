@@ -52,7 +52,7 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeStringValue(final Attribute<?> attribute, final QName attributeValueElementName,
+    public static XMLObject encodeStringValue(final Attribute attribute, final QName attributeValueElementName,
             final String value) {
         if (Strings.isNullOrEmpty(value)) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
@@ -77,7 +77,7 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeByteArrayValue(final Attribute<?> attribute, final QName attributeValueElementName,
+    public static XMLObject encodeByteArrayValue(final Attribute attribute, final QName attributeValueElementName,
             final byte[] value) {
         if (value == null || value.length == 0) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
@@ -102,7 +102,7 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeXmlObjectValue(final Attribute<?> attribute, final QName attributeValueElementName,
+    public static XMLObject encodeXmlObjectValue(final Attribute attribute, final QName attributeValueElementName,
             final XMLObject value) {
         if (value == null) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());

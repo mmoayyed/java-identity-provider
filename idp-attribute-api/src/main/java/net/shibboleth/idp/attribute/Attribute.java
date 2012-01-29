@@ -43,11 +43,9 @@ import com.google.common.base.Objects;
  * 
  * Instances of {@link Attribute} are compared using their IDs. That is, two attributes are considered the same if they
  * have the same ID, regardless of whether their display names, descriptions, values, or encoders are the same.
- * 
- * @param <ValueType> the object type of the values for this attribute
  */
 @NotThreadSafe
-public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
+public class Attribute implements Comparable<Attribute>, Cloneable {
 
     /** ID of this attribute. */
     private final String id;
@@ -59,7 +57,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
     private Map<Locale, String> displayDescriptions;
 
     /** Values for this attribute. */
-    private Collection<ValueType> values;
+    private Set<AttributeValue> values;
 
     /** Encoders that may be used to encode this attribute. */
     private Set<AttributeEncoder<?>> encoders;
@@ -77,7 +75,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
         displayNames = mapBuilder.buildMap();
         displayDescriptions = mapBuilder.buildMap();
 
-        values = new TransformedInputCollectionBuilder<ValueType>().buildList();
+        values = new TransformedInputCollectionBuilder<AttributeValue>().buildSet();
         encoders = new TransformedInputCollectionBuilder<AttributeEncoder<?>>().buildSet();
     }
 
@@ -135,7 +133,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
      * 
      * @return values of the attribute
      */
-    @Nonnull @NonnullElements public Collection<ValueType> getValues() {
+    @Nonnull @NonnullElements public Set<AttributeValue> getValues() {
         return values;
     }
 
@@ -144,7 +142,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
      * 
      * @param newValues the new values for this attribute
      */
-    public void setValues(@Nullable @NullableElements final Collection<ValueType> newValues) {
+    public void setValues(@Nullable @NullableElements final Collection<? extends AttributeValue> newValues) {
         values = new TransformedInputCollectionBuilder().addAll(newValues).buildSet();
     }
 
@@ -177,12 +175,13 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
      * 
      * {@inheritDoc}
      */
-    public Attribute clone() {
+    @Nonnull public Attribute clone() {
         try {
             Attribute clone = (Attribute) super.clone();
             clone.setDisplayDescriptions(getDisplayDescriptions());
             clone.setDisplayNames(getDisplayNames());
             clone.setEncoders(getEncoders());
+            // TODO(lajoie): should we clone the values?
             clone.setValues(getValues());
             return clone;
         } catch (CloneNotSupportedException e) {
@@ -215,7 +214,7 @@ public class Attribute<ValueType> implements Comparable<Attribute>, Cloneable {
     }
 
     /** {@inheritDoc} */
-    public String toString() {
+    @Nonnull public String toString() {
         return Objects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
                 .add("displayDescriptions", displayDescriptions).add("encoders", encoders).toString();
     }
