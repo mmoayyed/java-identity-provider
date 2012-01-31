@@ -34,7 +34,7 @@ import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Conditions;
 import org.opensaml.saml2.core.OneTimeUse;
 import org.opensaml.saml2.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -68,7 +68,7 @@ public class AddOneTimeUseConditionToAssertions extends AbstractIdentityProvider
         }
 
         final SAMLObjectBuilder<OneTimeUse> conditionBuilder =
-                (SAMLObjectBuilder<OneTimeUse>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<OneTimeUse>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         OneTimeUse.TYPE_NAME);
 
         Conditions conditions;

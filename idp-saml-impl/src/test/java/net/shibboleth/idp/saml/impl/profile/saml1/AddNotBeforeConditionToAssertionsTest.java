@@ -28,7 +28,7 @@ import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -115,7 +115,7 @@ public class AddNotBeforeConditionToAssertionsTest {
     @Test
     public void testSingleAssertionWithExistingConditions() throws Exception {
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
 
         Assertion assertion = Saml1ActionTestingSupport.buildAssertion();

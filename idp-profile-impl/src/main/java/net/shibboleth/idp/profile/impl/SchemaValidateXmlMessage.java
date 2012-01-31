@@ -32,7 +32,7 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
@@ -124,7 +124,7 @@ public class SchemaValidateXmlMessage extends AbstractIdentityProviderAction<XML
             return requestDom.getOwnerDocument();
         }
 
-        final Marshaller marshaller = Configuration.getMarshallerFactory().getMarshaller(request);
+        final Marshaller marshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(request);
         if (marshaller == null) {
             log.debug("Action {}: No marshaller available for incoming request {}", getId(), request.getElementQName());
             throw new InvalidInboundMessageException("No marshaller available for incoming request");

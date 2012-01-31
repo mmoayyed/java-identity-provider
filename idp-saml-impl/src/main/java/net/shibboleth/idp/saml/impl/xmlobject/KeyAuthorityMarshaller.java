@@ -25,7 +25,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.xml.io.MarshallingException;
@@ -50,7 +50,7 @@ public class KeyAuthorityMarshaller extends AbstractXMLObjectMarshaller {
             attr = AttributeSupport.constructAttribute(domElement.getOwnerDocument(), entry.getKey());
             attr.setValue(entry.getValue());
             domElement.setAttributeNodeNS(attr);
-            if (Configuration.isIDAttribute(entry.getKey())
+            if (XMLObjectProviderRegistrySupport.isIDAttribute(entry.getKey())
                     || keyAuthority.getUnknownAttributes().isIDAttribute(entry.getKey())) {
                 attr.getOwnerElement().setIdAttributeNode(attr, true);
             }

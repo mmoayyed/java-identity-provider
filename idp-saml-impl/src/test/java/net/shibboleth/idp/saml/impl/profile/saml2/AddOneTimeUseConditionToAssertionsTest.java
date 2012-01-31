@@ -29,7 +29,7 @@ import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Conditions;
 import org.opensaml.saml2.core.OneTimeUse;
 import org.opensaml.saml2.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -116,11 +116,11 @@ public class AddOneTimeUseConditionToAssertionsTest {
     @Test
     public void testSingleAssertionWithExistingCondition() throws Exception {
         SAMLObjectBuilder<OneTimeUse> conditionBuilder =
-                (SAMLObjectBuilder<OneTimeUse>) Configuration.getBuilderFactory().getBuilder(OneTimeUse.TYPE_NAME);
+                (SAMLObjectBuilder<OneTimeUse>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(OneTimeUse.TYPE_NAME);
         OneTimeUse condition = conditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getConditions().add(condition);
 

@@ -29,7 +29,7 @@ import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.DoNotCacheCondition;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -117,12 +117,12 @@ public class AddDoNotCacheConditionToAssertionsTest {
     @Test
     public void testSingleAssertionWithExistingCondition() throws Exception {
         SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
-                (SAMLObjectBuilder<DoNotCacheCondition>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<DoNotCacheCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         DoNotCacheCondition.TYPE_NAME);
         DoNotCacheCondition dncCondition = dncConditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getDoNotCacheConditions().add(dncCondition);
 
@@ -153,12 +153,12 @@ public class AddDoNotCacheConditionToAssertionsTest {
     @Test
     public void testSingleAssertionWithExistingDoNotCacheCondition() throws Exception {
         SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
-                (SAMLObjectBuilder<DoNotCacheCondition>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<DoNotCacheCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         DoNotCacheCondition.TYPE_NAME);
         DoNotCacheCondition dncCondition = dncConditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getDoNotCacheConditions().add(dncCondition);
 

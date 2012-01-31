@@ -44,7 +44,7 @@ import org.opensaml.saml1.core.Request;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Subject;
 import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 
 /**
  * Helper methods for creating/testing SAML 1 objects within profile action tests. When methods herein refer to mock
@@ -132,7 +132,7 @@ public final class Saml1ActionTestingSupport {
      */
     public static Response buildResponse() {
         final SAMLObjectBuilder<Response> responseBuilder =
-                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<Response>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         Response.DEFAULT_ELEMENT_NAME);
 
         final Response response = responseBuilder.buildObject();
@@ -151,7 +151,7 @@ public final class Saml1ActionTestingSupport {
      */
     public static Assertion buildAssertion() {
         final SAMLObjectBuilder<Assertion> assertionBuilder =
-                (SAMLObjectBuilder<Assertion>) Configuration.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
+                (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
 
         final Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(ASSERTION_ID);
@@ -171,12 +171,12 @@ public final class Saml1ActionTestingSupport {
      */
     public static Subject buildSubject(final @Nullable String principalName) {
         final SAMLObjectBuilder<Subject> subjectBuilder =
-                (SAMLObjectBuilder<Subject>) Configuration.getBuilderFactory().getBuilder(Subject.TYPE_NAME);
+                (SAMLObjectBuilder<Subject>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Subject.TYPE_NAME);
         final Subject subject = subjectBuilder.buildObject();
 
         if (principalName != null) {
             final SAMLObjectBuilder<NameIdentifier> nameIdBuilder =
-                    (SAMLObjectBuilder<NameIdentifier>) Configuration.getBuilderFactory().getBuilder(
+                    (SAMLObjectBuilder<NameIdentifier>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                             NameIdentifier.TYPE_NAME);
             final NameIdentifier nameId = nameIdBuilder.buildObject();
             nameId.setNameIdentifier(principalName);
@@ -196,7 +196,7 @@ public final class Saml1ActionTestingSupport {
      */
     public static Request buildAttributeQueryRequest(final @Nullable Subject subject) {
         final SAMLObjectBuilder<AttributeQuery> queryBuilder =
-                (SAMLObjectBuilder<AttributeQuery>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<AttributeQuery>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         AttributeQuery.TYPE_NAME);
         final AttributeQuery query = queryBuilder.buildObject();
 
@@ -205,7 +205,7 @@ public final class Saml1ActionTestingSupport {
         }
 
         SAMLObjectBuilder<Request> requestBuilder =
-                (SAMLObjectBuilder<Request>) Configuration.getBuilderFactory().getBuilder(Request.DEFAULT_ELEMENT_NAME);
+                (SAMLObjectBuilder<Request>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Request.DEFAULT_ELEMENT_NAME);
         Request request = requestBuilder.buildObject();
         request.setID(REQUEST_ID);
         request.setIssueInstant(new DateTime(0));

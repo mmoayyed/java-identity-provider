@@ -33,7 +33,7 @@ import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -119,7 +119,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
         }
 
         final SAMLObjectBuilder<AuthenticationStatement> statementBuilder =
-                (SAMLObjectBuilder<AuthenticationStatement>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<AuthenticationStatement>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         AuthenticationStatement.TYPE_NAME);
 
         final AuthenticationStatement statement = statementBuilder.buildObject();

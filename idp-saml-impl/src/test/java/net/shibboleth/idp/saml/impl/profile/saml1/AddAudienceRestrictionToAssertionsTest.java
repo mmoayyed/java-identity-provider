@@ -29,7 +29,7 @@ import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AudienceRestrictionCondition;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -117,12 +117,12 @@ public class AddAudienceRestrictionToAssertionsTest {
     @Test
     public void testSingleAssertionWithExistingCondition() throws Exception {
         SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                (SAMLObjectBuilder<AudienceRestrictionCondition>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         AudienceRestrictionCondition.TYPE_NAME);
         AudienceRestrictionCondition condition = conditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getAudienceRestrictionConditions().add(condition);
 
@@ -153,12 +153,12 @@ public class AddAudienceRestrictionToAssertionsTest {
     @Test
     public void testSingleAssertionWithExistingDoNotCondition() throws Exception {
         SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                (SAMLObjectBuilder<AudienceRestrictionCondition>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         AudienceRestrictionCondition.TYPE_NAME);
         AudienceRestrictionCondition condition = conditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getAudienceRestrictionConditions().add(condition);
 

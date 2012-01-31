@@ -28,7 +28,7 @@ import org.opensaml.common.SAMLVersion;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public final class Saml1ActionSupport {
             @Nonnull final RelyingPartySubcontext relyingPartyContext, @Nonnull final Response response) {
 
         final SAMLObjectBuilder<Assertion> assertionBuilder =
-                (SAMLObjectBuilder<Assertion>) Configuration.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
+                (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
 
         final SecurityConfiguration securityConfig = relyingPartyContext.getProfileConfig().getSecurityConfiguration();
 
@@ -94,7 +94,7 @@ public final class Saml1ActionSupport {
         Conditions conditions = assertion.getConditions();
         if (conditions == null) {
             final SAMLObjectBuilder<Conditions> conditionsBuilder =
-                    (SAMLObjectBuilder<Conditions>) Configuration.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                    (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
             conditions = conditionsBuilder.buildObject();
             assertion.setConditions(conditions);
             getLogger().debug("Action {}: Assertion {} did not already contain a Conditions, one was added",

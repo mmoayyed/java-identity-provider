@@ -41,7 +41,7 @@ import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AttributeStatement;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -142,7 +142,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
         }
 
         SAMLObjectBuilder<AttributeStatement> statementBuilder =
-                (SAMLObjectBuilder<AttributeStatement>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<AttributeStatement>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         AttributeStatement.TYPE_NAME);
 
         AttributeStatement statement = statementBuilder.buildObject();

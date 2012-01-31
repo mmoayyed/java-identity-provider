@@ -37,7 +37,7 @@ import org.opensaml.saml1.core.Audience;
 import org.opensaml.saml1.core.AudienceRestrictionCondition;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -91,7 +91,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
         final AudienceRestrictionCondition condition;
         if (conditions.getAudienceRestrictionConditions().isEmpty()) {
             final SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                    (SAMLObjectBuilder<AudienceRestrictionCondition>) Configuration.getBuilderFactory().getBuilder(
+                    (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                             AudienceRestrictionCondition.TYPE_NAME);
             log.debug("Action {}: Conditions did not contain an AudienceRestrictionCondition, adding one", getId());
             condition = conditionBuilder.buildObject();
@@ -102,7 +102,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
         }
 
         final SAMLObjectBuilder<Audience> audienceBuilder =
-                (SAMLObjectBuilder<Audience>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<Audience>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         Audience.DEFAULT_ELEMENT_NAME);
 
         log.debug("Action {}: Adding {} as an Audience of the AudienceRestrictionCondition", getId(),

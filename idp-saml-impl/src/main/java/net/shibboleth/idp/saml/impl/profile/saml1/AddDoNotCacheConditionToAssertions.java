@@ -34,7 +34,7 @@ import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.DoNotCacheCondition;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -68,7 +68,7 @@ public class AddDoNotCacheConditionToAssertions extends AbstractIdentityProvider
         }
 
         final SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
-                (SAMLObjectBuilder<DoNotCacheCondition>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<DoNotCacheCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         DoNotCacheCondition.TYPE_NAME);
 
         Conditions conditions;

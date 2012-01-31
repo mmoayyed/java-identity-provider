@@ -36,7 +36,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Status;
 import org.opensaml.saml1.core.StatusCode;
-import org.opensaml.xml.Configuration;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -67,11 +67,11 @@ public class AddResponseShell extends AbstractIdentityProviderAction<Object, Res
                 ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
 
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =
-                (SAMLObjectBuilder<StatusCode>) Configuration.getBuilderFactory().getBuilder(StatusCode.TYPE_NAME);
+                (SAMLObjectBuilder<StatusCode>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(StatusCode.TYPE_NAME);
         final SAMLObjectBuilder<Status> statusBuilder =
-                (SAMLObjectBuilder<Status>) Configuration.getBuilderFactory().getBuilder(Status.TYPE_NAME);
+                (SAMLObjectBuilder<Status>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Status.TYPE_NAME);
         final SAMLObjectBuilder<Response> responseBuilder =
-                (SAMLObjectBuilder<Response>) Configuration.getBuilderFactory().getBuilder(
+                (SAMLObjectBuilder<Response>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
                         Response.DEFAULT_ELEMENT_NAME);
 
         final StatusCode statusCode = statusCodeBuilder.buildObject();
