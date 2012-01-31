@@ -28,13 +28,13 @@ import java.util.Random;
 import java.util.UUID;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 
 import org.joda.time.DateTime;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.xml.ConfigurationException;
-import org.opensaml.xml.parse.BasicParserPool;
 import org.testng.annotations.DataProvider;
 
 import edu.vt.middleware.crypt.digest.SHA256;
