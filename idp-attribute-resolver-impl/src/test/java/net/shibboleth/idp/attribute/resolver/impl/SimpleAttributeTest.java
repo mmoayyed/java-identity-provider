@@ -45,8 +45,7 @@ public class SimpleAttributeTest {
      * @throws AttributeResolutionException if resolution failed.
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test
-    public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
         simple.initialize();
@@ -61,8 +60,7 @@ public class SimpleAttributeTest {
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test
-    public void testDataConnector() throws ComponentInitializationException {
+    @Test public void testDataConnector() throws ComponentInitializationException {
 
         // Set the dependency on the data connector
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
@@ -81,7 +79,8 @@ public class SimpleAttributeTest {
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(simple);
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
 
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
@@ -106,8 +105,7 @@ public class SimpleAttributeTest {
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test
-    public void testAttribute() throws ComponentInitializationException {
+    @Test public void testAttribute() throws ComponentInitializationException {
 
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
@@ -124,7 +122,8 @@ public class SimpleAttributeTest {
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
         resolver.setAttributeDefinition(am);
         resolver.initialize();
 
@@ -148,8 +147,7 @@ public class SimpleAttributeTest {
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test
-    public void testBoth() throws ComponentInitializationException {
+    @Test public void testBoth() throws ComponentInitializationException {
 
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
@@ -170,7 +168,8 @@ public class SimpleAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver("foo");
+        final AttributeResolver resolver = new AttributeResolver();
+        resolver.setId("foo");
 
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);

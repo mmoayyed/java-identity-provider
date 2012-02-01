@@ -18,18 +18,20 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -127,6 +129,8 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
+        // TODO check have dependencies
+
         templateName = "shibboleth.resolver.ad." + this.getClass().getName() + getId();
 
         if (null == templateSource) {
@@ -152,7 +156,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             throws AttributeResolutionException {
 
         final Attribute resultantAttribute = new Attribute(getId());
-        final Map<String, Iterator> sourceValues = new LazyMap<String, Iterator>();
+        final Map<String, Iterator<AttributeValue>> sourceValues = new LazyMap<String, Iterator<AttributeValue>>();
         final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
 
         if (null == getDependencies()) {
@@ -179,12 +183,11 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                 Template template;
                 template = velocity.getTemplate(templateName);
                 template.merge(vCtx, output);
-                resultantAttribute.addValue(output.toString());
+                resultantAttribute.getValues().add(new StringAttributeValue(output.toString()));
 
             } catch (Exception e) {
-                //
-                // Yup, Velocity throws Exception....
-                //
+                // TODO(lajoie) catch something other than exception
+
                 log.error("Unable to populate " + templateName + " template", e);
                 throw new AttributeResolutionException("Unable to evaluate template", e);
             }
@@ -192,7 +195,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
         return Optional.of(resultantAttribute);
     }
-    
+
     /**
      * Set up a map which can be used to populate the template. The key is the attribute name and the value is the
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
@@ -207,36 +210,25 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * @throws AttributeResolutionException if there is a mismatched count of attributes
      */
     private int countAndSetupSourceValues(final AttributeResolutionContext resolutionContext,
-            Map<String, Iterator> sourceValues) throws AttributeResolutionException {
-        int valueCount = -1;
-        final Set<ResolverPluginDependency> depends = getDependencies();
-        final Set<String> unresolvedAttributes = new HashSet<String>(sourceAttributes);
+            Map<String, Iterator<AttributeValue>> sourceValues) throws AttributeResolutionException {
 
-        for (ResolverPluginDependency dep : depends) {
-            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            if (null == dependentAttribute) {
-                log.warn("Dependency of TemplateAttribute " + getId() + " returned null dependent attribute");
-                continue;
-            }
-            if (!sourceAttributes.contains(dependentAttribute.getId())) {
-                log.info("Dependent atribute " + dependentAttribute.getId()
-                        + " not a source attribute for template attribute definition " + getId());
-                continue;
-            }
+        final Map<String, Set<AttributeValue>> dependencyAttributes =
+                PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
+        
+        final int valueCount = dependencyAttributes.values().iterator().next().size();
 
-            // Take from the input list
-            unresolvedAttributes.remove(dependentAttribute.getId());
-
-            // And add the values to the output list
-            final Collection<?> values = dependentAttribute.getValues();
-            if (null == values) {
-                log.warn("Dependency " + dependentAttribute.getId() + " of TemplateAttribute " + getId()
-                        + "returned null value set");
-                continue;
+        HashSet<String> attributeValues;
+        for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
+            attributeValues = new HashSet<String>();
+            for(AttributeValue value : dependencyAttribute.getValue()){
+                if(value instanceof StringAttributeValue){
+                    attributeValues.add((String)value.getValue());
+                }else{
+                    //TODO throw exception
+                }
             }
-            if (valueCount == -1) {
-                valueCount = values.size();
-            } else if (valueCount != values.size()) {
+            
+            if (attributeValues.size() != valueCount) {
                 final String msg =
                         "All attributes used in TemplateAttributeDefinition " + getId()
                                 + " must have the same number of values.";
@@ -244,12 +236,9 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                 throw new AttributeResolutionException(msg);
             }
 
-            sourceValues.put(dependentAttribute.getId(), values.iterator());
+            sourceValues.put(dependencyAttribute.getKey(), dependencyAttribute.getValue().iterator());
         }
-        if (!unresolvedAttributes.isEmpty()) {
-            log.warn("Dependant attributes {} not used by TemplateAttributeDefinition {}",
-                    unresolvedAttributes.toArray(), getId());
-        }
+
         return valueCount;
     }
 }

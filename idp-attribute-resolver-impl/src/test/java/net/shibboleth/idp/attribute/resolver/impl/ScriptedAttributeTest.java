@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -65,39 +66,6 @@ public class ScriptedAttributeTest {
             + ".addValue(child);\n";
 
     /**
-     * Test Invalid syntax.
-     * 
-     * @throws ComponentInitializationException only if bad things happens
-     */
-    @Test public void testInvalid() throws ComponentInitializationException {
-
-        boolean threw = false;
-
-        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
-        attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScriptLanguage("COBOL");
-        attr.setScript(TEST_SIMPLE_SCRIPT);
-        try {
-            attr.initialize();
-        } catch (ComponentInitializationException e) {
-            threw = true;
-        }
-        Assert.assertTrue(threw, "invalid language threw a initialization  error");
-
-        threw = false;
-        attr.setScriptLanguage(SCRIPT_LANGUAGE);
-        attr.setScript("badSyntox.");
-        attr.initialize();
-        try {
-            attr.doAttributeResolution(new AttributeResolutionContext());
-        } catch (AttributeResolutionException e) {
-            threw = true;
-        }
-        Assert.assertTrue(threw, "bad syntax threw a initialization error");
-
-    }
-
-    /**
      * Test resolution of an simple script (statically generated data).
      * 
      * @throws AttributeResolutionException
@@ -111,8 +79,7 @@ public class ScriptedAttributeTest {
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScriptLanguage(SCRIPT_LANGUAGE);
-        attr.setScript(TEST_SIMPLE_SCRIPT);
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT));
         attr.initialize();
 
         final Attribute val = attr.doAttributeResolution(new AttributeResolutionContext());
@@ -136,8 +103,7 @@ public class ScriptedAttributeTest {
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScriptLanguage(SCRIPT_LANGUAGE);
-        scripted.setScript(TEST_ATTRIBUTES_SCRIPT);
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_ATTRIBUTES_SCRIPT));
         scripted.setDependencies(ds);
         scripted.initialize();
 
@@ -185,8 +151,7 @@ public class ScriptedAttributeTest {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScriptLanguage(SCRIPT_LANGUAGE);
-        scripted.setScript(TEST_REQUEST_SCRIPT);
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_REQUEST_SCRIPT));
         scripted.setDependencies(ds);
         scripted.initialize();
 
