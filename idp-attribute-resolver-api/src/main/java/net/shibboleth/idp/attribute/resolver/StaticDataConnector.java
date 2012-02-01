@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
-import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import com.google.common.base.Optional;
@@ -54,7 +52,7 @@ public class StaticDataConnector extends BaseDataConnector {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        values = newValues;
+        values = new HashMap<String, Attribute>(newValues);
     }
 
     /**

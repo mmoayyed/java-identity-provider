@@ -17,17 +17,19 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -89,31 +91,20 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
             log.info("ScopedAttribute definition " + getId() + " had no dependencies");
             return null;
         }
+        final Set<AttributeValue> dependencyValues =
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
-        final Collection<ScopedStringAttributeValue> resultingValues = new LazySet<ScopedStringAttributeValue>();
-        for (ResolverPluginDependency dep : depends) {
-
-            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            if (null == dependentAttribute) {
-                log.error("Dependency of ScopedAttribute " + getId() + " returned null dependent attribute");
-                continue;
+        final Set<ScopedStringAttributeValue> resultingValues = new HashSet<ScopedStringAttributeValue>();
+        for (AttributeValue dependencyValue : dependencyValues) {
+            if (!(dependencyValue instanceof StringAttributeValue)) {
+                throw new AttributeResolutionException(
+                        "This attribute definition only operates on attribute values of type "
+                                + StringAttributeValue.class.getName());
             }
 
-            final Collection<?> values = dependentAttribute.getValues();
-            if (null == values) {
-                log.error("Dependency " + dependentAttribute.getId() + " of ScopedAttribute " + getId()
-                        + "returned null value set");
-                continue;
-            }
-            if (values.isEmpty()) {
-                log.debug("Dependency " + dependentAttribute.getId() + " of ScopedAttribute " + getId()
-                        + "returned no values, skipping");
-                continue;
-            }
-            for (Object value : values) {
-                resultingValues.add(new ScopedStringAttributeValue(value.toString(), scope));
-            }
+            resultingValues.add(new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
         }
+
         if (resultingValues.isEmpty()) {
             log.debug("Scoped definition " + getId() + " returned no values");
         }

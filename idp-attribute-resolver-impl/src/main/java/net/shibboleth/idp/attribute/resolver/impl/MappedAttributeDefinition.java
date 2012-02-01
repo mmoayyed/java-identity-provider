@@ -18,25 +18,31 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.collections.CollectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * Implementation of Mapped Attributes.
@@ -52,179 +58,88 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
 
-    /** Default return value. */
-    private String defaultValue;
-
-    /** Whether the definition passes thru unmatched values. */
-    private boolean passThru;
-
     /** Value maps. */
-    private Collection<ValueMap> valueMaps;
+    private Collection<ValueMapping> valueMappings;
 
     /**
-     * Set the value maps. Cannot be called after initialization.
+     * Gets the functions used to map an input value to an output value.
      * 
-     * @param maps the value maps to apply
+     * @return functions used to map an input value to an output value
      */
+    @Nonnull @NonnullElements @Unmodifiable public Collection<ValueMapping> getValueMappings() {
+        return valueMappings;
+    }
 
-    public synchronized void setValueMaps(final Collection<ValueMap> maps) {
+    /**
+     * Sets the functions used to map an input value to an output value.
+     * 
+     * @param mappings functions used to map an input value to an output value
+     */
+    public synchronized void setValueMappings(@Nullable @NullableElements final Collection<ValueMapping> mappings) {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        final Set<ValueMap> working = CollectionSupport.addNonNull(maps, new LazySet<ValueMap>());
+        valueMappings = ImmutableList.copyOf(Iterables.filter(mappings, Predicates.notNull()));
+    }
 
-        if (working.isEmpty()) {
-            log.info("Mapped Attribute definition " + getId() + " empty map supplied");
-            valueMaps = Collections.EMPTY_SET;
-        } else {
-            valueMaps = Collections.unmodifiableSet(working);
+    /** {@inheritDoc} */
+    @Nonnull protected Optional<Attribute> doAttributeResolution(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert resolutionContext != null : "Attribute resolution context can not be null";
+
+        ifNotInitializedThrowUninitializedComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
+        final Set<AttributeValue> unmappedResults =
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+        log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
+
+        // Bucket for results
+        final Attribute resultAttribute = new Attribute(getId());
+
+        Optional<String> mappingResult;
+        for (AttributeValue unmappedValue : unmappedResults) {
+            if (!(unmappedValue instanceof StringAttributeValue)) {
+                // TODO probably make this a specific exception type
+                throw new AttributeResolutionException("Attribute definition '" + getId()
+                        + "' does not support dependency values of type " + unmappedValue.getClass().getName());
+            }
+
+            for (ValueMapping function : valueMappings) {
+                mappingResult = function.apply((String) unmappedValue.getValue());
+                if (mappingResult.isPresent()) {
+                    log.debug("Attribuge definition '{}' mapped value '{}' to '{}'", new Object[] {getId(),
+                            unmappedValue.getValue(), mappingResult.get(),});
+                    resultAttribute.getValues().add(new StringAttributeValue(mappingResult.get()));
+                } else {
+                    log.debug("Attribuge definition '{}' was unable to map value '{}' to another value", getId(),
+                            unmappedValue.getValue());
+                }
+            }
         }
+
+        return Optional.of(resultAttribute);
     }
 
-    /**
-     * Access to our value maps.
-     * 
-     * @return the value maps we were initialised with (never null after initialization, always normalized and
-     *         unmodifiable).
-     */
-    public Collection<ValueMap> getValueMaps() {
-        return valueMaps;
-    }
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        valueMappings = null;
 
-    /**
-     * Set the default value. Cannot be called after initialization.
-     * 
-     * @param defaultVal the default value to apply (if any)
-     */
-    public synchronized void setDefaultValue(final String defaultVal) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        defaultValue = StringSupport.trimOrNull(defaultVal);
-    }
-
-    /**
-     * Gets the default return value.
-     * 
-     * @return the default return value. Can be null but can never be "";
-     */
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    /**
-     * Set the pass through value. Cannot be called after initialization.
-     * 
-     * @param passThruParm whether to pass unmatched values through or not.
-     */
-    public synchronized void setPassThru(final boolean passThruParm) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        passThru = passThruParm;
-    }
-
-    /**
-     * Returns whether passThru is set for this version of this resolver. Defaults to false.
-     * 
-     * @return the value of passThru.
-     */
-    public boolean getPassThru() {
-        return passThru;
+        super.doDestroy();
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == valueMaps) {
-            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
-                    + " is being initialized, without value maps being set");
+        if (getDependencies() == null || getDependencies().isEmpty()) {
+            throw new ComponentInitializationException("No dependecies have been specified for attribute definition "
+                    + getId());
         }
-        // Check configuration
-        if (passThru && !Strings.isNullOrEmpty(defaultValue)) {
-            throw new ComponentInitializationException("Mapped Attribute definition " + getId()
-                    + ") must not have a DefaultValue string with passThru enabled.");
+
+        if (valueMappings == null || valueMappings.isEmpty()) {
+            throw new ComponentInitializationException("No value mapping have been specified for attribute definition "
+                    + getId());
         }
     }
-
-    /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        final Set<ResolverPluginDependency> depends = getDependencies();
-        if (null == depends) {
-            return null;
-        }
-
-        final Collection<Object> unmappedResults = new LazySet<Object>();
-        for (ResolverPluginDependency dep : depends) {
-            Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            if (null != dependentAttribute) {
-                CollectionSupport.addNonNull(dependentAttribute.getValues(), unmappedResults);
-            }
-        }
-
-        // Bucket for results
-        final Attribute resultAttribute = new Attribute(getId());
-
-        if (unmappedResults.isEmpty()) {
-            log.debug("Attribute Definition {}: No values from dependency attributes", getId());
-            if (null != getDefaultValue()) {
-                log.debug("Attribute Definition {}: Default value "
-                        + "is not empty, adding it as the value for this attribute", getId());
-                resultAttribute.getValues().add(getDefaultValue());
-            }
-            return Optional.of(resultAttribute);
-        }
-
-        final Collection<Object> mappedValues = new LazySet<Object>();
-        for (Object o : unmappedResults) {
-            if (o == null) {
-                log.debug("Attribute Definition {}: null attribute value, skipping it", getId());
-                continue;
-            }
-            Set<String> mappedValuesThisObject = mapValue(o.toString());
-            mappedValues.addAll(mappedValuesThisObject);
-        }
-
-        resultAttribute.setValues(mappedValues);
-        return Optional.of(resultAttribute);
-    }
-
-    /**
-     * Maps the value from a dependency in to the value(s) for this attribute.
-     * 
-     * @param value the value from the dependency
-     * 
-     * @return the set of attribute values that the given dependency value maps in to
-     */
-    protected Set<String> mapValue(final String value) {
-        log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
-
-        final LazySet<String> mappedValues = new LazySet<String>();
-        boolean valueMapMatch = false;
-
-        if (!Strings.isNullOrEmpty(value)) {
-            for (ValueMap valueMap : valueMaps) {
-                mappedValues.addAll(valueMap.evaluate(value));
-                if (!mappedValues.isEmpty()) {
-                    valueMapMatch = true;
-                }
-            }
-
-            if (!valueMapMatch) {
-                if (passThru) {
-                    mappedValues.add(value);
-                } else if (getDefaultValue() != null) {
-                    mappedValues.add(getDefaultValue());
-                }
-            }
-        }
-
-        log.debug("Attribute Definition {}: mapped depdenency attribute value {} to the values {}", new Object[] {
-                getId(), value, mappedValues,});
-
-        return mappedValues;
-    }
-
 }

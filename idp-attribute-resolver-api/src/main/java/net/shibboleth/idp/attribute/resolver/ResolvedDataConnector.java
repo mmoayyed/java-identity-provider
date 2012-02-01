@@ -117,6 +117,15 @@ public final class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /**
+     * Gets the resolved attributes.
+     * 
+     * @return the resolved attributes
+     */
+    @Nonnull public Optional<Map<String, Attribute>> getResolvedAttributes() {
+        return resolvedAttributes;
+    }
+
+    /**
      * Gets the wrapped data connector that was resolved.
      * 
      * @return the resolved data connector

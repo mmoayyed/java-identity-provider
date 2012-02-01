@@ -51,7 +51,7 @@ public class SimpleAttributeTest {
         simple.setId(TEST_ATTRIBUTE_NAME);
         simple.initialize();
 
-        final Attribute result = simple.doAttributeResolution(null);
+        final Attribute result = simple.doAttributeResolution();
 
         Assert.assertNotNull(result.getValues());
     }
@@ -81,8 +81,7 @@ public class SimpleAttributeTest {
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(simple);
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
+        final AttributeResolver resolver = new AttributeResolver("foo");
 
         resolver.setDataConnectors(connectorSet);
         resolver.setAttributeDefinition(attributeSet);
@@ -125,8 +124,7 @@ public class SimpleAttributeTest {
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
+        final AttributeResolver resolver = new AttributeResolver("foo");
         resolver.setAttributeDefinition(am);
         resolver.initialize();
 
@@ -172,8 +170,7 @@ public class SimpleAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
+        final AttributeResolver resolver = new AttributeResolver("foo");
 
         resolver.setDataConnectors(dataDefinitions);
         resolver.setAttributeDefinition(attrDefinitions);

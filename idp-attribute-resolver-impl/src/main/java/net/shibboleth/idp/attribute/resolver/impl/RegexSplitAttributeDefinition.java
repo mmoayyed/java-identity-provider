@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,11 +25,13 @@ import java.util.regex.PatternSyntaxException;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -140,28 +142,28 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
         if (null == depends) {
             return null;
         }
+        final Set<AttributeValue> dependencyValues =
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
-        final Collection<Object> results = new LazySet<Object>();
-        for (ResolverPluginDependency dep : depends) {
-            Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            if (null != dependentAttribute) {
-                for (Object value : dependentAttribute.getValues()) {
-                    if (value instanceof String) {
-                        final Matcher matcher = compiledRegExp.matcher((String) value);
-                        if (matcher.matches()) {
-                            results.add(matcher.group(1));
-                        } else {
-                            log.debug("Resolver {}: Value {} did not result in any values"
-                                    + " when split by regular expression {}", value,
-                                    new Object[] {getId(), regExp.toString(), regExp.toString(),});
-                        }
-                    } else {
-                        log.info("Ignoring non-string attribute value");
-                    }
-                }
+        final Set<StringAttributeValue> results = new HashSet<StringAttributeValue>();
+        for (AttributeValue dependencyValue : dependencyValues) {
+            if (!(dependencyValue instanceof StringAttributeValue)) {
+                throw new AttributeResolutionException(
+                        "This attribute definition only operates on attribute values of type "
+                                + StringAttributeValue.class.getName());
+            }
+
+            final Matcher matcher = compiledRegExp.matcher((String) dependencyValue.getValue());
+            if (matcher.matches()) {
+                results.add(new StringAttributeValue(matcher.group(1)));
+            } else {
+                log.debug(
+                        "Resolver {}: Value {} did not result in any values" + " when split by regular expression {}",
+                        dependencyValue.getValue(), new Object[] {getId(), regExp.toString(), regExp.toString(),});
             }
         }
-        Attribute resultantAttribute = new Attribute(getId());
+
+        final Attribute resultantAttribute = new Attribute(getId());
         resultantAttribute.setValues(results);
         return Optional.of(resultantAttribute);
     }

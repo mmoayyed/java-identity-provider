@@ -19,10 +19,8 @@ package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +39,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
 import org.apache.velocity.runtime.resource.util.StringResourceRepository;
-import org.opensaml.util.collections.CollectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,13 +70,6 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** Template that produces the attribute value. */
     private String templateSource;
-
-    /**
-     * IDs of the attributes used in this composite.
-     * 
-     * This is checked against dependencies
-     */
-    private Set<String> sourceAttributes;
 
     /**
      * Set the engine to use.
@@ -133,32 +123,6 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         return templateSource;
     }
 
-    /**
-     * Set the attributes we will use/.
-     * 
-     * @param attributes the attributes.
-     */
-    public synchronized void setSourceAttributes(final List<String> attributes) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        Set<String> attributesSet = CollectionSupport.addNonNull(attributes, new HashSet<String>());
-        if (attributesSet.isEmpty()) {
-            sourceAttributes = Collections.EMPTY_SET;
-        } else {
-            sourceAttributes = Collections.unmodifiableSet(attributesSet);
-        }
-    }
-
-    /**
-     * Access the source attribute names used by this template.
-     * 
-     * @return the attribute names.
-     */
-    public Set<String> getSourceAttributes() {
-        return sourceAttributes;
-    }
-
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -174,10 +138,6 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                     + " is being initialized without and engine being supplied");
         }
 
-        if (sourceAttributes.isEmpty()) {
-            log.info("Template attribute: " + getId() + " has no attributes supplied.");
-        }
-
         // Register the template
         final StringResourceRepository repository = StringResourceLoader.getRepository();
         if (null != repository.getStringResource(templateName)) {
@@ -187,6 +147,52 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         repository.putStringResource(templateName, templateSource);
     }
 
+    /** {@inheritDoc} */
+    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+            throws AttributeResolutionException {
+
+        final Attribute resultantAttribute = new Attribute(getId());
+        final Map<String, Iterator> sourceValues = new LazyMap<String, Iterator>();
+        final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
+
+        if (null == getDependencies()) {
+            log.info("TemplateAttribute definition " + getId() + " had no dependencies");
+            return null;
+        }
+
+        // build velocity context
+        VelocityContext vCtx = new VelocityContext();
+        vCtx.put("requestContext", resolutionContext);
+        for (int i = 0; i < valueCount; i++) {
+            // Setup the attributes for this time around
+            for (String attributeId : sourceValues.keySet()) {
+                final Object value = sourceValues.get(attributeId).next();
+                log.debug("TemplateAttribute definition {} iteration {}; attribute {} has value {}", new Object[] {
+                        getId(), i + 1, attributeId, value.toString(),});
+                vCtx.put(attributeId, value);
+            }
+
+            try {
+                log.debug("Populating the following {} template", templateName);
+
+                StringWriter output = new StringWriter();
+                Template template;
+                template = velocity.getTemplate(templateName);
+                template.merge(vCtx, output);
+                resultantAttribute.addValue(output.toString());
+
+            } catch (Exception e) {
+                //
+                // Yup, Velocity throws Exception....
+                //
+                log.error("Unable to populate " + templateName + " template", e);
+                throw new AttributeResolutionException("Unable to evaluate template", e);
+            }
+        }
+
+        return Optional.of(resultantAttribute);
+    }
+    
     /**
      * Set up a map which can be used to populate the template. The key is the attribute name and the value is the
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
@@ -245,52 +251,5 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                     unresolvedAttributes.toArray(), getId());
         }
         return valueCount;
-    }
-
-    /** {@inheritDoc} */
-
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-
-        final Attribute resultantAttribute = new Attribute(getId());
-        final Map<String, Iterator> sourceValues = new LazyMap<String, Iterator>();
-        final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
-
-        if (null == getDependencies()) {
-            log.info("TemplateAttribute definition " + getId() + " had no dependencies");
-            return null;
-        }
-
-        // build velocity context
-        VelocityContext vCtx = new VelocityContext();
-        vCtx.put("requestContext", resolutionContext);
-        for (int i = 0; i < valueCount; i++) {
-            // Setup the attributes for this time around
-            for (String attributeId : sourceValues.keySet()) {
-                final Object value = sourceValues.get(attributeId).next();
-                log.debug("TemplateAttribute definition {} iteration {}; attribute {} has value {}", new Object[] {
-                        getId(), i + 1, attributeId, value.toString(),});
-                vCtx.put(attributeId, value);
-            }
-
-            try {
-                log.debug("Populating the following {} template", templateName);
-
-                StringWriter output = new StringWriter();
-                Template template;
-                template = velocity.getTemplate(templateName);
-                template.merge(vCtx, output);
-                resultantAttribute.addValue(output.toString());
-
-            } catch (Exception e) {
-                //
-                // Yup, Velocity throws Exception....
-                //
-                log.error("Unable to populate " + templateName + " template", e);
-                throw new AttributeResolutionException("Unable to evaluate template", e);
-            }
-        }
-
-        return Optional.of(resultantAttribute);
     }
 }

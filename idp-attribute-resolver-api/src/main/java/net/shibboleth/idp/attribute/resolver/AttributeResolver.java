@@ -65,15 +65,15 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
     /** Data connectors defined for this resolver. */
     private Map<String, BaseDataConnector> dataConnectors;
 
-    /**
-     * Constructor.
-     * 
-     * @param resolverId ID of this resolver
-     */
-    public AttributeResolver(@Nonnull @NotEmpty String resolverId) {
-        setId(resolverId);
+    /** Constructor. */
+    public AttributeResolver() {
         attributeDefinitions = Collections.emptyMap();
         dataConnectors = Collections.emptyMap();
+    }
+
+    /** {@inheritDoc} */
+    public synchronized void setId(@Nonnull @NotEmpty String componentId) {
+        super.setId(componentId);
     }
 
     /**

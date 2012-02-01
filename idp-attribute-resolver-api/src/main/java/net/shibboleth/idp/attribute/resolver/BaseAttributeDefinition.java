@@ -161,6 +161,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
                 ((ValidatableComponent) encoder).validate();
             }
         }
+
+        doValidate();
     }
 
     /** {@inheritDoc} */
@@ -187,6 +189,15 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
                 ((InitializableComponent) encoder).initialize();
             }
         }
+    }
+
+    /**
+     * Performs implementation specific validation. Default implementation of this method is a no-op
+     * 
+     * @throws ComponentValidationException thrown if the component is not valid
+     */
+    protected void doValidate() throws ComponentValidationException {
+
     }
 
     /**

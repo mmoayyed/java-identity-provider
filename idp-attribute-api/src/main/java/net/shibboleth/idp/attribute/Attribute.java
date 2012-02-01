@@ -216,6 +216,6 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
     /** {@inheritDoc} */
     @Nonnull public String toString() {
         return Objects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
-                .add("displayDescriptions", displayDescriptions).add("encoders", encoders).toString();
+                .add("displayDescriptions", displayDescriptions).add("encoders", encoders).add("values", values).toString();
     }
 }

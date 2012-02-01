@@ -17,17 +17,19 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -89,41 +91,26 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
             log.info("PrescopedAttribute definition " + getId() + " had no dependencies");
             return null;
         }
+        final Set<AttributeValue> dependencyValues =
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
-        final Collection<ScopedStringAttributeValue> resultingValues = new LazySet<ScopedStringAttributeValue>();
-        for (ResolverPluginDependency dep : depends) {
-            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            if (null == dependentAttribute) {
-                log.error("Dependency of PrescopedAttribute " + getId() + " returned null dependent attribute");
-                continue;
-            }
-
-            final Collection<?> values = dependentAttribute.getValues();
-            if (null == dependentAttribute.getValues()) {
-                log.error("Dependency " + dependentAttribute.getId() + " of PrescopedAttribute " + getId()
-                        + "returned null value set");
-                continue;
-            }
-            if (dependentAttribute.getValues().isEmpty()) {
-                log.debug("Dependency " + dependentAttribute.getId() + " of PrescopedAttribute " + getId()
-                        + "returned no values, skipping");
-                continue;
+        final Set<ScopedStringAttributeValue> resultingValues = new HashSet<ScopedStringAttributeValue>();
+        for (AttributeValue dependencyValue : dependencyValues) {
+            if (!(dependencyValue instanceof StringAttributeValue)) {
+                throw new AttributeResolutionException(
+                        "This attribute definition only operates on attribute values of type "
+                                + StringAttributeValue.class.getName());
             }
 
-            for (Object value : values) {
-                if (!(value instanceof String)) {
-                    log.debug("Skipping non string value " + value.toString());
-                    continue;
-                }
-                final String[] stringValues = ((String) value).split(scopeDelimiter);
-                if (stringValues.length < 2) {
-                    log.error("Input attribute value {} does not contain delimited {} and can not be split", value,
-                            scopeDelimiter);
-                    throw new AttributeResolutionException("Input attribute value can not be split.");
-                }
-                resultingValues.add(new ScopedStringAttributeValue(stringValues[0], stringValues[1]));
+            final String[] stringValues = ((String) dependencyValue.getValue()).split(scopeDelimiter);
+            if (stringValues.length < 2) {
+                log.error("Input attribute value {} does not contain delimited {} and can not be split",
+                        dependencyValue.getValue(), scopeDelimiter);
+                throw new AttributeResolutionException("Input attribute value can not be split.");
             }
+            resultingValues.add(new ScopedStringAttributeValue(stringValues[0], stringValues[1]));
         }
+
         if (resultingValues.isEmpty()) {
             log.debug("Prescoped definition " + getId() + " returned no values");
         }

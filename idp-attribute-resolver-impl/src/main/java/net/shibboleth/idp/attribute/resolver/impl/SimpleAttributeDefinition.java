@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.Collection;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
@@ -25,10 +24,8 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.utilities.java.support.collection.LazySet;
-
-import org.opensaml.util.collections.CollectionSupport;
 
 import com.google.common.base.Optional;
 
@@ -44,22 +41,14 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
+
         final Set<ResolverPluginDependency> depends = getDependencies();
         if (null == depends) {
-            return null;
-        }
-
-        final Collection<Object> resultValues = new LazySet<Object>();
-        for (ResolverPluginDependency dep : depends) {
-            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            if (null != dependentAttribute) {
-                CollectionSupport.addNonNull(dependentAttribute.getValues(), resultValues);
-            }
+            return Optional.absent();
         }
 
         final Attribute result = new Attribute(getId());
-        result.setValues(resultValues);
+        result.setValues(PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies()));
         return Optional.of(result);
     }
-
 }
