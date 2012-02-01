@@ -130,7 +130,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
      * 
      * @return the resolved data connector
      */
-    @Nonnull public BaseDataConnector unwrap() {
+    @Nonnull public BaseDataConnector getResolvedConnector() {
         return resolvedConnector;
     }
 

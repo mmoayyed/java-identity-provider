@@ -70,7 +70,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Optional<Attribute> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
         if (resolutionException != null) {
             throw resolutionException;

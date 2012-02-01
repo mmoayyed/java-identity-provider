@@ -18,10 +18,12 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.AttributeException;
 
 /** An exception indicating a problem resolving attribute data. */
+@ThreadSafe
 public class AttributeResolutionException extends AttributeException {
 
     /** Serial version UID. */

@@ -153,19 +153,6 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        super.validate();
-
-        for (AttributeEncoder encoder : encoders) {
-            if (encoder instanceof ValidatableComponent) {
-                ((ValidatableComponent) encoder).validate();
-            }
-        }
-
-        doValidate();
-    }
-
-    /** {@inheritDoc} */
     protected void doDestroy() {
         for (AttributeEncoder encoder : encoders) {
             if (encoder instanceof DestructableComponent) {
@@ -190,14 +177,16 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
             }
         }
     }
-
-    /**
-     * Performs implementation specific validation. Default implementation of this method is a no-op
-     * 
-     * @throws ComponentValidationException thrown if the component is not valid
-     */
+    
+    /** {@inheritDoc} */
     protected void doValidate() throws ComponentValidationException {
+        super.validate();
 
+        for (AttributeEncoder encoder : encoders) {
+            if (encoder instanceof ValidatableComponent) {
+                ((ValidatableComponent) encoder).validate();
+            }
+        }
     }
 
     /**
@@ -214,7 +203,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
                     + " has not been initialized and can not yet be used.");
         }
 
-        final Optional<Attribute> resolvedAttribute = doAttributeResolution(resolutionContext);
+        final Optional<Attribute> resolvedAttribute = doAttributeDefinitionResolve(resolutionContext);
         assert resolvedAttribute != null : "return of doAttributeResolution was null";
 
         if (!resolvedAttribute.isPresent()) {
@@ -239,6 +228,6 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @throws AttributeResolutionException thrown if there is a problem resolving and creating the attribute
      */
-    @Nonnull protected abstract Optional<Attribute> doAttributeResolution(
+    @Nonnull protected abstract Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
 }

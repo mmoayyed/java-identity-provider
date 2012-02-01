@@ -33,7 +33,7 @@ import com.google.common.base.Optional;
 public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, Attribute>> {
 
     /** ID of the data connector to use if this one fails. */
-    private Optional<String> failoverDataConnectorId;
+    private Optional<String> failoverDataConnectorId = Optional.absent();
 
     /**
      * Gets the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
@@ -42,7 +42,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @return ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    public Optional<String> getFailoverDataConnectorId() {
+    @Nonnull public Optional<String> getFailoverDataConnectorId() {
         return failoverDataConnectorId;
     }
 

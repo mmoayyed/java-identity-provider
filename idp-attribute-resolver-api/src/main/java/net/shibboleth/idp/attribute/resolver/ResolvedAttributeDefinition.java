@@ -63,7 +63,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeResolution(
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         return resolvedAttribute;
     }
@@ -157,7 +157,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the resolved attribute definition
      */
-    @Nonnull public BaseAttributeDefinition unwrap() {
+    @Nonnull public BaseAttributeDefinition getResolvedDefinition() {
         return resolvedDefinition;
     }
 

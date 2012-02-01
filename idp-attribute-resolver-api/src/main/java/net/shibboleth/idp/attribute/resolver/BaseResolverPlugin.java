@@ -22,9 +22,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
@@ -124,7 +126,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
      * 
      * @param pluginDependencies unmodifiable list of dependencies for this plugin
      */
-    public synchronized void setDependencies(final Collection<ResolverPluginDependency> pluginDependencies) {
+    public synchronized void setDependencies(@Nullable @NullableElements final Collection<ResolverPluginDependency> pluginDependencies) {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
@@ -172,6 +174,13 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
             }
         }
     }
+    
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        ComponentSupport.validate(activationCriteria);
+        
+        doValidate();
+    }
 
     /** {@inheritDoc} */
     protected void doDestroy() {
@@ -188,11 +197,16 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
 
         ComponentSupport.initialize(activationCriteria);
     }
+    
+    /**
+     * Performs implementation specific validation. Default implementation of this method is a no-op.
+     * 
+     * @throws ComponentValidationException thrown if the component is not valid
+     */
+    protected void doValidate() throws ComponentValidationException {
 
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        ComponentSupport.validate(activationCriteria);
     }
+
 
     /**
      * Perform the actual resolution. The resolved attribute(s) should not be recorded in the resolution context.

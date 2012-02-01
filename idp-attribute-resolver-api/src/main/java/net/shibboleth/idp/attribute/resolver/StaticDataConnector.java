@@ -20,8 +20,12 @@ package net.shibboleth.idp.attribute.resolver;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import com.google.common.base.Optional;
@@ -31,7 +35,37 @@ import com.google.common.base.Optional;
 public class StaticDataConnector extends BaseDataConnector {
 
     /** Static collection of values returned by this connector. */
-    private Map<String, Attribute> values;
+    private Optional<Map<String, Attribute>> values = Optional.absent();
+
+    /**
+     * Get the static values returned by this connector.
+     * 
+     * @return static values returned by this connector
+     */
+    @Nonnull public Map<String, Attribute> getValues() {
+        return values.get();
+    }
+
+    /**
+     * Set static values returned by this connector.
+     * 
+     * @param newValues static values returned by this connector
+     */
+    public synchronized void setValues(@Nullable @NullableElements Map<String, Attribute> newValues) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
+        // TODO need to deal with null collection and null elements
+
+        values = Optional.<Map<String, Attribute>> of(new HashMap<String, Attribute>(newValues));
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Optional<Map<String, Attribute>>
+            doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
+                    throws AttributeResolutionException {
+        return values;
+    }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -41,33 +75,5 @@ public class StaticDataConnector extends BaseDataConnector {
             throw new ComponentInitializationException("Static Data connector " + getId()
                     + " does not have values set up.");
         }
-    }
-
-    /**
-     * Set the values used.
-     * 
-     * @param newValues what to set.
-     */
-    public synchronized void setValues(Map<String, Attribute> newValues) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        values = new HashMap<String, Attribute>(newValues);
-    }
-
-    /**
-     * Get our values.
-     * 
-     * @return the values we return.
-     */
-    public Map<String, Attribute> getValues() {
-        return values;
-    }
-
-    /** {@inheritDoc} */
-    protected Optional<Map<String, Attribute>>
-            doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
-                    throws AttributeResolutionException {
-        return Optional.of(values);
     }
 }

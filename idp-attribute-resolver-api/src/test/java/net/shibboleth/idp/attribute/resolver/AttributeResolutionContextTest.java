@@ -123,7 +123,7 @@ public class AttributeResolutionContextTest {
         Assert.assertEquals(context.getResolvedAttributeDefinitions().size(), 1);
         Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("foo"));
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").unwrap() == definition);
+        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").getResolvedDefinition() == definition);
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").resolve(context).get() == attribute);
 
         try {
@@ -142,7 +142,7 @@ public class AttributeResolutionContextTest {
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
         Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("bar"));
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar") instanceof ResolvedAttributeDefinition);
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar").unwrap() == definition);
+        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar").getResolvedDefinition() == definition);
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar").resolve(context)
                 .equals(Optional.absent()));
     }
@@ -166,7 +166,7 @@ public class AttributeResolutionContextTest {
         Assert.assertEquals(context.getResolvedDataConnectors().size(), 1);
         Assert.assertNotNull(context.getResolvedDataConnectors().get("foo"));
         Assert.assertTrue(context.getResolvedDataConnectors().get("foo") instanceof ResolvedDataConnector);
-        Assert.assertTrue(context.getResolvedDataConnectors().get("foo").unwrap() == connector);
+        Assert.assertTrue(context.getResolvedDataConnectors().get("foo").getResolvedConnector() == connector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("foo").resolve(context).get() == attributes);
 
         try {
@@ -185,7 +185,7 @@ public class AttributeResolutionContextTest {
         Assert.assertTrue(context.getResolvedDataConnectors().get("foo") instanceof ResolvedDataConnector);
         Assert.assertNotNull(context.getResolvedDataConnectors().get("bar"));
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar") instanceof ResolvedDataConnector);
-        Assert.assertTrue(context.getResolvedDataConnectors().get("bar").unwrap() == connector);
+        Assert.assertTrue(context.getResolvedDataConnectors().get("bar").getResolvedConnector() == connector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar").resolve(context) == Optional.<Map<String, Attribute>>absent());
     }
 }

@@ -17,9 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
 import com.google.common.base.Optional;
 
@@ -28,18 +31,18 @@ import com.google.common.base.Optional;
 public class StaticAttributeDefinition extends BaseAttributeDefinition {
 
     /** Static value returned by this definition. */
-    private Attribute value;
+    private Optional<Attribute> value = Optional.absent();
 
     /**
      * Set the attribute value we are returning.
      * 
      * @param newAttrribute what to set.
      */
-    public synchronized void setAttribute(Attribute newAttrribute) {
+    public synchronized void setAttribute(@Nonnull Attribute newAttrribute) {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        value = newAttrribute;
+        value = Optional.of(Assert.isNotNull(newAttrribute, "Static attribute can not be null"));
     }
 
     /**
@@ -47,7 +50,13 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the attribute.
      */
-    public Attribute getValue() {
+    @Nonnull public Attribute getValue() {
+        return value.get();
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+            final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         return value;
     }
 
@@ -59,11 +68,5 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
             throw new ComponentInitializationException("Static Attribute definition " + getId()
                     + " does not have an attribute set up.");
         }
-    }
-
-    /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        return Optional.of(value);
     }
 }

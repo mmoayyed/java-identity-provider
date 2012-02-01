@@ -450,9 +450,6 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
                 continue;
             }
 
-            // remove any nulls or duplicate attribute values
-            cleanResolvedAttributeValues(resolvedAttribute.get());
-
             // remove value-less attributes
             if (resolvedAttribute.get().getValues().size() == 0) {
                 log.debug("Attribute Resolver {}: removing result of attribute definition {},"
@@ -464,30 +461,6 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
         }
 
         resolutionContext.setResolvedAttributes(resolvedAttributes);
-    }
-
-    /**
-     * Cleans the values of the given attribute. Currently this entails removal of any nulls or duplicate values.
-     * 
-     * @param attribute attribute whose values will be cleaned
-     */
-    protected void cleanResolvedAttributeValues(@Nonnull final Attribute attribute) {
-        assert attribute != null : "Attribute can not be null";
-
-        final Collection<?> values = attribute.getValues();
-        if (values.isEmpty()) {
-            return;
-        }
-
-        // TODO(lajoie) this possibly changes the type of value collection for the attribute, should it?
-        final LazySet cleanedValues = new LazySet<Object>();
-        for (Object value : values) {
-            if (value != null) {
-                cleanedValues.add(value);
-            }
-        }
-
-        attribute.setValues(cleanedValues);
     }
 
     /**
