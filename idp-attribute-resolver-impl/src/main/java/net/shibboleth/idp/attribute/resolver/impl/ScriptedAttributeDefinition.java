@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.script.ScriptContext;
@@ -25,9 +27,11 @@ import javax.script.SimpleScriptContext;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
@@ -122,12 +126,13 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("requestContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
 
-        for (ResolverPluginDependency dep : getDependencies()) {
-            final Attribute dependentAttribute = dep.getDependentAttribute(resolutionContext);
-            if (null != dependentAttribute) {
-                scriptContext.setAttribute(dependentAttribute.getId(), dependentAttribute, ScriptContext.ENGINE_SCOPE);
-            }
+        Map<String, Set<AttributeValue>> dependencyAttributes =
+                PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
+        for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
+            scriptContext.setAttribute(dependencyAttribute.getKey(), dependencyAttribute.getValue(),
+                    ScriptContext.ENGINE_SCOPE);
         }
+
         return scriptContext;
     }
 }

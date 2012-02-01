@@ -22,19 +22,19 @@
             <artifactId>idp-attribute-filter-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-       <dependency>
-            <!-- TODO remove this -->
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-authn-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
-        
+                <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-attribute-filter-api</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     
 </project>
