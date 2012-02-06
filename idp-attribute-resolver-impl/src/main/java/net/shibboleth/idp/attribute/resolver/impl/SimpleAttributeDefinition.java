@@ -17,38 +17,42 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import com.google.common.base.Optional;
 
 /**
- * A Simple Attribute definition. Basically it copies all inputs to outputs.
- * 
- * Note that a given name will be resolved both from attributes and from data providers and so an element of cobination
- * can be achieved.
- * */
+ * A {@link BaseAttributeDefinition} that creates an attribute whose values are the values the values of all its
+ * dependencies.
+ */
 @ThreadSafe
 public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-
-        final Set<ResolverPluginDependency> depends = getDependencies();
-        if (null == depends) {
-            return Optional.absent();
-        }
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert resolutionContext != null : "Attribute resolution context can not be null";
 
         final Attribute result = new Attribute(getId());
         result.setValues(PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies()));
         return Optional.of(result);
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (getDependencies().isEmpty()) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no dependencies were configured");
+        }
     }
 }

@@ -21,19 +21,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.slf4j.Logger;
@@ -42,8 +44,24 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 /**
- * An attribute definition that computes the attribute definition by executing a script written in some JSR-223
- * supporting language.
+ * An {@link BaseAttributeDefinition} that executes a script in order to populate the values of the generated attribute.
+ * 
+ * <p>
+ * The evaluated script has access to the following information:
+ * <ul>
+ * <li>A script attribute whose name is the ID of this attribute definition and whose value is a newly constructed
+ * {@link Attribute}.</li>
+ * <li>A script attribute whose name is <code>context</code> and whose value is the current
+ * {@link AttributeResolutionContext}</li>
+ * <li>A script attribute for every attribute produced by the dependencies of this attribute definition. The name of the
+ * script attribute is the ID of the {@link Attribute} and its value is the {@link Set} of {@link AttributeValue} for
+ * the attribute.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * The evaluated script should populated the values of the newly constructed {@link Attribute} mentioned above. No other
+ * information from the script will be taken in to account.
+ * </p>
  */
 @ThreadSafe
 public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
@@ -59,20 +77,37 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the script to be evaluated
      */
-    public EvaluableScript getScript() {
+    @Nullable public EvaluableScript getScript() {
         return script;
     }
 
     /**
      * Sets the script to be evaluated.
      * 
-     * @param matcherScript the script to be evaluated
+     * @param definitionScript the script to be evaluated
      */
-    public synchronized void setScript(EvaluableScript matcherScript) {
+    public synchronized void setScript(@Nonnull EvaluableScript definitionScript) {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        script = matcherScript;
+        script = Assert.isNotNull(definitionScript, "Attribute definition script can not be null");
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert resolutionContext != null : "Attribute resolution context can not be null";
+
+        final ScriptContext context = getScriptContext(resolutionContext);
+
+        try {
+            script.eval(context);
+        } catch (ScriptException e) {
+            throw new AttributeResolutionException("ScriptletAttributeDefinition " + getId()
+                    + " unable to execute script", e);
+        }
+
+        return Optional.fromNullable((Attribute) context.getAttribute(getId()));
     }
 
     /** {@inheritDoc} */
@@ -80,38 +115,13 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (null == script) {
-            throw new ComponentInitializationException("Attribute definition " + getId()
-                    + " no script has been provided");
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no script was configured");
         }
-    }
-
-    /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-
-        final Set<ResolverPluginDependency> depends = getDependencies();
-        if (null == depends) {
-            log.info("Scripted definition " + getId() + " had no dependencies");
-            return null;
-        }
-
-        final ScriptContext context = getScriptContext(resolutionContext);
-        try {
-            script.eval(context);
-        } catch (ScriptException e) {
-            final String message = "ScriptletAttributeDefinition " + getId() + " unable to execute script";
-            log.error(message, e);
-            throw new AttributeResolutionException(message, e);
-        }
-
-        return Optional.fromNullable((Attribute) context.getAttribute(getId()));
     }
 
     /**
-     * Creates the script execution context from the resolution context.
-     * 
-     * Inserts all the dependent (shibboleth) attributes as (script) attributes. It also adds a (script) attribute
-     * called 'requestContext' with our context.
+     * Constructs the {@link ScriptContext} used when evaluating the script.
      * 
      * @param resolutionContext current resolution context
      * 
@@ -120,15 +130,24 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * @throws AttributeResolutionException thrown if dependent data connectors or attribute definitions can not be
      *             resolved
      */
-    protected ScriptContext getScriptContext(final AttributeResolutionContext resolutionContext)
+    @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        scriptContext.setAttribute(getId(), null, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("requestContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
+        assert resolutionContext != null : "Attribute resolution context can not be null";
 
-        Map<String, Set<AttributeValue>> dependencyAttributes =
+        final SimpleScriptContext scriptContext = new SimpleScriptContext();
+
+        log.debug("Attribute definition '{}': adding to-be-populated attribute to script context", getId());
+        scriptContext.setAttribute(getId(), new Attribute(getId()), ScriptContext.ENGINE_SCOPE);
+
+        log.debug("Attribute definition '{}': adding current attribute resolution context to script context", getId());
+        scriptContext.setAttribute("context", resolutionContext, ScriptContext.ENGINE_SCOPE);
+
+        final Map<String, Set<AttributeValue>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
         for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
+            log.debug(
+                    "Attribute definition '{}': adding dependant attribute '{}' with the following values to the script context: {}",
+                    new Object[] {getId(), dependencyAttribute.getKey(), dependencyAttribute.getValue()});
             scriptContext.setAttribute(dependencyAttribute.getKey(), dependencyAttribute.getValue(),
                     ScriptContext.ENGINE_SCOPE);
         }

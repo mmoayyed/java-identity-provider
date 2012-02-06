@@ -17,30 +17,31 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.velocity.Template;
 
-import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
-import org.apache.velocity.runtime.resource.util.StringResourceRepository;
+import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,136 +65,81 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinition.class);
 
-    /** Velocity engine to use to render attribute values. */
-    private VelocityEngine velocity;
-
-    /** Name the attribute template is registered under within the template engine. */
-    private String templateName;
-
-    /** Template that produces the attribute value. */
-    private String templateSource;
+    /** Template to be evaluated. */
+    private Template template;
 
     /**
-     * Set the engine to use.
+     * Gets the template to be evaluated.
      * 
-     * @param engine velocity engine used to parse template.
+     * @return the template
      */
-    public synchronized void setVelocityEngine(final VelocityEngine engine) {
+    @Nullable public Template getTemplate() {
+        return template;
+    }
+
+    /**
+     * Sets the template to be evaluated.
+     * 
+     * @param velocityTemplate template to be evaluated
+     */
+    public synchronized void setTemplate(@Nonnull Template velocityTemplate) {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        velocity = engine;
+        template = Assert.isNotNull(velocityTemplate, "Template can not be null");
     }
 
-    /**
-     * Access the velocity engine being used.
-     * 
-     * @return the velocity engine. Not null after initialization.
-     */
-    public VelocityEngine getVelocityEngine() {
-        return velocity;
-    }
+    /** {@inheritDoc} */
+    protected Optional<Attribute> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
+            throws AttributeResolutionException {
 
-    /**
-     * Access the name by which the template is used. This name is uniqueified by the implemeting class and the id of
-     * the attribute resolver.
-     * 
-     * @return the template name. Only available after initialization.
-     */
-    public String getTemplateName() {
-        return templateName;
-    }
+        final Attribute resultantAttribute = new Attribute(getId());
 
-    /**
-     * Set the source to use.
-     * 
-     * @param template the template we use.
-     */
-    public synchronized void setTemplateSource(final String template) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        final Map<String, Iterator<AttributeValue>> sourceValues = new LazyMap<String, Iterator<AttributeValue>>();
+        final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
 
-        templateSource = StringSupport.trimOrNull(template);
-    }
+        // build velocity context
+        VelocityContext velocityContext;
+        String templateResult;
 
-    /**
-     * Access the source used in this template.
-     * 
-     * @return the source used by this template. Not null after initialization.
-     */
-    public String getTemplateSource() {
-        return templateSource;
+        for (int i = 0; i < valueCount; i++) {
+            log.debug("Attribute definition '{}': determing value {}", i + 1);
+            velocityContext = new VelocityContext();
+
+            for (String attributeId : sourceValues.keySet()) {
+                final Object value = sourceValues.get(attributeId).next();
+                log.debug("Attribute definition '{}': adding value '{}' for attribute '{}' to the template context",
+                        new Object[] {getId(), value.toString(), attributeId,});
+                velocityContext.put(attributeId, value);
+            }
+
+            try {
+                log.debug("Attribute definition '{}': evaluating template", getId());
+                templateResult = template.merge(velocityContext);
+                log.debug("Attribute definition '{}': result of template evaluating was '{}'", getId(), templateResult);
+                resultantAttribute.getValues().add(new StringAttributeValue(templateResult));
+            } catch (VelocityException e) {
+                log.error("Attribute definition '" + getId() + "': unable to evaluate velocity template", e);
+                throw new AttributeResolutionException("Unable to evaluate template", e);
+            }
+        }
+
+        return Optional.of(resultantAttribute);
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        // TODO check have dependencies
-
-        templateName = "shibboleth.resolver.ad." + this.getClass().getName() + getId();
-
-        if (null == templateSource) {
-            throw new ComponentInitializationException("TemplateAttribute definition " + getId()
-                    + " is being initialized without any source");
-        }
-        if (null == velocity) {
-            throw new ComponentInitializationException("TemplateAttribute definition " + getId()
-                    + " is being initialized without and engine being supplied");
+        if (getDependencies().isEmpty()) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no dependencies were configured");
         }
 
-        // Register the template
-        final StringResourceRepository repository = StringResourceLoader.getRepository();
-        if (null != repository.getStringResource(templateName)) {
-            throw new ComponentInitializationException("TemplateAttribute definition " + getId() + ". emplate named "
-                    + templateName + "has already been declared");
+        if (null == template) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no template was configured");
         }
-        repository.putStringResource(templateName, templateSource);
-    }
-
-    /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-
-        final Attribute resultantAttribute = new Attribute(getId());
-        final Map<String, Iterator<AttributeValue>> sourceValues = new LazyMap<String, Iterator<AttributeValue>>();
-        final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
-
-        if (null == getDependencies()) {
-            log.info("TemplateAttribute definition " + getId() + " had no dependencies");
-            return null;
-        }
-
-        // build velocity context
-        VelocityContext vCtx = new VelocityContext();
-        vCtx.put("requestContext", resolutionContext);
-        for (int i = 0; i < valueCount; i++) {
-            // Setup the attributes for this time around
-            for (String attributeId : sourceValues.keySet()) {
-                final Object value = sourceValues.get(attributeId).next();
-                log.debug("TemplateAttribute definition {} iteration {}; attribute {} has value {}", new Object[] {
-                        getId(), i + 1, attributeId, value.toString(),});
-                vCtx.put(attributeId, value);
-            }
-
-            try {
-                log.debug("Populating the following {} template", templateName);
-
-                StringWriter output = new StringWriter();
-                Template template;
-                template = velocity.getTemplate(templateName);
-                template.merge(vCtx, output);
-                resultantAttribute.getValues().add(new StringAttributeValue(output.toString()));
-
-            } catch (Exception e) {
-                // TODO(lajoie) catch something other than exception
-
-                log.error("Unable to populate " + templateName + " template", e);
-                throw new AttributeResolutionException("Unable to evaluate template", e);
-            }
-        }
-
-        return Optional.of(resultantAttribute);
     }
 
     /**
@@ -214,20 +160,23 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
         final Map<String, Set<AttributeValue>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
-        
+
         final int valueCount = dependencyAttributes.values().iterator().next().size();
 
         HashSet<String> attributeValues;
         for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
             attributeValues = new HashSet<String>();
-            for(AttributeValue value : dependencyAttribute.getValue()){
-                if(value instanceof StringAttributeValue){
-                    attributeValues.add((String)value.getValue());
-                }else{
-                    //TODO throw exception
+            for (AttributeValue value : dependencyAttribute.getValue()) {
+                if (value instanceof StringAttributeValue) {
+                    attributeValues.add((String) value.getValue());
+                } else {
+                    throw new AttributeResolutionException(new UnsupportedAttributeTypeException(
+                            "This attribute definition only supports attribute value types of "
+                                    + StringAttributeValue.class.getName() + " not values of type "
+                                    + value.getClass().getName()));
                 }
             }
-            
+
             if (attributeValues.size() != valueCount) {
                 final String msg =
                         "All attributes used in TemplateAttributeDefinition " + getId()

@@ -96,7 +96,7 @@ public class TemplateAttributeTest {
         attr.setTemplateSource(TEST_ATTRIBUTES_TEMPLATE);
         attr.setSourceAttributes(Collections.EMPTY_LIST);
         attr.initialize();
-        final Attribute val = attr.doAttributeResolution(new AttributeResolutionContext());
+        final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext());
         final Collection<?> results = val.getValues();
 
         Assert.assertEquals(results.size(), 0, "Templated value count");

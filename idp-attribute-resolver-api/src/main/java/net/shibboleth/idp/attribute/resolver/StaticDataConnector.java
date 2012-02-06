@@ -28,11 +28,17 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
 public class StaticDataConnector extends BaseDataConnector {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(StaticDataConnector.class);
 
     /** Static collection of values returned by this connector. */
     private Optional<Map<String, Attribute>> values = Optional.absent();
@@ -61,9 +67,9 @@ public class StaticDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Map<String, Attribute>>
-            doDataConnectorResolve(final AttributeResolutionContext resolutionContext)
-                    throws AttributeResolutionException {
+    @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+            final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        log.debug("Data connector '{}': Resolving static attribute {}", getId(), values.get());
         return values;
     }
 
@@ -71,7 +77,7 @@ public class StaticDataConnector extends BaseDataConnector {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == values) {
+        if (!values.isPresent()) {
             throw new ComponentInitializationException("Static Data connector " + getId()
                     + " does not have values set up.");
         }

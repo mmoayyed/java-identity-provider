@@ -26,11 +26,17 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
 public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, Attribute>> {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(BaseDataConnector.class);
 
     /** ID of the data connector to use if this one fails. */
     private Optional<String> failoverDataConnectorId = Optional.absent();
@@ -68,7 +74,17 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      */
     @Nonnull public final Optional<Map<String, Attribute>> doResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
-        return doDataConnectorResolve(resolutionContext);
+        Optional<Map<String, Attribute>> optionalResult = doDataConnectorResolve(resolutionContext);
+
+        if (!optionalResult.isPresent()) {
+            log.debug("Data connector '{}': no attributes were produced during resolution", getId());
+            return optionalResult;
+        } else {
+            log.debug("Data connector '{}': produced the following {} attributes during resolution ", new Object[] {
+                    getId(), optionalResult.get().size(), optionalResult.get().values(),});
+        }
+
+        return optionalResult;
     }
 
     /**

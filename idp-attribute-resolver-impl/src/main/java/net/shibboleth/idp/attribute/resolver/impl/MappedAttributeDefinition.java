@@ -18,15 +18,17 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
@@ -41,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -59,14 +61,14 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
 
     /** Value maps. */
-    private Collection<ValueMapping> valueMappings;
+    private Set<ValueMapping> valueMappings = Collections.emptySet();
 
     /**
      * Gets the functions used to map an input value to an output value.
      * 
      * @return functions used to map an input value to an output value
      */
-    @Nonnull @NonnullElements @Unmodifiable public Collection<ValueMapping> getValueMappings() {
+    @Nonnull @NonnullElements @Unmodifiable public Set<ValueMapping> getValueMappings() {
         return valueMappings;
     }
 
@@ -79,16 +81,13 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        valueMappings = ImmutableList.copyOf(Iterables.filter(mappings, Predicates.notNull()));
+        valueMappings = ImmutableSet.copyOf(Iterables.filter(mappings, Predicates.notNull()));
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeResolution(
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         assert resolutionContext != null : "Attribute resolution context can not be null";
-
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
 
         final Set<AttributeValue> unmappedResults =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
@@ -100,9 +99,9 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         Optional<String> mappingResult;
         for (AttributeValue unmappedValue : unmappedResults) {
             if (!(unmappedValue instanceof StringAttributeValue)) {
-                // TODO probably make this a specific exception type
-                throw new AttributeResolutionException("Attribute definition '" + getId()
-                        + "' does not support dependency values of type " + unmappedValue.getClass().getName());
+                throw new AttributeResolutionException(new UnsupportedAttributeTypeException("Attribute definition '"
+                        + getId() + "' does not support dependency values of type "
+                        + unmappedValue.getClass().getName()));
             }
 
             for (ValueMapping function : valueMappings) {
@@ -132,14 +131,14 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (getDependencies() == null || getDependencies().isEmpty()) {
-            throw new ComponentInitializationException("No dependecies have been specified for attribute definition "
-                    + getId());
+        if (getDependencies().isEmpty()) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no dependencies were configured");
         }
 
-        if (valueMappings == null || valueMappings.isEmpty()) {
-            throw new ComponentInitializationException("No value mapping have been specified for attribute definition "
-                    + getId());
+        if (valueMappings.isEmpty()) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no value mappings were configured");
         }
     }
 }

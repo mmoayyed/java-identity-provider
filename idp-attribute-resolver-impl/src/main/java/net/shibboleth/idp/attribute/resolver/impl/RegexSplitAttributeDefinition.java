@@ -17,23 +17,24 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 /**
- * A Regexp Attribute definition.
- * 
- * The provided regexp is run across each input attribute and the first group is returned as the value.
+ * An {@link BaseAttributeDefinition} that produces its attribute values by taking the first group match of a regular
+ * expression evaluating against the values of this definition's dependencies.
  */
 @ThreadSafe
 public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
@@ -52,119 +52,78 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinition.class);
 
     /** Regular expression used to split values. */
-    private Pattern compiledRegExp;
-
-    /** Text of regular expression. */
-    private String regExp;
-
-    /** Whether the regexp is case sensitive. */
-    private boolean caseSensitive;
+    private Pattern regexp;
 
     /**
-     * Set whether the regexp is case sensitive or not. This cannot be modified after initialization.
+     * Gets the regular expression used to split input values.
      * 
-     * @param isCaseSensitive the case sensitivity flag.
+     * @return regular expression used to split input values
      */
-    public synchronized void setCaseSensitive(final boolean isCaseSensitive) {
+    @Nullable public Pattern getRegularExpression() {
+        return regexp;
+    }
+
+    /**
+     * Sets the regular expression used to split input values.
+     * 
+     * @param expression regular expression used to split input values
+     */
+    public synchronized void setRegularExpression(@Nonnull Pattern expression) {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        caseSensitive = new Boolean(isCaseSensitive);
+        regexp = Assert.isNotNull(expression, "Regular expression can not be null");
     }
 
-    /**
-     * returns the case sensitivity.
-     * 
-     * @return whether we are case sensitive or not. defaults to false
-     */
-    public boolean getCaseSensitive() {
-        return caseSensitive;
-    }
+    /** {@inheritDoc} */
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert resolutionContext != null : "Attribute resolution context can not be null";
 
-    /**
-     * Sets the pattern we are matching with. This cannot be modified after initialization.
-     * 
-     * @param newRegExp the pattern.
-     */
-    public synchronized void setRegExp(final String newRegExp) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        final Attribute resultantAttribute = new Attribute(getId());
 
-        regExp = StringSupport.trimOrNull(newRegExp);
-    }
+        final Set<AttributeValue> dependencyValues =
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
 
-    /**
-     * Returns the regexp we are using.
-     * 
-     * @return the pattern. Never returns null after initialization.
-     */
-    public String getRegExp() {
-        return regExp;
-    }
+        for (AttributeValue dependencyValue : dependencyValues) {
+            if (!(dependencyValue instanceof StringAttributeValue)) {
+                throw new AttributeResolutionException(
+                        new UnsupportedAttributeTypeException(
+                                "This attribute definition only operates on attribute values of type "
+                                        + StringAttributeValue.class.getName() + " not "
+                                        + dependencyValue.getClass().getName()));
+            }
 
-    /**
-     * Returns the regexp we are using.
-     * 
-     * @return the compiled pattern. Always returns null before initialization and never after.
-     */
-    public Pattern getCompiledRegExp() {
-        return compiledRegExp;
+            log.debug("Attribute definition '{}': applying regexp '{}' to input value '{}'", new Object[] {getId(),
+                    regexp.pattern(), dependencyValue.getValue(),});
+            final Matcher matcher = regexp.matcher((String) dependencyValue.getValue());
+            if (matcher.matches()) {
+                log.debug("Attribute definition '{}': caputed the value '{}' by apply regexp '{}' to input value '{}",
+                        new Object[] {getId(), matcher.group(1), regexp.pattern(), dependencyValue.getValue()});
+                resultantAttribute.getValues().add(new StringAttributeValue(matcher.group(1)));
+            } else {
+                log.debug("Attribute definition '{}': Regexp '{}' did not match anything in input value '{}'",
+                        dependencyValue.getValue(),
+                        new Object[] {getId(), regexp.pattern(), dependencyValue.getValue()});
+            }
+        }
+
+        return Optional.of(resultantAttribute);
     }
+    
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == regExp) {
-            throw new ComponentInitializationException("Regexp Split Attribute definition " + getId()
-                    + " is being initialized, without a valid regexp being set");
+        if (null == regexp) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no regular expression was configured");
         }
-
-        try {
-            if (!caseSensitive) {
-                compiledRegExp = Pattern.compile(regExp, Pattern.CASE_INSENSITIVE);
-            } else {
-                compiledRegExp = Pattern.compile(regExp);
-            }
-        } catch (PatternSyntaxException e) {
-            throw new ComponentInitializationException(e);
+        
+        if (getDependencies().isEmpty()) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no dependencies were configured");
         }
-        if (null == compiledRegExp) {
-            throw new ComponentInitializationException("Regexp Split Attribute definition " + getId()
-                    + " was not compiled correctly");
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        final Set<ResolverPluginDependency> depends = getDependencies();
-        if (null == depends) {
-            return null;
-        }
-        final Set<AttributeValue> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
-
-        final Set<StringAttributeValue> results = new HashSet<StringAttributeValue>();
-        for (AttributeValue dependencyValue : dependencyValues) {
-            if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new AttributeResolutionException(
-                        "This attribute definition only operates on attribute values of type "
-                                + StringAttributeValue.class.getName());
-            }
-
-            final Matcher matcher = compiledRegExp.matcher((String) dependencyValue.getValue());
-            if (matcher.matches()) {
-                results.add(new StringAttributeValue(matcher.group(1)));
-            } else {
-                log.debug(
-                        "Resolver {}: Value {} did not result in any values" + " when split by regular expression {}",
-                        dependencyValue.getValue(), new Object[] {getId(), regExp.toString(), regExp.toString(),});
-            }
-        }
-
-        final Attribute resultantAttribute = new Attribute(getId());
-        resultantAttribute.setValues(results);
-        return Optional.of(resultantAttribute);
     }
 }

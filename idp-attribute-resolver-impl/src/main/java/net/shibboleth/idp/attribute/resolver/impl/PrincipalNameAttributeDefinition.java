@@ -40,7 +40,7 @@ public class PrincipalNameAttributeDefinition extends AbstractPrincipalAttribute
     private final Logger log = LoggerFactory.getLogger(PrincipalNameAttributeDefinition.class);
 
     /** {@inheritDoc} */
-    protected Attribute<?> doAttributeResolution(final AttributeResolutionContext resolutionContext)
+    protected Attribute<?> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
         final AuthenticationEvent event = getAuthenticationEvent(resolutionContext);

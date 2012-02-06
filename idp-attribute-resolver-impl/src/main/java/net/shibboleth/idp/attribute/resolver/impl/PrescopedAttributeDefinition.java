@@ -17,20 +17,23 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -48,76 +51,91 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinition.class);
 
-    /** Delimiter between value and scope. */
-    private String scopeDelimiter;
+    /** Delimiter between value and scope. Default value: @ */
+    private String scopeDelimiter = "@";
 
     /**
-     * Set the scope for this definition.
+     * Get delimiter between value and scope.
      * 
-     * @param newScopeDelimiter what to set.
+     * @return delimiter between value and scope
      */
-    public synchronized void setScopeDelimiter(final String newScopeDelimiter) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        scopeDelimiter = StringSupport.trimOrNull(newScopeDelimiter);
+    @Nonnull public String getScopeDelimiter() {
+        return scopeDelimiter;
     }
 
     /**
-     * Get scope delimiter.
+     * Set the delimiter between value and scope.
      * 
-     * @return the delimiter.
+     * @param newScopeDelimiter delimiter between value and scope
      */
-    public String getScopeDelimiter() {
-        return scopeDelimiter;
+    public synchronized void setScopeDelimiter(@Nonnull @NotEmpty final String newScopeDelimiter) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
+        scopeDelimiter =
+                Assert.isNotNull(StringSupport.trimOrNull(newScopeDelimiter),
+                        "Scope delimiter can not be null or empty");
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        assert resolutionContext != null : "Attribute resolution context can not be null";
+
+        final Attribute resultantAttribute = new Attribute(getId());
+
+        final Set<AttributeValue> dependencyValues =
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+        log.debug("Attribute definition '{}': Dependencies {} provided unmapped values of {}", new Object[] {getId(),
+                getDependencies(), dependencyValues,});
+
+        for (AttributeValue dependencyValue : dependencyValues) {
+            if (!(dependencyValue instanceof StringAttributeValue)) {
+                throw new AttributeResolutionException(new UnsupportedAttributeTypeException(
+                        "This attribute definition only operates on attribute values of type "
+                                + StringAttributeValue.class.getName()));
+            }
+
+            resultantAttribute.getValues().add(buildScopedStringAttributeValue((StringAttributeValue) dependencyValue));
+        }
+
+        return Optional.of(resultantAttribute);
+    }
+
+    /**
+     * Builds a {@link ScopedStringAttributeValue} from a {@link StringAttributeValue} whose value contains a delimited
+     * value.
+     * 
+     * @param value the original attribute value
+     * 
+     * @return the scoped attribute value
+     * 
+     * @throws AttributeResolutionException thrown if the given attribute value does not contain a delimited value
+     */
+    @Nonnull private ScopedStringAttributeValue buildScopedStringAttributeValue(@Nonnull StringAttributeValue value)
+            throws AttributeResolutionException {
+        assert value != null : "Attribute value can not be null";
+
+        final String[] stringValues = value.getValue().split(scopeDelimiter);
+        if (stringValues.length < 2) {
+            log.error(
+                    "Attribute definition '{}': Input attribute value {} does not contain delimiter {} and can not be split",
+                    new Object[] {getId(), value.getValue(), scopeDelimiter,});
+            throw new AttributeResolutionException("Input attribute value can not be split.");
+        }
+
+        log.debug("Attribute definition '{}': Value '{}' was split into {} at scope delimiter '{}'", new Object[] {
+                getId(), value.getValue(), stringValues, scopeDelimiter,});
+        return new ScopedStringAttributeValue(stringValues[0], stringValues[1]);
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == scopeDelimiter) {
-            throw new ComponentInitializationException("PreScoped Attribute definition " + getId()
-                    + " does not have a valid scope delimiter set up.");
+        if (getDependencies().isEmpty()) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no dependencies were configured");
         }
     }
-
-    /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-
-        final Set<ResolverPluginDependency> depends = getDependencies();
-        if (null == depends) {
-            log.info("PrescopedAttribute definition " + getId() + " had no dependencies");
-            return null;
-        }
-        final Set<AttributeValue> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
-
-        final Set<ScopedStringAttributeValue> resultingValues = new HashSet<ScopedStringAttributeValue>();
-        for (AttributeValue dependencyValue : dependencyValues) {
-            if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new AttributeResolutionException(
-                        "This attribute definition only operates on attribute values of type "
-                                + StringAttributeValue.class.getName());
-            }
-
-            final String[] stringValues = ((String) dependencyValue.getValue()).split(scopeDelimiter);
-            if (stringValues.length < 2) {
-                log.error("Input attribute value {} does not contain delimited {} and can not be split",
-                        dependencyValue.getValue(), scopeDelimiter);
-                throw new AttributeResolutionException("Input attribute value can not be split.");
-            }
-            resultingValues.add(new ScopedStringAttributeValue(stringValues[0], stringValues[1]));
-        }
-
-        if (resultingValues.isEmpty()) {
-            log.debug("Prescoped definition " + getId() + " returned no values");
-        }
-
-        final Attribute resultantAttribute = new Attribute(getId());
-        resultantAttribute.setValues(resultingValues);
-        return Optional.of(resultantAttribute);
-    }
-
 }

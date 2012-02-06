@@ -17,24 +17,25 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -45,31 +46,51 @@ import com.google.common.base.Optional;
 @ThreadSafe
 public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinition.class);
-
     /** Scope value. */
     private String scope;
-
-    /**
-     * Set the scope for this definition.
-     * 
-     * @param newScope what to set.
-     */
-    public synchronized void setScope(final String newScope) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        scope = StringSupport.trimOrNull(newScope);
-    }
 
     /**
      * Get scope value.
      * 
      * @return Returns the scope.
      */
-    public String getScope() {
+    @Nullable public String getScope() {
         return scope;
+    }
+
+    /**
+     * Set the scope for this definition.
+     * 
+     * @param newScope what to set.
+     */
+    public synchronized void setScope(@Nonnull @NotEmpty final String newScope) {
+        ifInitializedThrowUnmodifiabledComponentException(getId());
+        ifDestroyedThrowDestroyedComponentException(getId());
+
+        scope = Assert.isNotNull(StringSupport.trimOrNull(newScope), "Scope can not be null or empty");
+    }
+
+    /** {@inheritDoc} */
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+
+        final Attribute resultantAttribute = new Attribute(getId());
+
+        final Set<AttributeValue> dependencyValues =
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
+
+        for (AttributeValue dependencyValue : dependencyValues) {
+            if (!(dependencyValue instanceof StringAttributeValue)) {
+                throw new AttributeResolutionException(new UnsupportedAttributeTypeException(
+                        "This attribute definition only operates on attribute values of type "
+                                + StringAttributeValue.class.getName()));
+            }
+
+            resultantAttribute.getValues().add(
+                    new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
+        }
+
+        return Optional.of(resultantAttribute);
     }
 
     /** {@inheritDoc} */
@@ -77,40 +98,13 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (null == scope) {
-            throw new ComponentInitializationException("Scoped Attribute definition " + getId()
-                    + " does not have valid scope set up.");
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeResolution(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-
-        final Set<ResolverPluginDependency> depends = getDependencies();
-        if (null == depends) {
-            log.info("ScopedAttribute definition " + getId() + " had no dependencies");
-            return null;
-        }
-        final Set<AttributeValue> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
-
-        final Set<ScopedStringAttributeValue> resultingValues = new HashSet<ScopedStringAttributeValue>();
-        for (AttributeValue dependencyValue : dependencyValues) {
-            if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new AttributeResolutionException(
-                        "This attribute definition only operates on attribute values of type "
-                                + StringAttributeValue.class.getName());
-            }
-
-            resultingValues.add(new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no scope was configured");
         }
 
-        if (resultingValues.isEmpty()) {
-            log.debug("Scoped definition " + getId() + " returned no values");
+        if (getDependencies().isEmpty()) {
+            throw new ComponentInitializationException("Attribute definition '" + getId()
+                    + "': no dependencies were configured");
         }
-
-        final Attribute resultantAttribute = new Attribute(getId());
-        resultantAttribute.setValues(resultingValues);
-        return Optional.of(resultantAttribute);
     }
 }

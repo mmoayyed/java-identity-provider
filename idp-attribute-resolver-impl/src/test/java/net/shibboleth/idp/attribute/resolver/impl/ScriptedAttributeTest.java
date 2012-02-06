@@ -82,7 +82,7 @@ public class ScriptedAttributeTest {
         attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT));
         attr.initialize();
 
-        final Attribute val = attr.doAttributeResolution(new AttributeResolutionContext());
+        final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext());
         final Collection<?> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");

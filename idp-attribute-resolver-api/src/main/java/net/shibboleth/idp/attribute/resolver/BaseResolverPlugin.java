@@ -38,6 +38,9 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -50,6 +53,9 @@ import com.google.common.base.Predicates;
 @ThreadSafe
 public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucableIdentifiableInitializableComponent
         implements ValidatableComponent, UnmodifiableComponent, DestructableComponent {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
 
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
     private boolean propagateResolutionExceptions;
@@ -126,7 +132,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
      * 
      * @param pluginDependencies unmodifiable list of dependencies for this plugin
      */
-    public synchronized void setDependencies(@Nullable @NullableElements final Collection<ResolverPluginDependency> pluginDependencies) {
+    public synchronized void setDependencies(
+            @Nullable @NullableElements final Collection<ResolverPluginDependency> pluginDependencies) {
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
@@ -159,12 +166,14 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
         ifDestroyedThrowDestroyedComponentException(getId());
 
         if (!activationCriteria.apply(resolutionContext)) {
+            log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
             Optional.absent();
         }
 
         try {
             Optional<ResolvedType> resolvedData = doResolve(resolutionContext);
             assert resolvedData != null : "Result of doResolve for resolver plugin " + getId() + " was null";
+
             return resolvedData;
         } catch (AttributeResolutionException e) {
             if (propagateResolutionExceptions) {
@@ -174,11 +183,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         ComponentSupport.validate(activationCriteria);
-        
+
         doValidate();
     }
 
@@ -197,7 +206,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
 
         ComponentSupport.initialize(activationCriteria);
     }
-    
+
     /**
      * Performs implementation specific validation. Default implementation of this method is a no-op.
      * 
@@ -206,7 +215,6 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
     protected void doValidate() throws ComponentValidationException {
 
     }
-
 
     /**
      * Perform the actual resolution. The resolved attribute(s) should not be recorded in the resolution context.

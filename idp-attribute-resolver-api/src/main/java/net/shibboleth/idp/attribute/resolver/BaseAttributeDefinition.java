@@ -38,15 +38,20 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
 public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribute> {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinition.class);
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
@@ -177,7 +182,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     protected void doValidate() throws ComponentValidationException {
         super.validate();
@@ -198,23 +203,38 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      */
     @Nonnull protected Optional<Attribute> doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        if (!isInitialized()) {
-            throw new UnmodifiableComponentException("Attribute resolver plugin " + getId()
-                    + " has not been initialized and can not yet be used.");
+
+        final Optional<Attribute> optionalAttribute = doAttributeDefinitionResolve(resolutionContext);
+        assert optionalAttribute != null : "return of doAttributeResolution was null";
+
+        if (!optionalAttribute.isPresent()) {
+            log.debug("Attribute definition '{}': no attribute was produced during resolution", getId());
+            return optionalAttribute;
         }
 
-        final Optional<Attribute> resolvedAttribute = doAttributeDefinitionResolve(resolutionContext);
-        assert resolvedAttribute != null : "return of doAttributeResolution was null";
+        Attribute resolvedAttribute = optionalAttribute.get();
 
-        if (!resolvedAttribute.isPresent()) {
-            return resolvedAttribute;
+        if (resolvedAttribute.getValues().isEmpty()) {
+            log.debug("Attribute definition '{}': produced an attribute with no values", getId());
+        } else {
+            log.debug("Attribute definition '{}': produced an attribute with the following values", getId(),
+                    resolvedAttribute.getValues());
         }
 
-        resolvedAttribute.get().setDisplayDescriptions(getDisplayDescriptions());
-        resolvedAttribute.get().setDisplayNames(getDisplayNames());
-        resolvedAttribute.get().setEncoders(getAttributeEncoders());
+        log.debug(
+                "Attribute definition '{}': associating the following display descriptions with the resolved attribute: {}",
+                getId(), getDisplayDescriptions());
+        resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
 
-        return resolvedAttribute;
+        log.debug("Attribute definition '{}': associating the following display names with the resolved attribute: {}",
+                getId(), getDisplayNames());
+        resolvedAttribute.setDisplayNames(getDisplayNames());
+
+        log.debug("Attribute definition '{}': associating the following encoders with the resolved attribute: {}",
+                getId(), getAttributeEncoders());
+        resolvedAttribute.setEncoders(getAttributeEncoders());
+
+        return optionalAttribute;
     }
 
     /**

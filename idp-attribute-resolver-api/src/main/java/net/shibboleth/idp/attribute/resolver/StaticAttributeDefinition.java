@@ -20,6 +20,9 @@ package net.shibboleth.idp.attribute.resolver;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Assert;
@@ -29,6 +32,9 @@ import com.google.common.base.Optional;
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
 public class StaticAttributeDefinition extends BaseAttributeDefinition {
+    
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(StaticAttributeDefinition.class);
 
     /** Static value returned by this definition. */
     private Optional<Attribute> value = Optional.absent();
@@ -57,6 +63,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        log.debug("Attribute definition '{}': Resolving static attribute {}", getId(), value.get());
         return value;
     }
 
@@ -64,7 +71,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == value) {
+        if (!value.isPresent()) {
             throw new ComponentInitializationException("Static Attribute definition " + getId()
                     + " does not have an attribute set up.");
         }
