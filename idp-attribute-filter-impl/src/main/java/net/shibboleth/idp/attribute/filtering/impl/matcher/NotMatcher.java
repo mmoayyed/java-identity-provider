@@ -72,7 +72,7 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
     public Set<AttributeValue> getMatchingValues(final Attribute attribute, final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
         assert attribute != null : "Attribute to be filtered can not be null";
-        assert filterContext != null : "Attribute filter contet can not be null";
+        assert filterContext != null : "Attribute filter context can not be null";
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code

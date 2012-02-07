@@ -23,6 +23,9 @@ import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.testng.Assert;
@@ -98,6 +101,20 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         } catch (AssertionError e) {
             // expected this
         }
+
+        matcher = new ScriptedMatcher(returnOneValueScript);
+        try {
+            matcher.setScript(null);
+        } catch (AssertionError e) {
+            // expected this
+        }
+
+        try {
+            new ScriptedMatcher(null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected this
+        }
     }
 
     @Test public void testValidScript() throws Exception {
@@ -142,5 +159,38 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
+    }
+    
+    @Test public void testInitTeardown () throws AttributeFilteringException, ComponentInitializationException {
+        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        
+        boolean thrown = false;
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+        } catch (UninitializedComponentException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "getMatchingValues before init");
+        
+        matcher.initialize();
+        matcher.getMatchingValues(attribute, filterContext);
+        matcher.destroy();
+
+        thrown = false;
+        try {
+            matcher.initialize();
+        } catch (DestroyedComponentException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "getMatchingValues after destroy");
+
+        thrown = false;
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+        } catch (DestroyedComponentException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "getMatchingValues after destroy");
+        
     }
 }

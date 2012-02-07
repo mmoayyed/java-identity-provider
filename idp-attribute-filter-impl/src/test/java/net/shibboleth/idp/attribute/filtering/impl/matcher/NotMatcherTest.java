@@ -24,6 +24,8 @@ import static com.google.common.base.Predicates.or;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -61,15 +63,37 @@ public class NotMatcherTest extends AbstractMatcherTest {
         } catch (AssertionError e) {
             // expected this
         }
+
+        try {
+            new NotMatcher(null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected this
+        }
     }
 
     @Test public void testGetMatchingValues() throws Exception {
         NotMatcher matcher = new NotMatcher(new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
+
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+            Assert.fail();
+        } catch (UninitializedComponentException e) {
+            // expect this
+        }
+        
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value3));
+        matcher.destroy();
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+            Assert.fail();
+        } catch (DestroyedComponentException e) {
+            // expect this
+        }
     }
 }

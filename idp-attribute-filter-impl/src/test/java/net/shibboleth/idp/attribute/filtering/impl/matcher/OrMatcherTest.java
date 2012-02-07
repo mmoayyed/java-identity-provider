@@ -25,6 +25,8 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -72,12 +74,31 @@ public class OrMatcherTest extends AbstractMatcherTest {
         matcher.setComposedMatchers(Lists.<AttributeValueMatcher> newArrayList(
                 new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                 new AttributeValuePredicateMatcher(equalTo(value2))));
+        
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+            Assert.fail();
+        } catch (UninitializedComponentException e) {
+            // expect this
+        }
+        
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2) && result.contains(value2));
+        
+        matcher.destroy();
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+            Assert.fail();
+        } catch (DestroyedComponentException e) {
+            // expect this
+        }
 
+        matcher = new OrMatcher();
+        matcher.initialize();
+        Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
 }

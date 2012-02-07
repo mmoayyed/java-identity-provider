@@ -39,26 +39,37 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
     @Test public void testNullArguments() throws Exception {
         AttributeValuePredicateMatcher matcher = new AttributeValuePredicateMatcher(alwaysTrue());
 
+        boolean thrown = false;
         try {
             matcher.getMatchingValues(null, filterContext);
-            Assert.fail();
         } catch (AssertionError e) {
-            // expected this
+            thrown = true;
         }
-
+        Assert.assertTrue(thrown);
+        
+        thrown = false;
         try {
             matcher.getMatchingValues(attribute, null);
-            Assert.fail();
         } catch (AssertionError e) {
-            // expected this
+            thrown = true;
         }
-
+        Assert.assertTrue(thrown);
+        
+        thrown = false;
         try {
             matcher.getMatchingValues(null, null);
-            Assert.fail();
         } catch (AssertionError e) {
-            // expected this
+            thrown = true;
         }
+        Assert.assertTrue(thrown);
+        
+        thrown = false;
+        try {
+            new AttributeValuePredicateMatcher(null);
+        } catch (AssertionError e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown);
     }
 
     @Test public void testGetMatchingValues() throws Exception {
