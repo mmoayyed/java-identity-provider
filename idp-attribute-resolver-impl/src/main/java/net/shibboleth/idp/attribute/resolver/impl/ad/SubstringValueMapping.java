@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMapping;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 

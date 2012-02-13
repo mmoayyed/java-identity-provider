@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;

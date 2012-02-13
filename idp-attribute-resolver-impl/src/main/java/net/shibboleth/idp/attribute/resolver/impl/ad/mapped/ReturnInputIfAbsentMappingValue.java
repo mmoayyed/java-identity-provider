@@ -15,39 +15,30 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Assert;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
 
 /**
- * A {@Link ValueMapping} that returns a default value if the wrapped {@link ValueMapping} returns
+ * A {@Link ValueMapping} that returns the input value if the wrapped {@link ValueMapping} returns
  * {@link Optional#absent()}.
  */
-public class ReturnDefaultIfAbsentValueMapping implements ValueMapping {
+public class ReturnInputIfAbsentMappingValue implements ValueMapping {
 
     /** Value mapping function composed with this function. */
-    private final ValueMapping composedFunction;
-
-    /** The result returned if the composed function returns an {@link Optional#absent()}. */
-    private final Optional<String> result;
+    private ValueMapping composedFunction;
 
     /**
      * Constructor.
      * 
      * @param function value mapping function composed with this function
-     * @param returnValue result returned if the composed function returns an {@link Optional#absent()}
      */
-    public ReturnDefaultIfAbsentValueMapping(@Nonnull ValueMapping function, @Nonnull @NotEmpty String returnValue) {
+    public ReturnInputIfAbsentMappingValue(@Nonnull ValueMapping function) {
         composedFunction = Assert.isNotNull(function, "Composed value mapping function can not be null");
-        result =
-                Optional.of(Assert.isNull(StringSupport.trimOrNull(returnValue),
-                        "Return value can not be null or empty"));
     }
 
     /** {@inheritDoc} */
@@ -56,7 +47,7 @@ public class ReturnDefaultIfAbsentValueMapping implements ValueMapping {
         if (optionalResult.isPresent()) {
             return optionalResult;
         } else {
-            return result;
+            return Optional.of(input);
         }
     }
 }

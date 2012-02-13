@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.util.Map;
 import java.util.Map.Entry;

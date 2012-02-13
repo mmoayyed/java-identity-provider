@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +26,10 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.attribute.resolver.impl.ad.SubstringValueMapping;
+import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.MappedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMapping;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

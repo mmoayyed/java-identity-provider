@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-/** 
- * Implementations of various {@link net.shibboleth.idp.attribute.resolver.BaseResolverPlugin}s.  Class in this package 
- * are <strong>not</strong> part of the public API and may be changed at the whim of the developers.
- */
+/** Implementations of various {@link net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition}s. */
 
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver.impl.ad;

@@ -15,15 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-
-/**
- * A {@link Function} that maps a given input string to an optional output string. If the input does not map to an
- * output then {@link Optional#absent()} is returned.
+/** 
+ * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} implementation that maps from a given set of
+ * source value to an output value. 
  */
-public interface ValueMapping extends Function<String, Optional<String>> {
 
-}
+package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
