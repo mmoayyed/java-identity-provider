@@ -69,16 +69,24 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
 
     /** Filters to be used on attribute values. Default value: {@link Collections#emptyList()} */
     private List<AttributeValueFilterPolicy> valuePolicies;
+    
+    /** Whether the Id has been set. */
+    private boolean idSet;
 
     /** Constructor. */
     public AttributeFilterPolicy() {
         activationCriteria = Predicates.alwaysFalse();
         valuePolicies = Collections.emptyList();
+        setId("<Uninitialized FilterPolicy>");
+        idSet = false;
     }
 
     /** {@inheritDoc} */
     public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
+        ifDestroyedThrowDestroyedComponentException(getId());
+        ifInitializedThrowUnmodifiabledComponentException(getId());
         super.setId(componentId);
+        idSet = true;
     }
 
     /**
@@ -201,6 +209,10 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        
+        if (!idSet) {
+            throw new ComponentInitializationException("Identifier not set");
+        }
 
         if (activationCriteria == null) {
             activationCriteria = Predicates.alwaysFalse();

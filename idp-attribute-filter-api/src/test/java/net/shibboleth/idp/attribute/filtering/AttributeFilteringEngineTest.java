@@ -17,8 +17,14 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
+import java.util.Arrays;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.testng.Assert;
@@ -33,6 +39,18 @@ public class AttributeFilteringEngineTest {
     /** Test that post-construction state is what is expected. */
     @Test public void testPostConstructionState() throws Exception {
         AttributeFilteringEngine engine = new AttributeFilteringEngine();
+        try {
+            engine.setId("");
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected
+        }
+        try {
+            engine.setId(null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected
+        }
         engine.setId("engine");
         engine.initialize();
 
@@ -132,5 +150,89 @@ public class AttributeFilteringEngineTest {
 
         engine.filterAttributes(filterContext);
         Assert.assertEquals(filterContext.getFilteredAttributes().size(), 1);
+    }
+
+    @Test public void testInitDestroy() throws ComponentInitializationException {
+        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
+        AttributeValueFilterPolicy filterPolicy = new AttributeValueFilterPolicy();
+        filterPolicy.setAttributeId("attribute1");
+        filterPolicy.setValueMatcher(matcher);
+
+        MockPredicate predicate = new MockPredicate();
+        AttributeFilterPolicy policy = new AttributeFilterPolicy();
+        policy.setId("policy");
+        policy.setActivationCriteria(predicate);
+        policy.setAttributeValuePolicies(Arrays.asList(filterPolicy));
+
+        Assert.assertFalse(predicate.isInitialized());
+        Assert.assertFalse(predicate.isDestroyed());
+        Assert.assertFalse(matcher.isInitialized());
+        Assert.assertFalse(matcher.isDestroyed());
+
+        AttributeFilteringEngine engine = new AttributeFilteringEngine();
+        engine.setId("engine");
+        engine.setFilterPolicies(Lists.newArrayList(policy));
+        engine.initialize();
+
+        Assert.assertTrue(predicate.isInitialized());
+        Assert.assertFalse(predicate.isDestroyed());
+        Assert.assertTrue(matcher.isInitialized());
+        Assert.assertFalse(matcher.isDestroyed());
+
+        engine.destroy();
+        Assert.assertTrue(predicate.isInitialized());
+        Assert.assertTrue(predicate.isDestroyed());
+        Assert.assertTrue(matcher.isInitialized());
+        Assert.assertTrue(matcher.isDestroyed());
+
+        try {
+            engine.initialize();
+            Assert.fail();
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
+    }
+
+    @Test public void testValidate() throws ComponentInitializationException, ComponentValidationException {
+        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
+        AttributeValueFilterPolicy filterPolicy = new AttributeValueFilterPolicy();
+        filterPolicy.setAttributeId("attribute1");
+        filterPolicy.setValueMatcher(matcher);
+
+        MockPredicate predicate = new MockPredicate();
+        AttributeFilterPolicy policy = new AttributeFilterPolicy();
+        policy.setId("Id");
+        policy.setActivationCriteria(predicate);
+        policy.setAttributeValuePolicies(Arrays.asList(filterPolicy));
+
+        AttributeFilteringEngine engine = new AttributeFilteringEngine();
+        engine.setId("engine");
+        engine.setFilterPolicies(Lists.newArrayList(policy));
+
+        Assert.assertFalse(predicate.getValidated());
+        Assert.assertFalse(matcher.getValidated());
+        
+        try {
+            engine.validate();
+            Assert.fail();
+        } catch (UninitializedComponentException e) {
+            // OK
+        }
+        Assert.assertFalse(predicate.getValidated());
+        Assert.assertFalse(matcher.getValidated());
+
+        engine.initialize();
+        engine.validate();
+        Assert.assertTrue(predicate.getValidated());
+        Assert.assertTrue(matcher.getValidated());
+
+        predicate.setFailValidate(true);
+        try {
+            engine.validate();
+            Assert.fail();
+        } catch (ComponentValidationException e) {
+            // OK
+        }
+        
     }
 }

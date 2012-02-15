@@ -55,6 +55,9 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilteringEngine.class);
+    
+    /** Whether the Id has been set*/
+    private boolean idSet;
 
     /** Filter policies used by this engine. */
     private Set<AttributeFilterPolicy> filterPolicies;
@@ -62,11 +65,14 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
     /** Constructor. */
     public AttributeFilteringEngine() {
         filterPolicies = new TransformedInputCollectionBuilder().buildImmutableSet();
+        super.setId("<unidentified Attribute Filtering Engine>");
+        idSet = false;
     }
 
     /** {@inheritDoc} */
     public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
         super.setId(componentId);
+        idSet = true;
     }
 
     /**
@@ -201,6 +207,9 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
+        if (!idSet) {
+            throw new ComponentInitializationException("Identifier for filtering engine not set");
+        }
         super.doInitialize();
 
         for (AttributeFilterPolicy policy : filterPolicies) {

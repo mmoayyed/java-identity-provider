@@ -114,7 +114,7 @@ public final class AttributeFilterContext extends BaseContext {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
-                + trimmedAttributeId + " exsists in the pre-filtered attribute set");
+                + trimmedAttributeId + " exists in the pre-filtered attribute set");
 
         if (attributeValues == null || attributeValues.isEmpty()) {
             return;
@@ -163,7 +163,7 @@ public final class AttributeFilterContext extends BaseContext {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
-                + trimmedAttributeId + " exsists in the pre-filtered attribute set");
+                + trimmedAttributeId + " exists in the pre-filtered attribute set");
 
         if (attributeValues == null || attributeValues.isEmpty()) {
             return;

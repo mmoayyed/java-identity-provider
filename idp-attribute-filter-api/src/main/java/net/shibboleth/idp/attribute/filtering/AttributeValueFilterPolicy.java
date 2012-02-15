@@ -28,9 +28,7 @@ import net.shibboleth.utilities.java.support.component.AbstractDestructableIniti
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -48,6 +46,9 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
 
     /** Unique ID of the attribute this rule applies to. */
     private String attributeId;
+    
+    /** Whether the attributeId has been set. */
+    private boolean attributeIdSet;
 
     /**
      * Whether this attribute rule will treat values that its {@link AttributeValueMatcher} as values that are permitted
@@ -63,6 +64,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
     /** Constructor. */
     public AttributeValueFilterPolicy() {
         matchingPermittedValues = true;
+        attributeId = "<unspecified attribute>";
         valueMatchingRule = AttributeValueMatcher.MATCHES_NONE;
     }
 
@@ -72,6 +74,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @return ID of the attribute to which this rule applies
      */
     @Nonnull public String getAttributeId() {
+        ifDestroyedThrowDestroyedComponentException();
         return attributeId;
     }
 
@@ -83,16 +86,11 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @param id ID of the attribute to which this rule applies
      */
     public synchronized void setAttributeId(@Nonnull @NotEmpty String id) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Value filter policy for attribute " + getAttributeId()
-                    + " has already been initialized, its attribute ID can not be changed.");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+        ifInitializedThrowUnmodifiabledComponentException("value filter policy for attribute " + getAttributeId());
+        ifDestroyedThrowDestroyedComponentException();
 
         attributeId = Assert.isNotNull(StringSupport.trimOrNull(id), "Attribute ID can not be null or empty");
+        attributeIdSet = true;
     }
 
     /**
@@ -102,6 +100,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @return true if matching attribute rules are permitted values, false if they are not
      */
     public boolean isMatchingPermittedValues() {
+        ifDestroyedThrowDestroyedComponentException();
         return matchingPermittedValues;
     }
 
@@ -112,15 +111,9 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @param isMatchingPermittedValues whether this attribute rule will treat values that its
      *            {@link AttributeValueMatcher} as values that are permitted or denied
      */
-    public synchronized void setMathingPermittedValues(boolean isMatchingPermittedValues) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Value filter policy for attribute " + getAttributeId()
-                    + " has already been initialized, matching of permitted values can not be changed.");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+    public synchronized void setMatchingPermittedValues(boolean isMatchingPermittedValues) {
+        ifInitializedThrowUnmodifiabledComponentException("value filter policy for attribute " + getAttributeId());
+        ifDestroyedThrowDestroyedComponentException();
 
         matchingPermittedValues = isMatchingPermittedValues;
     }
@@ -131,6 +124,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @return matcher used to determine attribute values filtered by this rule
      */
     @Nonnull public AttributeValueMatcher getValueMatcher() {
+        ifDestroyedThrowDestroyedComponentException();
         return valueMatchingRule;
     }
 
@@ -140,20 +134,16 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @param matcher matcher used to determine attribute values filtered by this rule
      */
     public synchronized void setValueMatcher(@Nonnull AttributeValueMatcher matcher) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException("Value filter policy for attribute " + getAttributeId()
-                    + " has already been initialized, its value matcher can not be changed.");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+        ifInitializedThrowUnmodifiabledComponentException("value filter policy for attribute " + getAttributeId());
+        ifDestroyedThrowDestroyedComponentException();
 
         valueMatchingRule = Assert.isNull(matcher, "Attribute value matcher can not be null");
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
+        ifNotInitializedThrowUninitializedComponentException("value filter policy for attribute " + getAttributeId());
+        ifDestroyedThrowDestroyedComponentException();
         ComponentSupport.validate(valueMatchingRule);
     }
 
@@ -170,14 +160,8 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
         assert attribute != null : "To-be-filtered attribute can not be null";
         assert filterContext != null : "Attribute filter context can not be null";
 
-        if (!isInitialized()) {
-            throw new AttributeFilteringException("Value filter policy for attribute " + getAttributeId()
-                    + " has not be initialized and can not yet be used");
-        }
-
-        if (isDestroyed()) {
-            throw new DestroyedComponentException(this);
-        }
+        ifNotInitializedThrowUninitializedComponentException("value filter policy for attribute " + getAttributeId());
+        ifDestroyedThrowDestroyedComponentException();
 
         log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
                 .getValues().size());
@@ -197,14 +181,14 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
     /** {@inheritDoc} */
     protected void doDestroy() {
         ComponentSupport.destroy(valueMatchingRule);
-        super.destroy();
+        super.doDestroy();
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (attributeId == null) {
+        if (!attributeIdSet) {
             throw new ComponentInitializationException("No attribute specified for this attribute value filter policy");
         }
 

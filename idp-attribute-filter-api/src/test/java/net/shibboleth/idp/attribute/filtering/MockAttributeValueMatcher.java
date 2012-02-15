@@ -18,24 +18,39 @@
 package net.shibboleth.idp.attribute.filtering;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
 /** A simple, mock implementation of {@link AttributeValueMatcher}. */
-public class MockAttributeValueMatcher implements AttributeValueMatcher {
+public class MockAttributeValueMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent, ValidatableComponent {
 
     /** ID of the attribute to which this matcher applies. */
     private String matchingAttribute;
 
     /** Values, of the attribute, considered to match this matcher. */
     private Collection matchingValues;
+    
+    /** state variable */
+    private boolean initialized;
+
+    /** state variable */
+    private boolean destroyed;
+    
+    /** state variable */
+    private boolean validated;
 
     /**
      * Sets the ID of the attribute to which this matcher applies.
@@ -60,7 +75,7 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher {
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
         if (!Objects.equal(attribute.getId(), matchingAttribute)) {
-            return null;
+            return Collections.EMPTY_SET;
         }
 
         if (matchingValues == null) {
@@ -75,5 +90,34 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher {
         }
 
         return values;
+    }
+
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        validated = true; 
+    }
+    
+    public boolean getValidated() {
+        return validated;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    /** {@inheritDoc} */
+    public void destroy() {
+        destroyed = true;        
+    }
+
+    /** {@inheritDoc} */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /** {@inheritDoc} */
+    public void initialize() throws ComponentInitializationException {
+        initialized = true;
     }
 }

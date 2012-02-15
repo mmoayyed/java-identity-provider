@@ -30,7 +30,11 @@ import com.google.common.collect.Lists;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterContextTest {
-
+    
+    private final StringAttributeValue aStringAttributeValue = new StringAttributeValue("a");
+    private final StringAttributeValue bStringAttributeValue = new StringAttributeValue("b");
+    private final StringAttributeValue cStringAttributeValue = new StringAttributeValue("c");
+    
     /** Test that post-construction state is what is expected. */
     @Test public void testPostConstructionState() {
         AttributeFilterContext context = new AttributeFilterContext();
@@ -178,11 +182,11 @@ public class AttributeFilterContextTest {
         AttributeFilterContext context = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("one");
-        attribute1.getValues().add(new StringAttributeValue("a"));
-        attribute1.getValues().add(new StringAttributeValue("b"));
+        attribute1.getValues().add(aStringAttributeValue);
+        attribute1.getValues().add(bStringAttributeValue);
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
-        context.addPermittedAttributeValues("one", Lists.newArrayList("a"));
+        context.addPermittedAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
 
         context.addPermittedAttributeValues("one", null);
@@ -191,32 +195,32 @@ public class AttributeFilterContextTest {
         context.addPermittedAttributeValues("one", new ArrayList<String>());
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
 
-        context.addPermittedAttributeValues("one", Lists.newArrayList("b"));
+        context.addPermittedAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 2);
 
         try {
-            context.addPermittedAttributeValues(null, Lists.newArrayList("a"));
+            context.addPermittedAttributeValues(null, Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
         } catch (AssertionError e) {
             // expected this
         }
 
         try {
-            context.addPermittedAttributeValues("", Lists.newArrayList("a"));
+            context.addPermittedAttributeValues("", Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
         } catch (AssertionError e) {
             // expected this
         }
 
         try {
-            context.addPermittedAttributeValues("two", Lists.newArrayList("a"));
+            context.addPermittedAttributeValues("two", Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
         } catch (AssertionError e) {
             // expected this
         }
 
         try {
-            context.addPermittedAttributeValues("one", Lists.newArrayList("c"));
+            context.addPermittedAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
@@ -228,11 +232,11 @@ public class AttributeFilterContextTest {
         AttributeFilterContext context = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("one");
-        attribute1.getValues().add(new StringAttributeValue("a"));
-        attribute1.getValues().add(new StringAttributeValue("b"));
+        attribute1.getValues().add(aStringAttributeValue);
+        attribute1.getValues().add(bStringAttributeValue);
         context.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
-        context.addDeniedAttributeValues("one", Lists.newArrayList("a"));
+        context.addDeniedAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
         context.addDeniedAttributeValues("one", null);
@@ -241,32 +245,32 @@ public class AttributeFilterContextTest {
         context.addDeniedAttributeValues("one", new ArrayList<String>());
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
-        context.addDeniedAttributeValues("one", Lists.newArrayList("b"));
+        context.addDeniedAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 2);
 
         try {
-            context.addDeniedAttributeValues(null, Lists.newArrayList("a"));
+            context.addDeniedAttributeValues(null, Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
         } catch (AssertionError e) {
             // expected this
         }
 
         try {
-            context.addDeniedAttributeValues("", Lists.newArrayList("a"));
+            context.addDeniedAttributeValues("", Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
         } catch (AssertionError e) {
             // expected this
         }
 
         try {
-            context.addDeniedAttributeValues("two", Lists.newArrayList("a"));
+            context.addDeniedAttributeValues("two", Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
         } catch (AssertionError e) {
             // expected this
         }
 
         try {
-            context.addDeniedAttributeValues("one", Lists.newArrayList("c"));
+            context.addDeniedAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
