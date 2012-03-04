@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,9 +29,8 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSortedSet;
 
 //TODO(lajoie) performance metrics
 
@@ -61,32 +62,29 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
+    /** Criterion that must be met for this policy to be active for a given request. */
+    private final Predicate<AttributeFilterContext> activationCriteria;
+
+    /** Filters to be used on attribute values. */
+    private final SortedSet<AttributeValueFilterPolicy> valuePolicies;
+
     /**
-     * Criterion that must be met for this policy to be active for a given request. Default value:
-     * {@link Predicates#alwaysFalse()}
+     * Constructor.
+     * 
+     * @param policyId unique ID of this policy
+     * @param criterion criterion used to determine if this policy is active for a given request
+     * @param policies value filtering policies employed if this policy is active
      */
-    private Predicate<AttributeFilterContext> activationCriteria;
+    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nullable Predicate criterion,
+            @Nullable Collection<AttributeValueFilterPolicy> policies) {
+        setId(policyId);
 
-    /** Filters to be used on attribute values. Default value: {@link Collections#emptyList()} */
-    private List<AttributeValueFilterPolicy> valuePolicies;
-    
-    /** Whether the Id has been set. */
-    private boolean idSet;
+        activationCriteria =
+                Assert.isNotNull(criterion, "Attribute filter policy activiation criterion can not be null");
 
-    /** Constructor. */
-    public AttributeFilterPolicy() {
-        activationCriteria = Predicates.alwaysFalse();
-        valuePolicies = Collections.emptyList();
-        setId("<Uninitialized FilterPolicy>");
-        idSet = false;
-    }
-
-    /** {@inheritDoc} */
-    public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
-        ifDestroyedThrowDestroyedComponentException(getId());
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        super.setId(componentId);
-        idSet = true;
+        ArrayList<AttributeValueFilterPolicy> checkedPolicies = new ArrayList<AttributeValueFilterPolicy>();
+        CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
+        valuePolicies = ImmutableSortedSet.copyOf(checkedPolicies);
     }
 
     /**
@@ -99,37 +97,12 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     }
 
     /**
-     * Sets the criteria that must be met for this policy to be active for a given request.
-     * 
-     * @param criteria criteria that must be met for this policy to be active for a given request
-     */
-    public synchronized void setActivationCriteria(@Nonnull final Predicate<AttributeFilterContext> criteria) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        activationCriteria = Assert.isNull(criteria, "Activitation criteria can not be null");
-    }
-
-    /**
      * Gets the unmodifiable attribute rules that are in effect if this policy is in effect.
      * 
      * @return attribute rules that are in effect if this policy is in effect
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AttributeValueFilterPolicy> getAttributeValuePolicies() {
+    @Nonnull @NonnullElements @Unmodifiable public SortedSet<AttributeValueFilterPolicy> getAttributeValuePolicies() {
         return valuePolicies;
-    }
-
-    /**
-     * Sets the attribute rules that are in effect if this policy is in effect.
-     * 
-     * @param policies attribute rules that are in effect if this policy is in effect
-     */
-    public synchronized void setAttributeValuePolicies(
-            @Nullable @NullableElements final List<AttributeValueFilterPolicy> policies) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        valuePolicies = new TransformedInputCollectionBuilder().addAll(policies).buildImmutableList();
     }
 
     /** {@inheritDoc} */
@@ -209,16 +182,8 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
-        if (!idSet) {
-            throw new ComponentInitializationException("Identifier not set");
-        }
 
-        if (activationCriteria == null) {
-            activationCriteria = Predicates.alwaysFalse();
-        } else {
-            ComponentSupport.initialize(activationCriteria);
-        }
+        ComponentSupport.initialize(activationCriteria);
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
             valuePolicy.initialize();
@@ -228,7 +193,6 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     /** {@inheritDoc} */
     protected void doDestroy() {
         ComponentSupport.destroy(activationCriteria);
-        activationCriteria = Predicates.alwaysFalse();
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
             valuePolicy.destroy();

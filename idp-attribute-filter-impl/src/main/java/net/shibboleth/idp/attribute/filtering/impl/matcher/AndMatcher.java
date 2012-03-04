@@ -17,11 +17,13 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
@@ -30,6 +32,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 
 import com.google.common.base.Objects;
 
@@ -39,6 +42,15 @@ import com.google.common.base.Objects;
  */
 @ThreadSafe
 public class AndMatcher extends AbstractComposedMatcher {
+
+    /**
+     * Constructor.
+     * 
+     * @param composedMatchers matchers being composed
+     */
+    public AndMatcher(@Nullable @NullableElements final Collection<AttributeValueMatcher> composedMatchers) {
+        super(composedMatchers);
+    }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,

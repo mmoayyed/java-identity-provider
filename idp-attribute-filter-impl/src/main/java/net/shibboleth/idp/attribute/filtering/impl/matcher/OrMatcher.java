@@ -17,9 +17,12 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
@@ -27,6 +30,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import com.google.common.base.Objects;
@@ -37,6 +41,15 @@ import com.google.common.base.Objects;
  */
 @ThreadSafe
 public class OrMatcher extends AbstractComposedMatcher implements AttributeValueMatcher, ValidatableComponent {
+
+    /**
+     * Constructor.
+     * 
+     * @param composedMatchers matchers being composed
+     */
+    public OrMatcher(@Nullable @NullableElements final Collection<AttributeValueMatcher> composedMatchers) {
+        super(composedMatchers);
+    }
 
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)

@@ -18,9 +18,12 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -32,19 +35,21 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
-import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /** Base class for attribute definition resolver plugins. */
 @ThreadSafe
@@ -106,9 +111,16 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        displayDescriptions =
-                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE)
-                        .putAll(descriptions).buildImmutableMap();
+        HashMap<Locale, String> checkedDescriptions = new HashMap<Locale, String>();
+        String trimmedDescription;
+        for (Entry<Locale, String> entry : descriptions.entrySet()) {
+            trimmedDescription = StringSupport.trimOrNull(entry.getValue());
+            if (trimmedDescription != null) {
+                checkedDescriptions.put(entry.getKey(), trimmedDescription);
+            }
+        }
+
+        displayDescriptions = ImmutableMap.copyOf(checkedDescriptions);
     }
 
     /**
@@ -129,9 +141,16 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        displayNames =
-                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE).putAll(names)
-                        .buildImmutableMap();
+        HashMap<Locale, String> checkedNames = new HashMap<Locale, String>();
+        String trimmedName;
+        for (Entry<Locale, String> entry : names.entrySet()) {
+            trimmedName = StringSupport.trimOrNull(entry.getValue());
+            if (trimmedName != null) {
+                checkedNames.put(entry.getKey(), trimmedName);
+            }
+        }
+
+        displayNames = ImmutableMap.copyOf(checkedNames);
     }
 
     /**
@@ -154,7 +173,9 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        encoders = new TransformedInputCollectionBuilder().addAll(attributeEncoders).buildImmutableSet();
+        Set<AttributeEncoder<?>> checkedEncoders = new HashSet<AttributeEncoder<?>>();
+        CollectionSupport.addIf(checkedEncoders, attributeEncoders, Predicates.notNull());
+        encoders = ImmutableSet.copyOf(checkedEncoders);
     }
 
     /** {@inheritDoc} */

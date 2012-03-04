@@ -18,8 +18,12 @@
 package net.shibboleth.idp.attribute;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -29,13 +33,15 @@ import javax.annotation.concurrent.NotThreadSafe;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
-import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Assert;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Constraints;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Each attribute represents one piece of information about a user and has associated encoders used to turn that
@@ -70,13 +76,11 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
     public Attribute(@Nonnull @NotEmpty final String attributeId) {
         id = Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
 
-        TransformedInputMapBuilder<Locale, String> mapBuilder =
-                new TransformedInputMapBuilder<Locale, String>().valuePreprocessor(TrimOrNullStringFunction.INSTANCE);
-        displayNames = mapBuilder.buildMap();
-        displayDescriptions = mapBuilder.buildMap();
+        displayNames = Collections.emptyMap();
+        displayDescriptions = Collections.emptyMap();
 
-        values = new TransformedInputCollectionBuilder<AttributeValue>().buildSet();
-        encoders = new TransformedInputCollectionBuilder<AttributeEncoder<?>>().buildSet();
+        values = Constraints.constrainedSet(new HashSet<AttributeValue>(), Constraints.notNull());
+        encoders = Constraints.constrainedSet(new HashSet<AttributeEncoder<?>>(), Constraints.notNull());
     }
 
     /**
@@ -93,7 +97,7 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * 
      * @return human readable name of the attribute
      */
-    @Nonnull @NonnullElements public Map<Locale, String> getDisplayNames() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayNames() {
         return displayNames;
     }
 
@@ -103,9 +107,16 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * @param newNames the new names for this attribute
      */
     public void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> newNames) {
-        displayNames =
-                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE).putAll(newNames)
-                        .buildMap();
+        HashMap<Locale, String> checkedNames = new HashMap<Locale, String>();
+        String trimmedName;
+        for (Entry<Locale, String> entry : newNames.entrySet()) {
+            trimmedName = StringSupport.trimOrNull(entry.getValue());
+            if (trimmedName != null) {
+                checkedNames.put(entry.getKey(), trimmedName);
+            }
+        }
+
+        displayNames = ImmutableMap.copyOf(checkedNames);
     }
 
     /**
@@ -113,7 +124,7 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * 
      * @return human readable description of attribute
      */
-    @Nonnull @NonnullElements public Map<Locale, String> getDisplayDescriptions() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<Locale, String> getDisplayDescriptions() {
         return displayDescriptions;
     }
 
@@ -123,9 +134,16 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * @param newDescriptions the new descriptions for this attribute
      */
     public void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> newDescriptions) {
-        displayDescriptions =
-                new TransformedInputMapBuilder().valuePreprocessor(TrimOrNullStringFunction.INSTANCE)
-                        .putAll(newDescriptions).buildMap();
+        HashMap<Locale, String> checkedDescriptions = new HashMap<Locale, String>();
+        String trimmedDescription;
+        for (Entry<Locale, String> entry : newDescriptions.entrySet()) {
+            trimmedDescription = StringSupport.trimOrNull(entry.getValue());
+            if (trimmedDescription != null) {
+                checkedDescriptions.put(entry.getKey(), trimmedDescription);
+            }
+        }
+
+        displayDescriptions = ImmutableMap.copyOf(checkedDescriptions);
     }
 
     /**
@@ -142,8 +160,11 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * 
      * @param newValues the new values for this attribute
      */
-    public void setValues(@Nullable @NullableElements final Collection<? extends AttributeValue> newValues) {
-        values = new TransformedInputCollectionBuilder().addAll(newValues).buildSet();
+    public void setValues(@Nullable @NullableElements final Collection<AttributeValue> newValues) {
+        Set<AttributeValue> checkedValues =
+                Constraints.constrainedSet(new HashSet<AttributeValue>(), Constraints.notNull());
+        CollectionSupport.addIf(checkedValues, newValues, Predicates.<AttributeValue> notNull());
+        values = checkedValues;
     }
 
     /**
@@ -160,8 +181,11 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * 
      * @param newEncoders the new encoders for this attribute
      */
-    public void setEncoders(@Nullable @NullableElements final Set<AttributeEncoder<?>> newEncoders) {
-        encoders = new TransformedInputCollectionBuilder().addAll(newEncoders).buildSet();
+    public void setEncoders(@Nullable @NullableElements final Collection<AttributeEncoder<?>> newEncoders) {
+        Set<AttributeEncoder<?>> checkedEncoders =
+                Constraints.constrainedSet(new HashSet<AttributeEncoder<?>>(), Constraints.notNull());
+        CollectionSupport.addIf(checkedEncoders, newEncoders, Predicates.notNull());
+        encoders = checkedEncoders;
     }
 
     /** {@inheritDoc} */
@@ -216,6 +240,7 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
     /** {@inheritDoc} */
     @Nonnull public String toString() {
         return Objects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
-                .add("displayDescriptions", displayDescriptions).add("encoders", encoders).add("values", values).toString();
+                .add("displayDescriptions", displayDescriptions).add("encoders", encoders).add("values", values)
+                .toString();
     }
 }

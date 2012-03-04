@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,13 +32,14 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
-import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Constraints;
+import com.google.common.collect.MapConstraints;
 
 /** A context which carries and collects information through an attribute resolution. */
 @NotThreadSafe
@@ -56,13 +59,16 @@ public class AttributeResolutionContext extends BaseContext {
 
     /** Constructor. */
     public AttributeResolutionContext() {
-        requestedAttributes = new TransformedInputCollectionBuilder().buildSet();
+        requestedAttributes = Constraints.constrainedSet(new HashSet<Attribute>(), Constraints.notNull());
 
-        TransformedInputMapBuilder mapBuilder =
-                new TransformedInputMapBuilder().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
-        resolvedAttributes = mapBuilder.buildMap();
-        resolvedAttributeDefinitions = mapBuilder.buildMap();
-        resolvedDataConnectors = mapBuilder.buildMap();
+        resolvedAttributes = MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+        
+        resolvedAttributeDefinitions =
+                MapConstraints.constrainedMap(new HashMap<String, ResolvedAttributeDefinition>(),
+                        MapConstraints.notNull());
+        
+        resolvedDataConnectors =
+                MapConstraints.constrainedMap(new HashMap<String, ResolvedDataConnector>(), MapConstraints.notNull());
     }
 
     /**
@@ -80,7 +86,9 @@ public class AttributeResolutionContext extends BaseContext {
      * @param attributes attributes requested to be resolved
      */
     public void setRequestedAttributes(@Nullable @NullableElements final Set<Attribute> attributes) {
-        requestedAttributes = new TransformedInputCollectionBuilder().addAll(attributes).buildSet();
+        Set<Attribute> checkedAttributes = new HashSet<Attribute>();
+        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
+        requestedAttributes = checkedAttributes;
     }
 
     /**
@@ -98,18 +106,18 @@ public class AttributeResolutionContext extends BaseContext {
      * @param attributes set of resolved attributes, may be null, empty or contain null values
      */
     public void setResolvedAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        TransformedInputMapBuilder<String, Attribute> mapBuilder =
-                new TransformedInputMapBuilder<String, Attribute>().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+        Map<String, Attribute> checkedAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
 
         if (attributes != null) {
             for (Attribute attribute : attributes) {
                 if (attribute != null) {
-                    mapBuilder.put(attribute.getId(), attribute);
+                    checkedAttributes.put(attribute.getId(), attribute);
                 }
             }
         }
 
-        resolvedAttributes = mapBuilder.buildMap();
+        resolvedAttributes = checkedAttributes;
     }
 
     /**

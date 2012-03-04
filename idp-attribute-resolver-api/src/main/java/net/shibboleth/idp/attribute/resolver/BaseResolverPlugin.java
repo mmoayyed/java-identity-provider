@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -28,7 +29,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Base class for all {@link ResolutionPlugIn}s.
@@ -137,7 +139,9 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
         ifInitializedThrowUnmodifiabledComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
 
-        dependencies = new TransformedInputCollectionBuilder().addAll(pluginDependencies).buildImmutableSet();
+        HashSet<ResolverPluginDependency> checkedDeps = new HashSet<ResolverPluginDependency>();
+        CollectionSupport.addIf(checkedDeps, pluginDependencies, Predicates.notNull());
+        dependencies = ImmutableSet.copyOf(checkedDeps);
     }
 
     /**

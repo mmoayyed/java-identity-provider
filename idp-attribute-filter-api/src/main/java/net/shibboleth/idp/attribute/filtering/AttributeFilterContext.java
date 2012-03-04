@@ -19,24 +19,28 @@ package net.shibboleth.idp.attribute.filtering;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
-import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
 import net.shibboleth.utilities.java.support.logic.Assert;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
+
+import com.google.common.collect.Constraints;
+import com.google.common.collect.MapConstraints;
 
 /** Context used to collect data as attributes are filtered. */
 @NotThreadSafe
@@ -46,22 +50,23 @@ public final class AttributeFilterContext extends BaseContext {
     private Map<String, Attribute> prefilteredAttributes;
 
     /** Values, for a given attribute, that are permitted to be released. */
-    private Map<String, Collection> permittedValues;
+    private Map<String, Set<AttributeValue>> permittedValues;
 
     /** Values, for a given attribute, that are not permitted to be released. */
-    private Map<String, Collection> deniedValues;
+    private Map<String, Set<AttributeValue>> deniedValues;
 
     /** Attributes which have been filtered. */
     private Map<String, Attribute> filteredAttributes;
 
     /** Constructor. */
     public AttributeFilterContext() {
-        TransformedInputMapBuilder mapBuilder =
-                new TransformedInputMapBuilder().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
-        prefilteredAttributes = mapBuilder.buildMap();
-        permittedValues = mapBuilder.buildMap();
-        deniedValues = mapBuilder.buildMap();
-        filteredAttributes = mapBuilder.buildMap();
+        prefilteredAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+        permittedValues =
+                MapConstraints.constrainedMap(new HashMap<String, Set<AttributeValue>>(), MapConstraints.notNull());
+        deniedValues =
+                MapConstraints.constrainedMap(new HashMap<String, Set<AttributeValue>>(), MapConstraints.notNull());
+        filteredAttributes = MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
     }
 
     /**
@@ -79,16 +84,18 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes which are to be filtered
      */
     public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        TransformedInputMapBuilder<String, Attribute> mapBuilder =
-                new TransformedInputMapBuilder<String, Attribute>().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+        Map<String, Attribute> checkedAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
 
         if (attributes != null) {
             for (Attribute attribute : attributes) {
-                mapBuilder.put(attribute.getId(), attribute);
+                if (attribute != null) {
+                    checkedAttributes.put(attribute.getId(), attribute);
+                }
             }
         }
 
-        prefilteredAttributes = mapBuilder.buildMap();
+        prefilteredAttributes = checkedAttributes;
     }
 
     /**
@@ -96,7 +103,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return collection of attribute values, indexed by ID, that are permitted to be released,
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection> getPermittedAttributeValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<AttributeValue>> getPermittedAttributeValues() {
         return Collections.unmodifiableMap(permittedValues);
     }
 
@@ -110,7 +117,7 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributeValues values for the attribute that are permitted to be released
      */
     public void addPermittedAttributeValues(@Nonnull @NotEmpty String attributeId,
-            @Nullable @NullableElements Collection attributeValues) {
+            @Nullable @NullableElements Collection<? extends AttributeValue> attributeValues) {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
@@ -120,13 +127,13 @@ public final class AttributeFilterContext extends BaseContext {
             return;
         }
 
-        Collection permittedAttributeValues = permittedValues.get(trimmedAttributeId);
+        Set<AttributeValue> permittedAttributeValues = permittedValues.get(trimmedAttributeId);
         if (permittedAttributeValues == null) {
-            permittedAttributeValues = new TransformedInputCollectionBuilder().buildList();
+            permittedAttributeValues = Constraints.constrainedSet(new HashSet<AttributeValue>(), Constraints.notNull());
             permittedValues.put(trimmedAttributeId, permittedAttributeValues);
         }
 
-        for (Object value : attributeValues) {
+        for (AttributeValue value : attributeValues) {
             if (value != null) {
                 if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
                     throw new IllegalArgumentException("permitted value is not a current value of attribute "
@@ -145,7 +152,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @return collection of attribute values, indexed by ID, that are not permitted to be released
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String, Collection> getDeniedAttributeValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, Set<AttributeValue>> getDeniedAttributeValues() {
         return Collections.unmodifiableMap(deniedValues);
     }
 
@@ -159,23 +166,23 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributeValues values for the attribute that are not permitted to be released
      */
     public void addDeniedAttributeValues(@Nonnull @NotEmpty String attributeId,
-            @Nullable @NullableElements Collection attributeValues) {
+            @Nullable @NullableElements Collection<? extends AttributeValue> attributeValues) {
         String trimmedAttributeId =
                 Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
-        Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
+        Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "No attribute with ID "
                 + trimmedAttributeId + " exists in the pre-filtered attribute set");
 
         if (attributeValues == null || attributeValues.isEmpty()) {
             return;
         }
 
-        Collection deniedAttributeValues = deniedValues.get(trimmedAttributeId);
+        Set<AttributeValue> deniedAttributeValues = deniedValues.get(trimmedAttributeId);
         if (deniedAttributeValues == null) {
-            deniedAttributeValues = new TransformedInputCollectionBuilder().buildList();
+            deniedAttributeValues = Constraints.constrainedSet(new HashSet<AttributeValue>(), Constraints.notNull());
             deniedValues.put(trimmedAttributeId, deniedAttributeValues);
         }
 
-        for (Object value : attributeValues) {
+        for (AttributeValue value : attributeValues) {
             if (value != null) {
                 if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
                     throw new IllegalArgumentException("denied value is not a current value of attribute "
@@ -204,15 +211,17 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes that have been filtered
      */
     public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        TransformedInputMapBuilder<String, Attribute> mapBuilder =
-                new TransformedInputMapBuilder<String, Attribute>().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+        Map<String, Attribute> checkedAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
 
         if (attributes != null) {
             for (Attribute attribute : attributes) {
-                mapBuilder.put(attribute.getId(), attribute);
+                if (attribute != null) {
+                    checkedAttributes.put(attribute.getId(), attribute);
+                }
             }
         }
 
-        filteredAttributes = mapBuilder.buildMap();
+        filteredAttributes = checkedAttributes;
     }
 }

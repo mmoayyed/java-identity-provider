@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -28,10 +29,10 @@ import javax.annotation.concurrent.NotThreadSafe;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 
 import org.opensaml.messaging.context.BaseContext;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * A {@link BaseContext} that tracks a set of attributes. Usually the tracked attributes are about a particular user and
@@ -68,16 +69,13 @@ public class AttributeContext extends BaseContext {
             return;
         }
 
-        TransformedInputMapBuilder<String, Attribute> mapBuilder =
-                new TransformedInputMapBuilder<String, Attribute>().keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
+        HashMap<String, Attribute> checkedAttributes = new HashMap<String, Attribute>();
         for (Attribute attribute : newAttributes) {
-            if (attribute == null) {
-                continue;
+            if (attribute != null) {
+                checkedAttributes.put(attribute.getId(), attribute);
             }
-
-            mapBuilder.put(attribute.getId(), attribute);
         }
 
-        attributes = mapBuilder.buildImmutableMap();
+        attributes = ImmutableMap.copyOf(checkedAttributes);
     }
 }

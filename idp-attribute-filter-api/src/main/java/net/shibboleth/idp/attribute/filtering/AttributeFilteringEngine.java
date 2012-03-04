@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +32,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyList;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -45,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSortedSet;
 
 //TODO(lajoie) perf metrics
 
@@ -55,24 +58,23 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilteringEngine.class);
-    
-    /** Whether the Id has been set*/
-    private boolean idSet;
 
     /** Filter policies used by this engine. */
-    private Set<AttributeFilterPolicy> filterPolicies;
+    private final SortedSet<AttributeFilterPolicy> filterPolicies;
 
-    /** Constructor. */
-    public AttributeFilteringEngine() {
-        filterPolicies = new TransformedInputCollectionBuilder().buildImmutableSet();
-        super.setId("<unidentified Attribute Filtering Engine>");
-        idSet = false;
-    }
+    /**
+     * Constructor.
+     * 
+     * @param engineId ID of this engine
+     * @param policies filter policies used by this engine
+     */
+    public AttributeFilteringEngine(@Nonnull @NotEmpty String engineId,
+            @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
+        setId(engineId);
 
-    /** {@inheritDoc} */
-    public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
-        super.setId(componentId);
-        idSet = true;
+        ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<AttributeFilterPolicy>();
+        CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
+        filterPolicies = ImmutableSortedSet.copyOf(checkedPolicies);
     }
 
     /**
@@ -84,24 +86,11 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
         return filterPolicies;
     }
 
-    /**
-     * Sets the new policies for the filtering engine.
-     * 
-     * @param policies new policies for the filtering engine
-     */
-    public synchronized void setFilterPolicies(
-            @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        filterPolicies = new TransformedInputCollectionBuilder().addAll(policies).buildImmutableSet();
-    }
-
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         ifNotInitializedThrowUninitializedComponentException(getId());
         ifDestroyedThrowDestroyedComponentException(getId());
-        
+
         final LazyList<String> invalidPolicyIds = new LazyList<String>();
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
@@ -140,7 +129,7 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
 
         Map<String, Attribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
 
-        log.debug("Attribute filter engine '{}': beginning process of filter the following {} attributes: {}",
+        log.debug("Attribute filter engine '{}': beginning process of filtering the following {} attributes: {}",
                 new Object[] {getId(), prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
 
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
@@ -207,9 +196,6 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
-        if (!idSet) {
-            throw new ComponentInitializationException("Identifier for filtering engine not set");
-        }
         super.doInitialize();
 
         for (AttributeFilterPolicy policy : filterPolicies) {
@@ -223,8 +209,6 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
         for (AttributeFilterPolicy policy : policies) {
             policy.destroy();
         }
-
-        filterPolicies = Collections.emptySet();
 
         super.doDestroy();
     }

@@ -17,9 +17,10 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,13 +28,17 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.collection.TransformedInputCollectionBuilder;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * Base class for {@link AttributeValueMatcher} implementations that are compositions of other
@@ -43,30 +48,30 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
         AttributeValueMatcher, UnmodifiableComponent, ValidatableComponent {
 
     /** The composed matchers. */
-    private Set<AttributeValueMatcher> matchers = Collections.emptySet();
+    private final SortedSet<AttributeValueMatcher> matchers;
+
+    /**
+     * Constructor.
+     * 
+     * @param composedMatchers matchers being composed
+     */
+    public AbstractComposedMatcher(@Nullable @NullableElements final Collection<AttributeValueMatcher> composedMatchers) {
+        ArrayList<AttributeValueMatcher> checkedMatchers = new ArrayList<AttributeValueMatcher>();
+
+        if (composedMatchers != null) {
+            CollectionSupport.addIf(checkedMatchers, composedMatchers, Predicates.notNull());
+        }
+
+        matchers = ImmutableSortedSet.copyOf(checkedMatchers);
+    }
 
     /**
      * Get the composed matchers.
      * 
      * @return the composed matchers
      */
-    @Nonnull @NonnullElements public Set<AttributeValueMatcher> getComposedMatchers() {
+    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValueMatcher> getComposedMatchers() {
         return matchers;
-    }
-
-    /**
-     * Set the composed matchers.
-     * 
-     * @param composedMatchers the composed matchers
-     */
-    public synchronized void setComposedMatchers(
-            @Nullable @NullableElements final List<AttributeValueMatcher> composedMatchers) {
-        ifInitializedThrowUnmodifiabledComponentException();
-        ifDestroyedThrowDestroyedComponentException();
-
-        matchers =
-                new TransformedInputCollectionBuilder<AttributeValueMatcher>().addAll(composedMatchers)
-                        .buildImmutableSet();
     }
 
     /** {@inheritDoc} */
@@ -89,8 +94,6 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
         for (AttributeValueMatcher matcher : matchers) {
             ComponentSupport.destroy(matcher);
         }
-        // Clear after the setting of the flag top avoid race with getMatchingValues
-        matchers = Collections.emptySet();
 
         super.doDestroy();
     }

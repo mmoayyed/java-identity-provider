@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.testng.Assert;
@@ -192,7 +193,7 @@ public class AttributeFilterContextTest {
         context.addPermittedAttributeValues("one", null);
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
 
-        context.addPermittedAttributeValues("one", new ArrayList<String>());
+        context.addPermittedAttributeValues("one", new ArrayList<AttributeValue>());
         Assert.assertEquals(context.getPermittedAttributeValues().get("one").size(), 1);
 
         context.addPermittedAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
@@ -242,7 +243,7 @@ public class AttributeFilterContextTest {
         context.addDeniedAttributeValues("one", null);
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
-        context.addDeniedAttributeValues("one", new ArrayList<String>());
+        context.addDeniedAttributeValues("one", new ArrayList<AttributeValue>());
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
         context.addDeniedAttributeValues("one", Lists.newArrayList(bStringAttributeValue));

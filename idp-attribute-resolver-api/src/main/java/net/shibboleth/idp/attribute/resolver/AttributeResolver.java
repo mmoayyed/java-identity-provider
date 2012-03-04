@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,19 +34,18 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazySet;
-import net.shibboleth.utilities.java.support.collection.TransformedInputMapBuilder;
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.TrimOrNullStringFunction;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 
 //TODO(lajoie) perf metrics
 //TODO(lajoie) need to deal with thread safety issue where attribute definitions/data connectors might change in the midst of a resolution
@@ -60,20 +59,42 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
     private final Logger log = LoggerFactory.getLogger(AttributeResolver.class);
 
     /** Attribute definitions defined for this resolver. */
-    private Map<String, BaseAttributeDefinition> attributeDefinitions;
+    private final Map<String, BaseAttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
-    private Map<String, BaseDataConnector> dataConnectors;
+    private final Map<String, BaseDataConnector> dataConnectors;
 
-    /** Constructor. */
-    public AttributeResolver() {
-        attributeDefinitions = Collections.emptyMap();
-        dataConnectors = Collections.emptyMap();
-    }
+    /**
+     * Constructor.
+     * 
+     * @param resolverId ID of this resolver
+     * @param definitions attribute definitions loaded in to this resolver
+     * @param connectors data connectors loaded in to this resolver
+     */
+    public AttributeResolver(@Nonnull @NotEmpty String resolverId,
+            @Nullable @NullableElements Collection<BaseAttributeDefinition> definitions,
+            @Nullable @NullableElements Collection<BaseDataConnector> connectors) {
+        setId(resolverId);
 
-    /** {@inheritDoc} */
-    public synchronized void setId(@Nonnull @NotEmpty String componentId) {
-        super.setId(componentId);
+        HashMap<String, BaseAttributeDefinition> checkedDefinitions = new HashMap<String, BaseAttributeDefinition>();
+        if (definitions != null) {
+            for (BaseAttributeDefinition definition : definitions) {
+                if (definition != null) {
+                    checkedDefinitions.put(definition.getId(), definition);
+                }
+            }
+        }
+        attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
+
+        HashMap<String, BaseDataConnector> checkedConnectors = new HashMap<String, BaseDataConnector>();
+        if (connectors != null) {
+            for (BaseDataConnector connector : connectors) {
+                if (connector != null) {
+                    checkedConnectors.put(connector.getId(), connector);
+                }
+            }
+        }
+        dataConnectors = ImmutableMap.copyOf(checkedConnectors);
     }
 
     /**
@@ -86,62 +107,12 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
     }
 
     /**
-     * Sets the collection of attribute definitions for this resolver.
-     * 
-     * @param definitions definition to set
-     */
-    public synchronized void setAttributeDefinition(
-            @Nullable @NullableElements final Collection<BaseAttributeDefinition> definitions) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        TransformedInputMapBuilder<String, BaseAttributeDefinition> mapBuilder =
-                new TransformedInputMapBuilder<String, BaseAttributeDefinition>()
-                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
-
-        if (definitions != null) {
-            for (BaseAttributeDefinition definition : definitions) {
-                if (definition != null) {
-                    mapBuilder.put(definition.getId(), definition);
-                }
-            }
-        }
-
-        attributeDefinitions = mapBuilder.buildImmutableMap();
-    }
-
-    /**
      * Gets the unmodifiable collection of data connectors for this resolver.
      * 
      * @return data connectors loaded in to this resolver
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, BaseDataConnector> getDataConnectors() {
         return dataConnectors;
-    }
-
-    /**
-     * Sets the collection of data connectors for this resolver.
-     * 
-     * @param connectors connectors to set
-     */
-    public synchronized void setDataConnectors(
-            @Nullable @NullableElements final Collection<BaseDataConnector> connectors) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
-        TransformedInputMapBuilder<String, BaseDataConnector> mapBuilder =
-                new TransformedInputMapBuilder<String, BaseDataConnector>()
-                        .keyPreprocessor(TrimOrNullStringFunction.INSTANCE);
-
-        if (connectors != null) {
-            for (BaseDataConnector connector : connectors) {
-                if (connector != null) {
-                    mapBuilder.put(connector.getId(), connector);
-                }
-            }
-        }
-
-        dataConnectors = mapBuilder.buildImmutableMap();
     }
 
     /**
@@ -234,9 +205,6 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
         for (BaseResolverPlugin plugin : dataConnectors.values()) {
             plugin.destroy();
         }
-
-        attributeDefinitions = Collections.emptyMap();
-        dataConnectors = Collections.emptyMap();
     }
 
     /**

@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
-import org.springframework.beans.factory.parsing.FailFastProblemReporter;
-
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
