@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -88,8 +89,8 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final LazyList<String> invalidPolicyIds = new LazyList<String>();
         final Set<AttributeFilterPolicy> policies = getFilterPolicies();
@@ -124,8 +125,8 @@ public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableIni
             throws AttributeFilteringException {
         assert filterContext != null : "Attribute filter context can not be null";
 
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Map<String, Attribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
 

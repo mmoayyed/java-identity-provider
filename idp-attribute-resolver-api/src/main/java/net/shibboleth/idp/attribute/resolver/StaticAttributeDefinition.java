@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
 import com.google.common.base.Optional;
@@ -45,8 +46,8 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
      * @param newAttrribute what to set.
      */
     public synchronized void setAttribute(@Nonnull Attribute newAttrribute) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         value = Optional.of(Assert.isNotNull(newAttrribute, "Static attribute can not be null"));
     }

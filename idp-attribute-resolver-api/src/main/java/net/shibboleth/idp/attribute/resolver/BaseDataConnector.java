@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -60,8 +61,8 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      *            experiences an error
      */
     public synchronized void setFailoverDataConnectorId(@Nullable final String id) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         failoverDataConnectorId = Optional.fromNullable(StringSupport.trimOrNull(id));
     }

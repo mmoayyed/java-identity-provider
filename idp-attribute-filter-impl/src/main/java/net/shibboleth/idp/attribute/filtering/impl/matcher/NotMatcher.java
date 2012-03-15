@@ -77,8 +77,8 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
         final AttributeValueMatcher currentMatcher = getNegtedMatcher();
-        ifNotInitializedThrowUninitializedComponentException();
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Set<AttributeValue> attributeValues = new HashSet<AttributeValue>(attribute.getValues());
 

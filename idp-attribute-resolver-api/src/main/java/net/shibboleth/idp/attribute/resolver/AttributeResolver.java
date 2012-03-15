@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
@@ -123,8 +124,8 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
      * {@inheritDoc}
      */
     public void validate() throws ComponentValidationException {
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final LazyList<String> invalidDataConnectors = new LazyList<String>();
         for (BaseDataConnector plugin : dataConnectors.values()) {
@@ -169,8 +170,8 @@ public class AttributeResolver extends AbstractDestrucableIdentifiableInitializa
             throws AttributeResolutionException {
         assert resolutionContext != null : "Attribute resolution context can not be null";
 
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         log.debug("Attribute Resolver {}: initiating attribute resolution", getId());
 

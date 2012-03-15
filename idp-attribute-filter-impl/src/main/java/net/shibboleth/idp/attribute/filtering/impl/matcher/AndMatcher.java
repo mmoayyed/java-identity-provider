@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import com.google.common.base.Objects;
 
@@ -61,8 +62,9 @@ public class AndMatcher extends AbstractComposedMatcher {
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
         final Set<AttributeValueMatcher> currentMatchers = getComposedMatchers();
-        ifNotInitializedThrowUninitializedComponentException();
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
 
         if (currentMatchers.isEmpty()) {
             return Collections.emptySet();

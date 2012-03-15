@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.Assert;
@@ -101,8 +102,8 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
         assert filterContext != null : "Attribute filter contet can not be null";
 
         final EvaluableScript currentScript = script;
-        ifNotInitializedThrowUninitializedComponentException();
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);

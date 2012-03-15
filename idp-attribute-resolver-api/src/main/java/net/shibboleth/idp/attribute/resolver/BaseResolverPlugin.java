@@ -70,8 +70,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
 
     /** {@inheritDoc} */
     public synchronized void setId(final String componentId) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         super.setId(componentId);
     }
@@ -93,8 +93,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
      * @param propagate true if {@link AttributeResolutionException}s are propagated, false if not
      */
     public synchronized void setPropagateResolutionExceptions(final boolean propagate) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         propagateResolutionExceptions = propagate;
     }
@@ -114,9 +114,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
      * @param criteria criteria that must be met for this plugin to be active for a given request
      */
     public synchronized void setActivationCriteria(@Nonnull final Predicate<AttributeResolutionContext> criteria) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
-
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         activationCriteria = Assert.isNotNull(criteria, "Activiation criteria can not be null");
     }
 
@@ -136,8 +135,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
      */
     public synchronized void setDependencies(
             @Nullable @NullableElements final Collection<ResolverPluginDependency> pluginDependencies) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         HashSet<ResolverPluginDependency> checkedDeps = new HashSet<ResolverPluginDependency>();
         CollectionSupport.addIf(checkedDeps, pluginDependencies, Predicates.notNull());
@@ -166,8 +165,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestrucab
             throws AttributeResolutionException {
         assert resolutionContext != null : "Attribute resolution context can not be null";
 
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (!activationCriteria.apply(resolutionContext)) {
             log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());

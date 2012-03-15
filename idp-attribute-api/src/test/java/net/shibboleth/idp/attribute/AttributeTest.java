@@ -332,7 +332,7 @@ public class AttributeTest {
         Assert.assertFalse(attrib.getValues().contains(value2));
 
         // test replacing all entries
-        Collection<LocalizedStringAttributeValue> values = new ArrayList<LocalizedStringAttributeValue>();
+        Collection<AttributeValue> values = new ArrayList<AttributeValue>();
         values.add(value2);
         attrib.setValues(values);
         Assert.assertFalse(attrib.getValues().isEmpty());

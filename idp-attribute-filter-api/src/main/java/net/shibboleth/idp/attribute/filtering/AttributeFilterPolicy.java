@@ -127,8 +127,8 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
         assert filterContext != null : "Attribute filter context can not be null";
 
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
@@ -155,8 +155,8 @@ public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitia
     public void apply(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
         assert filterContext != null : "Attribute filter context can not be null";
 
-        ifNotInitializedThrowUninitializedComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final Map<String, Attribute> attributes = filterContext.getPrefilteredAttributes();
         log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getId(),

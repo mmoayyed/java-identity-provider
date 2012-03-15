@@ -74,7 +74,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @return ID of the attribute to which this rule applies
      */
     @Nonnull public String getAttributeId() {
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return attributeId;
     }
 
@@ -86,8 +86,8 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @param id ID of the attribute to which this rule applies
      */
     public synchronized void setAttributeId(@Nonnull @NotEmpty String id) {
-        ifInitializedThrowUnmodifiabledComponentException("value filter policy for attribute " + getAttributeId());
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         attributeId = Assert.isNotNull(StringSupport.trimOrNull(id), "Attribute ID can not be null or empty");
         attributeIdSet = true;
@@ -100,7 +100,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @return true if matching attribute rules are permitted values, false if they are not
      */
     public boolean isMatchingPermittedValues() {
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return matchingPermittedValues;
     }
 
@@ -112,8 +112,8 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      *            {@link AttributeValueMatcher} as values that are permitted or denied
      */
     public synchronized void setMatchingPermittedValues(boolean isMatchingPermittedValues) {
-        ifInitializedThrowUnmodifiabledComponentException("value filter policy for attribute " + getAttributeId());
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         matchingPermittedValues = isMatchingPermittedValues;
     }
@@ -124,7 +124,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @return matcher used to determine attribute values filtered by this rule
      */
     @Nonnull public AttributeValueMatcher getValueMatcher() {
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return valueMatchingRule;
     }
 
@@ -134,16 +134,16 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * @param matcher matcher used to determine attribute values filtered by this rule
      */
     public synchronized void setValueMatcher(@Nonnull AttributeValueMatcher matcher) {
-        ifInitializedThrowUnmodifiabledComponentException("value filter policy for attribute " + getAttributeId());
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         valueMatchingRule = Assert.isNull(matcher, "Attribute value matcher can not be null");
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        ifNotInitializedThrowUninitializedComponentException("value filter policy for attribute " + getAttributeId());
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.validate(valueMatchingRule);
     }
 
@@ -160,8 +160,8 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
         assert attribute != null : "To-be-filtered attribute can not be null";
         assert filterContext != null : "Attribute filter context can not be null";
 
-        ifNotInitializedThrowUninitializedComponentException("value filter policy for attribute " + getAttributeId());
-        ifDestroyedThrowDestroyedComponentException();
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
                 .getValues().size());

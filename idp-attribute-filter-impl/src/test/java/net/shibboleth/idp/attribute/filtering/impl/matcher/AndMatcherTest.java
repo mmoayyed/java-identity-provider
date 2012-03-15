@@ -21,6 +21,7 @@ import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
 
+import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -43,8 +44,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
 
     @Test public void testNullArguments() throws Exception {
         AttributeValuePredicateMatcher valuePredicate = new AttributeValuePredicateMatcher(alwaysTrue());
-        AndMatcher matcher = new AndMatcher();
-        matcher.setComposedMatchers(Lists.<AttributeValueMatcher> newArrayList(valuePredicate));
+        AndMatcher matcher = new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(valuePredicate));
         matcher.initialize();
 
         try {
@@ -70,8 +70,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testGetMatchingValues() throws Exception {
-        AndMatcher matcher = new AndMatcher();
-        matcher.setComposedMatchers(Lists.<AttributeValueMatcher> newArrayList(
+        AndMatcher matcher = new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(
                 new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                 new AttributeValuePredicateMatcher(or(equalTo(value2), equalTo(value3)))));
         
@@ -97,7 +96,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
             // expect this
         }
         
-        matcher = new AndMatcher();
+        matcher = new AndMatcher(Collections.EMPTY_LIST);
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }

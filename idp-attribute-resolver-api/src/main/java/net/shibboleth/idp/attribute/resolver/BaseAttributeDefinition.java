@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
@@ -87,8 +88,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param isDependencyOnly whether this attribute definition is only a dependency
      */
     public synchronized void setDependencyOnly(final boolean isDependencyOnly) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         dependencyOnly = isDependencyOnly;
     }
@@ -108,8 +109,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param descriptions localized human readable descriptions of attribute
      */
     public synchronized void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> descriptions) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         HashMap<Locale, String> checkedDescriptions = new HashMap<Locale, String>();
         String trimmedDescription;
@@ -138,8 +139,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param names localized human readable names of the attribute
      */
     public synchronized void setDisplayNames(@Nullable @NullableElements final Map<Locale, String> names) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         HashMap<Locale, String> checkedNames = new HashMap<Locale, String>();
         String trimmedName;
@@ -170,8 +171,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      */
     public synchronized void setAttributeEncoders(
             @Nullable @NullableElements final List<AttributeEncoder<?>> attributeEncoders) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Set<AttributeEncoder<?>> checkedEncoders = new HashSet<AttributeEncoder<?>>();
         CollectionSupport.addIf(checkedEncoders, attributeEncoders, Predicates.notNull());
