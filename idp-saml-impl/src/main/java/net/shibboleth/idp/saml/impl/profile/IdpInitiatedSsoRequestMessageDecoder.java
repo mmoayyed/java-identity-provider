@@ -60,7 +60,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
     public static final String TIME_PARAM = "time";
 
     /** {@inheritDoc} */
-    public void decode() throws MessageDecodingException {
+    protected void doDecode() throws MessageDecodingException {
         IdpInitatedSsoRequest authnRequest =
                 new IdpInitatedSsoRequest(getEntityId(getHttpServletRequest()), getAcsUrl(getHttpServletRequest()),
                         getTarget(getHttpServletRequest()), getTime(getHttpServletRequest()));
@@ -73,7 +73,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
         // msgMetadata.setMessageId(messageId);
         msgMetadata.setMessageIssueInstant(authnRequest.getTime());
         msgMetadata.setMessageIssuer(authnRequest.getEntityId());
-        
+
         messageContext.addSubcontext(msgMetadata);
 
         setMessageContext(messageContext);

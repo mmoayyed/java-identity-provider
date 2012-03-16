@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
@@ -62,7 +63,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
-        inputAttribute.setValues(Lists.newArrayList((Object) value));
+        inputAttribute.getValues().add(new StringAttributeValue(value));
         try {
             return encoder.encode(inputAttribute);
         } catch (AttributeEncodingException e) {
