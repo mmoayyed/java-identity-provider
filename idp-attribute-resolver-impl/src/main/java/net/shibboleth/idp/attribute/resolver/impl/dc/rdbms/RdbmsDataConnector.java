@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
@@ -75,8 +76,8 @@ public class RdbmsDataConnector extends BaseDataConnector {
      * @param source JDBC data source for retrieving {@link Connection}s
      */
     public synchronized void setDataSource(@Nonnull final DataSource source) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         dataSource = Assert.isNotNull(source, "JDBC data source can not be null");
     }
@@ -96,8 +97,8 @@ public class RdbmsDataConnector extends BaseDataConnector {
      * @param builder builder used to create the statements executed against the database
      */
     public void setExecutableStatementBuilder(@Nonnull final ExecutableStatementBuilder builder) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         statementBuilder = Assert.isNotNull(builder, "Executable statement builder can not be null");
     }
@@ -117,8 +118,8 @@ public class RdbmsDataConnector extends BaseDataConnector {
      * @param strategy strategy for mapping from a {@link ResultSet} to a collection of {@link Attribute}s
      */
     public void setResultMappingStrategy(@Nonnull final ResultMappingStrategy strategy) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         mappingStrategy = Assert.isNotNull(strategy, "Result mapping strategy can not be null");
     }
@@ -138,8 +139,8 @@ public class RdbmsDataConnector extends BaseDataConnector {
      * @param isAnError whether an empty result set is treated as an error
      */
     public synchronized void setNoResultIsAnError(final boolean isAnError) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         noResultIsAnError = isAnError;
     }
@@ -159,8 +160,8 @@ public class RdbmsDataConnector extends BaseDataConnector {
      * @param cache cache used to cache search results
      */
     public void setResultsCache(@Nonnull final Cache<String, Optional<Map<String, Attribute>>> cache) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         cache.invalidateAll();
         resultsCache = cache;

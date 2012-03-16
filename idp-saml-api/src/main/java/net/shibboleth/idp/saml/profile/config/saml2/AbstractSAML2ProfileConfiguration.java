@@ -27,17 +27,17 @@ import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /** Base class for SAML 2 profile configurations. */
 public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProfileConfiguration {
 
     /** Criteria used to determine name identifiers should be encrypted. */
-    private EvaluableCriterion<ProfileRequestContext> encryptNameIDsCriteria;
+    private Predicate<ProfileRequestContext> encryptNameIDsCriteria;
 
     /** Criteria used to determine assertions should be encrypted. */
-    private EvaluableCriterion<ProfileRequestContext> encryptAssertionsCriteria;
+    private Predicate<ProfileRequestContext> encryptAssertionsCriteria;
 
     /** Maximum proxy count for an assertion. Default value: 0 */
     private int proxyCount;
@@ -52,8 +52,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      */
     public AbstractSAML2ProfileConfiguration(String profileId) {
         super(profileId);
-        encryptNameIDsCriteria = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
-        encryptAssertionsCriteria = StaticResponseEvaluableCriterion.TRUE_RESPONSE;
+        encryptNameIDsCriteria = Predicates.alwaysFalse();
+        encryptAssertionsCriteria = Predicates.alwaysTrue();
         proxyCount = 0;
         proxyAudiences = Collections.emptySet();
     }
@@ -90,7 +90,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      * 
      * @return criteria used to determine name identifiers should be encrypted, never null
      */
-    public EvaluableCriterion<ProfileRequestContext> getEncryptNameIDsCriteria() {
+    public Predicate<ProfileRequestContext> getEncryptNameIDsCriteria() {
         return encryptNameIDsCriteria;
     }
 
@@ -99,7 +99,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      * 
      * @param criteria criteria used to determine name identifiers should be encrypted, never null
      */
-    public void setEncryptNameIDsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
+    public void setEncryptNameIDsCriteria(Predicate<ProfileRequestContext> criteria) {
         encryptNameIDsCriteria =
                 Assert.isNotNull(criteria,
                         "Criteria to determine if name identifiers should be encrypted can not be null");
@@ -110,7 +110,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      * 
      * @return criteria used to determine assertions should be encrypted, never null
      */
-    public EvaluableCriterion<ProfileRequestContext> getEncryptAssertionsCriteria() {
+    public Predicate<ProfileRequestContext> getEncryptAssertionsCriteria() {
         return encryptAssertionsCriteria;
     }
 
@@ -119,7 +119,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      * 
      * @param criteria criteria used to determine assertions should be encrypted, never null
      */
-    public void setEncryptAssertionsCriteria(EvaluableCriterion<ProfileRequestContext> criteria) {
+    public void setEncryptAssertionsCriteria(Predicate<ProfileRequestContext> criteria) {
         encryptAssertionsCriteria =
                 Assert.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");
     }

@@ -133,12 +133,10 @@ public class TemplateAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-        resolver.setDataConnectors(dataDefinitions);
-        resolver.setAttributeDefinition(attrDefinitions);
-        final AttributeResolutionContext context = new AttributeResolutionContext();
+        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
+
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
         Attribute a = context.getResolvedAttributes().get(name);
@@ -180,14 +178,10 @@ public class TemplateAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-        resolver.setDataConnectors(dataDefinitions);
-        resolver.setAttributeDefinition(attrDefinitions);
-
-        final AttributeResolutionContext context = new AttributeResolutionContext();
+        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
-
+        
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
         final Attribute a = context.getResolvedAttributes().get(name);

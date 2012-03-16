@@ -21,22 +21,20 @@ import java.util.ArrayList;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /** Unit test for {@link AbstractSAML2ProfileConfiguration}. */
 public class AbstractSAML2ProfileConfigurationTest {
 
-    @Test
-    public void testEncryptNameIDsCriteria() {
+    @Test public void testEncryptNameIDsCriteria() {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptNameIDsCriteria());
 
-        config.setEncryptNameIDsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
-        Assert.assertSame(config.getEncryptNameIDsCriteria(),
-                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setEncryptNameIDsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getEncryptNameIDsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
             config.setEncryptNameIDsCriteria(null);
@@ -46,14 +44,12 @@ public class AbstractSAML2ProfileConfigurationTest {
         }
     }
 
-    @Test
-    public void testEncryptAssertionsCriteria() {
+    @Test public void testEncryptAssertionsCriteria() {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptAssertionsCriteria());
 
-        config.setEncryptAssertionsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
-        Assert.assertSame(config.getEncryptAssertionsCriteria(),
-                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setEncryptAssertionsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getEncryptAssertionsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
             config.setEncryptAssertionsCriteria(null);
@@ -63,8 +59,7 @@ public class AbstractSAML2ProfileConfigurationTest {
         }
     }
 
-    @Test
-    public void testProxyCount() {
+    @Test public void testProxyCount() {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertEquals(config.getProxyCount(), 0);
 
@@ -72,8 +67,7 @@ public class AbstractSAML2ProfileConfigurationTest {
         Assert.assertEquals(config.getProxyCount(), 1);
     }
 
-    @Test
-    public void testProxyAudiences() {
+    @Test public void testProxyAudiences() {
         MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getProxyAudiences());
         Assert.assertTrue(config.getProxyAudiences().isEmpty());

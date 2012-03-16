@@ -27,7 +27,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.opensaml.util.criteria.EvaluationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,17 +93,13 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
-            try {
-                if (configuration.getActivationCriteria().evaluate(context) == Boolean.TRUE) {
-                    log.debug("Relying party configuration {} is applicable to profile request {}",
-                            configuration.getConfigurationId(), context.getId());
-                    matches.add(configuration);
-                } else {
-                    log.debug("Relying party configuration {} is not applicable to profile request {}",
-                            configuration.getConfigurationId(), context.getId());
-                }
-            } catch (EvaluationException e) {
-                log.warn("Error evaluating relying party configuration criteria", e);
+            if (configuration.getActivationCriteria().apply(context)) {
+                log.debug("Relying party configuration {} is applicable to profile request {}",
+                        configuration.getConfigurationId(), context.getId());
+                matches.add(configuration);
+            } else {
+                log.debug("Relying party configuration {} is not applicable to profile request {}",
+                        configuration.getConfigurationId(), context.getId());
             }
         }
 
@@ -121,17 +116,13 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
         for (RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
-            try {
-                if (configuration.getActivationCriteria().evaluate(context) == Boolean.TRUE) {
-                    log.debug("Relying party configuration {} is applicable to profile request {}",
-                            configuration.getConfigurationId(), context.getId());
-                    return configuration;
-                } else {
-                    log.debug("Relying party configuration {} is not applicable to profile request {}",
-                            configuration.getConfigurationId(), context.getId());
-                }
-            } catch (EvaluationException e) {
-                log.warn("Error evaluating relying party configuration criteria", e);
+            if (configuration.getActivationCriteria().apply(context)) {
+                log.debug("Relying party configuration {} is applicable to profile request {}",
+                        configuration.getConfigurationId(), context.getId());
+                return configuration;
+            } else {
+                log.debug("Relying party configuration {} is not applicable to profile request {}",
+                        configuration.getConfigurationId(), context.getId());
             }
         }
 

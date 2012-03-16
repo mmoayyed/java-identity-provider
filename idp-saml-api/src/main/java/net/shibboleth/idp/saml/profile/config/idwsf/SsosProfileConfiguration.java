@@ -23,8 +23,9 @@ import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.opensaml.saml2.core.RequestAbstractType;
 import org.opensaml.saml2.core.Response;
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /** Configuration for constrained Liberty IDWSF SSOS requests. */
 public class SsosProfileConfiguration extends SsoProfileConfiguration {
@@ -36,12 +37,12 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
     private int maximumTokenDelegationChainLength;
 
     /** Criterion used to determine if a token may be delegated to a relying party. */
-    private EvaluableCriterion<ProfileRequestContext<RequestAbstractType, Response>> delegationCriterion;
+    private Predicate<ProfileRequestContext<RequestAbstractType, Response>> delegationCriterion;
 
     /** Constructor. */
     public SsosProfileConfiguration() {
         this(PROFILE_ID);
-        delegationCriterion = StaticResponseEvaluableCriterion.FALSE_RESPONSE;
+        delegationCriterion = Predicates.alwaysFalse();
     }
 
     /**
@@ -77,7 +78,7 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
      * 
      * @return criterion used to determine if a token may be delegated to a relying party, never null
      */
-    public EvaluableCriterion<ProfileRequestContext<RequestAbstractType, Response>> getDelegationCriterion() {
+    public Predicate<ProfileRequestContext<RequestAbstractType, Response>> getDelegationCriterion() {
         return delegationCriterion;
     }
 
@@ -86,8 +87,7 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
      * 
      * @param criterion criterion used to determine if a token may be delegated to a relying party, never null
      */
-    public void setDelegationCriterion(
-            final EvaluableCriterion<ProfileRequestContext<RequestAbstractType, Response>> criterion) {
+    public void setDelegationCriterion(final Predicate<ProfileRequestContext<RequestAbstractType, Response>> criterion) {
         delegationCriterion = Assert.isNotNull(criterion, "Delegation criterion can not be null");
     }
 }

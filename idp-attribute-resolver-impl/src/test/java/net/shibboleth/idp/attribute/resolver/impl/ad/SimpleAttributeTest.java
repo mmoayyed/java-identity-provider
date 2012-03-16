@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
-import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -81,11 +80,7 @@ public class SimpleAttributeTest {
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(simple);
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-
-        resolver.setDataConnectors(connectorSet);
-        resolver.setAttributeDefinition(attributeSet);
+        final AttributeResolver resolver = new AttributeResolver("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -124,9 +119,7 @@ public class SimpleAttributeTest {
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-        resolver.setAttributeDefinition(am);
+        final AttributeResolver resolver = new AttributeResolver("foo", am, null);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();
@@ -170,11 +163,7 @@ public class SimpleAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-
-        resolver.setDataConnectors(dataDefinitions);
-        resolver.setAttributeDefinition(attrDefinitions);
+        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

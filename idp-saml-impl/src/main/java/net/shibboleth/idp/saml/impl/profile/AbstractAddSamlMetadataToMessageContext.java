@@ -26,6 +26,7 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SamlMetadataContext;
 import net.shibboleth.idp.saml.profile.SamlProtocolContext;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -35,7 +36,6 @@ import org.opensaml.saml.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.util.criteria.CriteriaSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;

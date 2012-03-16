@@ -26,6 +26,7 @@ import net.shibboleth.idp.session.IdPSessionContext;
 import net.shibboleth.idp.session.ServiceSession;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -62,7 +63,7 @@ public abstract class AbstractPrincipalAttributeDefinition extends BaseAttribute
      * @param parent the parent of the attribute request.
      * @return the principal name, or null
      */
-    private String getRelyingParty(SubcontextContainer parent) {
+    private String getRelyingParty(BaseContext parent) {
         if (!(parent instanceof InOutOperationContext)) {
             log.error("Attribute Defintion {}: Container does not implement InOutOperationContext.", getId());
             return null;
@@ -94,7 +95,7 @@ public abstract class AbstractPrincipalAttributeDefinition extends BaseAttribute
      */
     protected AuthenticationEvent getAuthenticationEvent(final AttributeResolutionContext resolutionContext) {
 
-        final SubcontextContainer parent = resolutionContext.getOwner();
+        final BaseContext parent = resolutionContext.getParent();
         final String relyingParty = getRelyingParty(parent);
 
         if (null == relyingParty) {

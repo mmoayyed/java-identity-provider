@@ -22,23 +22,23 @@ import java.util.Iterator;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /** Unit test for {@link RelyingPartyConfigurationResolver}. */
 public class RelyingPartyConfigurationResolverTest {
 
-    @Test
-    public void testConstruction() {
+    @Test public void testConstruction() {
         RelyingPartyConfigurationResolver resolver;
 
         ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
         rpConfigs
-                .add(new RelyingPartyConfiguration("one", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null));
-        rpConfigs
-                .add(new RelyingPartyConfiguration("two", "foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null));
-        rpConfigs.add(new RelyingPartyConfiguration("three", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE,
+                .add(new RelyingPartyConfiguration("one", "foo", Predicates.<ProfileRequestContext> alwaysTrue(), null));
+        rpConfigs.add(new RelyingPartyConfiguration("two", "foo", Predicates.<ProfileRequestContext> alwaysFalse(),
+                null));
+        rpConfigs.add(new RelyingPartyConfiguration("three", "foo", Predicates.<ProfileRequestContext> alwaysTrue(),
                 null));
 
         resolver = new RelyingPartyConfigurationResolver();
@@ -58,16 +58,15 @@ public class RelyingPartyConfigurationResolverTest {
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
     }
 
-    @Test
-    public void testResolve() throws Exception {
+    @Test public void testResolve() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
 
         RelyingPartyConfiguration config1 =
-                new RelyingPartyConfiguration("one", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
+                new RelyingPartyConfiguration("one", "foo", Predicates.<ProfileRequestContext> alwaysTrue(), null);
         RelyingPartyConfiguration config2 =
-                new RelyingPartyConfiguration("two", "foo", StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
+                new RelyingPartyConfiguration("two", "foo", Predicates.<ProfileRequestContext> alwaysFalse(), null);
         RelyingPartyConfiguration config3 =
-                new RelyingPartyConfiguration("three", "foo", StaticResponseEvaluableCriterion.TRUE_RESPONSE, null);
+                new RelyingPartyConfiguration("three", "foo", Predicates.<ProfileRequestContext> alwaysTrue(), null);
 
         ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
         rpConfigs.add(config1);

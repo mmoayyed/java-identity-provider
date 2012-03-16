@@ -35,6 +35,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
@@ -87,8 +88,8 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * @param definitionScript the script to be evaluated
      */
     public synchronized void setScript(@Nonnull EvaluableScript definitionScript) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         script = Assert.isNotNull(definitionScript, "Attribute definition script can not be null");
     }

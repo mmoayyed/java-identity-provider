@@ -49,9 +49,7 @@ public class PrincipalNameAttributeTest {
         attrDefn.setId(TEST_ATTRIBUTE_NAME);
         attrDefn.initialize();
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-        resolver.setAttributeDefinition(Lists.newArrayList(attrDefn));
+        final AttributeResolver resolver = new AttributeResolver("foo", Lists.newArrayList(attrDefn), null);
         resolver.initialize();
 
         AttributeResolutionContext context = new AttributeResolutionContext();

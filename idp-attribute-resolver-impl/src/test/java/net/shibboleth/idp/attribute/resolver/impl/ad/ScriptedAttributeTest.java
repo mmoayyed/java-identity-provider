@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -77,14 +78,14 @@ public class ScriptedAttributeTest {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
-        test.addValue(SIMPLE_VALUE);
+        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         attr.setId(TEST_ATTRIBUTE_NAME);
         attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT));
         attr.initialize();
 
-        final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext()).get();
         final Collection<?> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -117,10 +118,7 @@ public class ScriptedAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-        resolver.setDataConnectors(dataDefinitions);
-        resolver.setAttributeDefinition(attrDefinitions);
+        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -165,10 +163,7 @@ public class ScriptedAttributeTest {
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
         dataDefinitions.add(TestSources.populatedStaticConnectior());
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-        resolver.setDataConnectors(dataDefinitions);
-        resolver.setAttributeDefinition(attrDefinitions);
+        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

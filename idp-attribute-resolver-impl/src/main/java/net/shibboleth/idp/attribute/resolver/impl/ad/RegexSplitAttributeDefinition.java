@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.slf4j.Logger;
@@ -69,8 +70,8 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
      * @param expression regular expression used to split input values
      */
     public synchronized void setRegularExpression(@Nonnull Pattern expression) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         regexp = Assert.isNotNull(expression, "Regular expression can not be null");
     }

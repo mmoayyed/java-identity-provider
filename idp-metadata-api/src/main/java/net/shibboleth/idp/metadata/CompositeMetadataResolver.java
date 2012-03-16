@@ -21,10 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.opensaml.util.criteria.CriteriaSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

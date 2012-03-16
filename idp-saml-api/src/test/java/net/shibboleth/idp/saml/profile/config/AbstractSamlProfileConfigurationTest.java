@@ -22,24 +22,21 @@ import java.util.Set;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 /** Unit test for {@link AbstractSamlProfileConfiguration}. */
 public class AbstractSamlProfileConfigurationTest {
 
-    @Test
-    public void testSignAssertionsCriteria() {
+    @Test public void testSignAssertionsCriteria() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
         Assert.assertNotNull(config.getSignAssertionsCriteria());
 
-        config.setSignAssertionsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
-        Assert.assertSame(config.getSignAssertionsCriteria(),
-                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setSignAssertionsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignAssertionsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
             config.setSignAssertionsCriteria(null);
@@ -49,14 +46,12 @@ public class AbstractSamlProfileConfigurationTest {
         }
     }
 
-    @Test
-    public void testSignResponsesCriteria() {
+    @Test public void testSignResponsesCriteria() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
         Assert.assertNotNull(config.getSignResponsesCriteria());
 
-        config.setSignResponsesCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
-        Assert.assertSame(config.getSignResponsesCriteria(),
-                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setSignResponsesCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignResponsesCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
             config.setSignResponsesCriteria(null);
@@ -66,14 +61,12 @@ public class AbstractSamlProfileConfigurationTest {
         }
     }
 
-    @Test
-    public void testSignRequestsCriteria() {
+    @Test public void testSignRequestsCriteria() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
         Assert.assertNotNull(config.getSignedRequestsCriteria());
 
-        config.setSignedRequestsCriteria((EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
-        Assert.assertSame(config.getSignedRequestsCriteria(),
-                (EvaluableCriterion<ProfileRequestContext>) StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        config.setSignedRequestsCriteria(Predicates.<ProfileRequestContext> alwaysFalse());
+        Assert.assertSame(config.getSignedRequestsCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
 
         try {
             config.setSignedRequestsCriteria(null);
@@ -83,8 +76,7 @@ public class AbstractSamlProfileConfigurationTest {
         }
     }
 
-    @Test
-    public void testAssertionLifetime() {
+    @Test public void testAssertionLifetime() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
         Assert.assertTrue(config.getAssertionLifetime() > 0);
 
@@ -106,12 +98,11 @@ public class AbstractSamlProfileConfigurationTest {
         }
     }
 
-    @Test
-    public void testAdditionalAudiencesForAssertion() {
+    @Test public void testAdditionalAudiencesForAssertion() {
         MockSamlProfileConfiguration config = new MockSamlProfileConfiguration();
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
-        
+
         config.setAdditionalAudienceForAssertion(null);
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
@@ -129,7 +120,7 @@ public class AbstractSamlProfileConfigurationTest {
         } catch (UnsupportedOperationException e) {
             // expected this
         }
-        
+
         config.setAdditionalAudienceForAssertion(Collections.EMPTY_LIST);
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());

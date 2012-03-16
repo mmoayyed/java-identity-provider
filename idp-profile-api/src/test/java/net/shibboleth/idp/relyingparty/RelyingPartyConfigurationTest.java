@@ -20,33 +20,34 @@ package net.shibboleth.idp.relyingparty;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /** Unit test for {@link RelyingPartyConfiguration}. */
 public class RelyingPartyConfigurationTest {
 
-    @Test
-    public void testConstruction() {
+    @Test public void testConstruction() {
         RelyingPartyConfiguration config;
 
         config =
                 new RelyingPartyConfiguration("foo", "http://idp.example.org",
-                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, Collections.EMPTY_LIST);
+                        Predicates.<ProfileRequestContext> alwaysFalse(), Collections.EMPTY_LIST);
         Assert.assertEquals(config.getConfigurationId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
-        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         config =
                 new RelyingPartyConfiguration("foo", "http://idp.example.org",
-                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, null);
+                        Predicates.<ProfileRequestContext> alwaysFalse(), null);
         Assert.assertEquals(config.getConfigurationId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
-        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
@@ -56,16 +57,16 @@ public class RelyingPartyConfigurationTest {
 
         config =
                 new RelyingPartyConfiguration("foo", "http://idp.example.org",
-                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
+                        Predicates.<ProfileRequestContext> alwaysFalse(), profileConfigs);
         Assert.assertEquals(config.getConfigurationId(), "foo");
         Assert.assertEquals(config.getResponderEntityId(), "http://idp.example.org");
-        Assert.assertSame(config.getActivationCriteria(), StaticResponseEvaluableCriterion.FALSE_RESPONSE);
+        Assert.assertSame(config.getActivationCriteria(), Predicates.<ProfileRequestContext> alwaysFalse());
         Assert.assertEquals(config.getProfileConfigurations().size(), 2);
 
         try {
             config =
                     new RelyingPartyConfiguration(null, "http://idp.example.org",
-                            StaticResponseEvaluableCriterion.FALSE_RESPONSE, Collections.EMPTY_LIST);
+                            Predicates.<ProfileRequestContext> alwaysFalse(), Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
@@ -74,7 +75,7 @@ public class RelyingPartyConfigurationTest {
         try {
             config =
                     new RelyingPartyConfiguration("", "http://idp.example.org",
-                            StaticResponseEvaluableCriterion.FALSE_RESPONSE, Collections.EMPTY_LIST);
+                            Predicates.<ProfileRequestContext> alwaysFalse(), Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
@@ -82,7 +83,7 @@ public class RelyingPartyConfigurationTest {
 
         try {
             config =
-                    new RelyingPartyConfiguration("foo", null, StaticResponseEvaluableCriterion.FALSE_RESPONSE,
+                    new RelyingPartyConfiguration("foo", null, Predicates.<ProfileRequestContext> alwaysFalse(),
                             Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
@@ -91,7 +92,7 @@ public class RelyingPartyConfigurationTest {
 
         try {
             config =
-                    new RelyingPartyConfiguration("foo", null, StaticResponseEvaluableCriterion.FALSE_RESPONSE,
+                    new RelyingPartyConfiguration("foo", null, Predicates.<ProfileRequestContext> alwaysFalse(),
                             Collections.EMPTY_LIST);
             Assert.fail();
         } catch (IllegalArgumentException e) {
@@ -106,15 +107,14 @@ public class RelyingPartyConfigurationTest {
         }
     }
 
-    @Test
-    public void testProfileConfiguration() {
+    @Test public void testProfileConfiguration() {
         ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
         profileConfigs.add(new MockProfileConfiguration("foo"));
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
         RelyingPartyConfiguration config =
                 new RelyingPartyConfiguration("foo", "http://idp.example.org",
-                        StaticResponseEvaluableCriterion.FALSE_RESPONSE, profileConfigs);
+                        Predicates.<ProfileRequestContext> alwaysFalse(), profileConfigs);
         Assert.assertNotNull(config.getProfileConfiguration("foo"));
         Assert.assertNotNull(config.getProfileConfiguration("bar"));
         Assert.assertNull(config.getProfileConfiguration("baz"));

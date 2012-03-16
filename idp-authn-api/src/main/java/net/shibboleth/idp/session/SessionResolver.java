@@ -21,10 +21,10 @@ import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
+import com.google.common.base.Predicate;
 
 /** A resolver that is capable of finding sessions that meet certain criteria. */
 public interface SessionResolver extends IdentifiableComponent, ValidatableComponent,
-        Resolver<IdPSession, EvaluableCriterion<IdPSession>> {
+        Resolver<IdPSession, Predicate<IdPSession>> {
 
 }

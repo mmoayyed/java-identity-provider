@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -43,8 +44,9 @@ import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.core.Subject;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.opensaml.xml.XMLObjectProviderRegistrySupport;
+
+import com.google.common.base.Predicates;
 
 /**
  * Helper methods for creating/testing SAML 1 objects within profile action tests. When methods herein refer to mock
@@ -87,7 +89,7 @@ public final class Saml2ActionTestingSupport {
 
         final RelyingPartyConfiguration rpConfig =
                 new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER,
-                        StaticResponseEvaluableCriterion.TRUE_RESPONSE, buildProfileConfigurations());
+                        Predicates.<ProfileRequestContext> alwaysTrue(), buildProfileConfigurations());
 
         RelyingPartySubcontext subcontext = new RelyingPartySubcontext(id);
         subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(SsoProfileConfiguration.PROFILE_ID));
@@ -151,7 +153,8 @@ public final class Saml2ActionTestingSupport {
      */
     public static Assertion buildAssertion() {
         final SAMLObjectBuilder<Assertion> assertionBuilder =
-                (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
+                (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Assertion.TYPE_NAME);
 
         final Assertion assertion = assertionBuilder.buildObject();
         assertion.setID(ASSERTION_ID);
@@ -171,12 +174,14 @@ public final class Saml2ActionTestingSupport {
      */
     public static Subject buildSubject(final @Nullable String principalName) {
         final SAMLObjectBuilder<Subject> subjectBuilder =
-                (SAMLObjectBuilder<Subject>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Subject.TYPE_NAME);
+                (SAMLObjectBuilder<Subject>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Subject.TYPE_NAME);
         final Subject subject = subjectBuilder.buildObject();
 
         if (principalName != null) {
             final SAMLObjectBuilder<NameID> nameIdBuilder =
-                    (SAMLObjectBuilder<NameID>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(NameID.TYPE_NAME);
+                    (SAMLObjectBuilder<NameID>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                            NameID.TYPE_NAME);
             final NameID nameId = nameIdBuilder.buildObject();
             nameId.setValue(principalName);
             subject.setNameID(nameId);
@@ -195,7 +200,8 @@ public final class Saml2ActionTestingSupport {
      */
     public static AttributeQuery buildAttributeQueryRequest(final @Nullable Subject subject) {
         final SAMLObjectBuilder<Issuer> issuerBuilder =
-                (SAMLObjectBuilder<Issuer>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
+                (SAMLObjectBuilder<Issuer>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Issuer.DEFAULT_ELEMENT_NAME);
 
         final SAMLObjectBuilder<AttributeQuery> queryBuilder =
                 (SAMLObjectBuilder<AttributeQuery>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(

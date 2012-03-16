@@ -34,7 +34,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.util.criteria.StaticResponseEvaluableCriterion;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -506,7 +505,7 @@ public class RequestContextBuilder {
      * <li>configuration ID is 'mock'</li>
      * <li>the responder ID provided by {@link #setOutboundMessageIssuer(String)} or
      * {@link ActionTestingSupport#OUTBOUND_MSG_ISSUER} if none is given</li>
-     * <li>the activation criteria is {@link StaticResponseEvaluableCriterion#TRUE_RESPONSE}</li>
+     * <li>the activation criteria is {@link Predicates#alwaysTrue()}</li>
      * <li>the profile configurations provided {@link #setRelyingPartyProfileConfigurations(Collection)} or one
      * {@link MockProfileConfiguration} if none is provided</li>
      * </ul>
@@ -527,8 +526,7 @@ public class RequestContextBuilder {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }
 
-        return new RelyingPartyConfiguration("mock", responderId, StaticResponseEvaluableCriterion.TRUE_RESPONSE,
-                profileConfigs);
+        return new RelyingPartyConfiguration("mock", responderId, Predicates.<ProfileRequestContext>alwaysTrue(), profileConfigs);
     }
 
     /**

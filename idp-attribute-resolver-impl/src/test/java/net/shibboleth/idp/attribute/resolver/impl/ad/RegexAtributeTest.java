@@ -27,7 +27,6 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
-import net.shibboleth.idp.attribute.resolver.impl.ad.RegexSplitAttributeDefinition;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -67,10 +66,7 @@ public class RegexAtributeTest {
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);
 
-        final AttributeResolver resolver = new AttributeResolver();
-        resolver.setId("foo");
-        resolver.setDataConnectors(connectorSet);
-        resolver.setAttributeDefinition(attributeSet);
+        final AttributeResolver resolver = new AttributeResolver("foo", attributeSet, connectorSet);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();

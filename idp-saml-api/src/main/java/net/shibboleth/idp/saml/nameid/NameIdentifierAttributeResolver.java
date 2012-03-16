@@ -22,10 +22,9 @@ import java.util.Collections;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSamlNameIdentifierEncoder;
 import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
-
-import org.opensaml.util.criteria.CriteriaSet;
 
 /**
  *

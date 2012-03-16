@@ -44,7 +44,8 @@ public final class Saml1ActionSupport {
      * Constructs and adds a {@link Assertion} to the given {@link Response}. The {@link Assertion} is constructed as
      * follows:
      * <ul>
-     * <li>its ID is generated via the {@link org.opensaml.util.IdentifierGenerator} located on the
+     * <li>its ID is generated via the
+     * {@link net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy} located on the
      * {@link SecurityConfiguration} located on the {@link net.shibboleth.idp.profile.config.ProfileConfiguration} of
      * the {@link RelyingPartySubcontext}</li>
      * <li>its issue instant is set to the issue instant of the given {@link Response}</li>
@@ -63,7 +64,8 @@ public final class Saml1ActionSupport {
             @Nonnull final RelyingPartySubcontext relyingPartyContext, @Nonnull final Response response) {
 
         final SAMLObjectBuilder<Assertion> assertionBuilder =
-                (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Assertion.TYPE_NAME);
+                (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Assertion.TYPE_NAME);
 
         final SecurityConfiguration securityConfig = relyingPartyContext.getProfileConfig().getSecurityConfiguration();
 
@@ -94,7 +96,8 @@ public final class Saml1ActionSupport {
         Conditions conditions = assertion.getConditions();
         if (conditions == null) {
             final SAMLObjectBuilder<Conditions> conditionsBuilder =
-                    (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                    (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                            Conditions.TYPE_NAME);
             conditions = conditionsBuilder.buildObject();
             assertion.setConditions(conditions);
             getLogger().debug("Action {}: Assertion {} did not already contain a Conditions, one was added",

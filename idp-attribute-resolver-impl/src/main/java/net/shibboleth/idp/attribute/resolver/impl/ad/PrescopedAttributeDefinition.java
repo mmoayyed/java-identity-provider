@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -69,8 +70,8 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
      * @param newScopeDelimiter delimiter between value and scope
      */
     public synchronized void setScopeDelimiter(@Nonnull @NotEmpty final String newScopeDelimiter) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         scopeDelimiter =
                 Assert.isNotNull(StringSupport.trimOrNull(newScopeDelimiter),

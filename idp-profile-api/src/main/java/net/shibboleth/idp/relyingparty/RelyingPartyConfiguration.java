@@ -27,7 +27,7 @@ import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.util.criteria.EvaluableCriterion;
+import com.google.common.base.Predicate;
 
 /** The configuration that applies to given relying party. */
 public class RelyingPartyConfiguration {
@@ -39,7 +39,7 @@ public class RelyingPartyConfiguration {
     private final String responderEntityId;
 
     /** Criterion that must be met for this configuration to be active for a given request. */
-    private final EvaluableCriterion<ProfileRequestContext> activationCriteria;
+    private final Predicate<ProfileRequestContext> activationCriteria;
 
     /** Registered and usable communication profile configurations for this relying party. */
     private final Map<String, ProfileConfiguration> profileConfigurations;
@@ -54,7 +54,7 @@ public class RelyingPartyConfiguration {
      * @param configurations communication profile configurations for this relying party, may be null or empty
      */
     public RelyingPartyConfiguration(final String configurationId, final String responderId,
-            final EvaluableCriterion<ProfileRequestContext> criteria,
+            final Predicate<ProfileRequestContext> criteria,
             final Collection<? extends ProfileConfiguration> configurations) {
         id =
                 Assert.isNotNull(StringSupport.trimOrNull(configurationId),
@@ -110,7 +110,7 @@ public class RelyingPartyConfiguration {
      * 
      * @return criteria that must be met for this configuration to be active for a given request, never null
      */
-    public EvaluableCriterion<ProfileRequestContext> getActivationCriteria() {
+    public Predicate<ProfileRequestContext> getActivationCriteria() {
         return activationCriteria;
     }
 

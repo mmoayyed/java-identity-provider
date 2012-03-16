@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,8 +79,8 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * @param mappings functions used to map an input value to an output value
      */
     public synchronized void setValueMappings(@Nullable @NullableElements final Collection<ValueMapping> mappings) {
-        ifInitializedThrowUnmodifiabledComponentException(getId());
-        ifDestroyedThrowDestroyedComponentException(getId());
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         valueMappings = ImmutableSet.copyOf(Iterables.filter(mappings, Predicates.notNull()));
     }
