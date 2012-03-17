@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -56,7 +56,7 @@ import com.google.common.collect.ImmutableSortedSet;
  * policies run this collection will contain the final result.
  */
 @ThreadSafe
-public class AttributeFilterPolicy extends AbstractDestrucableIdentifiableInitializableComponent implements
+public class AttributeFilterPolicy extends AbstractDestructableIdentifiableInitializableComponent implements
         ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */

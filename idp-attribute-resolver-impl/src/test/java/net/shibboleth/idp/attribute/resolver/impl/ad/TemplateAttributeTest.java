@@ -35,6 +35,7 @@ import net.shibboleth.idp.attribute.resolver.impl.ad.TemplateAttributeDefinition
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.velocity.Template;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.testng.Assert;
@@ -94,11 +95,9 @@ public class TemplateAttributeTest {
         final TemplateAttributeDefinition attr = new TemplateAttributeDefinition();
 
         attr.setId(name);
-        attr.setVelocityEngine(getEngine());
-        attr.setTemplateSource(TEST_ATTRIBUTES_TEMPLATE);
-        attr.setSourceAttributes(Collections.EMPTY_LIST);
+        attr.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE));
         attr.initialize();
-        final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        final Attribute val = attr.resolve(new AttributeResolutionContext()).get();
         final Collection<?> results = val.getValues();
 
         Assert.assertEquals(results.size(), 0, "Templated value count");
@@ -118,9 +117,7 @@ public class TemplateAttributeTest {
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
         templateDef.setId(name);
-        templateDef.setVelocityEngine(getEngine());
-        templateDef.setTemplateSource(TEST_SIMPLE_TEMPLATE);
-        templateDef.setSourceAttributes(sources);
+        templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_SIMPLE_TEMPLATE));
 
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
@@ -161,9 +158,7 @@ public class TemplateAttributeTest {
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
         templateDef.setId(name);
-        templateDef.setVelocityEngine(getEngine());
-        templateDef.setTemplateSource(TEST_ATTRIBUTES_TEMPLATE);
-        templateDef.setSourceAttributes(sources);
+        templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE));
 
         Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));

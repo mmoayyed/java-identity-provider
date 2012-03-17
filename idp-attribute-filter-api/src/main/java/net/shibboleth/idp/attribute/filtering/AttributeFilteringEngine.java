@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyList;
-import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -54,7 +54,7 @@ import com.google.common.collect.ImmutableSortedSet;
 
 /** Services that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
-public class AttributeFilteringEngine extends AbstractDestrucableIdentifiableInitializableComponent implements
+public class AttributeFilteringEngine extends AbstractDestructableIdentifiableInitializableComponent implements
         ValidatableComponent, DestructableComponent, UnmodifiableComponent {
 
     /** Class logger. */

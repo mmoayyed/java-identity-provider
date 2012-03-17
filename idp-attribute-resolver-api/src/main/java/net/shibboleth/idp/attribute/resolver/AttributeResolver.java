@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.collection.LazySet;
-import net.shibboleth.utilities.java.support.component.AbstractDestrucableIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableMap;
 
 /** A component that resolves the attributes for a particular subject. */
 @ThreadSafe
-public class AttributeResolver extends AbstractDestrucableIdentifiableInitializableComponent implements
+public class AttributeResolver extends AbstractDestructableIdentifiableInitializableComponent implements
         ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */
