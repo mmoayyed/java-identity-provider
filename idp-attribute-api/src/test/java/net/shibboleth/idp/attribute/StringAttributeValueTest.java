@@ -21,61 +21,48 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link ScopedStringAttributeValue}. */
-public class ScopedStringAttributeValueTest {
+public class StringAttributeValueTest {
 
     /** Test proper instantiation of the object. */
     @Test public void testInstantiation() {
-        ScopedStringAttributeValue value = new ScopedStringAttributeValue(" foo ", " bar ");
+        StringAttributeValue value = new StringAttributeValue(" foo ");
         Assert.assertEquals(value.getValue(), "foo");
-        Assert.assertEquals(value.getScope(), "bar");
 
         try {
-            new ScopedStringAttributeValue(null, "bar");
+            new StringAttributeValue(null);
             Assert.fail("able to set null attribute value");
         } catch (AssertionError e) {
             // expected this
         }
 
         try {
-            new ScopedStringAttributeValue("", "bar");
+            new StringAttributeValue("");
             Assert.fail("able to set empty attribute value");
         } catch (AssertionError e) {
             // expected this
         }
 
-        try {
-            new ScopedStringAttributeValue("foo", null);
-            Assert.fail("able to set null attribute scope");
-        } catch (AssertionError e) {
-            // expected this
-        }
-
-        try {
-            new ScopedStringAttributeValue("foo", "");
-            Assert.fail("able to set empty attribute scope");
-        } catch (AssertionError e) {
-            // expected this
-        }
     }
 
     /** Test equality of two objects. */
     @Test public void testEquality() {
-        ScopedStringAttributeValue value1 = new ScopedStringAttributeValue(" foo ", " bar ");
-        ScopedStringAttributeValue value2 = new ScopedStringAttributeValue("foo", "bar");
-        ScopedStringAttributeValue value3 = new ScopedStringAttributeValue(" foo ", "baz ");
+        StringAttributeValue value1 = new StringAttributeValue(" foo ");
+        StringAttributeValue value2 = new StringAttributeValue("foo");
+        StringAttributeValue value3 = new StringAttributeValue(" baz ");
 
+        Assert.assertTrue(value1.equals(value2));
         Assert.assertTrue(value1.equals(value2));
         Assert.assertTrue(value1.equals(value1));
         Assert.assertTrue(value2.equals(value1));
         Assert.assertEquals(value1.hashCode(), value2.hashCode());
 
         Assert.assertFalse(value1.equals(value3));
-        Assert.assertFalse(value1.equals(new Integer(2)));
         Assert.assertFalse(value1.equals(null));
+        Assert.assertFalse(value1.equals(new Integer(2)));
         Assert.assertFalse(value3.equals(value1));
 
         Assert.assertFalse(value2.equals(value3));
         Assert.assertFalse(value3.equals(value2));
-        value1.toString();
+        value2.toString();
     }
 }

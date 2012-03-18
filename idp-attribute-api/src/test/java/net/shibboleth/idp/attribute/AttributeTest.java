@@ -18,13 +18,14 @@
 package net.shibboleth.idp.attribute;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import net.shibboleth.utilities.java.support.collection.LazySet;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -85,89 +86,64 @@ public class AttributeTest {
         Locale enbr = new Locale("en", "br");
 
         Attribute attrib = new Attribute("foo");
-        Map<Locale, String> diplayNames = attrib.getDisplayNames();
+        attrib.setDisplayNames(null);
+        Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
+        attrib.setDisplayNames(Collections.EMPTY_MAP);
+        Assert.assertTrue(attrib.getDisplayNames().isEmpty());
+
+        Map<Locale, String> displayNames = new HashMap<Locale, String>();
+        displayNames.put(null, "wibble");
+        attrib.setDisplayNames(displayNames);
+        Assert.assertTrue(attrib.getDisplayNames().isEmpty());
+
+        displayNames.clear();
+        displayNames.put(en, null);
+        attrib.setDisplayNames(displayNames);
+        Assert.assertTrue(attrib.getDisplayNames().isEmpty());
+
+        displayNames.clear();
         // test adding one entry
-        diplayNames.put(en, " english ");
-        Assert.assertFalse(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 1);
-        Assert.assertTrue(diplayNames.containsKey(en));
-        Assert.assertEquals(diplayNames.get(en), "english");
+        displayNames.put(en, " english ");
+        attrib.setDisplayNames(displayNames);
+        
+        Assert.assertFalse(attrib.getDisplayNames().isEmpty());
+        Assert.assertEquals(attrib.getDisplayNames().size(), 1);
+        Assert.assertTrue(attrib.getDisplayNames().containsKey(en));
+        Assert.assertEquals(attrib.getDisplayNames().get(en), "english");
 
         // test adding another entry
-        diplayNames.put(enbr, "british");
-        Assert.assertFalse(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 2);
-        Assert.assertTrue(diplayNames.containsKey(enbr));
-        Assert.assertEquals(diplayNames.get(enbr), "british");
-
-        // test replacing an entry
-        String replacedName = diplayNames.put(en, "english ");
-        Assert.assertEquals(replacedName, "english");
-        Assert.assertFalse(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 2);
-        Assert.assertTrue(diplayNames.containsKey(en));
-        Assert.assertEquals(diplayNames.get(en), "english");
-
-        // test removing an entry
-        diplayNames.remove(en);
-        Assert.assertFalse(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 1);
-        Assert.assertFalse(diplayNames.containsKey(en));
-        Assert.assertTrue(diplayNames.containsKey(enbr));
-        Assert.assertEquals(diplayNames.get(enbr), "british");
-
-        // test removing the same entry
-        diplayNames.remove(en);
-        Assert.assertFalse(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 1);
-        Assert.assertFalse(diplayNames.containsKey(en));
-        Assert.assertTrue(diplayNames.containsKey(enbr));
-        Assert.assertEquals(diplayNames.get(enbr), "british");
-
-        // test removing null
-        diplayNames.remove(null);
-        Assert.assertFalse(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 1);
-        Assert.assertFalse(diplayNames.containsKey(en));
-        Assert.assertTrue(diplayNames.containsKey(enbr));
-        Assert.assertEquals(diplayNames.get(enbr), "british");
-
-        // test removing the second entry
-        diplayNames.remove(enbr);
-        Assert.assertTrue(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 0);
-        Assert.assertFalse(diplayNames.containsKey(en));
-        Assert.assertFalse(diplayNames.containsKey(enbr));
-
-        // test adding something once the collection has been drained
-        diplayNames.put(en, " english ");
-        Assert.assertFalse(diplayNames.isEmpty());
-        Assert.assertEquals(diplayNames.size(), 1);
-        Assert.assertTrue(diplayNames.containsKey(en));
-        Assert.assertEquals(diplayNames.get(en), "english");
-
-        // test replacing all entries
-        Map<Locale, String> names = new HashMap<Locale, String>();
-        names.put(enbr, " british");
-        attrib.setDisplayNames(names);
+        displayNames.put(enbr, "british");
+        displayNames.put(en, " englishX ");
+        attrib.setDisplayNames(displayNames);
         Assert.assertFalse(attrib.getDisplayNames().isEmpty());
-        Assert.assertEquals(attrib.getDisplayNames().size(), 1);
-        Assert.assertFalse(attrib.getDisplayNames().containsKey(en));
+        Assert.assertEquals(attrib.getDisplayNames().size(), 2);
         Assert.assertTrue(attrib.getDisplayNames().containsKey(enbr));
         Assert.assertEquals(attrib.getDisplayNames().get(enbr), "british");
+        Assert.assertEquals(attrib.getDisplayNames().get(en), "englishX");
 
-        attrib.getDisplayNames().put(null, "foo");
-        Assert.assertFalse(attrib.getDisplayNames().isEmpty());
-        Assert.assertEquals(attrib.getDisplayNames().size(), 1);
+        // test replacing an entry
+        String replacedName = displayNames.put(en, "english ");
+        Assert.assertEquals(replacedName, " englishX ");
 
-        attrib.getDisplayNames().put(en, null);
+        attrib.setDisplayNames(displayNames);
         Assert.assertFalse(attrib.getDisplayNames().isEmpty());
-        Assert.assertEquals(attrib.getDisplayNames().size(), 1);
+        Assert.assertEquals(attrib.getDisplayNames().size(), 2);
+        Assert.assertTrue(attrib.getDisplayNames().containsKey(en));
+        Assert.assertEquals(attrib.getDisplayNames().get(en), "english");
 
-        attrib.getDisplayNames().put(en, "");
-        Assert.assertFalse(attrib.getDisplayNames().isEmpty());
-        Assert.assertEquals(attrib.getDisplayNames().size(), 1);
+        try {
+            // test removing an entry
+            attrib.getDisplayNames().remove(en);
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+        }
+        try {
+            // test removing an entry
+            attrib.getDisplayNames().put(en, "foo");
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+        }
     }
 
     /** Tests that display descriptions are properly added and modified. */
@@ -176,89 +152,64 @@ public class AttributeTest {
         Locale enbr = new Locale("en", "br");
 
         Attribute attrib = new Attribute("foo");
-        Map<Locale, String> descriptions = attrib.getDisplayDescriptions();
+        attrib.setDisplayDescriptions(null);
+        Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
+        attrib.setDisplayNames(Collections.EMPTY_MAP);
+        Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
+
+        Map<Locale, String> displayDescriptions = new HashMap<Locale, String>();
+        displayDescriptions.put(null, "wibble");
+        attrib.setDisplayDescriptions(displayDescriptions);
+        Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
+
+        displayDescriptions.clear();
+        displayDescriptions.put(en, null);
+        attrib.setDisplayDescriptions(displayDescriptions);
+        Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
+
+        displayDescriptions.clear();
         // test adding one entry
-        descriptions.put(en, " english ");
-        Assert.assertFalse(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 1);
-        Assert.assertTrue(descriptions.containsKey(en));
-        Assert.assertEquals(descriptions.get(en), "english");
+        displayDescriptions.put(en, " english ");
+        attrib.setDisplayDescriptions(displayDescriptions);
+        
+        Assert.assertFalse(attrib.getDisplayDescriptions().isEmpty());
+        Assert.assertEquals(attrib.getDisplayDescriptions().size(), 1);
+        Assert.assertTrue(attrib.getDisplayDescriptions().containsKey(en));
+        Assert.assertEquals(attrib.getDisplayDescriptions().get(en), "english");
 
         // test adding another entry
-        descriptions.put(enbr, "british");
-        Assert.assertFalse(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 2);
-        Assert.assertTrue(descriptions.containsKey(enbr));
-        Assert.assertEquals(descriptions.get(enbr), "british");
-
-        // test replacing an entry
-        String replacedDescription = descriptions.put(en, "english ");
-        Assert.assertEquals(replacedDescription, "english");
-        Assert.assertFalse(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 2);
-        Assert.assertTrue(descriptions.containsKey(en));
-        Assert.assertEquals(descriptions.get(en), "english");
-
-        // test removing an entry
-        descriptions.remove(en);
-        Assert.assertFalse(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 1);
-        Assert.assertFalse(descriptions.containsKey(en));
-        Assert.assertTrue(descriptions.containsKey(enbr));
-        Assert.assertEquals(descriptions.get(enbr), "british");
-
-        // test removing the same entry
-        descriptions.remove(en);
-        Assert.assertFalse(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 1);
-        Assert.assertFalse(descriptions.containsKey(en));
-        Assert.assertTrue(descriptions.containsKey(enbr));
-        Assert.assertEquals(descriptions.get(enbr), "british");
-
-        // test removing null
-        descriptions.remove(null);
-        Assert.assertFalse(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 1);
-        Assert.assertFalse(descriptions.containsKey(en));
-        Assert.assertTrue(descriptions.containsKey(enbr));
-        Assert.assertEquals(descriptions.get(enbr), "british");
-
-        // test removing the second entry
-        descriptions.remove(enbr);
-        Assert.assertTrue(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 0);
-        Assert.assertFalse(descriptions.containsKey(en));
-        Assert.assertFalse(descriptions.containsKey(enbr));
-
-        // test adding something once the collection has been drained
-        descriptions.put(en, " english ");
-        Assert.assertFalse(descriptions.isEmpty());
-        Assert.assertEquals(descriptions.size(), 1);
-        Assert.assertTrue(descriptions.containsKey(en));
-        Assert.assertEquals("english", descriptions.get(en));
-
-        // test replacing all entries
-        Map<Locale, String> newDescriptions = new HashMap<Locale, String>();
-        newDescriptions.put(enbr, " british");
-        attrib.setDisplayDescriptions(newDescriptions);
+        displayDescriptions.put(enbr, "british");
+        displayDescriptions.put(en, " englishX ");
+        attrib.setDisplayDescriptions(displayDescriptions);
         Assert.assertFalse(attrib.getDisplayDescriptions().isEmpty());
-        Assert.assertEquals(attrib.getDisplayDescriptions().size(), 1);
-        Assert.assertFalse(attrib.getDisplayDescriptions().containsKey(en));
+        Assert.assertEquals(attrib.getDisplayDescriptions().size(), 2);
         Assert.assertTrue(attrib.getDisplayDescriptions().containsKey(enbr));
         Assert.assertEquals(attrib.getDisplayDescriptions().get(enbr), "british");
+        Assert.assertEquals(attrib.getDisplayDescriptions().get(en), "englishX");
 
-        newDescriptions.put(null, "foo");
-        Assert.assertFalse(attrib.getDisplayDescriptions().isEmpty());
-        Assert.assertEquals(attrib.getDisplayDescriptions().size(), 1);
+        // test replacing an entry
+        String replacedName = displayDescriptions.put(en, "english ");
+        Assert.assertEquals(replacedName, " englishX ");
 
-        newDescriptions.put(en, null);
+        attrib.setDisplayDescriptions(displayDescriptions);
         Assert.assertFalse(attrib.getDisplayDescriptions().isEmpty());
-        Assert.assertEquals(attrib.getDisplayDescriptions().size(), 1);
+        Assert.assertEquals(attrib.getDisplayDescriptions().size(), 2);
+        Assert.assertTrue(attrib.getDisplayDescriptions().containsKey(en));
+        Assert.assertEquals(attrib.getDisplayDescriptions().get(en), "english");
 
-        newDescriptions.put(en, "");
-        Assert.assertFalse(attrib.getDisplayDescriptions().isEmpty());
-        Assert.assertEquals(attrib.getDisplayDescriptions().size(), 1);
+        try {
+            // test removing an entry
+            attrib.getDisplayDescriptions().remove(en);
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+        }
+        try {
+            // test removing an entry
+            attrib.getDisplayDescriptions().put(en, "foo");
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+        }
     }
 
     /** Tests that values are properly added and modified. */
@@ -267,65 +218,77 @@ public class AttributeTest {
         LocalizedStringAttributeValue value2 = new LocalizedStringAttributeValue("value2", null);
 
         Attribute attrib = new Attribute("foo");
-        Collection attribValues = attrib.getValues();
+        Assert.assertTrue(attrib.getValues().isEmpty());
 
-        // test adding one entry
-        Assert.assertTrue(attribValues.add(value1));
-        Assert.assertFalse(attrib.getValues().isEmpty());
+        attrib.setValues(null);
+        Assert.assertTrue(attrib.getValues().isEmpty());
+
+        attrib.setValues(Collections.EMPTY_SET);
+        Assert.assertTrue(attrib.getValues().isEmpty());
+        
+        Collection attribValues = new HashSet();
+        attrib.setValues(attribValues);
+        Assert.assertTrue(attrib.getValues().isEmpty());
+        
+        attribValues.add(null);
+        attrib.setValues(attribValues);
+        Assert.assertTrue(attrib.getValues().isEmpty());
+        
+        Assert.assertTrue(attrib.getValues().add(value1));
         Assert.assertEquals(attrib.getValues().size(), 1);
-        Assert.assertTrue(attrib.getValues().contains(value1));
 
         // test adding another entry
-        Assert.assertTrue(attribValues.add(value2));
+        Assert.assertTrue(attrib.getValues().add(value2));
         Assert.assertFalse(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 2);
         Assert.assertTrue(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test adding null
-        Assert.assertFalse(attribValues.add(null));
-        Assert.assertFalse(attrib.getValues().isEmpty());
-        Assert.assertEquals(attrib.getValues().size(), 2);
-        Assert.assertTrue(attrib.getValues().contains(value1));
-        Assert.assertTrue(attrib.getValues().contains(value2));
+        try {
+            Assert.assertFalse(attrib.getValues().add(null));
+            Assert.fail();
+        } catch (NullPointerException e) {
+            // THis is OK by the annotation
+        }
 
         // test adding an existing value
-        Assert.assertFalse(attribValues.add(value2));
+        Assert.assertFalse(attrib.getValues().add(value2));
         Assert.assertFalse(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 2);
         Assert.assertTrue(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test removing an entry
-        Assert.assertTrue(attribValues.remove(value1));
+        Assert.assertTrue(attrib.getValues().remove(value1));
         Assert.assertFalse(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test removing the same entry
-        Assert.assertFalse(attribValues.remove(value1));
+        Assert.assertFalse(attrib.getValues().remove(value1));
         Assert.assertFalse(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test removing null
-        Assert.assertFalse(attribValues.remove(null));
+        Assert.assertFalse(attrib.getValues().remove(null));
         Assert.assertFalse(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertTrue(attrib.getValues().contains(value2));
 
         // test removing the second entry
-        Assert.assertTrue(attribValues.remove(value2));
+        Assert.assertTrue(attrib.getValues().remove(value2));
         Assert.assertTrue(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 0);
         Assert.assertFalse(attrib.getValues().contains(value1));
         Assert.assertFalse(attrib.getValues().contains(value2));
 
         // test adding something once the collection has been drained
-        Assert.assertTrue(attribValues.add(value1));
+        Assert.assertTrue(attrib.getValues().add(value1));
         Assert.assertFalse(attrib.getValues().isEmpty());
         Assert.assertEquals(attrib.getValues().size(), 1);
         Assert.assertTrue(attrib.getValues().contains(value1));
@@ -347,23 +310,34 @@ public class AttributeTest {
         AttributeEncoder<String> enc2 = new MockEncoder<String>();
 
         Attribute attrib = new Attribute("foo");
-        Set<AttributeEncoder<?>> attribEncoders = attrib.getEncoders();
+        Assert.assertTrue(attrib.getEncoders().isEmpty());
+        attrib.setEncoders(null);
+        Assert.assertTrue(attrib.getEncoders().isEmpty());
+        Collection collection = (Collection<AttributeEncoder>) Arrays.asList((AttributeEncoder)null); 
+        attrib.setEncoders(collection);
+        Assert.assertTrue(attrib.getEncoders().isEmpty());
+
+        Set<AttributeEncoder<?>> attribEncoders = new HashSet<AttributeEncoder<?>>();
 
         // test adding one entry
         Assert.assertTrue(attribEncoders.add(enc1));
+        attrib.setEncoders(attribEncoders);
         Assert.assertFalse(attrib.getEncoders().isEmpty());
         Assert.assertEquals(attrib.getEncoders().size(), 1);
         Assert.assertTrue(attrib.getEncoders().contains(enc1));
 
         // test adding another entry
         Assert.assertTrue(attribEncoders.add(enc2));
+        attrib.setEncoders(attribEncoders);
         Assert.assertFalse(attrib.getEncoders().isEmpty());
         Assert.assertEquals(attrib.getEncoders().size(), 2);
         Assert.assertTrue(attrib.getEncoders().contains(enc1));
         Assert.assertTrue(attrib.getEncoders().contains(enc2));
 
         // test adding null
-        Assert.assertFalse(attribEncoders.add(null));
+        
+        attribEncoders.add(null);
+        attrib.setEncoders(attribEncoders);
         Assert.assertFalse(attrib.getEncoders().isEmpty());
         Assert.assertEquals(attrib.getEncoders().size(), 2);
         Assert.assertTrue(attrib.getEncoders().contains(enc1));
@@ -371,53 +345,40 @@ public class AttributeTest {
 
         // test adding an existing Encoder
         Assert.assertFalse(attribEncoders.add(enc2));
+        attrib.setEncoders(attribEncoders);
         Assert.assertFalse(attrib.getEncoders().isEmpty());
         Assert.assertEquals(attrib.getEncoders().size(), 2);
         Assert.assertTrue(attrib.getEncoders().contains(enc1));
         Assert.assertTrue(attrib.getEncoders().contains(enc2));
 
-        // test removing an entry
-        Assert.assertTrue(attribEncoders.remove(enc1));
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 1);
-        Assert.assertFalse(attrib.getEncoders().contains(enc1));
-        Assert.assertTrue(attrib.getEncoders().contains(enc2));
+        try {
+            attrib.getEncoders().add(null);
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+            // OK
+        }
+        
+    }
+    
+    @Test public void testCloneToString() {
+        Attribute attrib = new Attribute("foo");
+        Attribute dupl = new Attribute("foo");
+        Attribute diff = new Attribute("bar");
 
-        // test removing the same entry
-        Assert.assertFalse(attribEncoders.remove(enc1));
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 1);
-        Assert.assertFalse(attrib.getEncoders().contains(enc1));
-        Assert.assertTrue(attrib.getEncoders().contains(enc2));
-
-        // test removing null
-        Assert.assertFalse(attribEncoders.remove(null));
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 1);
-        Assert.assertFalse(attrib.getEncoders().contains(enc1));
-        Assert.assertTrue(attrib.getEncoders().contains(enc2));
-
-        // test removing the second entry
-        Assert.assertTrue(attribEncoders.remove(enc2));
-        Assert.assertTrue(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 0);
-        Assert.assertFalse(attrib.getEncoders().contains(enc1));
-        Assert.assertFalse(attrib.getEncoders().contains(enc2));
-
-        // test adding something once the collection has been drained
-        Assert.assertTrue(attribEncoders.add(enc1));
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 1);
-        Assert.assertTrue(attrib.getEncoders().contains(enc1));
-        Assert.assertFalse(attrib.getEncoders().contains(enc2));
-
-        // test replacing all entries
-        Set<AttributeEncoder<?>> encoders = new LazySet<AttributeEncoder<?>>();
-        encoders.add(enc2);
-        attrib.setEncoders(encoders);
-        Assert.assertFalse(attrib.getEncoders().isEmpty());
-        Assert.assertEquals(attrib.getEncoders().size(), 1);
-        Assert.assertFalse(attrib.getEncoders().contains(enc1));
-        Assert.assertTrue(attrib.getEncoders().contains(enc2));
+        Assert.assertTrue(attrib.equals(attrib));
+        Assert.assertTrue(attrib.equals(dupl));
+        Assert.assertFalse(attrib.equals(null));
+        Assert.assertFalse(attrib.equals(new Integer(2)));
+        
+        Assert.assertEquals(attrib.hashCode(), dupl.hashCode());
+        Assert.assertNotSame(attrib.hashCode(), diff.hashCode());
+        
+        Assert.assertTrue(attrib.compareTo(diff) > 0);
+        Assert.assertEquals(attrib.compareTo(dupl) , 0);
+        
+        attrib.setValues(Arrays.asList((AttributeValue)new LocalizedStringAttributeValue("value1", null)));
+        attrib.setDisplayDescriptions(Collections.singletonMap(new Locale("en"), "Descrption"));
+        attrib.setDisplayNames(Collections.singletonMap(new Locale("en"), "Name"));
+        attrib.toString();
     }
 }

@@ -56,7 +56,8 @@ public class UnsupportedAttributeTypeException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public UnsupportedAttributeTypeException(@Nullable final String message, @Nullable final Exception wrappedException) {
+    public UnsupportedAttributeTypeException(@Nullable final String message, 
+            @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }
