@@ -162,7 +162,9 @@ public class AttributeValueFilterPolicyTest {
             policy.setMatchingPermittedValues(false);
         } catch (DestroyedComponentException e) {
             thrown = true;
-        }
+        } catch (UnmodifiableComponentException e) {
+            thrown = true;
+        } 
         Assert.assertTrue(thrown, "setMatchingPermittedValues after destroy");
         
         thrown = false;
@@ -202,9 +204,9 @@ public class AttributeValueFilterPolicyTest {
         thrown = false;
         try {
             policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);     
-        } catch (DestroyedComponentException e) {
+        } catch (UnmodifiableComponentException e) {
             thrown = true;
-        }
+        } 
         Assert.assertTrue(thrown, "setMatchingPermittedValues after destroy");
         
         thrown = false;

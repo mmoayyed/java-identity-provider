@@ -31,11 +31,13 @@ import com.google.common.collect.Lists;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterContextTest {
-    
+
     private final StringAttributeValue aStringAttributeValue = new StringAttributeValue("a");
+
     private final StringAttributeValue bStringAttributeValue = new StringAttributeValue("b");
+
     private final StringAttributeValue cStringAttributeValue = new StringAttributeValue("c");
-    
+
     /** Test that post-construction state is what is expected. */
     @Test public void testPostConstructionState() {
         AttributeFilterContext context = new AttributeFilterContext();
@@ -88,19 +90,17 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
 
-        context.getPrefilteredAttributes().put(null, new Attribute("foo"));
-        Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
-        Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
-        Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
+        try {
+            context.getPrefilteredAttributes().put(null, new Attribute("foo"));
+            Assert.fail("null attribute id not allowed");
+        } catch (NullPointerException e) {
+        }
 
-        context.getPrefilteredAttributes().put("foo", null);
-        Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
-        Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getPrefilteredAttributes().get("attribute1"), attribute1);
-        Assert.assertTrue(context.getPrefilteredAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getPrefilteredAttributes().get("attribute3"), attribute3);
+        try {
+            context.getPrefilteredAttributes().put("foo", null);
+            Assert.fail("null attribute not allowed");
+        } catch (NullPointerException e) {
+        }
 
         context.getPrefilteredAttributes().remove(null);
         Assert.assertEquals(context.getPrefilteredAttributes().size(), 2);
@@ -152,19 +152,17 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
 
-        context.getFilteredAttributes().put(null, new Attribute("foo"));
-        Assert.assertEquals(context.getFilteredAttributes().size(), 2);
-        Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
-        Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
+        try {
+            context.getFilteredAttributes().put(null, new Attribute("foo"));
+            Assert.fail("null attribute id not allowed");
+        } catch (NullPointerException e) {
+        }
 
-        context.getFilteredAttributes().put("foo", null);
-        Assert.assertEquals(context.getFilteredAttributes().size(), 2);
-        Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute1"));
-        Assert.assertEquals(context.getFilteredAttributes().get("attribute1"), attribute1);
-        Assert.assertTrue(context.getFilteredAttributes().containsKey("attribute3"));
-        Assert.assertEquals(context.getFilteredAttributes().get("attribute3"), attribute3);
+        try {
+            context.getFilteredAttributes().put("foo", null);
+            Assert.fail("null attribute not allowed");
+        } catch (NullPointerException e) {
+        }
 
         context.getFilteredAttributes().remove(null);
         Assert.assertEquals(context.getFilteredAttributes().size(), 2);

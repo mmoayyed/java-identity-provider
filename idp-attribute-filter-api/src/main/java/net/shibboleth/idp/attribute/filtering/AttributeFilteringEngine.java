@@ -148,7 +148,11 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         for (String attributeId : filterContext.getPermittedAttributeValues().keySet()) {
             filteredAttributeValues = getFilteredValues(attributeId, filterContext);
             if (filteredAttributeValues.isPresent() && !filteredAttributeValues.get().isEmpty()) {
-                filteredAttribute = prefilteredAttributes.get(attributeId).clone();
+                try {
+                    filteredAttribute = prefilteredAttributes.get(attributeId).clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new AttributeFilteringException(e);
+                }
                 filteredAttribute.setValues(filteredAttributeValues.get());
                 filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
             }
