@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filtering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -48,7 +49,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
 
 //TODO(lajoie) perf metrics
 
@@ -61,7 +64,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
     private final Logger log = LoggerFactory.getLogger(AttributeFilteringEngine.class);
 
     /** Filter policies used by this engine. */
-    private final SortedSet<AttributeFilterPolicy> filterPolicies;
+    private final List<AttributeFilterPolicy> filterPolicies;
 
     /**
      * Constructor.
@@ -75,7 +78,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
 
         ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<AttributeFilterPolicy>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
-        filterPolicies = ImmutableSortedSet.copyOf(checkedPolicies);
+        filterPolicies = ImmutableList.copyOf(Iterables.filter(checkedPolicies, Predicates.notNull()));
     }
 
     /**
@@ -83,7 +86,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
      * 
      * @return immutable collection of filter policies
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeFilterPolicy> getFilterPolicies() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AttributeFilterPolicy> getFilterPolicies() {
         return filterPolicies;
     }
 
@@ -93,7 +96,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final LazyList<String> invalidPolicyIds = new LazyList<String>();
-        final Set<AttributeFilterPolicy> policies = getFilterPolicies();
+        final List<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
             try {
                 log.debug("Attribute filtering engine '{}': checking if policy '{}' is valid", getId(), policy.getId());
@@ -133,7 +136,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         log.debug("Attribute filter engine '{}': beginning process of filtering the following {} attributes: {}",
                 new Object[] {getId(), prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
 
-        final Set<AttributeFilterPolicy> policies = getFilterPolicies();
+        final List<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
             if (!policy.isApplicable(filterContext)) {
                 log.debug("Attribute filtering engine '{}': filter policy '{}' is not applicable", getId(),
@@ -212,7 +215,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        final Set<AttributeFilterPolicy> policies = getFilterPolicies();
+        final List<AttributeFilterPolicy> policies = getFilterPolicies();
         for (AttributeFilterPolicy policy : policies) {
             policy.destroy();
         }

@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -61,7 +62,7 @@ public class AndMatcher extends AbstractComposedMatcher {
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final Set<AttributeValueMatcher> currentMatchers = getComposedMatchers();
+        final List<AttributeValueMatcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

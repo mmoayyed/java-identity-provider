@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filtering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -44,7 +45,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
 
 //TODO(lajoie) performance metrics
 
@@ -66,7 +69,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     private final Predicate<AttributeFilterContext> activationCriteria;
 
     /** Filters to be used on attribute values. */
-    private final SortedSet<AttributeValueFilterPolicy> valuePolicies;
+    private final List<AttributeValueFilterPolicy> valuePolicies;
 
     /**
      * Constructor.
@@ -84,7 +87,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         ArrayList<AttributeValueFilterPolicy> checkedPolicies = new ArrayList<AttributeValueFilterPolicy>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
-        valuePolicies = ImmutableSortedSet.copyOf(checkedPolicies);
+        valuePolicies = ImmutableList.copyOf(Iterables.filter(policies, Predicates.notNull()));
     }
 
     /**
@@ -101,7 +104,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @return attribute rules that are in effect if this policy is in effect
      */
-    @Nonnull @NonnullElements @Unmodifiable public SortedSet<AttributeValueFilterPolicy> getAttributeValuePolicies() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AttributeValueFilterPolicy> getAttributeValuePolicies() {
         return valuePolicies;
     }
 

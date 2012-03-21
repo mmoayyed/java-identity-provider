@@ -19,8 +19,7 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +37,8 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * Base class for {@link AttributeValueMatcher} implementations that are compositions of other
@@ -48,7 +48,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
         AttributeValueMatcher, UnmodifiableComponent, ValidatableComponent {
 
     /** The composed matchers. */
-    private final SortedSet<AttributeValueMatcher> matchers;
+    private final List<AttributeValueMatcher> matchers;
 
     /**
      * Constructor.
@@ -62,7 +62,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
             CollectionSupport.addIf(checkedMatchers, composedMatchers, Predicates.notNull());
         }
 
-        matchers = ImmutableSortedSet.copyOf(checkedMatchers);
+        matchers = ImmutableList.copyOf(Iterables.filter(checkedMatchers, Predicates.notNull()));
     }
 
     /**
@@ -70,7 +70,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
      * 
      * @return the composed matchers
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValueMatcher> getComposedMatchers() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AttributeValueMatcher> getComposedMatchers() {
         return matchers;
     }
 
