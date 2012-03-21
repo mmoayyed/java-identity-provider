@@ -146,7 +146,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
 
         Optional<Collection> filteredAttributeValues;
         Attribute filteredAttribute;
-        for (String attributeId : filterContext.getPermittedAttributeValues().keySet()) {
+        for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
             filteredAttributeValues = getFilteredValues(attributeId, filterContext);
             if (filteredAttributeValues.isPresent() && !filteredAttributeValues.get().isEmpty()) {
                 try {
@@ -168,7 +168,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
      * @param attributeId ID of the attribute whose values are to be retrieved
      * @param filterContext current attribute filter context
      * 
-     * @return {@link Optional#absent()} if not values were permitted to be released, {@link Optional} containing an
+     * @return {@link Optional#absent()} if no values were permitted to be released, {@link Optional} containing an
      *         empty collection if values were permitted but then all were removed by deny policies, or {@link Optional}
      *         with a collection containing permitted values
      */
@@ -182,10 +182,6 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),
                     attributeId);
-            //
-            // Note that this code will not be exercised - empty attributes are stripped out in 
-            // AttributeFilterPolicy#apply
-            //
             return Optional.absent();
         }
 
