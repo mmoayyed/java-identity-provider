@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.filtering;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -125,8 +127,94 @@ public class AttributeFilteringEngineTest {
         engine.initialize();
 
         engine.filterAttributes(filterContext);
-        Assert.assertEquals(filterContext.getFilteredAttributes().size(), 1);
+        Map<String, Attribute> resultAttrs = filterContext.getFilteredAttributes();
+        Assert.assertEquals(resultAttrs.size(), 1);
+        Set<AttributeValue> result = resultAttrs.get("attribute1").getValues();
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(new StringAttributeValue("one")));
+        Assert.assertTrue(result.contains(new StringAttributeValue("two")));
     }
+
+    @Test public void testAllMatcher() throws Exception {
+
+        AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy();
+        attribute1Policy.setAttributeId("attribute1");
+        attribute1Policy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+
+        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(attribute1Policy));
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+
+        Attribute attribute1 = new Attribute("attribute1");
+        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+
+        AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
+        engine.initialize();
+
+        engine.filterAttributes(filterContext);
+        Set<AttributeValue> result = filterContext.getFilteredAttributes().get("attribute1").getValues();
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(new StringAttributeValue("one")));
+        Assert.assertTrue(result.contains(new StringAttributeValue("two")));
+    }
+
+    @Test public void testNoneMatcher() throws Exception {
+
+        AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy();
+        attribute1Policy.setAttributeId("attribute1");
+        attribute1Policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);
+
+        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(attribute1Policy));
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+
+        Attribute attribute1 = new Attribute("attribute1");
+        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+
+        AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
+        engine.initialize();
+
+        engine.filterAttributes(filterContext);
+        Assert.assertTrue(filterContext.getFilteredAttributes().isEmpty());
+    }
+
+    @Test public void testDenyFilterAttributes() throws Exception {
+        MockAttributeValueMatcher deny = new MockAttributeValueMatcher();
+        deny.setMatchingAttribute("attribute1");
+        deny.setMatchingValues(Arrays.asList(new StringAttributeValue("one")));
+
+        AttributeValueFilterPolicy denyPolicy = new AttributeValueFilterPolicy();
+        denyPolicy.setAttributeId("attribute1");
+        denyPolicy.setMatchingPermittedValues(false);
+        denyPolicy.setValueMatcher(deny);
+        
+        AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
+        allowPolicy.setAttributeId("attribute1");
+        allowPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+
+
+        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(denyPolicy, allowPolicy));
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+
+        Attribute attribute1 = new Attribute("attribute1");
+        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+
+        AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
+        engine.initialize();
+
+        engine.filterAttributes(filterContext);
+        Map<String, Attribute> resultAttrs = filterContext.getFilteredAttributes();
+        Assert.assertEquals(resultAttrs.size(), 1);
+        Set<AttributeValue> result = resultAttrs.get("attribute1").getValues();
+        Assert.assertEquals(result.size(), 1);
+        Assert.assertTrue(result.contains(new StringAttributeValue("two")));
+    }
+
+
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
