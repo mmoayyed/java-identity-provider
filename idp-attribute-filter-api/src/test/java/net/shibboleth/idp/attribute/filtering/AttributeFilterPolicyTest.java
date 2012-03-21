@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filtering;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -71,28 +72,28 @@ public class AttributeFilterPolicyTest {
         try {
             new AttributeFilterPolicy(null, predicate, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected
-        }
+        } 
 
         try {
             new AttributeFilterPolicy("", predicate, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected
         }
 
         try {
             new AttributeFilterPolicy("  ", predicate, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected
         }
 
         try {
             new AttributeFilterPolicy("engine", null, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected
         }
     }
@@ -256,6 +257,20 @@ public class AttributeFilterPolicyTest {
                 "three"))));
 
         Assert.assertNull(context.getPermittedAttributeValues().get(ATTR_NAME_2));
+    }
+    
+    @Test public void testApplyToEmpty() throws ComponentInitializationException, AttributeFilteringException {
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        //
+        // Empty attribute
+        //
+        AttributeFilterContext context = new AttributeFilterContext();
+        Attribute attribute = new Attribute(ATTR_NAME);
+        attribute.setValues(Collections.EMPTY_LIST);
+        context.setPrefilteredAttributes(Arrays.asList(attribute));
+        policy.initialize();
+        policy.apply(context);
+        Assert.assertTrue(context.getPermittedAttributeValues().isEmpty());
 
     }
 }

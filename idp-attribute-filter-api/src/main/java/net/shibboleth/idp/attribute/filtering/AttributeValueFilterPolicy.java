@@ -193,6 +193,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
         }
 
         if (valueMatchingRule == null) {
+            // Will never happen unless we change the constructor
             throw new ComponentInitializationException("No value matching rule specified");
         }
 

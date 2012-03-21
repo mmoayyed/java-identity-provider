@@ -19,9 +19,9 @@ package net.shibboleth.idp.attribute.filtering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 
 //TODO(lajoie) performance metrics
@@ -78,7 +77,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * @param criterion criterion used to determine if this policy is active for a given request
      * @param policies value filtering policies employed if this policy is active
      */
-    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nullable Predicate criterion,
+    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull Predicate criterion,
             @Nullable Collection<AttributeValueFilterPolicy> policies) {
         setId(policyId);
 
@@ -87,7 +86,11 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         ArrayList<AttributeValueFilterPolicy> checkedPolicies = new ArrayList<AttributeValueFilterPolicy>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
-        valuePolicies = ImmutableList.copyOf(Iterables.filter(policies, Predicates.notNull()));
+        if (null != policies) {
+            valuePolicies = ImmutableList.copyOf(Iterables.filter(policies, Predicates.notNull()));
+        } else {
+            valuePolicies = Collections.EMPTY_LIST;
+        }
     }
 
     /**
@@ -127,7 +130,8 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @throws AttributeFilteringException thrown if there is a problem evaluating this filter's requirement rule
      */
-    public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
+    public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) 
+            throws AttributeFilteringException {
         assert filterContext != null : "Attribute filter context can not be null";
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
