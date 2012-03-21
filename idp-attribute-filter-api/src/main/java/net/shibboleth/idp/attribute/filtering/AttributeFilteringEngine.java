@@ -138,6 +138,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
             if (!policy.isApplicable(filterContext)) {
                 log.debug("Attribute filtering engine '{}': filter policy '{}' is not applicable", getId(),
                         policy.getId());
+                continue;
             }
 
             policy.apply(filterContext);
@@ -181,6 +182,10 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),
                     attributeId);
+            //
+            // Note that this code will not be exercised - empty attributes are stripped out in 
+            // AttributeFilterPolicy#apply
+            //
             return Optional.absent();
         }
 
@@ -191,6 +196,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         if (filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': deny policies filtered out all values for attribute '{}'",
                     getId(), attributeId);
+            return Optional.absent();
         } else {
             log.debug("Attribute filtering engine '{}': {} values for attribute '{}' remained after filtering",
                     new Object[] {getId(), filteredAttributeValues.size(), attributeId,});
