@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.tou;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 
 import org.joda.time.DateTime;
 

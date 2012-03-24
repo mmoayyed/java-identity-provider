@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.log;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.concurrent.NotThreadSafe;
+
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 

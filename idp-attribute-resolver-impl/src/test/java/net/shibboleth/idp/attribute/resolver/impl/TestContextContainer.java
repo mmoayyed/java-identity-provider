@@ -8,7 +8,6 @@ import net.shibboleth.idp.session.IdPSessionContext;
 import net.shibboleth.idp.session.ServiceSession;
 
 import org.joda.time.DateTime;
-import org.opensaml.messaging.context.AbstractSubcontextContainer;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;

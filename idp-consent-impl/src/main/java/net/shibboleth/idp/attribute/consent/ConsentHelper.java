@@ -28,10 +28,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.slf4j.Logger;

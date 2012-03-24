@@ -20,8 +20,8 @@ package net.shibboleth.idp.attribute.filtering;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;

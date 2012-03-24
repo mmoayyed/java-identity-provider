@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 
-import net.jcip.annotations.NotThreadSafe;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;

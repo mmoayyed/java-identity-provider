@@ -19,7 +19,8 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Map;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 

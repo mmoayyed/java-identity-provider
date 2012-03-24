@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.saml.impl.xmlobject;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 
 import org.opensaml.xml.AbstractXMLObjectBuilder;

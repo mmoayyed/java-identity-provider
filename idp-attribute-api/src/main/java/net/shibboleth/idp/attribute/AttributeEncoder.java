@@ -18,8 +18,8 @@
 package net.shibboleth.idp.attribute;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.ThreadSafe;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**

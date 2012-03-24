@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 

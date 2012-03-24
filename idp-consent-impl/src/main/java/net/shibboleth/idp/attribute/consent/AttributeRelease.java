@@ -20,7 +20,8 @@ package net.shibboleth.idp.attribute.consent;
 import java.util.Collection;
 import java.util.HashSet;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.joda.time.DateTime;

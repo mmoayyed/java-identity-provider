@@ -22,7 +22,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;

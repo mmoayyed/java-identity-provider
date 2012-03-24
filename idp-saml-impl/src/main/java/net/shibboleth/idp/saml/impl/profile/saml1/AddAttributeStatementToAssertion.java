@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;

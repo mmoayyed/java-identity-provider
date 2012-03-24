@@ -19,7 +19,8 @@ package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.Collections;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;

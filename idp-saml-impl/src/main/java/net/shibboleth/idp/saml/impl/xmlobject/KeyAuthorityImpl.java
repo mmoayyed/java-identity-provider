@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.concurrent.NotThreadSafe;
+
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 
 import org.opensaml.xml.XMLObject;

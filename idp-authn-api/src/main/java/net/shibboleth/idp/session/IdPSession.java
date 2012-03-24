@@ -23,7 +23,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;

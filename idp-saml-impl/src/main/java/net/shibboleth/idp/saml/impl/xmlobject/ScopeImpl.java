@@ -20,7 +20,8 @@ package net.shibboleth.idp.saml.impl.xmlobject;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.concurrent.NotThreadSafe;
+
 import net.shibboleth.idp.saml.xmlobject.Scope;
 
 import org.opensaml.xml.XMLObject;

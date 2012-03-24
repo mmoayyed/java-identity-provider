@@ -20,7 +20,8 @@ package net.shibboleth.idp.service;
 import java.util.HashMap;
 import java.util.List;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
 

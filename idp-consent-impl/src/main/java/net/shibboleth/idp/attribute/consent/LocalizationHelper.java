@@ -23,7 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.concurrent.NotThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 
 import org.opensaml.common.xml.SAMLConstants;

@@ -20,13 +20,13 @@ package net.shibboleth.idp.attribute.resolver;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Assert;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 

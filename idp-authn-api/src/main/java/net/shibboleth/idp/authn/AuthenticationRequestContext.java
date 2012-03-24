@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.session.AuthenticationEvent;
 
 import org.opensaml.messaging.context.BaseContext;

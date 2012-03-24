@@ -17,10 +17,9 @@
 
 package net.shibboleth.idp.profile;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import net.jcip.annotations.ThreadSafe;
 
 import org.opensaml.messaging.context.InOutOperationContext;
 

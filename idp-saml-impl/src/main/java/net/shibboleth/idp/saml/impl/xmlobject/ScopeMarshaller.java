@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.saml.impl.xmlobject;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.jcip.annotations.NotThreadSafe;
+import javax.annotation.concurrent.NotThreadSafe;
+
 import net.shibboleth.idp.attribute.Attribute;
 
 /**

@@ -19,7 +19,8 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;

@@ -33,7 +33,6 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

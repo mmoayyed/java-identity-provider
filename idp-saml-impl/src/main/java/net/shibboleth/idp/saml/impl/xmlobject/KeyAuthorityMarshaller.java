@@ -19,14 +19,14 @@ package net.shibboleth.idp.saml.impl.xmlobject;
 
 import java.util.Map.Entry;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.namespace.QName;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
-import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.xml.XMLObject;
+import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.w3c.dom.Attr;

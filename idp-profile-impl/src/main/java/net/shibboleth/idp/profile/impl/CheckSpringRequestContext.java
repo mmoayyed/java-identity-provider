@@ -17,10 +17,10 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.jcip.annotations.ThreadSafe;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;

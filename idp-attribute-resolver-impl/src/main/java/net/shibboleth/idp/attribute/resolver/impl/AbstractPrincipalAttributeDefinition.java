@@ -17,7 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import net.jcip.annotations.ThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.session.AuthenticationEvent;
@@ -30,7 +31,6 @@ import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.context.SubcontextContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
