@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.testng.Assert;
@@ -161,10 +162,10 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
-    
-    @Test public void testInitTeardown () throws AttributeFilteringException, ComponentInitializationException {
+
+    @Test public void testInitTeardown() throws AttributeFilteringException, ComponentInitializationException {
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
-        
+
         boolean thrown = false;
         try {
             matcher.getMatchingValues(attribute, filterContext);
@@ -172,9 +173,17 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "getMatchingValues before init");
-        
+
         matcher.initialize();
         matcher.getMatchingValues(attribute, filterContext);
+
+        thrown = false;
+        try {
+            matcher.setScript(returnOneValueScript);
+        } catch (UnmodifiableComponentException e) {
+            thrown = true;
+        }
+
         matcher.destroy();
 
         thrown = false;
@@ -192,6 +201,27 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
-        
     }
+
+    @Test public void testEqualsHashToString() {
+        ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
+
+        matcher.toString();
+
+        Assert.assertFalse(matcher.equals(null));
+        Assert.assertTrue(matcher.equals(matcher));
+        Assert.assertFalse(matcher.equals(this));
+
+        ScriptedMatcher other = new ScriptedMatcher(addedValuesScript);
+
+        Assert.assertTrue(matcher.equals(other));
+        Assert.assertEquals(matcher.hashCode(), other.hashCode());
+
+        other = new ScriptedMatcher(nullReturnScript);
+
+        Assert.assertFalse(matcher.equals(other));
+        Assert.assertNotSame(matcher.hashCode(), other.hashCode());
+
+    }
+
 }

@@ -69,7 +69,8 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
     }
 
     /** {@inheritDoc} */
-    public Set<AttributeValue> getMatchingValues(final Attribute attribute, final AttributeFilterContext filterContext)
+    public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
+            @Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
         assert attribute != null : "Attribute to be filtered can not be null";
         assert filterContext != null : "Attribute filter context can not be null";

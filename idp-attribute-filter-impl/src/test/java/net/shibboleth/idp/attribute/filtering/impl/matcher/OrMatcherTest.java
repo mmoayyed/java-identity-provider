@@ -70,24 +70,25 @@ public class OrMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testGetMatchingValues() throws Exception {
-        OrMatcher matcher = new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(
-                new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
-                new AttributeValuePredicateMatcher(equalTo(value2))));
-        
+        OrMatcher matcher =
+                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(
+                        new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
+                        new AttributeValuePredicateMatcher(equalTo(value2))));
+
         try {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
         } catch (UninitializedComponentException e) {
             // expect this
         }
-        
+
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2) && result.contains(value2));
-        
+
         matcher.destroy();
         try {
             matcher.getMatchingValues(attribute, filterContext);
@@ -100,4 +101,46 @@ public class OrMatcherTest extends AbstractMatcherTest {
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
+
+    @Test public void testNoMatchingValues() throws Exception {
+        OrMatcher matcher =
+                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
+                        equalTo("Nothing")), new AttributeValuePredicateMatcher(
+                                equalTo("Zippo"))));
+
+
+        matcher.initialize();
+
+        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNotNull(result);
+        Assert.assertTrue(result.isEmpty());
+
+    }
+
+    @Test public void testEqualsHashToString() {
+        OrMatcher matcher =
+                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
+                        equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
+
+        matcher.toString();
+
+        Assert.assertFalse(matcher.equals(null));
+        Assert.assertTrue(matcher.equals(matcher));
+        Assert.assertFalse(matcher.equals(this));
+
+        OrMatcher other =
+                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
+                        equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
+
+        Assert.assertTrue(matcher.equals(other));
+        Assert.assertEquals(matcher.hashCode(), other.hashCode());
+
+        other =
+                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
+                        equalTo(value3)), new AttributeValuePredicateMatcher(equalTo(value2))));
+
+        Assert.assertFalse(matcher.equals(other));
+        Assert.assertNotSame(matcher.hashCode(), other.hashCode());
+    }
+
 }

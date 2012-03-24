@@ -24,12 +24,18 @@ import static com.google.common.base.Predicates.or;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Lists;
 
 /** Test the {@link NotMatcher} matcher. */
 public class NotMatcherTest extends AbstractMatcherTest {
@@ -39,6 +45,13 @@ public class NotMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testNullArguments() throws Exception {
+        try {
+            new AttributeValuePredicateMatcher(null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            // expected this
+        }
+
         AttributeValuePredicateMatcher valuePredicate = new AttributeValuePredicateMatcher(alwaysTrue());
         NotMatcher matcher = new NotMatcher(valuePredicate);
         matcher.initialize();
@@ -72,8 +85,10 @@ public class NotMatcherTest extends AbstractMatcherTest {
         }
     }
 
-    @Test public void testGetMatchingValues() throws Exception {
-        NotMatcher matcher = new NotMatcher(new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
+    @Test public void testInitValidateDestroy() throws AttributeFilteringException, ComponentInitializationException,
+            ComponentValidationException {
+        AbstractComposedMatcherTest.MyMatcher inMatcher = new AbstractComposedMatcherTest.MyMatcher();
+        NotMatcher matcher = new NotMatcher(inMatcher);
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
@@ -81,7 +96,56 @@ public class NotMatcherTest extends AbstractMatcherTest {
         } catch (UninitializedComponentException e) {
             // expect this
         }
-        
+        Assert.assertFalse(inMatcher.isInitialized());
+        Assert.assertFalse(inMatcher.isValidated());
+        Assert.assertFalse(inMatcher.isDestroyed());
+
+        try {
+            matcher.validate();
+            Assert.fail();
+        } catch (UninitializedComponentException e) {
+            // expect this
+        }
+
+        matcher.initialize();
+        Assert.assertTrue(inMatcher.isInitialized());
+        Assert.assertFalse(inMatcher.isValidated());
+        Assert.assertFalse(inMatcher.isDestroyed());
+
+        matcher.validate();
+        Assert.assertTrue(inMatcher.isInitialized());
+        Assert.assertTrue(inMatcher.isValidated());
+        Assert.assertFalse(inMatcher.isDestroyed());
+
+        inMatcher.setFailValidate(true);
+        try {
+            matcher.validate();
+        } catch (ComponentValidationException e) {
+            // OK
+        }
+
+        matcher.destroy();
+        Assert.assertTrue(inMatcher.isDestroyed());
+        Assert.assertTrue(inMatcher.isInitialized());
+        Assert.assertTrue(inMatcher.isValidated());
+
+        try {
+            matcher.initialize();
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
+
+        try {
+            matcher.validate();
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
+
+    }
+
+    @Test public void testGetMatchingValues() throws Exception {
+        NotMatcher matcher = new NotMatcher(new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
+
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -95,5 +159,38 @@ public class NotMatcherTest extends AbstractMatcherTest {
         } catch (DestroyedComponentException e) {
             // expect this
         }
+
+        matcher =
+                new NotMatcher(new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(
+                        new AttributeValuePredicateMatcher(equalTo(value1)), new AttributeValuePredicateMatcher(
+                                equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3)))));
+
+        matcher.initialize();
+
+        result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.size(), 0);
     }
+
+    @Test public void testEqualsHashToString() {
+        NotMatcher matcher = new NotMatcher(new AttributeValuePredicateMatcher(equalTo(value2)));
+
+        matcher.toString();
+
+        Assert.assertFalse(matcher.equals(null));
+        Assert.assertTrue(matcher.equals(matcher));
+        Assert.assertFalse(matcher.equals(this));
+
+        NotMatcher other = new NotMatcher(new AttributeValuePredicateMatcher(equalTo(value2)));
+
+        Assert.assertTrue(matcher.equals(other));
+        Assert.assertEquals(matcher.hashCode(), other.hashCode());
+
+        other = new NotMatcher(new AttributeValuePredicateMatcher(equalTo(value3)));
+
+        Assert.assertFalse(matcher.equals(other));
+        Assert.assertNotSame(matcher.hashCode(), other.hashCode());
+
+    }
+
 }

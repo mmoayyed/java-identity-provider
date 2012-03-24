@@ -67,6 +67,7 @@ public class AttributeValuePredicateMatcher implements AttributeValueMatcher {
                     matchedValues.add(value);
                 }
             } catch (Exception e) {
+                // TODO RDW Work out how to provoke this path when nothing inside throws an exception, just errors
                 log.debug("Attribute value '{}' of type '{}' caused an error while being evaluated '{}':\n{}",
                         new Object[] {value, value.getClass().getName(), valuePredicate.getClass().getName(), e});
                 throw new AttributeFilteringException("Unable to apply predicate to attribute value", e);

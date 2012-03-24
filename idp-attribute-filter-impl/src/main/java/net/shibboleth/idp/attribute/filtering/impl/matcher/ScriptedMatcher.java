@@ -42,6 +42,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 
 /**
@@ -130,7 +131,6 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        script = null;
         super.doDestroy();
     }
 
@@ -139,7 +139,37 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
         super.doInitialize();
 
         if (null == script) {
+            // never met so long as we have the assert in the constructor
             throw new ComponentInitializationException("No script has been provided");
         }
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof ScriptedMatcher)) {
+            return false;
+        }
+
+        ScriptedMatcher other = (ScriptedMatcher) obj;
+
+        return script.equals(other.getScript());
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return 27 * script.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("Script", getScript()).toString();
     }
 }

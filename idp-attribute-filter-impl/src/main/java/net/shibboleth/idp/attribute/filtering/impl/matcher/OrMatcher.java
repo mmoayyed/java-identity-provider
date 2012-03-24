@@ -33,7 +33,6 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import com.google.common.base.Objects;
 
@@ -42,7 +41,7 @@ import com.google.common.base.Objects;
  * considered to have matched if it is returned by any of the composed {@link AttributeValueMatcher}.
  */
 @ThreadSafe
-public class OrMatcher extends AbstractComposedMatcher implements AttributeValueMatcher, ValidatableComponent {
+public class OrMatcher extends AbstractComposedMatcher implements AttributeValueMatcher {
 
     /**
      * Constructor.

@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -41,7 +42,7 @@ import org.testng.annotations.Test;
 public class AbstractComposedMatcherTest {
 
     @Test
-    public void testInitDestroy() throws ComponentInitializationException, AttributeFilteringException {
+    public void testInitDestroy() throws ComponentInitializationException, AttributeFilteringException, ComponentValidationException {
         List<AttributeValueMatcher> firstList = new ArrayList<AttributeValueMatcher>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
         
@@ -71,7 +72,10 @@ public class AbstractComposedMatcherTest {
         for (int i = 0; i < 2;i++) {
             firstList.add(new MyMatcher());
         }
+        firstList.add(null);
         matcher = new ComposedMatcher(firstList);
+        
+        Assert.assertEquals(firstList.size()-1, matcher.getComposedMatchers().size());
         
         thrown = false;
         try {
@@ -94,8 +98,24 @@ public class AbstractComposedMatcherTest {
         for (int i = 0; i < 2;i++) {
             Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
             Assert.assertFalse(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should not be destroyed");
+            Assert.assertFalse(((MyMatcher)firstList.get(i)).isValidated(), "Element should not be validated");
         }
-
+        
+        matcher.validate();
+        
+        for (int i = 0; i < 2;i++) {
+            Assert.assertTrue(((MyMatcher)firstList.get(i)).isValidated(), "Element should be validated");
+        }
+        
+        ((MyMatcher)firstList.get(1)).setFailValidate(true);
+        thrown = false;
+        try {
+            matcher.validate();
+        } catch (ComponentValidationException  e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown);
+        
         matcher.destroy();
 
         for (int i = 0; i < 2;i++) {
@@ -106,6 +126,13 @@ public class AbstractComposedMatcherTest {
         try {
             matcher.initialize();
         } catch (DestroyedComponentException  e) {
+            thrown = true;
+        }
+
+        thrown = false;
+        try {
+            matcher.validate();
+        } catch (ComponentValidationException  e) {
             thrown = true;
         }
         
@@ -170,10 +197,12 @@ public class AbstractComposedMatcherTest {
         }
     }
     
-    private class MyMatcher implements  AttributeValueMatcher, DestructableComponent, InitializableComponent {
+    public static class MyMatcher implements  AttributeValueMatcher, DestructableComponent, InitializableComponent, ValidatableComponent {
 
         private boolean initialized;
         private boolean destroyed;
+        private boolean validated;
+        private boolean failValidate;
         
         public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
                 throws AttributeFilteringException {
@@ -194,6 +223,21 @@ public class AbstractComposedMatcherTest {
 
         public void destroy() {
             destroyed = true;
+        }
+
+        public boolean isValidated() { 
+            return validated;
+        }
+        
+        public void setFailValidate(boolean what) {
+            failValidate = what;
+        }
+        
+        public void validate() throws ComponentValidationException {
+            if (failValidate) {
+                throw new ComponentValidationException();
+            }
+            validated = true;
         }
     }
 }

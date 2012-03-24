@@ -55,7 +55,8 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
      * 
      * @param composedMatchers matchers being composed
      */
-    public AbstractComposedMatcher(@Nullable @NullableElements final Collection<AttributeValueMatcher> composedMatchers) {
+    public AbstractComposedMatcher(@Nullable @NullableElements final 
+            Collection<AttributeValueMatcher> composedMatchers) {
         ArrayList<AttributeValueMatcher> checkedMatchers = new ArrayList<AttributeValueMatcher>();
 
         if (composedMatchers != null) {

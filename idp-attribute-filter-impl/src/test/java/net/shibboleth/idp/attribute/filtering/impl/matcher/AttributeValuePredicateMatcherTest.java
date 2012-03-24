@@ -24,6 +24,7 @@ import static com.google.common.base.Predicates.or;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -46,7 +47,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
             thrown = true;
         }
         Assert.assertTrue(thrown);
-        
+
         thrown = false;
         try {
             matcher.getMatchingValues(attribute, null);
@@ -54,7 +55,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
             thrown = true;
         }
         Assert.assertTrue(thrown);
-        
+
         thrown = false;
         try {
             matcher.getMatchingValues(null, null);
@@ -62,7 +63,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
             thrown = true;
         }
         Assert.assertTrue(thrown);
-        
+
         thrown = false;
         try {
             new AttributeValuePredicateMatcher(null);
@@ -72,7 +73,8 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(thrown);
     }
 
-    @Test public void testGetMatchingValues() throws Exception {
+
+    @Test public void testGetMatchingValues() throws AttributeFilteringException {
         AttributeValuePredicateMatcher matcher =
                 new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
@@ -80,6 +82,28 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value1) && result.contains(value2));
+
+    }
+
+    @Test public void testEqualsHashToString() {
+        AttributeValuePredicateMatcher matcher =
+                new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
+
+        matcher.toString();
+
+        Assert.assertFalse(matcher.equals(null));
+        Assert.assertTrue(matcher.equals(matcher));
+        Assert.assertFalse(matcher.equals(this));
+
+        AttributeValuePredicateMatcher other = new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
+        
+        Assert.assertTrue(matcher.equals(other));
+        Assert.assertEquals(matcher.hashCode(), other.hashCode());
+
+        other = new AttributeValuePredicateMatcher(or(equalTo(value2), equalTo(value1)));
+
+        Assert.assertFalse(matcher.equals(other));
+        Assert.assertNotSame(matcher.hashCode(), other.hashCode());
 
     }
 }
