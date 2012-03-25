@@ -23,12 +23,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <!-- TODO remove this -->
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-authn-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
         </dependency>
