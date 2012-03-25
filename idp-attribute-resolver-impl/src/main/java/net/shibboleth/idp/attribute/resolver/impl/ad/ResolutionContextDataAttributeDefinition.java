@@ -19,11 +19,16 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Assert;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -36,6 +41,28 @@ public class ResolutionContextDataAttributeDefinition extends BaseAttributeDefin
 
     /** Function used to extract attribute values from the current resolution context. */
     private Function<AttributeResolutionContext, Collection<? extends AttributeValue>> dataExtractionStrategy;
+
+    /**
+     * Gets the function used to extract attribute values from the current {@link AttributeResolutionContext}.
+     * 
+     * @return function used to extract attribute values from the current {@link AttributeResolutionContext}
+     */
+    public Function<AttributeResolutionContext, Collection<? extends AttributeValue>> getDataExtractionStrategy() {
+        return dataExtractionStrategy;
+    }
+
+    /**
+     * Sets the function used to extract attribute values from the current {@link AttributeResolutionContext}.
+     * 
+     * @param strategy function used to extract attribute values from the current {@link AttributeResolutionContext}
+     */
+    public synchronized void setDataExtractionStrategy(
+            @Nonnull final Function<AttributeResolutionContext, Collection<? extends AttributeValue>> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        dataExtractionStrategy = Assert.isNotNull(strategy, "Data extraction strategy can not be null");
+    }
 
     /** {@inheritDoc} */
     protected Optional<Attribute> doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
@@ -52,5 +79,20 @@ public class ResolutionContextDataAttributeDefinition extends BaseAttributeDefin
         }
 
         return Optional.of(attribute);
+    }
+
+    /** {@inheritDoc} */
+    protected void doDestroy() {
+        dataExtractionStrategy = null;
+        super.doDestroy();
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (dataExtractionStrategy == null) {
+            throw new ComponentInitializationException("No data extraction strategy has been given");
+        }
     }
 }
