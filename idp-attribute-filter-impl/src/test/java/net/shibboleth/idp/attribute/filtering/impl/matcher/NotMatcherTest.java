@@ -87,7 +87,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
 
     @Test public void testInitValidateDestroy() throws AttributeFilteringException, ComponentInitializationException,
             ComponentValidationException {
-        AbstractComposedMatcherTest.MyMatcher inMatcher = new AbstractComposedMatcherTest.MyMatcher();
+        AbstractComposedMatcherTest.TestMatcher inMatcher = new AbstractComposedMatcherTest.TestMatcher();
         NotMatcher matcher = new NotMatcher(inMatcher);
 
         try {
@@ -97,7 +97,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
             // expect this
         }
         Assert.assertFalse(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.isValidated());
+        Assert.assertFalse(inMatcher.getValidateCount() > 0);
         Assert.assertFalse(inMatcher.isDestroyed());
 
         try {
@@ -109,12 +109,11 @@ public class NotMatcherTest extends AbstractMatcherTest {
 
         matcher.initialize();
         Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertFalse(inMatcher.isValidated());
-        Assert.assertFalse(inMatcher.isDestroyed());
+        Assert.assertFalse(inMatcher.getValidateCount() > 0);
 
         matcher.validate();
         Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertTrue(inMatcher.isValidated());
+        Assert.assertTrue(inMatcher.getValidateCount() > 0);
         Assert.assertFalse(inMatcher.isDestroyed());
 
         inMatcher.setFailValidate(true);
@@ -127,7 +126,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
         matcher.destroy();
         Assert.assertTrue(inMatcher.isDestroyed());
         Assert.assertTrue(inMatcher.isInitialized());
-        Assert.assertTrue(inMatcher.isValidated());
+        Assert.assertTrue(inMatcher.getValidateCount() > 0);
 
         try {
             matcher.initialize();

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.logic.ExceptionPredicate;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -84,6 +85,20 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(result.contains(value1) && result.contains(value2));
 
     }
+    
+    @Test public void testFailingGetMatchingValues() {
+        AttributeValuePredicateMatcher matcher =
+                new AttributeValuePredicateMatcher(new ExceptionPredicate(new RuntimeException()));
+
+        try {
+            matcher.getMatchingValues(attribute, filterContext);
+            Assert.fail();
+        } catch (AttributeFilteringException e) {
+            //OK
+        }
+
+    }
+
 
     @Test public void testEqualsHashToString() {
         AttributeValuePredicateMatcher matcher =

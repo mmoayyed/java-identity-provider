@@ -30,10 +30,12 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.logic.CountingDestructableInitializableValidatableFunction;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -47,7 +49,7 @@ public class AbstractComposedMatcherTest {
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
         
         for (int i = 0; i < 2;i++) {
-            firstList.add(new MyMatcher());
+            firstList.add(new TestMatcher());
         }
         
         matcher.destroy();
@@ -70,7 +72,7 @@ public class AbstractComposedMatcherTest {
         Assert.assertTrue(thrown, "Initialize after destroy");
 
         for (int i = 0; i < 2;i++) {
-            firstList.add(new MyMatcher());
+            firstList.add(new TestMatcher());
         }
         firstList.add(null);
         matcher = new ComposedMatcher(firstList);
@@ -87,7 +89,7 @@ public class AbstractComposedMatcherTest {
 
         thrown = false;
         try {
-            matcher.getComposedMatchers().add(new MyMatcher());
+            matcher.getComposedMatchers().add(new TestMatcher());
         } catch (UnsupportedOperationException e) {
             thrown = true;
         }
@@ -98,16 +100,16 @@ public class AbstractComposedMatcherTest {
         for (int i = 0; i < 2;i++) {
             Assert.assertTrue(((InitializableComponent)firstList.get(i)).isInitialized(), "Element should be initialized");
             Assert.assertFalse(((DestructableComponent)firstList.get(i)).isDestroyed(), "Element should not be destroyed");
-            Assert.assertFalse(((MyMatcher)firstList.get(i)).isValidated(), "Element should not be validated");
+            Assert.assertFalse(((TestMatcher)firstList.get(i)).getValidateCount() > 0, "Element should not be validated");
         }
         
         matcher.validate();
         
         for (int i = 0; i < 2;i++) {
-            Assert.assertTrue(((MyMatcher)firstList.get(i)).isValidated(), "Element should be validated");
+            Assert.assertTrue(((TestMatcher)firstList.get(i)).getValidateCount() > 0, "Element should be validated");
         }
         
-        ((MyMatcher)firstList.get(1)).setFailValidate(true);
+        ((TestMatcher)firstList.get(1)).setFailValidate(true);
         thrown = false;
         try {
             matcher.validate();
@@ -157,15 +159,15 @@ public class AbstractComposedMatcherTest {
         matcher = new ComposedMatcher(list);
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add List<null> - no matchers");
         
-        list.set(2, new MyMatcher());
-        list.set(3, new MyMatcher());
-        list.set(7, new MyMatcher());
-        list.set(11, new MyMatcher());
-        list.set(13, new MyMatcher());
-        list.set(17, new MyMatcher());
-        list.set(19, new MyMatcher());
-        list.set(23, new MyMatcher());
-        list.set(29, new MyMatcher());
+        list.set(2, new TestMatcher());
+        list.set(3, new TestMatcher());
+        list.set(7, new TestMatcher());
+        list.set(11, new TestMatcher());
+        list.set(13, new TestMatcher());
+        list.set(17, new TestMatcher());
+        list.set(19, new TestMatcher());
+        list.set(23, new TestMatcher());
+        list.set(29, new TestMatcher());
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Change to input list - no matchers");
 
         matcher = new ComposedMatcher(list);
@@ -197,47 +199,12 @@ public class AbstractComposedMatcherTest {
         }
     }
     
-    public static class MyMatcher implements  AttributeValueMatcher, DestructableComponent, InitializableComponent, ValidatableComponent {
+    public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  AttributeValueMatcher, DestructableComponent, InitializableComponent, ValidatableComponent {
 
-        private boolean initialized;
-        private boolean destroyed;
-        private boolean validated;
-        private boolean failValidate;
-        
         public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
                 throws AttributeFilteringException {
             return null;
         }
         
-        public boolean isInitialized() {
-            return initialized;
-        }
-
-        public void initialize() throws ComponentInitializationException {
-            initialized = true;
-        }
-
-        public boolean isDestroyed() {
-            return destroyed;
-        }
-
-        public void destroy() {
-            destroyed = true;
-        }
-
-        public boolean isValidated() { 
-            return validated;
-        }
-        
-        public void setFailValidate(boolean what) {
-            failValidate = what;
-        }
-        
-        public void validate() throws ComponentValidationException {
-            if (failValidate) {
-                throw new ComponentValidationException();
-            }
-            validated = true;
-        }
     }
 }
