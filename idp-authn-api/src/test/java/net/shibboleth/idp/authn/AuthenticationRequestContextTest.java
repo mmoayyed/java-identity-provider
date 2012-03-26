@@ -22,46 +22,61 @@ import java.util.ArrayList;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Optional;
+
+/** {@link AuthenticationRequestContext} unit test/ */
 public class AuthenticationRequestContextTest {
 
+    /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantation() throws Exception {
         long start = System.currentTimeMillis();
         // this is here to allow the context's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
         AuthenticationRequestContext ctx = new AuthenticationRequestContext();
-        Assert.assertNull(ctx.getAttemptedWorkflow());
-        Assert.assertNull(ctx.getAuthenticatedPrincipal());
+        Assert.assertEquals(ctx.getAttemptedWorkflow(), Optional.absent());
+        Assert.assertEquals(ctx.getAuthenticatedPrincipal(), Optional.absent());
         Assert.assertEquals(ctx.getCompletionInstant(), 0);
-        Assert.assertNull(ctx.getDefaultAuthenticationWorfklow());
+        Assert.assertEquals(ctx.getDefaultAuthenticationWorfklow(), Optional.absent());
         Assert.assertTrue(ctx.getInitiationInstant() > start);
         Assert.assertFalse(ctx.isForcingAuthentication());
         Assert.assertNotNull(ctx.getRequestedWorkflows());
         Assert.assertTrue(ctx.getRequestedWorkflows().isEmpty());
     }
 
+    /** Tests mutating attempted workflow descriptor. */
     @Test public void testAttemptedWorkflow() {
         AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
 
         AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setAttemptedWorkflow(descriptor);
-        Assert.assertEquals(ctx.getAttemptedWorkflow(), descriptor);
+        Assert.assertEquals(ctx.getAttemptedWorkflow().get(), descriptor);
 
-        ctx.setAttemptedWorkflow(null);
-        Assert.assertNull(ctx.getAttemptedWorkflow());
+        try {
+            ctx.setAttemptedWorkflow(null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            Assert.assertEquals(ctx.getAttemptedWorkflow().get(), descriptor);
+        }
     }
 
+    /** Tests mutating authenticated principal. */
     @Test public void testAuthenticatedPrincipal() {
         UsernamePrincipal principal = new UsernamePrincipal("bob");
 
         AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setAuthenticatedPrincipal(principal);
-        Assert.assertEquals(ctx.getAuthenticatedPrincipal(), principal);
+        Assert.assertEquals(ctx.getAuthenticatedPrincipal().get(), principal);
 
-        ctx.setAuthenticatedPrincipal(null);
-        Assert.assertNull(ctx.getAuthenticatedPrincipal());
+        try {
+            ctx.setAuthenticatedPrincipal(null);
+            Assert.fail();
+        } catch (AssertionError e) {
+            Assert.assertEquals(ctx.getAuthenticatedPrincipal().get(), principal);
+        }
     }
 
+    /** Tests mutating authentication completion instant. */
     @Test public void testCompletionInstant() throws Exception {
         AuthenticationRequestContext ctx = new AuthenticationRequestContext();
 
@@ -73,17 +88,19 @@ public class AuthenticationRequestContextTest {
         Assert.assertTrue(ctx.getCompletionInstant() > now);
     }
 
-    @Test public void testDefaultAuthenticationMethod() {
+    /** Tests mutating default authentication workflow. */
+    @Test public void testDefaultAuthenticationWorkflow() {
         AuthenticationWorkflowDescriptor descriptor = new AuthenticationWorkflowDescriptor("test");
 
         AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setDefaultWorfklow(descriptor);
-        Assert.assertEquals(ctx.getDefaultAuthenticationWorfklow(), descriptor);
+        Assert.assertEquals(ctx.getDefaultAuthenticationWorfklow().get(), descriptor);
 
         ctx.setDefaultWorfklow(null);
-        Assert.assertNull(ctx.getDefaultAuthenticationWorfklow());
+        Assert.assertEquals(ctx.getDefaultAuthenticationWorfklow(), Optional.absent());
     }
 
+    /** Tests mutating forced authentication. */
     @Test public void testForcingAuthentication() {
         AuthenticationRequestContext ctx = new AuthenticationRequestContext();
         ctx.setForcingAuthentication(true);
@@ -93,6 +110,7 @@ public class AuthenticationRequestContextTest {
         Assert.assertFalse(ctx.isForcingAuthentication());
     }
 
+    /** Tests mutating requested authentication workflows. */
     @Test public void testRequestedWorkflows() {
         ArrayList<AuthenticationWorkflowDescriptor> descriptors = new ArrayList<AuthenticationWorkflowDescriptor>();
         descriptors.add(new AuthenticationWorkflowDescriptor("foo"));

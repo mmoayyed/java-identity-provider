@@ -17,6 +17,11 @@
 
 package net.shibboleth.idp.authn;
 
+import javax.annotation.Nonnull;
+
+import com.google.common.base.Objects;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -24,13 +29,13 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class AuthenticationWorkflowDescriptor {
 
     /** The unique identifier of the authentication workflow. */
-    private String workflowId;
+    private final String workflowId;
 
     /** Whether this workflow supports passive authentication. */
     private boolean supportsPassive;
 
     /** Whether this workflow supports forced authentication. */
-    private boolean supportsForced;
+    private boolean supportsForcedAuthentication;
 
     /** Maximum amount of time in milliseconds, since first usage, a workflow should be considered active. */
     private long lifetime;
@@ -43,7 +48,7 @@ public class AuthenticationWorkflowDescriptor {
      * 
      * @param id unique ID of this workflow, can not be null or empty
      */
-    public AuthenticationWorkflowDescriptor(String id) {
+    public AuthenticationWorkflowDescriptor(@Nonnull @NotEmpty final String id) {
         workflowId = Assert.isNotNull(StringSupport.trimOrNull(id), "Workflow ID can not be null or empty");
     }
 
@@ -52,7 +57,7 @@ public class AuthenticationWorkflowDescriptor {
      * 
      * @return unique identifier of the authentication workflow
      */
-    public String getWorkflowId() {
+    @Nonnull @NotEmpty public String getWorkflowId() {
         return workflowId;
     }
 
@@ -61,7 +66,7 @@ public class AuthenticationWorkflowDescriptor {
      * 
      * @return whether this workflow supports passive authentication
      */
-    public boolean isSupportsPassive() {
+    public boolean isPassiveAuthenticationSupported() {
         return supportsPassive;
     }
 
@@ -70,7 +75,7 @@ public class AuthenticationWorkflowDescriptor {
      * 
      * @param isSupported whether this workflow supports passive authentication
      */
-    public void setSupportsPassive(boolean isSupported) {
+    public void setPassiveAuthenticationSupported(boolean isSupported) {
         supportsPassive = isSupported;
     }
 
@@ -79,8 +84,8 @@ public class AuthenticationWorkflowDescriptor {
      * 
      * @return whether this workflow supports forced authentication
      */
-    public boolean isSupportsForced() {
-        return supportsForced;
+    public boolean isForcedAuthenticationSupported() {
+        return supportsForcedAuthentication;
     }
 
     /**
@@ -88,8 +93,8 @@ public class AuthenticationWorkflowDescriptor {
      * 
      * @param isSupported whether this workflow supports forced authentication.
      */
-    public void setSupportsForced(boolean isSupported) {
-        supportsForced = isSupported;
+    public void setForcedAuthenticationSupported(boolean isSupported) {
+        supportsForcedAuthentication = isSupported;
     }
 
     /**
@@ -129,7 +134,9 @@ public class AuthenticationWorkflowDescriptor {
      * @param inactivityTimeout the workflow timeout, must be 0 or greater
      */
     public void setInactivityTimeout(long inactivityTimeout) {
-        timeout = inactivityTimeout;
+        timeout =
+                Assert.isGreaterThanOrEqual(0, inactivityTimeout,
+                        "Inactivity timeout must be greater than, or equal to, 0");
     }
 
     /** {@inheritDoc} */
@@ -152,5 +159,12 @@ public class AuthenticationWorkflowDescriptor {
         }
 
         return false;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("workflowId", workflowId).add("supportsPassive", supportsPassive)
+                .add("supportsForcedAuthentication", supportsForcedAuthentication).add("lifetime", lifetime)
+                .add("inactivityTimeout", timeout).toString();
     }
 }

@@ -20,31 +20,32 @@ package net.shibboleth.idp.authn;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/** {@link UsernamePrincipal} unit test. */
 public class UsernamePrincipalTest {
 
-    @Test
-    public void testInstantiation() {
+    /** Tests that everything is properly initialized during object construction. */
+    @Test public void testInstantiation() {
         UsernamePrincipal principal = new UsernamePrincipal("bob");
         Assert.assertEquals(principal.getName(), "bob");
 
         try {
             new UsernamePrincipal(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new UsernamePrincipal("");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new UsernamePrincipal("   ");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
     }

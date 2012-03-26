@@ -17,11 +17,15 @@
 
 package net.shibboleth.idp.session;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
@@ -31,10 +35,10 @@ import com.google.common.base.Objects;
 public final class ServiceSession extends BaseContext {
 
     /** The unique identifier of the service. */
-    private String serviceId;
+    private final String serviceId;
 
     /** The time, in milliseconds since the epoch, when this session was created. */
-    private long creationInstant;
+    private final long creationInstant;
 
     /** The last activity instant, in milliseconds since the epoch, for the session. */
     private long lastActivityInstant;
@@ -45,20 +49,22 @@ public final class ServiceSession extends BaseContext {
     /**
      * Constructor. Initializes creation and last activity instant to the current time.
      * 
-     * @param id the identifier of the service associated with this session, can not be null or empty
+     * @param id the identifier of the service associated with this session
+     * @param event authentication event used to authenticate the principal to this service
      */
-    public ServiceSession(String id) {
+    public ServiceSession(@Nonnull @NotEmpty final String id, @Nonnull final AuthenticationEvent event) {
         serviceId = Assert.isNotNull(StringSupport.trimOrNull(id), "Service ID can not be null nor empty");
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
+        authenticationEvent = Assert.isNotNull(event, "Authentication event can not be null");
     }
 
     /**
      * Gets the unique identifier of the service.
      * 
-     * @return unique identifier of the service, never null nor empty
+     * @return unique identifier of the service
      */
-    public String getServiceId() {
+    @Nonnull @NotEmpty public String getServiceId() {
         return serviceId;
     }
 
@@ -85,7 +91,7 @@ public final class ServiceSession extends BaseContext {
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
-    public void setLastActivityInstant(long instant) {
+    public void setLastActivityInstant(final long instant) {
         lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
@@ -99,19 +105,19 @@ public final class ServiceSession extends BaseContext {
     /**
      * Gets the authentication event currently associated with this session.
      * 
-     * @return authentication event currently associated with this session, may be null
+     * @return authentication event currently associated with this session
      */
-    public AuthenticationEvent getAuthenticationEvent() {
+    @Nonnull public AuthenticationEvent getAuthenticationEvent() {
         return authenticationEvent;
     }
 
     /**
      * Set the authentication event currently associated with this session.
      * 
-     * @param event authentication event currently associated with this session, may be null
+     * @param event authentication event currently associated with this session
      */
-    public void setAuthenticationEvent(AuthenticationEvent event) {
-        authenticationEvent = event;
+    public void setAuthenticationEvent(@Nonnull final AuthenticationEvent event) {
+        authenticationEvent = Assert.isNotNull(event, "Authentication event can not be null");
     }
 
     /** {@inheritDoc} */
@@ -120,7 +126,7 @@ public final class ServiceSession extends BaseContext {
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -134,5 +140,12 @@ public final class ServiceSession extends BaseContext {
         }
 
         return false;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("serviceId", serviceId)
+                .add("creationInstant", new DateTime(creationInstant)).add("lastActivityInstant", lastActivityInstant)
+                .add("authenticationEvent", authenticationEvent).toString();
     }
 }

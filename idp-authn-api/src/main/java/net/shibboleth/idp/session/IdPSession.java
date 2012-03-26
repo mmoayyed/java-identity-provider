@@ -17,19 +17,29 @@
 
 package net.shibboleth.idp.session;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 /**
  * An identity provider session.
@@ -42,7 +52,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
 
     /** Name of {@link org.slf4j.MDC} attribute that holds the current session ID: <code>idp.session.id</code>. */
     public static final String MDC_ATTRIBUTE = "idp.session.id";
-    
+
     /** Unique ID of this session. */
     private final String id;
 
@@ -55,47 +65,49 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     /** Last activity instant, in milliseconds since the epoch, for this session. */
     private long lastActivityInstant;
 
-    /** Unmodifiable authentication events that have occurred within the scope of this session. */
-    private Set<AuthenticationEvent> authenticationEvents;
+    /** The authentication events that have occurred within the scope of this session. */
+    private final ConcurrentMap<String, AuthenticationEvent> authenticationEvents;
 
-    /** Unmodifiable service session tied to this IdP session. */
-    private Set<ServiceSession> serviceSessions;
+    /** The service which have been authenticated to in this session. */
+    private final ConcurrentMap<String, ServiceSession> serviceSessions;
 
-    /** Service sessions indexed by service ID. */
-    private Map<String, ServiceSession> serviceSessionIndex;
+    /**
+     * Lock used to serialize requests that operate on {@link #authenticationEvents} and {@link #serviceSessions} in the
+     * same call.
+     */
+    private final Lock authnServiceStateLock = new ReentrantLock();
 
     /**
      * Constructor.
      * 
-     * @param sessionId identifier for this session, can not be null or empty
-     * @param sessionSecret secrete for this session, can not be null
+     * @param sessionId identifier for this session
+     * @param sessionSecret secrete for this session
      */
-    public IdPSession(String sessionId, byte[] sessionSecret) {
+    public IdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull byte[] sessionSecret) {
         id = Assert.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID can not be null or empty");
 
-        Assert.isNotNull(sessionSecret, "Session secret can not be null");
+        assert sessionSecret != null : "Session secret can not be null";
         secret = new byte[sessionSecret.length];
         System.arraycopy(sessionSecret, 0, secret, 0, sessionSecret.length);
 
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
 
-        authenticationEvents = Collections.emptySet();
-        serviceSessions = Collections.emptySet();
-        serviceSessionIndex = new HashMap<String, ServiceSession>();
+        authenticationEvents = new ConcurrentHashMap<String, AuthenticationEvent>(5);
+        serviceSessions = new ConcurrentHashMap<String, ServiceSession>(10);
     }
 
     /** {@inheritDoc} */
-    public String getId() {
+    @Nonnull @NotEmpty public String getId() {
         return id;
     }
 
     /**
      * Gets a secret associated with the session. This is useful for things like encrypting session cookies.
      * 
-     * @return secret associated with the session, never null or empty
+     * @return secret associated with the session
      */
-    public byte[] getSecret() {
+    @Nonnull public byte[] getSecret() {
         return secret;
     }
 
@@ -136,60 +148,36 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
     /**
      * Gets the unmodifiable set of authentication events that have occurred within the scope of this session.
      * 
-     * @return unmodifiable set of authentication events that have occurred within the scope of this session, never null
-     *         nor containing null elements
+     * @return unmodifiable set of authentication events that have occurred within the scope of this session
      */
-    public Set<AuthenticationEvent> getAuthenticateEvents() {
-        return authenticationEvents;
+    @Nonnull @NonnullElements @NotLive public Set<AuthenticationEvent> getAuthenticateEvents() {
+        return new HashSet(authenticationEvents.values());
     }
 
     /**
-     * Adds an authentication event to this session. If the given event is null or has already been added to this
-     * session this method simply returns.
+     * Gets the authentication event given its workflow ID.
      * 
-     * @param event event to be added, may be null
-     */
-    public synchronized void addAuthenticationEvent(AuthenticationEvent event) {
-        if (event == null || authenticationEvents.contains(event)) {
-            return;
-        }
-
-        HashSet<AuthenticationEvent> eventsCopy = new HashSet<AuthenticationEvent>(authenticationEvents);
-        eventsCopy.add(event);
-        authenticationEvents = Collections.unmodifiableSet(eventsCopy);
-    }
-
-    /**
-     * Removes an authentication event from this IdP session and disassociates it from any {@link ServiceSession}. If
-     * the given event is null or is not associated with this session this method simply returns.
+     * @param workflowId the ID of the authentication workflow
      * 
-     * @param event the event to be removed, may be null
+     * @return the authentication event
      */
-    public synchronized void removeAuthenticationEvent(AuthenticationEvent event) {
-        if (event == null || !authenticationEvents.contains(event)) {
-            return;
+    @Nonnull public Optional<AuthenticationEvent> getAuthenticationEvent(@Nullable final String workflowId) {
+        final String trimmedId = StringSupport.trimOrNull(workflowId);
+
+        if (trimmedId == null) {
+            return Optional.absent();
         }
 
-        HashSet<AuthenticationEvent> eventsCopy = new HashSet<AuthenticationEvent>(authenticationEvents);
-        eventsCopy.remove(event);
-
-        for (ServiceSession session : serviceSessions) {
-            if (event.equals(session.getAuthenticationEvent())) {
-                session.setAuthenticationEvent(null);
-            }
-        }
-
-        authenticationEvents = Collections.unmodifiableSet(eventsCopy);
+        return Optional.fromNullable(authenticationEvents.get(trimmedId));
     }
 
     /**
      * Gets the unmodifiable collection of service sessions associated with this session.
      * 
-     * @return unmodifiable collection of service sessions associated with this session, never null nor containing null
-     *         elements
+     * @return unmodifiable collection of service sessions associated with this session
      */
-    public Set<ServiceSession> getServiceSessions() {
-        return serviceSessions;
+    @Nonnull @NonnullElements @NotLive public Set<ServiceSession> getServiceSessions() {
+        return new HashSet(serviceSessions.values());
     }
 
     /**
@@ -199,41 +187,110 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * 
      * @return the session service or null if no session exists for that service, may be null
      */
-    public ServiceSession getServiceSession(String serviceId) {
-        return serviceSessionIndex.get(serviceId);
+    @Nonnull public Optional<ServiceSession> getServiceSession(@Nullable String serviceId) {
+        final String trimmedId = StringSupport.trimOrNull(serviceId);
+
+        if (trimmedId == null) {
+            return Optional.absent();
+        }
+
+        return Optional.fromNullable(serviceSessions.get(trimmedId));
     }
 
     /**
-     * Associates a service session with this IdP session. If the given service session is null or has already been
-     * added to this session this method simply returns.
+     * Adds a new service session to this IdP session. The {@link AuthenticationEvent} associated with the
+     * {@link ServiceSession} is associated with this {@link IdPSession} if it has not been so already.
      * 
-     * @param serviceSession service session to be associated with this IdP session, may be null
+     * @param session the service session
      */
-    public synchronized void addServiceSession(ServiceSession serviceSession) {
-        if (serviceSession == null || serviceSessions.contains(serviceSession)) {
-            return;
-        }
+    public void addServiceSession(@Nonnull final ServiceSession session) {
+        assert session != null : "Service session can not be null";
 
-        HashSet<ServiceSession> sessionsCopy = new HashSet<ServiceSession>(serviceSessions);
-        sessionsCopy.add(serviceSession);
-        serviceSessionIndex.put(serviceSession.getServiceId(), serviceSession);
-        serviceSessions = Collections.unmodifiableSet(sessionsCopy);
+        final String serviceId = session.getServiceId();
+
+        try {
+            authnServiceStateLock.lock();
+            assert !serviceSessions.containsKey(session.getId()) : "A session for service " + serviceId
+                    + " already exists";
+
+            final AuthenticationEvent authnEvent = session.getAuthenticationEvent();
+            if (!authenticationEvents.containsKey(authnEvent.getAuthenticationWorkflow())) {
+                authenticationEvents.put(authnEvent.getAuthenticationWorkflow(), authnEvent);
+            }
+
+            serviceSessions.put(serviceId, session);
+        } finally {
+            authnServiceStateLock.unlock();
+        }
     }
 
     /**
-     * Removes the service session from this IdP session. If the given service session is null or is not associated with
-     * this session this method simply returns.
+     * Disassociates the given service session from this IdP session.
      * 
-     * @param serviceSession the service session to be removed, may be null
+     * @param session the service session
+     * 
+     * @return true if the given session had been associated with this IdP session and now is not
      */
-    public void removeServiceSession(ServiceSession serviceSession) {
-        if (serviceSession == null || !serviceSessions.contains(serviceSession)) {
-            return;
+    public boolean removeServiceSession(@Nonnull final ServiceSession session) {
+        assert session != null : "Service session can not be null";
+
+        return serviceSessions.remove(session.getServiceId(), session);
+    }
+
+    /**
+     * Disassociated a given authentication event from this IdP session. This is only possible if all
+     * {@link ServiceSession}s that were associated with the authentication event have already disassociated from this
+     * IdP session. Otherwise an {@link IllegalStateException} is thrown.
+     * 
+     * @param event the event to disassociate
+     */
+    public void removeAuthenticationEvent(@Nonnull final AuthenticationEvent event) {
+        assert event != null : "Authentication event can not be null";
+
+        try {
+            authnServiceStateLock.lock();
+
+            for (ServiceSession session : serviceSessions.values()) {
+                if (session.getAuthenticationEvent().equals(event)) {
+                    throw new IllegalStateException("Authentication event " + event.getAuthenticationWorkflow()
+                            + " is associated with the session for service " + session.getServiceId()
+                            + " and so can not be removed");
+                }
+            }
+
+            authenticationEvents.remove(event.getAuthenticationWorkflow(), event);
+        } finally {
+            authnServiceStateLock.unlock();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
 
-        HashSet<ServiceSession> sessionsCopy = new HashSet<ServiceSession>(serviceSessions);
-        sessionsCopy.remove(serviceSession);
-        serviceSessionIndex.remove(serviceSession.getServiceId());
-        serviceSessions = Collections.unmodifiableSet(sessionsCopy);
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj instanceof IdPSession) {
+            return Objects.equal(getId(), ((IdPSession) obj).getId());
+        }
+
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("sessionId", id).add("creatingInstant", new DateTime(creationInstant))
+                .add("lastActivityInstant", new DateTime(lastActivityInstant))
+                .add("authenticationEvents", getAuthenticateEvents()).add("serviceSessions", getServiceSessions())
+                .toString();
     }
 }

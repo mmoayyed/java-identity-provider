@@ -19,11 +19,14 @@ package net.shibboleth.idp.session;
 
 import java.security.Principal;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Objects;
@@ -33,13 +36,13 @@ import com.google.common.base.Objects;
 public final class AuthenticationEvent extends BaseContext {
 
     /** The principal established by the authentication event. */
-    private Principal authenticatedPrincipal;
+    private final Principal authenticatedPrincipal;
 
     /** The identifier of the method used to authenticate the principal. */
-    private String authenticationWorkflow;
+    private final String authenticationWorkflow;
 
     /** The time, in milliseconds since the epoch, that the authentication completed. */
-    private long authenticationInstant;
+    private final long authenticationInstant;
 
     /** The last activity instant, in milliseconds since the epoch, for this event. */
     private long lastActivityInstant;
@@ -47,13 +50,13 @@ public final class AuthenticationEvent extends BaseContext {
     /**
      * Constructor. Initializes authentication instant time to the current time.
      * 
-     * @param workflow the workflow used to authenticate the principal, can not be null or empty
-     * @param principal the principal that was authenticated, can not be null
+     * @param workflow the workflow used to authenticate the principal
+     * @param principal the principal that was authenticated
      */
-    public AuthenticationEvent(String workflow, Principal principal) {
+    public AuthenticationEvent(@Nonnull @NotEmpty final String workflow, @Nonnull final Principal principal) {
         authenticationWorkflow =
                 Assert.isNotNull(StringSupport.trimOrNull(workflow), "Authentication method can not be null nor empty");
-        
+
         authenticatedPrincipal = Assert.isNotNull(principal, "Authenticationed princpal can not be null");
 
         authenticationInstant = System.currentTimeMillis();
@@ -63,18 +66,18 @@ public final class AuthenticationEvent extends BaseContext {
     /**
      * Gets the principal established by the authentication event.
      * 
-     * @return principal established by the authentication event, never null
+     * @return principal established by the authentication event
      */
-    public Principal getPrincipal() {
+    @Nonnull public Principal getAuthenticatedPrincipal() {
         return authenticatedPrincipal;
     }
 
     /**
      * Gets the workflow used to authenticate the principal.
      * 
-     * @return workflow used to authenticate the principal, never null
+     * @return workflow used to authenticate the principal
      */
-    public String getAuthenticationWorkflow() {
+    @Nonnull @NotEmpty public String getAuthenticationWorkflow() {
         return authenticationWorkflow;
     }
 
@@ -101,7 +104,7 @@ public final class AuthenticationEvent extends BaseContext {
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for this event, must be greater than 0
      */
-    public void setLastActivityInstant(long instant) {
+    public void setLastActivityInstant(final long instant) {
         lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
@@ -114,10 +117,7 @@ public final class AuthenticationEvent extends BaseContext {
 
     /** {@inheritDoc} */
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + authenticationWorkflow.hashCode();
-        return result;
+        return authenticationWorkflow.hashCode();
     }
 
     /** {@inheritDoc} */
@@ -131,10 +131,17 @@ public final class AuthenticationEvent extends BaseContext {
         }
 
         if (obj instanceof AuthenticationEvent) {
-            AuthenticationEvent other = (AuthenticationEvent) obj;
-            return Objects.equal(getAuthenticationWorkflow(), other.getAuthenticationWorkflow());
+            return Objects.equal(getAuthenticationWorkflow(), ((AuthenticationEvent) obj).getAuthenticationWorkflow());
         }
 
         return false;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("authenticationWorkflow", authenticationWorkflow)
+                .add("authenticatedPrincipal", authenticatedPrincipal)
+                .add("authenticationInstant", new DateTime(authenticationInstant))
+                .add("lastActivityInstant", new DateTime(lastActivityInstant)).toString();
     }
 }

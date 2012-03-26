@@ -22,6 +22,8 @@ import java.security.Principal;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import com.google.common.base.Objects;
+
 /** Principal based on a username. */
 public final class UsernamePrincipal implements Principal {
 
@@ -62,5 +64,10 @@ public final class UsernamePrincipal implements Principal {
         }
 
         return false;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("username", username).toString();
     }
 }

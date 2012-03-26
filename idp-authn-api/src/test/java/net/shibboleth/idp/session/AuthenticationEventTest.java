@@ -22,10 +22,11 @@ import net.shibboleth.idp.authn.UsernamePrincipal;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/** {@link AuthenticationEvent} unit test. */
 public class AuthenticationEventTest {
 
-    @Test
-    public void testInstantiation() throws Exception {
+    /** Tests that everything is properly initialized during object construction. */
+    @Test public void testInstantiation() throws Exception {
         long start = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
@@ -33,46 +34,46 @@ public class AuthenticationEventTest {
         AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
         Assert.assertTrue(event.getAuthenticationInstant() > start);
         Assert.assertEquals(event.getAuthenticationWorkflow(), "test");
-        Assert.assertEquals(event.getPrincipal(), new UsernamePrincipal("bob"));
+        Assert.assertEquals(event.getAuthenticatedPrincipal(), new UsernamePrincipal("bob"));
         Assert.assertEquals(event.getLastActivityInstant(), event.getAuthenticationInstant());
 
         try {
             new AuthenticationEvent(null, new UsernamePrincipal("bob"));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new AuthenticationEvent("", new UsernamePrincipal("bob"));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new AuthenticationEvent("  ", new UsernamePrincipal("bob"));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new AuthenticationEvent("test", null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
     }
 
-    @Test
-    public void testLastActivityInstant() throws Exception {
+    /** Tests mutating the last activity instant. */
+    @Test public void testLastActivityInstant() throws Exception {
         AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's last activity time to deviate from the 'now' time
         Thread.sleep(50);
-        
+
         event.setLastActivityInstantToNow();
         Assert.assertTrue(event.getLastActivityInstant() > now);
 

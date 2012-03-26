@@ -20,8 +20,10 @@ package net.shibboleth.idp.authn;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/** {@link UsernamePasswordContext} unit test. */
 public class UsernamePasswordContextTest {
 
+    /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() {
         UsernamePasswordContext ctx = new UsernamePasswordContext("bob", "test");
         Assert.assertEquals(ctx.getUsername(), "bob");
@@ -30,42 +32,42 @@ public class UsernamePasswordContextTest {
         try {
             new UsernamePasswordContext(null, "test");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new UsernamePasswordContext("", "test");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new UsernamePasswordContext("  ", "test");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new UsernamePasswordContext("bob", null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new UsernamePasswordContext("bob", "");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
             new UsernamePasswordContext("bob", "  ");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
     }

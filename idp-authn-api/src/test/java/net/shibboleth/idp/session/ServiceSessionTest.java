@@ -22,66 +22,81 @@ import net.shibboleth.idp.authn.UsernamePrincipal;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/** {@link ServiceSession} unit test. */
 public class ServiceSessionTest {
 
-    @Test
-    public void testInstantiation() throws Exception {
+    /** Tests that everything is properly initialized during object construction. */
+    @Test public void testInstantiation() throws Exception {
         long start = System.currentTimeMillis();
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        ServiceSession session = new ServiceSession("test");
-        Assert.assertNull(session.getAuthenticationEvent());
+        AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
+
+        ServiceSession session = new ServiceSession("test", event);
+        Assert.assertEquals(session.getAuthenticationEvent(), event);
         Assert.assertTrue(session.getCreationInstant() > start);
         Assert.assertEquals(session.getLastActivityInstant(), session.getCreationInstant());
         Assert.assertEquals(session.getServiceId(), "test");
 
         try {
-            new ServiceSession(null);
+            new ServiceSession(null, event);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
-            new ServiceSession("");
+            new ServiceSession("", event);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
 
         try {
-            new ServiceSession("  ");
+            new ServiceSession("  ", event);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
+
+        }
+
+        try {
+            new ServiceSession("foo", null);
+            Assert.fail();
+        } catch (AssertionError e) {
 
         }
     }
 
-    @Test
-    public void testAuthenticationEvent() {
-        AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
-
-        ServiceSession session = new ServiceSession("test");
-        session.setAuthenticationEvent(event);
-        Assert.assertEquals(session.getAuthenticationEvent(), event);
-
-        session.setAuthenticationEvent(null);
-        Assert.assertNull(session.getAuthenticationEvent());
-    }
-
-    @Test
-    public void testLastActivityInstant() throws Exception {
-        ServiceSession session = new ServiceSession("test");
+    /** Tests mutating the last activity instant. */
+    @Test public void testLastActivityInstant() throws Exception {
+        ServiceSession session =
+                new ServiceSession("test", new AuthenticationEvent("test", new UsernamePrincipal("bob")));
 
         long now = System.currentTimeMillis();
         // this is here to allow the event's last activity time to deviate from the 'now' time
         Thread.sleep(50);
-        
+
         session.setLastActivityInstantToNow();
         Assert.assertTrue(session.getLastActivityInstant() > now);
 
         session.setLastActivityInstant(now);
         Assert.assertEquals(session.getLastActivityInstant(), now);
+    }
+
+    /** Tests setting the authentication event. */
+    @Test public void testAuthenticationEvent() {
+        AuthenticationEvent event = new AuthenticationEvent("test", new UsernamePrincipal("bob"));
+
+        ServiceSession session = new ServiceSession("test", event);
+        session.setAuthenticationEvent(event);
+        Assert.assertEquals(session.getAuthenticationEvent(), event);
+
+        try {
+            session.setAuthenticationEvent(null);
+            Assert.fail();
+        } catch (AssertionError e) {
+
+        }
     }
 }

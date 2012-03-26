@@ -22,11 +22,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.session.AuthenticationEvent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
+import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
 
 /** A context representing the state of an authentication attempt. */
 @ThreadSafe
@@ -39,16 +48,16 @@ public final class AuthenticationRequestContext extends BaseContext {
     private boolean forcingAuthentication;
 
     /** Authentication workflow used if user authentication is needed but no particular workflows are requested. */
-    private AuthenticationWorkflowDescriptor defaultWorfklow;
+    private Optional<AuthenticationWorkflowDescriptor> defaultWorfklow;
 
     /** Authentication workflows, in order of preference, that must be used if user authentication is required. */
     private List<AuthenticationWorkflowDescriptor> requestedWorkflows;
 
     /** Authentication workflow that was attempted in order to authenticate the user. */
-    private AuthenticationWorkflowDescriptor attemptedWorkflow;
+    private Optional<AuthenticationWorkflowDescriptor> attemptedWorkflow;
 
     /** The authenticated principal. */
-    private Principal authenticatedPrincipal;
+    private Optional<Principal> authenticatedPrincipal;
 
     /** Time, in milliseconds since the epoch, when authentication process completed. */
     private long completionInstant;
@@ -58,7 +67,12 @@ public final class AuthenticationRequestContext extends BaseContext {
         super();
 
         initiationInstant = System.currentTimeMillis();
+
+        defaultWorfklow = Optional.absent();
         requestedWorkflows = Collections.emptyList();
+        attemptedWorkflow = Optional.absent();
+
+        authenticatedPrincipal = Optional.absent();
     }
 
     /**
@@ -88,7 +102,7 @@ public final class AuthenticationRequestContext extends BaseContext {
     /**
      * Gets whether authentication must occur even if an existing authentication event exists and is still valid.
      * 
-     * @return Returns the forcingAuthentication.
+     * @return whether authentication must occur
      */
     public boolean isForcingAuthentication() {
         return forcingAuthentication;
@@ -97,11 +111,10 @@ public final class AuthenticationRequestContext extends BaseContext {
     /**
      * Sets whether authentication must occur even if an existing authentication event exists and is still valid.
      * 
-     * @param isForcingAuthentication whether authentication must occur even if an existing authentication event exists
-     *            and is still valid
+     * @param force whether authentication must occur even if an existing authentication event exists and is still valid
      */
-    public void setForcingAuthentication(boolean isForcingAuthentication) {
-        forcingAuthentication = isForcingAuthentication;
+    public void setForcingAuthentication(boolean force) {
+        forcingAuthentication = force;
     }
 
     /**
@@ -112,7 +125,7 @@ public final class AuthenticationRequestContext extends BaseContext {
      * @return authentication workflow to use if user authentication is needed but no particular workflows are
      *         requested, may be null
      */
-    public AuthenticationWorkflowDescriptor getDefaultAuthenticationWorfklow() {
+    public Optional<AuthenticationWorkflowDescriptor> getDefaultAuthenticationWorfklow() {
         return defaultWorfklow;
     }
 
@@ -122,10 +135,10 @@ public final class AuthenticationRequestContext extends BaseContext {
      * requirements for this request may be used.
      * 
      * @param workflow authentication workflow to use if user authentication is needed but no particular workflows are
-     *            requested, may be null
+     *            requested
      */
-    public void setDefaultWorfklow(AuthenticationWorkflowDescriptor workflow) {
-        defaultWorfklow = workflow;
+    public void setDefaultWorfklow(@Nullable final AuthenticationWorkflowDescriptor workflow) {
+        defaultWorfklow = Optional.fromNullable(workflow);
     }
 
     /**
@@ -135,7 +148,7 @@ public final class AuthenticationRequestContext extends BaseContext {
      * @return authentication workflows, in order of preference, that must be used if user authentication is required,
      *         never null nor containing null elements
      */
-    public List<AuthenticationWorkflowDescriptor> getRequestedWorkflows() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AuthenticationWorkflowDescriptor> getRequestedWorkflows() {
         return requestedWorkflows;
     }
 
@@ -145,7 +158,8 @@ public final class AuthenticationRequestContext extends BaseContext {
      * @param workflows authentication workflows, in order of preference, that must be used if user authentication is
      *            required, may be null or contain null elements
      */
-    public void setRequestedWorkflows(List<AuthenticationWorkflowDescriptor> workflows) {
+    public void
+            setRequestedWorkflows(@Nullable @NullableElements final List<AuthenticationWorkflowDescriptor> workflows) {
         if (workflows == null || workflows.isEmpty()) {
             requestedWorkflows = Collections.emptyList();
             return;
@@ -174,46 +188,66 @@ public final class AuthenticationRequestContext extends BaseContext {
     /**
      * Gets the authentication workflow that was attempted in order to authenticate the user.
      * 
-     * @return authentication workflow that was attempted in order to authenticate the user, may be null
+     * @return authentication workflow that was attempted in order to authenticate the user
      */
-    public AuthenticationWorkflowDescriptor getAttemptedWorkflow() {
+    @Nonnull public Optional<AuthenticationWorkflowDescriptor> getAttemptedWorkflow() {
         return attemptedWorkflow;
     }
 
     /**
      * Sets the authentication workflow that was attempted in order to authenticate the user.
      * 
-     * @param workflow authentication workflow that was attempted in order to authenticate the user, may be null
+     * @param workflow authentication workflow that was attempted in order to authenticate the user
      */
-    public void setAttemptedWorkflow(AuthenticationWorkflowDescriptor workflow) {
-        attemptedWorkflow = workflow;
+    public void setAttemptedWorkflow(@Nonnull final AuthenticationWorkflowDescriptor workflow) {
+        assert workflow != null : "Authentication workflow descriptor can not be null";
+        attemptedWorkflow = Optional.of(workflow);
     }
 
     /**
      * Gets the principal that was authenticated.
      * 
-     * @return principal that was authenticated, may be null
+     * @return principal that was authenticated
      */
-    public Principal getAuthenticatedPrincipal() {
+    @Nonnull public Optional<Principal> getAuthenticatedPrincipal() {
         return authenticatedPrincipal;
     }
 
     /**
      * Sets the principal that was authenticated.
      * 
-     * @param principal principal that was authenticated, may be null
+     * @param principal principal that was authenticated
      */
-    public void setAuthenticatedPrincipal(Principal principal) {
-        authenticatedPrincipal = principal;
+    public void setAuthenticatedPrincipal(@Nonnull final Principal principal) {
+        assert principal != null : "Principal can not be null";
+        authenticatedPrincipal = Optional.of(principal);
     }
 
     /**
      * Creates an authentication event based on the information in this context. Note, authentication must have
-     * completed successfully in order to do this.
+     * completed successfully in order to do this. Throws an {@link IllegalStateException} if {@link #attemptedWorkflow}
+     * or {@link #authenticatedPrincipal} is {@link Optional#absent()}.
      * 
      * @return the constructed authentication event
      */
     public AuthenticationEvent buildAuthenticationEvent() {
-        return new AuthenticationEvent(attemptedWorkflow.getWorkflowId(), authenticatedPrincipal);
+        if (!attemptedWorkflow.isPresent()) {
+            throw new IllegalStateException("No authentication workflow has been attempted");
+        }
+
+        if (!authenticatedPrincipal.isPresent()) {
+            throw new IllegalStateException("No principal has been authenticated");
+        }
+
+        return new AuthenticationEvent(attemptedWorkflow.get().getWorkflowId(), authenticatedPrincipal.get());
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return Objects.toStringHelper(this).add("initiationInstant", new DateTime(initiationInstant))
+                .add("forcingAuthentication", forcingAuthentication).add("defaultWorfklow", defaultWorfklow)
+                .add("requestedWorkflows", requestedWorkflows).add("attemptedWorkflow", attemptedWorkflow)
+                .add("authenticatedPrincipal", authenticatedPrincipal)
+                .add("completionInstant", new DateTime(completionInstant)).toString();
     }
 }

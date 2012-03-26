@@ -20,8 +20,10 @@ package net.shibboleth.idp.session;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class IdPSessionSubcontextTest {
+/** {@link IdPSessionContext} unit test */
+public class IdPSessionContextTest {
 
+    /** Tests that everything is properly initialized during object construction. */
     @Test public void testInstantiation() {
         IdPSession session = new IdPSession("test", new byte[] {0, 0, 0});
         IdPSessionContext ctx = new IdPSessionContext(session);
@@ -31,7 +33,7 @@ public class IdPSessionSubcontextTest {
         try {
             new IdPSessionContext(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
 
         }
     }
