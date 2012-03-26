@@ -35,7 +35,6 @@ import net.shibboleth.utilities.java.support.component.DestroyedComponentExcepti
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.CountingDestructableInitializableValidatableFunction;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
