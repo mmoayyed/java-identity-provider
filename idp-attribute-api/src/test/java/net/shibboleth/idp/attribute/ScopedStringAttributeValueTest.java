@@ -70,7 +70,7 @@ public class ScopedStringAttributeValueTest {
         Assert.assertEquals(value1.hashCode(), value2.hashCode());
 
         Assert.assertFalse(value1.equals(value3));
-        Assert.assertFalse(value1.equals(new Integer(2)));
+        Assert.assertFalse(value1.equals(this));
         Assert.assertFalse(value1.equals(null));
         Assert.assertFalse(value3.equals(value1));
 

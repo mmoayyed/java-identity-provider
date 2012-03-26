@@ -82,7 +82,7 @@ public class ByteAttributeValue implements AttributeValue<byte[]> {
         }
 
         ByteAttributeValue other = (ByteAttributeValue) obj;
-        return Objects.equal(value, other.value);
+        return Arrays.equals(other.value, value);
     }
 
     /** {@inheritDoc} */
