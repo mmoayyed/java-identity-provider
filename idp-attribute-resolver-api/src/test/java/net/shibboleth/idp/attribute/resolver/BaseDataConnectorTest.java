@@ -38,7 +38,7 @@ public class BaseDataConnectorTest {
     @Test public void testInstantiation() {
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
-        Assert.assertNull(connector.getFailoverDataConnectorId());
+        Assert.assertFalse(connector.getFailoverDataConnectorId().isPresent());
     }
 
     /** Test getting/setting dependency ID. */

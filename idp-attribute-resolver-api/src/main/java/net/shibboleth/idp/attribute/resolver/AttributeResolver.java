@@ -306,7 +306,6 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         assert resolutionContext != null : "Attribute resolution context can not be null";
 
         log.debug("Attribute Resolver {}: beginning to resolve data connector {}", getId(), connectorId);
-
         if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
             log.debug("Attribute Resolver {}: data connector {} was already resolved, nothing to do", getId(),
                     connectorId);
@@ -321,7 +320,6 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
 
         resolveDependencies(connector, resolutionContext);
-
         Optional<Map<String, Attribute>> resolvedAttributes = Optional.absent();
         try {
             log.debug("Attribute Resolver {}: resolving data connector {}", getId(), connectorId);
@@ -329,9 +327,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         } catch (AttributeResolutionException e) {
             final Optional<String> failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (failoverDataConnectorId.isPresent()) {
-                log.debug(
-                        "Attribute Resolver {}: data connector {} failed to resolve, invoking failover data connector {}.  Reason for the failure was: {}",
-                        new Object[] {getId(), connectorId, failoverDataConnectorId.get(), e});
+                log.debug("Attribute Resolver {}: data connector {} failed to resolve, invoking failover data"
+                        + " connector {}.  Reason for the failure was: {}", new Object[] {getId(), connectorId,
+                        failoverDataConnectorId.get(), e,});
                 resolveDataConnector(failoverDataConnectorId.get(), resolutionContext);
                 return;
             } else {
@@ -442,24 +440,26 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     protected boolean validateDataConnector(@Nonnull BaseDataConnector connector,
             @Nonnull LazyList<String> invalidDataConnectors) {
+        assert connector != null;
+        assert invalidDataConnectors != null;
         try {
             connector.validate();
             log.debug("Attribute resolver {}: data connector {} is valid", getId(), connector.getId());
             return true;
         } catch (ComponentValidationException e) {
-            if (connector.getFailoverDataConnectorId() != null) {
-                if (invalidDataConnectors.contains(connector.getFailoverDataConnectorId())) {
+            if (connector.getFailoverDataConnectorId().isPresent()) {
+                String id = connector.getFailoverDataConnectorId().get();
+                if (invalidDataConnectors.contains(id)) {
                     log.warn("Attribute resolver {}: data connector {} is not valid for the following reason"
                             + " and failover data connector {} has already been found to be inavlid", new Object[] {
-                            getId(), connector.getId(), connector.getFailoverDataConnectorId(), e,});
+                            getId(), connector.getId(), id, e,});
                     invalidDataConnectors.add(connector.getId());
                     return false;
                 } else {
                     log.warn("Attribute resolver {}: data connector {} is not valid for the following reason,"
                             + " checking if failover data connector {} is valid",
-                            new Object[] {getId(), connector.getId(), connector.getFailoverDataConnectorId(), e,});
-                    return validateDataConnector(dataConnectors.get(connector.getFailoverDataConnectorId()),
-                            invalidDataConnectors);
+                            new Object[] {getId(), connector.getId(), id, e,});
+                    return validateDataConnector(dataConnectors.get(id), invalidDataConnectors);
                 }
             }
 
@@ -475,6 +475,12 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         super.doInitialize();
 
         HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
+        for (BaseDataConnector plugin : dataConnectors.values()) {
+            ComponentSupport.initialize(plugin);
+        }
+        for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
+            ComponentSupport.initialize(plugin);
+        }
 
         for (BaseDataConnector plugin : dataConnectors.values()) {
             log.debug("Attribute resolver {}: checking if data connector {} is has a cirucular depdency", getId(),

@@ -22,6 +22,7 @@ import java.util.Map;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.collection.LazySet;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 import org.testng.Assert;
@@ -174,7 +175,7 @@ public class AttributeResolverTest {
     @Test public void testResolveCleanDuplicateValues() throws Exception {
         Attribute attribute = new Attribute("ad1");
         attribute.getValues().addAll(
-                Lists.newArrayList(new StringAttributeValue("value1"), new StringAttributeValue("value2")));
+                Lists.newArrayList(new StringAttributeValue("value1"), new StringAttributeValue("value1")));
 
         MockAttributeDefinition definition = new MockAttributeDefinition("ad1", attribute);
 
@@ -283,7 +284,7 @@ public class AttributeResolverTest {
     }
 
     /** Test that validation fails when a plugin depends on a non-existent plugin. */
-    @Test public void testBadPluginIdValidate() throws Exception {
+    @Test public void testBadPluginIdInitialize() throws Exception {
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
         ad1.setDependencies(Lists.newArrayList(dep1));
@@ -297,13 +298,11 @@ public class AttributeResolverTest {
         definitions.add(ad1);
 
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
-        resolver.initialize();
-
         try {
-            resolver.validate();
-            Assert.fail("invalid resolver configuration didn't fail validation");
-        } catch (ComponentValidationException e) {
-            // expected this
+            resolver.initialize();
+            Assert.fail("invalid resolver configuration didn't fail initialization");            
+        } catch (ComponentInitializationException e) {
+            // OK
         }
 
         ResolverPluginDependency dep3 = new ResolverPluginDependency("ad0", null);
@@ -313,33 +312,32 @@ public class AttributeResolverTest {
         definitions.add(ad0);
 
         resolver = new AttributeResolver("foo", definitions, null);
-        resolver.initialize();
 
         try {
-            resolver.validate();
-            Assert.fail("invalid resolver configuration didn't fail validation");
-        } catch (ComponentValidationException e) {
+            resolver.initialize();
+            Assert.fail("invalid resolver configuration didn't fail initialization");
+        } catch (ComponentInitializationException e) {
             // expected this
         }
     }
 
     /** Test that validation fails when there are circular dependencies between plugins. */
-    @Test public void testCircularDependencyValidation() throws Exception {
+    @Test public void testCircularDependencyInitialize() throws Exception {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
         ad1.setDependencies(Lists.newArrayList(new ResolverPluginDependency("ad1", null)));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
         definitions.add(ad1);
-
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
-        resolver.initialize();
 
         try {
-            resolver.validate();
-            Assert.fail("invalid resolver configuration didn't fail validation");
-        } catch (ComponentValidationException e) {
-            // expected this
+            resolver.initialize();
+            Assert.fail("invalid resolver configuration didn't fail initialization.");
+        } catch (ComponentInitializationException e) {
+            //OK
         }
+
+
 
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
         dc1.setDependencies(Lists.newArrayList(new ResolverPluginDependency("ad0", null)));
@@ -363,12 +361,10 @@ public class AttributeResolverTest {
         definitions.add(ad2);
 
         resolver = new AttributeResolver("foo", definitions, connectors);
-        resolver.initialize();
-
         try {
-            resolver.validate();
-            Assert.fail("invalid resolver configuration didn't fail validation");
-        } catch (ComponentValidationException e) {
+            resolver.initialize();
+            Assert.fail("invalid resolver configuration didn't fail initialization");
+        } catch (ComponentInitializationException e) {
             // expected this
         }
     }

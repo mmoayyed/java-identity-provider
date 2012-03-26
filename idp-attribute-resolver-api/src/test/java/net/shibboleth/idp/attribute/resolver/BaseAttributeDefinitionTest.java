@@ -173,15 +173,13 @@ public class BaseAttributeDefinitionTest {
 
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute) null);
         definition.initialize();
-        Assert.assertNull(definition.resolve(context));
+        Assert.assertTrue(!definition.resolve(context).isPresent());
 
         Attribute attribute = new Attribute("foo");
         definition = new MockAttributeDefinition("foo", attribute);
-        Assert.assertEquals(definition.resolve(context), attribute);
+        definition.initialize();
+        Assert.assertEquals(definition.resolve(context).get(), attribute);
 
-        Optional<Attribute> resolvedAttribute = definition.resolve(context);
-        Assert.assertEquals(resolvedAttribute, attribute);
-        
     }
 
     /**

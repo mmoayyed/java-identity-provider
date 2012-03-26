@@ -27,27 +27,27 @@ public class ResolverPluginDependencyTest {
     @Test public void testInstantiation() {
         ResolverPluginDependency dep = new ResolverPluginDependency(" foo ", " bar ");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
-        Assert.assertEquals(dep.getDependencyAttributeId(), "bar");
+        Assert.assertEquals(dep.getDependencyAttributeId().get(), "bar");
 
         dep = new ResolverPluginDependency("foo ", "");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
-        Assert.assertEquals(dep.getDependencyAttributeId(), null);
+        Assert.assertFalse(dep.getDependencyAttributeId().isPresent());
 
         dep = new ResolverPluginDependency("foo ", null);
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
-        Assert.assertEquals(dep.getDependencyAttributeId(), null);
+        Assert.assertFalse(dep.getDependencyAttributeId().isPresent());
 
         try {
             dep = new ResolverPluginDependency(null, null);
             Assert.fail("able to set null dependency ID");
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected this
         }
 
         try {
             dep = new ResolverPluginDependency(" ", null);
             Assert.fail("able to set empty dependency ID");
-        } catch (IllegalArgumentException e) {
+        } catch (AssertionError e) {
             // expected this
         }
     }
