@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.xmlobject;
 
 import net.shibboleth.idp.saml.xmlobject.Scope;
 
-import org.opensaml.xml.schema.XSBooleanValue;
+import org.opensaml.core.xml.schema.XSBooleanValue;
 import org.testng.Assert;
 
 /**

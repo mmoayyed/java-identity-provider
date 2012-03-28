@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.xml.schema.XSBooleanValue;
-import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.validation.ValidatingXMLObject;
+import org.opensaml.core.xml.schema.XSBooleanValue;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.validation.ValidatingXMLObject;
 
 /** XMLObject for the Shibboleth Scope metadata extension. */
 public interface Scope extends ValidatingXMLObject, XSString {

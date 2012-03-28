@@ -22,7 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 
-import org.opensaml.xml.schema.impl.XSAnyImpl;
+import org.opensaml.core.xml.schema.impl.XSAnyImpl;
 
 /** Concrete implementation of {@link ScopedValue}. */
 @NotThreadSafe

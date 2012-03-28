@@ -26,10 +26,10 @@ import javax.annotation.concurrent.NotThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.util.AttributeMap;
+import org.opensaml.core.xml.util.XMLObjectChildrenList;
+import org.opensaml.core.xml.validation.AbstractValidatingXMLObject;
 import org.opensaml.xml.signature.KeyInfo;
-import org.opensaml.xml.util.AttributeMap;
-import org.opensaml.xml.util.XMLObjectChildrenList;
-import org.opensaml.xml.validation.AbstractValidatingXMLObject;
 
 /** Implementation of {@link KeyAuthority}. */
 @NotThreadSafe
