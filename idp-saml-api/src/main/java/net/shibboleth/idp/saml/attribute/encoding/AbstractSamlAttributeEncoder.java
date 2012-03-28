@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.common.SAMLObject;
-import org.opensaml.xml.XMLObject;
+import org.opensaml.core.xml.XMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

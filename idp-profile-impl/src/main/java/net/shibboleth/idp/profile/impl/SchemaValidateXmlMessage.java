@@ -32,8 +32,8 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.slf4j.Logger;

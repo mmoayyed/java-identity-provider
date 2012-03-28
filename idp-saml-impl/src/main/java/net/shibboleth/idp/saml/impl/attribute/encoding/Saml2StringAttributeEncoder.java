@@ -22,7 +22,7 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
 
-import org.opensaml.xml.XMLObject;
+import org.opensaml.core.xml.XMLObject;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from

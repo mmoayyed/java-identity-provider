@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeValue;
-import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.owasp.esapi.codecs.Base64;
 import org.testng.Assert;

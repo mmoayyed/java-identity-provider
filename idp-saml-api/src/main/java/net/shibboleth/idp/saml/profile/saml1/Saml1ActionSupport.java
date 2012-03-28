@@ -25,10 +25,10 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
+import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.Conditions;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

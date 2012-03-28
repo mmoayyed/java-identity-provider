@@ -32,12 +32,12 @@ import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
 import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Audience;
 import org.opensaml.saml2.core.AudienceRestriction;
 import org.opensaml.saml2.core.Conditions;
 import org.opensaml.saml2.core.Response;
-import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;

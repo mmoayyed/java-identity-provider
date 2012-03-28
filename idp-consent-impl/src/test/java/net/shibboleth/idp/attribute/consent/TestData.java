@@ -32,9 +32,9 @@ import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 
 import org.joda.time.DateTime;
 import org.opensaml.DefaultBootstrap;
+import org.opensaml.core.xml.ConfigurationException;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.xml.ConfigurationException;
 import org.testng.annotations.DataProvider;
 
 import edu.vt.middleware.crypt.digest.SHA256;

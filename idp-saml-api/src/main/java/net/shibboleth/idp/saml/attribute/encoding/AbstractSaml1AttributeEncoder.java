@@ -24,8 +24,8 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import org.opensaml.Configuration;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml1.core.Attribute;
-import org.opensaml.xml.XMLObject;
 
 /**
  * Base class for encoders that produce a SAML 1 {@link Attribute}.

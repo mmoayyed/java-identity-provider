@@ -22,7 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 
-import org.opensaml.xml.AbstractXMLObjectBuilder;
+import org.opensaml.core.xml.AbstractXMLObjectBuilder;
 
 /** Builder of {@link KeyAuthority} objects. */
 @ThreadSafe

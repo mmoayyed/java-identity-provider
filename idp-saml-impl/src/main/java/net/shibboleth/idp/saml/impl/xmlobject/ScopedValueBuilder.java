@@ -21,7 +21,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 
-import org.opensaml.xml.AbstractXMLObjectBuilder;
+import org.opensaml.core.xml.AbstractXMLObjectBuilder;
 
 /** Builder of {@link ScopedValue} objects. */
 @ThreadSafe

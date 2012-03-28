@@ -21,7 +21,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.saml.xmlobject.Scope;
 
-import org.opensaml.xml.XMLObject;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.slf4j.Logger;

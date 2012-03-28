@@ -22,7 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.opensaml.xml.XMLObject;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectMarshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.w3c.dom.Element;

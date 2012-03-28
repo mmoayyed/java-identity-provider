@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 import net.shibboleth.utilities.java.support.xml.QNameSupport;
 
-import org.opensaml.xml.XMLObject;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.xml.io.UnmarshallingException;
 import org.opensaml.xml.signature.KeyInfo;

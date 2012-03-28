@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.SAMLVersion;
+import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AttributeQuery;
@@ -44,7 +45,6 @@ import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.core.Subject;
-import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 
 import com.google.common.base.Predicates;
 

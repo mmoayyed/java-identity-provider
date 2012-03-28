@@ -25,9 +25,9 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml1.core.Attribute;
 import org.opensaml.saml1.core.AttributeValue;
-import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.schema.XSString;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;

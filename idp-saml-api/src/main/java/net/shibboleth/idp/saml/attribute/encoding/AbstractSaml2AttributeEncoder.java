@@ -26,8 +26,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.Configuration;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml2.core.Attribute;
-import org.opensaml.xml.XMLObject;
 
 /**
  * Base class for encoders that produce a SAML 2 {@link Attribute}.

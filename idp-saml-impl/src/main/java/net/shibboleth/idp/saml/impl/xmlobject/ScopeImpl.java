@@ -24,7 +24,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.saml.xmlobject.Scope;
 
-import org.opensaml.xml.XMLObject;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.xml.schema.XSBooleanValue;
 import org.opensaml.xml.validation.AbstractValidatingXMLObject;
 

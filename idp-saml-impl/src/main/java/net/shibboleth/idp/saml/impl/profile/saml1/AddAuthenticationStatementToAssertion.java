@@ -30,10 +30,10 @@ import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObjectBuilder;
+import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.XMLObjectProviderRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
