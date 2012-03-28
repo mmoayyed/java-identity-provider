@@ -135,7 +135,8 @@ public final class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
+    public void doValidate() throws ComponentValidationException {
+        super.doValidate();
         return;
     }
 

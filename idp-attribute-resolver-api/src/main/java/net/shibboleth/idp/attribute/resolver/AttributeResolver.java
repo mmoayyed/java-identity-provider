@@ -272,7 +272,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             log.debug("Attribute Resolver {}: resolving attribute definition {}", getId(), attributeId);
             resolvedAttribute = definition.resolve(resolutionContext);
         } catch (AttributeResolutionException e) {
-            if (definition.isPropagateResolutionExceptions()) {
+            if (!definition.isPropagateResolutionExceptions()) {
                 log.debug("Attribute Resolver {}: attribute definition {} produced the following"
                         + " error but was configured not to propogate it.", new Object[] {getId(), attributeId, e,});
             } else {

@@ -162,7 +162,8 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
+    public void doValidate() throws ComponentValidationException {
+        super.doValidate();
         return;
     }
 

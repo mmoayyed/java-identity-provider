@@ -34,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.AbstractDestructableIdent
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Assert;
@@ -54,7 +53,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @ThreadSafe
 public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructableIdentifiableInitializableComponent
-        implements ValidatableComponent, UnmodifiableComponent, DestructableComponent {
+        implements ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
@@ -170,7 +169,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
 
         if (!activationCriteria.apply(resolutionContext)) {
             log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
-            Optional.absent();
+            return Optional.absent();
         }
 
         try {
@@ -188,7 +187,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
+    public final synchronized void validate() throws ComponentValidationException {
         ComponentSupport.validate(activationCriteria);
 
         doValidate();
@@ -200,7 +199,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
         activationCriteria = Predicates.alwaysFalse();
         dependencies = Collections.emptySet();
 
-        super.destroy();
+        super.doDestroy();
     }
 
     /** {@inheritDoc} */

@@ -191,7 +191,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         displayDescriptions = Collections.emptyMap();
         displayNames = Collections.emptyMap();
 
-        super.destroy();
+        super.doDestroy();
     }
 
     /** {@inheritDoc} */
@@ -207,7 +207,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
 
     /** {@inheritDoc} */
     protected void doValidate() throws ComponentValidationException {
-        super.validate();
+        super.doValidate();
 
         for (AttributeEncoder encoder : encoders) {
             if (encoder instanceof ValidatableComponent) {
