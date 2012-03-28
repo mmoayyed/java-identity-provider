@@ -23,10 +23,10 @@ import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
-import org.opensaml.xml.security.DecryptionConfiguration;
-import org.opensaml.xml.security.EncryptionConfiguration;
-import org.opensaml.xml.security.SignatureSigningConfiguration;
-import org.opensaml.xml.security.SignatureValidationConfiguration;
+import org.opensaml.xmlsec.DecryptionConfiguration;
+import org.opensaml.xmlsec.EncryptionConfiguration;
+import org.opensaml.xmlsec.SignatureSigningConfiguration;
+import org.opensaml.xmlsec.SignatureValidationConfiguration;
 
 /** Configuration for request/response security operations. */
 public class SecurityConfiguration {

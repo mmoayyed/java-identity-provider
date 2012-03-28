@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.core.xml.AttributeExtensibleXMLObject;
 import org.opensaml.core.xml.validation.ValidatingXMLObject;
-import org.opensaml.xml.signature.KeyInfo;
+import org.opensaml.xmlsec.signature.KeyInfo;
 
 /** XMLObject for the Shibboleth KeyAuthority metadata extension. */
 public interface KeyAuthority extends ValidatingXMLObject, AttributeExtensibleXMLObject {

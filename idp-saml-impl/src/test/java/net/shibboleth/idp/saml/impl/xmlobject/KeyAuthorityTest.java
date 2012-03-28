@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 
-import org.opensaml.xml.signature.KeyInfo;
+import org.opensaml.xmlsec.signature.KeyInfo;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
