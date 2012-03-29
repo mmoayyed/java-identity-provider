@@ -22,11 +22,11 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 
-import org.opensaml.Configuration;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.saml.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

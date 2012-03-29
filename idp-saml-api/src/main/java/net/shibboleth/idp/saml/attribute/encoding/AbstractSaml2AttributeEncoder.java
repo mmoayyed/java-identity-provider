@@ -23,10 +23,10 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.Configuration;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.saml.config.Configuration;
 import org.opensaml.saml2.core.Attribute;
 
 /**
