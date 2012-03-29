@@ -23,9 +23,9 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.profile.saml1.CheckRequestVersion.InvalidMessageVersionException;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
-import org.opensaml.common.SAMLVersion;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml1.core.Request;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

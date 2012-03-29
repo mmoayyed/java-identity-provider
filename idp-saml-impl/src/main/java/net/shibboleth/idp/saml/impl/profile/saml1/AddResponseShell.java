@@ -29,11 +29,11 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
-import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.SAMLVersion;
 import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml1.core.Response;
 import org.opensaml.saml1.core.Status;
 import org.opensaml.saml1.core.StatusCode;

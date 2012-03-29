@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.xmlobject;
 
 import javax.xml.namespace.QName;
 
-import org.opensaml.common.SAMLObject;
+import org.opensaml.saml.common.SAMLObject;
 
 /** XMLObject that represents a SAML attribute value whose value contains a scope attribute. */
 public interface ScopedValue extends SAMLObject {

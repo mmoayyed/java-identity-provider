@@ -29,8 +29,8 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
-import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Conditions;
 import org.opensaml.saml2.core.OneTimeUse;

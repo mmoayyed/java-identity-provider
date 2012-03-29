@@ -35,10 +35,10 @@ import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
-import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.SAMLVersion;
 import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AttributeQuery;
 import org.opensaml.saml1.core.NameIdentifier;

@@ -22,10 +22,10 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
-import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml1.core.Assertion;
 import org.opensaml.saml1.core.AudienceRestrictionCondition;
 import org.opensaml.saml1.core.Conditions;

@@ -21,9 +21,9 @@ import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 
-import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.config.Configuration;
 import org.opensaml.saml1.core.Attribute;
 

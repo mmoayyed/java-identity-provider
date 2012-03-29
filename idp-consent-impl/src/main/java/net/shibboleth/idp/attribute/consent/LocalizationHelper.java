@@ -27,7 +27,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
 
-import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.SPSSODescriptor;
