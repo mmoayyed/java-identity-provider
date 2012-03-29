@@ -130,7 +130,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         final LazyList<String> invalidDataConnectors = new LazyList<String>();
         for (BaseDataConnector plugin : dataConnectors.values()) {
             log.debug("Attribute resolver {}: checking if data connector {} is valid", getId(), plugin.getId());
-            validateDataConnector(plugin, invalidDataConnectors);
+            if (!validateDataConnector(plugin, invalidDataConnectors)) {
+                invalidDataConnectors.add(plugin.getId());
+            }
         }
 
         final LazyList<String> invalidAttributeDefinitions = new LazyList<String>();
@@ -268,17 +270,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         Optional<Attribute> resolvedAttribute = Optional.absent();
 
-        try {
-            log.debug("Attribute Resolver {}: resolving attribute definition {}", getId(), attributeId);
-            resolvedAttribute = definition.resolve(resolutionContext);
-        } catch (AttributeResolutionException e) {
-            if (!definition.isPropagateResolutionExceptions()) {
-                log.debug("Attribute Resolver {}: attribute definition {} produced the following"
-                        + " error but was configured not to propogate it.", new Object[] {getId(), attributeId, e,});
-            } else {
-                throw e;
-            }
-        }
+        log.debug("Attribute Resolver {}: resolving attribute definition {}", getId(), attributeId);
+        resolvedAttribute = definition.resolve(resolutionContext);
 
         if (!resolvedAttribute.isPresent()) {
             log.debug("Attribute Resolver {}: attribute definition {} produced no attribute", getId(), attributeId);
@@ -333,13 +326,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                 resolveDataConnector(failoverDataConnectorId.get(), resolutionContext);
                 return;
             } else {
-                if (connector.isPropagateResolutionExceptions()) {
-                    log.debug("Attribute Resolver {}: data connector {} produced the"
-                            + " following error but was configured not to propogate it.", new Object[] {getId(),
-                            connectorId, e,});
-                } else {
-                    throw e;
-                }
+                // Pass it on.  Do not look at propagateException because this is handled in the
+                // connector code logic. 
+                throw e;
             }
         }
 
@@ -442,10 +431,21 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             @Nonnull LazyList<String> invalidDataConnectors) {
         assert connector != null;
         assert invalidDataConnectors != null;
+
+        if (connector.getFailoverDataConnectorId().isPresent()) {
+            String id = connector.getFailoverDataConnectorId().get();
+            if (!dataConnectors.containsKey(id)) {
+                log.warn("Attribute resolver {}: failover data connector {} for {} cannot be found", new Object[] {
+                        getId(), id, connector.getId(),});
+                return false;
+            }
+        }
+
+        boolean returnValue;
         try {
             connector.validate();
             log.debug("Attribute resolver {}: data connector {} is valid", getId(), connector.getId());
-            return true;
+            returnValue = true;
         } catch (ComponentValidationException e) {
             if (connector.getFailoverDataConnectorId().isPresent()) {
                 String id = connector.getFailoverDataConnectorId().get();
@@ -454,20 +454,24 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                             + " and failover data connector {} has already been found to be inavlid", new Object[] {
                             getId(), connector.getId(), id, e,});
                     invalidDataConnectors.add(connector.getId());
-                    return false;
+                    returnValue = false;
                 } else {
-                    log.warn("Attribute resolver {}: data connector {} is not valid for the following reason,"
+                    log.warn("Attribute resolver {}: data connector {} is not valid for the following reason {},"
                             + " checking if failover data connector {} is valid",
-                            new Object[] {getId(), connector.getId(), id, e,});
-                    return validateDataConnector(dataConnectors.get(id), invalidDataConnectors);
+                            new Object[] {getId(), connector.getId(), e, id,});
+                    returnValue = validateDataConnector(dataConnectors.get(id), invalidDataConnectors);
+                    if (!returnValue) {
+                        invalidDataConnectors.add(id);
+                    }
                 }
-            }
+            } else {
 
-            log.warn("Attribute resolver {}: data connector {} is not valid and has not failover connector",
-                    new Object[] {this.getId(), connector.getId(), e,});
-            invalidDataConnectors.add(connector.getId());
-            return false;
+                log.warn("Attribute resolver {}: data connector {} is not valid and has not failover connector",
+                        new Object[] {this.getId(), connector.getId(), e,});
+                returnValue = false;
+            }
         }
+        return returnValue;
     }
 
     /** {@inheritDoc} */

@@ -182,9 +182,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     /** {@inheritDoc} */
     protected void doDestroy() {
         for (AttributeEncoder encoder : encoders) {
-            if (encoder instanceof DestructableComponent) {
-                ((DestructableComponent) encoder).destroy();
-            }
+            ComponentSupport.destroy(encoder);
         }
 
         encoders = Collections.emptySet();
@@ -199,9 +197,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         super.doInitialize();
 
         for (AttributeEncoder encoder : encoders) {
-            if (encoder instanceof InitializableComponent) {
-                ((InitializableComponent) encoder).initialize();
-            }
+            ComponentSupport.initialize(encoder);
         }
     }
 
@@ -210,9 +206,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         super.doValidate();
 
         for (AttributeEncoder encoder : encoders) {
-            if (encoder instanceof ValidatableComponent) {
-                ((ValidatableComponent) encoder).validate();
-            }
+            ComponentSupport.validate(encoder);
         }
     }
 

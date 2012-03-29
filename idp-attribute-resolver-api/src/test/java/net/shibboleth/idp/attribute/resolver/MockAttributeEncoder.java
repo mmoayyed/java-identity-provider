@@ -20,9 +20,10 @@ package net.shibboleth.idp.attribute.resolver;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
 
 /** Mock implementation of {@link AttributeEncoder}. */
-public class MockAttributeEncoder implements AttributeEncoder<String> {
+public class MockAttributeEncoder extends CountingDestructableInitializableValidatableComponent implements AttributeEncoder<String> {
 
     /** Static protocol value for this encoder. */
     private final String staticProtocol;

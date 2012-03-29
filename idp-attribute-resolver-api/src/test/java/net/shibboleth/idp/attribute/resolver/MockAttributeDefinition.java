@@ -20,16 +20,27 @@ package net.shibboleth.idp.attribute.resolver;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
 import com.google.common.base.Optional;
 
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
-public class MockAttributeDefinition extends BaseAttributeDefinition {
+public class MockAttributeDefinition extends BaseAttributeDefinition implements ValidatableComponent {
 
     /** Whether this connector fails validation. */
     private boolean invalid;
+    
+    /** Number of times {@link #destroy()} was called. */
+    private int destroyCount;
+
+    /** Number of times {@link #initialize()} was called. */
+    private int initializeCount;
+
+    /** Number of times {@link #validate()} was called. */
+    private int validateCount;
 
     /** Static value returned by this definition. */
     private Optional<Attribute> staticValue;
@@ -81,9 +92,55 @@ public class MockAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
+    public void doValidate() throws ComponentValidationException {
         if (invalid) {
             throw new ComponentValidationException();
         }
+        validateCount += 1;
+    }
+    
+    /** {@inheritDoc} */
+    public void doDestroy() {
+        super.doDestroy();
+        destroyCount += 1;
+    }
+
+
+    /** {@inheritDoc} */
+    public boolean isInitialized() {
+        return initializeCount > 0;
+    }
+
+    /** {@inheritDoc} */
+    public void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        initializeCount += 1;
+    }
+
+    /**
+     * Gets the number of times {@link #destroy()} was called.
+     * 
+     * @return number of times {@link #destroy()} was called
+     */
+    public int getDestroyCount() {
+        return destroyCount;
+    }
+
+    /**
+     * Gets the number of times {@link #initialize()} was called.
+     * 
+     * @return number of times {@link #initialize()} was called
+     */
+    public int getInitializeCount() {
+        return initializeCount;
+    }
+
+    /**
+     * Gets the number of times {@link #validate()} was called.
+     * 
+     * @return number of times {@link #validate()} was called
+     */
+    public int getValidateCount() {
+        return validateCount;
     }
 }

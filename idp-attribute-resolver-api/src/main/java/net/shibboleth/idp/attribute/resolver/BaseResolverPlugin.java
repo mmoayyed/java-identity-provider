@@ -59,7 +59,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
     private final Logger log = LoggerFactory.getLogger(BaseResolverPlugin.class);
 
     /** Whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. */
-    private boolean propagateResolutionExceptions;
+    private boolean propagateResolutionExceptions = true;
 
     /** Criterion that must be met for this plugin to be active for the given request. */
     private Predicate<AttributeResolutionContext> activationCriteria = Predicates.alwaysTrue();
@@ -178,9 +178,15 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
 
             return resolvedData;
         } catch (AttributeResolutionException e) {
+            //
+            // NOTE - if you change this logic you MUST make changes in any derived classes that
+            // depend on our handling of propagateResolutionExceptions.
+            //
             if (propagateResolutionExceptions) {
                 throw e;
             } else {
+                log.debug("Resolver {} produced the following"
+                        + " error but was configured not to propogate it.", new Object[] {getId(), e,});
                 return Optional.absent();
             }
         }

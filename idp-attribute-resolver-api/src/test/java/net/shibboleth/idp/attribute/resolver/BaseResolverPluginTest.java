@@ -33,7 +33,7 @@ public class BaseResolverPluginTest {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
 
         Assert.assertEquals(plugin.getId(), "foo");
-        Assert.assertFalse(plugin.isPropagateResolutionExceptions());
+        Assert.assertTrue(plugin.isPropagateResolutionExceptions());
         Assert.assertEquals(plugin.getActivationCriteria(), Predicates.alwaysTrue());
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
@@ -112,6 +112,14 @@ public class BaseResolverPluginTest {
         plugin.initialize();
 
         Assert.assertEquals(plugin.resolve(context), Optional.fromNullable("bar"));
+        
+        context = new AttributeResolutionContext();
+        plugin = new MockBaseResolverPlugin(" foo ", "bar");
+        plugin.setActivationCriteria(Predicates.<AttributeResolutionContext> alwaysFalse());
+
+        plugin.initialize();
+        Assert.assertEquals(plugin.resolve(context), Optional.absent());
+
     }
 
     /**

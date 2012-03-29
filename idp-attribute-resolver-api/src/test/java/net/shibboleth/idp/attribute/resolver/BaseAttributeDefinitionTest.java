@@ -19,16 +19,20 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link BaseAttributeDefinition}. This test does not test any methods inherited from
@@ -180,6 +184,35 @@ public class BaseAttributeDefinitionTest {
         definition.initialize();
         Assert.assertEquals(definition.resolve(context).get(), attribute);
 
+    }
+    
+    @Test public void testInitDestroyValidate() throws ComponentInitializationException, ComponentValidationException {
+        MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
+        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", (Attribute) null);
+        
+        List list = Lists.newArrayList((AttributeEncoder<?>)encoder); 
+        definition.setAttributeEncoders(list);
+        
+        Assert.assertFalse(encoder.isInitialized());
+        Assert.assertFalse(encoder.getValidateCount() > 0);
+        Assert.assertFalse(encoder.isDestroyed());
+
+        definition.initialize();
+        Assert.assertTrue(encoder.isInitialized());
+        Assert.assertFalse(encoder.getValidateCount() > 0);
+        Assert.assertFalse(encoder.isDestroyed());
+
+        definition.validate();
+        Assert.assertTrue(encoder.isInitialized());
+        Assert.assertTrue(encoder.getValidateCount() > 0);
+        Assert.assertFalse(encoder.isDestroyed());
+
+        definition.destroy();
+        Assert.assertTrue(encoder.isInitialized());
+        Assert.assertTrue(encoder.getValidateCount() > 0);
+        Assert.assertTrue(encoder.isDestroyed());
+        
+        
     }
 
     /**

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collections;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -24,7 +25,11 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -34,17 +39,79 @@ import com.google.common.collect.Lists;
 
 /** Test case for {@link AttributeResolver}. */
 public class AttributeResolverTest {
+    private final Logger log = LoggerFactory.getLogger(AttributeResolverTest.class);
 
     /** Test post-instantiation state. */
-    @Test public void testInstantiation() throws Exception {
-        AttributeResolver resolver = new AttributeResolver("foo", null, null);
-        resolver.initialize();
+    @Test public void testInitVerifyDestroy() throws Exception {
+        MockAttributeDefinition attrDef = new MockAttributeDefinition("foo", new Attribute("test"));
+        MockDataConnector dataCon = new MockDataConnector("bar", (Map) null);
+        AttributeResolver resolver =
+                new AttributeResolver("toto", Collections.singleton((BaseAttributeDefinition) attrDef),
+                        Collections.singleton((BaseDataConnector) dataCon));
 
-        Assert.assertEquals(resolver.getId(), "foo");
-        Assert.assertNotNull(resolver.getAttributeDefinitions());
-        Assert.assertTrue(resolver.getAttributeDefinitions().isEmpty());
-        Assert.assertNotNull(resolver.getDataConnectors());
-        Assert.assertTrue(resolver.getDataConnectors().isEmpty());
+        Assert.assertFalse(attrDef.isInitialized());
+        Assert.assertFalse(attrDef.getValidateCount() > 0);
+        Assert.assertFalse(attrDef.isDestroyed());
+        Assert.assertFalse(dataCon.isInitialized());
+        Assert.assertFalse(dataCon.getValidateCount() > 0);
+        Assert.assertFalse(dataCon.isDestroyed());
+
+        try {
+            resolver.validate();
+            Assert.fail();
+        } catch (UninitializedComponentException e) {
+            // OK
+        }
+        Assert.assertFalse(attrDef.isInitialized());
+        Assert.assertFalse(attrDef.getValidateCount() > 0);
+        Assert.assertFalse(attrDef.isDestroyed());
+        Assert.assertFalse(dataCon.isInitialized());
+        Assert.assertFalse(dataCon.getValidateCount() > 0);
+        Assert.assertFalse(dataCon.isDestroyed());
+
+        resolver.initialize();
+        Assert.assertTrue(attrDef.isInitialized());
+        Assert.assertFalse(attrDef.getValidateCount() > 0);
+        Assert.assertFalse(attrDef.isDestroyed());
+        Assert.assertTrue(dataCon.isInitialized());
+        Assert.assertFalse(dataCon.getValidateCount() > 0);
+        Assert.assertFalse(dataCon.isDestroyed());
+
+        Assert.assertEquals(resolver.getId(), "toto");
+        Assert.assertEquals(resolver.getAttributeDefinitions().size(), 1);
+        Assert.assertTrue(resolver.getAttributeDefinitions().containsKey("foo"));
+        Assert.assertEquals(resolver.getDataConnectors().size(), 1);
+        Assert.assertTrue(resolver.getDataConnectors().containsKey("bar"));
+
+        resolver.validate();
+        Assert.assertTrue(attrDef.isInitialized());
+        Assert.assertTrue(attrDef.getValidateCount() > 0);
+        Assert.assertFalse(attrDef.isDestroyed());
+        Assert.assertTrue(dataCon.isInitialized());
+        Assert.assertTrue(dataCon.getValidateCount() > 0);
+        Assert.assertFalse(dataCon.isDestroyed());
+
+        resolver.destroy();
+        Assert.assertTrue(attrDef.isInitialized());
+        Assert.assertTrue(attrDef.getValidateCount() > 0);
+        Assert.assertTrue(attrDef.isDestroyed());
+        Assert.assertTrue(dataCon.isInitialized());
+        Assert.assertTrue(dataCon.getValidateCount() > 0);
+        Assert.assertTrue(dataCon.isDestroyed());
+
+        try {
+            resolver.initialize();
+            Assert.fail();
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
+
+        try {
+            resolver.validate();
+            Assert.fail();
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
     }
 
     /** Test getting, setting, overwriting, defensive collection copy. */
@@ -93,6 +160,82 @@ public class AttributeResolverTest {
         Assert.assertEquals(context.getResolvedAttributes().get("ad1"), attribute);
     }
 
+    /** Test that a simple resolve returns the expected results. */
+    @Test public void testResolveSpecificAttribute() throws Exception {
+        Attribute attribute = new Attribute("ad1");
+        attribute.getValues().add(new StringAttributeValue("value1"));
+
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        definitions.add(new MockAttributeDefinition("ad1", attribute));
+
+        AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        context.setRequestedAttributes(Collections.singleton(new Attribute("ad1")));
+        resolver.resolveAttributes(context);
+
+        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
+        Assert.assertEquals(context.getResolvedAttributes().size(), 1);
+        Assert.assertEquals(context.getResolvedAttributes().get("ad1"), attribute);
+
+        context = new AttributeResolutionContext();
+        context.setRequestedAttributes(Collections.singleton(new Attribute("1da")));
+        resolver.resolveAttributes(context);
+
+        Assert.assertTrue(context.getResolvedAttributeDefinitions().isEmpty());
+    }
+
+    /** Test that a simple resolve returns the expected results. */
+    @Test public void testResolveFails() throws Exception {
+        log.debug("Log Resolve fails");
+        Attribute attribute = new Attribute("ad1");
+        attribute.getValues().add(new StringAttributeValue("value1"));
+
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        BaseAttributeDefinition attrDef = new MockAttributeDefinition("ad1", new AttributeResolutionException());
+        attrDef.setPropagateResolutionExceptions(true);
+        definitions.add(attrDef);
+
+        AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        try {
+            resolver.resolveAttributes(context);
+            Assert.fail();
+        } catch (AttributeResolutionException e) {
+            // OK
+        }
+
+        definitions = new LazySet<BaseAttributeDefinition>();
+        attrDef = new MockAttributeDefinition("ad1", new AttributeResolutionException());
+        attrDef.setPropagateResolutionExceptions(false);
+        definitions.add(attrDef);
+
+        resolver = new AttributeResolver("foo", definitions, null);
+        resolver.initialize();
+
+        context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        Assert.assertTrue(context.getResolvedAttributes().isEmpty());
+        log.debug("Logged Resolve fails");
+    }
+
+    /** Test that a resolve with no definitions returns nothing the expected results. */
+    @Test public void testResolveEmpty() throws Exception {
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+
+        AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        Assert.assertTrue(context.getResolvedAttributeDefinitions().isEmpty());
+    }
+
     /** Test that resolve w/ dependencies returns the expected results. */
     @Test public void testResolveWithDependencies() throws Exception {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
@@ -127,6 +270,36 @@ public class AttributeResolverTest {
         Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad2"));
 
         Assert.assertNotNull(context.getResolvedDataConnectors().get("dc1"));
+    }
+
+    /** Test that resolve w/ dependencies returns the expected results. 
+     * @throws ComponentInitializationException if badness happens
+     * @throws AttributeResolutionException if badness happens in attribute resolution*/
+    @Test public void testResolveWithDependencyFail1() throws ComponentInitializationException, AttributeResolutionException
+           /* throws Exception */ {
+        MockDataConnector dc1 = new MockDataConnector("dc1", new AttributeResolutionException());
+        dc1.setFailoverDataConnectorId("dc2");
+        dc1.setPropagateResolutionExceptions(true);
+
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
+        ad1.setDependencies(Lists.newArrayList(dep1));
+
+        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dc1);
+        
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        definitions.add(ad1);
+
+        AttributeResolver resolver = new AttributeResolver("foo", definitions, connectors);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        //
+        // This will pass since we failover to a nonexistant connector, but we silently allow that through.
+        // The error in configuration is tested by validate()
+        //
+        resolver.resolveAttributes(context);
     }
 
     /**
@@ -283,6 +456,55 @@ public class AttributeResolverTest {
         resolver.validate();
     }
 
+    @Test public void testDataConnectorFailovertoInvalid() throws Exception {
+        MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
+        dc1.setInvalid(true);
+        dc1.setFailoverDataConnectorId("dc0");
+
+        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dc1);
+
+        AttributeResolver resolver = new AttributeResolver("foo", null, connectors);
+        resolver.initialize();
+
+        try {
+            resolver.validate();
+            Assert.fail("resolver with invalid plugin didn't fail validation");
+        } catch (ComponentValidationException e) {
+            // expected this
+        }
+
+        MockDataConnector dc0 = new MockDataConnector("dc0", (Map) null);
+        dc0.setInvalid(true);
+        dc1 = new MockDataConnector("dc1", (Map) null);
+        dc1.setInvalid(true);
+        dc1.setFailoverDataConnectorId("dc0");
+
+        connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dc1);
+        connectors.add(dc0);
+
+        resolver = new AttributeResolver("foo", null, connectors);
+        resolver.initialize();
+
+        try {
+            resolver.validate();
+            Assert.fail("resolver with invalid plugin didn't fail validation");
+        } catch (ComponentValidationException e) {
+            // expected this
+        }
+
+        //
+        // try again to provoke a different error path
+        //
+        try {
+            resolver.validate();
+            Assert.fail("resolver with invalid plugin didn't fail validation");
+        } catch (ComponentValidationException e) {
+            // expected this
+        }
+    }
+
     /** Test that validation fails when a plugin depends on a non-existent plugin. */
     @Test public void testBadPluginIdInitialize() throws Exception {
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
@@ -300,7 +522,7 @@ public class AttributeResolverTest {
         AttributeResolver resolver = new AttributeResolver("foo", definitions, null);
         try {
             resolver.initialize();
-            Assert.fail("invalid resolver configuration didn't fail initialization");            
+            Assert.fail("invalid resolver configuration didn't fail initialization");
         } catch (ComponentInitializationException e) {
             // OK
         }
@@ -334,10 +556,8 @@ public class AttributeResolverTest {
             resolver.initialize();
             Assert.fail("invalid resolver configuration didn't fail initialization.");
         } catch (ComponentInitializationException e) {
-            //OK
+            // OK
         }
-
-
 
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
         dc1.setDependencies(Lists.newArrayList(new ResolverPluginDependency("ad0", null)));

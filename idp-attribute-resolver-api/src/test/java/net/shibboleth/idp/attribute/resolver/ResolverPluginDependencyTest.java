@@ -51,4 +51,27 @@ public class ResolverPluginDependencyTest {
             // expected this
         }
     }
+    
+    @Test public void testEqualsToString() {
+        ResolverPluginDependency dep = new ResolverPluginDependency(" foo ", " bar ");
+
+        dep.toString();
+
+        Assert.assertFalse(dep.equals(null));
+        Assert.assertTrue(dep.equals(dep));
+        Assert.assertFalse(dep.equals(this));
+
+        ResolverPluginDependency other = new  ResolverPluginDependency("foo", "bar  ");
+
+        Assert.assertTrue(dep.equals(other));
+        Assert.assertEquals(dep.hashCode(), other.hashCode());
+
+        other = new  ResolverPluginDependency(" bar ", " foo");
+
+        Assert.assertFalse(dep.equals(other));
+        Assert.assertNotSame(dep.hashCode(), other.hashCode());
+
+    }
+
+    
 }
