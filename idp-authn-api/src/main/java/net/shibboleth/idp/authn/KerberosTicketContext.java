@@ -31,16 +31,7 @@ import org.opensaml.messaging.context.BaseContext;
 public class KerberosTicketContext extends BaseContext {
 
     /** Kerberos ticket to be validated. */
-    private final KerberosTicket ticket;
-
-    /**
-     * Constructor.
-     * 
-     * @param kerbTicket the Kerberos ticket to be validated
-     */
-    public KerberosTicketContext(@Nonnull final KerberosTicket kerbTicket) {
-        ticket = Assert.isNotNull(kerbTicket, "Kerberos ticket can not be null");
-    }
+    private KerberosTicket ticket;
 
     /**
      * Gets the Kerberos ticket to be validated.
@@ -49,5 +40,14 @@ public class KerberosTicketContext extends BaseContext {
      */
     @Nonnull public KerberosTicket getTicket() {
         return ticket;
+    }
+    
+    /**
+     * Sets the Kerberos ticket to be validated.
+     * 
+     * @param kerbTicket the Kerberos ticket to be validated
+     */
+    public void setTicket(@Nonnull final KerberosTicket kerbTicket){
+        ticket = Assert.isNotNull(kerbTicket, "Kerberos ticket can not be null");
     }
 }

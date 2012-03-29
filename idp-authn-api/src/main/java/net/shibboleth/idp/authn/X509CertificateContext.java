@@ -32,16 +32,7 @@ import org.opensaml.messaging.context.BaseContext;
 public class X509CertificateContext extends BaseContext {
 
     /** The certificate to be validated. */
-    private final X509Certificate certificate;
-
-    /**
-     * Constructor.
-     * 
-     * @param cert the certificate to be validated
-     */
-    public X509CertificateContext(@Nonnull final X509Certificate cert) {
-        certificate = Assert.isNotNull(cert, "X.509 certificate can not be null");
-    }
+    private X509Certificate certificate;
 
     /**
      * Gets the certificate to be validated.
@@ -50,5 +41,14 @@ public class X509CertificateContext extends BaseContext {
      */
     @Nonnull public X509Certificate getCertificate() {
         return certificate;
+    }
+
+    /**
+     * Sets the certificate to be validated.
+     * 
+     * @param cert certificate to be validated
+     */
+    public void setCertificate(@Nonnull final X509Certificate cert) {
+        certificate = Assert.isNotNull(cert, "Certificate can not be null");
     }
 }

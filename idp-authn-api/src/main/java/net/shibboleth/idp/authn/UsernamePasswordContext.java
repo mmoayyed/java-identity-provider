@@ -18,10 +18,9 @@
 package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Assert;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -32,29 +31,27 @@ import org.opensaml.messaging.context.BaseContext;
 public class UsernamePasswordContext extends BaseContext {
 
     /** The username. */
-    private final String username;
+    private String username;
 
     /** The password associated with the username. */
-    private final String password;
-
-    /**
-     * Constructor.
-     * 
-     * @param user the username
-     * @param pass the password
-     */
-    public UsernamePasswordContext(@Nonnull @NotEmpty final String user, @Nonnull @NotEmpty final String pass) {
-        username = Assert.isNotNull(StringSupport.trimOrNull(user), "Username can not be null");
-        password = Assert.isNotNull(StringSupport.trimOrNull(pass), "Password can not be null");
-    }
+    private String password;
 
     /**
      * Gets the username.
      * 
      * @return the username
      */
-    @Nonnull @NotEmpty public String getUsername() {
+    @Nullable public String getUsername() {
         return username;
+    }
+
+    /**
+     * Sets the username.
+     * 
+     * @param name the username
+     */
+    public void setUsername(@Nonnull final String name) {
+        username = Assert.isNotNull(name, "Username can not be null");
     }
 
     /**
@@ -62,7 +59,16 @@ public class UsernamePasswordContext extends BaseContext {
      * 
      * @return password associated with the username
      */
-    @Nonnull @NotEmpty public String getPassword() {
+    @Nullable public String getPassword() {
         return password;
+    }
+
+    /**
+     * Sets the password associated with the username.
+     * 
+     * @param pass password associated with the username
+     */
+    public void setPassword(@Nonnull final String pass) {
+        password = Assert.isNotNull(pass, "Password can not be null");
     }
 }

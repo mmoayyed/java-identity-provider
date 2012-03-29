@@ -23,52 +23,47 @@ import org.testng.annotations.Test;
 /** {@link UsernamePasswordContext} unit test. */
 public class UsernamePasswordContextTest {
 
-    /** Tests that everything is properly initialized during object construction. */
-    @Test public void testInstantiation() {
-        UsernamePasswordContext ctx = new UsernamePasswordContext("bob", "test");
+    /** Tests mutating the username. */
+    @Test public void testUsername() {
+        UsernamePasswordContext ctx = new UsernamePasswordContext();
+        Assert.assertNull(ctx.getUsername());
+
+        ctx.setUsername("bob");
         Assert.assertEquals(ctx.getUsername(), "bob");
-        Assert.assertEquals(ctx.getPassword(), "test");
+
+        ctx.setUsername("foo");
+        Assert.assertEquals(ctx.getUsername(), "foo");
+
+        ctx.setUsername("");
+        Assert.assertEquals(ctx.getUsername(), "");
 
         try {
-            new UsernamePasswordContext(null, "test");
+            ctx.setUsername(null);
             Assert.fail();
         } catch (AssertionError e) {
-
+            Assert.assertEquals(ctx.getUsername(), "");
         }
+    }
+
+    /** Tests mutating the password. */
+    @Test public void testPassword() {
+        UsernamePasswordContext ctx = new UsernamePasswordContext();
+        Assert.assertNull(ctx.getPassword());
+
+        ctx.setPassword("bob");
+        Assert.assertEquals(ctx.getPassword(), "bob");
+
+        ctx.setPassword("foo");
+        Assert.assertEquals(ctx.getPassword(), "foo");
+
+        ctx.setPassword("");
+        Assert.assertEquals(ctx.getPassword(), "");
 
         try {
-            new UsernamePasswordContext("", "test");
+            ctx.setPassword(null);
             Assert.fail();
         } catch (AssertionError e) {
-
-        }
-
-        try {
-            new UsernamePasswordContext("  ", "test");
-            Assert.fail();
-        } catch (AssertionError e) {
-
-        }
-
-        try {
-            new UsernamePasswordContext("bob", null);
-            Assert.fail();
-        } catch (AssertionError e) {
-
-        }
-
-        try {
-            new UsernamePasswordContext("bob", "");
-            Assert.fail();
-        } catch (AssertionError e) {
-
-        }
-
-        try {
-            new UsernamePasswordContext("bob", "  ");
-            Assert.fail();
-        } catch (AssertionError e) {
-
+            Assert.assertEquals(ctx.getPassword(), "");
         }
     }
 }

@@ -22,6 +22,10 @@
             <artifactId>idp-authn-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+        </dependency>
 
         <!-- Provided Dependencies -->
 
