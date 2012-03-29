@@ -39,9 +39,9 @@ import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml1.core.Assertion;
-import org.opensaml.saml1.core.AttributeStatement;
-import org.opensaml.saml1.core.Response;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.saml.saml1.core.AttributeStatement;
+import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -126,9 +126,9 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
             return null;
         }
 
-        ArrayList<org.opensaml.saml1.core.Attribute> encodedAttributes =
-                new ArrayList<org.opensaml.saml1.core.Attribute>(attributes.size());
-        org.opensaml.saml1.core.Attribute encodedAttribute = null;
+        ArrayList<org.opensaml.saml.saml1.core.Attribute> encodedAttributes =
+                new ArrayList<org.opensaml.saml.saml1.core.Attribute>(attributes.size());
+        org.opensaml.saml.saml1.core.Attribute encodedAttribute = null;
         for (Attribute attribute : attributes) {
             encodedAttribute = encodeAttribute(attribute);
             if (encodedAttribute != null) {
@@ -151,7 +151,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
     }
 
     /**
-     * Encodes a {@link Attribute} into a {@link org.opensaml.saml1.core.Attribute} if a proper encoder is available.
+     * Encodes a {@link Attribute} into a {@link org.opensaml.saml.saml1.core.Attribute} if a proper encoder is available.
      * 
      * @param attribute the attribute to be encoded, may be null
      * 
@@ -159,7 +159,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
      * 
      * @throws UnableToEncodeAttributeException thrown if there is a problem encoding an attribute
      */
-    private org.opensaml.saml1.core.Attribute encodeAttribute(Attribute attribute)
+    private org.opensaml.saml.saml1.core.Attribute encodeAttribute(Attribute attribute)
             throws UnableToEncodeAttributeException {
         if (attribute == null) {
             return null;
@@ -178,7 +178,7 @@ public class AddAttributeStatementToAssertion extends AbstractIdentityProviderAc
                     && encoder instanceof AbstractSaml1AttributeEncoder) {
                 log.debug("Action {}: Encoding attribute {} as a SAML 1 Attribute", getId(), attribute.getId());
                 try {
-                    return (org.opensaml.saml1.core.Attribute) encoder.encode(attribute);
+                    return (org.opensaml.saml.saml1.core.Attribute) encoder.encode(attribute);
                 } catch (AttributeEncodingException e) {
                     throw new UnableToEncodeAttributeException(attribute, e);
                 }

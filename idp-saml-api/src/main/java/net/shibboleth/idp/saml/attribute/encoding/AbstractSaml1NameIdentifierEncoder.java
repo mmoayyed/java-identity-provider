@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.attribute.encoding;
 
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 
 /** Base class for attribute encoders that produce a SAML 1 {@link NameIdentifier}. */
 public abstract class AbstractSaml1NameIdentifierEncoder extends AbstractSamlNameIdentifierEncoder<NameIdentifier> {

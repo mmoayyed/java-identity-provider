@@ -23,7 +23,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1NameIdentifierEncoder;
 
-import org.opensaml.saml1.core.NameIdentifier;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,8 +21,8 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.config.saml2.SsoProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.Assert;
 
-import org.opensaml.saml2.core.RequestAbstractType;
-import org.opensaml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.Response;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;

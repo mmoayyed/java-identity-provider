@@ -25,7 +25,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.config.Configuration;
-import org.opensaml.saml1.core.Attribute;
+import org.opensaml.saml.saml1.core.Attribute;
 
 /**
  * Base class for encoders that produce a SAML 1 {@link Attribute}.

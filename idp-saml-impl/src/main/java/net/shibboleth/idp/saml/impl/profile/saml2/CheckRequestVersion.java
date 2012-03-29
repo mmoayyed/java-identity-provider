@@ -26,7 +26,7 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

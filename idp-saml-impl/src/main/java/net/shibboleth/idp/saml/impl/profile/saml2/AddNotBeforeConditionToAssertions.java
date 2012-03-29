@@ -29,9 +29,9 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
-import org.opensaml.saml2.core.Assertion;
-import org.opensaml.saml2.core.Conditions;
-import org.opensaml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;

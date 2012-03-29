@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.profile;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.RoleDescriptor;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 
 /**
  * Subcontext that carries information SAML metadata about an associated entity. This context usually appears as a

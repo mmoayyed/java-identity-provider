@@ -26,7 +26,7 @@ import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml1.core.Request;
+import org.opensaml.saml.saml1.core.Request;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;

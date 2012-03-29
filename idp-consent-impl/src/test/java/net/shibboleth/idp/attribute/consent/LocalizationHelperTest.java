@@ -30,7 +30,7 @@ import javax.annotation.Resource;
 
 import net.shibboleth.idp.attribute.Attribute;
 
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
+import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;

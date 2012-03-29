@@ -38,6 +38,6 @@ public class Saml1ByteAttributeEncoder extends AbstractSaml1AttributeEncoder<byt
     /** {@inheritDoc} */
     protected XMLObject encodeValue(Attribute attribute, byte[] value) throws AttributeEncodingException {
         return SamlEncoderSupport.encodeByteArrayValue(attribute,
-                org.opensaml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
+                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
     }
 }

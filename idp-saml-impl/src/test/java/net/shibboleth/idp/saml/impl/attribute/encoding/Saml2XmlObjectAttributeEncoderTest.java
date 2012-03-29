@@ -27,8 +27,8 @@ import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.saml2.core.Attribute;
-import org.opensaml.saml2.core.AttributeValue;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -79,8 +79,8 @@ public class Saml2XmlObjectAttributeEncoderTest {
      * @param possibles the strings that they might be encoding.
      */
     private static void CheckValues(final XMLObject input, final String... possibles) {
-        Assert.assertTrue(input instanceof org.opensaml.saml1.core.Attribute);
-        final org.opensaml.saml1.core.Attribute attribute = (org.opensaml.saml1.core.Attribute) input;
+        Assert.assertTrue(input instanceof org.opensaml.saml.saml1.core.Attribute);
+        final org.opensaml.saml.saml1.core.Attribute attribute = (org.opensaml.saml.saml1.core.Attribute) input;
 
         final List<XMLObject> children = attribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 1, "Data must have but one entry");

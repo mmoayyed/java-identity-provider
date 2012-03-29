@@ -38,6 +38,6 @@ public class Saml2ByteAttributeEncoder extends AbstractSaml2AttributeEncoder<byt
     protected XMLObject encodeValue(net.shibboleth.idp.attribute.Attribute attribute, byte[] value)
             throws AttributeEncodingException {
         return SamlEncoderSupport.encodeByteArrayValue(attribute,
-                org.opensaml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
+                org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
     }
 }
