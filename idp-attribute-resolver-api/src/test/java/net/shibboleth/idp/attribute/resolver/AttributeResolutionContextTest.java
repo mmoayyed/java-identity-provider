@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -117,6 +118,7 @@ public class AttributeResolutionContextTest {
 
         Attribute attribute = new Attribute("foo");
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", attribute);
+        definition.initialize();
 
         context.recordAttributeDefinitionResolution(definition, Optional.<Attribute> fromNullable(attribute));
         Assert.assertNotNull(context.getResolvedAttributeDefinitions());
@@ -134,6 +136,7 @@ public class AttributeResolutionContextTest {
         }
 
         definition = new MockAttributeDefinition("bar", (Attribute) null);
+        definition.initialize();
 
         context.recordAttributeDefinitionResolution(definition, Optional.<Attribute> absent());
         Assert.assertNotNull(context.getResolvedAttributeDefinitions());
@@ -160,6 +163,7 @@ public class AttributeResolutionContextTest {
         attributes.put(attribute.getId(), attribute);
 
         MockDataConnector connector = new MockDataConnector("foo", attributes);
+        connector.initialize();
 
         context.recordDataConnectorResolution(connector, Optional.of(attributes));
         Assert.assertNotNull(context.getResolvedDataConnectors());
@@ -177,6 +181,7 @@ public class AttributeResolutionContextTest {
         }
 
         connector = new MockDataConnector("bar", (Map) null);
+        connector.initialize();
 
         context.recordDataConnectorResolution(connector, Optional.<Map<String, Attribute>>absent());
         Assert.assertNotNull(context.getResolvedDataConnectors());
@@ -187,5 +192,16 @@ public class AttributeResolutionContextTest {
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar") instanceof ResolvedDataConnector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar").getResolvedConnector() == connector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar").resolve(context) == Optional.<Map<String, Attribute>>absent());
+        
+        try {
+            StaticDataConnector other = new StaticDataConnector();
+            other.setId("bar");
+            other.setValues(Collections.EMPTY_LIST);
+            other.initialize();
+            context.recordDataConnectorResolution(other, Optional.<Map<String, Attribute>>absent());
+            Assert.fail("Cannot cross the same bridge twice or add the same resolvedId twice");
+        } catch (AttributeResolutionException ex) {
+            //OK
+        }
     }
 }

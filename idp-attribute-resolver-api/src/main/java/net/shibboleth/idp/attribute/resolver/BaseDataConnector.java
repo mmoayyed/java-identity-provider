@@ -81,8 +81,13 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
             log.debug("Data connector '{}': no attributes were produced during resolution", getId());
             return optionalResult;
         } else {
-            log.debug("Data connector '{}': produced the following {} attributes during resolution ", new Object[] {
-                    getId(), optionalResult.get().size(), optionalResult.get().values(),});
+            log.debug("Data connector '{}': produced the following {} attributes during resolution {}", new Object[] {
+                    getId(), optionalResult.get().size(), optionalResult.get().keySet(),});
+            for (String attrName : optionalResult.get().keySet()) {
+                Attribute attr = optionalResult.get().get(attrName);
+                log.debug("Data connector '{}': Attribute '{}': Values '{}'",
+                        new Object[] {getId(), attrName, attr.getValues(),});
+            }
         }
 
         return optionalResult;

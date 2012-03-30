@@ -41,6 +41,7 @@ import net.shibboleth.utilities.java.support.logic.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -222,6 +223,29 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      */
     protected void doValidate() throws ComponentValidationException {
 
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (!(obj instanceof BaseResolverPlugin)) {
+            return false;
+        }
+        
+        BaseResolverPlugin<ResolvedType> other = (BaseResolverPlugin<ResolvedType>) obj;
+        return Objects.equal(getId(), other.getId());        
     }
 
     /**

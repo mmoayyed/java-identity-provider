@@ -76,7 +76,8 @@ public final class PluginDependencySupport {
             ResolvedDataConnector dataConnector =
                     resolutionContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
-                assert dependency.getDependencyAttributeId().isPresent() : "Data connector dependencies must specify a dependant attribute ID";
+                assert dependency.getDependencyAttributeId().isPresent() : "Data connector dependencies "
+                        + "must specify a dependant attribute ID";
 
                 if (dataConnector.getResolvedAttributes().isPresent()) {
                     resolvedAttribute =
@@ -128,7 +129,7 @@ public final class PluginDependencySupport {
                     resolutionContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
                 if (dataConnector.getResolvedAttributes().isPresent()) {
-                    addAttributeValues(dataConnector.getResolvedAttributes().orNull(), result);
+                    addAttributeValues(dataConnector.getResolvedAttributes().get(), result);
                     continue;
                 }
             }
@@ -143,12 +144,8 @@ public final class PluginDependencySupport {
      * @param sources the source attributes
      * @param target current set attribute values
      */
-    @Nonnull private static void addAttributeValues(@Nullable final Map<String, Attribute> sources,
+    @Nonnull private static void addAttributeValues(@Nonnull final Map<String, Attribute> sources,
             @Nullable final Map<String, Set<AttributeValue>> target) {
-        if (sources == null) {
-            return;
-        }
-
         for (Attribute source : sources.values()) {
             if (source == null) {
                 continue;

@@ -39,9 +39,6 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -108,7 +105,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public synchronized void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> descriptions) {
+    public synchronized void setDisplayDescriptions(@Nullable @NullableElements 
+            final Map<Locale, String> descriptions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -237,9 +235,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
                     resolvedAttribute.getValues());
         }
 
-        log.debug(
-                "Attribute definition '{}': associating the following display descriptions with the resolved attribute: {}",
-                getId(), getDisplayDescriptions());
+        log.debug("Attribute definition '{}': associating the following display descriptions"
+                + " with the resolved attribute: {}", getId(), getDisplayDescriptions());
         resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
 
         log.debug("Attribute definition '{}': associating the following display names with the resolved attribute: {}",

@@ -60,6 +60,8 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
             @Nonnull Optional<Attribute> attribute) {
         resolvedDefinition = Assert.isNotNull(definition, "Resolved attribute definition can not be null");
         resolvedAttribute = Assert.isNotNull(attribute, "Resolved attribute can not be null");
+        Assert.isTrue(definition.isInitialized());
+        Assert.isFalse(definition.isDestroyed());
     }
 
     /** {@inheritDoc} */

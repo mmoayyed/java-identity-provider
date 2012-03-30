@@ -368,6 +368,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             } else if (dataConnectors.containsKey(pluginId)) {
                 resolveDataConnector(pluginId, resolutionContext);
             } else {
+                // This will not happen for as long as we test this in initialization
                 throw new AttributeResolutionException("Plugin " + plugin.getId() + " contains a depedency on plugin "
                         + pluginId + " which does not exist.");
             }

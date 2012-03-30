@@ -18,12 +18,12 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,13 +43,15 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     /**
      * Set the attribute value we are returning.
      * 
-     * @param newAttrribute what to set.
+     * @param newAttribute what to set.
      */
-    public synchronized void setAttribute(@Nonnull Attribute newAttrribute) {
+    public synchronized void setValue(@Nullable Attribute newAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        value = Optional.of(Assert.isNotNull(newAttrribute, "Static attribute can not be null"));
+        
+        if (null != newAttribute) {
+            value = Optional.of(newAttribute);
+        }
     }
 
     /**
@@ -57,13 +59,15 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the attribute.
      */
-    @Nonnull public Attribute getValue() {
-        return value.get();
+    @Nonnull public Optional<Attribute> getValue() {
+        return value;
     }
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         log.debug("Attribute definition '{}': Resolving static attribute {}", getId(), value.get());
         return value;
     }

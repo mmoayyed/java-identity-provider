@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.HashMap;
+import java.util.Arrays;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -86,7 +86,7 @@ public class ResolverTestSupport {
         try {
             StaticAttributeDefinition definition = new StaticAttributeDefinition();
             definition.setId(attributeId);
-            definition.setAttribute(attribute);
+            definition.setValue(attribute);
             definition.initialize();
             return definition;
         } catch (ComponentInitializationException e) {
@@ -97,15 +97,11 @@ public class ResolverTestSupport {
     }
 
     public static StaticDataConnector buildDataConnector(String connectorId, Attribute... attributes) {
-        HashMap<String, Attribute> connectorValues = new HashMap<String, Attribute>();
-        for (Attribute attribute : attributes) {
-            connectorValues.put(attribute.getId(), attribute);
-        }
 
         try {
             StaticDataConnector connector = new StaticDataConnector();
             connector.setId(connectorId);
-            connector.setValues(connectorValues);
+            connector.setValues(Arrays.asList(attributes));
             connector.initialize();
 
             return connector;

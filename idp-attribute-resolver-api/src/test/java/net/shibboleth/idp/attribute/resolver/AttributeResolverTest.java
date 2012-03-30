@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -272,14 +273,17 @@ public class AttributeResolverTest {
         Assert.assertNotNull(context.getResolvedDataConnectors().get("dc1"));
     }
 
-    /** Test that resolve w/ dependencies returns the expected results. 
+    /**
+     * Test that resolve w/ dependencies returns the expected results.
+     * 
      * @throws ComponentInitializationException if badness happens
-     * @throws AttributeResolutionException if badness happens in attribute resolution*/
-    @Test public void testResolveWithDependencyFail1() throws ComponentInitializationException, AttributeResolutionException
-           /* throws Exception */ {
+     * @throws AttributeResolutionException if badness happens in attribute resolution
+     */
+    @Test public void testResolveWithDependencyFail1() throws ComponentInitializationException,
+            AttributeResolutionException
+    /* throws Exception */{
         MockDataConnector dc1 = new MockDataConnector("dc1", new AttributeResolutionException());
         dc1.setFailoverDataConnectorId("dc2");
-        dc1.setPropagateResolutionExceptions(true);
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
@@ -287,7 +291,7 @@ public class AttributeResolverTest {
 
         LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
         connectors.add(dc1);
-        
+
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
         definitions.add(ad1);
 
@@ -301,6 +305,140 @@ public class AttributeResolverTest {
         //
         resolver.resolveAttributes(context);
     }
+
+    /**
+     * Test that resolve w/ dependencies returns the expected results.
+     * 
+     * @throws ComponentInitializationException if badness happens
+     * @throws AttributeResolutionException if badness happens in attribute resolution
+     */
+    @Test public void testResolveDataConnectorFail() throws ComponentInitializationException,
+            AttributeResolutionException {
+        MockDataConnector dc1 = new MockDataConnector("dc1", new AttributeResolutionException());
+
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
+        ad1.setDependencies(Lists.newArrayList(dep1));
+
+        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dc1);
+
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        definitions.add(ad1);
+
+        AttributeResolver resolver = new AttributeResolver("foo", definitions, connectors);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        try {
+            resolver.resolveAttributes(context);
+            Assert.fail();
+        } catch (AttributeResolutionException e) {
+            //
+            // OK
+        }
+    }
+
+    @Test public void testCachedDataConnectorDependency() throws ComponentInitializationException,
+            AttributeResolutionException {
+        MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
+
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        Attribute attr = new Attribute("test1");
+        attr.getValues().add(new StringAttributeValue("value1"));
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
+        ad1.setDependencies(Lists.newArrayList(dep1));
+
+        attr = new Attribute("test2");
+        attr.getValues().add(new StringAttributeValue("value2"));
+        MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", attr);
+        ad2.setDependencies(Lists.newArrayList(new ResolverPluginDependency("dc1", null)));
+
+        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dc1);
+
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        definitions.add(ad1);
+        definitions.add(ad2);
+
+        AttributeResolver resolver = new AttributeResolver("foo", definitions, connectors);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
+        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad2"));
+        Assert.assertEquals(context.getResolvedAttributes().size(), 2);
+        
+        MockDataConnector dcfail1 = new MockDataConnector("failer1", new AttributeResolutionException());
+        dcfail1.setInvalid(true);
+        dcfail1.setPropagateResolutionExceptions(false);
+        ResolverPluginDependency depFail1 = new ResolverPluginDependency("failer1", null);
+        MockDataConnector dcfail2 = new MockDataConnector("failer2", new AttributeResolutionException());
+        dcfail2.setFailoverDataConnectorId("failer1");
+        dcfail2.setInvalid(true);
+        ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2", null);
+        
+        connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dcfail1);
+        connectors.add(dcfail2);
+        
+        MockAttributeDefinition ad10 = new MockAttributeDefinition("ad10", new Attribute("ten"));
+        ad10.setDependencies(Lists.newArrayList(depFail1));
+        ad10.setPropagateResolutionExceptions(false);
+
+        MockAttributeDefinition ad11 = new MockAttributeDefinition("ad11", new Attribute("eleven"));
+        ad11.setDependencies(Lists.newArrayList(depFail2));
+        ad11.setPropagateResolutionExceptions(false);
+
+        definitions = new LazySet<BaseAttributeDefinition>();
+        definitions.add(ad10);
+        definitions.add(ad11);
+
+        resolver = new AttributeResolver("failoverTest", definitions, connectors);
+        resolver.initialize();
+        
+        try {
+            resolver.validate();
+            Assert.fail();
+        } catch (ComponentValidationException e) {
+            // OK
+        }
+
+    }
+
+    @Test public void testDataConnectorWithDataDependency() throws ComponentInitializationException,
+            AttributeResolutionException {
+        Map<String, Attribute> values = new HashMap<String, Attribute>(1);
+        Attribute attr = new Attribute("SubAttribute");
+        attr.getValues().add(new StringAttributeValue("SubValue1"));
+
+        values.put("SubAttribute", attr);
+        MockDataConnector dc1 = new MockDataConnector("dc1", values);
+
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", "SubAttribute");
+        attr = new Attribute("test1");
+        attr.getValues().add(new StringAttributeValue("value1"));
+        MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
+        ad1.setDependencies(Lists.newArrayList(dep1));
+
+        LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
+        connectors.add(dc1);
+
+        LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
+        definitions.add(ad1);
+        AttributeResolver resolver = new AttributeResolver("foo", definitions, connectors);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad1"));
+        Assert.assertEquals(context.getResolvedAttributes().size(), 1);
+        Assert.assertEquals(context.getResolvedDataConnectors().size(), 1);
+    }
+
 
     /**
      * Test that after resolution attribute definitions which returned null values don't have their results show up in

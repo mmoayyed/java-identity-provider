@@ -58,7 +58,9 @@ public final class ResolvedDataConnector extends BaseDataConnector {
             @Nonnull Optional<Map<String, Attribute>> attributes) {
         resolvedConnector = Assert.isNotNull(connector, "Resolved data connector can not be null");
         resolvedAttributes = Assert.isNotNull(attributes, "Resolved attributes can not be null");
-    }
+        Assert.isTrue(connector.isInitialized(), "Provided connector should be initialized");
+        Assert.isFalse(connector.isDestroyed(), "Provided connector must not be initialized");    
+        }
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
