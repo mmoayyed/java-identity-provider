@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.ConfigurationException;
+import org.opensaml.core.xml.config.ConfigurationException;
 import org.opensaml.saml.config.DefaultBootstrap;
 import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml.saml2.metadata.provider.MetadataProviderException;

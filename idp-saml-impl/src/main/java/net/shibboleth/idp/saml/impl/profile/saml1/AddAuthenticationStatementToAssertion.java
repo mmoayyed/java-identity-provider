@@ -29,7 +29,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;

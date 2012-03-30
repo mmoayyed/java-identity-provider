@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.slf4j.Logger;

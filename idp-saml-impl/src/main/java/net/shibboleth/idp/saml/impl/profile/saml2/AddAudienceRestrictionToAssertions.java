@@ -31,7 +31,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
-import org.opensaml.core.xml.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Audience;
