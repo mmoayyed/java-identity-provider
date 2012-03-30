@@ -25,15 +25,15 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 
+import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.util.AttributeMap;
 import org.opensaml.core.xml.util.XMLObjectChildrenList;
-import org.opensaml.core.xml.validation.AbstractValidatingXMLObject;
 import org.opensaml.xmlsec.signature.KeyInfo;
 
 /** Implementation of {@link KeyAuthority}. */
 @NotThreadSafe
-public class KeyAuthorityImpl extends AbstractValidatingXMLObject implements KeyAuthority {
+public class KeyAuthorityImpl extends AbstractXMLObject implements KeyAuthority {
 
     /** The list of KeyInfo child elements. */
     private final List<KeyInfo> keyInfos;

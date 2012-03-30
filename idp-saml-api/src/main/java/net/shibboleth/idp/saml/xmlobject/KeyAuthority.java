@@ -22,11 +22,10 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.opensaml.core.xml.AttributeExtensibleXMLObject;
-import org.opensaml.core.xml.validation.ValidatingXMLObject;
 import org.opensaml.xmlsec.signature.KeyInfo;
 
 /** XMLObject for the Shibboleth KeyAuthority metadata extension. */
-public interface KeyAuthority extends ValidatingXMLObject, AttributeExtensibleXMLObject {
+public interface KeyAuthority extends AttributeExtensibleXMLObject {
 
     /** Element local name. */
     public static final String DEFAULT_ELEMENT_LOCAL_NAME = "KeyAuthority";

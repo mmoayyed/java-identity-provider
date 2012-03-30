@@ -23,10 +23,9 @@ import javax.xml.namespace.QName;
 
 import org.opensaml.core.xml.schema.XSBooleanValue;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.core.xml.validation.ValidatingXMLObject;
 
 /** XMLObject for the Shibboleth Scope metadata extension. */
-public interface Scope extends ValidatingXMLObject, XSString {
+public interface Scope extends XSString {
 
     /** Element local name. */
     public static final String DEFAULT_ELEMENT_LOCAL_NAME = "Scope";

@@ -24,13 +24,13 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.saml.xmlobject.Scope;
 
+import org.opensaml.core.xml.AbstractXMLObject;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSBooleanValue;
-import org.opensaml.core.xml.validation.AbstractValidatingXMLObject;
 
 /** Implementation of {@link Scope}. */
 @NotThreadSafe
-public class ScopeImpl extends AbstractValidatingXMLObject implements Scope {
+public class ScopeImpl extends AbstractXMLObject implements Scope {
 
     /** The regexp attribute value. */
     private XSBooleanValue regexp;
