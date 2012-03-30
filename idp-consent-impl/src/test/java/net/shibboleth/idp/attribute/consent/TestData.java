@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.config.ConfigurationException;
+import org.opensaml.core.xml.config.XMLConfigurationException;
 import org.opensaml.saml.config.DefaultBootstrap;
 import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml.saml2.metadata.provider.MetadataProviderException;
@@ -189,7 +189,7 @@ public class TestData {
     private static MetadataProvider createMetadataProvider(String file) {
         try {
             DefaultBootstrap.bootstrap();
-        } catch (ConfigurationException e) {
+        } catch (XMLConfigurationException e) {
             e.printStackTrace();
         }
 
