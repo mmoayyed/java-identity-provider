@@ -17,40 +17,38 @@
 
 package net.shibboleth.idp.authn;
 
+import java.net.InetAddress;
+
 import javax.annotation.Nonnull;
-import javax.security.auth.kerberos.KerberosTicket;
 
 import net.shibboleth.utilities.java.support.logic.Assert;
 
 import org.opensaml.messaging.context.BaseContext;
 
-/**
- * Context, usually attached to {@link AuthenticationRequestContext}, that carries a {@link KerberosTicket} to be
- * validated.
- */
-public class KerberosTicketContext extends BaseContext {
+/** A context containing the IP address of the user agent. */
+public class UserAgentAddressContext extends BaseContext {
 
-    /** Kerberos ticket to be validated. */
-    private KerberosTicket ticket;
+    /** Address of the user-agent host. */
+    private InetAddress address;
 
     /**
-     * Gets the Kerberos ticket to be validated.
+     * Gets the address of the user-agent host.
      * 
-     * @return Kerberos ticket to be validated
+     * @return address of the user-agent host
      */
-    @Nonnull public KerberosTicket getTicket() {
-        return ticket;
+    public InetAddress getUserAgentAddress() {
+        return address;
     }
-    
+
     /**
-     * Sets the Kerberos ticket to be validated.
+     * Sets the address of the user-agent host.
      * 
-     * @param kerbTicket the Kerberos ticket to be validated
+     * @param userAgentAddress address of the user-agent host
      * 
      * @return this context
      */
-    public KerberosTicketContext setTicket(@Nonnull final KerberosTicket kerbTicket){
-        ticket = Assert.isNotNull(kerbTicket, "Kerberos ticket can not be null");
+    public UserAgentAddressContext setUserAgentAddress(@Nonnull final InetAddress userAgentAddress) {
+        address = Assert.isNotNull(userAgentAddress, "User-agent address can not be null");
         return this;
     }
 }

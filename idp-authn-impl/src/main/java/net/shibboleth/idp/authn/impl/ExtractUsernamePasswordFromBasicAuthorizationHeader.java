@@ -54,9 +54,8 @@ public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends Abstrac
         final String encodedCredentials = extractAuthorizationCredentials(httpRequest);
         final Pair<String, String> decodedCredentials = decodeAuthorizationCredentials(encodedCredentials);
 
-        UsernamePasswordContext upctx = authenticationContext.getSubcontext(UsernamePasswordContext.class, true);
-        upctx.setUsername(decodedCredentials.getFirst());
-        upctx.setPassword(decodedCredentials.getSecond());
+        authenticationContext.getSubcontext(UsernamePasswordContext.class, true)
+                .setUsername(decodedCredentials.getFirst()).setPassword(decodedCredentials.getSecond());
 
         return ActionSupport.buildProceedEvent(this);
     }

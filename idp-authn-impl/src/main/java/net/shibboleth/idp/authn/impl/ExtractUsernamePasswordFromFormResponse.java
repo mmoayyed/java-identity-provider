@@ -53,9 +53,8 @@ public class ExtractUsernamePasswordFromFormResponse extends AbstractAuthenticat
             throw new UnableToExtractUsernamePasswordException("Request did not contain a password");
         }
 
-        UsernamePasswordContext upctx = authenticationContext.getSubcontext(UsernamePasswordContext.class, true);
-        upctx.setUsername(username);
-        upctx.setPassword(password);
+        authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(username)
+                .setPassword(password);
 
         return ActionSupport.buildProceedEvent(this);
     }

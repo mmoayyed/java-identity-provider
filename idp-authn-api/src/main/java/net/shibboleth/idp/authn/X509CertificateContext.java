@@ -47,8 +47,11 @@ public class X509CertificateContext extends BaseContext {
      * Sets the certificate to be validated.
      * 
      * @param cert certificate to be validated
+     * 
+     * @return this context
      */
-    public void setCertificate(@Nonnull final X509Certificate cert) {
+    public X509CertificateContext setCertificate(@Nonnull final X509Certificate cert) {
         certificate = Assert.isNotNull(cert, "Certificate can not be null");
+        return this;
     }
 }

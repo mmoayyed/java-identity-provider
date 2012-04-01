@@ -49,9 +49,12 @@ public class UsernamePasswordContext extends BaseContext {
      * Sets the username.
      * 
      * @param name the username
+     * 
+     * @return this context
      */
-    public void setUsername(@Nonnull final String name) {
+    public UsernamePasswordContext setUsername(@Nonnull final String name) {
         username = Assert.isNotNull(name, "Username can not be null");
+        return this;
     }
 
     /**
@@ -67,8 +70,11 @@ public class UsernamePasswordContext extends BaseContext {
      * Sets the password associated with the username.
      * 
      * @param pass password associated with the username
+     * 
+     * @return this context
      */
-    public void setPassword(@Nonnull final String pass) {
+    public UsernamePasswordContext setPassword(@Nonnull final String pass) {
         password = Assert.isNotNull(pass, "Password can not be null");
+        return this;
     }
 }

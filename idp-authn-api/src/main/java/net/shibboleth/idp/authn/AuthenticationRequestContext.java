@@ -94,9 +94,14 @@ public final class AuthenticationRequestContext extends BaseContext {
         return completionInstant;
     }
 
-    /** Sets the completion time of the authentication attempt to the current time. */
-    public void setCompletionInstant() {
+    /**
+     * Sets the completion time of the authentication attempt to the current time.
+     * 
+     * @return this authentication request context
+     */
+    public AuthenticationRequestContext setCompletionInstant() {
         completionInstant = System.currentTimeMillis();
+        return this;
     }
 
     /**
@@ -112,9 +117,12 @@ public final class AuthenticationRequestContext extends BaseContext {
      * Sets whether authentication must occur even if an existing authentication event exists and is still valid.
      * 
      * @param force whether authentication must occur even if an existing authentication event exists and is still valid
+     * 
+     * @return this authentication request context
      */
-    public void setForcingAuthentication(boolean force) {
+    public AuthenticationRequestContext setForcingAuthentication(boolean force) {
         forcingAuthentication = force;
+        return this;
     }
 
     /**
@@ -136,9 +144,12 @@ public final class AuthenticationRequestContext extends BaseContext {
      * 
      * @param workflow authentication workflow to use if user authentication is needed but no particular workflows are
      *            requested
+     * 
+     * @return this authentication request context
      */
-    public void setDefaultWorfklow(@Nullable final AuthenticationWorkflowDescriptor workflow) {
+    public AuthenticationRequestContext setDefaultWorfklow(@Nullable final AuthenticationWorkflowDescriptor workflow) {
         defaultWorfklow = Optional.fromNullable(workflow);
+        return this;
     }
 
     /**
@@ -156,13 +167,15 @@ public final class AuthenticationRequestContext extends BaseContext {
      * Sets the authentication workflows, in order of preference, that must be used if user authentication is required.
      * 
      * @param workflows authentication workflows, in order of preference, that must be used if user authentication is
-     *            required, may be null or contain null elements
+     *            required
+     * 
+     * @return this authentication request context
      */
-    public void
-            setRequestedWorkflows(@Nullable @NullableElements final List<AuthenticationWorkflowDescriptor> workflows) {
+    public AuthenticationRequestContext setRequestedWorkflows(
+            @Nullable @NullableElements final List<AuthenticationWorkflowDescriptor> workflows) {
         if (workflows == null || workflows.isEmpty()) {
             requestedWorkflows = Collections.emptyList();
-            return;
+            return this;
         }
 
         ArrayList<AuthenticationWorkflowDescriptor> descriptors = new ArrayList<AuthenticationWorkflowDescriptor>();
@@ -183,6 +196,8 @@ public final class AuthenticationRequestContext extends BaseContext {
         } else {
             requestedWorkflows = Collections.unmodifiableList(descriptors);
         }
+
+        return this;
     }
 
     /**
@@ -198,10 +213,13 @@ public final class AuthenticationRequestContext extends BaseContext {
      * Sets the authentication workflow that was attempted in order to authenticate the user.
      * 
      * @param workflow authentication workflow that was attempted in order to authenticate the user
+     * 
+     * @return this authentication request context
      */
-    public void setAttemptedWorkflow(@Nonnull final AuthenticationWorkflowDescriptor workflow) {
+    public AuthenticationRequestContext setAttemptedWorkflow(@Nonnull final AuthenticationWorkflowDescriptor workflow) {
         assert workflow != null : "Authentication workflow descriptor can not be null";
         attemptedWorkflow = Optional.of(workflow);
+        return this;
     }
 
     /**
@@ -217,10 +235,13 @@ public final class AuthenticationRequestContext extends BaseContext {
      * Sets the principal that was authenticated.
      * 
      * @param principal principal that was authenticated
+     * 
+     * @return this authentication request context
      */
-    public void setAuthenticatedPrincipal(@Nonnull final Principal principal) {
+    public AuthenticationRequestContext setAuthenticatedPrincipal(@Nonnull final Principal principal) {
         assert principal != null : "Principal can not be null";
         authenticatedPrincipal = Optional.of(principal);
+        return this;
     }
 
     /**
