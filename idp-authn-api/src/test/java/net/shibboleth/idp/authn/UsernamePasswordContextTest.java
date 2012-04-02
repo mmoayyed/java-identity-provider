@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,7 +42,7 @@ public class UsernamePasswordContextTest {
         try {
             ctx.setUsername(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(ctx.getUsername(), "");
         }
     }
@@ -62,7 +64,7 @@ public class UsernamePasswordContextTest {
         try {
             ctx.setPassword(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(ctx.getPassword(), "");
         }
     }

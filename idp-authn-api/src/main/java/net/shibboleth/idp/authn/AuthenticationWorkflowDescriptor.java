@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Objects;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** A descriptor of an authentication workflow. */
@@ -49,7 +49,7 @@ public class AuthenticationWorkflowDescriptor {
      * @param id unique ID of this workflow, can not be null or empty
      */
     public AuthenticationWorkflowDescriptor(@Nonnull @NotEmpty final String id) {
-        workflowId = Assert.isNotNull(StringSupport.trimOrNull(id), "Workflow ID can not be null or empty");
+        workflowId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Workflow ID can not be null or empty");
     }
 
     /**
@@ -114,7 +114,7 @@ public class AuthenticationWorkflowDescriptor {
      * @param workflowLifetime the lifetime for the workflow, must be 0 or greater
      */
     public void setLifetime(long workflowLifetime) {
-        lifetime = Assert.isGreaterThanOrEqual(0, workflowLifetime, "Lifetime must be greater than or equal to 0");
+        lifetime = Constraint.isGreaterThanOrEqual(0, workflowLifetime, "Lifetime must be greater than or equal to 0");
     }
 
     /**
@@ -135,7 +135,7 @@ public class AuthenticationWorkflowDescriptor {
      */
     public void setInactivityTimeout(long inactivityTimeout) {
         timeout =
-                Assert.isGreaterThanOrEqual(0, inactivityTimeout,
+                Constraint.isGreaterThanOrEqual(0, inactivityTimeout,
                         "Inactivity timeout must be greater than, or equal to, 0");
     }
 

@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.predicate;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
@@ -36,7 +36,7 @@ public class InboundMessageIssuerPredicate extends BaseInboundMessageContextPred
     private Predicate<String> issuerMatch;
 
     public InboundMessageIssuerPredicate(@Nonnull Predicate<String> issuerMatchingPredicate) {
-        issuerMatch = Assert.isNotNull(issuerMatchingPredicate, "Issuer matching predicate can not be null");
+        issuerMatch = Constraint.isNotNull(issuerMatchingPredicate, "Issuer matching predicate can not be null");
     }
 
     /** {@inheritDoc} */

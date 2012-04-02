@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -48,7 +49,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
         try {
             new AttributeValuePredicateMatcher(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
@@ -59,28 +60,28 @@ public class NotMatcherTest extends AbstractMatcherTest {
         try {
             matcher.getMatchingValues(null, filterContext);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             new NotMatcher(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }

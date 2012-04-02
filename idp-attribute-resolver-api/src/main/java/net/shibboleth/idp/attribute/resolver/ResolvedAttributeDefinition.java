@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -58,10 +58,10 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      */
     public ResolvedAttributeDefinition(@Nonnull BaseAttributeDefinition definition,
             @Nonnull Optional<Attribute> attribute) {
-        resolvedDefinition = Assert.isNotNull(definition, "Resolved attribute definition can not be null");
-        resolvedAttribute = Assert.isNotNull(attribute, "Resolved attribute can not be null");
-        Assert.isTrue(definition.isInitialized());
-        Assert.isFalse(definition.isDestroyed());
+        resolvedDefinition = Constraint.isNotNull(definition, "Resolved attribute definition can not be null");
+        Constraint.isTrue(definition.isInitialized(), "Resolved definition must have been initialized");
+        Constraint.isFalse(definition.isDestroyed(), "Resolved definition can not have been destroyed");
+        resolvedAttribute = Constraint.isNotNull(attribute, "Resolved attribute can not be null");
     }
 
     /** {@inheritDoc} */

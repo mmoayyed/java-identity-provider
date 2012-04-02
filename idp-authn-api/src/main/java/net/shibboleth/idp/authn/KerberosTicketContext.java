@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn;
 import javax.annotation.Nonnull;
 import javax.security.auth.kerberos.KerberosTicket;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -50,7 +50,7 @@ public class KerberosTicketContext extends BaseContext {
      * @return this context
      */
     public KerberosTicketContext setTicket(@Nonnull final KerberosTicket kerbTicket){
-        ticket = Assert.isNotNull(kerbTicket, "Kerberos ticket can not be null");
+        ticket = Constraint.isNotNull(kerbTicket, "Kerberos ticket can not be null");
         return this;
     }
 }

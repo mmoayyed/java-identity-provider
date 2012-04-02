@@ -23,6 +23,7 @@ import java.util.List;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -200,21 +201,21 @@ public class AttributeFilterContextTest {
         try {
             context.addPermittedAttributeValues(null, Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             context.addPermittedAttributeValues("", Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             context.addPermittedAttributeValues("two", Lists.newArrayList(aStringAttributeValue));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
@@ -250,21 +251,21 @@ public class AttributeFilterContextTest {
         try {
             context.addDeniedAttributeValues(null, Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             context.addDeniedAttributeValues("", Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             context.addDeniedAttributeValues("two", Lists.newArrayList(bStringAttributeValue));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 

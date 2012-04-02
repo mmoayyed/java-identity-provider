@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute;
 import java.util.Arrays;
 
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -39,7 +40,7 @@ public class ByteAttributeValueTest {
         try {
             new ByteAttributeValue(null);
             Assert.fail("able to set null attribute value");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }

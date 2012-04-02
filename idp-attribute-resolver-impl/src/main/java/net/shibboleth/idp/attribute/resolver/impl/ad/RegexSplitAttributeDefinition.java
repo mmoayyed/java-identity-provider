@@ -35,7 +35,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,13 +73,14 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        regexp = Assert.isNotNull(expression, "Regular expression can not be null");
+        regexp = Constraint.isNotNull(expression, "Regular expression can not be null");
     }
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+
 
         final Attribute resultantAttribute = new Attribute(getId());
 

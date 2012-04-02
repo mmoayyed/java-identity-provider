@@ -39,7 +39,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import com.google.common.base.Objects;
@@ -93,14 +93,14 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
             throw new UnmodifiableComponentException();
         }
 
-        script = Assert.isNotNull(matcherScript, "Attribute value matching script can not be null");
+        script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");
     }
 
     /** {@inheritDoc} */
     @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
             @Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
-        assert attribute != null : "Attribute to be filtered can not be null";
-        assert filterContext != null : "Attribute filter contet can not be null";
+        Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         final EvaluableScript currentScript = script;
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.impl.profile;
 
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -64,13 +64,13 @@ public class IdpInitatedSsoRequest {
      */
     public IdpInitatedSsoRequest(String newEntityId, String newAcsUrl, String newTarget, long newTime) {
         entityId =
-                Assert.isNotNull(StringSupport.trimOrNull(newEntityId), "Service provider ID can not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(newEntityId), "Service provider ID can not be null or empty");
 
         acsUrl = StringSupport.trimOrNull(newAcsUrl);
 
         relayState = StringSupport.trimOrNull(newTarget);
 
-        time = Assert.isGreaterThanOrEqual(0, newTime, "Time must be greater than or equal to 0");
+        time = Constraint.isGreaterThanOrEqual(0, newTime, "Time must be greater than or equal to 0");
     }
 
     /**

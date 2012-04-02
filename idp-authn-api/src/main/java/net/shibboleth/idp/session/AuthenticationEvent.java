@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -55,9 +55,9 @@ public final class AuthenticationEvent extends BaseContext {
      */
     public AuthenticationEvent(@Nonnull @NotEmpty final String workflow, @Nonnull final Principal principal) {
         authenticationWorkflow =
-                Assert.isNotNull(StringSupport.trimOrNull(workflow), "Authentication method can not be null nor empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(workflow), "Authentication method can not be null nor empty");
 
-        authenticatedPrincipal = Assert.isNotNull(principal, "Authenticationed princpal can not be null");
+        authenticatedPrincipal = Constraint.isNotNull(principal, "Authenticationed princpal can not be null");
 
         authenticationInstant = System.currentTimeMillis();
         lastActivityInstant = authenticationInstant;
@@ -105,7 +105,7 @@ public final class AuthenticationEvent extends BaseContext {
      * @param instant last activity instant, in milliseconds since the epoch, for this event, must be greater than 0
      */
     public void setLastActivityInstant(final long instant) {
-        lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
+        lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**

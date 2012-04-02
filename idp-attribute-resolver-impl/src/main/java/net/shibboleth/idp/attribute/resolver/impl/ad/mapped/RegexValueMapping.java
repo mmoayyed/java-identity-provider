@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
@@ -46,9 +46,9 @@ public class RegexValueMapping implements ValueMapping {
      *            result
      */
     public RegexValueMapping(final Pattern targetPattern, String returnValuePattern) {
-        target = Assert.isNotNull(targetPattern, "Target pattern can not be null or empty");
+        target = Constraint.isNotNull(targetPattern, "Target pattern can not be null or empty");
         resultPattern =
-                Assert.isNotNull(StringSupport.trimOrNull(returnValuePattern), "Return value can not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(returnValuePattern), "Return value can not be null or empty");
     }
 
     /** {@inheritDoc} */

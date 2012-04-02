@@ -22,6 +22,7 @@ import java.util.Arrays;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -56,29 +57,29 @@ public class AttributeValuePredicateTest {
         try {
             new AttributeValuePredicate(null, true);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
         final Predicate matchAtLeastOne = AttributeLogicSupport.atLeastOneAttributeValueMatches(matchTwo);
-        
+
         try {
             matchAtLeastOne.apply(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
         Assert.assertFalse(matchAtLeastOne.apply(oneVal));
         Assert.assertTrue(matchAtLeastOne.apply(twoVals));
         Assert.assertTrue(matchAtLeastOne.apply(threeVals));
-        
+
         final Predicate matchAll = AttributeLogicSupport.allAttributeValuesMatches(matchBoth);
-        
+
         try {
             matchAll.apply(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 

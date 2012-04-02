@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -84,9 +84,9 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * @param sessionSecret secrete for this session
      */
     public IdPSession(@Nonnull @NotEmpty final String sessionId, @Nonnull byte[] sessionSecret) {
-        id = Assert.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID can not be null or empty");
+        id = Constraint.isNotNull(StringSupport.trimOrNull(sessionId), "Session ID can not be null or empty");
 
-        assert sessionSecret != null : "Session secret can not be null";
+        Constraint.isNotNull(sessionSecret, "Session secret can not be null");
         secret = new byte[sessionSecret.length];
         System.arraycopy(sessionSecret, 0, secret, 0, sessionSecret.length);
 
@@ -135,7 +135,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
     public void setLastActivityInstant(long instant) {
-        lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
+        lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**
@@ -204,14 +204,13 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * @param session the service session
      */
     public void addServiceSession(@Nonnull final ServiceSession session) {
-        assert session != null : "Service session can not be null";
+        Constraint.isNotNull(session, "Service session can not be null");
 
         final String serviceId = session.getServiceId();
-
         try {
             authnServiceStateLock.lock();
-            assert !serviceSessions.containsKey(session.getId()) : "A session for service " + serviceId
-                    + " already exists";
+            Constraint.isFalse(serviceSessions.containsKey(session.getId()), "A session for service " + serviceId
+                    + " already exists");
 
             final AuthenticationEvent authnEvent = session.getAuthenticationEvent();
             if (!authenticationEvents.containsKey(authnEvent.getAuthenticationWorkflow())) {
@@ -232,7 +231,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * @return true if the given session had been associated with this IdP session and now is not
      */
     public boolean removeServiceSession(@Nonnull final ServiceSession session) {
-        assert session != null : "Service session can not be null";
+        Constraint.isNotNull(session, "Service session can not be null");
 
         return serviceSessions.remove(session.getServiceId(), session);
     }
@@ -245,7 +244,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
      * @param event the event to disassociate
      */
     public void removeAuthenticationEvent(@Nonnull final AuthenticationEvent event) {
-        assert event != null : "Authentication event can not be null";
+        Constraint.isNotNull(event, "Authentication event can not be null");
 
         try {
             authnServiceStateLock.lock();

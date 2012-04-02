@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
     /** {@inheritDoc} */
     @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull final ResultSet results)
             throws AttributeResolutionException {
-        assert results != null : "Result set can not be null";
+        Constraint.isNotNull(results, "Result set can not be null");
 
         try {
             if (!results.next()) {

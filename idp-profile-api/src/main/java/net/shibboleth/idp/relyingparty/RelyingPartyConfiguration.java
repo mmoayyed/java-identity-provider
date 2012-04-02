@@ -24,7 +24,7 @@ import java.util.Map;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Predicate;
@@ -57,13 +57,13 @@ public class RelyingPartyConfiguration {
             final Predicate<ProfileRequestContext> criteria,
             final Collection<? extends ProfileConfiguration> configurations) {
         id =
-                Assert.isNotNull(StringSupport.trimOrNull(configurationId),
+                Constraint.isNotNull(StringSupport.trimOrNull(configurationId),
                         "Relying party configuration ID can not be null or empty");
 
         responderEntityId =
-                Assert.isNotNull(StringSupport.trimOrNull(responderId), "Responder entity ID can not be null");
+                Constraint.isNotNull(StringSupport.trimOrNull(responderId), "Responder entity ID can not be null");
 
-        activationCriteria = Assert.isNotNull(criteria, "Relying partying configuration criteria can not be null");
+        activationCriteria = Constraint.isNotNull(criteria, "Relying partying configuration criteria can not be null");
 
         if (configurations == null || configurations.isEmpty()) {
             profileConfigurations = Collections.emptyMap();
@@ -74,7 +74,7 @@ public class RelyingPartyConfiguration {
         for (ProfileConfiguration config : configurations) {
             if (config != null) {
                 final String trimmedId =
-                        Assert.isNotNull(StringSupport.trimOrNull(config.getProfileId()), "ID of profile class "
+                        Constraint.isNotNull(StringSupport.trimOrNull(config.getProfileId()), "ID of profile class "
                                 + config.getClass().getName() + " can not be null");
                 configMap.put(trimmedId, config);
             }

@@ -18,7 +18,7 @@
 package net.shibboleth.idp.relyingparty;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -44,7 +44,7 @@ public final class RelyingPartySubcontext extends BaseContext {
      * @param rpId the relying party identifier, can not be null or empty
      */
     public RelyingPartySubcontext(String rpId) {
-        relyingPartyId = Assert.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
+        relyingPartyId = Constraint.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
     }
 
     /**

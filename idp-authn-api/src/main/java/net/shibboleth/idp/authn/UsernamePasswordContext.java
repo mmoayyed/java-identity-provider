@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -53,7 +53,7 @@ public class UsernamePasswordContext extends BaseContext {
      * @return this context
      */
     public UsernamePasswordContext setUsername(@Nonnull final String name) {
-        username = Assert.isNotNull(name, "Username can not be null");
+        username = Constraint.isNotNull(name, "Username can not be null");
         return this;
     }
 
@@ -74,7 +74,7 @@ public class UsernamePasswordContext extends BaseContext {
      * @return this context
      */
     public UsernamePasswordContext setPassword(@Nonnull final String pass) {
-        password = Assert.isNotNull(pass, "Password can not be null");
+        password = Constraint.isNotNull(pass, "Password can not be null");
         return this;
     }
 }

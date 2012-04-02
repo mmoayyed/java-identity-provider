@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Predicate;
 
@@ -41,12 +41,13 @@ public class ScopedStringAttributeValueScopePredicate implements Predicate {
      */
     public ScopedStringAttributeValueScopePredicate(@Nonnull final Predicate<CharSequence> valueMatchingPredicate) {
         valuePredicate =
-                Assert.isNotNull(valueMatchingPredicate, "String attribute value matching predicate can not be null");
+                Constraint.isNotNull(valueMatchingPredicate,
+                        "String attribute value matching predicate can not be null");
     }
 
     /** {@inheritDoc} */
     public boolean apply(@Nonnull Object input) {
-        assert input != null : "Input can be null";
+        Constraint.isNotNull(input, "Input can be null");
 
         if (input instanceof ScopedStringAttributeValue) {
             return valuePredicate.apply(((ScopedStringAttributeValue) input).getScope());

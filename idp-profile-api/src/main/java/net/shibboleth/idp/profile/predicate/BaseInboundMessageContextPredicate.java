@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.predicate;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -33,7 +34,7 @@ import com.google.common.base.Predicate;
 public abstract class BaseInboundMessageContextPredicate implements Predicate<BaseContext> {
 
     protected Optional<MessageContext> lookupMessageContext(@Nonnull BaseContext input) {
-        assert input != null : "Context can not be null";
+        Constraint.isNotNull(input, "Context can not be null");
 
         final ProfileRequestContext profileContext;
         if (input instanceof ProfileRequestContext) {

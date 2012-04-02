@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -75,7 +75,7 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
      * @param attributeId unique identifier of the attribute
      */
     public Attribute(@Nonnull @NotEmpty final String attributeId) {
-        id = Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
+        id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
 
         displayNames = Collections.emptyMap();
         displayDescriptions = Collections.emptyMap();

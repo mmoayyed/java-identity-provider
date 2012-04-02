@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Optional;
 
@@ -38,7 +38,7 @@ public class ReturnInputIfAbsentMappingValue implements ValueMapping {
      * @param function value mapping function composed with this function
      */
     public ReturnInputIfAbsentMappingValue(@Nonnull ValueMapping function) {
-        composedFunction = Assert.isNotNull(function, "Composed value mapping function can not be null");
+        composedFunction = Constraint.isNotNull(function, "Composed value mapping function can not be null");
     }
 
     /** {@inheritDoc} */

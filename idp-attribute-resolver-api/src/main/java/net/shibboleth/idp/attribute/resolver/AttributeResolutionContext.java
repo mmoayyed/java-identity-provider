@@ -33,6 +33,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -62,11 +63,11 @@ public class AttributeResolutionContext extends BaseContext {
         requestedAttributes = Constraints.constrainedSet(new HashSet<Attribute>(), Constraints.notNull());
 
         resolvedAttributes = MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
-        
+
         resolvedAttributeDefinitions =
                 MapConstraints.constrainedMap(new HashMap<String, ResolvedAttributeDefinition>(),
                         MapConstraints.notNull());
-        
+
         resolvedDataConnectors =
                 MapConstraints.constrainedMap(new HashMap<String, ResolvedDataConnector>(), MapConstraints.notNull());
     }
@@ -141,8 +142,8 @@ public class AttributeResolutionContext extends BaseContext {
      */
     public void recordAttributeDefinitionResolution(@Nonnull final BaseAttributeDefinition definition,
             @Nonnull final Optional<Attribute> attribute) throws AttributeResolutionException {
-        assert definition != null : "Resolver attribute definition can not be null";
-        assert attribute != null : "Resolved attribute can not be null";
+        Constraint.isNotNull(definition, "Resolver attribute definition can not be null");
+        Constraint.isNotNull(attribute, "Resolved attribute can not be null");
 
         if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
             throw new AttributeResolutionException("The resolution of attribute definition " + definition.getId()
@@ -173,8 +174,8 @@ public class AttributeResolutionContext extends BaseContext {
      */
     public void recordDataConnectorResolution(@Nonnull final BaseDataConnector connector,
             @Nonnull final Optional<Map<String, Attribute>> attributes) throws AttributeResolutionException {
-        assert connector != null : "Resolver data connector can not be null";
-        assert attributes != null : "Resolved attributes can not be null";
+        Constraint.isNotNull(connector, "Resolver data connector can not be null");
+        Constraint.isNotNull(attributes, "Resolved attributes can not be null");
 
         if (resolvedDataConnectors.containsKey(connector.getId())) {
             throw new AttributeResolutionException("The resolution of data connector " + connector.getId()

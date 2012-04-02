@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.logic;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Predicate;
 
@@ -42,13 +42,13 @@ public class AttributeValuePredicate implements Predicate<Attribute> {
     public AttributeValuePredicate(@Nonnull final Predicate valueMatchingPredicate,
             final boolean allAttributeValuesMustMatch) {
         valuePredicate =
-                Assert.isNotNull(valueMatchingPredicate, "Attribute value matching predicate must not be null");
+                Constraint.isNotNull(valueMatchingPredicate, "Attribute value matching predicate must not be null");
         allValuesMustMatch = allAttributeValuesMustMatch;
     }
 
     /** {@inheritDoc} */
     public boolean apply(@Nonnull Attribute attribute) {
-        assert attribute != null : "Attribute can not be null";
+        Constraint.isNotNull( attribute, "Attribute can not be null");
         
         Boolean allValuesMatched = null;
         for (Object value : attribute.getValues()) {

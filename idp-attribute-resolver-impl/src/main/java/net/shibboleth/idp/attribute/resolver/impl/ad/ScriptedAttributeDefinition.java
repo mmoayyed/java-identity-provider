@@ -36,7 +36,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.slf4j.Logger;
@@ -91,13 +91,13 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        script = Assert.isNotNull(definitionScript, "Attribute definition script can not be null");
+        script = Constraint.isNotNull(definitionScript, "Attribute definition script can not be null");
     }
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final ScriptContext context = getScriptContext(resolutionContext);
 
@@ -133,7 +133,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      */
     @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
 

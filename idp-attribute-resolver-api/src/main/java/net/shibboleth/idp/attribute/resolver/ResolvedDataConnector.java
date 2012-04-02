@@ -26,7 +26,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -56,10 +56,10 @@ public final class ResolvedDataConnector extends BaseDataConnector {
      */
     public ResolvedDataConnector(@Nonnull BaseDataConnector connector,
             @Nonnull Optional<Map<String, Attribute>> attributes) {
-        resolvedConnector = Assert.isNotNull(connector, "Resolved data connector can not be null");
-        resolvedAttributes = Assert.isNotNull(attributes, "Resolved attributes can not be null");
-        Assert.isTrue(connector.isInitialized(), "Provided connector should be initialized");
-        Assert.isFalse(connector.isDestroyed(), "Provided connector must not be initialized");    
+        resolvedConnector = Constraint.isNotNull(connector, "Resolved data connector can not be null");
+        resolvedAttributes = Constraint.isNotNull(attributes, "Resolved attributes can not be null");
+        Constraint.isTrue(connector.isInitialized(), "Provided connector should be initialized");
+        Constraint.isFalse(connector.isDestroyed(), "Provided connector must not be initialized");    
         }
 
     /** {@inheritDoc} */

@@ -36,7 +36,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.IPRange;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -72,7 +72,7 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
     public ValidateUserAgentAddress(@Nonnull @NotEmpty final String authenticatedUserId,
             @Nullable @NullableElements final Collection<IPRange> ranges, final boolean isWhitelistingRanges) {
         authenticatedUser =
-                Assert.isNotNull(StringSupport.trimOrNull(authenticatedUserId), "Authenticated user ID can not be null");
+                Constraint.isNotNull(StringSupport.trimOrNull(authenticatedUserId), "Authenticated user ID can not be null");
 
         if (ranges == null) {
             designatedRanges = Collections.emptyList();

@@ -24,7 +24,7 @@ import java.sql.SQLException;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** A simple {@link ExecutableStatement} that executes a static SQL query string. */
@@ -39,7 +39,7 @@ public class SqlStringExecutableStatement implements ExecutableStatement {
      * @param query SQL query executed by this statement
      */
     public SqlStringExecutableStatement(@Nonnull @NotEmpty final String query) {
-        sqlQuery = Assert.isNotNull(StringSupport.trimOrNull(query), "SQL query string can not be null or empty");
+        sqlQuery = Constraint.isNotNull(StringSupport.trimOrNull(query), "SQL query string can not be null or empty");
     }
 
     /** {@inheritDoc} */

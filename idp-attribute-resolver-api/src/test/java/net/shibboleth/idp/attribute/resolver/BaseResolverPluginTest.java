@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -49,7 +51,7 @@ public class BaseResolverPluginTest {
         try {
             plugin.setActivationCriteria(null);
             Assert.fail("Able to set a null activiation criteria");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }
@@ -112,7 +114,7 @@ public class BaseResolverPluginTest {
         plugin.initialize();
 
         Assert.assertEquals(plugin.resolve(context), Optional.fromNullable("bar"));
-        
+
         context = new AttributeResolutionContext();
         plugin = new MockBaseResolverPlugin(" foo ", "bar");
         plugin.setActivationCriteria(Predicates.<AttributeResolutionContext> alwaysFalse());

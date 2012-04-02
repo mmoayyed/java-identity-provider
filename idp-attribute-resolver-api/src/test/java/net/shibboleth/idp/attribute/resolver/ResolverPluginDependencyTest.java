@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,18 +42,18 @@ public class ResolverPluginDependencyTest {
         try {
             dep = new ResolverPluginDependency(null, null);
             Assert.fail("able to set null dependency ID");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             dep = new ResolverPluginDependency(" ", null);
             Assert.fail("able to set empty dependency ID");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }
-    
+
     @Test public void testEqualsToString() {
         ResolverPluginDependency dep = new ResolverPluginDependency(" foo ", " bar ");
 
@@ -61,17 +63,16 @@ public class ResolverPluginDependencyTest {
         Assert.assertTrue(dep.equals(dep));
         Assert.assertFalse(dep.equals(this));
 
-        ResolverPluginDependency other = new  ResolverPluginDependency("foo", "bar  ");
+        ResolverPluginDependency other = new ResolverPluginDependency("foo", "bar  ");
 
         Assert.assertTrue(dep.equals(other));
         Assert.assertEquals(dep.hashCode(), other.hashCode());
 
-        other = new  ResolverPluginDependency(" bar ", " foo");
+        other = new ResolverPluginDependency(" bar ", " foo");
 
         Assert.assertFalse(dep.equals(other));
         Assert.assertNotSame(dep.hashCode(), other.hashCode());
 
     }
 
-    
 }

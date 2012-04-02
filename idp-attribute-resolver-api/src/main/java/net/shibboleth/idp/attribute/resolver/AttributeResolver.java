@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -170,10 +171,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
-
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         log.debug("Attribute Resolver {}: initiating attribute resolution", getId());
 
@@ -221,7 +222,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     @Nonnull @NonnullElements protected Collection<String> getToBeResolvedAttributes(
             @Nonnull final AttributeResolutionContext resolutionContext) {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Collection<String> attributeIds = new LazyList<String>();
         for (Attribute requestedAttribute : resolutionContext.getRequestedAttributes()) {
@@ -248,8 +249,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     protected void resolveAttributeDefinition(@Nonnull final String attributeId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
-        assert attributeId != null : "Attribute ID can not be null";
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(attributeId, "Attribute ID can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         log.debug("Attribute Resolver {}: beginning to resolve attribute definition {}", getId(), attributeId);
 
@@ -295,8 +296,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     protected void resolveDataConnector(@Nonnull final String connectorId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
-        assert connectorId != null : "Data connector ID can not be null";
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(connectorId, "Data connector ID can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         log.debug("Attribute Resolver {}: beginning to resolve data connector {}", getId(), connectorId);
         if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
@@ -326,8 +327,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                 resolveDataConnector(failoverDataConnectorId.get(), resolutionContext);
                 return;
             } else {
-                // Pass it on.  Do not look at propagateException because this is handled in the
-                // connector code logic. 
+                // Pass it on. Do not look at propagateException because this is handled in the
+                // connector code logic.
                 throw e;
             }
         }
@@ -351,8 +352,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     protected void resolveDependencies(@Nonnull final BaseResolverPlugin<?> plugin,
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
-        assert plugin != null : "Plugin dependency can not be null";
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(plugin, "Plugin dependency can not be null");
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         if (plugin.getDependencies().isEmpty()) {
             return;
@@ -385,7 +386,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * @param resolutionContext current resolution context
      */
     protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+
 
         final LazySet<Attribute> resolvedAttributes = new LazySet<Attribute>();
 
@@ -430,8 +432,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      */
     protected boolean validateDataConnector(@Nonnull BaseDataConnector connector,
             @Nonnull LazyList<String> invalidDataConnectors) {
-        assert connector != null;
-        assert invalidDataConnectors != null;
+        Constraint.isNotNull(connector, "To-be-validated connector can not be null");
+        Constraint.isNotNull(invalidDataConnectors, "List of invalid data connectors can not be null");
 
         if (connector.getFailoverDataConnectorId().isPresent()) {
             String id = connector.getFailoverDataConnectorId().get();

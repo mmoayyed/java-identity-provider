@@ -27,7 +27,7 @@ import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -56,7 +56,7 @@ public class SendBasicHttpAuthenticationChallenge extends AbstractAuthentication
     public SendBasicHttpAuthenticationChallenge(@Nonnull @NotEmpty final String realm) {
         super();
 
-        String checkedRealm = Assert.isNotNull(StringSupport.trimOrNull(realm), "Realm name can not be null or empty");
+        String checkedRealm = Constraint.isNotNull(StringSupport.trimOrNull(realm), "Realm name can not be null or empty");
         authenticateValue = BASIC + " " + REALM + "=\"" + checkedRealm + "\"";
     }
 

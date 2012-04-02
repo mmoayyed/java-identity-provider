@@ -24,6 +24,7 @@ import java.util.Map;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -35,8 +36,8 @@ import com.google.common.base.Optional;
  * 
  */
 public class ResolvedDataConnectorTest {
-    
-    private Optional<Map<String, Attribute>> resolvedData = Optional.of((Map<String, Attribute>)Collections.EMPTY_MAP);
+
+    private Optional<Map<String, Attribute>> resolvedData = Optional.of((Map<String, Attribute>) Collections.EMPTY_MAP);
 
     @Test public void testInit() {
         StaticDataConnector dc = new StaticDataConnector();
@@ -44,21 +45,21 @@ public class ResolvedDataConnectorTest {
         try {
             new ResolvedDataConnector(null, resolvedData);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
         try {
             new ResolvedDataConnector(dc, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
         try {
             new ResolvedDataConnector(dc, resolvedData);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
@@ -69,13 +70,12 @@ public class ResolvedDataConnectorTest {
         dc.setValues(Arrays.asList(new Attribute("attr")));
         dc.setId("Defn");
         dc.initialize();
-        ResolvedDataConnector resolvedDataConnector =
-                new ResolvedDataConnector(dc, resolvedData);
+        ResolvedDataConnector resolvedDataConnector = new ResolvedDataConnector(dc, resolvedData);
 
         resolvedDataConnector.toString();
 
         ResolvedDataConnector otherDc;
-        
+
         StaticDataConnector otherDef = new StaticDataConnector();
         otherDef.setId("OtherDefn");
         otherDef.setValues(Arrays.asList(new Attribute("otherAttr")));
@@ -93,7 +93,8 @@ public class ResolvedDataConnectorTest {
 
     }
 
-    @Test public void testNoops() throws ComponentInitializationException, ComponentValidationException, AttributeResolutionException {
+    @Test public void testNoops() throws ComponentInitializationException, ComponentValidationException,
+            AttributeResolutionException {
         StaticDataConnector dc = new StaticDataConnector();
         dc.setValues(Arrays.asList(new Attribute("attr")));
         dc.setId("Defn");
@@ -101,23 +102,23 @@ public class ResolvedDataConnectorTest {
         dc.setDependencies(Collections.singleton(dep));
         dc.setPropagateResolutionExceptions(false);
         dc.initialize();
-        ResolvedDataConnector resolvedDataConnector =
-                new ResolvedDataConnector(dc, resolvedData);
+        ResolvedDataConnector resolvedDataConnector = new ResolvedDataConnector(dc, resolvedData);
 
-        Assert.assertEquals(resolvedDataConnector.doDataConnectorResolve(new AttributeResolutionContext()), resolvedData);
+        Assert.assertEquals(resolvedDataConnector.doDataConnectorResolve(new AttributeResolutionContext()),
+                resolvedData);
         Assert.assertFalse(resolvedDataConnector.getFailoverDataConnectorId().isPresent());
         Assert.assertEquals(resolvedDataConnector.getResolvedConnector(), dc);
         Assert.assertTrue(resolvedDataConnector.isInitialized());
-        
+
         Assert.assertEquals(resolvedDataConnector.getDependencies(), dc.getDependencies());
         Assert.assertTrue(resolvedDataConnector.getActivationCriteria().apply(null));
         Assert.assertFalse(resolvedDataConnector.isPropagateResolutionExceptions());
-        
+
         //
         // TODO - do we want to do more about seeing that these are indeed noops?
         //
         resolvedDataConnector.setFailoverDataConnectorId("otherthing");
-        
+
         resolvedDataConnector.setPropagateResolutionExceptions(true);
         Assert.assertFalse(resolvedDataConnector.isPropagateResolutionExceptions());
 

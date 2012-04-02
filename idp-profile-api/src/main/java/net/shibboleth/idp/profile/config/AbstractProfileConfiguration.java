@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.config;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -40,7 +40,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * @param profileId ID of the the communication profile, never null or empty
      */
     public AbstractProfileConfiguration(final String profileId) {
-        id = Assert.isNotNull(StringSupport.trimOrNull(profileId), "Profile identifier can not be null or empty");
+        id = Constraint.isNotNull(StringSupport.trimOrNull(profileId), "Profile identifier can not be null or empty");
         enabled = true;
     }
 

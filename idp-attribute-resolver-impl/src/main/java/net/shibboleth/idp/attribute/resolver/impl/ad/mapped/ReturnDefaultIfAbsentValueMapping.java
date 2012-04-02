@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
@@ -44,9 +44,9 @@ public class ReturnDefaultIfAbsentValueMapping implements ValueMapping {
      * @param returnValue result returned if the composed function returns an {@link Optional#absent()}
      */
     public ReturnDefaultIfAbsentValueMapping(@Nonnull ValueMapping function, @Nonnull @NotEmpty String returnValue) {
-        composedFunction = Assert.isNotNull(function, "Composed value mapping function can not be null");
+        composedFunction = Constraint.isNotNull(function, "Composed value mapping function can not be null");
         result =
-                Optional.of(Assert.isNull(StringSupport.trimOrNull(returnValue),
+                Optional.of(Constraint.isNull(StringSupport.trimOrNull(returnValue),
                         "Return value can not be null or empty"));
     }
 

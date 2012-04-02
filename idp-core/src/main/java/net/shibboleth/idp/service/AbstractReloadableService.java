@@ -25,7 +25,7 @@ import java.util.concurrent.locks.Lock;
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -132,7 +132,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
         super.doInitialize();
         
         if (reloadCheckDelay > 0) {
-            Assert.isNotNull(reloadTaskTimer, "Reload task timer may not be null");
+            Constraint.isNotNull(reloadTaskTimer, "Reload task timer may not be null");
             reloadTask = new ServiceReloadTask();
             reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
         }

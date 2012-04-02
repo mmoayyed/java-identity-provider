@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
 /**
@@ -39,7 +39,7 @@ public class TemplatedExecutableStatementBuilder implements ExecutableStatementB
      * @param sqlTemplate template evaluated to generate a SQL query
      */
     public TemplatedExecutableStatementBuilder(@Nonnull final Template sqlTemplate) {
-        template = Assert.isNotNull(sqlTemplate, "SQL template can not be null");
+        template = Constraint.isNotNull(sqlTemplate, "SQL template can not be null");
     }
 
     /** {@inheritDoc} */

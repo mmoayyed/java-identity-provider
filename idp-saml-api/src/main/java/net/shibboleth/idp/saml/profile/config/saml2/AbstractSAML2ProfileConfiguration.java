@@ -24,7 +24,7 @@ import java.util.Set;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Predicate;
@@ -101,7 +101,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      */
     public void setEncryptNameIDsCriteria(Predicate<ProfileRequestContext> criteria) {
         encryptNameIDsCriteria =
-                Assert.isNotNull(criteria,
+                Constraint.isNotNull(criteria,
                         "Criteria to determine if name identifiers should be encrypted can not be null");
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      */
     public void setEncryptAssertionsCriteria(Predicate<ProfileRequestContext> criteria) {
         encryptAssertionsCriteria =
-                Assert.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");
+                Constraint.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");
     }
 
     /**

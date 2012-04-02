@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,7 +35,7 @@ public class IdPSessionContextTest {
         try {
             new IdPSessionContext(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }

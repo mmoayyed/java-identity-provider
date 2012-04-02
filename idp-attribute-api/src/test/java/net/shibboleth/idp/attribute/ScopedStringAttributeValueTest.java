@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -32,28 +34,28 @@ public class ScopedStringAttributeValueTest {
         try {
             new ScopedStringAttributeValue(null, "bar");
             Assert.fail("able to set null attribute value");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             new ScopedStringAttributeValue("", "bar");
             Assert.fail("able to set empty attribute value");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             new ScopedStringAttributeValue("foo", null);
             Assert.fail("able to set null attribute scope");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             new ScopedStringAttributeValue("foo", "");
             Assert.fail("able to set empty attribute scope");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }

@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -47,7 +47,7 @@ public final class ResolverPluginDependency {
      */
     public ResolverPluginDependency(@Nonnull @NotEmpty final String pluginId, @Nullable final String attributeId) {
         dependencyPluginId =
-                Assert.isNotNull(StringSupport.trimOrNull(pluginId), "Dependency plugin ID may not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(pluginId), "Dependency plugin ID may not be null or empty");
 
         dependencyAttributeId = Optional.fromNullable(StringSupport.trimOrNull(attributeId));
     }

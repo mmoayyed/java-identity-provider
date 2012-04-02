@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.config;
 
 import java.util.concurrent.TimeUnit;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
@@ -65,8 +65,8 @@ public class SecurityConfiguration {
      * @param generator the identifier generator, must not be null
      */
     public SecurityConfiguration(int skew, IdentifierGenerationStrategy generator) {
-        clockSkew = (int) Assert.isGreaterThan(0, skew, "Clock skew must be greater than 0");
-        idGenerator = Assert.isNotNull(generator, "Identifier generator can not be null");
+        clockSkew = (int) Constraint.isGreaterThan(0, skew, "Clock skew must be greater than 0");
+        idGenerator = Constraint.isNotNull(generator, "Identifier generator can not be null");
     }
 
     /**

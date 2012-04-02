@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -53,10 +53,10 @@ public final class ServiceSession extends BaseContext {
      * @param event authentication event used to authenticate the principal to this service
      */
     public ServiceSession(@Nonnull @NotEmpty final String id, @Nonnull final AuthenticationEvent event) {
-        serviceId = Assert.isNotNull(StringSupport.trimOrNull(id), "Service ID can not be null nor empty");
+        serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID can not be null nor empty");
         creationInstant = System.currentTimeMillis();
         lastActivityInstant = creationInstant;
-        authenticationEvent = Assert.isNotNull(event, "Authentication event can not be null");
+        authenticationEvent = Constraint.isNotNull(event, "Authentication event can not be null");
     }
 
     /**
@@ -92,7 +92,7 @@ public final class ServiceSession extends BaseContext {
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
     public void setLastActivityInstant(final long instant) {
-        lastActivityInstant = Assert.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
+        lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
     /**
@@ -117,7 +117,7 @@ public final class ServiceSession extends BaseContext {
      * @param event authentication event currently associated with this session
      */
     public void setAuthenticationEvent(@Nonnull final AuthenticationEvent event) {
-        authenticationEvent = Assert.isNotNull(event, "Authentication event can not be null");
+        authenticationEvent = Constraint.isNotNull(event, "Authentication event can not be null");
     }
 
     /** {@inheritDoc} */

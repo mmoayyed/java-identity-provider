@@ -19,7 +19,7 @@ package net.shibboleth.idp.log;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -59,7 +59,7 @@ public class PerformanceEvent extends BaseEvent {
      * @param operationId unique ID of the operation, must never be null or empty
      */
     public PerformanceEvent(String operationId) {
-        operation = Assert.isNotNull(StringSupport.trimOrNull(operationId), 
+        operation = Constraint.isNotNull(StringSupport.trimOrNull(operationId), 
                 "Operation identifier may not be null or empty");
 
         successfulOperation = false;

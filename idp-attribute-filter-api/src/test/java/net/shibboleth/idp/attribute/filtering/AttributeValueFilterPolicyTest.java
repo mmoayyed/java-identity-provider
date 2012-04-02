@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -39,75 +40,75 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         AttributeValueFilterPolicy policy = new AttributeValueFilterPolicy();
-        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher(); 
+        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
         policy.setValueMatcher(matcher);
-        
+
         Assert.assertFalse(policy.isInitialized(), "Created - not initialized");
         Assert.assertFalse(matcher.isInitialized(), "Create - not initialized");
         Assert.assertFalse(policy.isDestroyed(), "Created - not destroyed");
         Assert.assertFalse(matcher.isDestroyed(), "Created - not destroyed");
-        
+
         policy.setAttributeId("foo");
         policy.initialize();
-        
+
         Assert.assertTrue(policy.isInitialized(), "Initialized");
         Assert.assertTrue(matcher.isInitialized(), "Initialized");
         Assert.assertFalse(policy.isDestroyed(), "Initialized - not destroyed");
         Assert.assertFalse(matcher.isDestroyed(), "Initialized - not destroyed");
-        
+
         policy.destroy();
         Assert.assertTrue(policy.isDestroyed(), "Destroyed");
         Assert.assertTrue(matcher.isDestroyed(), "Destroyed");
-        
+
         boolean thrown = false;
-        try {            
+        try {
             policy.initialize();
         } catch (DestroyedComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "initialize after destroy");
-        
+
     }
-    
-    @Test public void testAttributeId() throws ComponentInitializationException{
+
+    @Test public void testAttributeId() throws ComponentInitializationException {
         AttributeValueFilterPolicy policy = new AttributeValueFilterPolicy();
         Assert.assertNotNull(policy.getAttributeId(), "AttributeId can never be null");
 
         boolean thrown = false;
         try {
-            policy.setAttributeId(null);            
-        } catch (AssertionError e) {
+            policy.setAttributeId(null);
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "null Attribute Id");
         Assert.assertNotNull(policy.getAttributeId(), "AttributeId can never be null");
-        
+
         thrown = false;
         try {
-            policy.setAttributeId("");            
-        } catch (AssertionError e) {
+            policy.setAttributeId("");
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "empty Attribute Id");
         Assert.assertNotNull(policy.getAttributeId(), "AttributeId can never be null");
-        
+
         try {
-            policy.initialize();            
+            policy.initialize();
         } catch (ComponentInitializationException e) {
             thrown = true;
-        } 
+        }
         Assert.assertTrue(thrown, "init with no Id");
-        
+
         policy = new AttributeValueFilterPolicy();
         policy.setAttributeId(" ID ");
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
-        
+
         policy.initialize();
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
-        
+
         thrown = false;
         try {
-            policy.setAttributeId("foo");            
+            policy.setAttributeId("foo");
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
@@ -122,31 +123,31 @@ public class AttributeValueFilterPolicyTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "GetAttributeId after destroy");
-        
+
         policy = new AttributeValueFilterPolicy();
         policy.destroy();
         thrown = false;
         try {
-            policy.setAttributeId("foo");            
+            policy.setAttributeId("foo");
         } catch (DestroyedComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "SetAttributeId after destroy");
     }
-    
+
     @Test public void testMatchingPermittingValues() throws ComponentInitializationException {
         AttributeValueFilterPolicy policy = new AttributeValueFilterPolicy();
         policy.setAttributeId("foo");
         Assert.assertTrue(policy.isMatchingPermittedValues(), "MatchingPermitted Values - created");
-        
-        policy.setMatchingPermittedValues(false);     
+
+        policy.setMatchingPermittedValues(false);
         Assert.assertFalse(policy.isMatchingPermittedValues(), "MatchingPermitted Values - changed");
         policy.initialize();
         Assert.assertFalse(policy.isMatchingPermittedValues(), "MatchingPermitted Values - initialized");
-        
+
         boolean thrown = false;
         try {
-            policy.setMatchingPermittedValues(true);     
+            policy.setMatchingPermittedValues(true);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
@@ -154,7 +155,7 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertFalse(policy.isMatchingPermittedValues(), "MatchingPermitted Values - set after initialized");
 
         policy = new AttributeValueFilterPolicy();
-        policy.setAttributeId(" foo");        
+        policy.setAttributeId(" foo");
         policy.initialize();
         policy.destroy();
         thrown = false;
@@ -164,9 +165,9 @@ public class AttributeValueFilterPolicyTest {
             thrown = true;
         } catch (UnmodifiableComponentException e) {
             thrown = true;
-        } 
+        }
         Assert.assertTrue(thrown, "setMatchingPermittedValues after destroy");
-        
+
         thrown = false;
         try {
             policy.isMatchingPermittedValues();
@@ -175,40 +176,44 @@ public class AttributeValueFilterPolicyTest {
         }
         Assert.assertTrue(thrown, "isMatchingPermittedValues after destroy");
     }
-    
+
     @Test public void testValueMatcher() throws ComponentInitializationException {
         AttributeValueFilterPolicy policy = new AttributeValueFilterPolicy();
         policy.setAttributeId("foo");
         Assert.assertNotNull(policy.getValueMatcher(), "AttributeValueMatcher - created");
-        
-        Assert.assertNotSame(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL, "AttributeValueMatcher - precondition for rest of test");
-        
-        policy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);     
-        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL, "AttributeValueMatcher - changed");
+
+        Assert.assertNotSame(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+                "AttributeValueMatcher - precondition for rest of test");
+
+        policy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+                "AttributeValueMatcher - changed");
         policy.initialize();
-        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL, "AttributeValueMatcher - initialized");
-        
+        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+                "AttributeValueMatcher - initialized");
+
         boolean thrown = false;
         try {
-            policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);     
+            policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "AttributeValueMatcher - set after initialized");
-        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL, "AttributeValueMatcher - set after initialized");
+        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+                "AttributeValueMatcher - set after initialized");
 
         policy = new AttributeValueFilterPolicy();
-        policy.setAttributeId(" foo");        
+        policy.setAttributeId(" foo");
         policy.initialize();
         policy.destroy();
         thrown = false;
         try {
-            policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);     
+            policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
-        } 
+        }
         Assert.assertTrue(thrown, "setMatchingPermittedValues after destroy");
-        
+
         thrown = false;
         try {
             policy.getValueMatcher();
@@ -216,11 +221,13 @@ public class AttributeValueFilterPolicyTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "isMatchingPermittedValues after destroy");
-        
+
     }
-    @Test public void testValidateApply() throws ComponentInitializationException, ComponentValidationException, AttributeFilteringException {
-        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher(); 
-        
+
+    @Test public void testValidateApply() throws ComponentInitializationException, ComponentValidationException,
+            AttributeFilteringException {
+        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
+
         final StringAttributeValue aStringAttributeValue = new StringAttributeValue("a");
         final StringAttributeValue bStringAttributeValue = new StringAttributeValue("b");
         final StringAttributeValue cStringAttributeValue = new StringAttributeValue("c");
@@ -231,14 +238,14 @@ public class AttributeValueFilterPolicyTest {
         attribute1.getValues().add(bStringAttributeValue);
         attribute1.getValues().add(cStringAttributeValue);
         attribute1.getValues().add(dStringAttributeValue);
-        
+
         matcher.setMatchingAttribute(ATTR_NAME);
         matcher.setMatchingValues(Arrays.asList(aStringAttributeValue, cStringAttributeValue));
-        
+
         AttributeValueFilterPolicy policy = new AttributeValueFilterPolicy();
         policy.setValueMatcher(matcher);
         policy.setAttributeId(ATTR_NAME);
-        
+
         boolean thrown = false;
         try {
             policy.validate();
@@ -256,14 +263,14 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertTrue(thrown, "Validate before init");
 
         policy.initialize();
-        
+
         policy.validate();
         Assert.assertTrue(matcher.getValidated(), "Validated");
-        
+
         thrown = false;
         try {
             policy.apply(null, new AttributeFilterContext());
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Null attribute");
@@ -271,7 +278,7 @@ public class AttributeValueFilterPolicyTest {
         thrown = false;
         try {
             policy.apply(new Attribute(ATTR_NAME), null);
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Null context");
@@ -280,7 +287,7 @@ public class AttributeValueFilterPolicyTest {
         context.setPrefilteredAttributes(Arrays.asList(attribute1));
 
         policy.apply(attribute1, context);
-        
+
         Collection<AttributeValue> result = context.getPermittedAttributeValues().get(ATTR_NAME);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(aStringAttributeValue));
@@ -292,18 +299,17 @@ public class AttributeValueFilterPolicyTest {
         policy.setAttributeId(ATTR_NAME);
         policy.setMatchingPermittedValues(false);
         policy.initialize();
-        
+
         context = new AttributeFilterContext();
         context.setPrefilteredAttributes(Arrays.asList(attribute1));
 
         policy.apply(attribute1, context);
-        
+
         result = context.getDeniedAttributeValues().get(ATTR_NAME);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(aStringAttributeValue));
         Assert.assertTrue(result.contains(cStringAttributeValue));
         Assert.assertNull(context.getPermittedAttributeValues().get(ATTR_NAME));
-
 
         policy.destroy();
 
@@ -314,7 +320,7 @@ public class AttributeValueFilterPolicyTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "validate after destroy");
-        
+
         thrown = false;
         try {
             policy.apply(attribute1, context);

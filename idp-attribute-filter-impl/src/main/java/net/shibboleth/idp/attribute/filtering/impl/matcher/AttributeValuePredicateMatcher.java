@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,14 +50,14 @@ public class AttributeValuePredicateMatcher implements AttributeValueMatcher {
      * @param valueMatchingPredicate predicate used to check attribute values
      */
     public AttributeValuePredicateMatcher(@Nonnull Predicate valueMatchingPredicate) {
-        valuePredicate = Assert.isNotNull(valueMatchingPredicate, "Attribute value matching predicate can not be null");
+        valuePredicate = Constraint.isNotNull(valueMatchingPredicate, "Attribute value matching predicate can not be null");
     }
 
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
             @Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
-        assert attribute != null : "Attribute to be filtered can not be null";
-        assert filterContext != null : "Attribute filter contet can not be null";
+        Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         HashSet matchedValues = new HashSet();
 

@@ -34,7 +34,7 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -74,14 +74,14 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         scopeDelimiter =
-                Assert.isNotNull(StringSupport.trimOrNull(newScopeDelimiter),
+                Constraint.isNotNull(StringSupport.trimOrNull(newScopeDelimiter),
                         "Scope delimiter can not be null or empty");
     }
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Attribute resultantAttribute = new Attribute(getId());
 
@@ -115,7 +115,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
      */
     @Nonnull private ScopedStringAttributeValue buildScopedStringAttributeValue(@Nonnull StringAttributeValue value)
             throws AttributeResolutionException {
-        assert value != null : "Attribute value can not be null";
+        Constraint.isNotNull(value, "Attribute value can not be null");
 
         final String[] stringValues = value.getValue().split(scopeDelimiter);
         if (stringValues.length < 2) {

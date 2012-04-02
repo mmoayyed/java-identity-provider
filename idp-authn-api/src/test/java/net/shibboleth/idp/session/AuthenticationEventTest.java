@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session;
 
 import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -40,28 +41,28 @@ public class AuthenticationEventTest {
         try {
             new AuthenticationEvent(null, new UsernamePrincipal("bob"));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new AuthenticationEvent("", new UsernamePrincipal("bob"));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new AuthenticationEvent("  ", new UsernamePrincipal("bob"));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new AuthenticationEvent("test", null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }

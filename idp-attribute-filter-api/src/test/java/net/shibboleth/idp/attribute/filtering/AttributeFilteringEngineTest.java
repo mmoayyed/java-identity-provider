@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -49,21 +50,21 @@ public class AttributeFilteringEngineTest {
         try {
             new AttributeFilteringEngine("  ", null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected
         }
-        
+
         try {
             new AttributeFilteringEngine("", null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected
         }
-        
+
         try {
             new AttributeFilteringEngine(null, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected
         }
     }
@@ -73,8 +74,10 @@ public class AttributeFilteringEngineTest {
         AttributeFilterPolicy policy1 = new AttributeFilterPolicy("policy1", Predicates.alwaysFalse(), null);
         AttributeFilterPolicy policy2 = new AttributeFilterPolicy("policy2", Predicates.alwaysFalse(), null);
         AttributeFilterPolicy policy3 = new AttributeFilterPolicy("policy3", Predicates.alwaysFalse(), null);
-        
-        AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.<AttributeFilterPolicy>newArrayList(policy1, policy1, policy2));
+
+        AttributeFilteringEngine engine =
+                new AttributeFilteringEngine("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy1,
+                        policy2));
         engine.initialize();
 
         Assert.assertTrue(engine.isInitialized());
@@ -86,7 +89,7 @@ public class AttributeFilteringEngineTest {
         Assert.assertFalse(engine.getFilterPolicies().contains(policy3));
         Assert.assertFalse(policy3.isInitialized());
 
-        engine = new AttributeFilteringEngine("engine", Lists.<AttributeFilterPolicy>newArrayList(policy1, policy2));
+        engine = new AttributeFilteringEngine("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy2));
         engine.initialize();
 
         Assert.assertEquals(engine.getFilterPolicies().size(), 2);
@@ -112,16 +115,20 @@ public class AttributeFilteringEngineTest {
         attribute1Policy.setAttributeId("attribute1");
         attribute1Policy.setValueMatcher(attribute1Matcher);
 
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(attribute1Policy));
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
+                        Lists.newArrayList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+                new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         Attribute attribute2 = new Attribute("attribute2");
-        attribute2.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("a"), new StringAttributeValue("b")));
+        attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("a"),
+                new StringAttributeValue("b")));
         filterContext.getPrefilteredAttributes().put(attribute2.getId(), attribute2);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -142,12 +149,15 @@ public class AttributeFilteringEngineTest {
         attribute1Policy.setAttributeId("attribute1");
         attribute1Policy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
 
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(attribute1Policy));
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
+                        Lists.newArrayList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+                new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -166,12 +176,15 @@ public class AttributeFilteringEngineTest {
         attribute1Policy.setAttributeId("attribute1");
         attribute1Policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);
 
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(attribute1Policy));
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
+                        Lists.newArrayList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+                new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -180,8 +193,6 @@ public class AttributeFilteringEngineTest {
         engine.filterAttributes(filterContext);
         Assert.assertTrue(filterContext.getFilteredAttributes().isEmpty());
     }
-    
-    
 
     @Test public void testDenyFilterAttributes() throws Exception {
         MockAttributeValueMatcher deny = new MockAttributeValueMatcher();
@@ -192,18 +203,20 @@ public class AttributeFilteringEngineTest {
         denyPolicy.setAttributeId("attribute1");
         denyPolicy.setMatchingPermittedValues(false);
         denyPolicy.setValueMatcher(deny);
-        
+
         AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
         allowPolicy.setAttributeId("attribute1");
         allowPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
 
-
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(denyPolicy, allowPolicy));
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(denyPolicy,
+                        allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+                new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -216,19 +229,20 @@ public class AttributeFilteringEngineTest {
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
     }
-    
+
     @Test public void testNoPolicy() throws Exception {
         AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
         allowPolicy.setAttributeId("attribute1");
         allowPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
 
-
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysFalse(), Lists.newArrayList(allowPolicy));
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysFalse(), Lists.newArrayList(allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+                new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -238,24 +252,25 @@ public class AttributeFilteringEngineTest {
         Assert.assertTrue(filterContext.getFilteredAttributes().isEmpty());
     }
 
-
     @Test public void testDenyAllFilterAttributes() throws Exception {
         AttributeValueFilterPolicy denyPolicy = new AttributeValueFilterPolicy();
         denyPolicy.setAttributeId("attribute1");
         denyPolicy.setMatchingPermittedValues(false);
         denyPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
-        
+
         AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
         allowPolicy.setAttributeId("attribute1");
         allowPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
 
-
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(denyPolicy, allowPolicy));
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(denyPolicy,
+                        allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         Attribute attribute1 = new Attribute("attribute1");
-        attribute1.setValues(Lists.<AttributeValue>newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+                new StringAttributeValue("two")));
         filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -265,7 +280,6 @@ public class AttributeFilteringEngineTest {
         Map<String, Attribute> resultAttrs = filterContext.getFilteredAttributes();
         Assert.assertTrue(resultAttrs.isEmpty());
     }
-
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
@@ -315,7 +329,7 @@ public class AttributeFilteringEngineTest {
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
         Assert.assertFalse(predicate.getValidated());
         Assert.assertFalse(matcher.getValidated());
-        
+
         try {
             engine.validate();
             Assert.fail();
@@ -337,6 +351,6 @@ public class AttributeFilteringEngineTest {
         } catch (ComponentValidationException e) {
             // OK
         }
-        
+
     }
 }

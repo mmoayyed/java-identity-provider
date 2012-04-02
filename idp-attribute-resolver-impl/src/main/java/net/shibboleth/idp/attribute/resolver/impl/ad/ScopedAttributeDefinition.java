@@ -35,7 +35,7 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
@@ -68,7 +68,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        scope = Assert.isNotNull(StringSupport.trimOrNull(newScope), "Scope can not be null or empty");
+        scope = Constraint.isNotNull(StringSupport.trimOrNull(newScope), "Scope can not be null or empty");
     }
 
     /** {@inheritDoc} */

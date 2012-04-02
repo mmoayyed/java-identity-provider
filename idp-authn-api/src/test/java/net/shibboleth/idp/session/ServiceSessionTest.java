@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session;
 
 import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -42,28 +43,28 @@ public class ServiceSessionTest {
         try {
             new ServiceSession(null, event);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new ServiceSession("", event);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new ServiceSession("  ", event);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new ServiceSession("foo", null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }
@@ -95,7 +96,7 @@ public class ServiceSessionTest {
         try {
             session.setAuthenticationEvent(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }

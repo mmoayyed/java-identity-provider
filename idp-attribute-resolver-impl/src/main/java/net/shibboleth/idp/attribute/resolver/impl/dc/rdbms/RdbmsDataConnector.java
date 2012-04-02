@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class RdbmsDataConnector extends BaseDataConnector {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        dataSource = Assert.isNotNull(source, "JDBC data source can not be null");
+        dataSource = Constraint.isNotNull(source, "JDBC data source can not be null");
     }
 
     /**
@@ -100,7 +100,7 @@ public class RdbmsDataConnector extends BaseDataConnector {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        statementBuilder = Assert.isNotNull(builder, "Executable statement builder can not be null");
+        statementBuilder = Constraint.isNotNull(builder, "Executable statement builder can not be null");
     }
 
     /**
@@ -121,7 +121,7 @@ public class RdbmsDataConnector extends BaseDataConnector {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        mappingStrategy = Assert.isNotNull(strategy, "Result mapping strategy can not be null");
+        mappingStrategy = Constraint.isNotNull(strategy, "Result mapping strategy can not be null");
     }
 
     /**

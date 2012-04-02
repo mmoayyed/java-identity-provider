@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.logic;
 
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -38,7 +39,7 @@ public class ScopedStringAttributeValuePredicateTest {
         try {
             new ScopedStringAttributeValueScopePredicate(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 

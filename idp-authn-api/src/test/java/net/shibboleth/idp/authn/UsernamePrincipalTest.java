@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,21 +33,21 @@ public class UsernamePrincipalTest {
         try {
             new UsernamePrincipal(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new UsernamePrincipal("");
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new UsernamePrincipal("   ");
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }

@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -61,7 +61,7 @@ public class ResolutionContextDataAttributeDefinition extends BaseAttributeDefin
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        dataExtractionStrategy = Assert.isNotNull(strategy, "Data extraction strategy can not be null");
+        dataExtractionStrategy = Constraint.isNotNull(strategy, "Data extraction strategy can not be null");
     }
 
     /** {@inheritDoc} */

@@ -21,7 +21,7 @@ import java.net.InetAddress;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -48,7 +48,7 @@ public class UserAgentAddressContext extends BaseContext {
      * @return this context
      */
     public UserAgentAddressContext setUserAgentAddress(@Nonnull final InetAddress userAgentAddress) {
-        address = Assert.isNotNull(userAgentAddress, "User-agent address can not be null");
+        address = Constraint.isNotNull(userAgentAddress, "User-agent address can not be null");
         return this;
     }
 }

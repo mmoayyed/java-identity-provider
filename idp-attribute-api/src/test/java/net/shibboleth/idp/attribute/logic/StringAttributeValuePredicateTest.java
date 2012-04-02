@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.logic;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -28,37 +29,35 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /** Test for {@link StringAttributeValuePredicate}. */
- 
+
 public class StringAttributeValuePredicateTest {
-    
+
     private static final String VALUE_ONE = "one";
+
     private static final String VALUE_TWO = "two";
 
     @Test public void stringAttributeValueMatches() {
         try {
             new StringAttributeValuePredicate(null);
             Assert.fail();
-        } 
-        catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
-        
+
         Predicate pred =
                 AttributeLogicSupport.stringAttributeValueMatches(Predicates.equalTo((CharSequence) VALUE_ONE));
 
         try {
             pred.apply(new ByteAttributeValue(new byte[3]));
             Assert.fail();
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // OK
         }
-        
+
         try {
             pred.apply(new Integer(2));
             Assert.fail();
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // OK
         }
 

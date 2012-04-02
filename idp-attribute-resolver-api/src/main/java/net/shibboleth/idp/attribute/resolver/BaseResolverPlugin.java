@@ -36,7 +36,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,7 +116,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
     public synchronized void setActivationCriteria(@Nonnull final Predicate<AttributeResolutionContext> criteria) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        activationCriteria = Assert.isNotNull(criteria, "Activiation criteria can not be null");
+        activationCriteria = Constraint.isNotNull(criteria, "Activiation criteria can not be null");
     }
 
     /**
@@ -163,7 +163,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      */
     @Nonnull public final Optional<ResolvedType> resolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -174,10 +175,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
         }
 
         try {
-            Optional<ResolvedType> resolvedData = doResolve(resolutionContext);
-            assert resolvedData != null : "Result of doResolve for resolver plugin " + getId() + " was null";
-
-            return resolvedData;
+            return Constraint.isNotNull(doResolve(resolutionContext), "Result of doResolve for resolver plugin '" + getId() + "' was null");
         } catch (AttributeResolutionException e) {
             //
             // NOTE - if you change this logic you MUST make changes in any derived classes that

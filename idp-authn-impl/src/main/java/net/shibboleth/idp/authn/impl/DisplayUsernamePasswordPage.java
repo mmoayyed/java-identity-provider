@@ -29,7 +29,7 @@ import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
@@ -77,7 +77,7 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
     public DisplayUsernamePasswordPage(@Nonnull final Template template) {
         setId(DisplayUsernamePasswordPage.class.getName());
 
-        pageTemplate = Assert.isNotNull(template, "Page template can not be null");
+        pageTemplate = Constraint.isNotNull(template, "Page template can not be null");
     }
 
     /** {@inheritDoc} */
@@ -111,7 +111,7 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
      * @return the constructed Velocity context
      */
     @Nonnull protected Context buildTemplateContext(@Nonnull final ProfileRequestContext profileRequestContext) {
-        assert profileRequestContext != null : "Profile request context can not be null";
+        Constraint.isNotNull(profileRequestContext, "Profile request context can not be null");
 
         VelocityContext templateContext = new VelocityContext();
 

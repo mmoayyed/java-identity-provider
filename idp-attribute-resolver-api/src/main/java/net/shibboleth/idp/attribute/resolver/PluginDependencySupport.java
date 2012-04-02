@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** Support class for working with {@link ResolverPluginDependency}. */
 public final class PluginDependencySupport {
@@ -56,14 +57,14 @@ public final class PluginDependencySupport {
     public static Set<AttributeValue> getMergedAttributeValues(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies) {
-        assert resolutionContext != null : "Attribute resolution context can not be null";
-        assert dependencies != null : "Resolver dependency collection can not be null";
+        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(dependencies, "Resolver dependency collection can not be null");
 
         Set<AttributeValue> values = new HashSet<AttributeValue>();
 
         Attribute resolvedAttribute;
         for (ResolverPluginDependency dependency : dependencies) {
-            assert dependency != null : "Resolver dependency can not be null";
+            Constraint.isNotNull(dependency, "Resolver dependency can not be null");
 
             ResolvedAttributeDefinition attributeDefinition =
                     resolutionContext.getResolvedAttributeDefinitions().get(dependency.getDependencyPluginId());
@@ -76,8 +77,8 @@ public final class PluginDependencySupport {
             ResolvedDataConnector dataConnector =
                     resolutionContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
-                assert dependency.getDependencyAttributeId().isPresent() : "Data connector dependencies "
-                        + "must specify a dependant attribute ID";
+                Constraint.isTrue(dependency.getDependencyAttributeId().isPresent(), "Data connector dependencies "
+                        + "must specify a dependant attribute ID");
 
                 if (dataConnector.getResolvedAttributes().isPresent()) {
                     resolvedAttribute =
@@ -116,7 +117,7 @@ public final class PluginDependencySupport {
         HashMap<String, Set<AttributeValue>> result = new HashMap<String, Set<AttributeValue>>();
 
         for (ResolverPluginDependency dependency : dependencies) {
-            assert dependency != null : "Resolver dependency can not be null";
+            Constraint.isNotNull(dependency, "Resolver dependency can not be null");
 
             ResolvedAttributeDefinition attributeDefinition =
                     resolutionContext.getResolvedAttributeDefinitions().get(dependency.getDependencyPluginId());

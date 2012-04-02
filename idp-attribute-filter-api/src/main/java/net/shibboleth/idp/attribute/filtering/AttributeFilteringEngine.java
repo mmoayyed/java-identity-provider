@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -123,11 +124,10 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
      */
     public void filterAttributes(@Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        assert filterContext != null : "Attribute filter context can not be null";
-
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         Map<String, Attribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
 
         log.debug("Attribute filter engine '{}': beginning process of filtering the following {} attributes: {}",
@@ -174,8 +174,8 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
      */
     protected Optional<Collection> getFilteredValues(@Nonnull @NotEmpty final String attributeId,
             @Nonnull final AttributeFilterContext filterContext) {
-        assert attributeId != null : "attributeId can not be null";
-        assert filterContext != null : "filterContext can not be null";
+        Constraint.isNotNull(attributeId, "attributeId can not be null");
+        Constraint.isNotNull(filterContext, "filterContext can not be null");
 
         final Collection filteredAttributeValues = filterContext.getPermittedAttributeValues().get(attributeId);
 

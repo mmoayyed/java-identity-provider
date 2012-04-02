@@ -24,7 +24,7 @@ import java.util.Set;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Predicate;
@@ -80,7 +80,7 @@ public abstract class AbstractSamlProfileConfiguration extends AbstractProfileCo
      */
     public void setSignAssertionsCriteria(Predicate<ProfileRequestContext> criteria) {
         signAssertionsCriteria =
-                Assert.isNotNull(criteria, "Criteria to determine if assertions should be signed can not be null");
+                Constraint.isNotNull(criteria, "Criteria to determine if assertions should be signed can not be null");
     }
 
     /**
@@ -99,7 +99,7 @@ public abstract class AbstractSamlProfileConfiguration extends AbstractProfileCo
      */
     public void setSignedRequestsCriteria(Predicate<ProfileRequestContext> criteria) {
         signedRequestsCriteria =
-                Assert.isNotNull(criteria,
+                Constraint.isNotNull(criteria,
                         "Criteria to determine if received requests should be signed can not be null");
     }
 
@@ -119,7 +119,7 @@ public abstract class AbstractSamlProfileConfiguration extends AbstractProfileCo
      */
     public void setSignResponsesCriteria(Predicate<ProfileRequestContext> criteria) {
         signResponsesCriteria =
-                Assert.isNotNull(criteria, "Criteria to determine if responses should be signed can not be null");
+                Constraint.isNotNull(criteria, "Criteria to determine if responses should be signed can not be null");
     }
 
     /**
@@ -137,7 +137,7 @@ public abstract class AbstractSamlProfileConfiguration extends AbstractProfileCo
      * @param lifetime lifetime of an assertion in milliseconds, must be greater than 0
      */
     public void setAssertionLifetime(final long lifetime) {
-        assertionLifetime = Assert.isGreaterThan(0, lifetime, "Assertion lifetime must be greater than 0");
+        assertionLifetime = Constraint.isGreaterThan(0, lifetime, "Assertion lifetime must be greater than 0");
     }
 
     /**

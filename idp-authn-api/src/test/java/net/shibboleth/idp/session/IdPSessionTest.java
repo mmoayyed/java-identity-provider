@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session;
 
 import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -43,28 +44,28 @@ public class IdPSessionTest {
         try {
             new IdPSession(null, new byte[] {0, 0, 0});
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new IdPSession("", new byte[] {0, 0, 0});
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new IdPSession("  ", new byte[] {0, 0, 0});
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new IdPSession("test", null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }
@@ -131,7 +132,7 @@ public class IdPSessionTest {
         try {
             session.addServiceSession(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(session.getServiceSessions().size(), 3);
             Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
             Assert.assertEquals(session.getServiceSession("svc1").get(), svcSession1);
@@ -149,7 +150,7 @@ public class IdPSessionTest {
         try {
             session.addServiceSession(svcSession1);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(session.getServiceSessions().size(), 3);
             Assert.assertTrue(session.getServiceSessions().contains(svcSession1));
             Assert.assertEquals(session.getServiceSession("svc1").get(), svcSession1);
@@ -192,7 +193,7 @@ public class IdPSessionTest {
         try {
             session.removeServiceSession(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(session.getServiceSessions().size(), 1);
             Assert.assertFalse(session.getServiceSessions().contains(svcSession1));
             Assert.assertTrue(session.getServiceSessions().contains(svcSession2));
@@ -243,7 +244,7 @@ public class IdPSessionTest {
         try {
             session.removeAuthenticationEvent(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(session.getAuthenticateEvents().size(), 1);
             Assert.assertTrue(session.getAuthenticateEvents().contains(event1));
             Assert.assertEquals(session.getAuthenticationEvent("foo").get(), event1);

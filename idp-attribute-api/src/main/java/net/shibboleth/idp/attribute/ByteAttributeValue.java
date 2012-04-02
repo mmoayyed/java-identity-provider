@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.codec.Base64Support;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -41,7 +41,7 @@ public class ByteAttributeValue implements AttributeValue<byte[]> {
      * @param attributeValue value of the attribute
      */
     public ByteAttributeValue(@Nonnull final byte[] attributeValue) {
-        value = Assert.isNotNull(attributeValue, "Attribute value can not be null");
+        value = Constraint.isNotNull(attributeValue, "Attribute value can not be null");
     }
 
     /** {@inheritDoc} */

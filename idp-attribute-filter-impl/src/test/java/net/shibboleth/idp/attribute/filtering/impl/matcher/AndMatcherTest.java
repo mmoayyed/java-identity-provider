@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -52,21 +53,21 @@ public class AndMatcherTest extends AbstractMatcherTest {
         try {
             matcher.getMatchingValues(null, filterContext);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }
@@ -121,7 +122,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
                         equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
 
         matcher.toString();
-        
+
         Assert.assertFalse(matcher.equals(null));
         Assert.assertTrue(matcher.equals(matcher));
         Assert.assertFalse(matcher.equals(this));
@@ -130,7 +131,6 @@ public class AndMatcherTest extends AbstractMatcherTest {
                 new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
                         equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
 
-        
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 

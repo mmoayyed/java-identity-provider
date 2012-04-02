@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -58,7 +58,7 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher, Initial
      * @param id ID of the attribute to which this matcher applies
      */
     public void setMatchingAttribute(String id) {
-        matchingAttribute = Assert.isNotNull(StringSupport.trimOrNull(id), "attribute ID can not be null or empty");
+        matchingAttribute = Constraint.isNotNull(StringSupport.trimOrNull(id), "attribute ID can not be null or empty");
     }
 
     /**

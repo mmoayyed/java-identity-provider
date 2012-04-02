@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -43,7 +43,7 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
     public ScopedStringAttributeValue(@Nonnull @NotEmpty final String attributeValue,
             @Nonnull @NotEmpty final String valueScope) {
         super(attributeValue);
-        scope = Assert.isNotNull(StringSupport.trimOrNull(valueScope), "Scope can not be null or empty");
+        scope = Constraint.isNotNull(StringSupport.trimOrNull(valueScope), "Scope can not be null or empty");
     }
     
 

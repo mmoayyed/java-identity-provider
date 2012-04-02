@@ -25,6 +25,7 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.logic.ExceptionPredicate;
 
 import org.testng.Assert;
@@ -44,7 +45,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         boolean thrown = false;
         try {
             matcher.getMatchingValues(null, filterContext);
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown);
@@ -52,7 +53,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         thrown = false;
         try {
             matcher.getMatchingValues(attribute, null);
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown);
@@ -60,7 +61,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         thrown = false;
         try {
             matcher.getMatchingValues(null, null);
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown);
@@ -68,12 +69,11 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         thrown = false;
         try {
             new AttributeValuePredicateMatcher(null);
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown);
     }
-
 
     @Test public void testGetMatchingValues() throws AttributeFilteringException {
         AttributeValuePredicateMatcher matcher =
@@ -85,7 +85,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(result.contains(value1) && result.contains(value2));
 
     }
-    
+
     @Test public void testFailingGetMatchingValues() {
         AttributeValuePredicateMatcher matcher =
                 new AttributeValuePredicateMatcher(new ExceptionPredicate(new RuntimeException()));
@@ -94,11 +94,10 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
         } catch (AttributeFilteringException e) {
-            //OK
+            // OK
         }
 
     }
-
 
     @Test public void testEqualsHashToString() {
         AttributeValuePredicateMatcher matcher =
@@ -111,7 +110,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         Assert.assertFalse(matcher.equals(this));
 
         AttributeValuePredicateMatcher other = new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
-        
+
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 

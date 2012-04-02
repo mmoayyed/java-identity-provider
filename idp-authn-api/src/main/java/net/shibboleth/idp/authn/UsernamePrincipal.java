@@ -19,7 +19,7 @@ package net.shibboleth.idp.authn;
 
 import java.security.Principal;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -36,7 +36,7 @@ public final class UsernamePrincipal implements Principal {
      * @param user the username, can not be null or empty
      */
     public UsernamePrincipal(final String user) {
-        username = Assert.isNotNull(StringSupport.trimOrNull(user), "Username can not be null or empty");
+        username = Constraint.isNotNull(StringSupport.trimOrNull(user), "Username can not be null or empty");
     }
 
     /** {@inheritDoc} */

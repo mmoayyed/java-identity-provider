@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -31,14 +33,14 @@ public class StringAttributeValueTest {
         try {
             new StringAttributeValue(null);
             Assert.fail("able to set null attribute value");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             new StringAttributeValue("");
             Assert.fail("able to set empty attribute value");
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 

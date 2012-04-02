@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -72,28 +73,28 @@ public class AttributeFilterPolicyTest {
         try {
             new AttributeFilterPolicy(null, predicate, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected
-        } 
+        }
 
         try {
             new AttributeFilterPolicy("", predicate, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected
         }
 
         try {
             new AttributeFilterPolicy("  ", predicate, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected
         }
 
         try {
             new AttributeFilterPolicy("engine", null, Arrays.asList(valuePolicy));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected
         }
     }
@@ -194,7 +195,7 @@ public class AttributeFilterPolicyTest {
         thrown = false;
         try {
             policy.isApplicable(null);
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown);
@@ -229,7 +230,7 @@ public class AttributeFilterPolicyTest {
         thrown = false;
         try {
             policy.apply(null);
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown);
@@ -258,7 +259,7 @@ public class AttributeFilterPolicyTest {
 
         Assert.assertNull(context.getPermittedAttributeValues().get(ATTR_NAME_2));
     }
-    
+
     @Test public void testApplyToEmpty() throws ComponentInitializationException, AttributeFilteringException {
         AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
         //

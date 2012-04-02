@@ -30,7 +30,7 @@ import net.shibboleth.idp.profile.InvalidInboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -71,7 +71,7 @@ public class SchemaValidateXmlMessage extends AbstractIdentityProviderAction<XML
             return;
         }
 
-        validationSchema = Assert.isNotNull(schema);
+        validationSchema = Constraint.isNotNull(schema, "Schema can not be null");
     }
 
     /** {@inheritDoc} */

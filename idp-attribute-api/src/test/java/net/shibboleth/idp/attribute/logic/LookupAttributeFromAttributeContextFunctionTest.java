@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeContext;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.testng.Assert;
@@ -30,11 +31,12 @@ import com.google.common.base.Function;
 
 /** Test for {@link LookupAttributeFromAttributeContextFunction}. */
 public class LookupAttributeFromAttributeContextFunctionTest {
-    
-    private static final String NAME_ONE = "one";
-    private static final String NAME_TWO = "two";
-    private static final String NAME_THREE = "three";
 
+    private static final String NAME_ONE = "one";
+
+    private static final String NAME_TWO = "two";
+
+    private static final String NAME_THREE = "three";
 
     @Test public void testLookupAttributeFromAttributeContextFunction() {
 
@@ -43,7 +45,7 @@ public class LookupAttributeFromAttributeContextFunctionTest {
 
         final AttributeContext attributeChildContext = new AttributeContext();
         attributeChildContext.setAttributes(Arrays.asList(attrOne, attrTwo));
-        
+
         final BaseContext parent = new BaseContext() {};
         parent.addSubcontext(attributeChildContext);
 
@@ -52,36 +54,36 @@ public class LookupAttributeFromAttributeContextFunctionTest {
 
         final BaseContext grandChild = new BaseContext() {};
         noneAtChildContext.addSubcontext(grandChild);
-        
+
         try {
             new LookupAttributeFromAttributeContextFunction(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
         try {
             new LookupAttributeFromAttributeContextFunction("");
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
-        
+
         Function<BaseContext, Attribute> func = AttributeLogicSupport.lookupAttributeFromAttributeContext(NAME_ONE);
         try {
             func.apply(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
-        
+
         Assert.assertNull(func.apply(parent));
         Assert.assertEquals(func.apply(attributeChildContext), attrOne);
         Assert.assertEquals(func.apply(noneAtChildContext), attrOne);
         Assert.assertEquals(func.apply(grandChild), attrOne);
-       
+
         func = AttributeLogicSupport.lookupAttributeFromAttributeContext(NAME_THREE);
-        
+
         Assert.assertNull(func.apply(noneAtChildContext));
         Assert.assertNull(func.apply(attributeChildContext));
         Assert.assertNull(func.apply(parent));

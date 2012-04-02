@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -119,8 +119,8 @@ public final class AttributeFilterContext extends BaseContext {
     public void addPermittedAttributeValues(@Nonnull @NotEmpty String attributeId,
             @Nullable @NullableElements Collection<? extends AttributeValue> attributeValues) {
         String trimmedAttributeId =
-                Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
-        Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
+                Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
+        Constraint.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
                 + trimmedAttributeId + " exists in the pre-filtered attribute set");
 
         if (attributeValues == null || attributeValues.isEmpty()) {
@@ -168,8 +168,8 @@ public final class AttributeFilterContext extends BaseContext {
     public void addDeniedAttributeValues(@Nonnull @NotEmpty String attributeId,
             @Nullable @NullableElements Collection<? extends AttributeValue> attributeValues) {
         String trimmedAttributeId =
-                Assert.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
-        Assert.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "No attribute with ID "
+                Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
+        Constraint.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "No attribute with ID "
                 + trimmedAttributeId + " exists in the pre-filtered attribute set");
 
         if (attributeValues == null || attributeValues.isEmpty()) {

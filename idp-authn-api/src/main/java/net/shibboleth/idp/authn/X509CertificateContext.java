@@ -21,7 +21,7 @@ import java.security.cert.X509Certificate;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -51,7 +51,7 @@ public class X509CertificateContext extends BaseContext {
      * @return this context
      */
     public X509CertificateContext setCertificate(@Nonnull final X509Certificate cert) {
-        certificate = Assert.isNotNull(cert, "Certificate can not be null");
+        certificate = Constraint.isNotNull(cert, "Certificate can not be null");
         return this;
     }
 }

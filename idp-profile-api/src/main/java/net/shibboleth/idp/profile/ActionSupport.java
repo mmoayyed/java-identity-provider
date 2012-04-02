@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -326,10 +326,10 @@ public final class ActionSupport {
      */
     @Nonnull public static Event buildEvent(@Nonnull final IdentifiableComponent source, @Nonnull final String eventId,
             @Nonnull final AttributeMap eventAttributes) {
-        Assert.isNotNull(source, "Component may not be null");
+        Constraint.isNotNull(source, "Component may not be null");
 
         final String trimmedEventId =
-                Assert.isNotNull(StringSupport.trimOrNull(eventId), "ID of event for action " + source.getId()
+                Constraint.isNotNull(StringSupport.trimOrNull(eventId), "ID of event for action " + source.getId()
                         + " may not be null");
 
         if (eventAttributes == null || eventAttributes.isEmpty()) {

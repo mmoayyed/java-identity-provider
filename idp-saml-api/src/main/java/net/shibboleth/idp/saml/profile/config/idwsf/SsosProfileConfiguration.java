@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.profile.config.idwsf;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.config.saml2.SsoProfileConfiguration;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
@@ -88,6 +88,6 @@ public class SsosProfileConfiguration extends SsoProfileConfiguration {
      * @param criterion criterion used to determine if a token may be delegated to a relying party, never null
      */
     public void setDelegationCriterion(final Predicate<ProfileRequestContext<RequestAbstractType, Response>> criterion) {
-        delegationCriterion = Assert.isNotNull(criterion, "Delegation criterion can not be null");
+        delegationCriterion = Constraint.isNotNull(criterion, "Delegation criterion can not be null");
     }
 }

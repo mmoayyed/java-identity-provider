@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -50,21 +51,21 @@ public class OrMatcherTest extends AbstractMatcherTest {
         try {
             matcher.getMatchingValues(null, filterContext);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }
@@ -105,9 +106,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
     @Test public void testNoMatchingValues() throws Exception {
         OrMatcher matcher =
                 new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo("Nothing")), new AttributeValuePredicateMatcher(
-                                equalTo("Zippo"))));
-
+                        equalTo("Nothing")), new AttributeValuePredicateMatcher(equalTo("Zippo"))));
 
         matcher.initialize();
 

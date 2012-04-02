@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMapping;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
@@ -49,7 +49,7 @@ public class SubstringValueMapping implements ValueMapping {
         ignoreCase = caseInsensitive;
 
         String trimmedTarget =
-                Assert.isNotNull(StringSupport.trimOrNull(targetValue), "Target value can not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(targetValue), "Target value can not be null or empty");
         if (ignoreCase) {
             target = trimmedTarget.toUpperCase();
         } else {
@@ -57,7 +57,7 @@ public class SubstringValueMapping implements ValueMapping {
         }
 
         result =
-                Optional.of(Assert.isNotNull(StringSupport.trimOrNull(returnValue),
+                Optional.of(Constraint.isNotNull(StringSupport.trimOrNull(returnValue),
                         "Return value can not be null or empty"));
     }
 

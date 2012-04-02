@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
 
     /** Unique ID of the attribute this rule applies to. */
     private String attributeId;
-    
+
     /** Whether the attributeId has been set. */
     private boolean attributeIdSet;
 
@@ -89,7 +89,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        attributeId = Assert.isNotNull(StringSupport.trimOrNull(id), "Attribute ID can not be null or empty");
+        attributeId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Attribute ID can not be null or empty");
         attributeIdSet = true;
     }
 
@@ -137,7 +137,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        valueMatchingRule = Assert.isNull(matcher, "Attribute value matcher can not be null");
+        valueMatchingRule = Constraint.isNull(matcher, "Attribute value matcher can not be null");
     }
 
     /** {@inheritDoc} */
@@ -157,11 +157,11 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      */
     public void apply(@Nonnull final Attribute attribute, @Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        assert attribute != null : "To-be-filtered attribute can not be null";
-        assert filterContext != null : "Attribute filter context can not be null";
-
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        Constraint.isNotNull(attribute, "To-be-filtered attribute can not be null");
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
                 .getValues().size());

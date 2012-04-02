@@ -29,7 +29,7 @@ import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -174,7 +174,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * @param state current state of the service
      */
     protected final void setCurrentState(final String state) {
-        currentState = Assert.isNotNull(StringSupport.trimOrNull(state), "State indicator may not be null or empty");
+        currentState = Constraint.isNotNull(StringSupport.trimOrNull(state), "State indicator may not be null or empty");
     }
 
     /**

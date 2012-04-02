@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -33,21 +35,21 @@ public class AuthenticationWorkflowDescriptorTest {
         try {
             new AuthenticationWorkflowDescriptor(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new AuthenticationWorkflowDescriptor("");
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             new AuthenticationWorkflowDescriptor("  ");
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }
@@ -62,7 +64,7 @@ public class AuthenticationWorkflowDescriptorTest {
         try {
             descriptor.setInactivityTimeout(-10);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(descriptor.getInactivityTimeout(), 10);
         }
     }
@@ -77,7 +79,7 @@ public class AuthenticationWorkflowDescriptorTest {
         try {
             descriptor.setLifetime(-10);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(descriptor.getLifetime(), 10);
         }
     }

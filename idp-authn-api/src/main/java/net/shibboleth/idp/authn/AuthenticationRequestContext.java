@@ -30,6 +30,7 @@ import net.shibboleth.idp.session.AuthenticationEvent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
@@ -217,7 +218,7 @@ public final class AuthenticationRequestContext extends BaseContext {
      * @return this authentication request context
      */
     public AuthenticationRequestContext setAttemptedWorkflow(@Nonnull final AuthenticationWorkflowDescriptor workflow) {
-        assert workflow != null : "Authentication workflow descriptor can not be null";
+        Constraint.isNotNull(workflow, "Authentication workflow descriptor can not be null");
         attemptedWorkflow = Optional.of(workflow);
         return this;
     }
@@ -239,7 +240,7 @@ public final class AuthenticationRequestContext extends BaseContext {
      * @return this authentication request context
      */
     public AuthenticationRequestContext setAuthenticatedPrincipal(@Nonnull final Principal principal) {
-        assert principal != null : "Principal can not be null";
+        Constraint.isNotNull(principal, "Principal can not be null");
         authenticatedPrincipal = Optional.of(principal);
         return this;
     }

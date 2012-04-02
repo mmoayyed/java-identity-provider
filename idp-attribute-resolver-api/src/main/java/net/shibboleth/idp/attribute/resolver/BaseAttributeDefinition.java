@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -105,8 +106,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public synchronized void setDisplayDescriptions(@Nullable @NullableElements 
-            final Map<Locale, String> descriptions) {
+    public synchronized void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> descriptions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -218,8 +218,9 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     @Nonnull protected Optional<Attribute> doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {
 
-        final Optional<Attribute> optionalAttribute = doAttributeDefinitionResolve(resolutionContext);
-        assert optionalAttribute != null : "return of doAttributeResolution was null";
+        final Optional<Attribute> optionalAttribute =
+                Constraint.isNotNull(doAttributeDefinitionResolve(resolutionContext),
+                        "return of doAttributeResolution was null");
 
         if (!optionalAttribute.isPresent()) {
             log.debug("Attribute definition '{}': no attribute was produced during resolution", getId());

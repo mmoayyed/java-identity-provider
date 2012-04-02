@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Objects;
 
@@ -55,8 +56,8 @@ public class OrMatcher extends AbstractComposedMatcher implements AttributeValue
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        assert attribute != null : "Attribute to be filtered can not be null";
-        assert filterContext != null : "Attribute filter context can not be null";
+        Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code

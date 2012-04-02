@@ -19,6 +19,8 @@ package net.shibboleth.idp.authn;
 
 import java.util.ArrayList;
 
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -55,7 +57,7 @@ public class AuthenticationRequestContextTest {
         try {
             ctx.setAttemptedWorkflow(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(ctx.getAttemptedWorkflow().get(), descriptor);
         }
     }
@@ -71,7 +73,7 @@ public class AuthenticationRequestContextTest {
         try {
             ctx.setAuthenticatedPrincipal(null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             Assert.assertEquals(ctx.getAuthenticatedPrincipal().get(), principal);
         }
     }

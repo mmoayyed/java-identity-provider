@@ -22,6 +22,7 @@ import java.util.Collections;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -41,21 +42,21 @@ public class ResolvedAttributeDefinitionTest {
         try {
             new ResolvedAttributeDefinition(null, Optional.of(attribute));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
         try {
             new ResolvedAttributeDefinition(attrDef, null);
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
         try {
             new ResolvedAttributeDefinition(new StaticAttributeDefinition(), Optional.of(attribute));
             Assert.fail();
-        } catch (AssertionError e) {
+        } catch (ConstraintViolationException e) {
             // OK
         }
 
@@ -104,18 +105,18 @@ public class ResolvedAttributeDefinitionTest {
         ResolvedAttributeDefinition resolvedAttributeDefinition =
                 new ResolvedAttributeDefinition(attrDef, Optional.of(new Attribute("foo")));
         resolvedAttributeDefinition.getActivationCriteria();
-        
+
         Assert.assertEquals(resolvedAttributeDefinition.getDependencies(), attrDef.getDependencies());
         Assert.assertTrue(resolvedAttributeDefinition.getActivationCriteria().apply(null));
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
-        
+
         //
         // TODO - do we want to do more about seeing that these are indeed noops?
         //
         resolvedAttributeDefinition.setDependencyOnly(true);
         resolvedAttributeDefinition.setDisplayDescriptions(null);
         resolvedAttributeDefinition.setDisplayNames(null);
-        
+
         resolvedAttributeDefinition.setPropagateResolutionExceptions(true);
         Assert.assertFalse(resolvedAttributeDefinition.isPropagateResolutionExceptions());
 

@@ -35,7 +35,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Objects;
 
@@ -56,7 +56,7 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
      * @param valueMatcher attribute value matcher to be negated
      */
     public NotMatcher(@Nonnull final AttributeValueMatcher valueMatcher){
-        negatedMatcher = Assert.isNotNull(valueMatcher, "Attribute value matcher can not be null");
+        negatedMatcher = Constraint.isNotNull(valueMatcher, "Attribute value matcher can not be null");
     }
     
     /**
@@ -72,8 +72,8 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
     public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
             @Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilteringException {
-        assert attribute != null : "Attribute to be filtered can not be null";
-        assert filterContext != null : "Attribute filter context can not be null";
+        Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code

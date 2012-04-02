@@ -38,7 +38,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +82,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
         setId(policyId);
 
         activationCriteria =
-                Assert.isNotNull(criterion, "Attribute filter policy activiation criterion can not be null");
+                Constraint.isNotNull(criterion, "Attribute filter policy activiation criterion can not be null");
 
         ArrayList<AttributeValueFilterPolicy> checkedPolicies = new ArrayList<AttributeValueFilterPolicy>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
@@ -130,12 +130,11 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @throws AttributeFilteringException thrown if there is a problem evaluating this filter's requirement rule
      */
-    public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) 
-            throws AttributeFilteringException {
-        assert filterContext != null : "Attribute filter context can not be null";
-
+    public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
@@ -160,10 +159,10 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      *             request
      */
     public void apply(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
-        assert filterContext != null : "Attribute filter context can not be null";
-
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         final Map<String, Attribute> attributes = filterContext.getPrefilteredAttributes();
         log.debug("Applying attribute filter policy '{}' to current set of attributes: {}", getId(),

@@ -38,7 +38,7 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Assert;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
 import org.apache.velocity.VelocityContext;
@@ -87,7 +87,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        template = Assert.isNotNull(velocityTemplate, "Template can not be null");
+        template = Constraint.isNotNull(velocityTemplate, "Template can not be null");
     }
 
     /** {@inheritDoc} */
