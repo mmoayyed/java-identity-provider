@@ -21,14 +21,14 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.ProfileException;
+import net.shibboleth.idp.profile.ProfileRequestContext;
+
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
-
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
 
 /** A base class for authentication related actions. */
 public abstract class AbstractAuthenticationAction extends AbstractIdentityProviderAction {
@@ -63,12 +63,12 @@ public abstract class AbstractAuthenticationAction extends AbstractIdentityProvi
      * 
      * @return the result of this action
      * 
-     * @throws ProfileException thrown if there is a problem executing the profile action
+     * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
     protected abstract Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws ProfileException;
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException;
 
     /** Exception thrown if there is no authentication exception available. */
     public static final class NoAuthenticationContextException extends ProfileException {

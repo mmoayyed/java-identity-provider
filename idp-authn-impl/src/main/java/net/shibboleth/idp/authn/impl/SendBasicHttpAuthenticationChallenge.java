@@ -21,20 +21,20 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-
-import com.google.common.net.HttpHeaders;
-
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+
+import com.google.common.net.HttpHeaders;
 
 /** A stage that prompts for HTTP Basic authentication credentials. */
 public class SendBasicHttpAuthenticationChallenge extends AbstractAuthenticationAction {
@@ -64,7 +64,7 @@ public class SendBasicHttpAuthenticationChallenge extends AbstractAuthentication
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws ProfileException {
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         HttpServletSupport.addNoCacheHeaders(httpResponse);
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

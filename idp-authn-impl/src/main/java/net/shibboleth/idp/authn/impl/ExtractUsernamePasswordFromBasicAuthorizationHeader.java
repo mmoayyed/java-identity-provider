@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Enumeration;
+
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -49,7 +52,7 @@ public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends Abstrac
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws ProfileException {
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final String encodedCredentials = extractAuthorizationCredentials(httpRequest);
         final Pair<String, String> decodedCredentials = decodeAuthorizationCredentials(encodedCredentials);
@@ -73,19 +76,22 @@ public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends Abstrac
      *             the incorrect scheme
      */
     protected String extractAuthorizationCredentials(@Nonnull final HttpServletRequest httpRequest)
-            throws ProfileException {
-        final String authorizationHeader = StringSupport.trimOrNull(httpRequest.getHeader(HttpHeaders.AUTHORIZATION));
-        // TODO(lajoie) check if null or if there is more than one header
+            throws AuthenticationException {
 
-        final String[] splitHeader = authorizationHeader.split(" ");
-        // TODO(lajoie) check size and error out if incorrect
-
-        final String scheme = StringSupport.trimOrNull(splitHeader[0]);
-        if (!SendBasicHttpAuthenticationChallenge.BASIC.equalsIgnoreCase(scheme)) {
-            // TODO(lajoie) error condition
+        String[] splitValue;
+        String authnScheme;
+        for (Enumeration<String> header = httpRequest.getHeaders(HttpHeaders.AUTHORIZATION); header.hasMoreElements();) {
+            splitValue = header.nextElement().split(" ");
+            if (splitValue.length == 2) {
+                authnScheme = StringSupport.trimOrNull(splitValue[0]);
+                if (SendBasicHttpAuthenticationChallenge.BASIC.equalsIgnoreCase(authnScheme)) {
+                    return StringSupport.trimOrNull(splitValue[1]);
+                }
+            }
         }
 
-        return StringSupport.trimOrNull(splitHeader[1]);
+        throw new InvalidBasicAuthorizationHeaderException(
+                "Request did not contain an Authorization header for Basic authentication");
     }
 
     /**
@@ -99,17 +105,45 @@ public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends Abstrac
      * @throws ProfileException thrown if the encoded credentials were improperly encoded or are malformed
      */
     protected Pair<String, String> decodeAuthorizationCredentials(@Nonnull @NotEmpty final String encodedCredentials)
-            throws ProfileException {
+            throws AuthenticationException {
         final String decodedUserPass = new String(Base64Support.decode(encodedCredentials), Charsets.US_ASCII);
 
         if (!decodedUserPass.contains(":")) {
-            // TODO(lajoie) error condition
+            throw new InvalidBasicAuthorizationHeaderException(
+                    "Request did not contain a well-formed Basic authorization header value");
         }
 
         final String username = decodedUserPass.substring(0, decodedUserPass.indexOf(':'));
+        if (username == null) {
+            throw new InvalidBasicAuthorizationHeaderException(
+                    "Request did not contain a well-formed Basic authorization header value");
+        }
+
         final String password = decodedUserPass.substring(decodedUserPass.indexOf(':'));
-        // TODO(lajoie) check to see if username or password is empty and error out if so
+        if (password == null) {
+            throw new InvalidBasicAuthorizationHeaderException(
+                    "Request did not contain a well-formed Basic authorization header value");
+        }
 
         return new Pair<String, String>(username, password);
+    }
+
+    /**
+     * Thrown if the HTTP request did not contain an authorization header value that was valid for use with Basic
+     * authentication.
+     */
+    public static class InvalidBasicAuthorizationHeaderException extends AuthenticationException {
+
+        /** Serial version UID. */
+        private static final long serialVersionUID = -1859600619050947760L;
+
+        /**
+         * Constructor.
+         * 
+         * @param message error message
+         */
+        public InvalidBasicAuthorizationHeaderException(String message) {
+            super(message);
+        }
     }
 }

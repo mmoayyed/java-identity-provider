@@ -17,8 +17,10 @@
 
 package net.shibboleth.idp.authn;
 
+import net.shibboleth.idp.profile.ProfileException;
+
 /** Exception indicating a problem authenticating a user. */
-public class AuthenticationException extends Exception {
+public class AuthenticationException extends ProfileException {
 
     /** Serial version UID. */
     private static final long serialVersionUID = 6587176160411149029L;

@@ -28,11 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.UserAgentAddressContext;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -87,7 +87,7 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws ProfileException {
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final UserAgentAddressContext uaaCtx =
                 authenticationContext.getSubcontext(UserAgentAddressContext.class, false);

@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.Assert;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
@@ -84,7 +84,7 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws ProfileException {
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final Context templateContext = buildTemplateContext(profileRequestContext);
 
@@ -127,7 +127,7 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
     }
 
     /** Exception thrown when there is a problem rendering the username/password collection page. */
-    public static class InvalidTemplateException extends ProfileException {
+    public static class InvalidTemplateException extends AuthenticationException {
 
         /** Serial version UID. */
         private static final long serialVersionUID = -4206933885462310219L;

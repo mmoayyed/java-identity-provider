@@ -22,10 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.springframework.webflow.execution.Event;
@@ -41,7 +41,7 @@ public class ExtractUsernamePasswordFromFormResponse extends AbstractAuthenticat
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws ProfileException {
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final String username = httpRequest.getParameter(DisplayUsernamePasswordPage.USERNAME_FIELD_NAME);
         if (username == null) {
@@ -60,7 +60,7 @@ public class ExtractUsernamePasswordFromFormResponse extends AbstractAuthenticat
     }
 
     /** Thrown if there is a problem with the incoming request. */
-    public static final class UnableToExtractUsernamePasswordException extends ProfileException {
+    public static final class UnableToExtractUsernamePasswordException extends AuthenticationException {
 
         /** Serial version UID. */
         private static final long serialVersionUID = -2470302287986807006L;
