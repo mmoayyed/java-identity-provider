@@ -68,7 +68,7 @@ public class ScopedValueTest extends BaseShibObjectProviderTestCase {
 
         sv.setValue(expectedValue + scopeDelimiter + expectedScope);
 
-        assertEquals(expectedDOM, sv);
+        assertXMLEquals(expectedDOM, sv);
     }
 
     /** {@inheritDoc} */
@@ -79,7 +79,7 @@ public class ScopedValueTest extends BaseShibObjectProviderTestCase {
         sv.setScopeAttributeName(scopeAttribute);
         sv.setScope(expectedScope);
 
-        assertEquals(expectedOptionalAttributesDOM, sv);
+        assertXMLEquals(expectedOptionalAttributesDOM, sv);
     }
 
     /** {@inheritDoc} */

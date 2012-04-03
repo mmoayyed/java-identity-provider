@@ -51,7 +51,7 @@ public class ScopeTest extends BaseShibObjectProviderTestCase {
 
         scope.setValue(expectedContent);
 
-        assertEquals(expectedDOM, scope);
+        assertXMLEquals(expectedDOM, scope);
     }
 
     /** {@inheritDoc} */
@@ -61,7 +61,7 @@ public class ScopeTest extends BaseShibObjectProviderTestCase {
         scope.setValue(expectedContent);
         scope.setRegexp(expectedRegexp);
 
-        assertEquals(expectedOptionalAttributesDOM, scope);
+        assertXMLEquals(expectedOptionalAttributesDOM, scope);
     }
 
     /** {@inheritDoc} */

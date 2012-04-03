@@ -60,7 +60,7 @@ public class KeyAuthorityTest extends BaseShibObjectProviderTestCase {
     public void testSingleElementMarshall() {
         KeyAuthority keyAuthority = (KeyAuthority) buildXMLObject(KeyAuthority.DEFAULT_ELEMENT_NAME);
 
-        assertEquals(expectedDOM, keyAuthority);
+        assertXMLEquals(expectedDOM, keyAuthority);
     }
 
     /** {@inheritDoc} */
@@ -70,7 +70,7 @@ public class KeyAuthorityTest extends BaseShibObjectProviderTestCase {
         keyAuthority.setVerifyDepth(expectedVerifyDepth);
         keyAuthority.getUnknownAttributes().put(unknownAttribName, unknownAttribValue);
 
-        assertEquals(expectedOptionalAttributesDOM, keyAuthority);
+        assertXMLEquals(expectedOptionalAttributesDOM, keyAuthority);
     }
 
     /** {@inheritDoc} */
@@ -81,7 +81,7 @@ public class KeyAuthorityTest extends BaseShibObjectProviderTestCase {
             keyAuthority.getKeyInfos().add((KeyInfo) buildXMLObject(KeyInfo.DEFAULT_ELEMENT_NAME));
         }
 
-        assertEquals(expectedChildElementsDOM, keyAuthority);
+        assertXMLEquals(expectedChildElementsDOM, keyAuthority);
     }
 
     @Test
