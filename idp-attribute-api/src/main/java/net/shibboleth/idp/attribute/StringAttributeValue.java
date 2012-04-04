@@ -37,7 +37,7 @@ public class StringAttributeValue implements AttributeValue<String> {
      * @param attributeValue the attribute value
      */
     public StringAttributeValue(@Nonnull @NotEmpty String attributeValue) {
-        value = Constraint.isNotNull(StringSupport.trim(attributeValue), "Attribute value can not be null or empty");
+        value = Constraint.isNotNull(StringSupport.trimOrNull(attributeValue), "Attribute value can not be null or empty");
     }
 
     /**

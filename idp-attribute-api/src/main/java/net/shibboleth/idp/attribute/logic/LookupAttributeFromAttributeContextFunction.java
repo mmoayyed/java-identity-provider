@@ -23,6 +23,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -46,7 +47,7 @@ public class LookupAttributeFromAttributeContextFunction implements Function<Bas
      * @param attributeId ID of the attribute
      */
     public LookupAttributeFromAttributeContextFunction(@Nonnull @NotEmpty final String attributeId) {
-        id = Constraint.isNotNull(attributeId, "Attribute ID can not be null");
+        id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null");
     }
 
     /** {@inheritDoc} */
