@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMLTooling xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns="http://www.opensaml.org/xmltooling-config" xsi:schemaLocation="http://www.opensaml.org/xmltooling-config ../../src/schema/xmltooling-config.xsd">
+<XMLTooling xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:encoder="urn:mace:shibboleth:2.0:attribute:encoder" xmlns="http://www.opensaml.org/xmltooling-config" xsi:schemaLocation="http://www.opensaml.org/xmltooling-config ../../src/schema/xmltooling-config.xsd">
 
     <!-- Shibboleth SAML Metadata Extensions Object providers -->
     <ObjectProviders>
@@ -18,7 +18,7 @@
             <UnmarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.KeyAuthorityUnmarshaller"/>
         </ObjectProvider>
         
-        <ObjectProvider qualifiedName="shibmd:ScopedValue">
+        <ObjectProvider qualifiedName="encoder:ScopedValue">
             <BuilderClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopedValueBuilder"/>
             <MarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopedValueMarshaller"/>
             <UnmarshallingClass className="net.shibboleth.idp.saml.impl.xmlobject.ScopedValueUnmarshaller"/>

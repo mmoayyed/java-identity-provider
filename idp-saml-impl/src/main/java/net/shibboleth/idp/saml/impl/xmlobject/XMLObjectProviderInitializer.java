@@ -26,7 +26,7 @@ public class XMLObjectProviderInitializer extends AbstractXMLObjectProviderIniti
     
     /** Config resources. */
     private static String[] configs = {
-        "/shibboleth-saml-metadata-ext-config.xml",
+        "/shibboleth-saml-ext-config.xml",
         };
 
     /** {@inheritDoc} */
