@@ -48,7 +48,7 @@
     <properties>
         <svn.relative.location>java-identity-provider</svn.relative.location>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
-        <opensaml.version>TRUNK-SNAPSHOT</opensaml.version>
+        <opensaml.version>3.0-SNAPSHOT</opensaml.version>
     </properties>
 
     <repositories>
