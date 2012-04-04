@@ -21,14 +21,16 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
 
+import org.opensaml.core.xml.XMLObjectProviderBaseTestCase;
 import org.opensaml.xmlsec.signature.KeyInfo;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
  * Testing shibmd:KeyAuthority metadata extension.
  */
-public class KeyAuthorityTest extends BaseShibObjectProviderTestCase {
+public class KeyAuthorityTest extends XMLObjectProviderBaseTestCase {
 
     private Integer expectedVerifyDepth;
 
@@ -40,15 +42,14 @@ public class KeyAuthorityTest extends BaseShibObjectProviderTestCase {
 
     /** Constructor. */
     public KeyAuthorityTest() {
-        singleElementFile = DATA_PATH + "/impl/ShibMDKeyAuthority.xml";
-        singleElementOptionalAttributesFile = DATA_PATH + "/impl/ShibMDKeyAuthorityOptionalAttributes.xml";
-        childElementsFile = DATA_PATH + "/impl/ShibMDKeyAuthorityChildElements.xml";
+        singleElementFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibMDKeyAuthority.xml";
+        singleElementOptionalAttributesFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibMDKeyAuthorityOptionalAttributes.xml";
+        childElementsFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibMDKeyAuthorityChildElements.xml";
     }
 
     /** {@inheritDoc} */
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @BeforeMethod
+	protected void setUp() throws Exception {
         expectedVerifyDepth = new Integer(5);
         expectedNumKeyInfos = 4;
 
@@ -57,14 +58,16 @@ public class KeyAuthorityTest extends BaseShibObjectProviderTestCase {
     }
 
     /** {@inheritDoc} */
-    public void testSingleElementMarshall() {
+    @Test
+	public void testSingleElementMarshall() {
         KeyAuthority keyAuthority = (KeyAuthority) buildXMLObject(KeyAuthority.DEFAULT_ELEMENT_NAME);
 
         assertXMLEquals(expectedDOM, keyAuthority);
     }
 
     /** {@inheritDoc} */
-    public void testSingleElementOptionalAttributesMarshall() {
+    @Test
+	public void testSingleElementOptionalAttributesMarshall() {
         KeyAuthority keyAuthority = (KeyAuthority) buildXMLObject(KeyAuthority.DEFAULT_ELEMENT_NAME);
 
         keyAuthority.setVerifyDepth(expectedVerifyDepth);
@@ -74,7 +77,8 @@ public class KeyAuthorityTest extends BaseShibObjectProviderTestCase {
     }
 
     /** {@inheritDoc} */
-    public void testChildElementsMarshall() {
+    @Test
+	public void testChildElementsMarshall() {
         KeyAuthority keyAuthority = (KeyAuthority) buildXMLObject(KeyAuthority.DEFAULT_ELEMENT_NAME);
 
         for (int i = 0; i < expectedNumKeyInfos; i++) {

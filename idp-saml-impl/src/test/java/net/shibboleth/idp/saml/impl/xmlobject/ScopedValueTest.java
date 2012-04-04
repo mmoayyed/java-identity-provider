@@ -19,12 +19,15 @@ package net.shibboleth.idp.saml.impl.xmlobject;
 
 import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 
+import org.opensaml.core.xml.XMLObjectProviderBaseTestCase;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  * Testing shib:ScopedValue encoder extension.
  */
-public class ScopedValueTest extends BaseShibObjectProviderTestCase {
+public class ScopedValueTest extends XMLObjectProviderBaseTestCase {
 
     /**
      * Expected attribute value.
@@ -48,14 +51,13 @@ public class ScopedValueTest extends BaseShibObjectProviderTestCase {
 
     /** Constructor. */
     public ScopedValueTest() {
-        singleElementFile = DATA_PATH + "/impl/ShibScopedValue.xml";
-        singleElementOptionalAttributesFile = DATA_PATH + "/impl/ShibScopedValueOptionalAttributes.xml";
+        singleElementFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibScopedValue.xml";
+        singleElementOptionalAttributesFile = "/net/shibboleth/idp/saml/impl/xmlobject/ShibScopedValueOptionalAttributes.xml";
     }
 
     /** {@inheritDoc} */
-    protected void setUp() throws Exception {
-        super.setUp();
-
+    @BeforeMethod
+	protected void setUp() throws Exception {
         expectedValue = "member";
         expectedScope = "example.edu";
         scopeAttribute = "scope";
@@ -63,7 +65,8 @@ public class ScopedValueTest extends BaseShibObjectProviderTestCase {
     }
 
     /** {@inheritDoc} */
-    public void testSingleElementMarshall() {
+    @Test
+	public void testSingleElementMarshall() {
         ScopedValue sv = (ScopedValue) buildXMLObject(ScopedValue.TYPE_NAME);
 
         sv.setValue(expectedValue + scopeDelimiter + expectedScope);
@@ -72,7 +75,8 @@ public class ScopedValueTest extends BaseShibObjectProviderTestCase {
     }
 
     /** {@inheritDoc} */
-    public void testSingleElementOptionalAttributesMarshall() {
+    @Test
+	public void testSingleElementOptionalAttributesMarshall() {
         ScopedValue sv = (ScopedValue) buildXMLObject(ScopedValue.TYPE_NAME);
 
         sv.setValue(expectedValue);
@@ -83,7 +87,8 @@ public class ScopedValueTest extends BaseShibObjectProviderTestCase {
     }
 
     /** {@inheritDoc} */
-    public void testSingleElementUnmarshall() {
+    @Test
+	public void testSingleElementUnmarshall() {
         ScopedValue sv = (ScopedValue) unmarshallElement(singleElementFile);
 
         Assert.assertNotNull(sv, "Unmarshalled object was null");
@@ -91,7 +96,8 @@ public class ScopedValueTest extends BaseShibObjectProviderTestCase {
     }
 
     /** {@inheritDoc} */
-    public void testSingleElementOptionalAttributesUnmarshall() {
+    @Test
+	public void testSingleElementOptionalAttributesUnmarshall() {
         ScopedValue sv = (ScopedValue) unmarshallElement(singleElementOptionalAttributesFile);
         sv.setScopeAttributeName(scopeAttribute);
         Assert.assertNotNull(sv, "Unmarshalled object was null");
