@@ -83,7 +83,7 @@ public class PrecscopedAtributeTest {
      * Test the prescoped attribute resolve when there are no matches.
      * 
      * @throws AttributeResolutionException if resolution fails.
-     * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
+     * @throws ComponentInitializationException if any of our initializations failed (which it shouldn't)
      */
     @Test public void testPreScopedNoValues() throws AttributeResolutionException, ComponentInitializationException {
 

@@ -105,7 +105,10 @@ public class TemplateAttributeTest {
         attr.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         attr.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE_ATTR));
         attr.initialize();
-        Assert.assertFalse(attr.resolve(new AttributeResolutionContext()).isPresent());
+        final Attribute val = attr.resolve(new AttributeResolutionContext()).get();
+        final Collection<?> results = val.getValues();
+
+        Assert.assertEquals(results.size(), 0, "Templated value count");
     }
 
     /**
@@ -189,7 +192,7 @@ public class TemplateAttributeTest {
         Assert.assertEquals(results.size(), 2, "Templated value count");
         String s = "Att " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[0];
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "First Match");
-        s = "Att " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[1];
+        s = "Att " + TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[1];
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
     }
 

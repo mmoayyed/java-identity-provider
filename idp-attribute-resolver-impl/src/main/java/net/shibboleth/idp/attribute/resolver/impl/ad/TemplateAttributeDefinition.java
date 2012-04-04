@@ -108,10 +108,10 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             velocityContext = new VelocityContext();
 
             for (String attributeId : sourceValues.keySet()) {
-                final Object value = sourceValues.get(attributeId).next();
+                final AttributeValue value = sourceValues.get(attributeId).next();
                 log.debug("Attribute definition '{}': adding value '{}' for attribute '{}' to the template context",
                         new Object[] {getId(), value.toString(), attributeId,});
-                velocityContext.put(attributeId, value);
+                velocityContext.put(attributeId, value.getValue());
             }
 
             try {
@@ -162,7 +162,8 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         final Map<String, Set<AttributeValue>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
 
-        final int valueCount = dependencyAttributes.values().iterator().next().size();
+        int valueCount = 0;
+        boolean valueCountSet = false;
 
         HashSet<String> attributeValues;
         for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
@@ -177,8 +178,11 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                                     + value.getClass().getName()));
                 }
             }
-
-            if (attributeValues.size() != valueCount) {
+            
+            if (!valueCountSet) {
+                valueCount = attributeValues.size();
+                valueCountSet = true;
+            } else if (attributeValues.size() != valueCount) {
                 final String msg =
                         "All attributes used in TemplateAttributeDefinition " + getId()
                                 + " must have the same number of values.";
