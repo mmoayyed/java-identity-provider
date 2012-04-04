@@ -95,7 +95,6 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
 
         if (isAuthenticated(uaaCtx.getUserAgentAddress())) {
             authenticationContext.setAuthenticatedPrincipal(new UsernamePrincipal(authenticatedUser));
-            authenticationContext.setCompletionInstant();
         }
 
         return ActionSupport.buildProceedEvent(this);

@@ -17,26 +17,40 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
-import net.shibboleth.idp.profile.ProfileException;
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
+import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.UsernamePrincipal;
+import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- *
+ * An authentication stage that checks that the request's REMOTE_USER is set and, if so, sets the identified user as the
+ * authenticated principal.
  */
-public class ValidateRemoteUser extends AbstractIdentityProviderAction {
+public class ValidateRemoteUser extends AbstractAuthenticationAction {
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) throws ProfileException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+            @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
+        final String remoteUser = StringSupport.trimOrNull(httpRequest.getRemoteUser());
+        if (remoteUser == null) {
+            // TODO error case
+        }
+
+        authenticationContext.setAuthenticatedPrincipal(new UsernamePrincipal(remoteUser));
+
+        return ActionSupport.buildProceedEvent(this);
+    }
 }
