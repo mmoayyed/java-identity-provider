@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.Collection;
 import java.util.Set;
 
+import javax.script.ScriptException;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -56,15 +58,22 @@ public class ScriptedAttributeTest {
     /** A simple script to set a value based on input values. */
     private static final String TEST_ATTRIBUTES_SCRIPT = "importPackage(Packages.net.shibboleth.idp.attribute);\n"
             + TEST_ATTRIBUTE_NAME + " = res = new Attribute(\"" + TEST_ATTRIBUTE_NAME + "\");\n" + "values = "
-            + TestSources.DEPENDS_ON_ATTRIBUTE_NAME + ".getValues().iterator();\n" + "while (values.hasNext()) {\n"
+            + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + ".getValues().iterator();\n" + "while (values.hasNext()) {\n"
             + "  val = values.next();\n" + "  " + TEST_ATTRIBUTE_NAME + ".addValue(val);\n}\n";
 
-    /** Something to look at the requestContext. */
+    /** Something to look at the requestContext. 
     private static final String TEST_REQUEST_SCRIPT = "importPackage(Packages.net.shibboleth.idp.attribute);\n"
             + TEST_ATTRIBUTE_NAME + " = res = new Attribute(\"" + TEST_ATTRIBUTE_NAME + "\");\n"
             + "clazloader = requestContext.getClass().getClassLoader();\n"
             + "claz = clazloader.loadClass(\"net.shibboleth.idp.attribute.resolver.AttributeResolutionContext\");\n"
-            + "parent = requestContext.getOwner();\n" + "child = parent.getSubcontext(claz);\n" + TEST_ATTRIBUTE_NAME
+            + "parent = requestContext.getParent();\n" + "child = parent.getSubcontext(claz);\n" + TEST_ATTRIBUTE_NAME
+            + ".addValue(child);\n";*/
+    /** Something to look at the requestContext. */ 
+    private static final String TEST_REQUEST_SCRIPT = "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n"
+            + TEST_ATTRIBUTE_NAME + " = res = new JscriptAttribute(\"" + TEST_ATTRIBUTE_NAME + "\");\n"
+            + "clazloader = requestContext.getClass().getClassLoader();\n"
+            + "claz = clazloader.loadClass(\"net.shibboleth.idp.attribute.resolver.AttributeResolutionContext\");\n"
+            + "parent = requestContext.getParent();\n" + "child = parent.getSubcontext(claz);\n" + TEST_ATTRIBUTE_NAME
             + ".addValue(child);\n";
 
     /**
@@ -72,8 +81,9 @@ public class ScriptedAttributeTest {
      * 
      * @throws AttributeResolutionException
      * @throws ComponentInitializationException only if the test will fail
+     * @throws ScriptException 
      */
-    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException, ScriptException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
@@ -97,12 +107,13 @@ public class ScriptedAttributeTest {
      * 
      * @throws AttributeResolutionException if the resolve fails
      * @throws ComponentInitializationException only if things go wrong
+     * @throws ScriptException 
      */
-    @Test public void testWithAttributes() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testWithAttributes() throws AttributeResolutionException, ComponentInitializationException, ScriptException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_ATTRIBUTES_SCRIPT));
@@ -115,24 +126,20 @@ public class ScriptedAttributeTest {
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
-        dataDefinitions.add(TestSources.populatedStaticConnectior());
+        dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
-        try {
-            resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
-            Assert.fail("resolution failed", e);
-        }
+        resolver.resolveAttributes(context);
         final Attribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
         final Collection values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE),
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
                 "looking for value COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
+        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
                 "looking for value ATTRIBUTE_ATTRIBUTE_VALUE");
     }
 
@@ -141,12 +148,13 @@ public class ScriptedAttributeTest {
      * 
      * @throws AttributeResolutionException if the resolve fails
      * @throws ComponentInitializationException only if the test has gone wrong
+     * @throws ScriptException 
      */
-    @Test public void testRequestContext() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testRequestContext() throws AttributeResolutionException, ComponentInitializationException, ScriptException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        ds.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
@@ -160,12 +168,14 @@ public class ScriptedAttributeTest {
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
-        dataDefinitions.add(TestSources.populatedStaticConnectior());
+        dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
+        TestContextContainer container = new TestContextContainer();
         final AttributeResolutionContext context = new AttributeResolutionContext();
+        container.addSubcontext(context);
         try {
             resolver.resolveAttributes(context);
         } catch (AttributeResolutionException e) {
@@ -177,7 +187,7 @@ public class ScriptedAttributeTest {
         final Attribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
         final Collection values = attribute.getValues();
 
-        Assert.assertTrue(values.contains(context), "looking for context");
+        Assert.assertEquals(values.size(), 1, "looking for context");
     }
 
 }

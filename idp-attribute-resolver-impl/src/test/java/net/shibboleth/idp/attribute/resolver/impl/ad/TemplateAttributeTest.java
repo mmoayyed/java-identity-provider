@@ -18,12 +18,14 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -48,15 +50,21 @@ public class TemplateAttributeTest {
     private static final String TEST_ATTRIBUTE_BASE_NAME = "TEMPLATE";
 
     /** Simple result. */
-    private static final String SIMPLE_VALUE = "simple";
+    private static final String SIMPLE_VALUE_STRING = "simple";
+    private static final StringAttributeValue SIMPLE_VALUE_RESULT = new StringAttributeValue(SIMPLE_VALUE_STRING);
 
     /** A simple script to set a constant value. */
-    private static final String TEST_SIMPLE_TEMPLATE = SIMPLE_VALUE;
+    private static final String TEST_SIMPLE_TEMPLATE = SIMPLE_VALUE_STRING;
 
     /** A simple script to set a value based on input values. */
-    private static final String TEST_ATTRIBUTES_TEMPLATE = "Att " + "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME + "}-"
+    private static final String TEST_ATTRIBUTES_TEMPLATE_ATTR = "Att " + "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}-"
             + "${" + TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME + "}";
 
+
+    private static final String TEST_ATTRIBUTES_TEMPLATE_CONNECTOR = "Att " + "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR + "}-"
+            + "${" + TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME + "}";
+
+    
     /** Our singleton engine. */
     private static VelocityEngine engineSingleton;
 
@@ -94,12 +102,10 @@ public class TemplateAttributeTest {
         final TemplateAttributeDefinition attr = new TemplateAttributeDefinition();
 
         attr.setId(name);
-        attr.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE));
+        attr.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        attr.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE_ATTR));
         attr.initialize();
-        final Attribute val = attr.resolve(new AttributeResolutionContext()).get();
-        final Collection<?> results = val.getValues();
-
-        Assert.assertEquals(results.size(), 0, "Templated value count");
+        Assert.assertFalse(attr.resolve(new AttributeResolutionContext()).isPresent());
     }
 
     /**
@@ -112,14 +118,14 @@ public class TemplateAttributeTest {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "2";
         final List<String> sources = new LazyList<String>();
-        sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME);
+        sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
         templateDef.setId(name);
         templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_SIMPLE_TEMPLATE));
 
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         templateDef.setDependencies(ds);
         templateDef.initialize();
 
@@ -127,7 +133,7 @@ public class TemplateAttributeTest {
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
-        dataDefinitions.add(TestSources.populatedStaticConnectior());
+        dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
@@ -138,7 +144,7 @@ public class TemplateAttributeTest {
         Attribute a = context.getResolvedAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 1, "Templated value count");
-        Assert.assertTrue(results.contains(SIMPLE_VALUE), "Single value context is correct");
+        Assert.assertTrue(results.contains(SIMPLE_VALUE_RESULT), "Single value context is correct");
 
     }
 
@@ -152,15 +158,15 @@ public class TemplateAttributeTest {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
         final List<String> sources = new LazyList<String>();
-        sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME);
+        sources.add(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         sources.add(TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
         templateDef.setId(name);
-        templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE));
+        templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE_CONNECTOR));
 
         Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         ds.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
@@ -170,7 +176,7 @@ public class TemplateAttributeTest {
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
-        dataDefinitions.add(TestSources.populatedStaticConnectior());
+        dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
@@ -181,10 +187,10 @@ public class TemplateAttributeTest {
         final Attribute a = context.getResolvedAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 2, "Templated value count");
-        String s = "Att " + TestSources.COMMON_ATTRIBUTE_VALUE + "-" + TestSources.SECOND_ATTRIBUTE_VALUES[0];
-        Assert.assertTrue(results.contains(s), "First Match");
-        s = "Att " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE + "-" + TestSources.SECOND_ATTRIBUTE_VALUES[1];
-        Assert.assertTrue(results.contains(s), "Second Match");
+        String s = "Att " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[0];
+        Assert.assertTrue(results.contains(new StringAttributeValue(s)), "First Match");
+        s = "Att " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[1];
+        Assert.assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
     }
 
 }

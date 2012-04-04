@@ -106,7 +106,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param descriptions localized human readable descriptions of attribute
      */
-    public synchronized void setDisplayDescriptions(@Nullable @NullableElements final Map<Locale, String> descriptions) {
+    public synchronized void setDisplayDescriptions(@Nullable @NullableElements final 
+            Map<Locale, String> descriptions) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -212,8 +213,9 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * {@inheritDoc}
      * 
      * This method delegates the actual resolution of the attribute's values to the
-     * {@link #doResolve(AttributeResolutionContext)} method. Afterwards, if {@link Optional#absent()} was not returned,
-     * this method will attach the registered display names, descriptions, and encoders to the resultant attribute.
+     * {@link #doAttributeDefinitionResolve(AttributeResolutionContext)} method. Afterwards, if
+     * {@link Optional#absent()} was not returned, this method will attach the registered display names, descriptions,
+     * and encoders to the resultant attribute.
      */
     @Nonnull protected Optional<Attribute> doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws AttributeResolutionException {

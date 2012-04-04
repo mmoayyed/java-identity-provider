@@ -18,9 +18,11 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
@@ -33,6 +35,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Optional;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.SimpleAttribute}. */
 public class SimpleAttributeTest {
@@ -49,11 +53,12 @@ public class SimpleAttributeTest {
     @Test public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
+        simple.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         simple.initialize();
 
-        final Attribute result = simple.doAttributeResolution();
+        final Optional<Attribute> result = simple.doAttributeDefinitionResolve(new AttributeResolutionContext());
 
-        Assert.assertNotNull(result.getValues());
+        Assert.assertTrue(result.get().getValues().isEmpty());
     }
 
     /**
@@ -69,13 +74,13 @@ public class SimpleAttributeTest {
 
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         simple.setDependencies(dependencySet);
         simple.initialize();
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
-        connectorSet.add(TestSources.populatedStaticConnectior());
+        connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(simple);
@@ -92,9 +97,9 @@ public class SimpleAttributeTest {
 
         final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE), "looking for COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE),
-                "looking for CONNECTOR_ATTRIBUTE_VALUE");
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT), "looking for " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
+                "looking for " + TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING);
     }
 
     /**
@@ -110,7 +115,7 @@ public class SimpleAttributeTest {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         simple.setDependencies(dependencySet);
         simple.initialize();
 
@@ -128,13 +133,13 @@ public class SimpleAttributeTest {
         } catch (AttributeResolutionException e) {
             Assert.fail("resolution failed", e);
         }
-        final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE),
-                "looking for value COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
-                "looking for value ATTRIBUTE_ATTRIBUTE_VALUE");
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
+                "looking for value " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
+                "looking for value " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
     }
 
     /**
@@ -149,9 +154,9 @@ public class SimpleAttributeTest {
 
         Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         simple.setDependencies(dependencySet);
         simple.initialize();
 
@@ -161,7 +166,7 @@ public class SimpleAttributeTest {
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
         final Set<BaseDataConnector> dataDefinitions = new LazySet<BaseDataConnector>();
-        dataDefinitions.add(TestSources.populatedStaticConnectior());
+        dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
@@ -174,12 +179,12 @@ public class SimpleAttributeTest {
         }
 
         final Collection values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT),
+                "looking for value " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
+                "looking for value " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
+        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_RESULT),
+                "looking for value " + TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING);
         Assert.assertEquals(values.size(), 3);
-        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE),
-                "looking for value COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE),
-                "looking for value ATTRIBUTE_ATTRIBUTE_VALUE");
-        Assert.assertTrue(values.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE),
-                "looking for value CONNECTOR_ATTRIBUTE_VALUE");
     }
 }

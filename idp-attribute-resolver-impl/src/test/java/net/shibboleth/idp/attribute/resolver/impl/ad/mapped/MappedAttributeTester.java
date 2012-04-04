@@ -56,7 +56,7 @@ public class MappedAttributeTester {
 
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         definition.setDependencies(dependencySet);
 
         try {

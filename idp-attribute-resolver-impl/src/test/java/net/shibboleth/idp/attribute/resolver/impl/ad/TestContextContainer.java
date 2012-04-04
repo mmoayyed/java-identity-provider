@@ -1,4 +1,4 @@
-package net.shibboleth.idp.attribute.resolver.impl;
+package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.security.Principal;
 
@@ -13,7 +13,7 @@ import org.opensaml.messaging.context.InOutOperationContext;
 import org.opensaml.messaging.context.MessageContext;
 
 /** trivial context container to test the get something from a container. */
-class TestContextContainer extends AbstractSubcontextContainer implements InOutOperationContext {
+class TestContextContainer extends InOutOperationContext {
     
     final MessageContext inbound;
     
@@ -23,7 +23,7 @@ class TestContextContainer extends AbstractSubcontextContainer implements InOutO
         setAutoCreateSubcontexts(false);
         inbound = new MyMessageContext();
         
-        final BasicMessageMetadataContext basic = new BasicMessageMetadataContext(inbound);
+        final BasicMessageMetadataContext basic = new BasicMessageMetadataContext();
         basic.setMessageIssuer(relyingParty);
         
         AuthenticationEvent event = new AuthenticationEvent(authnMethod, new Principal() {   
@@ -33,11 +33,10 @@ class TestContextContainer extends AbstractSubcontextContainer implements InOutO
         });
         
         final IdPSession idpSession = new IdPSession("sessionId", new byte[2]);
-        final ServiceSession serviceSession = new ServiceSession(relyingParty);
-        serviceSession.setAuthenticationEvent(event);
+        final ServiceSession serviceSession = new ServiceSession("serviceSession", event);
         idpSession.addServiceSession(serviceSession);
         
-        new IdPSessionContext(this, idpSession);
+        new IdPSessionContext(idpSession);
     }
 
     public TestContextContainer() {
@@ -67,7 +66,7 @@ class TestContextContainer extends AbstractSubcontextContainer implements InOutO
     }
     
     
-    private class MyMessageContext extends AbstractSubcontextContainer implements MessageContext {
+    private class MyMessageContext extends MessageContext {
 
         /** Not used. */
         public DateTime getCreationTime() {

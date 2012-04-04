@@ -56,7 +56,7 @@ public class ScopedAttributeTest {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
         final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition();
         scoped.setScope(TEST_SCOPE);
@@ -66,7 +66,7 @@ public class ScopedAttributeTest {
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
-        connectorSet.add(TestSources.populatedStaticConnectior());
+        connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(scoped);
@@ -81,9 +81,9 @@ public class ScopedAttributeTest {
         final Collection<?> f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
                 "looking for COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE, TEST_SCOPE)),
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
                 "looking for CONNECTOR_ATTRIBUTE_VALUE");
 
     }

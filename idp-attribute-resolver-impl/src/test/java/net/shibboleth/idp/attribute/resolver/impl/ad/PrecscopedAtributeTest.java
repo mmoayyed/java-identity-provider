@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.Collection;
 import java.util.Set;
 
-import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
@@ -54,7 +53,7 @@ public class PrecscopedAtributeTest {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter("-");
@@ -63,7 +62,7 @@ public class PrecscopedAtributeTest {
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
-        connectorSet.add(TestSources.populatedStaticConnectior());
+        connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);
@@ -91,7 +90,7 @@ public class PrecscopedAtributeTest {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter("@");
@@ -100,7 +99,7 @@ public class PrecscopedAtributeTest {
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
-        connectorSet.add(TestSources.populatedStaticConnectior());
+        connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);
@@ -109,9 +108,12 @@ public class PrecscopedAtributeTest {
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
-        resolver.resolveAttributes(context);
+        try {
+            resolver.resolveAttributes(context);
+            Assert.fail();
+        } catch (AttributeResolutionException e) {
+            // OK
+        }
 
-        final Attribute resultAttribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
-        Assert.assertNull(resultAttribute);
-    }
+   }
 }

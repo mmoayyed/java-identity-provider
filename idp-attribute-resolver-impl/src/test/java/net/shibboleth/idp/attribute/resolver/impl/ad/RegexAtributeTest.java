@@ -52,16 +52,16 @@ public class RegexAtributeTest {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME));
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
-        attrDef.setRegExp(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
+        attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
         attrDef.setDependencies(dependencySet);
         attrDef.initialize();
 
         // And resolve
         final Set<BaseDataConnector> connectorSet = new LazySet<BaseDataConnector>();
-        connectorSet.add(TestSources.populatedStaticConnectior());
+        connectorSet.add(TestSources.populatedStaticConnector());
 
         final Set<BaseAttributeDefinition> attributeSet = new LazySet<BaseAttributeDefinition>();
         attributeSet.add(attrDef);

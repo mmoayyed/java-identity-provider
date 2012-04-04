@@ -17,58 +17,64 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.StaticAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.StaticDataConnector;
-import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {
     /** The name we use in this test for the static connector. */
-    protected static final String STATIC_CONNECTOR_NAME = "staticCon";
+    public static final String STATIC_CONNECTOR_NAME = "staticCon";
 
     /** The name we use in this test for the static attribute. */
-    protected static final String STATIC_ATTRIBUTE_NAME = "staticAtt";
+    public static final String STATIC_ATTRIBUTE_NAME = "staticAtt";
 
     /** The name of the attribute we use as source. */
-    protected static final String DEPENDS_ON_ATTRIBUTE_NAME = "at1";
+    public static final String DEPENDS_ON_ATTRIBUTE_NAME_ATTR = "at1";
+    public static final String DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR = "ac1";
     
     /** The name of another attribute we use as source. */
-    protected static final String DEPENDS_ON_SECOND_ATTRIBUTE_NAME = "at2";
+    public static final String DEPENDS_ON_SECOND_ATTRIBUTE_NAME = "at2";
 
     /** Another attributes values. */
-    protected static final String[] SECOND_ATTRIBUTE_VALUES = {"at2-Val1", "at2-Val2"};
+    public static final String[] SECOND_ATTRIBUTE_VALUE_STRINGS = {"at2-Val1", "at2-Val2"};
+    public static final StringAttributeValue[] SECOND_ATTRIBUTE_VALUE_RESULTS = {new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),};
 
     /** A value from both providers. */
-    protected static final String COMMON_ATTRIBUTE_VALUE = "at1-Data";
+    public static final String COMMON_ATTRIBUTE_VALUE_STRING = "at1-Data";
+    public static final StringAttributeValue COMMON_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the connector. */
-    protected static final String CONNECTOR_ATTRIBUTE_VALUE = "at1-Connector";
+    public static final String CONNECTOR_ATTRIBUTE_VALUE_STRING = "at1-Connector";
+    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING);
 
     /** A value from the attribute. */
-    protected static final String ATTRIBUTE_ATTRIBUTE_VALUE = "at1-Attribute";
+    public static final String ATTRIBUTE_ATTRIBUTE_VALUE_STRING = "at1-Attribute";
+    public static final StringAttributeValue ATTRIBUTE_ATTRIBUTE_VALUE_RESULT = new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
 
     /** Regexp. for CONNECTOR_ATTRIBUTE_VALUE (for map & regexp testing). */
-    protected static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
     
-    /** Regexp result. for CONNECTOR_ATTRIBUTE_VALUE (for regexp testing). */
-    protected static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = "Connect";
+    public static final String CONNECTOR_ATTRIBUTE_VALUE_REGEXP = "at1-(.+)or";
+    public static final Pattern CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN = Pattern.compile(CONNECTOR_ATTRIBUTE_VALUE_REGEXP);
+    public static final StringAttributeValue CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT = new StringAttributeValue("Connect");
     
     /** Principal name for Principal method tests */
-    protected static final String TEST_PRINCIPAL = "PrincipalName";
+    public static final String TEST_PRINCIPAL = "PrincipalName";
 
     /** Relying party name for Principal method tests */
-    protected static final String TEST_RELYING_PARTY = "RP1";
+    public static final String TEST_RELYING_PARTY = "RP1";
 
-    /** Authenitcation method for Principal method tests */
-    protected static final String TEST_AUTHN_METHOD = "AuthNmEthod";
+    /** Authentication method for Principal method tests */
+    public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
 
 
     /** Constructor. */
@@ -81,31 +87,30 @@ public final class TestSources {
      * @return The connector
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    protected static BaseDataConnector populatedStaticConnectior() throws ComponentInitializationException {
-        Map<String, Attribute> values;
+    public static BaseDataConnector populatedStaticConnector() throws ComponentInitializationException {
         Attribute attr;
-        Set<String> valuesSet;
+        Set<Attribute> attributeSet;
+        Set<AttributeValue> valuesSet;
 
-        values = new LazyMap<String, Attribute>();
-        valuesSet = new LazySet<String>();
+        valuesSet = new LazySet<AttributeValue>();
+        attributeSet = new LazySet<Attribute>();
 
-        valuesSet.add(COMMON_ATTRIBUTE_VALUE);
-        valuesSet.add(CONNECTOR_ATTRIBUTE_VALUE);
-        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME);
+        valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
+        valuesSet.add(new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING));
+        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         attr.setValues(valuesSet);
-        values.put(DEPENDS_ON_ATTRIBUTE_NAME, attr);
+        attributeSet.add(attr);
 
         attr = new Attribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
-        valuesSet = new LazySet<String>();
-        valuesSet.add(SECOND_ATTRIBUTE_VALUES[0]);
-        valuesSet.add(SECOND_ATTRIBUTE_VALUES[1]);
-
+        valuesSet = new LazySet<AttributeValue>();
+        valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]));
+        valuesSet.add(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[1]));
         attr.setValues(valuesSet);
-        values.put("at2", attr);
+        attributeSet.add(attr);
         
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId(STATIC_CONNECTOR_NAME);
-        connector.setValues(values);
+        connector.setValues(attributeSet);
         connector.initialize();
 
         return connector;
@@ -117,20 +122,20 @@ public final class TestSources {
      * @return the attribute definition
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
-    protected static BaseAttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
+    public static BaseAttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
         Attribute attr;
-        Set<String> valuesSet;
+        Set<AttributeValue> valuesSet;
 
-        valuesSet = new LazySet<String>();
+        valuesSet = new LazySet<AttributeValue>();
 
-        valuesSet.add(COMMON_ATTRIBUTE_VALUE);
-        valuesSet.add(ATTRIBUTE_ATTRIBUTE_VALUE);
-        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME);
+        valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
+        valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
+        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         attr.setValues(valuesSet);
         
         StaticAttributeDefinition definition = new StaticAttributeDefinition();
         definition.setId(STATIC_ATTRIBUTE_NAME);
-        definition.setAttribute(attr);
+        definition.setValue(attr);
         definition.initialize();
         return definition;
     }
