@@ -120,6 +120,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                 log.debug("Attribute definition '{}': result of template evaluating was '{}'", getId(), templateResult);
                 resultantAttribute.getValues().add(new StringAttributeValue(templateResult));
             } catch (VelocityException e) {
+                // TODO (rdw) uncovered path
                 log.error("Attribute definition '" + getId() + "': unable to evaluate velocity template", e);
                 throw new AttributeResolutionException("Unable to evaluate template", e);
             }

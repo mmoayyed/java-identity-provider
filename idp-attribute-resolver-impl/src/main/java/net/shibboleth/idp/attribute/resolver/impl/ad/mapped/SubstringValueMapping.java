@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMapping;
+import javax.annotation.Nonnull;
+
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 /**
  * A {@link ValueMapping} function that checks if an input contains a particular substring and, if so, returns a static
@@ -33,7 +34,7 @@ public class SubstringValueMapping implements ValueMapping {
     private final String target;
 
     /** Whether to perform a case-insensitive comparison between the target and the input. */
-    private boolean ignoreCase;
+    private final boolean ignoreCase;
 
     /** The value returned if the input value contains the target. */
     private final Optional<String> result;
@@ -48,27 +49,28 @@ public class SubstringValueMapping implements ValueMapping {
     public SubstringValueMapping(final String targetValue, boolean caseInsensitive, String returnValue) {
         ignoreCase = caseInsensitive;
 
-        String trimmedTarget =
-                Constraint.isNotNull(StringSupport.trimOrNull(targetValue), "Target value can not be null or empty");
+        String checkedTarget =
+                Constraint.isNotNull(Strings.emptyToNull(targetValue), "Target value can not be null or empty");
         if (ignoreCase) {
-            target = trimmedTarget.toUpperCase();
+            target = checkedTarget.toUpperCase();
         } else {
-            target = trimmedTarget;
+            target = checkedTarget;
         }
 
         result =
-                Optional.of(Constraint.isNotNull(StringSupport.trimOrNull(returnValue),
+                Optional.of(Constraint.isNotNull(Strings.emptyToNull(returnValue),
                         "Return value can not be null or empty"));
     }
 
     /** {@inheritDoc} */
-    public Optional<String> apply(String input) {
+    @Nonnull public Optional<String> apply(@Nonnull String input) {
+        Constraint.isNotNull(input, "input to String Mapper cannot be null");
         String source = input;
         if (ignoreCase) {
             source = source.toUpperCase();
         }
 
-        if (input.contains(target)) {
+        if (source.contains(target)) {
             return result;
         }
 

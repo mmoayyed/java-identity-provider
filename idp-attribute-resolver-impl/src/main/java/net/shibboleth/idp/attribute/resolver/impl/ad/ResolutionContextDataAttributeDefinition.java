@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -47,7 +48,8 @@ public class ResolutionContextDataAttributeDefinition extends BaseAttributeDefin
      * 
      * @return function used to extract attribute values from the current {@link AttributeResolutionContext}
      */
-    public Function<AttributeResolutionContext, Collection<? extends AttributeValue>> getDataExtractionStrategy() {
+    @Nullable public Function<AttributeResolutionContext, Collection<? extends AttributeValue>>
+            getDataExtractionStrategy() {
         return dataExtractionStrategy;
     }
 
@@ -58,16 +60,20 @@ public class ResolutionContextDataAttributeDefinition extends BaseAttributeDefin
      */
     public synchronized void setDataExtractionStrategy(
             @Nonnull final Function<AttributeResolutionContext, Collection<? extends AttributeValue>> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         dataExtractionStrategy = Constraint.isNotNull(strategy, "Data extraction strategy can not be null");
     }
 
     /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
-        Attribute attribute = new Attribute(getId());
+    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        Constraint.isNotNull(resolutionContext, "Resolution Context cannot be null");
+
+        final Attribute attribute = new Attribute(getId());
 
         Collection<? extends AttributeValue> values = dataExtractionStrategy.apply(resolutionContext);
         if (values != null && !values.isEmpty()) {

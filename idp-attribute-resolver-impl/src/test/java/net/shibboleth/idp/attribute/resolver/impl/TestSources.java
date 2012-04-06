@@ -123,18 +123,27 @@ public final class TestSources {
      * @throws ComponentInitializationException if we cannot initialized (unlikely)
      */
     public static BaseAttributeDefinition populatedStaticAttribute() throws ComponentInitializationException {
+        return populatedStaticAttribute(STATIC_ATTRIBUTE_NAME, DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 2);
+    }
+
+    public static BaseAttributeDefinition populatedStaticAttribute(String definitionName, String attributeName, int attributeCount) throws ComponentInitializationException {
         Attribute attr;
         Set<AttributeValue> valuesSet;
 
         valuesSet = new LazySet<AttributeValue>();
 
         valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
-        valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
-        attr = new Attribute(DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        if (attributeCount > 1) {
+            valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
+        }
+        for (int i = 2; i < attributeCount; i++) {
+            valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING + i));
+        }
+        attr = new Attribute(attributeName);
         attr.setValues(valuesSet);
         
         StaticAttributeDefinition definition = new StaticAttributeDefinition();
-        definition.setId(STATIC_ATTRIBUTE_NAME);
+        definition.setId(definitionName);
         definition.setValue(attr);
         definition.initialize();
         return definition;

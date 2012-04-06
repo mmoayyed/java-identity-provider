@@ -43,6 +43,7 @@ public class ReturnInputIfAbsentMappingValue implements ValueMapping {
 
     /** {@inheritDoc} */
     public Optional<String> apply(String input) {
+        Constraint.isNotNull(input, "Input to composed value mapping function can not be null");
         Optional<String> optionalResult = composedFunction.apply(input);
         if (optionalResult.isPresent()) {
             return optionalResult;

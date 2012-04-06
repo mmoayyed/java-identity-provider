@@ -89,6 +89,8 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Set<AttributeValue> unmappedResults =

@@ -20,10 +20,13 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 /**
  * A {@link ValueMapping} function that checks if an input contains matches a given {@link Pattern} and, if so, returns
@@ -45,14 +48,15 @@ public class RegexValueMapping implements ValueMapping {
      * @param returnValuePattern value pattern to be populated with matching input groups to generate the function
      *            result
      */
-    public RegexValueMapping(final Pattern targetPattern, String returnValuePattern) {
+    public RegexValueMapping(@Nonnull final Pattern targetPattern, @Nonnull @NotEmpty final String returnValuePattern) {
         target = Constraint.isNotNull(targetPattern, "Target pattern can not be null or empty");
-        resultPattern =
-                Constraint.isNotNull(StringSupport.trimOrNull(returnValuePattern), "Return value can not be null or empty");
+        resultPattern = Constraint.isNotNull(Strings.emptyToNull(returnValuePattern), 
+                "Return value can not be null or empty");
     }
 
     /** {@inheritDoc} */
-    public Optional<String> apply(String input) {
+    @Nonnull public Optional<String> apply(@Nonnull final String input) {
+        Constraint.isNotNull(input, "provided input cannot be null");
         Matcher matcher = target.matcher(input);
         if (matcher.matches()) {
             return Optional.of(matcher.replaceAll(resultPattern));

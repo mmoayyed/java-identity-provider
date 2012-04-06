@@ -19,17 +19,21 @@ package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
-import net.shibboleth.idp.attribute.resolver.impl.ad.SubstringValueMapping;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -43,7 +47,7 @@ public class MappedAttributeTest {
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "mapped";
 
-    @Test public void testInstantiation() {
+    @Test public void testInstantiation() throws ComponentInitializationException, AttributeResolutionException {
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
 
@@ -70,11 +74,24 @@ public class MappedAttributeTest {
         valueMappings.add(new SubstringValueMapping("foo", false, "foo"));
         definition.setValueMappings(valueMappings);
 
+        definition.initialize();
+        
+        definition.destroy();
         try {
             definition.initialize();
-        } catch (ComponentInitializationException e) {
-            Assert.fail();
+            Assert.fail("init a torn down mapper?");
+        } catch (DestroyedComponentException e) {
+            // expected this
         }
+        
+        try {
+            definition.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            Assert.fail("resolve a torn down mapper?");
+        } catch (DestroyedComponentException e) {
+            // expected this
+        }
+
+        
     }
 
     @Test public void testNoAttributeValues() throws Exception {
@@ -102,8 +119,30 @@ public class MappedAttributeTest {
         Assert.assertTrue(result.getValues().isEmpty());
     }
 
-    @Test public void testInvalidValueType() {
-        // TODO
+    @Test public void testInvalidValueType() throws ComponentInitializationException {
+        Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
+        attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1,2,3})));
+        
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
+
+        Collection<ValueMapping> valueMappings = new ArrayList<ValueMapping>();
+        valueMappings.add(new SubstringValueMapping("student", false, "student"));
+
+        MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        definition.setId(TEST_ATTRIBUTE_NAME);
+        definition.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID)));
+        definition.setValueMappings(valueMappings);
+        definition.initialize();
+        
+        try {
+            definition.doAttributeDefinitionResolve(resolutionContext);
+            Assert.fail("invalid types");
+        } catch (AttributeResolutionException e) {
+            //
+        }
+        
     }
 
     @Test public void testValidValueType() throws Exception {
@@ -120,7 +159,9 @@ public class MappedAttributeTest {
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
+        Assert.assertTrue(definition.getValueMappings().isEmpty());
         definition.setValueMappings(valueMappings);
+        Assert.assertEquals(definition.getValueMappings().size(), 1);
         definition.initialize();
 
         Optional<Attribute> optionalResult = definition.resolve(resolutionContext);

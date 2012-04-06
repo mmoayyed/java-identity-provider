@@ -53,6 +53,12 @@ public class SimpleAttributeTest {
     @Test public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
+        try {
+            simple.initialize();
+            Assert.fail("no dependencies");
+        } catch (ComponentInitializationException e) {
+            //OK
+        }
         simple.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         simple.initialize();
 

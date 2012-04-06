@@ -17,28 +17,41 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
+import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.SubstringValueMapping;
+import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMapping;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Sets;
 
 /**
  * Test for regex attribute definitions.
  */
 public class RegexAtributeTest {
     /** The name. */
-    private static final String TEST_ATTRIBUTE_NAME = "simple";
+    private static final String TEST_ATTRIBUTE_NAME = "regex";
 
     /**
      * Test regexp. We set up an attribute called 'at1-Connector', we throw this at 'at1-(.+)or' and look for group 1
@@ -77,4 +90,98 @@ public class RegexAtributeTest {
         Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");
     }
 
+    @Test public void testInvalidValueType() throws ComponentInitializationException {
+        Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
+        attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
+
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
+
+        Collection<ValueMapping> valueMappings = new ArrayList<ValueMapping>();
+        valueMappings.add(new SubstringValueMapping("student", false, "student"));
+
+        final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
+        attrDef.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID)));
+        attrDef.initialize();
+
+        try {
+            attrDef.doAttributeDefinitionResolve(resolutionContext);
+            Assert.fail("Invalid type");
+        } catch (AttributeResolutionException e) {
+            //
+        }
+    }
+
+    @Test public void testInitDestroyParms() throws AttributeResolutionException, ComponentInitializationException {
+        
+        RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
+        Collection<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(new ResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID));
+        attrDef.setDependencies(pluginDependencies);
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        try {
+            attrDef.initialize();
+            Assert.fail("no regexp - should fail");
+        } catch (ComponentInitializationException e) {
+            // OK
+        }
+        try {
+            attrDef.setRegularExpression(null);
+            Assert.fail("set null regexp");
+        } catch (ConstraintViolationException e) {
+            // OK
+        }
+
+        attrDef = new RegexSplitAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        Assert.assertNull(attrDef.getRegularExpression());
+        attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
+        try {
+            attrDef.initialize();
+            Assert.fail("no Dependency - should fail");
+        } catch (ComponentInitializationException e) {
+            // OK
+        }
+        attrDef.setDependencies(pluginDependencies);
+        
+        try {
+            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            Assert.fail("resolve not initialized");
+        } catch (UninitializedComponentException e) {
+            // OK
+        }
+        attrDef.initialize();
+        
+        Assert.assertEquals(attrDef.getRegularExpression(), TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
+        
+        try {
+            attrDef.doAttributeDefinitionResolve(null);
+            Assert.fail("Null context not allowed");
+        } catch (ConstraintViolationException e) {
+            // OK
+        }
+            
+        attrDef.destroy();
+        try {
+            attrDef.initialize();
+            Assert.fail("Init after destroy");
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
+        try {
+            attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
+            Assert.fail("setRegExp after destroy");
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
+        try {
+            attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            Assert.fail("Resolve after destroy");
+        } catch (DestroyedComponentException e) {
+            // OK
+        }
+    }
 }

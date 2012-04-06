@@ -65,8 +65,8 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
      * @param newScope what to set.
      */
     public synchronized void setScope(@Nonnull @NotEmpty final String newScope) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         scope = Constraint.isNotNull(StringSupport.trimOrNull(newScope), "Scope can not be null or empty");
     }
@@ -74,6 +74,9 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         final Attribute resultantAttribute = new Attribute(getId());
 

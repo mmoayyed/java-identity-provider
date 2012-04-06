@@ -75,6 +75,11 @@ public class ScriptedAttributeTest {
                     + "claz = clazloader.loadClass(\"net.shibboleth.idp.attribute.resolver.AttributeResolutionContext\");\n"
                     + "parent = requestContext.getParent();\n" + "child = parent.getSubcontext(claz);\n"
                     + TEST_ATTRIBUTE_NAME + ".addValue(child);\n";
+    
+    private static final String TEST_FAIL_SCRIPT =
+            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n"
+                    + " flibby.nonexistant();";
+
 
     /**
      * Test resolution of an simple script (statically generated data).
@@ -91,16 +96,45 @@ public class ScriptedAttributeTest {
         test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        Assert.assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
         attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT));
         attr.initialize();
-
+        Assert.assertNotNull(attr.getScript());
+        
         final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext()).get();
         final Set<AttributeValue> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+    }
+
+    @Test public void testFails() throws AttributeResolutionException, ComponentInitializationException,
+            ScriptException {
+
+        final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
+
+        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
+
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        try {
+            attr.initialize();
+            Assert.fail("No script defined");
+        } catch (ComponentInitializationException ex) {
+            // OK
+        }
+        
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_FAIL_SCRIPT));
+        attr.initialize();
+
+        try {
+            attr.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            Assert.fail("Should have thrown an exception");
+        } catch (AttributeResolutionException ex) {
+            //OK
+        }
     }
 
     /**
@@ -142,9 +176,9 @@ public class ScriptedAttributeTest {
         Assert.assertEquals(values.size(), 2);
         for (AttributeValue value : values) {
             Assert.assertTrue(value.getValue().equals(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT)
-                            || value.getValue().equals(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT), "looking for value "
-                            + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + " or "
-                            + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + ", found:" + value.toString());
+                    || value.getValue().equals(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT), "looking for value "
+                    + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + " or " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING
+                    + ", found:" + value.toString());
         }
     }
 

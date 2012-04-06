@@ -21,9 +21,9 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 
 /**
  * A {@Link ValueMapping} that returns a default value if the wrapped {@link ValueMapping} returns
@@ -46,12 +46,13 @@ public class ReturnDefaultIfAbsentValueMapping implements ValueMapping {
     public ReturnDefaultIfAbsentValueMapping(@Nonnull ValueMapping function, @Nonnull @NotEmpty String returnValue) {
         composedFunction = Constraint.isNotNull(function, "Composed value mapping function can not be null");
         result =
-                Optional.of(Constraint.isNull(StringSupport.trimOrNull(returnValue),
+                Optional.of(Constraint.isNotNull(Strings.emptyToNull(returnValue),
                         "Return value can not be null or empty"));
     }
 
     /** {@inheritDoc} */
     public Optional<String> apply(String input) {
+        Constraint.isNotNull(input, "Input to composed value mapping functioncan not be null");
         Optional<String> optionalResult = composedFunction.apply(input);
         if (optionalResult.isPresent()) {
             return optionalResult;

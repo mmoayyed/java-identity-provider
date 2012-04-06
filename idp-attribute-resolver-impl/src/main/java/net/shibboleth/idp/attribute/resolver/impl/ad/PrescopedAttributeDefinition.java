@@ -70,8 +70,8 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
      * @param newScopeDelimiter delimiter between value and scope
      */
     public synchronized void setScopeDelimiter(@Nonnull @NotEmpty final String newScopeDelimiter) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         scopeDelimiter =
                 Constraint.isNotNull(StringSupport.trimOrNull(newScopeDelimiter),
@@ -82,6 +82,8 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         final Attribute resultantAttribute = new Attribute(getId());
 
@@ -119,9 +121,8 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
 
         final String[] stringValues = value.getValue().split(scopeDelimiter);
         if (stringValues.length < 2) {
-            log.error(
-                    "Attribute definition '{}': Input attribute value {} does not contain delimiter {} and can not be split",
-                    new Object[] {getId(), value.getValue(), scopeDelimiter,});
+            log.error("Attribute definition '{}': Input attribute value {} does not contain"
+                    + " delimiter {} and can not be split", new Object[] {getId(), value.getValue(), scopeDelimiter,});
             throw new AttributeResolutionException("Input attribute value can not be split.");
         }
 

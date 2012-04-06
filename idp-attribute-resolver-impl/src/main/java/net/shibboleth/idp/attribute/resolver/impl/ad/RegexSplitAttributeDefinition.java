@@ -81,6 +81,8 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
             @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final Attribute resultantAttribute = new Attribute(getId());
 
