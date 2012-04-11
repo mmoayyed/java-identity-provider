@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config.saml2;
 
-/** Configuration for SAML 2 Single Logout requests. */
+/** SAMLConfigurationSupport for SAML 2 Single Logout requests. */
 public class LogoutProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */

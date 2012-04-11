@@ -26,7 +26,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.saml.config.Configuration;
+import org.opensaml.saml.config.SAMLConfigurationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ public final class SamlEncoderSupport {
         }
 
         final XMLObjectBuilder<XSString> stringBuilder =
-                Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+                SAMLConfigurationSupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
 
         LOG.debug("Encoding value {} of attribute {}", value, attribute.getId());
         final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
@@ -85,7 +85,7 @@ public final class SamlEncoderSupport {
         }
 
         final XMLObjectBuilder<XSString> stringBuilder =
-                Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+                SAMLConfigurationSupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
 
         final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
 
@@ -110,7 +110,7 @@ public final class SamlEncoderSupport {
         }
 
         final XMLObjectBuilder<XSAny> attributeValueBuilder =
-                Configuration.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);
+                SAMLConfigurationSupport.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);
         final XSAny samlAttributeValue = attributeValueBuilder.buildObject(attributeValueElementName);
         samlAttributeValue.getUnknownXMLObjects().add(value);
 

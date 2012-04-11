@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config.saml2;
 
-/** Configuration for SAML 2 SSO requests. */
+/** SAMLConfigurationSupport for SAML 2 SSO requests. */
 public class SsoProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */

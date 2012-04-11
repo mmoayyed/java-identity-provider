@@ -27,7 +27,7 @@ import org.opensaml.saml.saml2.core.Response;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-/** Configuration for constrained Liberty IDWSF SSOS requests. */
+/** SAMLConfigurationSupport for constrained Liberty IDWSF SSOS requests. */
 public class SsosProfileConfiguration extends SsoProfileConfiguration {
 
     /** ID for this profile configuration. */

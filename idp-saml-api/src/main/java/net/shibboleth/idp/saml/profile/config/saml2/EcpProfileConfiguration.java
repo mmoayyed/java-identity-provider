@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config.saml2;
 
-/** Configuration for SAML 2 ECP requests. */
+/** SAMLConfigurationSupport for SAML 2 ECP requests. */
 public class EcpProfileConfiguration extends SsoProfileConfiguration {
 
     /** ID for this profile configuration. */

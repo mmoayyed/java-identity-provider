@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config.saml2;
 
-/** Configuration for SAML 2 attribute query requests. */
+/** SAMLConfigurationSupport for SAML 2 attribute query requests. */
 public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConfiguration {
 
     /** ID for this profile configuration. */

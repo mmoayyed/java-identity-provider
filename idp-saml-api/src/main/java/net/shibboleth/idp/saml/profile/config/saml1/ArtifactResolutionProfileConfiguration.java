@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config.saml1;
 
-/** Configuration for SAML 1 artifact resolution requests. */
+/** SAMLConfigurationSupport for SAML 1 artifact resolution requests. */
 public class ArtifactResolutionProfileConfiguration extends AbstractSAML1ProfileConfiguration {
 
     /** ID for this profile configuration. */
