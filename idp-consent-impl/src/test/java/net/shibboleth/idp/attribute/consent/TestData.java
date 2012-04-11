@@ -31,11 +31,13 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 
 import org.joda.time.DateTime;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.config.XMLConfigurationException;
-import org.opensaml.saml.config.DefaultBootstrap;
 import org.opensaml.saml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.saml2.metadata.provider.FilesystemMetadataProvider;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 
 import edu.vt.middleware.crypt.digest.SHA256;
@@ -187,10 +189,11 @@ public class TestData {
     }
 
     private static MetadataProvider createMetadataProvider(String file) {
+        //TODO this probably shouldn't be here, this should be taken care of by the tested class, not by this data provider class
         try {
-            DefaultBootstrap.bootstrap();
-        } catch (XMLConfigurationException e) {
-            e.printStackTrace();
+            InitializationService.initialize();
+        } catch (InitializationException e) {
+            Assert.fail("Initialization of OpenSAML failed");
         }
 
         FilesystemMetadataProvider metadataProvider = null;
