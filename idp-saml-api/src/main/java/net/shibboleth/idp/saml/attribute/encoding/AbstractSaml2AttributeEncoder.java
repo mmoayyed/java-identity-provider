@@ -24,9 +24,9 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.config.SAMLConfigurationSupport;
 import org.opensaml.saml.saml2.core.Attribute;
 
 /**
@@ -48,7 +48,8 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType> extends
         super();
 
         attributeBuilder =
-                (SAMLObjectBuilder<Attribute>) SAMLConfigurationSupport.getBuilderFactory().getBuilder(Attribute.TYPE_NAME);
+                (SAMLObjectBuilder<Attribute>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Attribute.TYPE_NAME);
     }
 
     /** {@inheritDoc} */

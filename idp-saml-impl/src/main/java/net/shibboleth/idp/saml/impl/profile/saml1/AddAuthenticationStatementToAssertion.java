@@ -119,12 +119,12 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
         }
 
         final SAMLObjectBuilder<AuthenticationStatement> statementBuilder =
-                (SAMLObjectBuilder<AuthenticationStatement>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        AuthenticationStatement.TYPE_NAME);
+                (SAMLObjectBuilder<AuthenticationStatement>) XMLObjectProviderRegistrySupport.getBuilderFactory()
+                        .getBuilder(AuthenticationStatement.TYPE_NAME);
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
         statement.setAuthenticationInstant(new DateTime(authnCtx.getCompletionInstant()));
-        statement.setAuthenticationMethod(authnCtx.getAttemptedWorkflow().getWorkflowId());
+        statement.setAuthenticationMethod(authnCtx.getAttemptedWorkflow().get().getWorkflowId());
         return statement;
     }
 }
