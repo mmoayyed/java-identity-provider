@@ -28,16 +28,16 @@ import org.opensaml.core.xml.XMLObject;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
  * {@link net.shibboleth.idp.attribute.Attribute} that contains {@link XMLObject} values.
  */
-public class Saml2XmlObjectAttributeEncoder extends AbstractSaml2AttributeEncoder<XMLObject> {
+public class Saml2XmlObjectAttributeEncoder extends AbstractSaml2AttributeEncoder<XMLObjectAttributeValue> {
 
     /** {@inheritDoc} */
     protected boolean canEncodeValue(Attribute attribute, Object value) {
-        return value instanceof XMLObject;
+        return value instanceof XMLObjectAttributeValue;
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(Attribute attribute, XMLObject value) throws AttributeEncodingException {
+    protected XMLObject encodeValue(Attribute attribute, XMLObjectAttributeValue value) throws AttributeEncodingException {
         return SamlEncoderSupport.encodeXmlObjectValue(attribute,
-                org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
+                org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }
 }

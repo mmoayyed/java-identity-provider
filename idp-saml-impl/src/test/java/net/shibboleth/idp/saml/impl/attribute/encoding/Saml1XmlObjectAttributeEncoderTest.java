@@ -21,6 +21,9 @@ import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.opensaml.core.config.InitializationException;
@@ -28,7 +31,6 @@ import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
-import org.opensaml.saml.saml1.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -58,14 +60,14 @@ public class Saml1XmlObjectAttributeEncoderTest {
      * @param value that we encode
      * @return an XML object
      */
-    private static XMLObject ObjectFor(final String value) {
+    private static XMLObjectAttributeValue ObjectFor(final String value) {
         final Saml1StringAttributeEncoder encoder = new Saml1StringAttributeEncoder();
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.getValues().add(new StringAttributeValue(value));
         try {
-            return encoder.encode(inputAttribute);
+            return  new XMLObjectAttributeValue(encoder.encode(inputAttribute));
         } catch (AttributeEncodingException e) {
             return null;
         }
@@ -112,7 +114,12 @@ public class Saml1XmlObjectAttributeEncoderTest {
     @Test public void testInappropriate() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<Object> values = Lists.newArrayList(new Integer(3), STRING_1, new Object(), intArray);
+        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                        new ScopedStringAttributeValue("foo", "bar"), new AttributeValue() {
+                            public Object getValue() {
+                                return intArray;
+                            }
+                        });
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -124,7 +131,8 @@ public class Saml1XmlObjectAttributeEncoderTest {
 
     @Test public void testSingle() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
-        final Collection<Object> values = Lists.newArrayList(new Object(), ObjectFor(STRING_1));
+        final Collection<AttributeValue> values =
+                Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -135,7 +143,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
 
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 1, "Encoding one entry");
-        Assert.assertEquals(children.get(0).getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(children.get(0).getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/>");
@@ -145,7 +153,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
 
     @Test public void testMulti() throws Exception {
         final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
-        final Collection<Object> values = Lists.newArrayList(new Object(), ObjectFor(STRING_1), ObjectFor(STRING_2));
+        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -157,12 +165,12 @@ public class Saml1XmlObjectAttributeEncoderTest {
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
-        Assert.assertEquals(children.get(0).getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(children.get(0).getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/> for first Attribute");
 
-        Assert.assertEquals(children.get(1).getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(children.get(1).getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(1).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/> for second Attribute");

@@ -20,12 +20,16 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 import java.util.Collection;
 import java.util.List;
 
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml2.core.Attribute;
-import org.opensaml.saml.saml2.core.AttributeValue;
 import org.owasp.esapi.codecs.Base64;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
@@ -67,7 +71,13 @@ public class Saml2ByteAttributeEncoderTest {
     @Test public void testInappropriate() throws Exception {
         final Saml2ByteAttributeEncoder encoder = new Saml2ByteAttributeEncoder();
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<Object> values = Lists.newArrayList(new Integer(3), "1234", new Object(), intArray);
+        final Collection<AttributeValue> values =
+                Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
+                        "foo", "bar"), new AttributeValue() {
+                    public Object getValue() {
+                        return intArray;
+                    }
+                });
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -80,7 +90,7 @@ public class Saml2ByteAttributeEncoderTest {
 
     @Test public void testSingle() throws Exception {
         final Saml2ByteAttributeEncoder encoder = new Saml2ByteAttributeEncoder();
-        final Collection<Object> values = Lists.newArrayList(new Object(), BYTE_ARRAY_1);
+        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -95,7 +105,7 @@ public class Saml2ByteAttributeEncoderTest {
         Assert.assertEquals(children.size(), 1, "Encoding one entry");
 
         XMLObject child = children.get(0);
-        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME);
+        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME);
 
         Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
 
@@ -108,7 +118,7 @@ public class Saml2ByteAttributeEncoderTest {
 
     @Test public void testMulti() throws Exception {
         final Saml2ByteAttributeEncoder encoder = new Saml2ByteAttributeEncoder();
-        final Collection<Object> values = Lists.newArrayList((Object) BYTE_ARRAY_1, BYTE_ARRAY_2);
+        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(BYTE_ARRAY_2));
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -122,12 +132,12 @@ public class Saml2ByteAttributeEncoderTest {
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
         XMLObject child = children.get(0);
-        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertTrue(child instanceof XSString, "Child of result attribute shoulld be a string");
 
         XSString childAsString = (XSString) child;
-        Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(child.getElementQName(), org.opensaml.saml.saml2.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         final byte[] res0 = Base64.decode(childAsString.getValue());
 

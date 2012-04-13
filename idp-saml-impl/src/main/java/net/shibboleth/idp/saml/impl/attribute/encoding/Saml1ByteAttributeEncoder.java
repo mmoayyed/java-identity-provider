@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
 
@@ -28,16 +29,16 @@ import org.opensaml.core.xml.XMLObject;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 1 attributes from
  * {@link net.shibboleth.idp.attribute.Attribute} that contains <code>byte[]</code> values.
  */
-public class Saml1ByteAttributeEncoder extends AbstractSaml1AttributeEncoder<byte[]> {
+public class Saml1ByteAttributeEncoder extends AbstractSaml1AttributeEncoder<ByteAttributeValue> {
 
     /** {@inheritDoc} */
     protected boolean canEncodeValue(Attribute attribute, Object value) {
-        return value instanceof byte[];
+        return value instanceof ByteAttributeValue;
     }
 
     /** {@inheritDoc} */
-    protected XMLObject encodeValue(Attribute attribute, byte[] value) throws AttributeEncodingException {
+    protected XMLObject encodeValue(Attribute attribute, ByteAttributeValue value) throws AttributeEncodingException {
         return SamlEncoderSupport.encodeByteArrayValue(attribute,
-                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value);
+                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
     }
 }
