@@ -22,6 +22,7 @@ import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -40,8 +41,8 @@ import org.slf4j.LoggerFactory;
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
 // TODO display name and description
-public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObject, EncodedType> extends
-        AbstractInitializableComponent implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
+public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObject, EncodedType extends AttributeValue>
+        extends AbstractInitializableComponent implements AttributeEncoder<AttributeType>, UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractSamlAttributeEncoder.class);
@@ -103,7 +104,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (name == null) {
             throw new ComponentInitializationException("Attribute name can not be null or empty");
         }
@@ -167,8 +168,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @return true if the encoder can encoder this value, false if not
      */
-    protected abstract boolean canEncodeValue(final net.shibboleth.idp.attribute.Attribute attribute,
-            final Object value);
+    protected abstract boolean
+            canEncodeValue(final net.shibboleth.idp.attribute.Attribute attribute, final Object value);
 
     /**
      * Encodes an attribute value in to a SAML attribute value element.
