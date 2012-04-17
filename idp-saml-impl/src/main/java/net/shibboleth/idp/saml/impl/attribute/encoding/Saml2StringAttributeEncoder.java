@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
@@ -32,7 +33,7 @@ import org.opensaml.core.xml.XMLObject;
 public class Saml2StringAttributeEncoder extends AbstractSaml2AttributeEncoder<StringAttributeValue> {
 
     /** {@inheritDoc} */
-    protected boolean canEncodeValue(net.shibboleth.idp.attribute.Attribute attribute, Object value) {
+    protected boolean canEncodeValue(net.shibboleth.idp.attribute.Attribute attribute, AttributeValue value) {
         return value instanceof StringAttributeValue;
     }
 

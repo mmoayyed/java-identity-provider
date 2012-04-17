@@ -129,7 +129,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
 
         EncodedType attributeValue;
         XMLObject samlAttributeValue;
-        for (Object o : attribute.getValues()) {
+        for (AttributeValue o : attribute.getValues()) {
             if (o == null) {
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;
@@ -169,7 +169,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * @return true if the encoder can encoder this value, false if not
      */
     protected abstract boolean
-            canEncodeValue(final net.shibboleth.idp.attribute.Attribute attribute, final Object value);
+            canEncodeValue(final net.shibboleth.idp.attribute.Attribute attribute, final AttributeValue value);
 
     /**
      * Encodes an attribute value in to a SAML attribute value element.

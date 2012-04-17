@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2NameIdentifierEncoder;
 
 import org.opensaml.saml.saml2.core.NameID;
@@ -40,17 +41,18 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIdentif
     public NameID encode(Attribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
-        final Collection<?> attributeValues = attribute.getValues();
+        final Collection<AttributeValue> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("Attribute {} contains no value, nothing to encode", attributeId);
             return null;
         }
 
-        for (Object value : attributeValues) {
-            if (value == null) {
+        for (AttributeValue attrValue : attributeValues) {
+            if (attrValue == null) {
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;
             }
+            Object value = attrValue.getValue();
 
             if (value instanceof NameID) {
                 NameID identifier = (NameID) value;

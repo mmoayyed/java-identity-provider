@@ -22,7 +22,6 @@ import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
-import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.opensaml.core.config.InitializationException;
@@ -37,9 +36,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Lists;
 
 /**
- * {@link Saml1ByteAttributeEncoder} Unit test.
- * 
- * Identical code to the {@link Saml1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
+ * {@link Saml1StringAttributeEncoder} Unit test.
  */
 public class Saml1StringAttributeEncoderTest {
 

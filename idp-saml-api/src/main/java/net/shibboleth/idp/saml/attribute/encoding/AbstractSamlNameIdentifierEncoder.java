@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import org.opensaml.saml.common.SAMLObject;
+
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -25,7 +27,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * 
  * @param <NameIdType> type of name identifier produced by this encoder
  */
-public abstract class AbstractSamlNameIdentifierEncoder<NameIdType> implements AttributeEncoder<NameIdType> {
+public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLObject> implements
+        AttributeEncoder<NameIdType> {
 
     /** The format of the name identifier. */
     private String format;
