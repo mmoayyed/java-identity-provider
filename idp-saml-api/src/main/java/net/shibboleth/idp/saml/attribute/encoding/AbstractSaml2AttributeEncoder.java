@@ -19,9 +19,13 @@ package net.shibboleth.idp.saml.attribute.encoding;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -54,7 +58,7 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType extends Attribut
     }
 
     /** {@inheritDoc} */
-    public final String getProtocol() {
+    @Nonnull public final String getProtocol() {
         return SAMLConstants.SAML20P_NS;
     }
 
@@ -63,7 +67,7 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType extends Attribut
      * 
      * @return friendly, human readable, name for the attribute
      */
-    public final String getFriendlyName() {
+    @Nullable public final String getFriendlyName() {
         return friendlyName;
     }
 
@@ -72,13 +76,24 @@ public abstract class AbstractSaml2AttributeEncoder<EncodedType extends Attribut
      * 
      * @param attributeFriendlyName friendly, human readable, name for the attribute
      */
-    public final synchronized void setFriendlyName(final String attributeFriendlyName) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException(
-                    "Friendly attribute name can not be changed after encoder has been initialized");
-        }
+    public final synchronized void setFriendlyName(@Nullable final String attributeFriendlyName) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         friendlyName = StringSupport.trimOrNull(attributeFriendlyName);
     }
+    
+    /**
+     * Ensures that the friendly is not null.
+     * 
+     * {@inheritDoc}
+     */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (friendlyName == null) {
+            throw new ComponentInitializationException("Friendly name can not be null or empty");
+        }
+    }
+
 
     /** {@inheritDoc} */
     protected Attribute buildAttribute(final net.shibboleth.idp.attribute.Attribute attribute,

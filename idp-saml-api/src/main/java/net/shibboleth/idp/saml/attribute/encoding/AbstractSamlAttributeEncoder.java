@@ -20,13 +20,18 @@ package net.shibboleth.idp.saml.attribute.encoding;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -58,7 +63,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @return name of the attribute, never null after initialization
      */
-    public final String getName() {
+    @Nullable public final String getName() {
         return name;
     }
 
@@ -67,11 +72,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @param attributeName name of the attribute
      */
-    public final synchronized void setName(final String attributeName) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException(
-                    "Attribute name can not be changed after encoder has been initialized");
-        }
+    public final synchronized void setName(@Nullable final String attributeName) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         name = StringSupport.trimOrNull(attributeName);
     }
 
@@ -80,7 +82,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @return namespace in which the attribute name is interpreted, never null after initialization
      */
-    public final String getNamespace() {
+    @Nullable public final String getNamespace() {
         return namespace;
     }
 
@@ -89,11 +91,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @param attributeNamespace namespace in which the attribute name is interpreted
      */
-    public final synchronized void setNamespace(final String attributeNamespace) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException(
-                    "Attribute name format can not be changed after encoder has been initialized");
-        }
+    public final synchronized void setNamespace(@Nullable final String attributeNamespace) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         namespace = StringSupport.trimOrNull(attributeNamespace);
     }
 
@@ -115,8 +114,10 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
     }
 
     /** {@inheritDoc} */
-    public AttributeType encode(final net.shibboleth.idp.attribute.Attribute attribute)
+    @Nullable public AttributeType encode(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute)
             throws AttributeEncodingException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(attribute, "attribute passed in to encode must not be null");
         final String attributeId = attribute.getId();
         log.debug("Beginning to encode attribute {}", attributeId);
 
@@ -131,6 +132,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
         XMLObject samlAttributeValue;
         for (AttributeValue o : attribute.getValues()) {
             if (o == null) {
+                // filtered out upstream leave in test for sanity
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;
             }
@@ -150,7 +152,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
             }
         }
 
-        if (samlAttributeValues == null || samlAttributeValues.isEmpty()) {
+        if (samlAttributeValues.isEmpty()) {
             log.debug("Attribute {} did not contain any non-empty String values, nothing to encode", attributeId);
             return null;
         }
@@ -168,8 +170,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @return true if the encoder can encoder this value, false if not
      */
-    protected abstract boolean
-            canEncodeValue(final net.shibboleth.idp.attribute.Attribute attribute, final AttributeValue value);
+    protected abstract boolean canEncodeValue(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
+            @Nonnull final AttributeValue value);
 
     /**
      * Encodes an attribute value in to a SAML attribute value element.
@@ -181,8 +183,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @throws AttributeEncodingException thrown if there is a problem encoding the attribute value
      */
-    protected abstract XMLObject encodeValue(final net.shibboleth.idp.attribute.Attribute attribute,
-            final EncodedType value) throws AttributeEncodingException;
+    @Nullable protected abstract XMLObject encodeValue(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
+            @Nonnull final EncodedType value) throws AttributeEncodingException;
 
     /**
      * Builds a SAML attribute element from the given attribute values.
@@ -194,6 +196,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
      * 
      * @throws AttributeEncodingException thrown if there is a problem constructing the SAML attribute
      */
-    protected abstract AttributeType buildAttribute(final net.shibboleth.idp.attribute.Attribute attribute,
-            final List<XMLObject> attributeValues) throws AttributeEncodingException;
+    @Nonnull protected abstract AttributeType buildAttribute(
+            @Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
+            @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException;
 }

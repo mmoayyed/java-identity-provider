@@ -17,10 +17,13 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
@@ -52,8 +55,12 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeStringValue(final Attribute attribute, final QName attributeValueElementName,
-            final String value) {
+    @Nullable public static XMLObject encodeStringValue(@Nonnull final Attribute attribute,
+            @Nonnull final QName attributeValueElementName, @Nullable final String value) {
+
+        Constraint.isNotNull(attribute, "Attribute can not be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
+
         if (Strings.isNullOrEmpty(value)) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
@@ -77,12 +84,14 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeByteArrayValue(final Attribute attribute, final QName attributeValueElementName,
-            final byte[] value) {
+    @Nullable public static XMLObject encodeByteArrayValue(@Nonnull final Attribute attribute,
+            @Nonnull final QName attributeValueElementName, @Nullable final byte[] value) {
         if (value == null || value.length == 0) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
+        Constraint.isNotNull(attribute, "Attribute can not be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
 
         final XMLObjectBuilder<XSString> stringBuilder =
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
@@ -102,12 +111,14 @@ public final class SamlEncoderSupport {
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
-    public static XMLObject encodeXmlObjectValue(final Attribute attribute, final QName attributeValueElementName,
-            final XMLObject value) {
+    @Nullable public static XMLObject encodeXmlObjectValue(@Nonnull final Attribute attribute,
+            @Nonnull final QName attributeValueElementName, @Nullable final XMLObject value) {
         if (value == null) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
+        Constraint.isNotNull(attribute, "Attribute can not be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
 
         final XMLObjectBuilder<XSAny> attributeValueBuilder =
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSAny.TYPE_NAME);

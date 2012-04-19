@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import javax.annotation.Nonnull;
+
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 
@@ -24,7 +26,7 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 public abstract class AbstractSaml1NameIdentifierEncoder extends AbstractSamlNameIdentifierEncoder<NameIdentifier> {
 
     /** {@inheritDoc} */
-    public final String getProtocol() {
+    @Nonnull public final String getProtocol() {
         return SAMLConstants.SAML10P_NS;
     }
 }

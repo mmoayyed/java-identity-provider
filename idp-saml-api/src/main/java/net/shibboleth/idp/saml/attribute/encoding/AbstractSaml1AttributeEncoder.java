@@ -19,8 +19,12 @@ package net.shibboleth.idp.saml.attribute.encoding;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -49,13 +53,13 @@ public abstract class AbstractSaml1AttributeEncoder<EncodedType extends Attribut
     }
 
     /** {@inheritDoc} */
-    public final String getProtocol() {
+    @Nonnull @NotEmpty public final String getProtocol() {
         return SAMLConstants.SAML10P_NS;
     }
 
     /** {@inheritDoc} */
-    protected Attribute buildAttribute(final net.shibboleth.idp.attribute.Attribute attribute,
-            final List<XMLObject> attributeValues) throws AttributeEncodingException {
+    protected Attribute buildAttribute(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
+            @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException {
 
         final Attribute samlAttribute = attributeBuilder.buildObject();
         samlAttribute.setAttributeName(getName());

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import javax.annotation.Nullable;
+
 import org.opensaml.saml.common.SAMLObject;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
@@ -41,7 +43,7 @@ public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLO
      * 
      * @return format of the name identifier
      */
-    public final String getNameFormat() {
+    @Nullable public final String getNameFormat() {
         return format;
     }
 
@@ -50,7 +52,7 @@ public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLO
      * 
      * @param nameFormat format of the name identifier
      */
-    public final void setNameFormat(final String nameFormat) {
+    public final void setNameFormat(@Nullable final String nameFormat) {
         format = StringSupport.trimOrNull(nameFormat);
     }
 
@@ -59,7 +61,7 @@ public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLO
      * 
      * @return security or administrative domain that qualifies the name identifier
      */
-    public final String getNameQualifier() {
+    @Nullable public final String getNameQualifier() {
         return qualifier;
     }
 
@@ -68,7 +70,7 @@ public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLO
      * 
      * @param nameQualifier security or administrative domain that qualifies the name identifier
      */
-    public final void setNameQualifier(final String nameQualifier) {
+    @Nullable public final void setNameQualifier(final String nameQualifier) {
         qualifier = StringSupport.trimOrNull(nameQualifier);
     }
 }
