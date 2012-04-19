@@ -22,9 +22,10 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
@@ -40,7 +41,7 @@ import com.google.common.collect.Lists;
  * 
  * Identical code to the {@link Saml1StringAttributeEncoderTest} except that the type of result and encoder is changed.
  */
-public class Saml2XmlObjectSubjectNameIDEncoderTest {
+public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -74,9 +75,10 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest {
         return new XMLObjectAttributeValue(id);
     }
 
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-
+    private Saml2XmlObjectSubjectNameIDEncoder encoder;
+    
+    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+        encoder = new Saml2XmlObjectSubjectNameIDEncoder();
         saml1Builder = new NameIdentifierBuilder();
         saml2Builder = new NameIDBuilder();
     }
@@ -93,7 +95,6 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest {
     }
 
     @Test public void testInappropriate() throws Exception {
-        final Saml2XmlObjectSubjectNameIDEncoder encoder = new Saml2XmlObjectSubjectNameIDEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
@@ -112,7 +113,6 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest {
     }
 
     @Test public void testSingle() throws Exception {
-        final Saml2XmlObjectSubjectNameIDEncoder encoder = new Saml2XmlObjectSubjectNameIDEncoder();
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), new StringAttributeValue("foo"),
                         saml2NameIdFor(NAME_1), saml1NameIdFor(NAME_2));
@@ -130,7 +130,6 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest {
     }
 
     @Test public void testMulti() throws Exception {
-        final Saml2XmlObjectSubjectNameIDEncoder encoder = new Saml2XmlObjectSubjectNameIDEncoder();
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), saml2NameIdFor(NAME_1),
                         saml2NameIdFor(NAME_1));

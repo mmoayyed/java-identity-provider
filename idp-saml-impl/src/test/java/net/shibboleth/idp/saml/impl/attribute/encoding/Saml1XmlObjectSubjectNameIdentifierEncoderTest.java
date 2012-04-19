@@ -22,9 +22,10 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
@@ -41,7 +42,7 @@ import com.google.common.collect.Lists;
  * Identical code to the {@link Saml1XmlObjectSubjectNameIdentifierEncoder} except that the type of assertion and
  * encoder is changed.
  */
-public class Saml1XmlObjectSubjectNameIdentifierEncoderTest {
+public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -75,14 +76,16 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest {
         return new XMLObjectAttributeValue(id);
     }
 
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
+    private Saml1XmlObjectSubjectNameIdentifierEncoder encoder;
+
+    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+        
+        encoder = new Saml1XmlObjectSubjectNameIdentifierEncoder();
         saml1Builder = new NameIdentifierBuilder();
         saml2Builder = new NameIDBuilder();
     }
 
     @Test public void testEmpty() throws Exception {
-        final Saml1XmlObjectSubjectNameIdentifierEncoder encoder = new Saml1XmlObjectSubjectNameIdentifierEncoder();
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -93,7 +96,6 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest {
     }
 
     @Test public void testInappropriate() throws Exception {
-        final Saml1XmlObjectSubjectNameIdentifierEncoder encoder = new Saml1XmlObjectSubjectNameIdentifierEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
@@ -112,7 +114,6 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest {
     }
 
     @Test public void testSingle() throws Exception {
-        final Saml1XmlObjectSubjectNameIdentifierEncoder encoder = new Saml1XmlObjectSubjectNameIdentifierEncoder();
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) saml2NameIdFor(OTHERID), new StringAttributeValue("foo"),
                         saml1NameIdFor(NAME_1), saml2NameIdFor(NAME_2));
@@ -130,7 +131,6 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest {
     }
 
     @Test public void testMulti() throws Exception {
-        final Saml1XmlObjectSubjectNameIdentifierEncoder encoder = new Saml1XmlObjectSubjectNameIdentifierEncoder();
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1),
                         saml1NameIdFor(NAME_1));

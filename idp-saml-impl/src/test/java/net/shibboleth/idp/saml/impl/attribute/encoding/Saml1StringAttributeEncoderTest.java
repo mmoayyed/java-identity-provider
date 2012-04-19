@@ -23,9 +23,9 @@ import java.util.List;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
 /**
  * {@link Saml1StringAttributeEncoder} Unit test.
  */
-public class Saml1StringAttributeEncoderTest {
+public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -49,12 +49,16 @@ public class Saml1StringAttributeEncoderTest {
     /** A second test value. */
     private final static String STRING_2 = "Second string the value is";
 
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
+    private Saml1StringAttributeEncoder encoder;
+    
+    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+        encoder = new Saml1StringAttributeEncoder();
+        encoder.setName(ATTR_NAME);
+        encoder.setNamespace("NameSpace");
+        encoder.initialize();
     }
 
     @Test public void testEmpty() throws Exception {
-        final Saml1StringAttributeEncoder encoder = new Saml1StringAttributeEncoder();
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -65,7 +69,7 @@ public class Saml1StringAttributeEncoderTest {
     }
 
     @Test public void testInappropriate() throws Exception {
-        final Saml1StringAttributeEncoder encoder = new Saml1StringAttributeEncoder();
+        encoder.initialize();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
@@ -84,7 +88,6 @@ public class Saml1StringAttributeEncoderTest {
     }
 
     @Test public void testSingle() throws Exception {
-        final Saml1StringAttributeEncoder encoder = new Saml1StringAttributeEncoder();
         final Collection<AttributeValue> values =
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1)));
@@ -114,7 +117,6 @@ public class Saml1StringAttributeEncoderTest {
     }
 
     @Test public void testMulti() throws Exception {
-        final Saml1StringAttributeEncoder encoder = new Saml1StringAttributeEncoder();
         final Collection<AttributeValue> values =
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2)));

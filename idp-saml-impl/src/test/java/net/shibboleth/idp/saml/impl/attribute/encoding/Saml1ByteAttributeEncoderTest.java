@@ -24,9 +24,9 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
  * 
  * Identical code to the {@link Saml1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
  */
-public class Saml1ByteAttributeEncoderTest {
+public class Saml1ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -52,13 +52,17 @@ public class Saml1ByteAttributeEncoderTest {
 
     /** A second test value. */
     private final static byte[] BYTE_ARRAY_2 = {4, 3, 2, 1};
-
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
+    
+    private Saml1ByteAttributeEncoder encoder;
+    
+    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+        encoder = new Saml1ByteAttributeEncoder();
+        encoder.setName(ATTR_NAME);
+        encoder.setNamespace("NameSpace");
+        encoder.initialize();
     }
-
+    
     @Test public void testEmpty() throws Exception {
-        final Saml1ByteAttributeEncoder encoder = new Saml1ByteAttributeEncoder();
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -69,7 +73,6 @@ public class Saml1ByteAttributeEncoderTest {
     }
 
     @Test public void testInappropriate() throws Exception {
-        final Saml1ByteAttributeEncoder encoder = new Saml1ByteAttributeEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
@@ -88,7 +91,6 @@ public class Saml1ByteAttributeEncoderTest {
     }
 
     @Test public void testSingle() throws Exception {
-        final Saml1ByteAttributeEncoder encoder = new Saml1ByteAttributeEncoder();
         final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
@@ -117,7 +119,6 @@ public class Saml1ByteAttributeEncoderTest {
     }
 
     @Test public void testMulti() throws Exception {
-        final Saml1ByteAttributeEncoder encoder = new Saml1ByteAttributeEncoder();
         final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(BYTE_ARRAY_2));
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;

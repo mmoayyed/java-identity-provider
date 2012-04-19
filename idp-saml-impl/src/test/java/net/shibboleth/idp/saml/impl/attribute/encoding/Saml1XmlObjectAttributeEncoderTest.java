@@ -25,9 +25,9 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
  * 
  * Identical code to the {@link Saml1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
  */
-public class Saml1XmlObjectAttributeEncoderTest {
+public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase  {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -53,6 +53,20 @@ public class Saml1XmlObjectAttributeEncoderTest {
     /** A second test value. */
     private final static String STRING_2 = "Second string the value is";
 
+    private Saml1XmlObjectAttributeEncoder encoder;
+    private Saml1StringAttributeEncoder strEncoder;
+    
+    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+        encoder = new Saml1XmlObjectAttributeEncoder();
+        encoder.setName(ATTR_NAME);
+        encoder.setNamespace("NameSpace");
+        encoder.initialize();
+        strEncoder = new Saml1StringAttributeEncoder();
+        strEncoder.setName(ATTR_NAME);
+        strEncoder.setNamespace("NameSpace");
+        strEncoder.initialize();
+    }
+    
     /**
      * Create an XML object from a string which we can test against later. We use the Saml1StringEncoder to do the work
      * because it is handy in this package.
@@ -60,14 +74,13 @@ public class Saml1XmlObjectAttributeEncoderTest {
      * @param value that we encode
      * @return an XML object
      */
-    private static XMLObjectAttributeValue ObjectFor(final String value) {
-        final Saml1StringAttributeEncoder encoder = new Saml1StringAttributeEncoder();
+    private XMLObjectAttributeValue ObjectFor(final String value) {
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.getValues().add(new StringAttributeValue(value));
         try {
-            return  new XMLObjectAttributeValue(encoder.encode(inputAttribute));
+            return  new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
         } catch (AttributeEncodingException e) {
             return null;
         }
@@ -97,12 +110,7 @@ public class Saml1XmlObjectAttributeEncoderTest {
         Assert.assertTrue(false, "No potential matched matched");
     }
 
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
-
     @Test public void testEmpty() throws Exception {
-        final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -112,7 +120,6 @@ public class Saml1XmlObjectAttributeEncoderTest {
     }
 
     @Test public void testInappropriate() throws Exception {
-        final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue("foo", "bar"), new AttributeValue() {
@@ -130,7 +137,6 @@ public class Saml1XmlObjectAttributeEncoderTest {
     }
 
     @Test public void testSingle() throws Exception {
-        final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
@@ -152,7 +158,6 @@ public class Saml1XmlObjectAttributeEncoderTest {
     }
 
     @Test public void testMulti() throws Exception {
-        final Saml1XmlObjectAttributeEncoder encoder = new Saml1XmlObjectAttributeEncoder();
         final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
