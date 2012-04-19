@@ -33,13 +33,12 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+import org.opensaml.saml.common.SAMLObject;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
@@ -47,7 +46,7 @@ import com.google.common.collect.Lists;
 /**
  *
  */
-public class AbstractSamlAttributeEncoderTest {
+public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     
     private XSStringBuilder theBuilder;
     private QName theQName = new QName("LocalQNAME");
@@ -56,11 +55,6 @@ public class AbstractSamlAttributeEncoderTest {
     private final String ATTRIBUTE_ID = "attrID";
     private final String ATTRIBUTE_VALUE_1 = "attrValOne";
     private final String ATTRIBUTE_VALUE_2 = "attrValeTwo";
-    
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-        theBuilder = new XSStringBuilder();
-    }
     
     @Test public void testInitializeAndSetters() throws AttributeEncodingException, ComponentInitializationException {
         AbstractSamlAttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
@@ -156,6 +150,55 @@ public class AbstractSamlAttributeEncoderTest {
         Assert.assertTrue(resultSet.contains(ATTRIBUTE_VALUE_1));
         Assert.assertTrue(resultSet.contains(ATTRIBUTE_VALUE_2));
 
+    }
+    
+    @Test public void testEqualsHash() {
+        mockEncoder enc1 = new mockEncoder(theBuilder, theQName);
+        Assert.assertEquals(enc1, enc1);
+        Assert.assertNotSame(enc1, null);
+        Assert.assertNotSame(enc1, this);
+
+        mockEncoder enc2 = new mockEncoder(theBuilder, theQName);
+        
+        Assert.assertEquals(enc1, enc2);
+        Assert.assertEquals(enc1.hashCode(), enc2.hashCode());
+        enc1.setName(MY_NAME);
+        enc1.setNamespace(MY_NAMESPACE);
+        enc2.setName(MY_NAME);
+        enc2.setNamespace(MY_NAMESPACE);
+        Assert.assertEquals(enc1, enc2);
+        Assert.assertEquals(enc1.hashCode(), enc2.hashCode());
+        enc2.setName(MY_NAME + MY_NAME);
+        Assert.assertNotSame(enc1,  enc2);
+        Assert.assertNotSame(enc1.hashCode(),  enc2.hashCode());
+        enc2.setName(MY_NAME);
+        enc2.setNamespace(MY_NAME);
+        Assert.assertNotSame(enc1,  enc2);
+        Assert.assertNotSame(enc1.hashCode(),  enc2.hashCode());        
+        
+        AbstractSamlAttributeEncoder enc3 = new AbstractSamlAttributeEncoder<SAMLObject, AttributeValue>() {
+
+            public String getProtocol() {
+                return "Random Stuff";
+            }
+
+            protected boolean canEncodeValue(Attribute attribute, AttributeValue value) {
+                return false;
+            }
+
+            protected XMLObject encodeValue(Attribute attribute, AttributeValue value)
+                    throws AttributeEncodingException {
+                return null;
+            }
+
+            protected SAMLObject buildAttribute(Attribute attribute, List<XMLObject> attributeValues)
+                    throws AttributeEncodingException {
+                return null;
+            }};
+            enc3.setName(MY_NAME);
+            enc3.setNamespace(MY_NAMESPACE);
+            Assert.assertNotSame(enc1,  enc3);
+            Assert.assertNotSame(enc1.hashCode(),  enc3.hashCode());        
     }
  
     protected static class mockEncoder extends AbstractSaml1AttributeEncoder {

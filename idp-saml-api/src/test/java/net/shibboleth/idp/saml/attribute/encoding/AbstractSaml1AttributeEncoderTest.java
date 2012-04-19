@@ -29,13 +29,11 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
@@ -43,7 +41,7 @@ import com.google.common.collect.Lists;
 /**
  * test for {@link AbstractSaml1AttributeEncoder
  */
-public class AbstractSaml1AttributeEncoderTest {
+public class AbstractSaml1AttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     private XSStringBuilder theBuilder;
 
@@ -58,11 +56,6 @@ public class AbstractSaml1AttributeEncoderTest {
     private final String ATTRIBUTE_VALUE_1 = "attrValOne";
 
     private final String ATTRIBUTE_VALUE_2 = "attrValueTwo";
-
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-        theBuilder = new XSStringBuilder();
-    }
 
     @Test public void testAbstractSaml1AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
         AbstractSaml1AttributeEncoder encoder = new AbstractSamlAttributeEncoderTest.mockEncoder(theBuilder, theQName);

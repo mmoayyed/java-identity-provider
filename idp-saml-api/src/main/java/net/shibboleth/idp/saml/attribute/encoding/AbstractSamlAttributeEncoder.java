@@ -39,6 +39,8 @@ import org.opensaml.saml.common.SAMLObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+
 /**
  * Base class for encoders that produce SAML attributes.
  * 
@@ -159,6 +161,32 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
 
         log.debug("Completed encoding {} values for attribute {}", samlAttributeValues.size(), attributeId);
         return buildAttribute(attribute, samlAttributeValues);
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof AbstractSamlAttributeEncoder)) {
+            return false;
+        }
+        
+        AbstractSamlAttributeEncoder other = (AbstractSamlAttributeEncoder) obj;
+        
+        return Objects.equal(getName(), other.getName()) &&
+               Objects.equal(getNamespace(), other.getNamespace()) &&
+               Objects.equal(getProtocol(), other.getProtocol());
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getName(), getNamespace(), getProtocol());
     }
 
     /**

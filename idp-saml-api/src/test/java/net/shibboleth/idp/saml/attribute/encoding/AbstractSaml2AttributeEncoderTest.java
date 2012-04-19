@@ -31,13 +31,11 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
@@ -45,7 +43,7 @@ import com.google.common.collect.Lists;
 /**
  * test for {@link AbstractSaml2AttributeEncoder
  */
-public class AbstractSaml2AttributeEncoderTest {
+public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     private XSStringBuilder theBuilder;
 
@@ -62,11 +60,6 @@ public class AbstractSaml2AttributeEncoderTest {
     private final String ATTRIBUTE_VALUE_2 = "attrValueTwo";
 
     private final String FRIENDLY_NAME = "friendly";
-
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-        theBuilder = new XSStringBuilder();
-    }
 
     @Test public void testAbstractSaml2AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
         AbstractSaml2AttributeEncoder encoder = new mockEncoder();

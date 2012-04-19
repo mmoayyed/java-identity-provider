@@ -21,6 +21,8 @@ import javax.annotation.Nullable;
 
 import org.opensaml.saml.common.SAMLObject;
 
+import com.google.common.base.Objects;
+
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -73,4 +75,31 @@ public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLO
     @Nullable public final void setNameQualifier(final String nameQualifier) {
         qualifier = StringSupport.trimOrNull(nameQualifier);
     }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof AbstractSamlNameIdentifierEncoder)) {
+            return false;
+        }
+        
+        AbstractSamlNameIdentifierEncoder other = (AbstractSamlNameIdentifierEncoder) obj;
+        
+        return Objects.equal(getNameFormat(), other.getNameFormat()) &&
+               Objects.equal(getNameQualifier(), other.getNameQualifier()) &&
+               Objects.equal(getProtocol(), other.getProtocol());
+    }
+    
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getNameFormat(), getNameQualifier(), getProtocol());
+    }
+
 }
