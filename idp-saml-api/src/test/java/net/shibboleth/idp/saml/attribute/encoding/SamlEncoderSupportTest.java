@@ -25,21 +25,19 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**
  * Test form {@link SamlEncoderSupport}.
  */
-public class SamlEncoderSupportTest {
+public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     
     /** Test values. */
     private final static String QNAME_LOCALPART = "myQName";
@@ -47,10 +45,6 @@ public class SamlEncoderSupportTest {
     private final static String STRING_VALUE = "TestValue";
     private final static Attribute ATTR = new Attribute("attr");
     private final static byte[] BYTE_ARRAY_VALUE = {1, 2, 3, 4, 5};
-    
-    @BeforeSuite() public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
     
     @Test public void testEncodeStringValue() {
         

@@ -23,8 +23,7 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLVersion;
@@ -34,16 +33,10 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link AddResponseShell} unit test. */
-public class AddResponseShellTest {
-
-    @BeforeSuite()
-    public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
+public class AddResponseShellTest  extends OpenSAMLInitBaseTestCase {
 
     @Test
     public void testAddResponse() throws Exception {

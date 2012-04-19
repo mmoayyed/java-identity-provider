@@ -25,6 +25,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.ActionTestSupportAction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -38,12 +39,7 @@ import org.testng.annotations.Test;
 /**
  * @link Saml1ActionSupport} unit test.
  */
-public class Saml1ActionSupportTest {
-
-    @BeforeSuite 
-    public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
+public class Saml1ActionSupportTest  extends OpenSAMLInitBaseTestCase {
 
     /**
      * Test that when an assertion is added to response it goes there. 

@@ -22,8 +22,7 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -32,16 +31,10 @@ import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link AddNotBeforeConditionToAssertions} unit test. */
-public class AddNotBeforeConditionToAssertionsTest {
-
-    @BeforeSuite()
-    public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
+public class AddNotBeforeConditionToAssertionsTest  extends OpenSAMLInitBaseTestCase {
 
     /** Test that action errors out properly if there is no response. */
     @Test

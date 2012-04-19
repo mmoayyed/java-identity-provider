@@ -23,6 +23,7 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.profile.saml2.CheckRequestVersion.InvalidMessageVersionException;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
 import org.opensaml.saml.common.SAMLVersion;
@@ -34,12 +35,7 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link CheckRequestVersion} unit test. */
-public class CheckRequestVersionTest {
-
-    @BeforeSuite()
-    public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
+public class CheckRequestVersionTest  extends OpenSAMLInitBaseTestCase {
 
     /** Test the action errors out properly when there is a null message */
     @Test

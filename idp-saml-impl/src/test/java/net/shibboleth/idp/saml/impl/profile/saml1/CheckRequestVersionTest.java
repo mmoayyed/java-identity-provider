@@ -23,23 +23,16 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.impl.profile.saml1.CheckRequestVersion.InvalidMessageVersionException;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.Request;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link CheckRequestVersion} unit test. */
-public class CheckRequestVersionTest {
-
-    @BeforeSuite()
-    public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
+public class CheckRequestVersionTest  extends OpenSAMLInitBaseTestCase {
 
     /** Test the action errors out properly when there is a null message */
     @Test

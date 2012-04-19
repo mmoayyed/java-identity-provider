@@ -25,25 +25,18 @@ import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
 import net.shibboleth.idp.saml.profile.ActionTestSupportAction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /**
  * @link Saml1ActionSupport} unit test.
  */
-public class Saml2ActionSupportTest {
-
-    @BeforeSuite 
-    public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
+public class Saml2ActionSupportTest  extends OpenSAMLInitBaseTestCase {
 
     /**
      * Test that when an assertion is added to response it goes there. 

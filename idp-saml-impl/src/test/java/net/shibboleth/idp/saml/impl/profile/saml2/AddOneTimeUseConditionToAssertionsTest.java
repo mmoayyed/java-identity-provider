@@ -22,8 +22,7 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
-import org.opensaml.core.config.InitializationException;
-import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -33,16 +32,10 @@ import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 /** {@link AddOneTimeUseConditionToAssertions} unit test. */
-public class AddOneTimeUseConditionToAssertionsTest {
-
-    @BeforeSuite()
-    public void initOpenSAML() throws InitializationException {
-        InitializationService.initialize();
-    }
+public class AddOneTimeUseConditionToAssertionsTest  extends OpenSAMLInitBaseTestCase {
 
     /** Test that action errors out properly if there is no response. */
     @Test
