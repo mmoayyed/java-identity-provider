@@ -30,7 +30,7 @@ import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
@@ -77,7 +77,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
 
     private Saml1XmlObjectSubjectNameIdentifierEncoder encoder;
 
-    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+    @BeforeClass public void initTest() throws ComponentInitializationException {
         
         encoder = new Saml1XmlObjectSubjectNameIdentifierEncoder();
         saml1Builder = new NameIdentifierBuilder();

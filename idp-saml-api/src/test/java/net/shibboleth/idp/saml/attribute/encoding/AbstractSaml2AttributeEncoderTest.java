@@ -36,7 +36,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
@@ -62,7 +62,7 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
 
     private final String FRIENDLY_NAME = "friendly";
     
-    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+    @BeforeClass public void initTest() throws ComponentInitializationException {
         theBuilder = new XSStringBuilder();
     }
 

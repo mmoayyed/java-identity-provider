@@ -32,7 +32,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
@@ -56,7 +56,7 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     private Saml1XmlObjectAttributeEncoder encoder;
     private Saml1StringAttributeEncoder strEncoder;
     
-    @BeforeSuite(dependsOnGroups={"opensaml.init"}) public void initTest() throws ComponentInitializationException {
+    @BeforeClass public void initTest() throws ComponentInitializationException {
         encoder = new Saml1XmlObjectAttributeEncoder();
         encoder.setName(ATTR_NAME);
         encoder.setNamespace("NameSpace");
