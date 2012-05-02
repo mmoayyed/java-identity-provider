@@ -137,7 +137,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        valueMatchingRule = Constraint.isNull(matcher, "Attribute value matcher can not be null");
+        valueMatchingRule = Constraint.isNotNull(matcher, "Attribute value matcher can not be null");
     }
 
     /** {@inheritDoc} */
