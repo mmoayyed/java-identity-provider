@@ -47,7 +47,8 @@ public final class ResolverPluginDependency {
      */
     public ResolverPluginDependency(@Nonnull @NotEmpty final String pluginId, @Nullable final String attributeId) {
         dependencyPluginId =
-                Constraint.isNotNull(StringSupport.trimOrNull(pluginId), "Dependency plugin ID may not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(pluginId),
+                        "Dependency plugin ID may not be null or empty");
 
         dependencyAttributeId = Optional.fromNullable(StringSupport.trimOrNull(attributeId));
     }

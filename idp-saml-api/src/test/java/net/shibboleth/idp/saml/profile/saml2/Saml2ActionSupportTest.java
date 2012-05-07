@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.saml.profile.saml2;
 
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidSubcontextException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.ActionTestSupportAction;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Response;
@@ -33,18 +33,24 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+
 /**
  * @link Saml1ActionSupport} unit test.
  */
-public class Saml2ActionSupportTest  extends OpenSAMLInitBaseTestCase {
+public class Saml2ActionSupportTest extends OpenSAMLInitBaseTestCase {
+
+    /** Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}. */
+    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy =
+            new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
 
     /**
-     * Test that when an assertion is added to response it goes there. 
+     * Test that when an assertion is added to response it goes there.
+     * 
      * @throws ComponentInitializationException if we cannot setup our environment.
      * @throws InvalidSubcontextException if we cannot setup our environment.
      */
-    @Test 
-    public void testAddAssertionToResponse() throws ComponentInitializationException, InvalidSubcontextException {
+    @Test public void testAddAssertionToResponse() throws ComponentInitializationException, InvalidSubcontextException {
 
         final Response response = Saml2ActionTestingSupport.buildResponse();
 
@@ -58,8 +64,7 @@ public class Saml2ActionSupportTest  extends OpenSAMLInitBaseTestCase {
                         ProfileRequestContext.BINDING_KEY);
 
         ActionTestSupportAction action = new ActionTestSupportAction();
-        RelyingPartySubcontext relyingPartyCtx =
-                ActionSupport.getRequiredRelyingPartyContext(action, profileRequestContext);
+        RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
 
         Assert.assertEquals(response.getAssertions().size(), 0, "Expected zarro assertions before insert");
         Assertion assertion = Saml2ActionSupport.addAssertionToResponse(action, relyingPartyCtx, response);
@@ -73,11 +78,10 @@ public class Saml2ActionSupportTest  extends OpenSAMLInitBaseTestCase {
 
     /**
      * Test that only one Conditions is added to an assertion.
-     * @throws ComponentInitializationException if problems setting up our environment
-     * .
+     * 
+     * @throws ComponentInitializationException if problems setting up our environment .
      */
-    @Test 
-    public void testAddConditionsToAssertion() throws ComponentInitializationException {
+    @Test public void testAddConditionsToAssertion() throws ComponentInitializationException {
         ActionTestSupportAction action = new ActionTestSupportAction();
         Assertion assertion = Saml2ActionTestingSupport.buildAssertion();
 

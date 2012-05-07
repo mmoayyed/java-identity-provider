@@ -24,7 +24,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidInboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
@@ -44,7 +44,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /** An action that schema validates inbound XML messages. */
-public class SchemaValidateXmlMessage extends AbstractIdentityProviderAction<XMLObject, Object> {
+public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, Object> {
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(SchemaValidateXmlMessage.class);
@@ -90,7 +90,7 @@ public class SchemaValidateXmlMessage extends AbstractIdentityProviderAction<XML
 
         log.debug("Action {}: Attempting to schema validate incoming message", getId());
 
-        final XMLObject request = ActionSupport.getRequiredInboundMessage(this, profileRequestContext);
+        final XMLObject request = profileRequestContext.getInboundMessageContext().getMessage();
 
         final Document requestDoc = getRequestDom(request);
 

@@ -15,30 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml2;
+package net.shibboleth.idp.profile.navigate;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.opensaml.saml.saml2.core.Response;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import com.google.common.base.Function;
+
 /**
- *
+ * A {@link Function} that extracts the {@link ProfileRequestContext} from the current Webflow conversation. It is
+ * expected that the {@link ProfileRequestContext} will be bound to the conversation attribute identified by
+ * {@link ProfileRequestContext#BINDING_KEY}.
  */
-public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
+public class WebflowRequestContextProfileRequestContextLookup implements
+        Function<RequestContext, ProfileRequestContext> {
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        // TODO Auto-generated method stub
-        return null;
+    public ProfileRequestContext apply(RequestContext requestContext) {
+        return (ProfileRequestContext) requestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
     }
-
 }

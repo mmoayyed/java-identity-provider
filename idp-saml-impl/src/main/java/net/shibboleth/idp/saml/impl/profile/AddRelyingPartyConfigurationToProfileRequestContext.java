@@ -17,36 +17,82 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import com.google.common.base.Function;
+
 /**
- * This action attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the {@link RelyingPartySubcontext}
+ * This action attempts to resolve a {@link RelyingPartyConfiguration} and adds it to the {@link RelyingPartyContext}
  * located on the {@link ProfileRequestContext}.
  */
-public final class AddRelyingPartyConfigurationToProfileRequestContext extends AbstractIdentityProviderAction {
+public final class AddRelyingPartyConfigurationToProfileRequestContext extends AbstractProfileAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddRelyingPartyConfigurationToProfileRequestContext.class);
 
+    /**
+     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
+     */
+    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+
     /** Resolver used to look up relying party configurations. */
     private RelyingPartyConfigurationResolver rpConfigResolver;
+
+    /** Constructor. */
+    public AddRelyingPartyConfigurationToProfileRequestContext() {
+        super();
+
+        relyingPartyContextLookupStrategy =
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
+                        false);
+    }
+
+    /**
+     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
+     *         {@link ProfileRequestContext}
+     */
+    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
+        return relyingPartyContextLookupStrategy;
+    }
+
+    /**
+     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public synchronized void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
+    }
 
     /**
      * Gets the resolver used to look up relying party configuration.
@@ -76,9 +122,8 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
             throws ProfileException {
 
-        final RelyingPartySubcontext relyingPartyCtx =
-                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
-        profileRequestContext.getSubcontext(RelyingPartySubcontext.class, false);
+        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
 
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);

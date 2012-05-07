@@ -15,30 +15,35 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml2;
+package net.shibboleth.idp.profile.navigate;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
-
-import org.opensaml.saml.saml2.core.Response;
-import org.springframework.webflow.execution.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.RequestContext;
 
+import com.google.common.base.Function;
+
 /**
- *
+ * A {@link Function} that extracts the {@link HttpServletRequest} from the {@link ExternalContext} of the given
+ * {@link RequestContext}.
  */
-public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
+public class WebflowRequestContextHttpServletRequestLookup implements
+        Function<RequestContext, HttpServletRequest> {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(WebflowRequestContextHttpServletRequestLookup.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public HttpServletRequest apply(RequestContext requestContext) {
+        final ExternalContext externalContext = requestContext.getExternalContext();
+        if (externalContext == null) {
+            log.debug("Webflow RequestContext's ExternalContext was null");
+            return null;
+        }
 
+        return (HttpServletRequest) externalContext.getNativeRequest();
+    }
 }

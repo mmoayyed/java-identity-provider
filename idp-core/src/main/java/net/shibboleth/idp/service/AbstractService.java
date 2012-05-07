@@ -174,7 +174,8 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * @param state current state of the service
      */
     protected final void setCurrentState(final String state) {
-        currentState = Constraint.isNotNull(StringSupport.trimOrNull(state), "State indicator may not be null or empty");
+        currentState =
+                Constraint.isNotNull(StringSupport.trimOrNull(state), "State indicator may not be null or empty");
     }
 
     /**

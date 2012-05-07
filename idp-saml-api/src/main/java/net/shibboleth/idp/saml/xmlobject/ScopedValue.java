@@ -28,8 +28,9 @@ public interface ScopedValue extends SAMLObject {
     public static final String TYPE_LOCAL_NAME = "ScopedValue";
 
     /** QName of the XSI type. */
-    //TODO fix these with constants when available
-    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", TYPE_LOCAL_NAME, "encoder");
+    // TODO fix these with constants when available
+    public static final QName TYPE_NAME = new QName("urn:mace:shibboleth:2.0:attribute:encoder", TYPE_LOCAL_NAME,
+            "encoder");
 
     /**
      * Gets the name of the scope attribute.

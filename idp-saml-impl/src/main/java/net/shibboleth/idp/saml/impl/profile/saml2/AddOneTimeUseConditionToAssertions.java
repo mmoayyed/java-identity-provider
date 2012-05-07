@@ -22,7 +22,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
@@ -48,7 +48,7 @@ import org.springframework.webflow.execution.RequestContext;
  * This action requires that the outbound message context to contain a {@link Response} with one, or more,
  * {@link Assertion}.
  */
-public class AddOneTimeUseConditionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
+public class AddOneTimeUseConditionToAssertions extends AbstractProfileAction<Object, Response> {
     
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AddOneTimeUseConditionToAssertions.class);
@@ -59,7 +59,7 @@ public class AddOneTimeUseConditionToAssertions extends AbstractIdentityProvider
             throws ProfileException {
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
-        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
+        final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {

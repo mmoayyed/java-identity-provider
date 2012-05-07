@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  *
  */
-public class AddSubjectToStatements extends AbstractIdentityProviderAction<Object, Response> {
+public class AddSubjectToStatements extends AbstractProfileAction<Object, Response> {
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,

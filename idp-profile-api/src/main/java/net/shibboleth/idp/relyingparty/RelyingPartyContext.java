@@ -27,7 +27,7 @@ import org.opensaml.messaging.context.BaseContext;
  * {@link org.opensaml.messaging.context.Subcontext} containing relying party specific information. This is usually a
  * subcontext of a {@link net.shibboleth.idp.profile.ProfileRequestContext}.
  */
-public final class RelyingPartySubcontext extends BaseContext {
+public final class RelyingPartyContext extends BaseContext {
 
     /** The identifier for the relying party. */
     private final String relyingPartyId;
@@ -43,8 +43,9 @@ public final class RelyingPartySubcontext extends BaseContext {
      * 
      * @param rpId the relying party identifier, can not be null or empty
      */
-    public RelyingPartySubcontext(String rpId) {
-        relyingPartyId = Constraint.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
+    public RelyingPartyContext(String rpId) {
+        relyingPartyId =
+                Constraint.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
     }
 
     /**

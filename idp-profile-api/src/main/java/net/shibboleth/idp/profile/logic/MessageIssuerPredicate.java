@@ -15,39 +15,48 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.predicate;
+package net.shibboleth.idp.profile.logic;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
-import org.opensaml.messaging.context.MessageContext;
 
-import com.google.common.base.Optional;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-/**
- *
- */
-public class InboundMessageIssuerPredicate extends BaseInboundMessageContextPredicate {
+/** A {@link Predicate} that checks if the issuer of the message matches a given {@link Predicate}. */
+public class MessageIssuerPredicate implements Predicate<BaseContext> {
 
-    private Predicate<String> issuerMatch;
+    /** Strategy used to lookup the {@link BasicMessageMetadataContext} associated with the message. */
+    private final Function<BaseContext, BasicMessageMetadataContext> messageMetadataLookupStrategy;
 
-    public InboundMessageIssuerPredicate(@Nonnull Predicate<String> issuerMatchingPredicate) {
+    /** Strategy used to see if the message issuer is acceptable. */
+    private final Predicate<String> issuerMatch;
+
+    /**
+     * Constructor.
+     * 
+     * @param lookupStrategy strategy used to lookup the {@link BasicMessageMetadataContext} associated with the message
+     * @param issuerMatchingPredicate strategy used to see if the message issuer is acceptable
+     */
+    public MessageIssuerPredicate(@Nonnull final Function<BaseContext, BasicMessageMetadataContext> lookupStrategy,
+            @Nonnull final Predicate<String> issuerMatchingPredicate) {
+        messageMetadataLookupStrategy =
+                Constraint.isNotNull(lookupStrategy, "Message metadata lookup strategy can not be null");
         issuerMatch = Constraint.isNotNull(issuerMatchingPredicate, "Issuer matching predicate can not be null");
     }
 
     /** {@inheritDoc} */
-    public boolean apply(BaseContext input) {
-        Optional<MessageContext> messageContext = lookupMessageContext(input);
-        if (!messageContext.isPresent()) {
+    public boolean apply(@Nullable final BaseContext input) {
+        if (input == null) {
             return false;
         }
 
-        BasicMessageMetadataContext msgMdContext =
-                messageContext.get().getSubcontext(BasicMessageMetadataContext.class, false);
+        final BasicMessageMetadataContext msgMdContext = messageMetadataLookupStrategy.apply(input);
         if (msgMdContext != null) {
             return issuerMatch.apply(msgMdContext.getMessageIssuer());
         }

@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -39,7 +39,7 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link ProfileRequestContext#getOutboundMessageContext()}. If there was no message ID on the inbound message than
  * nothing is added to the response.
  */
-public class AddInResponseToToResponse extends AbstractIdentityProviderAction<Object, Response> {
+public class AddInResponseToToResponse extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddInResponseToToResponse.class);
@@ -57,7 +57,7 @@ public class AddInResponseToToResponse extends AbstractIdentityProviderAction<Ob
             return ActionSupport.buildProceedEvent(this);
         }
 
-        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
+        final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
 
         log.debug("Action {}: Add InResponseTo message ID {} to Response {}",
                 new Object[] {getId(), inMsgId, response.getID(),});

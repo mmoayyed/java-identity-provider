@@ -55,7 +55,8 @@ public final class AuthenticationEvent extends BaseContext {
      */
     public AuthenticationEvent(@Nonnull @NotEmpty final String workflow, @Nonnull final Principal principal) {
         authenticationWorkflow =
-                Constraint.isNotNull(StringSupport.trimOrNull(workflow), "Authentication method can not be null nor empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(workflow),
+                        "Authentication method can not be null nor empty");
 
         authenticatedPrincipal = Constraint.isNotNull(principal, "Authenticationed princpal can not be null");
 

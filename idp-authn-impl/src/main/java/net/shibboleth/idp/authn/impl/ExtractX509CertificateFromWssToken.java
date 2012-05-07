@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  *
  */
-public class ExtractX509CertificateFromWssToken extends AbstractIdentityProviderAction {
+public class ExtractX509CertificateFromWssToken extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,

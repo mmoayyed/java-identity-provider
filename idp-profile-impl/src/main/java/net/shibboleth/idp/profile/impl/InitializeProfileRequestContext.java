@@ -21,7 +21,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -34,10 +34,12 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link ProfileRequestContext#BINDING_KEY} key.
  */
 @ThreadSafe
-public final class InitializeProfileRequestContext extends AbstractIdentityProviderAction {
+public final class InitializeProfileRequestContext extends AbstractProfileAction {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public InitializeProfileRequestContext() {
+        super();
+        
         setId(InitializeProfileRequestContext.class.getName());
     }
 

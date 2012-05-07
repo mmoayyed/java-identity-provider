@@ -29,6 +29,8 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,6 +40,12 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class ValidateRemoteUser extends AbstractAuthenticationAction {
 
+    /** Transition name returned when {@link HttpServletRequest#getRemoteUser()} returns a null or empty string. */
+    public static final String TRANSITION_NO_REMOTE_USER = "NoRemoteUser";
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
+
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
@@ -46,9 +54,11 @@ public class ValidateRemoteUser extends AbstractAuthenticationAction {
 
         final String remoteUser = StringSupport.trimOrNull(httpRequest.getRemoteUser());
         if (remoteUser == null) {
-            // TODO error case
+            log.debug("Action {}: HTTP request did not contain a remote user", getId());
+            return ActionSupport.buildEvent(this, TRANSITION_NO_REMOTE_USER, null);
         }
 
+        log.debug("Action{}: HTTP request identified remote user as '{}'", getId(), remoteUser);
         authenticationContext.setAuthenticatedPrincipal(new UsernamePrincipal(remoteUser));
 
         return ActionSupport.buildProceedEvent(this);

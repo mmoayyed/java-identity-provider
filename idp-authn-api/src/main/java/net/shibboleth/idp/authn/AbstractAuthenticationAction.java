@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -31,7 +31,7 @@ import org.springframework.webflow.execution.RequestContext;
 import com.google.common.base.Function;
 
 /** A base class for authentication related actions. */
-public abstract class AbstractAuthenticationAction extends AbstractIdentityProviderAction {
+public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
 
     /**
      * Strategy used to extract, and create if necessary, the {@link AuthenticationRequestContext} from the

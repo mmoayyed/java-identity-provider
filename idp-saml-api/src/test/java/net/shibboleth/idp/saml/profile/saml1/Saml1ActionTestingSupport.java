@@ -28,7 +28,7 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.saml1.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.AttributeQueryProfileConfiguration;
 import net.shibboleth.idp.saml.profile.config.saml1.SsoProfileConfiguration;
@@ -64,7 +64,7 @@ public final class Saml1ActionTestingSupport {
     public final static String ASSERTION_ID = "assertion";
 
     /**
-     * Builds a {@link RelyingPartySubcontext} that is a child of the given parent context. The build subcontext
+     * Builds a {@link RelyingPartyContext} that is a child of the given parent context. The build subcontext
      * contains:
      * <ul>
      * <li>a {@link RelyingPartyConfiguration} whose ID is the given relying party ID or
@@ -79,7 +79,7 @@ public final class Saml1ActionTestingSupport {
      * 
      * @return the constructed subcontext
      */
-    public static RelyingPartySubcontext buildRelyingPartySubcontext(@Nonnull final BaseContext parent,
+    public static RelyingPartyContext buildRelyingPartySubcontext(@Nonnull final BaseContext parent,
             @Nullable final String relyingPartyId) {
 
         String id = StringSupport.trimOrNull(relyingPartyId);
@@ -91,7 +91,7 @@ public final class Saml1ActionTestingSupport {
                 new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER,
                         Predicates.<ProfileRequestContext> alwaysTrue(), buildProfileConfigurations());
 
-        RelyingPartySubcontext subcontext = new RelyingPartySubcontext(id);
+        RelyingPartyContext subcontext = new RelyingPartyContext(id);
         subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(SsoProfileConfiguration.PROFILE_ID));
         subcontext.setRelyingPartyConfiguration(rpConfig);
 

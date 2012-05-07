@@ -165,7 +165,6 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
             throws AttributeResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -175,7 +174,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
         }
 
         try {
-            return Constraint.isNotNull(doResolve(resolutionContext), "Result of doResolve for resolver plugin '" + getId() + "' was null");
+            return Constraint.isNotNull(doResolve(resolutionContext), "Result of doResolve for resolver plugin '"
+                    + getId() + "' was null");
         } catch (AttributeResolutionException e) {
             //
             // NOTE - if you change this logic you MUST make changes in any derived classes that
@@ -184,8 +184,8 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
             if (propagateResolutionExceptions) {
                 throw e;
             } else {
-                log.debug("Resolver {} produced the following"
-                        + " error but was configured not to propogate it.", new Object[] {getId(), e,});
+                log.debug("Resolver {} produced the following" + " error but was configured not to propogate it.",
+                        new Object[] {getId(), e,});
                 return Optional.absent();
             }
         }
@@ -222,12 +222,12 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
     protected void doValidate() throws ComponentValidationException {
 
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         return Objects.hashCode(getId());
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -241,9 +241,9 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
         if (!(obj instanceof BaseResolverPlugin)) {
             return false;
         }
-        
+
         BaseResolverPlugin<ResolvedType> other = (BaseResolverPlugin<ResolvedType>) obj;
-        return Objects.equal(getId(), other.getId());        
+        return Objects.equal(getId(), other.getId());
     }
 
     /**

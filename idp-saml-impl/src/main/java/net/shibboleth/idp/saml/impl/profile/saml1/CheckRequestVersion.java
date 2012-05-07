@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -33,10 +33,12 @@ import org.springframework.webflow.execution.RequestContext;
 import com.google.common.base.Objects;
 
 /** Checks whether the inbound SAML request has the appropriate version. */
-public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestAbstractType, Object> {
+public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractType, Object> {
 
     /** Constructor. The ID of this component is set to the name of this class. */
     public CheckRequestVersion() {
+        super();
+        
         setId(CheckRequestVersion.class.getName());
     }
 
@@ -45,12 +47,12 @@ public class CheckRequestVersion extends AbstractIdentityProviderAction<RequestA
             final RequestContext springRequestContext,
             final ProfileRequestContext<RequestAbstractType, Object> profileRequestContext) throws ProfileException {
 
-        final RequestAbstractType request = ActionSupport.getRequiredInboundMessage(this, profileRequestContext);
+        final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
 
         if (Objects.equal(SAMLVersion.VERSION_10, request.getVersion())
                 || Objects.equal(SAMLVersion.VERSION_11, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
-        }else{
+        } else {
             throw new InvalidMessageVersionException(request.getVersion());
         }
     }

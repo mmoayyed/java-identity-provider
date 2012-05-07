@@ -19,9 +19,9 @@ package net.shibboleth.idp.saml.profile.saml1;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -47,10 +47,10 @@ public final class Saml1ActionSupport {
      * <li>its ID is generated via the
      * {@link net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy} located on the
      * {@link SecurityConfiguration} located on the {@link net.shibboleth.idp.profile.config.ProfileConfiguration} of
-     * the {@link RelyingPartySubcontext}</li>
+     * the {@link RelyingPartyContext}</li>
      * <li>its issue instant is set to the issue instant of the given {@link Response}</li>
      * <li>its issuer is set to the responder entity ID given by the
-     * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} of the {@link RelyingPartySubcontext}</li>
+     * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} of the {@link RelyingPartyContext}</li>
      * <li>its version is set to {@link SAMLVersion#VERSION_11}</li>
      * </ul>
      * 
@@ -60,8 +60,8 @@ public final class Saml1ActionSupport {
      * 
      * @return the assertion that was added to the response
      */
-    @Nonnull public static Assertion addAssertionToResponse(@Nonnull final AbstractIdentityProviderAction action,
-            @Nonnull final RelyingPartySubcontext relyingPartyContext, @Nonnull final Response response) {
+    @Nonnull public static Assertion addAssertionToResponse(@Nonnull final AbstractProfileAction action,
+            @Nonnull final RelyingPartyContext relyingPartyContext, @Nonnull final Response response) {
 
         final SAMLObjectBuilder<Assertion> assertionBuilder =
                 (SAMLObjectBuilder<Assertion>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
@@ -91,7 +91,7 @@ public final class Saml1ActionSupport {
      * 
      * @return the {@link Conditions} that already existed on, or the one that was added to, the {@link Assertion}
      */
-    @Nonnull public static Conditions addConditionsToAssertion(@Nonnull final AbstractIdentityProviderAction action,
+    @Nonnull public static Conditions addConditionsToAssertion(@Nonnull final AbstractProfileAction action,
             @Nonnull final Assertion assertion) {
         Conditions conditions = assertion.getConditions();
         if (conditions == null) {

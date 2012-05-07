@@ -17,19 +17,23 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -38,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import com.google.common.base.Function;
 
 /**
  * Builds an {@link AuthenticationStatement} and adds it to the {@link Response} set as the message of the
@@ -52,10 +58,50 @@ import org.springframework.webflow.execution.RequestContext;
  * The constructed {@link AuthenticationStatement} will have its authentication instant and method properties set. This
  * information is retrieved from the {@link AuthenticationRequestContext} on the {@link ProfileRequestContext}.
  */
-public class AddAuthenticationStatementToAssertion extends AbstractIdentityProviderAction<Object, Response> {
+public class AddAuthenticationStatementToAssertion extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
+
+    /**
+     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
+     */
+    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+
+    /** Constructor. */
+    public AddAuthenticationStatementToAssertion() {
+        super();
+        
+        relyingPartyContextLookupStrategy =
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
+                        false);
+    }
+
+    /**
+     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
+     *         {@link ProfileRequestContext}
+     */
+    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
+        return relyingPartyContextLookupStrategy;
+    }
+
+    /**
+     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public synchronized void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
+    }
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
@@ -63,8 +109,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
             throws ProfileException {
         log.debug("Action {}: Attempting to add an AuthenticationStatement to outgoing Response", getId());
 
-        final RelyingPartySubcontext relyingPartyCtx =
-                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
 
         final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext);
         if (statement == null) {
@@ -73,8 +118,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
         }
 
         final Assertion assertion =
-                getStatementAssertion(relyingPartyCtx,
-                        ActionSupport.getRequiredOutboundMessage(this, profileRequestContext));
+                getStatementAssertion(relyingPartyCtx, profileRequestContext.getOutboundMessageContext().getMessage());
         assertion.getAuthenticationStatements().add(statement);
 
         log.debug("Action {}: Added AuthenticationStatement to assertion {}", getId(), assertion.getID());
@@ -89,7 +133,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractIdentityProvi
      * 
      * @return the assertion to which the attribute statement will be added
      */
-    private Assertion getStatementAssertion(RelyingPartySubcontext relyingPartyContext, Response response) {
+    private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
         // TODO allow for a configuration option that forces the statement in to its own assertion
 
         final Assertion assertion;

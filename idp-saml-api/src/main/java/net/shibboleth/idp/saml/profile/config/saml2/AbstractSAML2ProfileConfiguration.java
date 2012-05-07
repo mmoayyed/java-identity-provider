@@ -121,7 +121,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSamlProf
      */
     public void setEncryptAssertionsCriteria(Predicate<ProfileRequestContext> criteria) {
         encryptAssertionsCriteria =
-                Constraint.isNotNull(criteria, "Criteria to determine if assertions should be enecrypted can not be null");
+                Constraint.isNotNull(criteria,
+                        "Criteria to determine if assertions should be enecrypted can not be null");
     }
 
     /**

@@ -20,7 +20,7 @@ package net.shibboleth.idp.authn.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
@@ -30,7 +30,7 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  *
  */
-public class SelectAuthenticationWorkflow extends AbstractIdentityProviderAction {
+public class SelectAuthenticationWorkflow extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,

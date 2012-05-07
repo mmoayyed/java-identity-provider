@@ -19,19 +19,23 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Audience;
@@ -43,13 +47,55 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import com.google.common.base.Function;
+
 //TODO have an option that controls, if a restriction condition already exists, if a new one is added or if the audiences are just added the existing condition
 
 /** Adds an {@link AudienceRestriction} to every {@link Assertion} contained on the {@link Response}. */
-public class AddAudienceRestrictionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
+public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAudienceRestrictionToAssertions.class);
+
+    /**
+     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
+     */
+    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
+
+    /** Constructor. */
+    public AddAudienceRestrictionToAssertions() {
+        super();
+
+        relyingPartyContextLookupStrategy =
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
+                        false);
+    }
+
+    /**
+     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
+     *         {@link ProfileRequestContext}
+     */
+    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
+        return relyingPartyContextLookupStrategy;
+    }
+
+    /**
+     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public synchronized void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
+    }
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
@@ -57,10 +103,9 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AudienceRestriction to outgoing assertions", getId());
 
-        final RelyingPartySubcontext relyingPartyCtx =
-                ActionSupport.getRequiredRelyingPartyContext(this, profileRequestContext);
+        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
 
-        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
+        final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
@@ -78,19 +123,19 @@ public class AddAudienceRestrictionToAssertions extends AbstractIdentityProvider
     }
 
     /**
-     * Adds the {@link RelyingPartySubcontext#getRelyingPartyId()} and any additional audiences configured in the active
+     * Adds the {@link RelyingPartyContext#getRelyingPartyId()} and any additional audiences configured in the active
      * {@link AbstractSamlProfileConfiguration} as {@link Audience} to the {@link AudienceRestriction}. If no
      * {@link AudienceRestriction} exists on the given {@link Conditions} one is created and added.
      * 
      * @param conditions condition that has, or will received the created, {@link AudienceRestriction}
      * @param relyingPartyCtx information about the current relying party
      */
-    private void addAudienceRestriction(final Conditions conditions, final RelyingPartySubcontext relyingPartyCtx) {
+    private void addAudienceRestriction(final Conditions conditions, final RelyingPartyContext relyingPartyCtx) {
         final AudienceRestriction condition;
         if (conditions.getAudienceRestrictions().isEmpty()) {
             final SAMLObjectBuilder<AudienceRestriction> conditionBuilder =
-                    (SAMLObjectBuilder<AudienceRestriction>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                            AudienceRestriction.TYPE_NAME);
+                    (SAMLObjectBuilder<AudienceRestriction>) XMLObjectProviderRegistrySupport.getBuilderFactory()
+                            .getBuilder(AudienceRestriction.TYPE_NAME);
             log.debug("Action {}: Conditions did not contain an AudienceRestriction, adding one", getId());
             condition = conditionBuilder.buildObject();
             conditions.getAudienceRestrictions().add(condition);

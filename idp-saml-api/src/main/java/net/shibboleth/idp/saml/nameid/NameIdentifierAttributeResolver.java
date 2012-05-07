@@ -30,23 +30,21 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
  *
  */
 
-/* 
- * Criteria:
- * Attributes
- * SAML protocol or Encoder Class
- * Supported formats - from metadata
- * Format precedence - from profile config 
+/*
+ * Criteria: Attributes SAML protocol or Encoder Class Supported formats - from metadata Format precedence - from
+ * profile config
  * 
  * Needs helpers getting supported formats
  */
-public class NameIdentifierAttributeResolver implements Resolver<Pair<Attribute, AbstractSamlNameIdentifierEncoder>, CriteriaSet> {
+public class NameIdentifierAttributeResolver implements
+        Resolver<Pair<Attribute, AbstractSamlNameIdentifierEncoder>, CriteriaSet> {
 
     /** {@inheritDoc} */
     public Iterable<Pair<Attribute, AbstractSamlNameIdentifierEncoder>> resolve(CriteriaSet criteria)
             throws ResolverException {
         return Collections.singleton(resolveSingle(criteria));
     }
-    
+
     /** {@inheritDoc} */
     public Pair<Attribute, AbstractSamlNameIdentifierEncoder> resolveSingle(CriteriaSet criteria)
             throws ResolverException {

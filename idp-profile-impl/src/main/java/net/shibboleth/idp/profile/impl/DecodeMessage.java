@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
 import net.shibboleth.idp.profile.ProfileException;
@@ -45,7 +45,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @param <OutboundMessageType> this is meaningless for this action but needed to fill out the class decleration
  */
 public final class DecodeMessage<InboundMessageType, OutboundMessageType> extends
-        AbstractIdentityProviderAction<InboundMessageType, OutboundMessageType> implements UnmodifiableComponent {
+        AbstractProfileAction<InboundMessageType, OutboundMessageType> implements UnmodifiableComponent {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(DecodeMessage.class);

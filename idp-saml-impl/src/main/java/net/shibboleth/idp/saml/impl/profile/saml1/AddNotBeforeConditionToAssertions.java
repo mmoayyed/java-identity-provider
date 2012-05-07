@@ -22,7 +22,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.RequestContext;
  * the {@link ProfileRequestContext#getOutboundMessageContext()}. If no {@link Conditions} is present on and
  * {@link Assertion} one will be created.
  */
-public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderAction<Object, Response> {
+public class AddNotBeforeConditionToAssertions extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddNotBeforeConditionToAssertions.class);
@@ -53,7 +53,7 @@ public class AddNotBeforeConditionToAssertions extends AbstractIdentityProviderA
             throws ProfileException {
         log.debug("Action {}: Attempting to add NotBefore condition to every Assertion in outgoing Response", getId());
 
-        final Response response = ActionSupport.getRequiredOutboundMessage(this, profileRequestContext);
+        final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {

@@ -50,7 +50,8 @@ public class AttributeValuePredicateMatcher implements AttributeValueMatcher {
      * @param valueMatchingPredicate predicate used to check attribute values
      */
     public AttributeValuePredicateMatcher(@Nonnull Predicate valueMatchingPredicate) {
-        valuePredicate = Constraint.isNotNull(valueMatchingPredicate, "Attribute value matching predicate can not be null");
+        valuePredicate =
+                Constraint.isNotNull(valueMatchingPredicate, "Attribute value matching predicate can not be null");
     }
 
     /** {@inheritDoc} */

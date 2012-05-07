@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.profile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -29,7 +29,7 @@ import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-public class ActionTestSupportAction extends AbstractIdentityProviderAction<Object, Response> {
+public class ActionTestSupportAction extends AbstractProfileAction<Object, Response> {
 
     public ActionTestSupportAction() throws ComponentInitializationException {
         setId("Test Component");

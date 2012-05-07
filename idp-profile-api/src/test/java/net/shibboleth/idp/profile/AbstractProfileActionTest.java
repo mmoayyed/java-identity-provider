@@ -20,34 +20,41 @@ package net.shibboleth.idp.profile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction.UninitializedActionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link AbstractIdentityProviderAction}. */
-public class AbstractIdentityProviderActionTest {
+/** Unit test for {@link AbstractProfileAction}. */
+public class AbstractProfileActionTest {
 
-    @Test
-    public void testActionId() {
+    @Test public void testActionId() {
         MockIdentityProviderAction action = new MockIdentityProviderAction(null);
-        Assert.assertNull(action.getId());
-
-        action.setId(null);
-        Assert.assertNull(action.getId());
-
-        action.setId("   ");
         Assert.assertNull(action.getId());
 
         action.setId(" mock");
         Assert.assertEquals(action.getId(), "mock");
+
+        try {
+            action.setId(null);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            // expected this
+        }
+
+        try {
+            action.setId("   ");
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+            // expected this
+        }
     }
 
-    @Test
-    public void testActionIinitialization() {
+    @Test public void testActionIinitialization() {
         MockIdentityProviderAction action = new MockIdentityProviderAction(null);
         Assert.assertFalse(action.isInitialized());
 
@@ -69,8 +76,7 @@ public class AbstractIdentityProviderActionTest {
         Assert.assertEquals(action.getId(), "mock");
     }
 
-    @Test
-    public void testActionExecution() throws Exception {
+    @Test public void testActionExecution() throws Exception {
         RequestContext springRequestContext = new RequestContextBuilder().buildRequestContext();
 
         MockIdentityProviderAction action = new MockIdentityProviderAction(null);
@@ -98,13 +104,13 @@ public class AbstractIdentityProviderActionTest {
         try {
             action.execute(springRequestContext);
             Assert.fail();
-        } catch (UninitializedActionException e) {
+        } catch (UninitializedComponentException e) {
             // expected this
         }
     }
 
-    /** Mock {@link AbstractIdentityProviderAction}. */
-    private class MockIdentityProviderAction extends AbstractIdentityProviderAction {
+    /** Mock {@link AbstractProfileAction}. */
+    private class MockIdentityProviderAction extends AbstractProfileAction {
 
         private ProfileException thrownException;
 

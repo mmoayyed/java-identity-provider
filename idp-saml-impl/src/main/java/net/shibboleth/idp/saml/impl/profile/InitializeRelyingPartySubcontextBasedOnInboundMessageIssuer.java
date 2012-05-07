@@ -17,35 +17,77 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import com.google.common.base.Function;
+
 /**
- * Adds a {@link RelyingPartySubcontext} to the current {@link ProfileRequestContext}. The relying party ID is assumed
- * to be the inbound message issuer as determined by the {@link BasicMessageMetadataContext#getMessageIssuer()} located
- * on the {@link ProfileRequestContext#getInboundMessageContext()}.
+ * Adds a {@link RelyingPartyContext} to the current {@link ProfileRequestContext}. The relying party ID is assumed to
+ * be the inbound message issuer as determined by the {@link BasicMessageMetadataContext#getMessageIssuer()} located on
+ * the {@link ProfileRequestContext#getInboundMessageContext()}.
  */
-public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends AbstractIdentityProviderAction {
+public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends AbstractProfileAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory
             .getLogger(InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer.class);
 
-    /** {@inheritDoc} */
-    protected Class<BasicMessageMetadataContext> getSubcontextType() {
-        return BasicMessageMetadataContext.class;
+    /**
+     * Strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message context.
+     */
+    private Function<MessageContext, BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
+
+    /** Constructor. */
+    public InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer() {
+        super();
+
+        messageMetadataContextLookupStrategy =
+                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(
+                        BasicMessageMetadataContext.class, false);
+    }
+
+    /**
+     * Gets the strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
+     * context.
+     * 
+     * @return strategy used to look up the {@link BasicMessageMetadataContext} associated with the iinbound message
+     *         context
+     */
+    public Function<MessageContext, BasicMessageMetadataContext> getMessageMetadataContextLookupStrategy() {
+        return messageMetadataContextLookupStrategy;
+    }
+
+    /**
+     * Sets the strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
+     * context.
+     * 
+     * @param strategy strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound
+     *            message context
+     */
+    public synchronized void setMessageMetadataContextLookupStrategy(
+            @Nonnull final Function<MessageContext, BasicMessageMetadataContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        messageMetadataContextLookupStrategy =
+                Constraint.isNotNull(strategy, "Message metadata context lookup strategy can not be null");
     }
 
     /** {@inheritDoc} */
@@ -53,12 +95,12 @@ public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends
             RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final BasicMessageMetadataContext messageSubcontext =
-                ActionSupport.getRequiredInboundMessageMetadata(this, profileRequestContext);
+                messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());
 
         log.debug("Action {}: Attaching RelyingPartySubcontext with relying party ID {} to ProfileRequestContext",
                 getId(), messageSubcontext.getMessageIssuer());
 
-        profileRequestContext.addSubcontext(new RelyingPartySubcontext(messageSubcontext.getMessageIssuer()));
+        profileRequestContext.addSubcontext(new RelyingPartyContext(messageSubcontext.getMessageIssuer()));
 
         return ActionSupport.buildProceedEvent(this);
     }

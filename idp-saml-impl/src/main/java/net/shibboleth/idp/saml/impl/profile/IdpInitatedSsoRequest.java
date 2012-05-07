@@ -64,7 +64,8 @@ public class IdpInitatedSsoRequest {
      */
     public IdpInitatedSsoRequest(String newEntityId, String newAcsUrl, String newTarget, long newTime) {
         entityId =
-                Constraint.isNotNull(StringSupport.trimOrNull(newEntityId), "Service provider ID can not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(newEntityId),
+                        "Service provider ID can not be null or empty");
 
         acsUrl = StringSupport.trimOrNull(newAcsUrl);
 

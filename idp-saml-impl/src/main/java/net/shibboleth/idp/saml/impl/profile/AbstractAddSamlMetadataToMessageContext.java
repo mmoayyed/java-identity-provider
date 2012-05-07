@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractIdentityProviderAction;
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -42,7 +42,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /** Base class for actions which add a populated {@link SamlMetadataContext} to a given {@link MessageContext}. */
-public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractIdentityProviderAction {
+public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractAddSamlMetadataToMessageContext.class);

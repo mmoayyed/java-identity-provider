@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartySubcontext;
+import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
@@ -327,7 +327,7 @@ public class RequestContextBuilder {
      * <ul>
      * <li>inbound message context created by {@link #buildInboundMessageContext()}</li>
      * <li>outbound message context created by {@link #buildOutboundMessageContext()}</li>
-     * <li>{@link RelyingPartySubcontext} created by {@link #buildRelyingPartyContext()}</li>
+     * <li>{@link RelyingPartyContext} created by {@link #buildRelyingPartyContext()}</li>
      * </ul>
      * 
      * @return the constructed {@link ProfileRequestContext
@@ -467,9 +467,9 @@ public class RequestContextBuilder {
     }
 
     /**
-     * Builds {@link RelyingPartySubcontext}.
+     * Builds {@link RelyingPartyContext}.
      * 
-     * The default implementations builds a {@link RelyingPartySubcontext} with:
+     * The default implementations builds a {@link RelyingPartyContext} with:
      * <ul>
      * <li>a relying party ID provided by {@link #setInboundMessageIssuer(String)} or
      * {@link ActionTestingSupport#INBOUND_MSG_ISSUER} if none is given</li>
@@ -478,15 +478,15 @@ public class RequestContextBuilder {
      * {@link #selectProfileConfiguration(Map)}</li>
      * </ul>
      * 
-     * @return the constructed {@link RelyingPartySubcontext}
+     * @return the constructed {@link RelyingPartyContext}
      */
-    @Nonnull protected RelyingPartySubcontext buildRelyingPartyContext(
+    @Nonnull protected RelyingPartyContext buildRelyingPartyContext(
             @Nonnull final ProfileRequestContext profileRequestContext) {
-        final RelyingPartySubcontext rpCtx;
+        final RelyingPartyContext rpCtx;
         if (Objects.equal(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
-            rpCtx = new RelyingPartySubcontext(ActionTestingSupport.INBOUND_MSG_ISSUER);
+            rpCtx = new RelyingPartyContext(ActionTestingSupport.INBOUND_MSG_ISSUER);
         } else {
-            rpCtx = new RelyingPartySubcontext(inboundMessageIssuer);
+            rpCtx = new RelyingPartyContext(inboundMessageIssuer);
         }
         profileRequestContext.addSubcontext(rpCtx);
 

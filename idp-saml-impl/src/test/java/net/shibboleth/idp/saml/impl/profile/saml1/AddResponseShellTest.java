@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -36,10 +35,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link AddResponseShell} unit test. */
-public class AddResponseShellTest  extends OpenSAMLInitBaseTestCase {
+public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
 
-    @Test
-    public void testAddResponse() throws Exception {
+    @Test public void testAddResponse() throws Exception {
         RequestContext springRequestContext =
                 new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                         Saml1ActionTestingSupport.buildProfileConfigurations()).buildRequestContext();
@@ -53,8 +51,7 @@ public class AddResponseShellTest  extends OpenSAMLInitBaseTestCase {
         ProfileRequestContext<Object, Response> profileRequestContext =
                 (ProfileRequestContext<Object, Response>) springRequestContext.getConversationScope().get(
                         ProfileRequestContext.BINDING_KEY);
-        MessageContext<Response> outMsgCtx =
-                ActionSupport.getRequiredOutboundMessageContext(action, profileRequestContext);
+        MessageContext<Response> outMsgCtx = profileRequestContext.getOutboundMessageContext();
         Response response = outMsgCtx.getMessage();
 
         Assert.assertNotNull(response);
@@ -66,18 +63,18 @@ public class AddResponseShellTest  extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(status);
         Assert.assertNotNull(status.getStatusCode());
         Assert.assertEquals(status.getStatusCode().getValue(), StatusCode.SUCCESS);
-        
+
         BasicMessageMetadataContext messageMetadata = outMsgCtx.getSubcontext(BasicMessageMetadataContext.class, false);
         Assert.assertNotNull(messageMetadata);
         Assert.assertEquals(messageMetadata.getMessageId(), response.getID());
         Assert.assertEquals(messageMetadata.getMessageIssueInstant(), response.getIssueInstant().getMillis());
     }
 
-    @Test
-    public void testAddResponseWhenResponseAlreadyExist() throws Exception {
-        RequestContext springRequestContext = new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
-                .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
-                .buildRequestContext();
+    @Test public void testAddResponseWhenResponseAlreadyExist() throws Exception {
+        RequestContext springRequestContext =
+                new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
+                        .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
+                        .buildRequestContext();
 
         AddResponseShell action = new AddResponseShell();
         action.setId("test");
