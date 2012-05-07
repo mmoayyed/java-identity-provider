@@ -63,6 +63,9 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
 
+    /** Whether the generated attribute statement should be placed in its own assertion or added to one if it exists. */
+    private boolean statementInOwnAssertion;
+
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
@@ -72,9 +75,34 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     public AddAttributeStatementToAssertion() {
         super();
 
+        statementInOwnAssertion = false;
+
         relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
-                        false);
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+    }
+
+    /**
+     * Gets whether the generated attribute statement should be placed in its own assertion or added to one if it
+     * exists.
+     * 
+     * @return whether the generated attribute statement should be placed in its own assertion or added to one if it
+     *         exists
+     */
+    public boolean isStatementInOwnAssertion() {
+        return statementInOwnAssertion;
+    }
+
+    /**
+     * Sets whether the generated attribute statement should be placed in its own assertion or added to one if it
+     * exists.
+     * 
+     * @param inOwnAssertion whether the generated attribute statement should be placed in its own assertion or
+     *            added to one if it exists
+     */
+    public synchronized void setStatementInOwnAssertion(boolean inOwnAssertion) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        statementInOwnAssertion = inOwnAssertion;
     }
 
     /**
@@ -141,10 +169,9 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      * @return the assertion to which the attribute statement will be added
      */
     private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
-        // TODO allow for a configuration option that forces the statement in to its own assertion
 
         final Assertion assertion;
-        if (response.getAssertions().isEmpty()) {
+        if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
             assertion = Saml1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
         } else {
             assertion = response.getAssertions().get(0);

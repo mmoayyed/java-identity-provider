@@ -49,8 +49,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
-//TODO have an option that controls, if a restriction condition already exists, if a new one is added or if the audiences are just added the existing condition
-
 /** Adds an {@link AudienceRestrictionCondition} to every {@link Assertion} contained on the {@link Response}. */
 public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Object, Response> {
 
@@ -58,17 +56,50 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
     private final Logger log = LoggerFactory.getLogger(AddAudienceRestrictionToAssertions.class);
 
     /**
+     * Whether, if an assertion already contains an audience restriction, this action will add its audiences to that
+     * restriction or create another one.
+     */
+    private boolean addingAudiencesToExistingRestriction;
+
+    /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
-    /** Constructor. */
+    /**
+     * Constructor. Initializes {@link #addingAudiencesToExistingRestriction} to <code>true</code>. Initializes
+     * {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+     */
     public AddAudienceRestrictionToAssertions() {
         super();
-        
+
+        addingAudiencesToExistingRestriction = true;
+
         relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
-                        false);
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+    }
+
+    /**
+     * Gets whether, if an assertion already contains an audience restriction, this action will add its audiences to
+     * that restriction or create another one.
+     * 
+     * @return whether this action will add its audiences to that restriction or create another one
+     */
+    public boolean isAddingAudiencesToExistingRestriction() {
+        return addingAudiencesToExistingRestriction;
+    }
+
+    /**
+     * Sets whether, if an assertion already contains an audience restriction, this action will add its audiences to
+     * that restriction or create another one.
+     * 
+     * @param addingToExistingRestriction whether this action will add its audiences to that restriction or create
+     *            another one
+     */
+    public synchronized void setAddingAudiencesToExistingRestriction(boolean addingToExistingRestriction) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        addingAudiencesToExistingRestriction = addingToExistingRestriction;
     }
 
     /**
@@ -133,18 +164,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
      * @param relyingPartyCtx information about the current relying party
      */
     private void addAudienceRestriction(final Conditions conditions, final RelyingPartyContext relyingPartyCtx) {
-        final AudienceRestrictionCondition condition;
-        if (conditions.getAudienceRestrictionConditions().isEmpty()) {
-            final SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                    (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport
-                            .getBuilderFactory().getBuilder(AudienceRestrictionCondition.TYPE_NAME);
-            log.debug("Action {}: Conditions did not contain an AudienceRestrictionCondition, adding one", getId());
-            condition = conditionBuilder.buildObject();
-            conditions.getAudienceRestrictionConditions().add(condition);
-        } else {
-            log.debug("Action {}: Conditions already contained an AudienceRestrictionCondition, using it", getId());
-            condition = conditions.getAudienceRestrictionConditions().get(0);
-        }
+        final AudienceRestrictionCondition condition = getAudienceRestrictionCondition(conditions);
 
         final SAMLObjectBuilder<Audience> audienceBuilder =
                 (SAMLObjectBuilder<Audience>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
@@ -167,5 +187,30 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
                 condition.getAudiences().add(audience);
             }
         }
+    }
+
+    /**
+     * Gets the {@link AudienceRestrictionCondition} to which audiences will be added.
+     * 
+     * @param conditions existing set of conditions
+     * 
+     * @return the condition to which audiences will be added
+     */
+    private AudienceRestrictionCondition getAudienceRestrictionCondition(Conditions conditions) {
+        final AudienceRestrictionCondition condition;
+
+        if (!addingAudiencesToExistingRestriction || conditions.getAudienceRestrictionConditions().isEmpty()) {
+            final SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
+                    (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport
+                            .getBuilderFactory().getBuilder(AudienceRestrictionCondition.TYPE_NAME);
+            log.debug("Action {}: Conditions did not contain an AudienceRestrictionCondition, adding one", getId());
+            condition = conditionBuilder.buildObject();
+            conditions.getAudienceRestrictionConditions().add(condition);
+        } else {
+            log.debug("Action {}: Conditions already contained an AudienceRestrictionCondition, using it", getId());
+            condition = conditions.getAudienceRestrictionConditions().get(0);
+        }
+
+        return condition;
     }
 }

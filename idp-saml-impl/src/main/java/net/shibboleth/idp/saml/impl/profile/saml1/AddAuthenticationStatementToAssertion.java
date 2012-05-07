@@ -64,6 +64,12 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
     private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
 
     /**
+     * Whether the generated authentication statement should be placed in its own assertion or added to one if it
+     * exists.
+     */
+    private boolean statementInOwnAssertion;
+
+    /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
@@ -71,10 +77,35 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
     /** Constructor. */
     public AddAuthenticationStatementToAssertion() {
         super();
-        
+
+        statementInOwnAssertion = false;
+
         relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
-                        false);
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+    }
+
+    /**
+     * Gets whether the generated authentication statement should be placed in its own assertion or added to one if it
+     * exists.
+     * 
+     * @return whether the generated authentication statement should be placed in its own assertion or added to one if
+     *         it exists
+     */
+    public boolean isStatementInOwnAssertion() {
+        return statementInOwnAssertion;
+    }
+
+    /**
+     * Sets whether the generated authentication statement should be placed in its own assertion or added to one if it
+     * exists.
+     * 
+     * @param inOwnAssertion whether the generated authentication statement should be placed in its own assertion or
+     *            added to one if it exists
+     */
+    public synchronized void setStatementInOwnAssertion(boolean inOwnAssertion) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        statementInOwnAssertion = inOwnAssertion;
     }
 
     /**
@@ -134,10 +165,8 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
      * @return the assertion to which the attribute statement will be added
      */
     private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
-        // TODO allow for a configuration option that forces the statement in to its own assertion
-
         final Assertion assertion;
-        if (response.getAssertions().isEmpty()) {
+        if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
             assertion = Saml1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
         } else {
             assertion = response.getAssertions().get(0);
