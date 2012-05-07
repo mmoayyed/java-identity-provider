@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile;
 
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +35,7 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
         InOutOperationContext<InboundMessageType, OutboundMessageType> {
 
     /** ID under which this context is stored, for example, within maps or sessions. */
-    public static final String BINDING_KEY = ProfileRequestContext.class.getPackage().getName()
-            + ProfileRequestContext.class.getName();
+    public static final String BINDING_KEY = ProfileRequestContext.class.getName();
 
     /**
      * Indicates whether the current profile request is passive. Passive requests are not capable of showing a UI to a
@@ -77,7 +77,7 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
      * 
      * @return current HTTP request
      */
-    public HttpServletRequest getHttpRequest() {
+    @Nullable public HttpServletRequest getHttpRequest() {
         return httpRequest;
     }
 
@@ -86,7 +86,7 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
      * 
      * @param request current HTTP request
      */
-    public void setHttpRequest(final HttpServletRequest request) {
+    public void setHttpRequest(@Nullable final HttpServletRequest request) {
         httpRequest = request;
     }
 
@@ -95,7 +95,7 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
      * 
      * @return current HTTP response
      */
-    public HttpServletResponse getHttpResponse() {
+    @Nullable public HttpServletResponse getHttpResponse() {
         return httpResponse;
     }
 
@@ -104,7 +104,7 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
      * 
      * @param response current HTTP response
      */
-    public void setHttpResponse(final HttpServletResponse response) {
+    public void setHttpResponse(@Nullable final HttpServletResponse response) {
         httpResponse = response;
     }
 }

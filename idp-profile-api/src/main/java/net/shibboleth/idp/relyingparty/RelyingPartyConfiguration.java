@@ -19,15 +19,22 @@ package net.shibboleth.idp.relyingparty;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /** The configuration that applies to given relying party. */
 public class RelyingPartyConfiguration {
@@ -53,9 +60,9 @@ public class RelyingPartyConfiguration {
      *            profile request, never null
      * @param configurations communication profile configurations for this relying party, may be null or empty
      */
-    public RelyingPartyConfiguration(final String configurationId, final String responderId,
-            final Predicate<ProfileRequestContext> criteria,
-            final Collection<? extends ProfileConfiguration> configurations) {
+    public RelyingPartyConfiguration(@Nonnull @NotEmpty final String configurationId,
+            @Nonnull @NotEmpty final String responderId, @Nonnull final Predicate<ProfileRequestContext> criteria,
+            @Nullable @NullableElements final Collection<? extends ProfileConfiguration> configurations) {
         id =
                 Constraint.isNotNull(StringSupport.trimOrNull(configurationId),
                         "Relying party configuration ID can not be null or empty");
@@ -70,21 +77,18 @@ public class RelyingPartyConfiguration {
             return;
         }
 
-        final HashMap<String, ProfileConfiguration> configMap = new HashMap<String, ProfileConfiguration>();
+        Builder<String, ProfileConfiguration> configBuilder = new Builder<String, ProfileConfiguration>();
         for (ProfileConfiguration config : configurations) {
             if (config != null) {
                 final String trimmedId =
-                        Constraint.isNotNull(StringSupport.trimOrNull(config.getProfileId()), "ID of profile class "
-                                + config.getClass().getName() + " can not be null");
-                configMap.put(trimmedId, config);
+                        Constraint
+                                .isNotNull(StringSupport.trimOrNull(config.getProfileId()),
+                                        "ID of profile configuration class " + config.getClass().getName()
+                                                + " can not be null");
+                configBuilder.put(trimmedId, config);
             }
         }
-
-        if (configMap.size() == 0) {
-            profileConfigurations = Collections.emptyMap();
-        } else {
-            profileConfigurations = Collections.unmodifiableMap(configMap);
-        }
+        profileConfigurations = configBuilder.build();
     }
 
     /**
@@ -92,7 +96,7 @@ public class RelyingPartyConfiguration {
      * 
      * @return unique ID of this configuration, never null or empty
      */
-    public String getConfigurationId() {
+    @Nonnull @NotEmpty public String getConfigurationId() {
         return id;
     }
 
@@ -101,7 +105,7 @@ public class RelyingPartyConfiguration {
      * 
      * @return ID of the entity responding to requests
      */
-    public String getResponderEntityId() {
+    @Nonnull @NotEmpty public String getResponderEntityId() {
         return responderEntityId;
     }
 
@@ -110,7 +114,7 @@ public class RelyingPartyConfiguration {
      * 
      * @return criteria that must be met for this configuration to be active for a given request, never null
      */
-    public Predicate<ProfileRequestContext> getActivationCriteria() {
+    @Nonnull public Predicate<ProfileRequestContext> getActivationCriteria() {
         return activationCriteria;
     }
 
@@ -119,7 +123,7 @@ public class RelyingPartyConfiguration {
      * 
      * @return unmodifiable set of profile configurations for this relying party, never null
      */
-    public Map<String, ProfileConfiguration> getProfileConfigurations() {
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, ProfileConfiguration> getProfileConfigurations() {
         return profileConfigurations;
     }
 
@@ -133,7 +137,7 @@ public class RelyingPartyConfiguration {
      * @return the configuration for the profile or null if the profile ID was null or empty or there is no
      *         configuration for the given profile
      */
-    public ProfileConfiguration getProfileConfiguration(String profileId) {
+    @Nullable public ProfileConfiguration getProfileConfiguration(@Nullable final String profileId) {
         final String trimmedId = StringSupport.trimOrNull(profileId);
         if (trimmedId == null) {
             return null;

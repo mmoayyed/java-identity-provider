@@ -46,7 +46,19 @@ public final class ActionSupport {
      * @return the proceed event
      */
     @Nonnull public static Event buildProceedEvent(@Nonnull final IdentifiableComponent source) {
-        return buildEvent(source, PROCEED_EVENT_ID, null);
+        return buildEvent(source, PROCEED_EVENT_ID);
+    }
+
+    /**
+     * Builds an event with a given ID but no related attributes.
+     * 
+     * @param source the source of the event
+     * @param eventId the ID of the event
+     * 
+     * @return the constructed event
+     */
+    @Nonnull public static Event buildEvent(@Nonnull final IdentifiableComponent source, @Nonnull final String eventId) {
+        return buildEvent(source, eventId, null);
     }
 
     /**

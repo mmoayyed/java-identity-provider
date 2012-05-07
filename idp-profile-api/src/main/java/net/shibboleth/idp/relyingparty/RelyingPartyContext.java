@@ -17,7 +17,11 @@
 
 package net.shibboleth.idp.relyingparty;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -43,7 +47,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @param rpId the relying party identifier, can not be null or empty
      */
-    public RelyingPartyContext(String rpId) {
+    public RelyingPartyContext(@Nonnull @NotEmpty final String rpId) {
         relyingPartyId =
                 Constraint.isNotNull(StringSupport.trimOrNull(rpId), "Relying party ID can not be null or empty");
     }
@@ -53,7 +57,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @return unique identifier of the relying party, never null or empty
      */
-    public String getRelyingPartyId() {
+    @Nonnull @NotEmpty public String getRelyingPartyId() {
         return relyingPartyId;
     }
 
@@ -62,7 +66,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @return the relying party configuration, may be null
      */
-    public RelyingPartyConfiguration getConfiguration() {
+    @Nullable public RelyingPartyConfiguration getConfiguration() {
         return relyingPartyConfiguration;
     }
 
@@ -71,7 +75,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @param config configuration to use when processing requests for this relying party, may be null
      */
-    public void setRelyingPartyConfiguration(RelyingPartyConfiguration config) {
+    public void setRelyingPartyConfiguration(@Nullable final RelyingPartyConfiguration config) {
         relyingPartyConfiguration = config;
     }
 
@@ -80,7 +84,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @return profile configuration for the request profile currently being processed, may be null
      */
-    public ProfileConfiguration getProfileConfig() {
+    @Nullable public ProfileConfiguration getProfileConfig() {
         return profileConfiguration;
     }
 
@@ -89,7 +93,7 @@ public final class RelyingPartyContext extends BaseContext {
      * 
      * @param config configuration for the request profile currently being processed, may be null
      */
-    public void setProfileConfiguration(ProfileConfiguration config) {
+    public void setProfileConfiguration(@Nullable final ProfileConfiguration config) {
         this.profileConfiguration = config;
     }
 }
