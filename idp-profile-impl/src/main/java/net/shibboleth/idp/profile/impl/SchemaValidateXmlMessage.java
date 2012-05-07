@@ -31,8 +31,6 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidInboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
@@ -54,35 +52,24 @@ public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, O
     private Logger log = LoggerFactory.getLogger(SchemaValidateXmlMessage.class);
 
     /** Schema used to validate incoming messages. */
-    private Schema validationSchema;
+    private final Schema validationSchema;
+
+    /**
+     * Constructor.
+     * 
+     * @param schema schema used to validate incoming messages
+     */
+    public SchemaValidateXmlMessage(@Nonnull final Schema schema) {
+        validationSchema = Constraint.isNotNull(schema, "Schema can not be null");
+    }
 
     /**
      * Gets the schema used to validate incoming messages.
      * 
      * @return schema used to validate incoming messages, not null after action is initialized
      */
-    public Schema getValidationSchema() {
+    @Nonnull public Schema getValidationSchema() {
         return validationSchema;
-    }
-
-    /**
-     * Sets the schema used to validate incoming messages.
-     * 
-     * @param schema schema used to validate incoming messages
-     */
-    public synchronized void setValidationSchema(@Nonnull final Schema schema) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        validationSchema = Constraint.isNotNull(schema, "Schema can not be null");
-    }
-
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        super.validate();
-
-        if (validationSchema == null) {
-            throw new ComponentValidationException("No validation schema specified");
-        }
     }
 
     /** {@inheritDoc} */

@@ -26,12 +26,10 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -51,21 +49,36 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddRelyingPartyConfigurationToProfileRequestContext.class);
 
+    /** Resolver used to look up relying party configurations. */
+    private final Resolver<RelyingPartyConfiguration, ProfileRequestContext> rpConfigResolver;
+
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
-    /** Resolver used to look up relying party configurations. */
-    private RelyingPartyConfigurationResolver rpConfigResolver;
-
-    /** Constructor. */
-    public AddRelyingPartyConfigurationToProfileRequestContext() {
+    /**
+     * Constructor.
+     * 
+     * @param resolver resolver used to look up relying party configurations
+     */
+    public AddRelyingPartyConfigurationToProfileRequestContext(
+            @Nonnull final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver) {
         super();
 
+        rpConfigResolver = Constraint.isNotNull(resolver, "Relying party configuration resolver can not be null");
+
         relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
-                        false);
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+    }
+
+    /**
+     * Gets the resolver used to look up relying party configuration.
+     * 
+     * @return resolver used to look up relying party configuration, never null after initialization
+     */
+    @Nonnull public Resolver<RelyingPartyConfiguration, ProfileRequestContext> getRelyingPartyConfigurationResolver() {
+        return rpConfigResolver;
     }
 
     /**
@@ -94,29 +107,6 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
     }
 
-    /**
-     * Gets the resolver used to look up relying party configuration.
-     * 
-     * @return resolver used to look up relying party configuration, never null after initialization
-     */
-    public RelyingPartyConfigurationResolver getRelyingPartyConfigurationResolver() {
-        return rpConfigResolver;
-    }
-
-    /**
-     * Sets the resolver used to look up relying party configuration.
-     * 
-     * @param resolver resolver used to look up relying party configuration
-     */
-    public synchronized void setRelyingPartyConfigurationResolver(RelyingPartyConfigurationResolver resolver) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException(
-                    AddRelyingPartyConfigurationToProfileRequestContext.class.getName() + " " + getId()
-                            + ": already initialized, relying party configuration resolver can no longer be changed.");
-        }
-        rpConfigResolver = resolver;
-    }
-
     /** {@inheritDoc} */
     public Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
@@ -137,15 +127,6 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
         } catch (ResolverException e) {
             log.error("Action {}: error trying to resolve relying party configuration", getId(), e);
             throw new NoRelyingPartyConfigurationException("Error trying to resolve relying party configuration", e);
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (rpConfigResolver == null) {
-            throw new ComponentInitializationException("Relying party configuration resolver can not be null");
         }
     }
 

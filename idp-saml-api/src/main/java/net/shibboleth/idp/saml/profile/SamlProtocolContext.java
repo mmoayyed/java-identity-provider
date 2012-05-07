@@ -17,8 +17,10 @@
 
 package net.shibboleth.idp.saml.profile;
 
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -43,7 +45,7 @@ public class SamlProtocolContext extends BaseContext {
      * 
      * @return SAML protocol in use, may be null
      */
-    public String getProtocol() {
+    @Nullable @NotEmpty public String getProtocol() {
         return protocol;
     }
 
@@ -52,7 +54,7 @@ public class SamlProtocolContext extends BaseContext {
      * 
      * @param samlProtocol SAML protocol in use
      */
-    public void setProtocol(String samlProtocol) {
+    public void setProtocol(@Nullable final String samlProtocol) {
         protocol = StringSupport.trimOrNull(samlProtocol);
     }
 
@@ -61,7 +63,7 @@ public class SamlProtocolContext extends BaseContext {
      * 
      * @return role in which the SAML entity is operating, may be null
      */
-    public QName getRole() {
+    @Nullable public QName getRole() {
         return role;
     }
 
@@ -70,7 +72,7 @@ public class SamlProtocolContext extends BaseContext {
      * 
      * @param samlRole role in which the SAML entity is operating
      */
-    public void setRole(QName samlRole) {
+    public void setRole(@Nullable final QName samlRole) {
         role = samlRole;
     }
 
@@ -79,7 +81,7 @@ public class SamlProtocolContext extends BaseContext {
      * 
      * @return relay state associated with this protocol exchange, may be null
      */
-    public String getRelayState() {
+    @Nullable @NotEmpty public String getRelayState() {
         return relayState;
     }
 
@@ -88,7 +90,7 @@ public class SamlProtocolContext extends BaseContext {
      * 
      * @param state relay state associated with this protocol exchange
      */
-    public void setRelayState(String state) {
+    public void setRelayState(@Nullable String state) {
         relayState = StringSupport.trimOrNull(state);
     }
 }

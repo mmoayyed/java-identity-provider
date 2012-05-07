@@ -46,26 +46,36 @@ public class FilterAttributes extends AbstractProfileAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
+    
+    /** Engine used to fetch attributes. */
+    private final AttributeFilteringEngine filterEngine;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
-    /** Resolver used to fetch attributes. */
-    private AttributeFilteringEngine filterEngine;
-
-    /** 
-     * Constructor.
-     *
-     * Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+    /**
+     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+     * 
+     * @param engine engine used to filter attributes
      */
-    public FilterAttributes() {
+    public FilterAttributes(@Nonnull final AttributeFilteringEngine engine) {
         super();
-        
+
+        filterEngine = Constraint.isNotNull(engine, "Attribute filtering engine can not be null");
+
         relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
-                        false);
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+    }
+
+    /**
+     * Gets the engine used to filter attributes.
+     * 
+     * @return engine used to filter attributes
+     */
+    @Nonnull public AttributeFilteringEngine getAttributeFilteringEnginer() {
+        return filterEngine;
     }
 
     /**

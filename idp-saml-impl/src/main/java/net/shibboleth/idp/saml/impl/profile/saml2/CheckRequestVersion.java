@@ -35,13 +35,6 @@ import com.google.common.base.Objects;
 /** Checks whether the inbound SAML request has the appropriate version. */
 public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractType, Object> {
 
-    /** Constructor. The ID of this component is set to the name of this class. */
-    public CheckRequestVersion() {
-        super();
-        
-        setId(CheckRequestVersion.class.getName());
-    }
-
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,

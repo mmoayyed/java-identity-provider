@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile;
 
+import javax.annotation.Nullable;
+
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
@@ -39,7 +41,7 @@ public class SamlMetadataContext extends BaseContext {
      * 
      * @return descriptor of the SAML entity, may be null
      */
-    public EntityDescriptor getEntityDescriptor() {
+    @Nullable public EntityDescriptor getEntityDescriptor() {
         return entityDescriptor;
     }
 
@@ -48,7 +50,7 @@ public class SamlMetadataContext extends BaseContext {
      * 
      * @param descriptor of the SAML entity
      */
-    public void setEntityDescriptor(EntityDescriptor descriptor) {
+    public void setEntityDescriptor(@Nullable final EntityDescriptor descriptor) {
         entityDescriptor = descriptor;
     }
 
@@ -57,7 +59,7 @@ public class SamlMetadataContext extends BaseContext {
      * 
      * @return role descriptor of the SAML entity
      */
-    public RoleDescriptor getRoleDescriptor() {
+    @Nullable public RoleDescriptor getRoleDescriptor() {
         return roleDescriptor;
     }
 
@@ -66,7 +68,7 @@ public class SamlMetadataContext extends BaseContext {
      * 
      * @param descriptor role descriptor of the SAML entity
      */
-    public void setRoleDescriptor(RoleDescriptor descriptor) {
+    public void setRoleDescriptor(@Nullable final RoleDescriptor descriptor) {
         roleDescriptor = descriptor;
     }
 }

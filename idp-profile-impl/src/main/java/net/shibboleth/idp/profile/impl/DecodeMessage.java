@@ -27,7 +27,6 @@ import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -52,27 +51,26 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
     private final Logger log = LoggerFactory.getLogger(DecodeMessage.class);
 
     /** Factory used to create new {@link MessageDecoder} instances. */
-    private HttpServletRequestMessageDecoderFactory<InboundMessageType> decoderFactory;
+    private final HttpServletRequestMessageDecoderFactory<InboundMessageType> decoderFactory;
+    
+    /**
+     * Constructor.
+     *
+     * @param factory factory used to create new {@link MessageDecoder} instances
+     */
+    public DecodeMessage(@Nonnull final HttpServletRequestMessageDecoderFactory<InboundMessageType> factory){
+        super();
+        
+        decoderFactory = Constraint.isNotNull(factory, "Message decoder factory can not be null");
+    }
 
     /**
      * Gets the factory used to create new {@link MessageDecoder} instances.
      * 
      * @return factory used to create new {@link MessageDecoder} instances, never null after initialization
      */
-    public HttpServletRequestMessageDecoderFactory<InboundMessageType> getDecoderFactory() {
+    @Nonnull public HttpServletRequestMessageDecoderFactory<InboundMessageType> getDecoderFactory() {
         return decoderFactory;
-    }
-
-    /**
-     * Sets the factory used to create new {@link MessageDecoder} instances.
-     * 
-     * @param factory factory used to create new {@link MessageDecoder} instances
-     */
-    public synchronized void setDecoderFactory(
-            @Nonnull final HttpServletRequestMessageDecoderFactory<InboundMessageType> factory) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        decoderFactory = Constraint.isNotNull(factory, "Message decoder factory can not be null");
     }
 
     /** {@inheritDoc} */
@@ -102,15 +100,6 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
         } catch (ComponentInitializationException e) {
             log.error("DecodeMessage {}: error initializing the message decoder", getId(), e);
             throw new UnableToDecodeMessageException("Unable to decode incoming message");
-        }
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (decoderFactory == null) {
-            throw new ComponentInitializationException("Message decoder factory can not be null");
         }
     }
 

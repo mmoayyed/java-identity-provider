@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.impl.profile;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,12 +27,14 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SamlMetadataContext;
 import net.shibboleth.idp.saml.profile.SamlProtocolContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
@@ -41,20 +44,68 @@ import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/** Base class for actions which add a populated {@link SamlMetadataContext} to a given {@link MessageContext}. */
-public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractProfileAction {
+import com.google.common.base.Function;
+
+/** Action that creates and adds a {@link SamlMetadataContext} to a {@link MessageContext}. */
+public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractAddSamlMetadataToMessageContext.class);
+    private final Logger log = LoggerFactory.getLogger(AddSamlMetadataToMessageContext.class);
 
     /** Resolver used to look up SAML metadata. */
-    private Resolver<EntityDescriptor, CriteriaSet> metadataResolver;
+    private final Resolver<EntityDescriptor, CriteriaSet> metadataResolver;
+
+    /** Strategy used to lookup the {@link MessageContext}. */
+    private Function<ProfileRequestContext, MessageContext> messageContextLookupStrategy;
+
+    /**
+     * Constructor. Initializes {@link #messageContextLookupStrategy} to {@link ChildContextLookup}.
+     * 
+     * @param resolver resolver used to look up SAML metadata
+     */
+    public AddSamlMetadataToMessageContext(@Nonnull final Resolver<EntityDescriptor, CriteriaSet> resolver) {
+        super();
+
+        metadataResolver = Constraint.isNotNull(resolver, "Metadata resolver can not be null");
+
+        messageContextLookupStrategy =
+                new ChildContextLookup<ProfileRequestContext, MessageContext>(MessageContext.class, false);
+    }
+
+    /**
+     * Gets the resolver used to look up SAML metadata.
+     * 
+     * @return resolver used to look up SAML metadata
+     */
+    @Nonnull public Resolver<EntityDescriptor, CriteriaSet> getMetadataResolver() {
+        return metadataResolver;
+    }
+
+    /**
+     * Gets the strategy used to lookup the {@link MessageContext}.
+     * 
+     * @return strategy used to lookup the {@link MessageContext}
+     */
+    @Nonnull public Function<ProfileRequestContext, MessageContext> getMessageContextLookupStrategy() {
+        return messageContextLookupStrategy;
+    }
+
+    /**
+     * Sets the strategy used to lookup the {@link MessageContext}.
+     * 
+     * @param strategy strategy used to lookup the {@link MessageContext}
+     */
+    public synchronized void setMessageContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, MessageContext> strategy) {
+        messageContextLookupStrategy =
+                Constraint.isNotNull(strategy, "Message context lookup strategy can not be null");
+    }
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
             throws ProfileException {
-        MessageContext messageCtx = getMessageContext(profileRequestContext);
+        MessageContext messageCtx = messageContextLookupStrategy.apply(profileRequestContext);
         if (messageCtx == null) {
             log.debug("Action {}: appropriate message context not available, skipping this action.", getId());
             return ActionSupport.buildProceedEvent(this);
@@ -97,14 +148,4 @@ public abstract class AbstractAddSamlMetadataToMessageContext extends AbstractPr
             return null;
         }
     }
-
-    /**
-     * Gets the message context to which the {@link SamlMetadataContext} will be added. If the returned value is null
-     * this action will simply complete with an {@link ActionSupport#PROCEED_EVENT_ID} event.
-     * 
-     * @param profileRequestContext current request context
-     * 
-     * @return the message context to which the {@link SamlMetadataContext} will be added, may be null
-     */
-    protected abstract MessageContext getMessageContext(ProfileRequestContext profileRequestContext);
 }

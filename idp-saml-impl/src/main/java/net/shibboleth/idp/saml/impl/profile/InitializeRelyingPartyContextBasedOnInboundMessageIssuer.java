@@ -44,11 +44,10 @@ import com.google.common.base.Function;
  * be the inbound message issuer as determined by the {@link BasicMessageMetadataContext#getMessageIssuer()} located on
  * the {@link ProfileRequestContext#getInboundMessageContext()}.
  */
-public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends AbstractProfileAction {
+public class InitializeRelyingPartyContextBasedOnInboundMessageIssuer extends AbstractProfileAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory
-            .getLogger(InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer.class);
+    private final Logger log = LoggerFactory.getLogger(InitializeRelyingPartyContextBasedOnInboundMessageIssuer.class);
 
     /**
      * Strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message context.
@@ -56,22 +55,22 @@ public class InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer extends
     private Function<MessageContext, BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
 
     /** Constructor. */
-    public InitializeRelyingPartySubcontextBasedOnInboundMessageIssuer() {
+    public InitializeRelyingPartyContextBasedOnInboundMessageIssuer() {
         super();
 
         messageMetadataContextLookupStrategy =
-                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(
-                        BasicMessageMetadataContext.class, false);
+                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(BasicMessageMetadataContext.class,
+                        false);
     }
 
     /**
      * Gets the strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
      * context.
      * 
-     * @return strategy used to look up the {@link BasicMessageMetadataContext} associated with the iinbound message
+     * @return strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
      *         context
      */
-    public Function<MessageContext, BasicMessageMetadataContext> getMessageMetadataContextLookupStrategy() {
+    @Nonnull public Function<MessageContext, BasicMessageMetadataContext> getMessageMetadataContextLookupStrategy() {
         return messageMetadataContextLookupStrategy;
     }
 

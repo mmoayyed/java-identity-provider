@@ -47,24 +47,35 @@ public class ResolveAttributes extends AbstractProfileAction {
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
 
+    /** Resolver used to fetch attributes. */
+    private final AttributeResolver attributeResolver;
+
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
-    /** Resolver used to fetch attributes. */
-    private AttributeResolver attributeResolver;
-
-    /** 
-     * Constructor.
-     *
-     * Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+    /**
+     * Constructor. Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+     * 
+     * @param resolver resolver used to fetch attributes
      */
-    public ResolveAttributes() {
+    public ResolveAttributes(@Nonnull final AttributeResolver resolver) {
         super();
+
+        attributeResolver = Constraint.isNotNull(resolver, "Attribute resolver can not be null");
 
         relyingPartyContextLookupStrategy =
                 new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+    }
+
+    /**
+     * Gets the resolver used to fetch attributes.
+     * 
+     * @return resolver used to fetch attributes
+     */
+    @Nonnull public AttributeResolver getAttributeResolver() {
+        return attributeResolver;
     }
 
     /**
