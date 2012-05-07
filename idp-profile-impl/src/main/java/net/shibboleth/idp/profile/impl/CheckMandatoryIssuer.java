@@ -44,14 +44,17 @@ public final class CheckMandatoryIssuer extends AbstractProfileAction {
      */
     private Function<MessageContext, BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
 
-    /** Constructor. The ID of this component is set to the name of this class. */
+    /**
+     * Constructor.
+     * 
+     * Initializes {@link #messageMetadataContextLookupStrategy} to {@link ChildContextLookup}.
+     */
     public CheckMandatoryIssuer() {
         super();
 
-        setId(CheckMandatoryIssuer.class.getName());
         messageMetadataContextLookupStrategy =
-                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(
-                        BasicMessageMetadataContext.class, false);
+                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(BasicMessageMetadataContext.class,
+                        false);
     }
 
     /**

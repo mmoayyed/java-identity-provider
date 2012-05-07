@@ -49,14 +49,17 @@ public final class CheckMessageReplay extends AbstractProfileAction {
      */
     private Function<MessageContext, BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
 
-    /** Constructor. The ID of this component is set to the name of this class. */
+    /**
+     * Constructor.
+     * 
+     * Initializes {@link #messageMetadataContextLookupStrategy} to {@link ChildContextLookup}.
+     */
     public CheckMessageReplay() {
         super();
 
-        setId(CheckMessageReplay.class.getName());
         messageMetadataContextLookupStrategy =
-                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(
-                        BasicMessageMetadataContext.class, false);
+                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(BasicMessageMetadataContext.class,
+                        false);
     }
 
     /**

@@ -46,6 +46,17 @@ public class CheckSpringRequestContext extends AbstractIdentifiableInitializable
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(CheckSpringRequestContext.class);
 
+    /**
+     * Constructor.
+     * 
+     * Initializes the ID of this action to the class name.
+     */
+    public CheckSpringRequestContext() {
+        super();
+
+        setId(getClass().getName());
+    }
+
     /** {@inheritDoc} */
     public synchronized void setId(String componentId) {
         super.setId(componentId);

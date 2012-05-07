@@ -55,11 +55,14 @@ public class ResolveAttributes extends AbstractProfileAction {
     /** Resolver used to fetch attributes. */
     private AttributeResolver attributeResolver;
 
-    /** Constructor. The ID of this component is set to the name of this class. */
+    /** 
+     * Constructor.
+     *
+     * Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+     */
     public ResolveAttributes() {
         super();
 
-        setId(ResolveAttributes.class.getName());
         relyingPartyContextLookupStrategy =
                 new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
     }

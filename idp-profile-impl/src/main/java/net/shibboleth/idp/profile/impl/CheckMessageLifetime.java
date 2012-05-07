@@ -45,6 +45,9 @@ import com.google.common.base.Function;
 /** An action that checks that the inbound message should be considered valid based upon when it was issued. */
 public final class CheckMessageLifetime extends AbstractProfileAction {
 
+    /** Amount of time, in milliseconds, for which a message is valid. Default value: 5 minutes */
+    private long messageLifetime;
+
     /**
      * Strategy used to look up the {@link RelyingPartyContext} associated with the given {@link ProfileRequestContext}.
      */
@@ -55,17 +58,24 @@ public final class CheckMessageLifetime extends AbstractProfileAction {
      */
     private Function<MessageContext, BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
 
-    /** Amount of time, in milliseconds, for which a message is valid. Default value: 5 minutes */
-    private long messageLifetime;
-
-    /** Constructor. */
+    /**
+     * Constructor.
+     * 
+     * Initializes {@link #messageLifetime} to 5 minutes. Initializes {@link #rpContextLookupStrategy} to
+     * {@link ChildContextLookup}. Initializes {@link #messageMetadataContextLookupStrategy} to
+     * {@link ChildContextLookup}.
+     */
     public CheckMessageLifetime() {
         super();
 
         messageLifetime = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
+
+        rpContextLookupStrategy =
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+
         messageMetadataContextLookupStrategy =
-                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(
-                        BasicMessageMetadataContext.class, false);
+                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(BasicMessageMetadataContext.class,
+                        false);
     }
 
     /**

@@ -62,26 +62,28 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractProfileAction.class);
 
-    /**
-     * Strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}. Default
-     * implementation is {@link WebflowRequestContextHttpServletRequestLookup}
-     */
+    /** Strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}. */
     private Function<RequestContext, HttpServletRequest> httpRequestLookupStrategy;
 
-    /**
-     * Strategy used to lookup the {@link HttpServletResponse} from a given WebFlow {@link RequestContext}. Default
-     * implementation is {@link WebflowRequestContextHttpServletResponseLookup}
-     */
+    /** Strategy used to lookup the {@link HttpServletResponse} from a given WebFlow {@link RequestContext}. */
     private Function<RequestContext, HttpServletResponse> httpResponseLookupStrategy;
 
-    /**
-     * Strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}. Default
-     * implementation is {@link WebflowRequestContextProfileRequestContextLookup}
-     */
+    /** Strategy used to lookup the {@link ProfileRequestContext} from a given WebFlow {@link RequestContext}. */
     private Function<RequestContext, ProfileRequestContext> profileContextLookupStrategy;
 
-    /** Constructor. */
+    /**
+     * Constructor.
+     * 
+     * Initializes the ID of this action to the class name. Initializes {@link #httpRequestLookupStrategy} to
+     * {@link WebflowRequestContextHttpServletRequestLookup}. Initializes {@link #httpResponseLookupStrategy} to
+     * {@link WebflowRequestContextHttpServletResponseLookup}. Initializes {@link #profileContextLookupStrategy} to
+     * {@link WebflowRequestContextProfileRequestContextLookup}.
+     */
     public AbstractProfileAction() {
+        super();
+
+        setId(getClass().getName());
+
         httpRequestLookupStrategy = new WebflowRequestContextHttpServletRequestLookup();
         httpResponseLookupStrategy = new WebflowRequestContextHttpServletResponseLookup();
         profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();

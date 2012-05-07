@@ -55,11 +55,14 @@ public class FilterAttributes extends AbstractProfileAction {
     /** Resolver used to fetch attributes. */
     private AttributeFilteringEngine filterEngine;
 
-    /** Constructor. The ID of this component is set to the name of this class. */
+    /** 
+     * Constructor.
+     *
+     * Initializes {@link #relyingPartyContextLookupStrategy} to {@link ChildContextLookup}.
+     */
     public FilterAttributes() {
         super();
-
-        setId(FilterAttributes.class.getName());
+        
         relyingPartyContextLookupStrategy =
                 new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
                         false);

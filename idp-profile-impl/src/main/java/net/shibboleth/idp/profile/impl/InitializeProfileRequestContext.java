@@ -36,13 +36,6 @@ import org.springframework.webflow.execution.RequestContext;
 @ThreadSafe
 public final class InitializeProfileRequestContext extends AbstractProfileAction {
 
-    /** Constructor. The ID of this component is set to the name of this class. */
-    public InitializeProfileRequestContext() {
-        super();
-        
-        setId(InitializeProfileRequestContext.class.getName());
-    }
-
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)

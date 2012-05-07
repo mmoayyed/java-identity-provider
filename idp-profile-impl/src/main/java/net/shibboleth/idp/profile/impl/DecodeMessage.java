@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,9 +27,9 @@ import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
@@ -67,12 +68,11 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
      * 
      * @param factory factory used to create new {@link MessageDecoder} instances
      */
-    public synchronized void setDecoderFactory(HttpServletRequestMessageDecoderFactory<InboundMessageType> factory) {
-        if (isInitialized()) {
-            throw new UnmodifiableComponentException(DecodeMessage.class.getName() + " " + getId()
-                    + ": already initialized, decoder factory can no longer be changed.");
-        }
-        decoderFactory = factory;
+    public synchronized void setDecoderFactory(
+            @Nonnull final HttpServletRequestMessageDecoderFactory<InboundMessageType> factory) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        decoderFactory = Constraint.isNotNull(factory, "Message decoder factory can not be null");
     }
 
     /** {@inheritDoc} */
@@ -80,11 +80,6 @@ public final class DecodeMessage<InboundMessageType, OutboundMessageType> extend
             final RequestContext springRequestContext,
             final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
             throws ProfileException {
-
-        if (!isInitialized()) {
-            throw new UninitializedComponentException("DecodeMessage " + getId()
-                    + ": has not been initialized and can not yet be used.");
-        }
 
         try {
             log.debug("DecodeMessage {}: creating new message decoder", getId());

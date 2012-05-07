@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +31,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.InvalidInboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -42,6 +45,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /** An action that schema validates inbound XML messages. */
 public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, Object> {
@@ -67,9 +71,7 @@ public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, O
      * @param schema schema used to validate incoming messages
      */
     public synchronized void setValidationSchema(@Nonnull final Schema schema) {
-        if (isInitialized()) {
-            return;
-        }
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         validationSchema = Constraint.isNotNull(schema, "Schema can not be null");
     }
@@ -98,9 +100,12 @@ public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, O
 
         try {
             schemaValidator.validate(new DOMSource(requestDoc));
-        } catch (Exception e) {
+        } catch (SAXException e) {
             log.debug("Action {}: Incoming request {} is not schema valid",
                     new Object[] {getId(), request.getElementQName(), e});
+            throw new SchemaInvalidMessageException(e.getMessage());
+        } catch (IOException e) {
+            log.debug("Action {}: Unable to read incoming message");
             throw new SchemaInvalidMessageException(e.getMessage());
         }
 
