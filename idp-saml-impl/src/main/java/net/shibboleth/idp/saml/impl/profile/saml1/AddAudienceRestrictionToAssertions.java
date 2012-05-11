@@ -23,9 +23,10 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -44,13 +45,21 @@ import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
 /** Adds an {@link AudienceRestrictionCondition} to every {@link Assertion} contained on the {@link Response}. */
+@Events({
+        @Event(id = ActionSupport.PROCEED_EVENT_ID),
+        @Event(id = AddAudienceRestrictionToAssertions.NO_ASSERTION_EVENT_ID,
+                description = "Returned if the outbound response does not contain an assertion")})
 public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Object, Response> {
+
+    /** 
+     * ID of the event returned if the outbound response does not contain an assertion to which audiences can be added. 
+     */
+    public static final String NO_ASSERTION_EVENT_ID = "NoAssertion";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAudienceRestrictionToAssertions.class);
@@ -129,8 +138,8 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
+    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
+            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AudienceRestrictionCondition to outgoing assertions", getId());
 
@@ -140,9 +149,9 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
-            log.error("Action {}: Unable to add AudienceRestrictionCondition, Response does not contain an Asertion",
+            log.debug("Action {}: Unable to add AudienceRestrictionCondition, Response does not contain an Asertion",
                     getId());
-            throw new InvalidOutboundMessageException("No Assertion available within the Response");
+            return ActionSupport.buildEvent(this, NO_ASSERTION_EVENT_ID);
         }
 
         Conditions conditions;

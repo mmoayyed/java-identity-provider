@@ -17,27 +17,18 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import com.google.common.base.Function;
 
 /**
  *
@@ -47,44 +38,10 @@ public class AddSubjectToStatements extends AbstractProfileAction<Object, Respon
     /** Class Logger. */
     private Logger log = LoggerFactory.getLogger(AddSubjectToStatements.class);
 
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
-
     /** Constructor. */
     public AddSubjectToStatements() {
         super();
 
-        relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
-                        false);
-    }
-
-    /**
-     * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @return strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *         {@link ProfileRequestContext}
-     */
-    @Nonnull public Function<ProfileRequestContext, RelyingPartyContext> getRelyingPartyContextLookupStrategy() {
-        return relyingPartyContextLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public synchronized void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
     }
 
     /** {@inheritDoc} */
@@ -92,16 +49,7 @@ public class AddSubjectToStatements extends AbstractProfileAction<Object, Respon
             final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
 
-        log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
-
-        final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-
-        final AttributeContext attributeCtx = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
-        if (attributeCtx == null) {
-            log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
-                    relyingPartyCtx.getRelyingPartyId());
-            return ActionSupport.buildProceedEvent(this);
-        }
+        // TODO Auto-generated method stub
 
         return null;
     }

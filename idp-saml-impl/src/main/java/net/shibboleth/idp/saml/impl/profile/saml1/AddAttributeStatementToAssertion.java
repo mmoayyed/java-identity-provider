@@ -25,6 +25,8 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeEncoder;
@@ -48,7 +50,6 @@ import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
@@ -58,13 +59,38 @@ import com.google.common.base.Function;
  * {@link ProfileRequestContext#getOutboundMessageContext()}. The {@link Attribute} set to be encoded is drawn from the
  * {@link AttributeContext} located on the {@link RelyingPartyContext} located on the {@link ProfileRequestContext}.
  */
+@Events({
+        @Event(id = ActionSupport.PROCEED_EVENT_ID),
+        @Event(id = AddAttributeStatementToAssertion.NO_RPC_EVENT_ID,
+                description = "Returned if no relying party information is associated with the current request"),
+        @Event(id = AddAttributeStatementToAssertion.NO_AC_EVENT_ID,
+                description = "Returned if no attribute context is associated with the relying party context"),
+        @Event(id = AddAttributeStatementToAssertion.UTEA_EVENT_ID,
+                description = "Returned if there was a problem encoding an attribute")})
 public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
+
+    /**
+     * ID of the event returned if no {@link RelyingPartyContext} is associated with the {@link ProfileRequestContext}.
+     */
+    public static final String NO_RPC_EVENT_ID = "NoRelyingPartyContext";
+
+    /** ID of the event returned if no {@link AttributeContext} is associated with the {@link RelyingPartyContext}. */
+    public static final String NO_AC_EVENT_ID = "NoAttributeContext";
+
+    /** ID of the transition returned if some attributes can not be encoded. */
+    public static final String UTEA_EVENT_ID = "UnableToEncodeAttribute";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
 
     /** Whether the generated attribute statement should be placed in its own assertion or added to one if it exists. */
     private boolean statementInOwnAssertion;
+
+    /**
+     * Whether attributes that result in an {@link AttributeEncodingException} when being encoded should be ignored or
+     * result in an {@link #UTEA_EVENT_ID} transition.
+     */
+    private boolean ignoringUnencodableAttributes;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
@@ -96,8 +122,8 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      * Sets whether the generated attribute statement should be placed in its own assertion or added to one if it
      * exists.
      * 
-     * @param inOwnAssertion whether the generated attribute statement should be placed in its own assertion or
-     *            added to one if it exists
+     * @param inOwnAssertion whether the generated attribute statement should be placed in its own assertion or added to
+     *            one if it exists
      */
     public synchronized void setStatementInOwnAssertion(boolean inOwnAssertion) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -132,32 +158,41 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
+    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
+            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (relyingPartyCtx == null) {
+            log.error("Action {}: No relying party context located in current profile request context", getId());
+            return ActionSupport.buildEvent(this, NO_RPC_EVENT_ID);
+        }
 
         final AttributeContext attributeCtx = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
         if (attributeCtx == null) {
             log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
                     relyingPartyCtx.getRelyingPartyId());
-            return ActionSupport.buildProceedEvent(this);
+            return ActionSupport.buildEvent(this, NO_AC_EVENT_ID);
         }
 
-        final AttributeStatement statement = buildAttributeStatement(attributeCtx.getAttributes().values());
-        if (statement == null) {
-            log.debug("Action {}: No AttributeStatement was built, nothing left to do", getId());
+        try {
+            final AttributeStatement statement = buildAttributeStatement(attributeCtx.getAttributes().values());
+            if (statement == null) {
+                log.debug("Action {}: No AttributeStatement was built, nothing left to do", getId());
+                return ActionSupport.buildProceedEvent(this);
+            }
+
+            final Assertion assertion =
+                    getStatementAssertion(relyingPartyCtx, profileRequestContext.getOutboundMessageContext()
+                            .getMessage());
+            assertion.getAttributeStatements().add(statement);
+
+            log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
             return ActionSupport.buildProceedEvent(this);
+        } catch (AttributeEncodingException e) {
+            return ActionSupport.buildEvent(this, UTEA_EVENT_ID);
         }
-
-        final Assertion assertion =
-                getStatementAssertion(relyingPartyCtx, profileRequestContext.getOutboundMessageContext().getMessage());
-        assertion.getAttributeStatements().add(statement);
-
-        log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
-        return ActionSupport.buildProceedEvent(this);
     }
 
     /**
@@ -169,7 +204,6 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      * @return the assertion to which the attribute statement will be added
      */
     private Assertion getStatementAssertion(RelyingPartyContext relyingPartyContext, Response response) {
-
         final Assertion assertion;
         if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
             assertion = Saml1ActionSupport.addAssertionToResponse(this, relyingPartyContext, response);
@@ -187,12 +221,12 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      * 
      * @return the attribute statement or null if no attributes can be encoded
      * 
-     * @throws UnableToEncodeAttributeException thrown if there is a problem encoding an attribute
+     * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
     private AttributeStatement buildAttributeStatement(Collection<Attribute> attributes)
-            throws UnableToEncodeAttributeException {
+            throws AttributeEncodingException {
         if (attributes == null || attributes.isEmpty()) {
-            log.debug("Action {}: No attributes available to be encoded, nothing left to do");
+            log.debug("Action {}: No attributes available to be encoded, nothing left to do", getId());
             return null;
         }
 
@@ -228,10 +262,10 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
      * 
      * @return the encoded attribute of null if the attribute could not be encoded
      * 
-     * @throws UnableToEncodeAttributeException thrown if there is a problem encoding an attribute
+     * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
     private org.opensaml.saml.saml1.core.Attribute encodeAttribute(Attribute attribute)
-            throws UnableToEncodeAttributeException {
+            throws AttributeEncodingException {
         if (attribute == null) {
             return null;
         }
@@ -251,7 +285,12 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
                 try {
                     return (org.opensaml.saml.saml1.core.Attribute) encoder.encode(attribute);
                 } catch (AttributeEncodingException e) {
-                    throw new UnableToEncodeAttributeException(attribute, e);
+                    if (ignoringUnencodableAttributes) {
+                        log.debug("Action {}: Unable to encode attribute '{}' as SAML 1 attribute because: {}",
+                                new Object[] {getId(), attribute.getId(), e});
+                    } else {
+                        throw e;
+                    }
                 }
             }
         }
@@ -259,22 +298,5 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
         log.debug("Action {}: Attribute {} did not have a SAML 1 Attribute encoder associated with it, nothing to do",
                 getId(), attribute.getId());
         return null;
-    }
-
-    /** Exception thrown if there is a problem encoding an attribute. */
-    public class UnableToEncodeAttributeException extends ProfileException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = 3915220535913429394L;
-
-        /**
-         * Constructor.
-         * 
-         * @param attribute the attribute that could not be encoded
-         * @param e the exception that occurred when attempting to encode the attribute
-         */
-        public UnableToEncodeAttributeException(Attribute attribute, AttributeEncodingException e) {
-            super("Action " + getId() + ": Unable to encode attribute " + attribute.getId(), e);
-        }
     }
 }
