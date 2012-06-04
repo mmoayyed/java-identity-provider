@@ -20,7 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.InvalidInboundMessageContextException;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.saml.impl.profile.saml1.CheckRequestVersion.InvalidMessageVersionException;
+import net.shibboleth.idp.saml.profile.EventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -32,11 +32,10 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link CheckRequestVersion} unit test. */
-public class CheckRequestVersionTest  extends OpenSAMLInitBaseTestCase {
+public class CheckRequestVersionTest extends OpenSAMLInitBaseTestCase {
 
     /** Test the action errors out properly when there is a null message */
-    @Test
-    public void testNullMessage() throws Exception {
+    @Test public void testNullMessage() throws Exception {
         CheckRequestVersion action = new CheckRequestVersion();
         action.setId("test");
         action.initialize();
@@ -50,8 +49,7 @@ public class CheckRequestVersionTest  extends OpenSAMLInitBaseTestCase {
     }
 
     /** Test that the action accepts SAML 1.0 and 1.1 messages. */
-    @Test
-    public void testSaml1Message() throws Exception {
+    @Test public void testSaml1Message() throws Exception {
         RequestContext springRequestContext =
                 new RequestContextBuilder()
                         .setInboundMessage(Saml1ActionTestingSupport.buildAttributeQueryRequest(null))
@@ -68,8 +66,7 @@ public class CheckRequestVersionTest  extends OpenSAMLInitBaseTestCase {
     }
 
     /** Test that the action errors out on SAML 2 messages. */
-    @Test
-    public void testSaml2Message() throws Exception {
+    @Test public void testSaml2Message() throws Exception {
         Request request = Saml1ActionTestingSupport.buildAttributeQueryRequest(null);
         request.setVersion(SAMLVersion.VERSION_20);
 
@@ -82,11 +79,7 @@ public class CheckRequestVersionTest  extends OpenSAMLInitBaseTestCase {
         action.setId("test");
         action.initialize();
 
-        try {
-            action.execute(springRequestContext);
-            Assert.fail();
-        } catch (InvalidMessageVersionException e) {
-            // expected this
-        }
+        Event event = action.execute(springRequestContext);
+        Assert.assertEquals(event.getId(), EventIds.INVALID_MESSAGE_VERSION);
     }
 }

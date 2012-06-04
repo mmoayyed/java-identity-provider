@@ -21,6 +21,7 @@ import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.EventIds;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.webflow.execution.Event;
@@ -35,58 +36,58 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
         Event event = action.doExecute(null, null, null, profileCtx);
-        
-        Assert.assertEquals(event.getId(), AddAttributeStatementToAssertion.NO_RPC_EVENT_ID);
+
+        Assert.assertEquals(event.getId(), EventIds.NO_RELYING_PARTY_CTX);
     }
-    
+
     @Test public void testNoAttributeContext() throws Exception {
         RelyingPartyContext rpCtx = new RelyingPartyContext("http://example.org");
-        
+
         ProfileRequestContext profileCtx = new ProfileRequestContext();
         profileCtx.addSubcontext(rpCtx);
-        
+
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
         Event event = action.doExecute(null, null, null, profileCtx);
-        
-        Assert.assertEquals(event.getId(), AddAttributeStatementToAssertion.NO_AC_EVENT_ID);
+
+        Assert.assertEquals(event.getId(), EventIds.NO_ATTRIBUTE_CTX);
     }
-    
+
     @Test public void testNoAttributes() throws Exception {
         AttributeContext attribCtx = new AttributeContext();
-        
+
         RelyingPartyContext rpCtx = new RelyingPartyContext("http://example.org");
         rpCtx.addSubcontext(attribCtx);
-        
+
         ProfileRequestContext profileCtx = new ProfileRequestContext();
         profileCtx.addSubcontext(rpCtx);
-        
+
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
         Event event = action.doExecute(null, null, null, profileCtx);
-        
+
         Assert.assertEquals(event.getId(), ActionSupport.PROCEED_EVENT_ID);
     }
-    
-    @Test public void testIgnoreAttributeEncodingErrors(){
-      //TODO
+
+    @Test public void testIgnoreAttributeEncodingErrors() {
+        // TODO
     }
-    
-    @Test public void failOnAttributeEncodingErrors(){
-      //TODO
+
+    @Test public void failOnAttributeEncodingErrors() {
+        // TODO
     }
-    
-    @Test public void testNonResponseOutboundMessage(){
-      //TODO
+
+    @Test public void testNonResponseOutboundMessage() {
+        // TODO
     }
-    
-    @Test public void testNoOutboundMessage(){
-      //TODO
+
+    @Test public void testNoOutboundMessage() {
+        // TODO
     }
-    
-    @Test public void testNoAssertionInResponse(){
-      //TODO
+
+    @Test public void testNoAssertionInResponse() {
+        // TODO
     }
-    
-    @Test public void testAddedAttributeStatement(){
-        //TODO
+
+    @Test public void testAddedAttributeStatement() {
+        // TODO
     }
 }

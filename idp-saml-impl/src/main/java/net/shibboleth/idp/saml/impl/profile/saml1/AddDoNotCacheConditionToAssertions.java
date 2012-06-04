@@ -22,11 +22,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidOutboundMessageException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.saml.profile.EventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -37,7 +39,6 @@ import org.opensaml.saml.saml1.core.DoNotCacheCondition;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -48,23 +49,32 @@ import org.springframework.webflow.execution.RequestContext;
  * This action requires that the outbound message context to contain a {@link Response} with one, or more,
  * {@link Assertion}.
  */
+@Events({
+        @Event(id = ActionSupport.PROCEED_EVENT_ID),
+        @Event(id = EventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
+        @Event(id = EventIds.NO_RESPONSE,
+                description = "No SAML response object is associated with the current request")})
 public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddDoNotCacheConditionToAssertions.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
-            throws ProfileException {
+    protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse, RequestContext springRequestContext,
+            ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
+        if (response == null) {
+            log.error("Action {}: No SAML response located in current profile request context", getId());
+            return ActionSupport.buildEvent(this, EventIds.NO_RESPONSE);
+        }
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
-            log.error("Action {}: Unable to add DoNotCacheCondition, Response does not contain an Asertion", getId());
-            throw new InvalidOutboundMessageException("No Assertion available within the Response");
+            log.debug("Action {}: Unable to add DoNotCacheCondition, Response does not contain an Asertion", getId());
+            return ActionSupport.buildEvent(this, EventIds.NO_ASSERTION);
         }
 
         final SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =

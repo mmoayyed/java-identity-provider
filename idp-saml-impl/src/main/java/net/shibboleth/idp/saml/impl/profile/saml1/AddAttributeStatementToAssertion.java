@@ -37,6 +37,7 @@ import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
+import net.shibboleth.idp.saml.profile.EventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -61,24 +62,12 @@ import com.google.common.base.Function;
  */
 @Events({
         @Event(id = ActionSupport.PROCEED_EVENT_ID),
-        @Event(id = AddAttributeStatementToAssertion.NO_RPC_EVENT_ID,
+        @Event(id = EventIds.NO_RELYING_PARTY_CTX,
                 description = "Returned if no relying party information is associated with the current request"),
-        @Event(id = AddAttributeStatementToAssertion.NO_AC_EVENT_ID,
+        @Event(id = EventIds.NO_ATTRIBUTE_CTX,
                 description = "Returned if no attribute context is associated with the relying party context"),
-        @Event(id = AddAttributeStatementToAssertion.UTEA_EVENT_ID,
-                description = "Returned if there was a problem encoding an attribute")})
+        @Event(id = EventIds.UNABLE_ENCODE_ATTRIBUTE, description = "Returned if there was a problem encoding an attribute")})
 public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
-
-    /**
-     * ID of the event returned if no {@link RelyingPartyContext} is associated with the {@link ProfileRequestContext}.
-     */
-    public static final String NO_RPC_EVENT_ID = "NoRelyingPartyContext";
-
-    /** ID of the event returned if no {@link AttributeContext} is associated with the {@link RelyingPartyContext}. */
-    public static final String NO_AC_EVENT_ID = "NoAttributeContext";
-
-    /** ID of the transition returned if some attributes can not be encoded. */
-    public static final String UTEA_EVENT_ID = "UnableToEncodeAttribute";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
@@ -88,7 +77,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
 
     /**
      * Whether attributes that result in an {@link AttributeEncodingException} when being encoded should be ignored or
-     * result in an {@link #UTEA_EVENT_ID} transition.
+     * result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition.
      */
     private boolean ignoringUnencodableAttributes;
 
@@ -166,14 +155,14 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.error("Action {}: No relying party context located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, NO_RPC_EVENT_ID);
+            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
         }
 
         final AttributeContext attributeCtx = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
         if (attributeCtx == null) {
             log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
                     relyingPartyCtx.getRelyingPartyId());
-            return ActionSupport.buildEvent(this, NO_AC_EVENT_ID);
+            return ActionSupport.buildEvent(this, EventIds.NO_ATTRIBUTE_CTX);
         }
 
         try {
@@ -191,7 +180,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
             log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
             return ActionSupport.buildProceedEvent(this);
         } catch (AttributeEncodingException e) {
-            return ActionSupport.buildEvent(this, UTEA_EVENT_ID);
+            return ActionSupport.buildEvent(this, EventIds.UNABLE_ENCODE_ATTRIBUTE);
         }
     }
 

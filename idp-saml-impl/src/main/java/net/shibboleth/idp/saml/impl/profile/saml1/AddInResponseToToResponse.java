@@ -20,10 +20,13 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.saml.profile.EventIds;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
@@ -31,7 +34,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -39,22 +41,23 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link ProfileRequestContext#getOutboundMessageContext()}. If there was no message ID on the inbound message than
  * nothing is added to the response.
  */
+@Events({@Event(id = ActionSupport.PROCEED_EVENT_ID),
+        @Event(id = EventIds.NO_IN_MSG_ID, description = "Inbound message did not contain an ID")})
 public class AddInResponseToToResponse extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AddInResponseToToResponse.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
+    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
+            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add InResponseTo to outgoing Response", getId());
 
         final String inMsgId = getInboundMessageId(profileRequestContext);
         if (inMsgId == null) {
             log.debug("Action {}: Inbound message did not have an ID, no InResponse to added to Response", getId());
-            //TODO throw error
-            return ActionSupport.buildProceedEvent(this);
+            return ActionSupport.buildEvent(this, EventIds.NO_IN_MSG_ID);
         }
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
@@ -79,8 +82,7 @@ public class AddInResponseToToResponse extends AbstractProfileAction<Object, Res
             return null;
         }
 
-        final BasicMessageMetadataContext inMsgMetadataCtx =
-                inMsgCtx.getSubcontext(BasicMessageMetadataContext.class);
+        final BasicMessageMetadataContext inMsgMetadataCtx = inMsgCtx.getSubcontext(BasicMessageMetadataContext.class);
         if (inMsgMetadataCtx == null) {
             log.debug("Action {}: no inbound message metadata context available", getId());
             return null;
