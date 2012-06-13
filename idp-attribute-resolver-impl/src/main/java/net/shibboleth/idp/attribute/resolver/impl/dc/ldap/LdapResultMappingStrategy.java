@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
+package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
-import java.sql.ResultSet;
+import org.ldaptive.LdapResult;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
 
-/** Strategy for mapping from a {@link ResultSet} to a collection of {@link Attribute}s. */
-public interface ResultMappingStrategy extends MappingStrategy<ResultSet>{}
+/** Strategy for mapping from a {@link LdapResult} to a collection of {@link Attribute}s. */
+public interface LdapResultMappingStrategy extends MappingStrategy<LdapResult>{}

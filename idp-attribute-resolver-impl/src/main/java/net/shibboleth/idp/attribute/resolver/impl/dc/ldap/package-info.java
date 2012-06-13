@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
+/** 
+ * A {@link net.shibboleth.idp.attribute.resolver.BaseDataConnector} implementation that reads data from an LDAP.
+ */
 
-import java.sql.ResultSet;
-
-import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
-
-/** Strategy for mapping from a {@link ResultSet} to a collection of {@link Attribute}s. */
-public interface ResultMappingStrategy extends MappingStrategy<ResultSet>{}
+package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;

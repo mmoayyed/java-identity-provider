@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
+/** 
+ * Common functionality used by data connectors.
+ */
 
-import java.sql.ResultSet;
-
-import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
-
-/** Strategy for mapping from a {@link ResultSet} to a collection of {@link Attribute}s. */
-public interface ResultMappingStrategy extends MappingStrategy<ResultSet>{}
+package net.shibboleth.idp.attribute.resolver.impl.dc;
