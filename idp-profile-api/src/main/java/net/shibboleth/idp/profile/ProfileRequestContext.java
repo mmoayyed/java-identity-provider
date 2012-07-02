@@ -17,10 +17,14 @@
 
 package net.shibboleth.idp.profile;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.InOutOperationContext;
 
@@ -37,6 +41,11 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
     /** ID under which this context is stored, for example, within maps or sessions. */
     public static final String BINDING_KEY = ProfileRequestContext.class.getName();
 
+    public static final String ANONYMOUS_PROFILE_ID = "anonymous";
+
+    /** Unique identifier for the profile/operation/function of the current request. */
+    private String profileId;
+
     /**
      * Indicates whether the current profile request is passive. Passive requests are not capable of showing a UI to a
      * user.
@@ -52,6 +61,30 @@ public final class ProfileRequestContext<InboundMessageType, OutboundMessageType
     /** Constructor. */
     public ProfileRequestContext() {
         super();
+        profileId = ANONYMOUS_PROFILE_ID;
+    }
+
+    /**
+     * Gets the ID of the profile used by the current request.
+     * 
+     * @return ID of the profile used by the current request
+     */
+    @Nonnull @NotEmpty public String getProfileId() {
+        return profileId;
+    }
+
+    /**
+     * Sets the ID of the profile used by the current request.
+     * 
+     * @param id ID of the profile used by the current request
+     */
+    public void setProfileId(final String id) {
+        final String trimmedId = StringSupport.trimOrNull(id);
+        if (trimmedId == null) {
+            profileId = ANONYMOUS_PROFILE_ID;
+        } else {
+            profileId = id;
+        }
     }
 
     /**

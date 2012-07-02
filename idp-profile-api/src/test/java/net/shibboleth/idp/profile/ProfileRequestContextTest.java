@@ -25,8 +25,7 @@ import org.testng.annotations.Test;
 /** Unit test for {@link ProfileRequestContext}. */
 public class ProfileRequestContextTest {
 
-    @Test
-    public void testHttpRequest() {
+    @Test public void testHttpRequest() {
         ProfileRequestContext context = new ProfileRequestContext();
         Assert.assertNull(context.getHttpRequest());
 
@@ -35,8 +34,7 @@ public class ProfileRequestContextTest {
         Assert.assertSame(context.getHttpRequest(), request);
     }
 
-    @Test
-    public void testHttpResponse() {
+    @Test public void testHttpResponse() {
         ProfileRequestContext context = new ProfileRequestContext();
         Assert.assertNull(context.getHttpResponse());
 
@@ -45,12 +43,25 @@ public class ProfileRequestContextTest {
         Assert.assertSame(context.getHttpResponse(), response);
     }
 
-    @Test
-    public void testIsPassive() {
+    @Test public void testIsPassive() {
         ProfileRequestContext context = new ProfileRequestContext();
         Assert.assertFalse(context.isPassiveProfile());
 
         context.setPassiveProfile(true);
         Assert.assertTrue(context.isPassiveProfile());
+    }
+
+    @Test public void testProfileId() {
+        ProfileRequestContext context = new ProfileRequestContext();
+        Assert.assertEquals(context.getProfileId(), ProfileRequestContext.ANONYMOUS_PROFILE_ID);
+
+        context.setProfileId(null);
+        Assert.assertEquals(context.getProfileId(), ProfileRequestContext.ANONYMOUS_PROFILE_ID);
+
+        context.setProfileId("foo");
+        Assert.assertEquals(context.getProfileId(), "foo");
+
+        context.setProfileId("  ");
+        Assert.assertEquals(context.getProfileId(), ProfileRequestContext.ANONYMOUS_PROFILE_ID);
     }
 }
