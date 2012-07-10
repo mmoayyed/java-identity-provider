@@ -18,22 +18,10 @@
 package net.shibboleth.idp.saml.profile;
 
 /** Constants to use for {@link org.springframework.webflow.execution.Event} IDs. */
-public final class EventIds {
+public final class SamlEventIds {
 
     /** Is the SAML message version is incorrect (e.g., received a SAML 1.1 but expected SAML 2 message). */
     public static final String INVALID_MESSAGE_VERSION = "InvalidMessageVersion";
-
-    /**
-     * ID of the event returned if no {@link net.shibboleth.idp.relyingparty.RelyingPartyContext} is associated with the
-     * {@link net.shibboleth.idp.profile.ProfileRequestContext}.
-     */
-    public static final String NO_RELYING_PARTY_CTX = "NoRelyingPartyContext";
-
-    /**
-     * ID of the event returned if no {@link net.shibboleth.idp.attribute.AttributeContext} is associated with the
-     * {@link net.shibboleth.idp.relyingparty.RelyingPartyContext}.
-     */
-    public static final String NO_ATTRIBUTE_CTX = "NoAttributeContext";
 
     /** ID of the transition returned if some attributes can not be encoded. */
     public static final String UNABLE_ENCODE_ATTRIBUTE = "UnableToEncodeAttribute";
@@ -56,6 +44,6 @@ public final class EventIds {
     public static final String NO_IN_MSG_ID = "NoInboundMessageId";
 
     /** Constructor. */
-    private EventIds() {
+    private SamlEventIds() {
     }
 }

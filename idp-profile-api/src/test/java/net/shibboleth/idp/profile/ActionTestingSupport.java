@@ -40,13 +40,13 @@ public class ActionTestingSupport {
 
     /**
      * Checks that the given event is a proceed event. That is, that the event is not null, that its source is not null,
-     * and that its ID is {@link ActionSupport#PROCEED_EVENT_ID}.
+     * and that its ID is {@link EventIds#PROCEED_EVENT_ID}.
      * 
      * @param event the event to check
      */
     public static void assertProceedEvent(Event event) {
         Assert.assertNotNull(event);
         Assert.assertNotNull(event.getSource());
-        Assert.assertEquals(event.getId(), ActionSupport.PROCEED_EVENT_ID);
+        Assert.assertEquals(event.getId(), EventIds.PROCEED_EVENT_ID);
     }
 }

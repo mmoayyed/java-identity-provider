@@ -18,15 +18,19 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -36,17 +40,23 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
 /** A stage which invokes the {@link AttributeFilteringEngine} for the current request. */
+@Events({@Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context available for request"),
+        @Event(id = EventIds.NO_ATTRIBUTE_CTX, description = "No attributes were available for filtering"),
+        @Event(id = FilterAttributes.UNABLE_FILTER_ATTRIBS, description = "Error in filtering attributes")})
 public class FilterAttributes extends AbstractProfileAction {
+
+    /** ID of event indicating that the attribute filtering process failed. */
+    public static final String UNABLE_FILTER_ATTRIBS = "UnableToFilterAttributes";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
-    
+
     /** Engine used to fetch attributes. */
     private final AttributeFilteringEngine filterEngine;
 
@@ -105,17 +115,30 @@ public class FilterAttributes extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (relyingPartyCtx == null) {
+            log.debug("Action {}: No relying party context available.", getId());
+            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
+        }
 
-        AttributeContext attributeContext = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
+        final AttributeContext attributeContext = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
+        if (attributeContext == null) {
+            log.debug("Action {}: No attribute context, no attributes to filter", getId());
+            return ActionSupport.buildEvent(this, EventIds.NO_ATTRIBUTE_CTX);
+        }
+
+        if (attributeContext.getAttributes().isEmpty()) {
+            log.debug("Action {}: No attributes to filter", getId());
+            return ActionSupport.buildProceedEvent(this);
+        }
 
         // Get the filer context from the profile request
         // this may already exist but if not, auto-create it
-        final AttributeFilterContext filterContext =
-                profileRequestContext.getSubcontext(AttributeFilterContext.class, true);
+        final AttributeFilterContext filterContext = relyingPartyCtx.getSubcontext(AttributeFilterContext.class, true);
 
         // If the filter context doesn't have a set of attributes to filter already
         // then look for them in the profile request context
@@ -123,66 +146,17 @@ public class FilterAttributes extends AbstractProfileAction {
             filterContext.setPrefilteredAttributes(attributeContext.getAttributes().values());
         }
 
-        if (filterContext.getPrefilteredAttributes().isEmpty()) {
-            log.debug("Action {}: No attributes available to filter, nothing to do", getId());
-            return ActionSupport.buildProceedEvent(this);
-        }
-
         try {
             filterEngine.filterAttributes(filterContext);
-            profileRequestContext.removeSubcontext(filterContext);
-
-            if (attributeContext == null) {
-                attributeContext = new AttributeContext();
-                relyingPartyCtx.addSubcontext(attributeContext);
-            }
+            // TODO should we do this
+            // relyingPartyCtx.removeSubcontext(filterContext);
 
             attributeContext.setAttributes(filterContext.getFilteredAttributes().values());
         } catch (AttributeFilteringException e) {
             log.error("Action {}: Error encountered while filtering attributes", getId(), e);
-            throw new UnableToFilterAttributesException(e);
+            return ActionSupport.buildEvent(this, UNABLE_FILTER_ATTRIBS);
         }
 
         return ActionSupport.buildProceedEvent(this);
-    }
-
-    /** Exception thrown if there is a problem filtering attributes. */
-    public static class UnableToFilterAttributesException extends ProfileException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = 4198028709026788847L;
-
-        /** Constructor. */
-        public UnableToFilterAttributesException() {
-            super();
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         */
-        public UnableToFilterAttributesException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public UnableToFilterAttributesException(Exception wrappedException) {
-            super(wrappedException);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public UnableToFilterAttributesException(String message, Exception wrappedException) {
-            super(message, wrappedException);
-        }
     }
 }

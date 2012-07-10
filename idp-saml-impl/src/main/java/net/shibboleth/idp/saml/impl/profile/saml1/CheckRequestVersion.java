@@ -24,9 +24,10 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.saml.profile.EventIds;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.RequestAbstractType;
@@ -36,8 +37,8 @@ import com.google.common.base.Objects;
 
 /** Checks whether the inbound SAML request has the appropriate version. */
 @Events({
-        @Event(id = ActionSupport.PROCEED_EVENT_ID),
-        @Event(id = EventIds.INVALID_MESSAGE_VERSION,
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = SamlEventIds.INVALID_MESSAGE_VERSION,
                 description = "A message with a version other than 1.1 was received")})
 public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractType, Object> {
 
@@ -52,7 +53,7 @@ public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractTy
                 || Objects.equal(SAMLVersion.VERSION_11, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
         } else {
-            return ActionSupport.buildEvent(this, EventIds.INVALID_MESSAGE_VERSION);
+            return ActionSupport.buildEvent(this, SamlEventIds.INVALID_MESSAGE_VERSION);
         }
     }
 }

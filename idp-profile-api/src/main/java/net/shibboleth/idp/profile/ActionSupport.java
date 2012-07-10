@@ -29,24 +29,19 @@ import org.springframework.webflow.execution.Event;
 /** Helper class for {@link org.springframework.webflow.execution.Action} operations. */
 public final class ActionSupport {
 
-    /**
-     * ID of an Event indicating that the action completed successfully and processing should move on to the next step.
-     */
-    public static final String PROCEED_EVENT_ID = "proceed";
-
     /** Constructor. */
     private ActionSupport() {
     }
 
     /**
-     * Builds a {@link #PROCEED_EVENT_ID} event with no related attributes.
+     * Builds a {@link EventIds#PROCEED_EVENT_ID} event with no related attributes.
      * 
      * @param source the source of the event
      * 
      * @return the proceed event
      */
     @Nonnull public static Event buildProceedEvent(@Nonnull final IdentifiableComponent source) {
-        return buildEvent(source, PROCEED_EVENT_ID);
+        return buildEvent(source, EventIds.PROCEED_EVENT_ID);
     }
 
     /**

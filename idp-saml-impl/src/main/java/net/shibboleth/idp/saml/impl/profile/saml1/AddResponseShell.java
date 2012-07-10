@@ -25,10 +25,11 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.EventIds;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -54,8 +55,9 @@ import com.google.common.base.Function;
  * message for the {@link ProfileRequestContext#getOutboundMessageContext()}.
  */
 @Events({
-        @Event(id = ActionSupport.PROCEED_EVENT_ID),
-        @Event(id = EventIds.RESPONSE_EXISTS,
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context available"),
+        @Event(id = SamlEventIds.RESPONSE_EXISTS,
                 description = "If the outgoing message context already contains a message")})
 public class AddResponseShell extends AbstractProfileAction<Object, Response> {
 
@@ -109,7 +111,7 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageCtx.getMessage() != null) {
             log.error("Action {}: Outbound message context already contains a Response", getId());
-            return ActionSupport.buildEvent(this, EventIds.RESPONSE_EXISTS);
+            return ActionSupport.buildEvent(this, SamlEventIds.RESPONSE_EXISTS);
         }
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);

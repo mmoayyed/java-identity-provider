@@ -33,11 +33,12 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
-import net.shibboleth.idp.saml.profile.EventIds;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -61,12 +62,12 @@ import com.google.common.base.Function;
  * {@link AttributeContext} located on the {@link RelyingPartyContext} located on the {@link ProfileRequestContext}.
  */
 @Events({
-        @Event(id = ActionSupport.PROCEED_EVENT_ID),
+        @Event(id = EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.NO_RELYING_PARTY_CTX,
                 description = "Returned if no relying party information is associated with the current request"),
         @Event(id = EventIds.NO_ATTRIBUTE_CTX,
                 description = "Returned if no attribute context is associated with the relying party context"),
-        @Event(id = EventIds.UNABLE_ENCODE_ATTRIBUTE, description = "Returned if there was a problem encoding an attribute")})
+        @Event(id = SamlEventIds.UNABLE_ENCODE_ATTRIBUTE, description = "Returned if there was a problem encoding an attribute")})
 public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
@@ -180,7 +181,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
             log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
             return ActionSupport.buildProceedEvent(this);
         } catch (AttributeEncodingException e) {
-            return ActionSupport.buildEvent(this, EventIds.UNABLE_ENCODE_ATTRIBUTE);
+            return ActionSupport.buildEvent(this, SamlEventIds.UNABLE_ENCODE_ATTRIBUTE);
         }
     }
 

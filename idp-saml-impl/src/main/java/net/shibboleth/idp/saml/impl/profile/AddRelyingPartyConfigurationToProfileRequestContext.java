@@ -113,7 +113,6 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
             throws ProfileException {
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
 
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);

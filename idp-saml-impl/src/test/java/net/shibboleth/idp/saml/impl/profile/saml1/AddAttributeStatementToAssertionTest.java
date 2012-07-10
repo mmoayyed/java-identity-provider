@@ -18,10 +18,9 @@
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import net.shibboleth.idp.attribute.AttributeContext;
-import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.EventIds;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.webflow.execution.Event;
@@ -64,7 +63,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
         Event event = action.doExecute(null, null, null, profileCtx);
 
-        Assert.assertEquals(event.getId(), ActionSupport.PROCEED_EVENT_ID);
+        Assert.assertEquals(event.getId(), EventIds.PROCEED_EVENT_ID);
     }
 
     @Test public void testIgnoreAttributeEncodingErrors() {

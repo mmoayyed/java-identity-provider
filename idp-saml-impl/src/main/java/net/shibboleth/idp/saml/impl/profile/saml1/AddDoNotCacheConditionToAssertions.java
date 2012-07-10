@@ -26,9 +26,10 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.saml.profile.EventIds;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -50,9 +51,9 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link Assertion}.
  */
 @Events({
-        @Event(id = ActionSupport.PROCEED_EVENT_ID),
-        @Event(id = EventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
-        @Event(id = EventIds.NO_RESPONSE,
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = SamlEventIds.NO_ASSERTION, description = "Outbound response does not contain an assertion"),
+        @Event(id = SamlEventIds.NO_RESPONSE,
                 description = "No SAML response object is associated with the current request")})
 public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Object, Response> {
 
@@ -68,13 +69,13 @@ public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Ob
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
         if (response == null) {
             log.error("Action {}: No SAML response located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_RESPONSE);
+            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
         }
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
             log.debug("Action {}: Unable to add DoNotCacheCondition, Response does not contain an Asertion", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_ASSERTION);
+            return ActionSupport.buildEvent(this, SamlEventIds.NO_ASSERTION);
         }
 
         final SAMLObjectBuilder<DoNotCacheCondition> dncConditionBuilder =
