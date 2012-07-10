@@ -45,7 +45,6 @@
         <module>../idp-saml-impl</module>        
     </modules>
 
-
     <properties>
         <svn.relative.location>java-identity-provider</svn.relative.location>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
