@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -59,7 +60,8 @@ import com.google.common.base.Function;
 /**
  * Builds an {@link AttributeStatement} and adds it to the {@link Response} set as the message of the
  * {@link ProfileRequestContext#getOutboundMessageContext()}. The {@link Attribute} set to be encoded is drawn from the
- * {@link AttributeContext} located on the {@link RelyingPartyContext} located on the {@link ProfileRequestContext}.
+ * {@link AttributeContext} located on the {@link RelyingPartyContext} looked up via the
+ * {@link #relyingPartyContextLookupStrategy}.
  */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
@@ -67,7 +69,8 @@ import com.google.common.base.Function;
                 description = "Returned if no relying party information is associated with the current request"),
         @Event(id = EventIds.NO_ATTRIBUTE_CTX,
                 description = "Returned if no attribute context is associated with the relying party context"),
-        @Event(id = SamlEventIds.UNABLE_ENCODE_ATTRIBUTE, description = "Returned if there was a problem encoding an attribute")})
+        @Event(id = SamlEventIds.UNABLE_ENCODE_ATTRIBUTE,
+                description = "Returned if there was a problem encoding an attribute")})
 public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
@@ -148,9 +151,9 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);

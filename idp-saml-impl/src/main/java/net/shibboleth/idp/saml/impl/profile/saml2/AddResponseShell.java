@@ -21,12 +21,15 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidOutboundMessageException;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -43,15 +46,19 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
 /**
- * A profile action that creates a {@link Response}, adds a {@link StatusCode#SUCCESS_URI} status to it, and sets it as
- * the message for the {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * A profile action that creates a {@link Response}, adds a {@link StatusCode#SUCCESS} status to it, and sets it as the
+ * message for the {@link ProfileRequestContext#getOutboundMessageContext()}.
  */
+@Events({
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context available"),
+        @Event(id = SamlEventIds.RESPONSE_EXISTS,
+                description = "If the outgoing message context already contains a message")})
 public class AddResponseShell extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
@@ -67,8 +74,7 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         super();
 
         relyingPartyContextLookupStrategy =
-                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class,
-                        false);
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
     }
 
     /**
@@ -98,17 +104,21 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
+    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
+            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
 
         final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageCtx.getMessage() != null) {
             log.error("Action {}: Outbound message context already contains a Response", getId());
-            throw new InvalidOutboundMessageException("Outbound message context already contains a Response");
+            return ActionSupport.buildEvent(this, SamlEventIds.RESPONSE_EXISTS);
         }
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (relyingPartyCtx == null) {
+            log.error("Action {}: No relying party context located in current profile request context", getId());
+            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
+        }
 
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =
                 (SAMLObjectBuilder<StatusCode>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(

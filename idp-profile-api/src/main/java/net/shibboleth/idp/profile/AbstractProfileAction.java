@@ -177,7 +177,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
                 profileContextLookupStrategy.apply(springRequestContext);
         if (profileRequestContext == null) {
             log.error("Action {}: IdP profile request context is not available", getId());
-            throw new InvalidProfileRequestContextStateException("IdP profile request context is not available");
+            return ActionSupport.buildEvent(this, EventIds.NO_PROFILE_CTX);
         }
 
         profileRequestContext.setHttpRequest(httpRequest);

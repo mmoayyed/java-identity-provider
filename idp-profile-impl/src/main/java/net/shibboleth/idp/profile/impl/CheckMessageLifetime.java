@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -44,6 +43,9 @@ import com.google.common.base.Function;
 
 /** An action that checks that the inbound message should be considered valid based upon when it was issued. */
 public final class CheckMessageLifetime extends AbstractProfileAction {
+
+    /** ID of action returned if no issue instant is associated with the message. */
+    public static final String NO_ISSUE_INSTANT = "NoIssueInstant";
 
     /** Amount of time, in milliseconds, for which a message is valid. Default value: 5 minutes */
     private long messageLifetime;
@@ -163,8 +165,7 @@ public final class CheckMessageLifetime extends AbstractProfileAction {
                 messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());
 
         if (messageSubcontext.getMessageIssueInstant() <= 0) {
-            throw new InvalidProfileRequestContextStateException(
-                    "Basic message metadata subcontext does not contain a message issue instant");
+            return ActionSupport.buildEvent(this, NO_ISSUE_INSTANT);
         }
 
         final long clockskew = relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getClockSkew();

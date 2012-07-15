@@ -20,24 +20,31 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Objects;
 
 /** Checks whether the inbound SAML request has the appropriate version. */
+@Events({
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = SamlEventIds.INVALID_MESSAGE_VERSION,
+                description = "A message with a version other than 1.1 was received")})
 public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractType, Object> {
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
+    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
+            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
             final ProfileRequestContext<RequestAbstractType, Object> profileRequestContext) throws ProfileException {
 
         final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();
@@ -45,32 +52,7 @@ public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractTy
         if (Objects.equal(SAMLVersion.VERSION_20, request.getVersion())) {
             return ActionSupport.buildProceedEvent(this);
         } else {
-            throw new InvalidMessageVersionException(request.getVersion());
-        }
-    }
-
-    /** Exception thrown when the incoming message was not an expected SAML version. */
-    public static class InvalidMessageVersionException extends ProfileException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = -872917446217307755L;
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         */
-        public InvalidMessageVersionException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param messageVersion SAML version of the message
-         */
-        public InvalidMessageVersionException(SAMLVersion messageVersion) {
-            super("Message SAML version was " + messageVersion.toString() + ", expected 2.0");
+            return ActionSupport.buildEvent(this, SamlEventIds.INVALID_MESSAGE_VERSION);
         }
     }
 }

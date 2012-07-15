@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.profile.saml1;
 
-import net.shibboleth.idp.profile.InvalidSubcontextException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -48,9 +47,8 @@ public class Saml1ActionSupportTest extends OpenSAMLInitBaseTestCase {
      * Test that when an assertion is added to response it goes there.
      * 
      * @throws ComponentInitializationException if we cannot setup our environment.
-     * @throws InvalidSubcontextException if we cannot setup our environment.
      */
-    @Test public void testAddAssertionToResponse() throws ComponentInitializationException, InvalidSubcontextException {
+    @Test public void testAddAssertionToResponse() throws ComponentInitializationException {
 
         final Response response = Saml1ActionTestingSupport.buildResponse();
 

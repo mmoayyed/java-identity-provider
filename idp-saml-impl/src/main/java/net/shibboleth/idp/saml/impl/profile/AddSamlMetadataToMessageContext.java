@@ -18,11 +18,15 @@
 package net.shibboleth.idp.saml.impl.profile;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -41,12 +45,13 @@ import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
 /** Action that creates and adds a {@link SamlMetadataContext} to a {@link MessageContext}. */
+@Events({@Event(id = EventIds.NO_MSG_CTX, description = "No message context was available in the request"),
+        @Event(id = EventIds.NO_MSG_MD, description = "No message metadata available in message context")})
 public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
@@ -102,24 +107,26 @@ public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
-        MessageContext messageCtx = messageContextLookupStrategy.apply(profileRequestContext);
+    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+
+        final MessageContext messageCtx = messageContextLookupStrategy.apply(profileRequestContext);
         if (messageCtx == null) {
-            log.debug("Action {}: appropriate message context not available, skipping this action.", getId());
-            return ActionSupport.buildProceedEvent(this);
+            log.debug("Action {}: appropriate message context not available", getId());
+            return ActionSupport.buildEvent(this, EventIds.NO_MSG_CTX);
         }
 
-        BasicMessageMetadataContext msgMetadataCtx = messageCtx.getSubcontext(BasicMessageMetadataContext.class, false);
+        final BasicMessageMetadataContext msgMetadataCtx =
+                messageCtx.getSubcontext(BasicMessageMetadataContext.class, false);
         if (msgMetadataCtx == null) {
-            log.debug("Action {}: message context did not contain basic message metadata, skipping this action.",
-                    getId());
-            return ActionSupport.buildProceedEvent(this);
+            log.debug("Action {}: message context did not contain basic message metadata", getId());
+            return ActionSupport.buildEvent(this, EventIds.NO_MSG_MD);
         }
-        EntityIdCriterion entityIdCriterion = new EntityIdCriterion(msgMetadataCtx.getMessageIssuer());
 
-        SamlProtocolContext protocolCtx = messageCtx.getSubcontext(SamlProtocolContext.class, false);
+        final EntityIdCriterion entityIdCriterion = new EntityIdCriterion(msgMetadataCtx.getMessageIssuer());
+
+        final SamlProtocolContext protocolCtx = messageCtx.getSubcontext(SamlProtocolContext.class, false);
         ProtocolCriterion protocolCriterion = null;
         EntityRoleCriterion roleCriterion = null;
         if (protocolCtx != null) {
@@ -131,13 +138,14 @@ public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
             }
         }
 
-        CriteriaSet criteria = new CriteriaSet(entityIdCriterion, protocolCriterion, roleCriterion);
+        final CriteriaSet criteria = new CriteriaSet(entityIdCriterion, protocolCriterion, roleCriterion);
         try {
-            EntityDescriptor entityMetadata = metadataResolver.resolveSingle(criteria);
+            final EntityDescriptor entityMetadata = metadataResolver.resolveSingle(criteria);
 
-            SamlMetadataContext metadataCtx = new SamlMetadataContext();
+            final SamlMetadataContext metadataCtx = new SamlMetadataContext();
             metadataCtx.setEntityDescriptor(entityMetadata);
-            // TODO metadataCtx.setRoleDescriptor(descriptor);
+            // TODO need to look up role descriptor
+            // metadataCtx.setRoleDescriptor(descriptor);
 
             messageCtx.addSubcontext(metadataCtx);
 

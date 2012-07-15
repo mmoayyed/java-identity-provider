@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile;
 
 /** Exception thrown if the inbound message contains invalid information. */
+@Deprecated
 public class InvalidInboundMessageException extends ProfileException {
 
     /** Serial version UID. */

@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile;
 /**
  * Exception thrown if certain information was expected to be found in the {@link ProfileRequestContext} but was not.
  */
+@Deprecated
 public class InvalidProfileRequestContextStateException extends ProfileException {
 
     /** Serial version UID. */

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -55,6 +55,6 @@ public class SetProfileIdTest {
         SetProfileId action = new SetProfileId("foo");
         Event result = action.doExecute(null, null, null, context);
         Assert.assertEquals(context.getProfileId(), "foo");
-        Assert.assertEquals(result.getId(), ActionSupport.PROCEED_EVENT_ID);
+        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
     }
 }
