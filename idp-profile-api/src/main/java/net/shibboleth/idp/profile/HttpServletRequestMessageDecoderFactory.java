@@ -23,7 +23,7 @@ import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 
 /**
- * A factory that produces {@link HttpServletRequestMessageDecoderFactory}.
+ * A factory that produces a {@link MessageDecoder} appropriate for a given {@link HttpServletRequest}.
  * 
  * @param <MessageType> the type of message produced by the decoder
  */
