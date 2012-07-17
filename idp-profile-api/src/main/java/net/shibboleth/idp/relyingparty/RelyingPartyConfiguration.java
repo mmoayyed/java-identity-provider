@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -33,7 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap.Builder;
 
 /** The configuration that applies to given relying party. */
@@ -45,9 +43,6 @@ public class RelyingPartyConfiguration {
     /** The entity ID of the IdP. */
     private final String responderEntityId;
 
-    /** Criterion that must be met for this configuration to be active for a given request. */
-    private final Predicate<ProfileRequestContext> activationCriteria;
-
     /** Registered and usable communication profile configurations for this relying party. */
     private final Map<String, ProfileConfiguration> profileConfigurations;
 
@@ -56,12 +51,10 @@ public class RelyingPartyConfiguration {
      * 
      * @param configurationId unique ID for this configuration
      * @param responderId the ID by which the responder is known by this relying party
-     * @param criteria criteria that must be met in order for this relying party configuration to apply to a given
-     *            profile request, never null
-     * @param configurations communication profile configurations for this relying party, may be null or empty
+     * @param configurations communication profile configurations for this relying party
      */
     public RelyingPartyConfiguration(@Nonnull @NotEmpty final String configurationId,
-            @Nonnull @NotEmpty final String responderId, @Nonnull final Predicate<ProfileRequestContext> criteria,
+            @Nonnull @NotEmpty final String responderId,
             @Nullable @NullableElements final Collection<? extends ProfileConfiguration> configurations) {
         id =
                 Constraint.isNotNull(StringSupport.trimOrNull(configurationId),
@@ -69,8 +62,6 @@ public class RelyingPartyConfiguration {
 
         responderEntityId =
                 Constraint.isNotNull(StringSupport.trimOrNull(responderId), "Responder entity ID can not be null");
-
-        activationCriteria = Constraint.isNotNull(criteria, "Relying partying configuration criteria can not be null");
 
         if (configurations == null || configurations.isEmpty()) {
             profileConfigurations = Collections.emptyMap();
@@ -107,15 +98,6 @@ public class RelyingPartyConfiguration {
      */
     @Nonnull @NotEmpty public String getResponderEntityId() {
         return responderEntityId;
-    }
-
-    /**
-     * Gets the criteria that must be met for this configuration to be active for a given request.
-     * 
-     * @return criteria that must be met for this configuration to be active for a given request, never null
-     */
-    @Nonnull public Predicate<ProfileRequestContext> getActivationCriteria() {
-        return activationCriteria;
     }
 
     /**

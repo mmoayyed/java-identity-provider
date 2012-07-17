@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.relyingparty.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,16 +37,16 @@ import com.google.common.collect.Iterables;
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request.
  * 
- * Note, this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
+ * Note, this resolver does not permit more than one {@link ActivatedRelyingPartyConfiguration} with the same ID.
  */
-public class RelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
-        Resolver<RelyingPartyConfiguration, ProfileRequestContext> {
+public class ActivatedRelyingPartyConfigurationResolver extends AbstractIdentifiableInitializableComponent implements
+        Resolver<ActivatedRelyingPartyConfiguration, ProfileRequestContext> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(RelyingPartyConfigurationResolver.class);
+    private final Logger log = LoggerFactory.getLogger(ActivatedRelyingPartyConfigurationResolver.class);
 
     /** Registered relying party configurations. */
-    private List<RelyingPartyConfiguration> rpConfigurations = Collections.emptyList();
+    private List<ActivatedRelyingPartyConfiguration> rpConfigurations = Collections.emptyList();
 
     /** {@inheritDoc} */
     public synchronized void setId(String componentId) {
@@ -58,7 +58,7 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
      * 
      * @return unmodifiable list of registered relying party configurations, never null nor containing null entries
      */
-    public List<RelyingPartyConfiguration> getRelyingPartyConfigurations() {
+    public List<ActivatedRelyingPartyConfiguration> getRelyingPartyConfigurations() {
         return rpConfigurations;
     }
 
@@ -69,28 +69,30 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
      * 
      * @param configs list of registered relying party configurations
      */
-    public synchronized void setRelyingPartyConfigurations(List<RelyingPartyConfiguration> configs) {
+    public synchronized void setRelyingPartyConfigurations(List<ActivatedRelyingPartyConfiguration> configs) {
         if (isInitialized()) {
             return;
         }
 
         rpConfigurations =
-                ImmutableList.<RelyingPartyConfiguration> builder()
+                ImmutableList.<ActivatedRelyingPartyConfiguration> builder()
                         .addAll(Iterables.filter(configs, Predicates.notNull())).build();
 
     }
 
     /** {@inheritDoc} */
-    public Iterable<RelyingPartyConfiguration> resolve(final ProfileRequestContext context) throws ResolverException {
+    public Iterable<ActivatedRelyingPartyConfiguration> resolve(final ProfileRequestContext context)
+            throws ResolverException {
         if (context == null) {
             return Collections.emptyList();
         }
 
         log.debug("Resolving relying party configurations for profile request {}", context.getId());
 
-        final ArrayList<RelyingPartyConfiguration> matches = new ArrayList<RelyingPartyConfiguration>();
+        final ArrayList<ActivatedRelyingPartyConfiguration> matches =
+                new ArrayList<ActivatedRelyingPartyConfiguration>();
 
-        for (RelyingPartyConfiguration configuration : rpConfigurations) {
+        for (ActivatedRelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
             if (configuration.getActivationCriteria().apply(context)) {
@@ -107,13 +109,14 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
     }
 
     /** {@inheritDoc} */
-    public RelyingPartyConfiguration resolveSingle(final ProfileRequestContext context) throws ResolverException {
+    public ActivatedRelyingPartyConfiguration resolveSingle(final ProfileRequestContext context)
+            throws ResolverException {
         if (context == null) {
             return null;
         }
 
         log.debug("Resolving relying party configuration for profile request {}", context.getId());
-        for (RelyingPartyConfiguration configuration : rpConfigurations) {
+        for (ActivatedRelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable to profile request {}",
                     configuration.getConfigurationId(), context.getId());
             if (configuration.getActivationCriteria().apply(context)) {
@@ -135,7 +138,7 @@ public class RelyingPartyConfigurationResolver extends AbstractIdentifiableIniti
         super.doInitialize();
 
         final ArrayList<String> configIds = new ArrayList<String>();
-        for (RelyingPartyConfiguration config : rpConfigurations) {
+        for (ActivatedRelyingPartyConfiguration config : rpConfigurations) {
             if (configIds.contains(config.getConfigurationId())) {
                 throw new ComponentInitializationException("Multiple replying party configurations with ID "
                         + config.getConfigurationId() + " detected.  Configuration IDs must be unique.");

@@ -526,7 +526,7 @@ public class RequestContextBuilder {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }
 
-        return new RelyingPartyConfiguration("mock", responderId, Predicates.<ProfileRequestContext>alwaysTrue(), profileConfigs);
+        return new RelyingPartyConfiguration("mock", responderId, profileConfigs);
     }
 
     /**

@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -46,8 +45,6 @@ import org.opensaml.saml.saml1.core.Request;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.Subject;
 
-import com.google.common.base.Predicates;
-
 /**
  * Helper methods for creating/testing SAML 1 objects within profile action tests. When methods herein refer to mock
  * objects they are always objects that have been created via Mockito unless otherwise noted.
@@ -64,8 +61,7 @@ public final class Saml1ActionTestingSupport {
     public final static String ASSERTION_ID = "assertion";
 
     /**
-     * Builds a {@link RelyingPartyContext} that is a child of the given parent context. The build subcontext
-     * contains:
+     * Builds a {@link RelyingPartyContext} that is a child of the given parent context. The build subcontext contains:
      * <ul>
      * <li>a {@link RelyingPartyConfiguration} whose ID is the given relying party ID or
      * {@link SamlActionTestingSupport#INBOUND_MSG_ISSUER} if none is given</li>
@@ -89,7 +85,7 @@ public final class Saml1ActionTestingSupport {
 
         final RelyingPartyConfiguration rpConfig =
                 new RelyingPartyConfiguration(id, ActionTestingSupport.OUTBOUND_MSG_ISSUER,
-                        Predicates.<ProfileRequestContext> alwaysTrue(), buildProfileConfigurations());
+                        buildProfileConfigurations());
 
         RelyingPartyContext subcontext = new RelyingPartyContext(id);
         subcontext.setProfileConfiguration(rpConfig.getProfileConfiguration(SsoProfileConfiguration.PROFILE_ID));

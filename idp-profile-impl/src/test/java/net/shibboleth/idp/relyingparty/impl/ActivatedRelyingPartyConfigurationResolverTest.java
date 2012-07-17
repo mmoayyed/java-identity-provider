@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.relyingparty;
+package net.shibboleth.idp.relyingparty.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -28,31 +29,31 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link RelyingPartyConfigurationResolver}. */
-public class RelyingPartyConfigurationResolverTest {
+public class ActivatedRelyingPartyConfigurationResolverTest {
 
     @Test public void testConstruction() {
-        RelyingPartyConfigurationResolver resolver;
+        ActivatedRelyingPartyConfigurationResolver resolver;
 
-        ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
-        rpConfigs
-                .add(new RelyingPartyConfiguration("one", "foo", Predicates.<ProfileRequestContext> alwaysTrue(), null));
-        rpConfigs.add(new RelyingPartyConfiguration("two", "foo", Predicates.<ProfileRequestContext> alwaysFalse(),
-                null));
-        rpConfigs.add(new RelyingPartyConfiguration("three", "foo", Predicates.<ProfileRequestContext> alwaysTrue(),
-                null));
+        ArrayList<ActivatedRelyingPartyConfiguration> rpConfigs = new ArrayList<ActivatedRelyingPartyConfiguration>();
+        rpConfigs.add(new ActivatedRelyingPartyConfiguration("one", "foo", null, Predicates
+                .<ProfileRequestContext> alwaysTrue()));
+        rpConfigs.add(new ActivatedRelyingPartyConfiguration("two", "foo", null, Predicates
+                .<ProfileRequestContext> alwaysFalse()));
+        rpConfigs.add(new ActivatedRelyingPartyConfiguration("three", "foo", null, Predicates
+                .<ProfileRequestContext> alwaysTrue()));
 
-        resolver = new RelyingPartyConfigurationResolver();
+        resolver = new ActivatedRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 3);
 
-        resolver = new RelyingPartyConfigurationResolver();
+        resolver = new ActivatedRelyingPartyConfigurationResolver();
         resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
 
-        resolver = new RelyingPartyConfigurationResolver();
+        resolver = new ActivatedRelyingPartyConfigurationResolver();
         resolver.setId("test");
         Assert.assertEquals(resolver.getId(), "test");
         Assert.assertEquals(resolver.getRelyingPartyConfigurations().size(), 0);
@@ -61,33 +62,36 @@ public class RelyingPartyConfigurationResolverTest {
     @Test public void testResolve() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
 
-        RelyingPartyConfiguration config1 =
-                new RelyingPartyConfiguration("one", "foo", Predicates.<ProfileRequestContext> alwaysTrue(), null);
-        RelyingPartyConfiguration config2 =
-                new RelyingPartyConfiguration("two", "foo", Predicates.<ProfileRequestContext> alwaysFalse(), null);
-        RelyingPartyConfiguration config3 =
-                new RelyingPartyConfiguration("three", "foo", Predicates.<ProfileRequestContext> alwaysTrue(), null);
+        ActivatedRelyingPartyConfiguration config1 =
+                new ActivatedRelyingPartyConfiguration("one", "foo", null,
+                        Predicates.<ProfileRequestContext> alwaysTrue());
+        ActivatedRelyingPartyConfiguration config2 =
+                new ActivatedRelyingPartyConfiguration("two", "foo", null,
+                        Predicates.<ProfileRequestContext> alwaysFalse());
+        ActivatedRelyingPartyConfiguration config3 =
+                new ActivatedRelyingPartyConfiguration("three", "foo", null,
+                        Predicates.<ProfileRequestContext> alwaysTrue());
 
-        ArrayList<RelyingPartyConfiguration> rpConfigs = new ArrayList<RelyingPartyConfiguration>();
+        ArrayList<ActivatedRelyingPartyConfiguration> rpConfigs = new ArrayList<ActivatedRelyingPartyConfiguration>();
         rpConfigs.add(config1);
         rpConfigs.add(config2);
         rpConfigs.add(config3);
 
-        RelyingPartyConfigurationResolver resolver = new RelyingPartyConfigurationResolver();
+        ActivatedRelyingPartyConfigurationResolver resolver = new ActivatedRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
 
-        Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
+        Iterable<ActivatedRelyingPartyConfiguration> results = resolver.resolve(requestContext);
         Assert.assertNotNull(results);
 
-        Iterator<RelyingPartyConfiguration> resultItr = results.iterator();
+        Iterator<ActivatedRelyingPartyConfiguration> resultItr = results.iterator();
         Assert.assertTrue(resultItr.hasNext());
         Assert.assertSame(resultItr.next(), config1);
         Assert.assertTrue(resultItr.hasNext());
         Assert.assertSame(resultItr.next(), config3);
         Assert.assertFalse(resultItr.hasNext());
 
-        RelyingPartyConfiguration result = resolver.resolveSingle(requestContext);
+        ActivatedRelyingPartyConfiguration result = resolver.resolveSingle(requestContext);
         Assert.assertSame(result, config1);
 
         results = resolver.resolve(null);
