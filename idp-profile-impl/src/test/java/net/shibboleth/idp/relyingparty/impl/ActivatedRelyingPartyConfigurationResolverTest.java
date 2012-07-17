@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
