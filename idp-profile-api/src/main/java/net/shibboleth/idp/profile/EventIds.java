@@ -39,6 +39,12 @@ public final class EventIds {
     public static final String NO_RELYING_PARTY_CTX = "NoRelyingPartyContext";
 
     /**
+     * ID of the event returned if no {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} is associated
+     * with the {@link net.shibboleth.idp.profile.ProfileRequestContext}.
+     */
+    public static final String NO_RELYING_PARTY_CONFIG = "NoRelyingPartyConfiguration";
+
+    /**
      * ID of the event returned if no {@link net.shibboleth.idp.attribute.AttributeContext} is associated with the
      * {@link net.shibboleth.idp.relyingparty.RelyingPartyContext}.
      */
