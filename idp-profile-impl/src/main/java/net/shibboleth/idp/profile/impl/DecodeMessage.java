@@ -18,128 +18,71 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-/**
- * An IdP action that decodes the incoming message and populates
- * {@link ProfileRequestContext#getInboundMessageContext()}.
- * 
- * @param <InboundMessageType> the inbound message type
- * @param <OutboundMessageType> this is meaningless for this action but needed to fill out the class decleration
- */
-public final class DecodeMessage<InboundMessageType, OutboundMessageType> extends
-        AbstractProfileAction<InboundMessageType, OutboundMessageType> implements UnmodifiableComponent {
+/** A profile stage that decodes an incoming request into a given {@link MessageContext}. */
+@Events({@Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = DecodeMessage.UNABLE_TO_DECODE, description = "An error occured trying to decode the message")})
+public class DecodeMessage extends AbstractProfileAction {
+
+    /** ID of the event returned if incoming message could not be decoded. */
+    public static final String UNABLE_TO_DECODE = "UnableToDecode";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(DecodeMessage.class);
 
-    /** Factory used to create new {@link MessageDecoder} instances. */
-    private final HttpServletRequestMessageDecoderFactory<InboundMessageType> decoderFactory;
-    
+    /** Factory used to produce the {@link MessageDecoder} instance used to decode the incoming message. */
+    private final HttpServletRequestMessageDecoderFactory decoderFactory;
+
     /**
      * Constructor.
-     *
-     * @param factory factory used to create new {@link MessageDecoder} instances
+     * 
+     * @param factory factory used to create a {@link MessageDecoder} for an incoming request
      */
-    public DecodeMessage(@Nonnull final HttpServletRequestMessageDecoderFactory<InboundMessageType> factory){
-        super();
-        
+    public DecodeMessage(@Nonnull final HttpServletRequestMessageDecoderFactory factory) {
         decoderFactory = Constraint.isNotNull(factory, "Message decoder factory can not be null");
     }
 
-    /**
-     * Gets the factory used to create new {@link MessageDecoder} instances.
-     * 
-     * @return factory used to create new {@link MessageDecoder} instances, never null after initialization
-     */
-    @Nonnull public HttpServletRequestMessageDecoderFactory<InboundMessageType> getDecoderFactory() {
-        return decoderFactory;
-    }
-
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-            throws ProfileException {
-
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         try {
-            log.debug("DecodeMessage {}: creating new message decoder", getId());
-            final MessageDecoder<InboundMessageType> decoder =
-                    decoderFactory.newDecoder(profileRequestContext.getHttpRequest());
+            final MessageDecoder decoder = decoderFactory.newDecoder(httpRequest);
+            log.debug("Action {}: Using message decoder of type {} for this request", getId(), decoder.getClass()
+                    .getName());
 
-            decoder.initialize();
-
-            log.debug("DecodeMessage {}: decoding message", getId());
+            log.debug("Action {}: Decoding incoming request", getId());
             decoder.decode();
-            profileRequestContext.setInboundMessageContext(decoder.getMessageContext());
-            log.debug("DecodeMessage {}: successfully decoded message", getId());
-
+            final MessageContext msgContext = decoder.getMessageContext();
             decoder.destroy();
+            log.debug("Action {}: Incoming request decoded into a message context of type {}", getId(), msgContext
+                    .getClass().getName());
 
+            profileRequestContext.setInboundMessageContext(msgContext);
             return ActionSupport.buildProceedEvent(this);
         } catch (MessageDecodingException e) {
-            log.error("DecodeMessage {}: was unable to decode the incoming request", getId(), e);
-            throw new UnableToDecodeMessageException("Unable to decode incoming message");
-        } catch (ComponentInitializationException e) {
-            log.error("DecodeMessage {}: error initializing the message decoder", getId(), e);
-            throw new UnableToDecodeMessageException("Unable to decode incoming message");
-        }
-    }
-
-    /** Exception thrown if there is a problem decoding the incoming message. */
-    public static class UnableToDecodeMessageException extends ProfileException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = -7866899349347664342L;
-
-        /** Constructor. */
-        public UnableToDecodeMessageException() {
-            super();
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         */
-        public UnableToDecodeMessageException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public UnableToDecodeMessageException(Exception wrappedException) {
-            super(wrappedException);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public UnableToDecodeMessageException(String message, Exception wrappedException) {
-            super(message, wrappedException);
+            log.debug("Action {}: Unable to decode incoming request", getId(), e);
+            return ActionSupport.buildEvent(this, UNABLE_TO_DECODE);
         }
     }
 }
