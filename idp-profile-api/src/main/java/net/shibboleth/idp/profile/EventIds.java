@@ -44,6 +44,9 @@ public final class EventIds {
      */
     public static final String NO_RELYING_PARTY_CONFIG = "NoRelyingPartyConfiguration";
 
+    /** ID of the even when no profile configuration is associated with the request. */
+    public static final String NO_PROFILE_CONFIG = "NoProfileConfiguration";
+
     /**
      * ID of the event returned if no {@link net.shibboleth.idp.attribute.AttributeContext} is associated with the
      * {@link net.shibboleth.idp.relyingparty.RelyingPartyContext}.

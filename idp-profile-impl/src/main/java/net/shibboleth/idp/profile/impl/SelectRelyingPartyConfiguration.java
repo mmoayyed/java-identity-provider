@@ -52,10 +52,10 @@ import com.google.common.base.Function;
         @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context return by lookup strategy"),
         @Event(id = EventIds.NO_RELYING_PARTY_CONFIG,
                 description = "No relying party configuation can be associated with the profile request")})
-public final class AddRelyingPartyConfigurationToProfileRequestContext extends AbstractProfileAction {
+public final class SelectRelyingPartyConfiguration extends AbstractProfileAction {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AddRelyingPartyConfigurationToProfileRequestContext.class);
+    private final Logger log = LoggerFactory.getLogger(SelectRelyingPartyConfiguration.class);
 
     /** Resolver used to look up relying party configurations. */
     private final Resolver<RelyingPartyConfiguration, ProfileRequestContext> rpConfigResolver;
@@ -70,7 +70,7 @@ public final class AddRelyingPartyConfigurationToProfileRequestContext extends A
      * 
      * @param resolver resolver used to look up relying party configurations
      */
-    public AddRelyingPartyConfigurationToProfileRequestContext(
+    public SelectRelyingPartyConfiguration(
             @Nonnull final Resolver<RelyingPartyConfiguration, ProfileRequestContext> resolver) {
         super();
 
