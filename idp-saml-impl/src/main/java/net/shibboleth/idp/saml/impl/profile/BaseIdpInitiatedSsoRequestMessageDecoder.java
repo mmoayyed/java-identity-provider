@@ -22,15 +22,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.BasicMessageMetadataContext;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
 
-/** Decodes an incoming Shibboleth Authentication Request message. */
+/**
+ * Decodes an incoming Shibboleth Authentication Request message.
+ * 
+ * @param <RequestType> type of decoded message
+ */
 @NotThreadSafe
-public class IdpInitiatedSsoRequestMessageDecoder extends
-        AbstractHttpServletRequestMessageDecoder<IdpInitatedSsoRequest> {
+public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> extends
+        AbstractHttpServletRequestMessageDecoder<RequestType> {
 
     /**
      * Deprecated name of the query parameter carrying the service provider entity ID: {@value} . Use of
@@ -59,26 +61,6 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
     /** Name of the query parameter carrying the current time at the service provider: {@value. } */
     public static final String TIME_PARAM = "time";
 
-    /** {@inheritDoc} */
-    protected void doDecode() throws MessageDecodingException {
-        IdpInitatedSsoRequest authnRequest =
-                new IdpInitatedSsoRequest(getEntityId(getHttpServletRequest()), getAcsUrl(getHttpServletRequest()),
-                        getTarget(getHttpServletRequest()), getTime(getHttpServletRequest()));
-
-        MessageContext<IdpInitatedSsoRequest> messageContext = new MessageContext<IdpInitatedSsoRequest>();
-        messageContext.setMessage(authnRequest);
-
-        BasicMessageMetadataContext msgMetadata = new BasicMessageMetadataContext();
-        // TODO need to generate a message ID, probably need to base it off of the conversation ID
-        // msgMetadata.setMessageId(messageId);
-        msgMetadata.setMessageIssueInstant(authnRequest.getTime());
-        msgMetadata.setMessageIssuer(authnRequest.getEntityId());
-
-        messageContext.addSubcontext(msgMetadata);
-
-        setMessageContext(messageContext);
-    }
-
     /**
      * Gets the entity ID of the service provider.
      * 
@@ -88,7 +70,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
      * 
      * @throws MessageDecodingException thrown if the request does not contain a service provider entity ID
      */
-    private String getEntityId(HttpServletRequest request) throws MessageDecodingException {
+    public String getEntityId(HttpServletRequest request) throws MessageDecodingException {
         String entityId = StringSupport.trimOrNull(request.getParameter(ENTITY_ID_PARAM));
         if (entityId == null) {
             entityId = StringSupport.trimOrNull(request.getParameter(PROVIDER_ID_PARAM));
@@ -108,7 +90,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
      * 
      * @return the assertion consumer service URL, may be null if none is given in the request
      */
-    private String getAcsUrl(HttpServletRequest request) {
+    public String getAcsUrl(HttpServletRequest request) {
         String acsUrl = StringSupport.trimOrNull(request.getParameter(ACS_URL_PARAM));
         if (acsUrl == null) {
             acsUrl = StringSupport.trimOrNull(request.getParameter(SHIRE_PARAM));
@@ -124,7 +106,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
      * 
      * @return the relay state, or null if the service provider did not send one
      */
-    private String getTarget(HttpServletRequest request) {
+    public String getTarget(HttpServletRequest request) {
         String relayState = StringSupport.trimOrNull(request.getParameter(RELAY_STATE_PARAM));
         if (relayState == null) {
             relayState = StringSupport.trimOrNull(request.getParameter(TARGET_PARAM));
@@ -143,7 +125,7 @@ public class IdpInitiatedSsoRequestMessageDecoder extends
      * @throws MessageDecodingException thrown if the time parameter given by the service provider is non-numeric or a
      *             negative time
      */
-    private long getTime(HttpServletRequest request) throws MessageDecodingException {
+    public long getTime(HttpServletRequest request) throws MessageDecodingException {
         String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
         if (timeString == null) {
             return 0;
