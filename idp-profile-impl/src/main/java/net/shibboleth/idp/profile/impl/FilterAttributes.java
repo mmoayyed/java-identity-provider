@@ -148,8 +148,7 @@ public class FilterAttributes extends AbstractProfileAction {
 
         try {
             filterEngine.filterAttributes(filterContext);
-            // TODO should we do this
-            // relyingPartyCtx.removeSubcontext(filterContext);
+            relyingPartyCtx.removeSubcontext(filterContext);
 
             attributeContext.setAttributes(filterContext.getFilteredAttributes().values());
         } catch (AttributeFilteringException e) {

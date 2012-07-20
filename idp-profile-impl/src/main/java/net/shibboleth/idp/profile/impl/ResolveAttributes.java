@@ -131,8 +131,7 @@ public class ResolveAttributes extends AbstractProfileAction {
 
         try {
             attributeResolver.resolveAttributes(resolutionContext);
-            // TODO should we do this?
-            // relyingPartyCtx.removeSubcontext(resolutionContext);
+            relyingPartyCtx.removeSubcontext(resolutionContext);
 
             final AttributeContext attributeCtx = new AttributeContext();
             attributeCtx.setAttributes(resolutionContext.getResolvedAttributes().values());
