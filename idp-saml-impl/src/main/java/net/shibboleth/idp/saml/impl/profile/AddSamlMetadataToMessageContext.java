@@ -50,7 +50,7 @@ import org.springframework.webflow.execution.RequestContext;
 import com.google.common.base.Function;
 
 /** Action that creates and adds a {@link SamlMetadataContext} to a {@link MessageContext}. */
-@Events({@Event(id = EventIds.NO_MSG_CTX, description = "No message context was available in the request"),
+@Events({@Event(id = EventIds.INVALID_MSG_CTX, description = "No message context was available in the request"),
         @Event(id = EventIds.NO_MSG_MD, description = "No message metadata available in message context")})
 public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
 
@@ -114,7 +114,7 @@ public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
         final MessageContext messageCtx = messageContextLookupStrategy.apply(profileRequestContext);
         if (messageCtx == null) {
             log.debug("Action {}: appropriate message context not available", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_MSG_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
         }
 
         final BasicMessageMetadataContext msgMetadataCtx =

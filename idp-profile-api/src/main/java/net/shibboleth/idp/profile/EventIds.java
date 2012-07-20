@@ -23,8 +23,11 @@ public final class EventIds {
     /** Incoming request did not contains a {@link ProfileRequestContext}. */
     public static final String NO_PROFILE_CTX = "NoProfileCtx";
 
-    /** ID of the event returned if an expected {@link org.opensaml.messaging.context.MessageContext} is missing. */
-    public static final String NO_MSG_CTX = "NoMessageContext";
+    /**
+     * ID of the event returned if an expected {@link org.opensaml.messaging.context.MessageContext} is missing or
+     * invalid in some way.
+     */
+    public static final String INVALID_MSG_CTX = "InvalidMessageContext";
 
     /**
      * ID of the event returned if a {@link org.opensaml.messaging.context.MessageContext} does not contain a necessary

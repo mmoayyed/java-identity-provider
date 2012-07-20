@@ -26,27 +26,31 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidInboundMessageException;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.core.xml.io.Marshaller;
-import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.messaging.context.MessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /** An action that schema validates inbound XML messages. */
+@Events({@Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = EventIds.INVALID_MSG_CTX, description = "No inbound message context or message"),
+        @Event(id = SchemaValidateXmlMessage.SCHEMA_INVALID, description = "Inbound message was schema invalid")})
 public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, Object> {
+
+    /** ID of the event returned if the incoming request is schema invalid. */
+    public static final String SCHEMA_INVALID = "SchemaInvalid";
 
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(SchemaValidateXmlMessage.class);
@@ -73,80 +77,43 @@ public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, O
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext<XMLObject, Object> profileRequestContext)
-            throws ProfileException {
+    protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest,
+            HttpServletResponse httpResponse, RequestContext springRequestContext,
+            ProfileRequestContext<XMLObject, Object> profileRequestContext) throws ProfileException {
 
         log.debug("Action {}: Attempting to schema validate incoming message", getId());
 
-        final XMLObject request = profileRequestContext.getInboundMessageContext().getMessage();
+        final MessageContext<XMLObject> msgCtx = profileRequestContext.getInboundMessageContext();
+        if (msgCtx == null) {
+            log.debug("Action {}: Inbound message context is null, unable to proceed", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
+        }
 
-        final Document requestDoc = getRequestDom(request);
+        final XMLObject request = msgCtx.getMessage();
+        if (request == null) {
+            log.debug("Action {}: Inbound message context did not contain a message, unable to proceed", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
+        }
 
-        final Validator schemaValidator = validationSchema.newValidator();
+        final Element requestElem = request.getDOM();
+        if (requestElem == null) {
+            log.debug("Action {}: Inbound message doesn't contain a DOM, unable to proceed", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
+        }
 
         try {
-            schemaValidator.validate(new DOMSource(requestDoc));
+            final Validator schemaValidator = validationSchema.newValidator();
+            schemaValidator.validate(new DOMSource(requestElem));
         } catch (SAXException e) {
             log.debug("Action {}: Incoming request {} is not schema valid",
                     new Object[] {getId(), request.getElementQName(), e});
-            throw new SchemaInvalidMessageException(e.getMessage());
+            return ActionSupport.buildEvent(this, SCHEMA_INVALID);
         } catch (IOException e) {
             log.debug("Action {}: Unable to read incoming message");
-            throw new SchemaInvalidMessageException(e.getMessage());
+            return ActionSupport.buildEvent(this, SCHEMA_INVALID);
         }
 
         log.debug("Action {}: Incoming message is valid", getId());
         return ActionSupport.buildProceedEvent(this);
-    }
-
-    /**
-     * Gets the {@link Document} of the incoming XML request.
-     * 
-     * @param request the incoming request
-     * 
-     * @return the {@link Document} of the incoming XML request
-     * 
-     * @throws InvalidInboundMessageException thrown if the given XMLObject does not have an associated DOM and can not
-     *             be marshalled
-     */
-    protected Document getRequestDom(final XMLObject request) throws InvalidInboundMessageException {
-        Element requestDom = request.getDOM();
-        if (requestDom != null) {
-            return requestDom.getOwnerDocument();
-        }
-
-        final Marshaller marshaller = XMLObjectProviderRegistrySupport.getMarshallerFactory().getMarshaller(request);
-        if (marshaller == null) {
-            log.debug("Action {}: No marshaller available for incoming request {}", getId(), request.getElementQName());
-            throw new InvalidInboundMessageException("No marshaller available for incoming request");
-        }
-
-        try {
-            requestDom = marshaller.marshall(request);
-        } catch (MarshallingException e) {
-            log.debug("Action {}: Unable to marshall incoming request {}",
-                    new Object[] {getId(), request.getElementQName(), e});
-            throw new InvalidInboundMessageException("Unable to marshall inbound request", e);
-        }
-
-        return requestDom.getOwnerDocument();
-    }
-
-    /** Exception thrown if an incoming message is not schema valid. */
-    public static class SchemaInvalidMessageException extends ProfileException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = 7892341018763645081L;
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         */
-        public SchemaInvalidMessageException(String message) {
-            super(message);
-        }
-
     }
 }
