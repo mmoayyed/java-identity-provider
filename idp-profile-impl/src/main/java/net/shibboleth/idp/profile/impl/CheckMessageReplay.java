@@ -18,115 +18,69 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.InvalidProfileRequestContextStateException;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.util.storage.ReplayCache;
-import org.springframework.webflow.execution.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
-
-import com.google.common.base.Function;
 
 /** Checks that the given message has not be replayed. */
 public final class CheckMessageReplay extends AbstractProfileAction {
 
+    /** ID of event returned if a message is being replayed. */
+    public static final String REPLAYED_MSG = "ReplayedMessage";
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(CheckMessageReplay.class);
+
     /** Cache used to store message issuer/id pairs and check to see if a message is being replayed. */
     private ReplayCache replayCache;
 
-    /**
-     * Strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message context.
-     */
-    private Function<MessageContext, BasicMessageMetadataContext> messageMetadataContextLookupStrategy;
-
-    /**
-     * Constructor.
-     * 
-     * Initializes {@link #messageMetadataContextLookupStrategy} to {@link ChildContextLookup}.
-     */
-    public CheckMessageReplay() {
-        super();
-
-        messageMetadataContextLookupStrategy =
-                new ChildContextLookup<MessageContext, BasicMessageMetadataContext>(BasicMessageMetadataContext.class,
-                        false);
-    }
-
-    /**
-     * Gets the strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
-     * context.
-     * 
-     * @return strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
-     *         context
-     */
-    public Function<MessageContext, BasicMessageMetadataContext> getMessageMetadataContextLookupStrategy() {
-        return messageMetadataContextLookupStrategy;
-    }
-
-    /**
-     * Sets the strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound message
-     * context.
-     * 
-     * @param strategy strategy used to look up the {@link BasicMessageMetadataContext} associated with the inbound
-     *            message context
-     */
-    public synchronized void setMessageMetadataContextLookupStrategy(
-            @Nonnull final Function<MessageContext, BasicMessageMetadataContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        messageMetadataContextLookupStrategy =
-                Constraint.isNotNull(strategy, "Message metadata context lookup strategy can not be null");
-    }
-
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
-        final BasicMessageMetadataContext messageSubcontext =
-                messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());
-
-        if (messageSubcontext.getMessageIssuer() == null) {
-            throw new InvalidProfileRequestContextStateException(
-                    "Basic message metadata subcontext does not contain a message issuer");
+        final MessageContext msgCtx = profileRequestContext.getInboundMessageContext();
+        if (msgCtx == null) {
+            log.debug("Action {}: No inbound message context, unable to proceed", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
         }
 
-        if (messageSubcontext.getMessageId() == null) {
-            throw new InvalidProfileRequestContextStateException(
-                    "Basic message metadata subcontext does not contain a message ID");
+        final BasicMessageMetadataContext msgMdCtx = msgCtx.getSubcontext(BasicMessageMetadataContext.class, false);
+        if (msgMdCtx == null) {
+            log.debug("Action {}: No inbound message metadata context, unable to proceed", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
         }
 
-        if (replayCache.isReplay(messageSubcontext.getMessageIssuer(), messageSubcontext.getMessageId())) {
-            throw new ReplayedMessageException(messageSubcontext.getMessageId(), messageSubcontext.getMessageIssuer());
+        final String msgIssuer = msgMdCtx.getMessageIssuer();
+        if (msgIssuer == null) {
+            log.debug("Action {}: Message metadata does not contain an issuer, unable to proceed", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
+        }
+
+        final String msgId = msgMdCtx.getMessageId();
+        if (msgId == null) {
+            log.debug("Action {}: Message metadata does not contain a message ID, unable to proceed", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
+        }
+
+        if (replayCache.isReplay(msgIssuer, msgId)) {
+            log.debug("Action {}: Message {} issued by {} has been replayed", new Object[] {getId(), msgId, msgIssuer});
+            return ActionSupport.buildEvent(this, REPLAYED_MSG);
         }
 
         return ActionSupport.buildProceedEvent(this);
-    }
-
-    /** Profile processing error that occurred because the given request was detected as a replay. */
-    public class ReplayedMessageException extends ProfileException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = -7358811994922990143L;
-
-        /**
-         * Constructor.
-         * 
-         * @param messageId ID of the message, never null
-         * @param messageIssuer issuer of the message, never null
-         */
-        public ReplayedMessageException(String messageId, String messageIssuer) {
-            super("Action " + getId() + ": Message ID " + messageId + " from issuer " + messageIssuer
-                    + " is a replayed message");
-        }
     }
 }
