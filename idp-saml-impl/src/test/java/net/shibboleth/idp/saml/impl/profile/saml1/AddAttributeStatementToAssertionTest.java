@@ -36,7 +36,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
         Event event = action.doExecute(null, null, null, profileCtx);
 
-        Assert.assertEquals(event.getId(), EventIds.NO_RELYING_PARTY_CTX);
+        Assert.assertEquals(event.getId(), EventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     @Test public void testNoAttributeContext() throws Exception {
@@ -48,7 +48,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
         Event event = action.doExecute(null, null, null, profileCtx);
 
-        Assert.assertEquals(event.getId(), EventIds.NO_ATTRIBUTE_CTX);
+        Assert.assertEquals(event.getId(), EventIds.INVALID_ATTRIBUTE_CTX);
     }
 
     @Test public void testNoAttributes() throws Exception {

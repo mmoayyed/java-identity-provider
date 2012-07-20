@@ -46,8 +46,8 @@ import com.google.common.base.Function;
 
 /** A stage which invokes the {@link AttributeFilteringEngine} for the current request. */
 @Events({@Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context available for request"),
-        @Event(id = EventIds.NO_ATTRIBUTE_CTX, description = "No attributes were available for filtering"),
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available for request"),
+        @Event(id = EventIds.INVALID_ATTRIBUTE_CTX, description = "No attributes were available for filtering"),
         @Event(id = FilterAttributes.UNABLE_FILTER_ATTRIBS, description = "Error in filtering attributes")})
 public class FilterAttributes extends AbstractProfileAction {
 
@@ -122,13 +122,13 @@ public class FilterAttributes extends AbstractProfileAction {
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.debug("Action {}: No relying party context available.", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
         }
 
         final AttributeContext attributeContext = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
         if (attributeContext == null) {
             log.debug("Action {}: No attribute context, no attributes to filter", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_ATTRIBUTE_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_ATTRIBUTE_CTX);
         }
 
         if (attributeContext.getAttributes().isEmpty()) {

@@ -46,7 +46,7 @@ import com.google.common.base.Function;
 
 /** A stage which invokes the {@link AttributeResolver} for the current request. */
 @Events({@Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context available for request"),
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available for request"),
         @Event(id = ResolveAttributes.UNABLE_RESOLVE_ATTRIBS, description = "Error resolving attributes")})
 public class ResolveAttributes extends AbstractProfileAction {
 
@@ -121,7 +121,7 @@ public class ResolveAttributes extends AbstractProfileAction {
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.debug("Action {}: No relying party context available.", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
         }
 
         // Get the resolution context from the profile request

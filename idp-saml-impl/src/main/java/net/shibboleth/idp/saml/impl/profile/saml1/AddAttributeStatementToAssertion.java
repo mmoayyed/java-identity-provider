@@ -65,9 +65,9 @@ import com.google.common.base.Function;
  */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.NO_RELYING_PARTY_CTX,
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
                 description = "Returned if no relying party information is associated with the current request"),
-        @Event(id = EventIds.NO_ATTRIBUTE_CTX,
+        @Event(id = EventIds.INVALID_ATTRIBUTE_CTX,
                 description = "Returned if no attribute context is associated with the relying party context"),
         @Event(id = SamlEventIds.UNABLE_ENCODE_ATTRIBUTE,
                 description = "Returned if there was a problem encoding an attribute")})
@@ -159,14 +159,14 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.error("Action {}: No relying party context located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
         }
 
         final AttributeContext attributeCtx = relyingPartyCtx.getSubcontext(AttributeContext.class, false);
         if (attributeCtx == null) {
             log.debug("Action {}: No AttributeSubcontext available for relying party  {}, nothing left to do", getId(),
                     relyingPartyCtx.getRelyingPartyId());
-            return ActionSupport.buildEvent(this, EventIds.NO_ATTRIBUTE_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_ATTRIBUTE_CTX);
         }
 
         try {

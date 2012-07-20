@@ -51,7 +51,7 @@ import com.google.common.base.Function;
 
 /** Action that creates and adds a {@link SamlMetadataContext} to a {@link MessageContext}. */
 @Events({@Event(id = EventIds.INVALID_MSG_CTX, description = "No message context was available in the request"),
-        @Event(id = EventIds.NO_MSG_MD, description = "No message metadata available in message context")})
+        @Event(id = EventIds.INVALID_MSG_MD, description = "No message metadata available in message context")})
 public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
 
     /** Class logger. */
@@ -121,7 +121,7 @@ public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
                 messageCtx.getSubcontext(BasicMessageMetadataContext.class, false);
         if (msgMetadataCtx == null) {
             log.debug("Action {}: message context did not contain basic message metadata", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_MSG_MD);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
         }
 
         final EntityIdCriterion entityIdCriterion = new EntityIdCriterion(msgMetadataCtx.getMessageIssuer());

@@ -20,44 +20,50 @@ package net.shibboleth.idp.profile;
 /** Constants to use for {@link org.springframework.webflow.execution.Event} IDs. */
 public final class EventIds {
 
-    /** Incoming request did not contains a {@link ProfileRequestContext}. */
-    public static final String NO_PROFILE_CTX = "NoProfileCtx";
+    /**
+     * ID of event returned if the {@link ProfileRequestContext} associated with the current request is missing or
+     * corrupt in some way.
+     */
+    public static final String INVALID_PROFILE_CTX = "InvalidProfileContext";
 
     /**
-     * ID of the event returned if an expected {@link org.opensaml.messaging.context.MessageContext} is missing or
-     * invalid in some way.
+     * ID of the event returned if a {@link org.opensaml.messaging.context.MessageContext} is missing or corrupt in some
+     * way.
      */
     public static final String INVALID_MSG_CTX = "InvalidMessageContext";
 
     /**
-     * ID of the event returned if a {@link org.opensaml.messaging.context.MessageContext} does not contain a necessary
-     * {@link org.opensaml.messaging.context.BasicMessageMetadataContext}.
+     * ID of the event returned if a {@link org.opensaml.messaging.context.BasicMessageMetadataContext} is missing or
+     * corrupt in some way.
      */
-    public static final String NO_MSG_MD = "NoMessageMetadata";
+    public static final String INVALID_MSG_MD = "InvalidMessageMetadata";
 
     /**
-     * ID of the event returned if no {@link net.shibboleth.idp.relyingparty.RelyingPartyContext} is associated with the
-     * {@link net.shibboleth.idp.profile.ProfileRequestContext}.
+     * ID of the event returned if a {@link net.shibboleth.idp.relyingparty.RelyingPartyContext} is missing or corrupt
+     * in some way..
      */
-    public static final String NO_RELYING_PARTY_CTX = "NoRelyingPartyContext";
+    public static final String INVALID_RELYING_PARTY_CTX = "InvalidRelyingPartyContext";
 
     /**
-     * ID of the event returned if no {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} is associated
-     * with the {@link net.shibboleth.idp.profile.ProfileRequestContext}.
+     * ID of the event returned if a {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration} is missing or
+     * corrupt in some way..
      */
-    public static final String NO_RELYING_PARTY_CONFIG = "NoRelyingPartyConfiguration";
-
-    /** ID of the even when no profile configuration is associated with the request. */
-    public static final String NO_PROFILE_CONFIG = "NoProfileConfiguration";
+    public static final String INVALID_RELYING_PARTY_CONFIG = "InvalidRelyingPartyConfiguration";
 
     /**
-     * ID of the event returned if no {@link net.shibboleth.idp.attribute.AttributeContext} is associated with the
-     * {@link net.shibboleth.idp.relyingparty.RelyingPartyContext}.
+     * ID of the event returned if a {@link net.shibboleth.idp.profile.config.ProfileConfiguration} is missing or
+     * corrupt in some way.
      */
-    public static final String NO_ATTRIBUTE_CTX = "NoAttributeContext";
+    public static final String INVALID_PROFILE_CONFIG = "InvalidProfileConfiguration";
 
     /**
-     * ID of an Event indicating that the action completed successfully and processing should move on to the next step.
+     * ID of the event returned if a {@link net.shibboleth.idp.attribute.AttributeContext} is missing or corrupt in some
+     * way.
+     */
+    public static final String INVALID_ATTRIBUTE_CTX = "InvalidAttributeContext";
+
+    /**
+     * ID of an Event indicating that an action completed successfully and processing should move on to the next step.
      */
     public static final String PROCEED_EVENT_ID = "proceed";
 

@@ -56,7 +56,7 @@ import com.google.common.base.Function;
  */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context available"),
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available"),
         @Event(id = SamlEventIds.RESPONSE_EXISTS,
                 description = "If the outgoing message context already contains a message")})
 public class AddResponseShell extends AbstractProfileAction<Object, Response> {
@@ -117,7 +117,7 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.error("Action {}: No relying party context located in current profile request context", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
         }
 
         final SAMLObjectBuilder<StatusCode> statusCodeBuilder =

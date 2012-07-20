@@ -49,8 +49,8 @@ import com.google.common.base.Function;
  */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.NO_RELYING_PARTY_CTX, description = "No relying party context return by lookup strategy"),
-        @Event(id = EventIds.NO_RELYING_PARTY_CONFIG,
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context return by lookup strategy"),
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CONFIG,
                 description = "No relying party configuation can be associated with the profile request")})
 public final class SelectRelyingPartyConfiguration extends AbstractProfileAction {
 
@@ -123,14 +123,14 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyCtx == null) {
             log.debug("Action {}: No relying party context available for this request", getId());
-            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CTX);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
         }
 
         try {
             final RelyingPartyConfiguration config = rpConfigResolver.resolveSingle(profileRequestContext);
             if (config == null) {
                 log.debug("Action {}: No relying party configuration applies to this request", getId());
-                return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CONFIG);
+                return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CONFIG);
             }
 
             log.debug("Action {}: Found relying party configuration for request", getId());
@@ -138,7 +138,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
             return ActionSupport.buildProceedEvent(this);
         } catch (ResolverException e) {
             log.error("Action {}: error trying to resolve relying party configuration", getId(), e);
-            return ActionSupport.buildEvent(this, EventIds.NO_RELYING_PARTY_CONFIG);
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CONFIG);
         }
     }
 }
