@@ -25,10 +25,13 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
+
+//TODO get rid of exception
 
 /** A base class for authentication related actions. */
 public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
@@ -38,6 +41,15 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
      * {@link ProfileRequestContext}.
      */
     private Function<ProfileRequestContext, AuthenticationRequestContext> authnCtxLookupStrategy;
+
+    /** Constructor. */
+    public AbstractAuthenticationAction() {
+        super();
+
+        authnCtxLookupStrategy =
+                new ChildContextLookup<ProfileRequestContext, AuthenticationRequestContext>(
+                        AuthenticationRequestContext.class, false);
+    }
 
     /** {@inheritDoc} */
     protected final Event doExecute(@Nonnull final HttpServletRequest httpRequest,
