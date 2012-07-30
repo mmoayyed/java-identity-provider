@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <action-state id="InitializeAuthenticationContext">
+        <evaluate expression="initializeAuthenticationContext" />
+        <transition on="proceed" to="FilterAvailableWorkflowsByPassivity" />
+    </action-state>
+
+    <action-state id="FilterAvailableWorkflowsByPassivity">
+        <evaluate expression="filterAvailableWorkflowsByPassivity" />
+        <transition on="NoPotentialWorkflow" to="SomeErrorStageNotShownHere" />
+        <transition on="proceed" to="SetRequestedAuthenticationWorkflows" />
+    </action-state>
+
+    <action-state id="SetRequestedAuthenticationWorkflows">
+        <evaluate expression="setRequestedAuthenticationWorkflows" />
+        <transition on="InvalidMessageContext" to="SomeErrorStageNotShownHere"></transition>
+        <transition on="proceed" to="FilterAvailableWorkflowsByRequestedWorkflows" />
+    </action-state>
+
+    <action-state id="FilterAvailableWorkflowsByRequestedWorkflows">
+        <evaluate expression="filterAvailableWorkflowsByRequestedWorkflows" />
+        <transition on="NoPotentialWorkflow" to="SomeErrorStageNotShownHere" />
+        <transition on="proceed" to="SelectAuthenticationWorkflow" />
+    </action-state>
+
+    <action-state id="SelectAuthenticationWorkflow">
+        <evaluate expression="selectAuthenticationWorkflow" />
+        <transition on="NoPotentialWorkflow" to="SomeErrorStageNotShownHere" />
+        <transition on="urn:oasis:names:tc:SAML:2.0:ac:classes:InternetProtocol" to="ExtractUserAgentAddress" />
+        <transition on="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" to="" />
+        <!-- others could go here -->
+    </action-state>
+
+    <!-- Start IP authn steps -->
+    <action-state id="ExtractUserAgentAddress">
+        <evaluate expression="extractUserAgentAddress" />
+        <transition on="NoCredentials" to="SomeErrorStageNotShownHere" />
+        <transition on="proceed" to="ValidateUserAgentAddress" />
+    </action-state>
+
+    <action-state id="ValidateUserAgentAddress">
+        <evaluate expression="validateUserAgentAddress" />
+        <transition on="InvalidAuthenticationContext" to="SomeErrorStageNotShownHere" />
+        <transition on="InvalidCredentials" to="SomeErrorStageNotShownHere" />
+        <transition on="proceed" to="FinalizeAuthentication" />
+    </action-state>
+    <!-- End IP authn steps -->
+
+    <!-- Start Username/Password steps -->
+    <action-state id="ExtractUsernamePasswordFromWssToken">
+        <evaluate expression="extractUsernamePasswordFromWssToken" />
+        <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
+        <transition on="proceed" to="ValidateUsernamePasswordAgainstLdap" />
+    </action-state>
+
+    <action-state id="DisplayUsernamePasswordPage">
+        <evaluate expression="displayUsernamePasswordPage" />
+        <transition on="proceed" to="ExtractUsernamePasswordFromFormResponse" />
+    </action-state>
+
+    <action-state id="ExtractUsernamePasswordFromFormResponse">
+        <evaluate expression="extractUsernamePasswordFromFormResponse" />
+        <transition on="NoCredentials" to="DisplayUsernamePasswordPage" />
+        <transition on="proceed" to="ValidateUsernamePasswordAgainstLdap" />
+    </action-state>
+
+    <action-state id="ValidateUsernamePasswordAgainstLdap">
+        <evaluate expression="validateUsernamePasswordAgainstLdap" />
+        <!-- on error, to ExtractUsernamePasswordFromWssToken -->
+        <transition on="proceed" to="FinalizeAuthentication" />
+    </action-state>
+    <!-- End Username/Password steps -->
+
+    <action-state id="FinalizeAuthentication">
+        <evaluate expression="finalizeAuthentication" />
+    </action-state>
+
+</flow>

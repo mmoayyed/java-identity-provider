@@ -21,67 +21,53 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.springframework.webflow.execution.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A stage that extracts a username/password from the request. This stage is expected to be used in conjunction with
  * {@link DisplayUsernamePasswordPage} but will work with any stage that properly passes in the username and password.
  */
-public class ExtractUsernamePasswordFromFormResponse extends AbstractAuthenticationAction {
+@Events({@Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = AuthnEventIds.NO_CREDENTIALS, description = "request does not contain username or password")})
+public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticationAction {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromFormRequest.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final String username = httpRequest.getParameter(DisplayUsernamePasswordPage.USERNAME_FIELD_NAME);
         if (username == null) {
-            throw new UnableToExtractUsernamePasswordException("Request did not contain a username");
+            log.debug("Action {}: no username in request", getId());
+            return ActionSupport.buildEvent(this, AuthnEventIds.NO_CREDENTIALS);
         }
 
         final String password = httpRequest.getParameter(DisplayUsernamePasswordPage.PASSWORD_FIELD_NAME);
         if (password == null) {
-            throw new UnableToExtractUsernamePasswordException("Request did not contain a password");
+            log.debug("Action {}: no password in request", getId());
+            return ActionSupport.buildEvent(this, AuthnEventIds.NO_CREDENTIALS);
         }
 
         authenticationContext.getSubcontext(UsernamePasswordContext.class, true).setUsername(username)
                 .setPassword(password);
 
         return ActionSupport.buildProceedEvent(this);
-    }
-
-    /** Thrown if there is a problem with the incoming request. */
-    public static final class UnableToExtractUsernamePasswordException extends AuthenticationException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = -2470302287986807006L;
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         */
-        public UnableToExtractUsernamePasswordException(String message) {
-            super(message);
-        }
-
-        /**
-         * Constructor.
-         * 
-         * @param message exception message
-         * @param wrappedException exception to be wrapped by this one
-         */
-        public UnableToExtractUsernamePasswordException(String message, Exception wrappedException) {
-            super(message, wrappedException);
-        }
     }
 }

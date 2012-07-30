@@ -17,15 +17,18 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
@@ -38,7 +41,8 @@ import org.opensaml.soap.wssecurity.Password;
 import org.opensaml.soap.wssecurity.Security;
 import org.opensaml.soap.wssecurity.Username;
 import org.opensaml.soap.wssecurity.UsernameToken;
-import org.springframework.webflow.execution.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 //TODO(lajoie) should we support nonce and created checks?  probably
@@ -49,22 +53,70 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationAction {
 
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWssToken.class);
+
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
-        final Envelope inboundMessage = (Envelope) profileRequestContext.getInboundMessageContext().getMessage();
+        // TODO(lajoie) get the envelope from the inbound message context
+        final Envelope inboundMessage = null;
 
-        final UsernameToken usernameToken = getUsernameToken(inboundMessage);
-
-        final Pair<String, String> usernamePassword = extractUsernamePassword(usernameToken);
+        final Pair<String, String> usernamePassword = extractUsernamePassword(inboundMessage);
+        if (usernamePassword == null) {
+            log.debug("Action {}: inbound message does not contain a username and password", getId());
+            return ActionSupport.buildEvent(this, AuthnEventIds.NO_CREDENTIALS);
+        }
 
         authenticationContext.getSubcontext(UsernamePasswordContext.class, true)
                 .setUsername(usernamePassword.getFirst()).setPassword(usernamePassword.getSecond());
 
         return ActionSupport.buildProceedEvent(this);
+    }
+
+    /**
+     * Extracts a username/password from the inbound message.
+     * 
+     * @param message the inbound message
+     * 
+     * @return the username and password
+     */
+    @Nullable protected Pair<String, String> extractUsernamePassword(@Nonnull final Envelope message) {
+        final UsernameToken usernameToken = getUsernameToken(message);
+        if (usernameToken == null) {
+            return null;
+        }
+
+        final Username username = usernameToken.getUsername();
+        if (username == null) {
+            log.debug("Action {}: <UsernameToken> does not contain a <Username>", getId());
+            return null;
+        }
+
+        final List<XMLObject> passwords = usernameToken.getUnknownXMLObjects(Password.ELEMENT_NAME);
+        if (passwords == null || passwords.size() == 0) {
+            log.debug("Action {}: <UsernameToken> does not contain a <Password>", getId());
+            return null;
+        }
+
+        final Iterator<XMLObject> passwordsItr = passwords.iterator();
+        Password password = null;
+        while (passwordsItr.hasNext()) {
+            password = (Password) passwordsItr.next();
+            if (password.getType() != null && !password.getType().equals(Password.TYPE_PASSWORD_TEXT)) {
+                log.debug("Action {}: skipping password with unsupported type {}", getId(), password.getType());
+                password = null;
+            }
+        }
+
+        if (password == null) {
+            log.debug("Action {}: <UsernameToken> does not contain a support <Password>", getId());
+            return null;
+        }
+        return new Pair<String, String>(username.getValue(), password.getValue());
     }
 
     /**
@@ -74,38 +126,22 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationA
      * 
      * @return the extracted token
      */
-    private UsernameToken getUsernameToken(Envelope message) {
+    @Nullable protected UsernameToken getUsernameToken(Envelope message) {
         final Header header = message.getHeader();
 
         final List<XMLObject> securityHeaders = header.getUnknownXMLObjects(Security.ELEMENT_NAME);
-        // TODO(lajoie) check that there is only one and if not, error out
+        if (securityHeaders == null || securityHeaders.size() == 0) {
+            log.debug("Action {}: inbound message does not contain <Security>", getId());
+            return null;
+        }
 
         final List<XMLObject> usernameTokens =
                 ((Security) securityHeaders.get(0)).getUnknownXMLObjects(UsernameToken.ELEMENT_NAME);
-        // TODO(lajoie) check that there is only one and if not, error out
-
-        return (UsernameToken) usernameTokens.get(0);
-    }
-
-    /**
-     * Extracts a username/password from the given {@link UsernameToken}.
-     * 
-     * @param usernameToken the token from which the username/password should be extracted
-     * 
-     * @return the username and password
-     */
-    private Pair<String, String> extractUsernamePassword(UsernameToken usernameToken) {
-        final Username username = usernameToken.getUsername();
-        // TODO(lajoie) check not null and not empty
-
-        final List<XMLObject> passwords = usernameToken.getUnknownXMLObjects(Password.ELEMENT_NAME);
-        // TODO(lajoie) check that there is only one and if not, error out
-
-        Password password = (Password) passwords.get(0);
-        if (password.getType() != null && !password.getType().equals(Password.TYPE_PASSWORD_TEXT)) {
-            // TODO(lajoie) error, we can't support digest
+        if (usernameTokens == null || usernameTokens.size() == 0) {
+            log.debug("Action {}: inbound message security header does not contain <UsernameToken>", getId());
+            return null;
         }
 
-        return new Pair<String, String>(username.getValue(), password.getValue());
+        return (UsernameToken) usernameTokens.get(0);
     }
 }

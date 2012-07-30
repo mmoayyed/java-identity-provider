@@ -85,7 +85,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
             log.debug("Action {}: user session {} currently exists", getId(), session.getId());
         }
 
-        // TODO get configured authentication mechanisms
+        // TODO(lajoie) get configured authentication mechanisms
         Collection<AuthenticationWorkflowDescriptor> availableFlows = null;
 
         AuthenticationRequestContext authnCtx = new AuthenticationRequestContext(session, availableFlows);

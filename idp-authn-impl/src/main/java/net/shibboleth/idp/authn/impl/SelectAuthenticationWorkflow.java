@@ -17,26 +17,83 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ProfileException;
+import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationException;
+import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- *
+ * An authentication action that selects an authentication workflow to invoke.
+ * <p>
+ * This action selects the workflow from the potential workflows given by
+ * {@link AuthenticationRequestContext#getPotentialWorkflows()}. It will first look to see if any active workflows, as
+ * given by {@link AuthenticationRequestContext#getActiveWorkflows()}, are potential workflows and if so will use one.
+ * Otherwise it will simply pick on of the inactive potential workflows.
+ * </p>
+ * <p>
+ * The event ID returned by this stage may either be {@link AuthnEventIds#NO_POTENTIAL_WORKFLOW} or the ID of the chosen
+ * authentication workflow.
+ * </p>
  */
-public class SelectAuthenticationWorkflow extends AbstractProfileAction {
+public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(SelectAuthenticationWorkflow.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext) throws ProfileException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nullable final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
+        final Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows =
+                authenticationContext.getPotentialWorkflows();
+        if (potentialWorkflows.isEmpty()) {
+            log.debug("Action {}: no potential workflows available");
+            return ActionSupport.buildEvent(this, AuthnEventIds.NO_POTENTIAL_WORKFLOW);
+        }
+
+        log.debug("Action {}: selecting authentication workflow from the following potential workflows: {}", getId(),
+                potentialWorkflows.keySet());
+
+        AuthenticationWorkflowDescriptor descriptor;
+
+        final Set<String> activeWorkflowIds = authenticationContext.getActiveWorkflows().keySet();
+        if (!activeWorkflowIds.isEmpty()) {
+            log.debug("Action {}: checking if any of the following active authentication workflows is suitable: {}",
+                    getId(), activeWorkflowIds);
+            for (String activeWorkflowId : activeWorkflowIds) {
+                descriptor = potentialWorkflows.get(activeWorkflowId);
+                if (descriptor != null) {
+                    log.debug("Action {}: selecting active authentication workflow {}", getId(),
+                            descriptor.getWorkflowId());
+                    authenticationContext.setAttemptedWorkflow(descriptor);
+                    return ActionSupport.buildEvent(this, descriptor.getWorkflowId());
+                }
+            }
+        }
+
+        log.debug("Action {}: no active workflows is suitable, selecting inactive workflow", getId());
+
+        descriptor = potentialWorkflows.values().iterator().next();
+        log.debug("Action {}: selecting inactive authentication workflow {}", getId(), descriptor.getWorkflowId());
+        authenticationContext.setAttemptedWorkflow(descriptor);
+        return ActionSupport.buildEvent(this, descriptor.getWorkflowId());
+    }
 }

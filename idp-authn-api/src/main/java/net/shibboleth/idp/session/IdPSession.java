@@ -216,6 +216,8 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
             if (!authenticationEvents.containsKey(authnEvent.getAuthenticationWorkflow())) {
                 authenticationEvents.put(authnEvent.getAuthenticationWorkflow(), authnEvent);
             }
+            
+            //TODO(lajoie) don't we need to update the authn event if it already exists?
 
             serviceSessions.put(serviceId, session);
         } finally {

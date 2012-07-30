@@ -18,34 +18,100 @@
 package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.ServiceSession;
 
-import org.springframework.webflow.execution.Event;
+import org.opensaml.messaging.context.BasicMessageMetadataContext;
+import org.opensaml.messaging.context.MessageContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
-/**
- * A stage that checks that authentication has completed and calls
- * {@link AuthenticationRequestContext#setCompletionInstant()}
- */
+/** A stage that checks that authentication has completed and, if so, records it in the user's IdP session. */
+@Events({
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = EventIds.INVALID_MSG_CTX, description = "Inbound message context does not exist"),
+        @Event(id = EventIds.INVALID_MSG_MD, description = "Inbound message metadata does not exist"),
+        @Event(id = AuthnEventIds.INVALID_AUTHN_CTX,
+                description = "Authentication context doesn't indicated an attempted workflow")})
 public class FinalizeAuthentication extends AbstractAuthenticationAction {
 
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(FinalizeAuthentication.class);
+
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
-        // TODO(lajoie) need to check for authenticated principal or error
+        final MessageContext messageCtx = profileRequestContext.getInboundMessageContext();
+        if (messageCtx == null) {
+            log.debug("Action {}: no inbound message context available", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_CTX);
+        }
+
+        final BasicMessageMetadataContext msgMdCtx = messageCtx.getSubcontext(BasicMessageMetadataContext.class, false);
+        if (msgMdCtx == null) {
+            log.debug("Action {}: no inbound message metadata available", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
+        }
+
+        if (!authenticationContext.getAttemptedWorkflow().isPresent()) {
+            log.debug("Action {}: no attempted workflow descriptor available", getId());
+            return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
+        }
+
+        if (!authenticationContext.getAuthenticatedPrincipal().isPresent()) {
+            log.debug("Action {}: no authenticated principal available", getId());
+            return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
+        }
+
+        updateIdpSession(authenticationContext, msgMdCtx.getMessageIssuer());
 
         authenticationContext.setCompletionInstant();
 
         return ActionSupport.buildProceedEvent(this);
+    }
+
+    /**
+     * Updates the session associated with the authenticated user. The following steps are performed:
+     * <ul>
+     * <li>creating the {@link IdPSession} if the user does not yet have one</li>
+     * <li>creating a {@link ServiceSession} to associate the user with the service for which authentication was
+     * performed</li>
+     * <li>updating the last activity time of the IdP session</li>
+     * </ul>
+     * 
+     * @param authenticationContext current authentication context
+     * @param serviceId ID of the service for which the user was authenticated
+     */
+    protected void updateIdpSession(@Nonnull final AuthenticationRequestContext authenticationContext,
+            @Nonnull final String serviceId) {
+        IdPSession idpSession = null;
+
+        if (!authenticationContext.getActiveSession().isPresent()) {
+            idpSession = authenticationContext.getActiveSession().get();
+        } else {
+            // TODO(lajoie) create session
+        }
+
+        ServiceSession serviceSession = new ServiceSession(serviceId, authenticationContext.buildAuthenticationEvent());
+        idpSession.addServiceSession(serviceSession);
+
+        idpSession.setLastActivityInstantToNow();
     }
 }

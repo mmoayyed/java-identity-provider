@@ -27,12 +27,16 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UserAgentAddressContext;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -40,7 +44,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.IPRange;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.springframework.webflow.execution.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Predicates;
@@ -51,7 +56,15 @@ import com.google.common.collect.Iterables;
  * A stage that ensures that the user-agent address is within a given range and, if so acts as if the configured user
  * has been authenticated.
  */
+@Events({
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = AuthnEventIds.INVALID_AUTHN_CTX,
+                description = "authentication context does not contain UserAgentAddressContext"),
+        @Event(id = AuthnEventIds.INVALID_CREDENTIALS, description = "user agent IP address not in allowed IP ranges")})
 public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ValidateUserAgentAddress.class);
 
     /** The ID of the user to treat as authenticated by this stage. */
     private final String authenticatedUser;
@@ -72,7 +85,8 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
     public ValidateUserAgentAddress(@Nonnull @NotEmpty final String authenticatedUserId,
             @Nullable @NullableElements final Collection<IPRange> ranges, final boolean isWhitelistingRanges) {
         authenticatedUser =
-                Constraint.isNotNull(StringSupport.trimOrNull(authenticatedUserId), "Authenticated user ID can not be null");
+                Constraint.isNotNull(StringSupport.trimOrNull(authenticatedUserId),
+                        "Authenticated user ID can not be null");
 
         if (ranges == null) {
             designatedRanges = Collections.emptyList();
@@ -84,20 +98,26 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final UserAgentAddressContext uaaCtx =
                 authenticationContext.getSubcontext(UserAgentAddressContext.class, false);
-        // TODO(lajoie) error if null
-
-        if (isAuthenticated(uaaCtx.getUserAgentAddress())) {
-            authenticationContext.setAuthenticatedPrincipal(new UsernamePrincipal(authenticatedUser));
+        if (uaaCtx == null) {
+            log.debug("Action {}: no UserAgentAddressContext available within authentication context", getId());
+            return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_AUTHN_CTX);
         }
 
-        return ActionSupport.buildProceedEvent(this);
+        if (isAuthenticated(uaaCtx.getUserAgentAddress())) {
+            log.debug("Action {}: authenticated user agent", getId());
+            authenticationContext.setAuthenticatedPrincipal(new UsernamePrincipal(authenticatedUser));
+            return ActionSupport.buildProceedEvent(this);
+        } else {
+            log.debug("Action {}: user agent was not authenticated", getId());
+            return ActionSupport.buildEvent(this, AuthnEventIds.INVALID_CREDENTIALS);
+        }
     }
 
     /**
@@ -109,23 +129,23 @@ public class ValidateUserAgentAddress extends AbstractAuthenticationAction {
      */
     private boolean isAuthenticated(InetAddress address) {
         byte[] resolvedAddress = address.getAddress();
-        
+
         boolean containedInRange = false;
-        for(IPRange range : designatedRanges){
-            if(range.contains(resolvedAddress)){
+        for (IPRange range : designatedRanges) {
+            if (range.contains(resolvedAddress)) {
                 containedInRange = true;
                 break;
             }
         }
-        
-        if(whitelistingIPRanges && containedInRange){
+
+        if (whitelistingIPRanges && containedInRange) {
             return true;
         }
-        
-        if(!whitelistingIPRanges && !containedInRange){
+
+        if (!whitelistingIPRanges && !containedInRange) {
             return true;
         }
-        
+
         return false;
     }
 }

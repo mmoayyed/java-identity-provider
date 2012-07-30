@@ -21,14 +21,19 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UserAgentAddressContext;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 
-import org.springframework.webflow.execution.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.net.InetAddresses;
@@ -37,40 +42,28 @@ import com.google.common.net.InetAddresses;
  * A stage that extracts the user-agent's IP address from the incoming requests, creates an
  * {@link UserAgentAddressContext}, and attaches it to the {@link AuthenticationRequestContext}.
  */
+@Events({@Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = AuthnEventIds.NO_CREDENTIALS, description = "request does not contain user agent's IP address")})
 public class ExtractUserAgentAddress extends AbstractAuthenticationAction {
 
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(ExtractUserAgentAddress.class);
+
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final String addressString = httpRequest.getRemoteAddr();
         if (!InetAddresses.isInetAddress(addressString)) {
-            throw new InvalidUserAgentAddressException(addressString);
+            log.debug("Action {}: User agent's IP address, {}, is not a valid IP address", getId(), addressString);
+            return ActionSupport.buildEvent(this, AuthnEventIds.NO_CREDENTIALS);
         }
 
         authenticationContext.getSubcontext(UserAgentAddressContext.class, true).setUserAgentAddress(
                 InetAddresses.forString(addressString));
 
         return ActionSupport.buildProceedEvent(this);
-    }
-
-    /**
-     * An exception thrown if the address returned by {@link HttpServletRequest#getRemoteAddr()} is not a valid address.
-     */
-    public static class InvalidUserAgentAddressException extends AuthenticationException {
-
-        /** Serial version UID. */
-        private static final long serialVersionUID = 6569921115933477293L;
-
-        /**
-         * Constructor.
-         * 
-         * @param address the invalid address
-         */
-        public InvalidUserAgentAddressException(String address) {
-            super("User-agent IP address '" + address + "' is invalid");
-        }
     }
 }
