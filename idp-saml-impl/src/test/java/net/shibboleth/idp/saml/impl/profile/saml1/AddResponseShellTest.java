@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -80,11 +81,10 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
         action.setId("test");
         action.initialize();
 
-        try {
-            action.execute(springRequestContext);
-            Assert.fail();
-        } catch (Exception e) {
-            // expected this
-        }
+        Event result = action.execute(springRequestContext);
+
+        Assert.assertNotNull(result);
+        Assert.assertNotNull(result.getSource());
+        Assert.assertEquals(result.getId(), SamlEventIds.RESPONSE_EXISTS);
     }
 }
