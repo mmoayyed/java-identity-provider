@@ -38,7 +38,6 @@ import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Adds a {@link OneTimeUse} to every {@link Assertion} in the outgoing {@link Response} retrieved from the
@@ -49,14 +48,13 @@ import org.springframework.webflow.execution.RequestContext;
  * {@link Assertion}.
  */
 public class AddOneTimeUseConditionToAssertions extends AbstractProfileAction<Object, Response> {
-    
+
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(AddOneTimeUseConditionToAssertions.class);
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
-            throws ProfileException {
+            ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();

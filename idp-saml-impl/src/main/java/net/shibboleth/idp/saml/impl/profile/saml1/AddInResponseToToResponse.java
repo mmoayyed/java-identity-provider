@@ -35,7 +35,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Adds the <code>InResponseTo</code> attribute to outgoing {@link Response} retrieved from the
@@ -50,9 +49,9 @@ public class AddInResponseToToResponse extends AbstractProfileAction<Object, Res
     private final Logger log = LoggerFactory.getLogger(AddInResponseToToResponse.class);
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event
+            doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+                    final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add InResponseTo to outgoing Response", getId());
 
         final String inMsgId = getInboundMessageId(profileRequestContext);

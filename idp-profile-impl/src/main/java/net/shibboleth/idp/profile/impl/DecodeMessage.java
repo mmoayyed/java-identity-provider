@@ -37,7 +37,6 @@ import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /** A profile stage that decodes an incoming request into a given {@link MessageContext}. */
 @Events({@Event(id = EventIds.PROCEED_EVENT_ID),
@@ -63,9 +62,9 @@ public class DecodeMessage extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event
+            doExecute(@Nonnull final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         try {
             final MessageDecoder decoder = decoderFactory.newDecoder(httpRequest);
             log.debug("Action {}: Using message decoder of type {} for this request", getId(), decoder.getClass()

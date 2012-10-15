@@ -36,7 +36,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -46,7 +45,8 @@ import com.google.common.base.Function;
  */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
-        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context associated with the request"),
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
+                description = "No relying party context associated with the request"),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CONFIG,
                 description = "Relying party context didn't contain a relying party configuration"),
         @Event(id = EventIds.INVALID_PROFILE_CONFIG, description = "Profile is not configured for the relying party")})
@@ -80,9 +80,9 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event
+            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx == null) {
             log.debug("Action {}: No relying party context associated with this profile request", getId());

@@ -32,7 +32,6 @@ import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.net.HttpHeaders;
 
@@ -56,13 +55,14 @@ public class SendBasicHttpAuthenticationChallenge extends AbstractAuthentication
     public SendBasicHttpAuthenticationChallenge(@Nonnull @NotEmpty final String realm) {
         super();
 
-        String checkedRealm = Constraint.isNotNull(StringSupport.trimOrNull(realm), "Realm name can not be null or empty");
+        String checkedRealm =
+                Constraint.isNotNull(StringSupport.trimOrNull(realm), "Realm name can not be null or empty");
         authenticateValue = BASIC + " " + REALM + "=\"" + checkedRealm + "\"";
     }
 
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+            @Nonnull final HttpServletResponse httpResponse,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 

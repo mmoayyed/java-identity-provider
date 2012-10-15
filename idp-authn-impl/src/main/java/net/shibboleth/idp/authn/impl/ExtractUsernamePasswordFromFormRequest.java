@@ -34,7 +34,6 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A stage that extracts a username/password from the request. This stage is expected to be used in conjunction with
@@ -49,7 +48,7 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticati
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+            @Nonnull final HttpServletResponse httpResponse,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 

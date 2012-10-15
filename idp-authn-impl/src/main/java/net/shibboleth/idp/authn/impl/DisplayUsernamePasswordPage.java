@@ -37,7 +37,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.VelocityException;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 //TODO(lajoie) internationalized pages based on Accept-Language
 
@@ -82,7 +81,7 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
 
     /** {@inheritDoc} */
     protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+            @Nonnull final HttpServletResponse httpResponse,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 

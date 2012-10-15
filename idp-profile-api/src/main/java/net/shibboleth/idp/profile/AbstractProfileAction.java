@@ -52,6 +52,12 @@ import com.google.common.base.Function;
  * <li>tracking performance metrics for the action</li>
  * </ul>
  * 
+ * Action implementations should generally override
+ * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext)}, however if an action needs access
+ * to the Spring Webflow {@link RequestContext} it may override
+ * {@link #doExecute(HttpServletRequest, HttpServletResponse, RequestContext, ProfileRequestContext)} instead. In
+ * general, implementations should avoid doing this however.
+ * 
  * @param <InboundMessageType> type of in-bound message
  * @param <OutboundMessageType> type of out-bound message
  */
@@ -192,7 +198,8 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     }
 
     /**
-     * Performs this action.
+     * Performs this action. Default implementation of this simply invokes
+     * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext)}.
      * 
      * @param httpRequest current HTTP request
      * @param httpResponse current HTTP response
@@ -203,8 +210,27 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
      * 
      * @throws ProfileException thrown if there is a problem executing the profile action
      */
-    protected abstract Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
             final RequestContext springRequestContext,
             final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-            throws ProfileException;
+            throws ProfileException {
+        return doExecute(httpRequest, httpResponse, profileRequestContext);
+    }
+
+    /**
+     * Performs this action. Default implementation of this method throws an {@link UnsupportedOperationException}.
+     * 
+     * @param httpRequest current HTTP request
+     * @param httpResponse current HTTP response
+     * @param profileRequestContext the current IdP profile request context, never null
+     * 
+     * @return the result of this action, never null
+     * 
+     * @throws ProfileException thrown if there is a problem executing the profile action
+     */
+    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+            throws ProfileException {
+        throw new UnsupportedOperationException();
+    }
 }

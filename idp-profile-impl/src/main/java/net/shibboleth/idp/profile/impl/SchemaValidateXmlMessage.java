@@ -39,7 +39,6 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -78,8 +77,8 @@ public class SchemaValidateXmlMessage extends AbstractProfileAction<XMLObject, O
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse, RequestContext springRequestContext,
-            ProfileRequestContext<XMLObject, Object> profileRequestContext) throws ProfileException {
+            HttpServletResponse httpResponse, ProfileRequestContext<XMLObject, Object> profileRequestContext)
+            throws ProfileException {
 
         log.debug("Action {}: Attempting to schema validate incoming message", getId());
 

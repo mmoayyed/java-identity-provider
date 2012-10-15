@@ -40,7 +40,6 @@ import org.opensaml.saml.saml1.core.DoNotCacheCondition;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Adds a {@link DoNotCacheCondition} to every {@link Assertion} in the outgoing {@link Response} retrieved from the
@@ -62,8 +61,8 @@ public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Ob
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse, RequestContext springRequestContext,
-            ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+            HttpServletResponse httpResponse, ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();

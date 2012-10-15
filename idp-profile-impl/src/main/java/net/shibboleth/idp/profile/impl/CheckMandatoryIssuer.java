@@ -32,7 +32,6 @@ import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -85,7 +84,7 @@ public final class CheckMandatoryIssuer extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+            ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final BasicMessageMetadataContext messageSubcontext =
                 messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());

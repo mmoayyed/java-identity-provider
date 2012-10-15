@@ -33,7 +33,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.util.storage.ReplayCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /** Checks that the given message has not be replayed. */
 public final class CheckMessageReplay extends AbstractProfileAction {
@@ -48,9 +47,9 @@ public final class CheckMessageReplay extends AbstractProfileAction {
     private ReplayCache replayCache;
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event
+            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final MessageContext msgCtx = profileRequestContext.getInboundMessageContext();
         if (msgCtx == null) {

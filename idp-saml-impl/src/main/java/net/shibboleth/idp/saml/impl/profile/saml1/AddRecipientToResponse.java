@@ -26,7 +26,6 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 // TODO need access to the response endpoint
 
@@ -37,7 +36,6 @@ public class AddRecipientToResponse extends AbstractProfileAction<Object, Respon
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         // TODO Auto-generated method stub
         return null;

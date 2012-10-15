@@ -39,7 +39,6 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An authentication action that filters out potential authentication workflows if the current request is a passive
@@ -54,7 +53,7 @@ public class FilterAvailableWorkflowsByPassivity extends AbstractAuthenticationA
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nullable final HttpServletResponse httpResponse,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 

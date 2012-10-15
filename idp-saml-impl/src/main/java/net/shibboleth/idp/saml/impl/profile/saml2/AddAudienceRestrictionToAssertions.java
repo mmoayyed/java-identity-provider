@@ -47,11 +47,10 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
-/** Adds an {@link AudienceRestrictionCondition} to every {@link Assertion} contained on the {@link Response}. */
+/** Adds an {@link AudienceRestriction} to every {@link Assertion} contained on the {@link Response}. */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
@@ -138,9 +137,9 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event
+            doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+                    final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AudienceRestrictionCondition to outgoing assertions", getId());
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
@@ -174,10 +173,10 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
 
     /**
      * Adds the {@link RelyingPartyContext#getRelyingPartyId()} and any additional audiences configured in the active
-     * {@link AbstractSamlProfileConfiguration} as {@link Audience} to the {@link AudienceRestrictionCondition}. If no
-     * {@link AudienceRestrictionCondition} exists on the given {@link Conditions} one is created and added.
+     * {@link AbstractSamlProfileConfiguration} as {@link Audience} to the {@link AudienceRestriction}. If no
+     * {@link AudienceRestriction} exists on the given {@link Conditions} one is created and added.
      * 
-     * @param conditions condition that has, or will received the created, {@link AudienceRestrictionCondition}
+     * @param conditions condition that has, or will received the created, {@link AudienceRestriction}
      * @param relyingPartyCtx information about the current relying party
      */
     private void addAudienceRestriction(final Conditions conditions, final RelyingPartyContext relyingPartyCtx) {
@@ -207,7 +206,7 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
     }
 
     /**
-     * Gets the {@link AudienceRestrictionCondition} to which audiences will be added.
+     * Gets the {@link AudienceRestriction} to which audiences will be added.
      * 
      * @param conditions existing set of conditions
      * 

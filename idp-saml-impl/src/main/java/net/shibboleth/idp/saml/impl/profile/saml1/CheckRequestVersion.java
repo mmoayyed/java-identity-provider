@@ -31,7 +31,6 @@ import net.shibboleth.idp.saml.profile.SamlEventIds;
 
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.RequestAbstractType;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Objects;
 
@@ -44,7 +43,7 @@ public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractTy
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
+            final HttpServletResponse httpResponse,
             final ProfileRequestContext<RequestAbstractType, Object> profileRequestContext) throws ProfileException {
 
         final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();

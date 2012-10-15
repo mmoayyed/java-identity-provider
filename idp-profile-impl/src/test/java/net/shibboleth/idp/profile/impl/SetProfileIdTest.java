@@ -53,7 +53,7 @@ public class SetProfileIdTest {
         ProfileRequestContext context = new ProfileRequestContext();
 
         SetProfileId action = new SetProfileId("foo");
-        Event result = action.doExecute(null, null, null, context);
+        Event result = action.doExecute(null, null, context);
         Assert.assertEquals(context.getProfileId(), "foo");
         Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
     }

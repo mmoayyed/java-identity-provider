@@ -35,7 +35,6 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -91,7 +90,7 @@ public class InitializeRelyingPartyContextBasedOnInboundMessageIssuer extends Ab
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext profileRequestContext) throws ProfileException {
+            ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final BasicMessageMetadataContext messageSubcontext =
                 messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());

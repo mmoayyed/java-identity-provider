@@ -26,7 +26,6 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  *
@@ -35,7 +34,6 @@ public class AddConsentToResponse extends AbstractProfileAction<Object, Response
 
     /** {@inheritDoc} */
     protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
             final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         // TODO Auto-generated method stub
         return null;

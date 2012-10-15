@@ -39,7 +39,6 @@ import net.shibboleth.idp.session.IdPSessionContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -70,9 +69,9 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event
+            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final IdPSessionContext sessionCtx = sessionCtxLookupStrategy.apply(profileRequestContext);
 

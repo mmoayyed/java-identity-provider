@@ -37,7 +37,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Adds the <code>NotBefore</code> condition to every {@link Assertion} in the outgoing {@link Response} retrieved from
@@ -56,8 +55,8 @@ public class AddNotBeforeConditionToAssertions extends AbstractProfileAction<Obj
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse, RequestContext springRequestContext,
-            ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+            HttpServletResponse httpResponse, ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
         log.debug("Action {}: Attempting to add NotBefore condition to every Assertion in outgoing Response", getId());
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();

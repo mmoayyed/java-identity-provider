@@ -44,7 +44,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -109,8 +108,8 @@ public class AddNotOnOrAfterConditionToAssertions extends AbstractProfileAction<
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse, RequestContext springRequestContext,
-            ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+            HttpServletResponse httpResponse, ProfileRequestContext<Object, Response> profileRequestContext)
+            throws ProfileException {
         log.debug("Action {}: Attempting to add NotOnOrAfter condition to every Assertion in outgoing Response",
                 getId());
 
@@ -128,8 +127,7 @@ public class AddNotOnOrAfterConditionToAssertions extends AbstractProfileAction<
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
-            log.debug("Action {}: Unable to add NotOnOrAfter condition, Response does not contain an Asertion",
-                    getId());
+            log.debug("Action {}: Unable to add NotOnOrAfter condition, Response does not contain an Asertion", getId());
             return ActionSupport.buildEvent(this, SamlEventIds.NO_ASSERTION);
         }
 

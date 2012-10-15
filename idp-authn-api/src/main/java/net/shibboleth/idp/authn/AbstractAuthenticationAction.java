@@ -33,7 +33,18 @@ import com.google.common.base.Function;
 
 //TODO get rid of exception
 
-/** A base class for authentication related actions. */
+/**
+ * A base class for authentication related actions.
+ * 
+ * In addition to the work performed by {@link AbstractProfileAction}, this action also looks up and makes available the
+ * {@link AuthenticationRequestContext}.
+ * 
+ * Authentication action implementations should generally override
+ * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext, AuthenticationRequestContext)},
+ * however if an action needs access to the Spring Webflow {@link RequestContext} it may override
+ * {@link #doExecute(HttpServletRequest, HttpServletResponse, RequestContext, ProfileRequestContext, AuthenticationRequestContext)}
+ * instead. In general, implementations should avoid doing this however.
+ */
 public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
 
     /**
@@ -65,7 +76,8 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     }
 
     /**
-     * Performs this authentication action.
+     * Performs this authentication action. Default implementation of this simply invokes
+     * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext, AuthenticationRequestContext)}.
      * 
      * @param httpRequest current HTTP request
      * @param httpResponse current HTTP response
@@ -77,10 +89,32 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
      * 
      * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
-    protected abstract Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
             @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException;
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+        return doExecute(httpRequest, httpResponse, profileRequestContext, authenticationContext);
+    }
+
+    /**
+     * Performs this authentication action. Default implementation of this method throws an
+     * {@link UnsupportedOperationException}.
+     * 
+     * @param httpRequest current HTTP request
+     * @param httpResponse current HTTP response
+     * @param profileRequestContext the current IdP profile request context
+     * @param authenticationContext the current authentication context
+     * 
+     * @return the result of this action
+     * 
+     * @throws AuthenticationException thrown if there is a problem performing the authentication action
+     */
+    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
+            @Nonnull final HttpServletResponse httpResponse,
+            @Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
+        throw new UnsupportedOperationException();
+    }
 
     /** Exception thrown if there is no authentication exception available. */
     public static final class NoAuthenticationContextException extends ProfileException {

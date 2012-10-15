@@ -27,7 +27,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 public class ActionTestSupportAction extends AbstractProfileAction<Object, Response> {
 
@@ -38,8 +37,7 @@ public class ActionTestSupportAction extends AbstractProfileAction<Object, Respo
 
     /** {@inheritDoc} */
     protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            RequestContext springRequestContext, ProfileRequestContext<Object, Response> profileRequestContext)
-            throws ProfileException {
+            ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         return null;
     }
 }

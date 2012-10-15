@@ -36,7 +36,6 @@ import net.shibboleth.idp.profile.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An authentication action that selects an authentication workflow to invoke.
@@ -58,7 +57,7 @@ public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
 
     /** {@inheritDoc} */
     protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
+            @Nullable final HttpServletResponse httpResponse,
             @Nullable final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 

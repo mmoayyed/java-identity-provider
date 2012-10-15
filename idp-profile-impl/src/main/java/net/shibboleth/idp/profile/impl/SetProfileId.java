@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 
 /** A profile action that sets the ID of the profile in use. */
 public class SetProfileId extends AbstractProfileAction {
@@ -49,7 +48,7 @@ public class SetProfileId extends AbstractProfileAction {
 
         profileId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Profile ID can not be null or empty");
     }
-    
+
     /**
      * Gets the ID of the profile in use.
      * 
@@ -60,9 +59,9 @@ public class SetProfileId extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nullable final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected Event
+            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         profileRequestContext.setProfileId(profileId);
         return ActionSupport.buildProceedEvent(this);
     }

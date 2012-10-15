@@ -34,7 +34,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         ProfileRequestContext profileCtx = new ProfileRequestContext();
 
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        Event event = action.doExecute(null, null, null, profileCtx);
+        Event event = action.doExecute(null, null, profileCtx);
 
         Assert.assertEquals(event.getId(), EventIds.INVALID_RELYING_PARTY_CTX);
     }
@@ -46,7 +46,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         profileCtx.addSubcontext(rpCtx);
 
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        Event event = action.doExecute(null, null, null, profileCtx);
+        Event event = action.doExecute(null, null, profileCtx);
 
         Assert.assertEquals(event.getId(), EventIds.INVALID_ATTRIBUTE_CTX);
     }
@@ -61,7 +61,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         profileCtx.addSubcontext(rpCtx);
 
         AddAttributeStatementToAssertion action = new AddAttributeStatementToAssertion();
-        Event event = action.doExecute(null, null, null, profileCtx);
+        Event event = action.doExecute(null, null, profileCtx);
 
         Assert.assertEquals(event.getId(), EventIds.PROCEED_EVENT_ID);
     }

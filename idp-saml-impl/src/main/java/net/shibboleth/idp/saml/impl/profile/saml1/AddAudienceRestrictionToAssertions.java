@@ -47,7 +47,6 @@ import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -138,9 +137,9 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse, final RequestContext springRequestContext,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event
+            doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
+                    final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AudienceRestrictionCondition to outgoing assertions", getId());
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
