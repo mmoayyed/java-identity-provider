@@ -32,8 +32,7 @@ import org.testng.annotations.Test;
 /** Unit test for {@link CheckMessageLifetime}. */
 public class CheckMandatoryLifetimeTest {
 
-    @Test
-    public void testMessageLifetime() throws Exception {
+    @Test public void testMessageLifetime() throws Exception {
         CheckMessageLifetime action = new CheckMessageLifetime();
         action.setId("mock");
 
@@ -51,42 +50,47 @@ public class CheckMandatoryLifetimeTest {
         }
     }
 
-    @Test
-    public void testValidMessage() throws Exception {
+    @Test public void testValidMessage() throws Exception {
         CheckMessageLifetime action = new CheckMessageLifetime();
         action.setId("mock");
         action.initialize();
 
         Event result =
-                action.execute(new RequestContextBuilder().setInboundMessageIssueInstant(System.currentTimeMillis())
-                        .buildRequestContext());
+                action.doExecute(null, null,
+                        new RequestContextBuilder().setInboundMessageId(ActionTestingSupport.INBOUND_MSG_ID)
+                                .setInboundMessageIssuer(ActionTestingSupport.INBOUND_MSG_ISSUER)
+                                .setInboundMessageIssueInstant(System.currentTimeMillis()).buildProfileRequestContext());
         ActionTestingSupport.assertProceedEvent(result);
     }
 
-    @Test
-    public void testFutureMessage() throws Exception {
+    @Test public void testFutureMessage() throws Exception {
         CheckMessageLifetime action = new CheckMessageLifetime();
         action.setId("mock");
         action.initialize();
 
         try {
-            action.execute(new RequestContextBuilder().setInboundMessageIssueInstant(
-                    System.currentTimeMillis() + 1000000).buildRequestContext());
+            action.doExecute(null, null,
+                    new RequestContextBuilder().setInboundMessageId(ActionTestingSupport.INBOUND_MSG_ID)
+                            .setInboundMessageIssuer(ActionTestingSupport.INBOUND_MSG_ISSUER)
+                            .setInboundMessageIssueInstant(System.currentTimeMillis() + 1000000)
+                            .buildProfileRequestContext());
             Assert.fail();
         } catch (FutureMessageException e) {
             // expected this
         }
     }
 
-    @Test
-    public void testPastMessage() throws Exception {
+    @Test public void testPastMessage() throws Exception {
         CheckMessageLifetime action = new CheckMessageLifetime();
         action.setId("mock");
         action.initialize();
 
         try {
-            action.execute(new RequestContextBuilder().setInboundMessageIssueInstant(
-                    System.currentTimeMillis() - 1000000).buildRequestContext());
+            action.doExecute(null, null,
+                    new RequestContextBuilder().setInboundMessageId(ActionTestingSupport.INBOUND_MSG_ID)
+                            .setInboundMessageIssuer(ActionTestingSupport.INBOUND_MSG_ISSUER)
+                            .setInboundMessageIssueInstant(System.currentTimeMillis() - 1000000)
+                            .buildProfileRequestContext());
             Assert.fail();
         } catch (PastMessageException e) {
             // expected this

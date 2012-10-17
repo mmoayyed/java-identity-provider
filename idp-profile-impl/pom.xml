@@ -35,6 +35,13 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core</artifactId>
+            <version>${opensaml.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         
     </dependencies>
 

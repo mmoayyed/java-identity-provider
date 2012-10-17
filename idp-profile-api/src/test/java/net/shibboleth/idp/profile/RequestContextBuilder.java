@@ -333,7 +333,7 @@ public class RequestContextBuilder {
      * @return the constructed {@link ProfileRequestContext
 
      */
-    @Nonnull protected ProfileRequestContext buildProfileRequestContext() {
+    @Nonnull public ProfileRequestContext buildProfileRequestContext() {
         final ProfileRequestContext profileContext = new ProfileRequestContext();
         profileContext.setInboundMessageContext(buildInboundMessageContext());
         profileContext.setOutboundMessageContext(buildOutboundMessageContext());
@@ -520,6 +520,10 @@ public class RequestContextBuilder {
             responderId = outboundMessageIssuer;
         }
 
+        if (relyingPartyProfileConfigurations == null) {
+            relyingPartyProfileConfigurations = new ArrayList<ProfileConfiguration>();
+        }
+        
         ArrayList<ProfileConfiguration> profileConfigs =
                 Lists.newArrayList(Iterables.filter(relyingPartyProfileConfigurations, Predicates.notNull()));
         if (profileConfigs.isEmpty()) {

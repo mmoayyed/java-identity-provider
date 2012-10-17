@@ -28,24 +28,26 @@ import org.testng.annotations.Test;
 /** Unit test for {@link CheckMandatoryIssuer}. */
 public class CheckMandatoryIssuerTest {
 
-    @Test
-    public void testWithIssuer() throws Exception {
+    @Test public void testWithIssuer() throws Exception {
         CheckMandatoryIssuer action = new CheckMandatoryIssuer();
         action.setId("test");
         action.initialize();
 
-        Event result = action.execute(new RequestContextBuilder().buildRequestContext());
+        Event result =
+                action.doExecute(null, null, new RequestContextBuilder().setInboundMessageIssuer("issuer")
+                        .buildProfileRequestContext());
+
         ActionTestingSupport.assertProceedEvent(result);
     }
 
-    @Test
-    public void testNoIssuer() throws Exception {
+    @Test public void testNoIssuer() throws Exception {
         CheckMandatoryIssuer action = new CheckMandatoryIssuer();
         action.setId("test");
         action.initialize();
 
         try {
-            action.execute(new RequestContextBuilder().setInboundMessageIssuer(null).buildRequestContext());
+            action.doExecute(null, null, new RequestContextBuilder().setInboundMessageIssuer(null)
+                    .buildProfileRequestContext());
             Assert.fail();
         } catch (NoMessageIssuerException e) {
             // expected this

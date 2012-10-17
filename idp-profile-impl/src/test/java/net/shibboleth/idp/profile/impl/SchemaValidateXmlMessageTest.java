@@ -17,12 +17,11 @@
 
 package net.shibboleth.idp.profile.impl;
 
-import java.util.Collections;
-
 import javax.xml.validation.Schema;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
+import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.resource.ClasspathResource;
 import net.shibboleth.utilities.java.support.resource.Resource;
@@ -35,7 +34,6 @@ import org.opensaml.core.xml.mock.SimpleXMLObject;
 import org.opensaml.core.xml.mock.SimpleXMLObjectBuilder;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -70,32 +68,22 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
         schema = SchemaBuilder.buildSchema(SchemaLanguage.XML, schemaResource);
     }
 
-    /**
-     * Test a null inbound message context.
-     * 
-     * @throws Exception
-     */
+    /** Test a null inbound message context. */
     @Test public void testNullInboundMessageContext() throws Exception {
 
         SchemaValidateXmlMessage action = new SchemaValidateXmlMessage(schema);
         action.initialize();
 
-        RequestContext springRequestContext =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(Collections.EMPTY_LIST)
-                        .setInboundMessage(null).buildRequestContext();
+        ProfileRequestContext profileRequestContext = new ProfileRequestContext();
 
-        Event result = action.execute(springRequestContext);
+        Event result = action.doExecute(null, null, profileRequestContext);
 
         Assert.assertNotNull(result);
         Assert.assertNotNull(result.getSource());
         Assert.assertEquals(result.getId(), EventIds.INVALID_MSG_CTX);
     }
 
-    /**
-     * Test a null dom.
-     * 
-     * @throws Exception
-     */
+    /** Test a null dom. */
     @Test public void testNullDom() throws Exception {
 
         SchemaValidateXmlMessage action = new SchemaValidateXmlMessage(schema);
@@ -103,22 +91,16 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
 
         SimpleXMLObject simpleXml = new SimpleXMLObjectBuilder().buildObject();
 
-        RequestContext springRequestContext =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(Collections.EMPTY_LIST)
-                        .setInboundMessage(simpleXml).buildRequestContext();
-
-        Event result = action.execute(springRequestContext);
+        Event result =
+                action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(simpleXml)
+                        .buildProfileRequestContext());
 
         Assert.assertNotNull(result);
         Assert.assertNotNull(result.getSource());
         Assert.assertEquals(result.getId(), EventIds.INVALID_MSG_CTX);
     }
 
-    /**
-     * Test validation of an invalid xml file.
-     * 
-     * @throws Exception
-     */
+    /** Test validation of an invalid xml file. */
     @Test public void testInvalidSchema() throws Exception {
 
         SchemaValidateXmlMessage action = new SchemaValidateXmlMessage(schema);
@@ -130,22 +112,16 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
         XMLObject invalidXml =
                 XMLObjectSupport.unmarshallFromInputStream(parserPool, invalidXmlResource.getInputStream());
 
-        RequestContext springRequestContext =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(Collections.EMPTY_LIST)
-                        .setInboundMessage(invalidXml).buildRequestContext();
-
-        Event result = action.execute(springRequestContext);
+        Event result =
+                action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(invalidXml)
+                        .buildProfileRequestContext());
 
         Assert.assertNotNull(result);
         Assert.assertNotNull(result.getSource());
         Assert.assertEquals(result.getId(), SchemaValidateXmlMessage.SCHEMA_INVALID);
     }
 
-    /**
-     * Test validation of a valid xml file.
-     * 
-     * @throws Exception
-     */
+    /** Test validation of a valid xml file. */
     @Test public void testValidSchema() throws Exception {
 
         SchemaValidateXmlMessage action = new SchemaValidateXmlMessage(schema);
@@ -156,11 +132,9 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
 
         XMLObject validXml = XMLObjectSupport.unmarshallFromInputStream(parserPool, validXmlResource.getInputStream());
 
-        RequestContext springRequestContext =
-                new RequestContextBuilder().setRelyingPartyProfileConfigurations(Collections.EMPTY_LIST)
-                        .setInboundMessage(validXml).buildRequestContext();
-
-        Event result = action.execute(springRequestContext);
+        Event result =
+                action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(validXml)
+                        .buildProfileRequestContext());
 
         ActionTestingSupport.assertProceedEvent(result);
     }
