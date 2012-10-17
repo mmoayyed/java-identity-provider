@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -57,7 +58,7 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(response);
         Assert.assertNotNull(response.getID());
         Assert.assertNotNull(response.getIssueInstant());
-        Assert.assertEquals(response.getVersion(), SAMLVersion.VERSION_11);
+        Assert.assertEquals(response.getVersion(), SAMLVersion.VERSION_20);
 
         Status status = response.getStatus();
         Assert.assertNotNull(status);
@@ -80,11 +81,10 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
         action.setId("test");
         action.initialize();
 
-        try {
-            action.execute(springRequestContext);
-            Assert.fail();
-        } catch (Exception e) {
-            // expected this
-        }
+        Event result = action.execute(springRequestContext);
+
+        Assert.assertNotNull(result);
+        Assert.assertNotNull(result.getSource());
+        Assert.assertEquals(result.getId(), SamlEventIds.RESPONSE_EXISTS);
     }
 }

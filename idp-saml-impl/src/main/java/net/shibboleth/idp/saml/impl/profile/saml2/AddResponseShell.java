@@ -28,6 +28,7 @@ import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -136,12 +137,16 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
         status.setStatusCode(statusCode);
 
         final Response response = responseBuilder.buildObject();
-        // TODO check for nulls
-        response.setID(relyingPartyCtx.getProfileConfig().getSecurityConfiguration().getIdGenerator()
-                .generateIdentifier());
+        ProfileConfiguration profileConfiguration = relyingPartyCtx.getProfileConfig();
+        if (profileConfiguration == null) {
+            log.error("Action {}: No profile configuration located in current relying party context", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
+        }
+
+        response.setID(profileConfiguration.getSecurityConfiguration().getIdGenerator().generateIdentifier());
         response.setIssueInstant(new DateTime(ISOChronology.getInstanceUTC()));
         response.setStatus(status);
-        response.setVersion(SAMLVersion.VERSION_11);
+        response.setVersion(SAMLVersion.VERSION_20);
 
         outboundMessageCtx.setMessage(response);
 
