@@ -209,7 +209,7 @@ public final class IdPSession extends BaseContext implements IdentifiableCompone
         final String serviceId = session.getServiceId();
         try {
             authnServiceStateLock.lock();
-            Constraint.isFalse(serviceSessions.containsKey(session.getId()), "A session for service " + serviceId
+            Constraint.isFalse(serviceSessions.containsKey(serviceId), "A session for service " + serviceId
                     + " already exists");
 
             final AuthenticationEvent authnEvent = session.getAuthenticationEvent();
