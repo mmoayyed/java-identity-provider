@@ -69,7 +69,7 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
         }
 
         final List<String> requestedWorkflowIds = getRequestedWorkflows(authnRequest);
-        log.debug("Action {}: inbound AuthnRequest requsted the following workflow IDs: {}", getId(),
+        log.debug("Action {}: inbound AuthnRequest requested the following workflow IDs: {}", getId(),
                 requestedWorkflowIds);
 
         final Map<String, AuthenticationWorkflowDescriptor> availableDescritpors =
