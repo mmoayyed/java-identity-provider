@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -54,37 +55,33 @@ public class RelyingPartyConfigurationTest {
         try {
             config = new RelyingPartyConfiguration(null, "http://idp.example.org", Collections.EMPTY_LIST);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             config = new RelyingPartyConfiguration("", "http://idp.example.org", Collections.EMPTY_LIST);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             config = new RelyingPartyConfiguration("foo", null, Collections.EMPTY_LIST);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             config = new RelyingPartyConfiguration("foo", null, Collections.EMPTY_LIST);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
-
-        try {
-            config = new RelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST);
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // expected this
-        }
+        
+        config = new RelyingPartyConfiguration("foo", "http://idp.example.org", Collections.EMPTY_LIST);
+        Assert.assertTrue(config.getProfileConfigurations().isEmpty());     
     }
 
     @Test public void testProfileConfiguration() {

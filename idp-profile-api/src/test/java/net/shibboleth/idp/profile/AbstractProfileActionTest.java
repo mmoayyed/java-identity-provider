@@ -34,7 +34,7 @@ public class AbstractProfileActionTest {
 
     @Test public void testActionId() {
         MockIdentityProviderAction action = new MockIdentityProviderAction(null);
-        Assert.assertNull(action.getId());
+        Assert.assertEquals(action.getId(), MockIdentityProviderAction.class.getName());
 
         action.setId(" mock");
         Assert.assertEquals(action.getId(), "mock");
@@ -54,24 +54,18 @@ public class AbstractProfileActionTest {
         }
     }
 
-    @Test public void testActionIinitialization() {
+    @Test public void testActionInitialization() {
         MockIdentityProviderAction action = new MockIdentityProviderAction(null);
         Assert.assertFalse(action.isInitialized());
-
-        try {
-            action.initialize();
-            Assert.fail();
-        } catch (ComponentInitializationException e) {
-            // expected this
-        }
-
         action.setId("mock");
+        
         try {
             action.initialize();
         } catch (ComponentInitializationException e) {
             Assert.fail();
         }
 
+        Assert.assertEquals(action.getId(), "mock");               
         action.setId("foo");
         Assert.assertEquals(action.getId(), "mock");
     }

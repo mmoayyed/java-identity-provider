@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.config;
 
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -33,14 +34,14 @@ public class AbstractProfileConfigurationTest {
         try {
             config = new MockProfileConfiguration(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
 
         }
 
         try {
             config = new MockProfileConfiguration("");
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
 
         }
     }
@@ -57,7 +58,7 @@ public class AbstractProfileConfigurationTest {
     @Test
     public void testSecurityConfiguration(){
         MockProfileConfiguration config = new MockProfileConfiguration("mock");
-        Assert.assertNull(config.getSecurityConfiguration());
+        Assert.assertNotNull(config.getSecurityConfiguration());
         
         SecurityConfiguration securityConfig = new SecurityConfiguration();
         config.setSecurityConfiguration(securityConfig);
