@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionTestingSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -43,12 +43,11 @@ public class AddNotOnOrAfterConditionToAssertionsTest  extends OpenSAMLInitBaseT
         action.setId("test");
         action.initialize();
 
-        try {
-            action.execute(new RequestContextBuilder().buildRequestContext());
-            Assert.fail();
-        } catch (ProfileException e) {
-            // expected this
-        }
+        Event result = action.execute(new RequestContextBuilder().buildRequestContext());
+
+        Assert.assertNotNull(result);
+        Assert.assertNotNull(result.getSource());
+        Assert.assertEquals(result.getId(), SamlEventIds.NO_RESPONSE);
     }
 
     /** Test that action errors out properly if there is no assertion in the response. */
@@ -63,12 +62,11 @@ public class AddNotOnOrAfterConditionToAssertionsTest  extends OpenSAMLInitBaseT
         action.setId("test");
         action.initialize();
 
-        try {
-            action.execute(springRequestContext);
-            Assert.fail();
-        } catch (ProfileException e) {
-            // expected this
-        }
+        Event result = action.execute(springRequestContext);
+
+        Assert.assertNotNull(result);
+        Assert.assertNotNull(result.getSource());
+        Assert.assertEquals(result.getId(), SamlEventIds.NO_ASSERTION);
     }
 
     /**

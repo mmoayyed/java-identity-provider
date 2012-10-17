@@ -58,6 +58,10 @@ public class AddOneTimeUseConditionToAssertions extends AbstractProfileAction<Ob
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
+        if (response == null) {
+            log.error("Action {}: No SAML response located in current profile request context", getId());
+            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
+        }
 
         final List<Assertion> assertions = response.getAssertions();
         if (assertions.isEmpty()) {
