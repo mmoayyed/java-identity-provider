@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
  * A function that gets the values of an attribute that meets this matchers requirements.
  * 
  * <p>
- * Implementations of this interface <strong>MUST</strong> implementation appropriate {@link Object#equals(Object)} and
+ * Implementations of this interface <strong>MUST</strong> implement appropriate {@link Object#equals(Object)} and
  * {@link Object#hashCode()} methods.
  * </p>
  */
