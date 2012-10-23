@@ -33,10 +33,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapResult;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-
+import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +60,8 @@ public class LdapDataConnector extends BaseDataConnector {
     /** Builder used to create the search requests executed against the LDAP. */
     private SearchRequestBuilder requestBuilder;
 
-    /** Strategy for mapping from a {@link ResultSet} to a collection of {@link Attribute}s. */
-    private LdapResultMappingStrategy mappingStrategy;
+    /** Strategy for mapping from a {@link SearchResult} to a collection of {@link Attribute}s. */
+    private SearchResultMappingStrategy mappingStrategy;
 
     /** Whether an empty result set is an error. */
     private boolean noResultIsAnError;
@@ -113,20 +112,20 @@ public class LdapDataConnector extends BaseDataConnector {
     }
 
     /**
-     * Gets the strategy for mapping from a {@link LdapResult} to a collection of {@link Attribute}s.
+     * Gets the strategy for mapping from a {@link SearchResult} to a collection of {@link Attribute}s.
      * 
-     * @return strategy for mapping from a {@link LdapResult} to a collection of {@link Attribute}s
+     * @return strategy for mapping from a {@link SearchResult} to a collection of {@link Attribute}s
      */
-    public LdapResultMappingStrategy getLdapResultMappingStrategy() {
+    public SearchResultMappingStrategy getSearchResultMappingStrategy() {
         return mappingStrategy;
     }
 
     /**
-     * Sets the strategy for mapping from a {@link LdapResult} to a collection of {@link Attribute}s.
+     * Sets the strategy for mapping from a {@link SearchResult} to a collection of {@link Attribute}s.
      * 
-     * @param strategy strategy for mapping from a {@link LdapResult} to a collection of {@link Attribute}s
+     * @param strategy strategy for mapping from a {@link SearchResult} to a collection of {@link Attribute}s
      */
-    public void setLdapResultMappingStrategy(@Nonnull final LdapResultMappingStrategy strategy) {
+    public void setSearchResultMappingStrategy(@Nonnull final SearchResultMappingStrategy strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -264,7 +263,7 @@ public class LdapDataConnector extends BaseDataConnector {
             connection = connectionFactory.getConnection();
             connection.open();
             final SearchOperation search = new SearchOperation(connection);
-            final LdapResult result = search.execute(request).getResult();
+            final SearchResult result = search.execute(request).getResult();
 
             final Optional<Map<String, Attribute>> resolvedAttributes = mappingStrategy.map(result);
             if (!resolvedAttributes.isPresent() && noResultIsAnError) {

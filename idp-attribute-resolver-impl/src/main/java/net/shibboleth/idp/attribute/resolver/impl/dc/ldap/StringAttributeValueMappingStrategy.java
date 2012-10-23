@@ -29,7 +29,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,16 +39,16 @@ import com.google.common.base.Optional;
 //TODO(lajoie): want some settings to control what happens if there is more than one LdapEntry
 
 /**
- * A simple {@link LdapResultMappingStrategy} that iterates over all result entries and includes all attribute values
- * as strings.
+ * A simple {@link SearchResultMappingStrategy} that iterates over all result entries and includes all attribute values as
+ * strings.
  */
-public class StringAttributeValueMappingStrategy implements LdapResultMappingStrategy {
+public class StringAttributeValueMappingStrategy implements SearchResultMappingStrategy {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(StringAttributeValueMappingStrategy.class);
 
     /** {@inheritDoc} */
-    @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull final LdapResult results)
+    @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull final SearchResult results)
             throws AttributeResolutionException {
         Constraint.isNotNull(results, "Results can not be null");
 

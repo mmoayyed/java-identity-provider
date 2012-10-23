@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
-import org.ldaptive.LdapResult;
+import org.ldaptive.SearchResult;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
 
-/** Strategy for mapping from a {@link LdapResult} to a collection of {@link Attribute}s. */
-public interface LdapResultMappingStrategy extends MappingStrategy<LdapResult>{}
+/** Strategy for mapping from a {@link SearchResult} to a collection of {@link Attribute}s. */
+public interface SearchResultMappingStrategy extends MappingStrategy<SearchResult> {}
