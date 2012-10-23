@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -174,7 +175,7 @@ public class RegexAtributeTest {
         try {
             attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
             Assert.fail("setRegExp after destroy");
-        } catch (DestroyedComponentException e) {
+        } catch (UnmodifiableComponentException e) {
             // OK
         }
         try {

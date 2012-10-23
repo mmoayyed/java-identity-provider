@@ -168,7 +168,9 @@ public class ScopedAttributeTest {
         } catch (UninitializedComponentException e) {
             // OK
         }
-        attrDef.initialize();
+        
+        attrDef.setScope(TEST_SCOPE);
+        attrDef.initialize();        
         
         Assert.assertEquals(attrDef.getScope(), TEST_SCOPE);
         
