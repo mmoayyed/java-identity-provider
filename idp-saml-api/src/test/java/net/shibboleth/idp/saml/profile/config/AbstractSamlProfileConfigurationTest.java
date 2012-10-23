@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -41,7 +42,7 @@ public class AbstractSamlProfileConfigurationTest {
         try {
             config.setSignAssertionsCriteria(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // excepted this
         }
     }
@@ -56,7 +57,7 @@ public class AbstractSamlProfileConfigurationTest {
         try {
             config.setSignResponsesCriteria(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // excepted this
         }
     }
@@ -71,7 +72,7 @@ public class AbstractSamlProfileConfigurationTest {
         try {
             config.setSignedRequestsCriteria(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // excepted this
         }
     }
@@ -86,14 +87,14 @@ public class AbstractSamlProfileConfigurationTest {
         try {
             config.setAssertionLifetime(0);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
             config.setAssertionLifetime(-100);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // expected this
         }
     }

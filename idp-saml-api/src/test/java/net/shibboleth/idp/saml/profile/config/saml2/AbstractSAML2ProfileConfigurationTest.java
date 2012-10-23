@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.profile.config.saml2;
 import java.util.ArrayList;
 
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -39,7 +40,7 @@ public class AbstractSAML2ProfileConfigurationTest {
         try {
             config.setEncryptNameIDsCriteria(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // excepted this
         }
     }
@@ -54,7 +55,7 @@ public class AbstractSAML2ProfileConfigurationTest {
         try {
             config.setEncryptAssertionsCriteria(null);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (ConstraintViolationException e) {
             // excepted this
         }
     }
