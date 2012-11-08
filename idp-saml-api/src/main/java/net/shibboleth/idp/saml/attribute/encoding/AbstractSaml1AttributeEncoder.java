@@ -54,7 +54,7 @@ public abstract class AbstractSaml1AttributeEncoder<EncodedType extends Attribut
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public final String getProtocol() {
-        return SAMLConstants.SAML10P_NS;
+        return SAMLConstants.SAML11P_NS;
     }
 
     /** {@inheritDoc} */

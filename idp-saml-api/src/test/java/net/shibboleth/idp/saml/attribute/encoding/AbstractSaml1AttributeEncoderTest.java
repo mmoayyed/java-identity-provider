@@ -68,7 +68,7 @@ public class AbstractSaml1AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         encoder.setNamespace(MY_NAMESPACE);
         encoder.initialize();
         // Use literal here to catch things being edited by mistake
-        Assert.assertEquals(encoder.getProtocol(), "urn:oasis:names:tc:SAML:1.0:protocol");
+        Assert.assertEquals(encoder.getProtocol(), "urn:oasis:names:tc:SAML:1.1:protocol");
 
                 
         Attribute attr = new Attribute(ATTRIBUTE_ID);

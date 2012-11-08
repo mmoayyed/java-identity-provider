@@ -37,6 +37,6 @@ public class AbstractSaml1NameIdentifierEncoderTest {
             }
         };
         // Again, use constants
-        Assert.assertEquals(encoder.getProtocol(), "urn:oasis:names:tc:SAML:1.0:protocol");
+        Assert.assertEquals(encoder.getProtocol(), "urn:oasis:names:tc:SAML:1.1:protocol");
     }
 }

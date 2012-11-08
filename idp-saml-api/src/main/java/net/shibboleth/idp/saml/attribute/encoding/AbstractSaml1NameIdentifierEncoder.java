@@ -27,6 +27,6 @@ public abstract class AbstractSaml1NameIdentifierEncoder extends AbstractSamlNam
 
     /** {@inheritDoc} */
     @Nonnull public final String getProtocol() {
-        return SAMLConstants.SAML10P_NS;
+        return SAMLConstants.SAML11P_NS;
     }
 }
