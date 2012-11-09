@@ -69,7 +69,9 @@ import com.google.common.base.Function;
         @Event(id = EventIds.INVALID_ATTRIBUTE_CTX,
                 description = "Returned if no attribute context is associated with the relying party context"),
         @Event(id = SamlEventIds.UNABLE_ENCODE_ATTRIBUTE,
-                description = "Returned if there was a problem encoding an attribute")})
+                description = "Returned if there was a problem encoding an attribute"),
+        @Event(id = SamlEventIds.NO_RESPONSE,
+                description = "No SAML response object is associated with the current request")})
 public class AddAttributeStatementToAssertion extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
@@ -124,6 +126,30 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     }
 
     /**
+     * Gets whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
+     * ignored or result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition.
+     * 
+     * @return whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
+     *         ignored or result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition
+     */
+    public boolean isIgnoringUnencodableAttributes() {
+        return ignoringUnencodableAttributes;
+    }
+
+    /**
+     * Sets whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
+     * ignored or result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition.
+     * 
+     * @param ignoreUnencodableAttributes whether the attributes that result in an {@link AttributeEncodingException}
+     *            when being encoded should be ignored or result in an {@link #UNABLE_ENCODE_ATTRIBUTE} transition
+     */
+    public void setIgnoringUnencodableAttributes(boolean ignoreUnencodableAttributes) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        ignoringUnencodableAttributes = ignoreUnencodableAttributes;
+    }
+
+    /**
      * Gets the strategy used to locate the {@link RelyingPartyContext} associated with a given
      * {@link ProfileRequestContext}.
      * 
@@ -168,6 +194,12 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
             return ActionSupport.buildEvent(this, EventIds.INVALID_ATTRIBUTE_CTX);
         }
 
+        final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
+        if (response == null) {
+            log.error("Action {}: No SAML response located in current profile request context", getId());
+            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
+        }
+
         try {
             final AttributeStatement statement = buildAttributeStatement(attributeCtx.getAttributes().values());
             if (statement == null) {
@@ -175,9 +207,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
                 return ActionSupport.buildProceedEvent(this);
             }
 
-            final Assertion assertion =
-                    getStatementAssertion(relyingPartyCtx, profileRequestContext.getOutboundMessageContext()
-                            .getMessage());
+            final Assertion assertion = getStatementAssertion(relyingPartyCtx, response);
             assertion.getAttributeStatements().add(statement);
 
             log.debug("Action {}: Adding constructed AttributeStatement to Assertion {} ", getId(), assertion.getID());
