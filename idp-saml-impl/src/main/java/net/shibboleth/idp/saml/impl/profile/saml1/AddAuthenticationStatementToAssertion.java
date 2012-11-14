@@ -21,12 +21,16 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.ext.spring.webflow.Event;
+import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -40,7 +44,6 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.Event;
 
 import com.google.common.base.Function;
 
@@ -57,6 +60,12 @@ import com.google.common.base.Function;
  * The constructed {@link AuthenticationStatement} will have its authentication instant and method properties set. This
  * information is retrieved from the {@link AuthenticationRequestContext} on the {@link ProfileRequestContext}.
  */
+@Events({
+        @Event(id = EventIds.PROCEED_EVENT_ID),
+        @Event(id = EventIds.INVALID_RELYING_PARTY_CTX,
+                description = "Returned if no relying party information is associated with the current request"),
+        @Event(id = SamlEventIds.NO_RESPONSE,
+                description = "No SAML response object is associated with the current request")})
 public class AddAuthenticationStatementToAssertion extends AbstractProfileAction<Object, Response> {
 
     /** Class logger. */
@@ -134,11 +143,21 @@ public class AddAuthenticationStatementToAssertion extends AbstractProfileAction
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+    protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
             ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AuthenticationStatement to outgoing Response", getId());
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (relyingPartyCtx == null) {
+            log.error("Action {}: No relying party context located in current profile request context", getId());
+            return ActionSupport.buildEvent(this, EventIds.INVALID_RELYING_PARTY_CTX);
+        }
+        
+        final Response response = profileRequestContext.getOutboundMessageContext().getMessage();
+        if (response == null) {
+            log.error("Action {}: No SAML response located in current profile request context", getId());
+            return ActionSupport.buildEvent(this, SamlEventIds.NO_RESPONSE);
+        }
 
         final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext);
         if (statement == null) {
