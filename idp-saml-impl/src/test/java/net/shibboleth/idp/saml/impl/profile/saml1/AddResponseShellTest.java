@@ -83,8 +83,6 @@ public class AddResponseShellTest extends OpenSAMLInitBaseTestCase {
 
         Event result = action.execute(springRequestContext);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.RESPONSE_EXISTS);
+        ActionTestingSupport.assertEvent(result, SamlEventIds.RESPONSE_EXISTS);
     }
 }

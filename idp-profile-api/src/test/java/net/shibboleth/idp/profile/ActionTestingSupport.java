@@ -39,14 +39,23 @@ public class ActionTestingSupport {
     public final static String OUTBOUND_MSG_ISSUER = "http://idp.example.org";
 
     /**
+     * Checks that the event is not null, that the event source is not null, and that the event ID is the given id.
+     * 
+     * @param event the event to check
+     */
+    public static void assertEvent(final Event event, final String id) {
+        Assert.assertNotNull(event);
+        Assert.assertNotNull(event.getSource());
+        Assert.assertEquals(event.getId(), id);
+    }
+
+    /**
      * Checks that the given event is a proceed event. That is, that the event is not null, that its source is not null,
      * and that its ID is {@link EventIds#PROCEED_EVENT_ID}.
      * 
      * @param event the event to check
      */
-    public static void assertProceedEvent(Event event) {
-        Assert.assertNotNull(event);
-        Assert.assertNotNull(event.getSource());
-        Assert.assertEquals(event.getId(), EventIds.PROCEED_EVENT_ID);
+    public static void assertProceedEvent(final Event event) {
+        assertEvent(event, EventIds.PROCEED_EVENT_ID);
     }
 }

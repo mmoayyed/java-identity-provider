@@ -61,9 +61,7 @@ public class ResolveAttributesTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action resolves attributes and proceeds properly. */
@@ -180,8 +178,6 @@ public class ResolveAttributesTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), ResolveAttributes.UNABLE_RESOLVE_ATTRIBS);
+        ActionTestingSupport.assertEvent(result, ResolveAttributes.UNABLE_RESOLVE_ATTRIBS);
     }
 }

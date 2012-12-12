@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -76,9 +77,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */
@@ -94,9 +93,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.NO_RESPONSE);
+        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
     }
 
     /** Test that the action errors out properly if there is no attribute context. */
@@ -111,9 +108,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_ATTRIBUTE_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_ATTRIBUTE_CTX);
     }
 
     /** Test that the action errors out properly if the attribute context does not contain attributes. */
@@ -131,9 +126,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
     }
 
     /** Test that the action ignores attribute encoding errors. */
@@ -162,9 +155,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
     }
 
     /** Test that the action returns the correct transition when an attribute encoding error occurs. */
@@ -192,9 +183,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.UNABLE_ENCODE_ATTRIBUTE);
+        ActionTestingSupport.assertEvent(result, SamlEventIds.UNABLE_ENCODE_ATTRIBUTE);
     }
 
     @Test public void testNonResponseOutboundMessage() throws Exception {
@@ -240,9 +229,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
         Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
@@ -280,9 +267,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
         Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
@@ -317,9 +302,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
         Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);

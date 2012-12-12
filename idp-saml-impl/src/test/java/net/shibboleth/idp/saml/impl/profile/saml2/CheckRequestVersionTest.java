@@ -27,7 +27,6 @@ import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link CheckRequestVersion} unit test. */
@@ -53,7 +52,8 @@ public class CheckRequestVersionTest extends OpenSAMLInitBaseTestCase {
         action.initialize();
 
         Event result = action.execute(springRequestContext);
-        Assert.assertEquals(result.getId(), SamlEventIds.INVALID_MESSAGE_VERSION);
+        
+        ActionTestingSupport.assertEvent(result, SamlEventIds.INVALID_MESSAGE_VERSION);
     }
 
     /** Test that the action errors out on SAML 2 messages. */

@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -46,9 +47,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no response. */
@@ -61,9 +60,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.NO_RESPONSE);
+        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
     }
 
     /** Test that the action proceeds properly returning no assertions if there is no authentication context. */
@@ -78,9 +75,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
         Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);
@@ -132,9 +127,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertProceedEvent(result);
 
         Assert.assertNotNull(profileCtx.getOutboundMessageContext().getMessage());
         Assert.assertTrue(profileCtx.getOutboundMessageContext().getMessage() instanceof Response);

@@ -35,25 +35,21 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** {@link AddAudienceRestrictionToAssertions} unit test. */
-public class AddAudienceRestrictionToAssertionsTest  extends OpenSAMLInitBaseTestCase {
+public class AddAudienceRestrictionToAssertionsTest extends OpenSAMLInitBaseTestCase {
 
     /** Test that action errors out properly if there is no response. */
-    @Test
-    public void testNoResponse() throws Exception {
+    @Test public void testNoResponse() throws Exception {
         AddAudienceRestrictionToAssertions action = new AddAudienceRestrictionToAssertions();
         action.setId("test");
         action.initialize();
 
         Event result = action.execute(new RequestContextBuilder().buildRequestContext());
-        
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.NO_RESPONSE);
+
+        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
     }
 
     /** Test that action errors out properly if there is no assertion in the response. */
-    @Test
-    public void testNoAssertion() throws Exception {
+    @Test public void testNoAssertion() throws Exception {
         RequestContext springRequestContext =
                 new RequestContextBuilder().setOutboundMessage(Saml1ActionTestingSupport.buildResponse())
                         .setRelyingPartyProfileConfigurations(Saml1ActionTestingSupport.buildProfileConfigurations())
@@ -65,17 +61,14 @@ public class AddAudienceRestrictionToAssertionsTest  extends OpenSAMLInitBaseTes
 
         Event result = action.execute(springRequestContext);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.NO_ASSERTION);
+        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_ASSERTION);
     }
 
     /**
      * Test that the condition is properly added if there is a single assertion, without a Conditions element, in the
      * response.
      */
-    @Test
-    public void testSingleAssertion() throws Exception {
+    @Test public void testSingleAssertion() throws Exception {
         Assertion assertion = Saml1ActionTestingSupport.buildAssertion();
 
         Response response = Saml1ActionTestingSupport.buildResponse();
@@ -105,15 +98,15 @@ public class AddAudienceRestrictionToAssertionsTest  extends OpenSAMLInitBaseTes
      * Test that the condition is properly added if there is a single assertion, with a Conditions element, in the
      * response.
      */
-    @Test
-    public void testSingleAssertionWithExistingCondition() throws Exception {
+    @Test public void testSingleAssertionWithExistingCondition() throws Exception {
         SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        AudienceRestrictionCondition.TYPE_NAME);
+                (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory()
+                        .getBuilder(AudienceRestrictionCondition.TYPE_NAME);
         AudienceRestrictionCondition condition = conditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getAudienceRestrictionConditions().add(condition);
 
@@ -141,15 +134,15 @@ public class AddAudienceRestrictionToAssertionsTest  extends OpenSAMLInitBaseTes
     }
 
     /** Test that an addition DoNotCache is not added if an assertion already contains one. */
-    @Test
-    public void testSingleAssertionWithExistingDoNotCondition() throws Exception {
+    @Test public void testSingleAssertionWithExistingDoNotCondition() throws Exception {
         SAMLObjectBuilder<AudienceRestrictionCondition> conditionBuilder =
-                (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
-                        AudienceRestrictionCondition.TYPE_NAME);
+                (SAMLObjectBuilder<AudienceRestrictionCondition>) XMLObjectProviderRegistrySupport.getBuilderFactory()
+                        .getBuilder(AudienceRestrictionCondition.TYPE_NAME);
         AudienceRestrictionCondition condition = conditionBuilder.buildObject();
 
         SAMLObjectBuilder<Conditions> conditionsBuilder =
-                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(Conditions.TYPE_NAME);
+                (SAMLObjectBuilder<Conditions>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(
+                        Conditions.TYPE_NAME);
         Conditions conditions = conditionsBuilder.buildObject();
         conditions.getAudienceRestrictionConditions().add(condition);
 
@@ -177,8 +170,7 @@ public class AddAudienceRestrictionToAssertionsTest  extends OpenSAMLInitBaseTes
     }
 
     /** Test that the condition is properly added if there are multiple assertions in the response. */
-    @Test
-    public void testMultipleAssertion() throws Exception {
+    @Test public void testMultipleAssertion() throws Exception {
         Response response = Saml1ActionTestingSupport.buildResponse();
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());
         response.getAssertions().add(Saml1ActionTestingSupport.buildAssertion());

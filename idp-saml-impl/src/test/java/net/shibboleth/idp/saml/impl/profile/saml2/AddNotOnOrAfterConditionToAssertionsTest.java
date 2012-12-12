@@ -45,9 +45,7 @@ public class AddNotOnOrAfterConditionToAssertionsTest  extends OpenSAMLInitBaseT
 
         Event result = action.execute(new RequestContextBuilder().buildRequestContext());
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.NO_RESPONSE);
+        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
     }
 
     /** Test that action errors out properly if there is no assertion in the response. */
@@ -64,9 +62,7 @@ public class AddNotOnOrAfterConditionToAssertionsTest  extends OpenSAMLInitBaseT
 
         Event result = action.execute(springRequestContext);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SamlEventIds.NO_ASSERTION);
+        ActionTestingSupport.assertEvent(result, SamlEventIds.NO_ASSERTION);
     }
 
     /**

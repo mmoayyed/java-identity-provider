@@ -59,9 +59,7 @@ public class FilterAttributesTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no attribute context. */
@@ -76,9 +74,7 @@ public class FilterAttributesTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_ATTRIBUTE_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_ATTRIBUTE_CTX);
     }
 
     /** Test that the action proceeds properly if there are no attributes to filter . */
@@ -256,9 +252,7 @@ public class FilterAttributesTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), FilterAttributes.UNABLE_FILTER_ATTRIBS);
+        ActionTestingSupport.assertEvent(result, FilterAttributes.UNABLE_FILTER_ATTRIBS);
     }
 
     /** {@link Attribute} which always throws a {@link CloneNotSupportedException}. */

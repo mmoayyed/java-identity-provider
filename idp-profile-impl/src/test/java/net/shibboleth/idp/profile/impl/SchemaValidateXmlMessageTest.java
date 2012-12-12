@@ -34,7 +34,6 @@ import org.opensaml.core.xml.mock.SimpleXMLObject;
 import org.opensaml.core.xml.mock.SimpleXMLObjectBuilder;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.springframework.webflow.execution.Event;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -78,9 +77,7 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
 
         Event result = action.doExecute(null, null, profileRequestContext);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_MSG_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_MSG_CTX);
     }
 
     /** Test a null dom. */
@@ -95,9 +92,7 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
                 action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(simpleXml)
                         .buildProfileRequestContext());
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_MSG_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_MSG_CTX);
     }
 
     /** Test validation of an invalid xml file. */
@@ -116,9 +111,7 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
                 action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(invalidXml)
                         .buildProfileRequestContext());
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), SchemaValidateXmlMessage.SCHEMA_INVALID);
+        ActionTestingSupport.assertEvent(result, SchemaValidateXmlMessage.SCHEMA_INVALID);
     }
 
     /** Test validation of a valid xml file. */

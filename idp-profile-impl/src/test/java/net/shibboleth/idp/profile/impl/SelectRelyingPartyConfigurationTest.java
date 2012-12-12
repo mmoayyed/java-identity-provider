@@ -23,6 +23,7 @@ import java.util.Collections;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -51,9 +52,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_RELYING_PARTY_CTX);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
@@ -68,9 +67,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_RELYING_PARTY_CONFIG);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action errors out properly if the relying party configuration can not be resolved. */
@@ -89,10 +86,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.INVALID_RELYING_PARTY_CONFIG);
-
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CONFIG);
     }
 
     /** Test that the action resolves the relying party and proceeds properly. */
@@ -110,9 +104,7 @@ public class SelectRelyingPartyConfigurationTest {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), EventIds.PROCEED_EVENT_ID);
+        ActionTestingSupport.assertEvent(result, EventIds.PROCEED_EVENT_ID);
 
         RelyingPartyConfiguration resolvedConfig =
                 profileCtx.getSubcontext(RelyingPartyContext.class).getConfiguration();

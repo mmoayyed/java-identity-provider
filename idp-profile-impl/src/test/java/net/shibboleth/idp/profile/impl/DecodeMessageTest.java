@@ -72,9 +72,7 @@ public class DecodeMessageTest extends XMLObjectBaseTestCase {
 
         Event result = action.doExecute(null, null, profileCtx);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getSource());
-        Assert.assertEquals(result.getId(), DecodeMessage.UNABLE_TO_DECODE);
+        ActionTestingSupport.assertEvent(result, DecodeMessage.UNABLE_TO_DECODE);
     }
 
     /**
