@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: Profile API Implementations</name>
+    <name>Shibboleth IdP :: Profile Implementation</name>
     <artifactId>idp-profile-impl</artifactId>
     <packaging>jar</packaging>
 

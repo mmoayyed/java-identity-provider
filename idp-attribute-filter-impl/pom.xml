@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: Attribute Filter Engine Plugin Impl</name>
+    <name>Shibboleth IdP :: Attribute Filter Implementation</name>
     <artifactId>idp-attribute-filter-impl</artifactId>
     <packaging>jar</packaging>
 
