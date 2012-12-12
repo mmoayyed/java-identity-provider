@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
 
-/** Unit test for {@link RelyingPartyConfigurationResolver}. */
+/** Unit test for {@link ActivatedRelyingPartyConfigurationResolver}. */
 public class ActivatedRelyingPartyConfigurationResolverTest {
 
     @Test public void testConstruction() {
