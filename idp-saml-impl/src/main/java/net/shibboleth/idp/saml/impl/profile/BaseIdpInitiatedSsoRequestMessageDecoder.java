@@ -78,7 +78,7 @@ public abstract class BaseIdpInitiatedSsoRequestMessageDecoder<RequestType> exte
 
         if (entityId == null) {
             throw new MessageDecodingException("Shibboleth Authentication Request message did not contain either the "
-                    + ENTITY_ID_PARAM + " (preferred) or " + PROVIDER_ID_PARAM + "query parameter.");
+                    + ENTITY_ID_PARAM + " (preferred) or " + PROVIDER_ID_PARAM + " query parameter.");
         }
         return entityId;
     }
