@@ -73,7 +73,7 @@ public final class CheckMessageLifetime extends AbstractProfileAction {
     public static final String FUTURE_ISSUE_INSTANT = "FutureIssueInstant";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
+    private final Logger log = LoggerFactory.getLogger(CheckMessageLifetime.class);
 
     /** Amount of time, in milliseconds, for which a message is valid. Default value: 5 minutes */
     private long messageLifetime;
