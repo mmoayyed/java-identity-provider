@@ -15,19 +15,16 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.attribute.encoding;
+package net.shibboleth.idp.attribute;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
 
 import com.google.common.base.Objects;
-
-// TODO (rdw) this belongs in idp-attribute
 
 /** A {@link XMLObjectAttributeValue} value for an {@link net.shibboleth.idp.attribute.Attribute}. */
 public class XMLObjectAttributeValue implements AttributeValue<XMLObject> {

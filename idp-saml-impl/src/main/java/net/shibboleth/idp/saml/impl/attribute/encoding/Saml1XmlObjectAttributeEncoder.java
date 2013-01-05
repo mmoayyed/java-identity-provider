@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
 
