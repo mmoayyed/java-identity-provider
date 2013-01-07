@@ -144,7 +144,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
 
         if (null == idPEntityIdStrategy) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no <essage Metadata Context Lookup Strategy set");
+                    + "': no IdP Entity Id Lookup Strategy set");
         }
     }
 

@@ -188,12 +188,12 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
 
         if (null == relyingPartyEntityIdStrategy) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no Relying Party Context Lookup Strategy set");
+                    + "': no Relying Party EntityId Lookup Strategy set");
         }
 
         if (null == idPEntityIdStrategy) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no <essage Metadata Context Lookup Strategy set");
+                    + "': no IdP EntityId Lookup Strategy set");
         }
     }
 
