@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -35,26 +34,26 @@ import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
 
 /**
- * Test for {@link SAML2NameIDAttributeDefinition}.
+ * Test for {@link SAML1NameIdentifierAttributeDefinition}.
  */
-public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCase {
+public class SAML1NameIdentifierAttributeDefinitionTest  extends OpenSAMLInitBaseTestCase {
 
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "simple";
     private static final String SECOND_ATTRIBUTE_NAME = "second";
     
+    private static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
+
     private static final String ALTERNATIVE_FORMAT = "ALTERNATE_FORMAT";
 
     private static final String ALTERNATE_QUALIFIER = "ALTERNATE_QUALIFIER";
-
-    private static final String ALTERNATE_SP_QUALIFIER = "ALTERNATE_SP_QUAL";
 
     @Test public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
@@ -76,9 +75,8 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
     }
     
     @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
-        final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
+        final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
         try {
             defn.initialize();
             Assert.fail("functions");
@@ -114,12 +112,10 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         Assert.assertEquals(values.size(), 2);
         Collection<String> nameValues = new HashSet<String>(2);
         for (AttributeValue val: values) {
-            NameID id = (NameID) val.getValue();
+            NameIdentifier id = (NameIdentifier) val.getValue();
             Assert.assertNull(id.getFormat());
-            Assert.assertNull(id.getSPProvidedID());
-            Assert.assertEquals(id.getSPNameQualifier(), RpEntityIdStrategy.SP_ENTITY_ID);
-            Assert.assertEquals(id.getNameQualifier(), IdPEntityIdStrategy.IDP_ENTITY_ID);
-            nameValues.add(id.getValue());
+            Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
+            nameValues.add(id.getNameIdentifier());
         }
         Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
         Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
@@ -127,9 +123,8 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
     }
     
     @Test public void testBadValue() throws AttributeResolutionException, ComponentInitializationException {
-        final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
+        final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
         defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
                 
@@ -141,9 +136,8 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         defn.initialize();
 
 
-        final SAML2NameIDAttributeDefinition defn2 = new SAML2NameIDAttributeDefinition();
+        final SAML1NameIdentifierAttributeDefinition defn2 = new SAML1NameIdentifierAttributeDefinition();
         defn2.setId(SECOND_ATTRIBUTE_NAME);
-        defn2.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
         defn2.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
         defn2.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
                 
@@ -173,16 +167,9 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
 
     
     @Test public void testSingleValueWithOptions() throws AttributeResolutionException, ComponentInitializationException {
-        final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
+        final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
-        try {
-            defn.initialize();
-            Assert.fail("functions");
-        } catch (ComponentInitializationException e) {
-            //OK
-        }
-        defn.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
                 
         // Set the dependency on the data connector
@@ -192,7 +179,6 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         defn.setDependencies(dependencySet);
         defn.setNameIdFormat(ALTERNATIVE_FORMAT);
         defn.setNameIdQualifier(ALTERNATE_QUALIFIER);
-        defn.setNameIdSPQualifier(ALTERNATE_SP_QUALIFIER);
         defn.initialize();
 
         // And resolve
@@ -212,18 +198,13 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 1);
-        NameID id = (NameID) values.iterator().next().getValue();
+        NameIdentifier id = (NameIdentifier) values.iterator().next().getValue();
         Assert.assertEquals(id.getFormat(), ALTERNATIVE_FORMAT);
         Assert.assertEquals(defn.getNameIdFormat(), id.getFormat());
-        Assert.assertNull(id.getSPProvidedID());
-        Assert.assertEquals(id.getSPNameQualifier(), ALTERNATE_SP_QUALIFIER);
-        Assert.assertEquals(defn.getNameIdSPQualifier(), id.getSPNameQualifier());
         Assert.assertEquals(id.getNameQualifier(), ALTERNATE_QUALIFIER);
         Assert.assertEquals(defn.getNameIdQualifier(), id.getNameQualifier());
-        Assert.assertEquals(id.getValue(),TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+        Assert.assertEquals(id.getNameIdentifier(),TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
         
-        Assert.assertTrue(defn.getRelyingPartyEntityIdStrategy() instanceof RpEntityIdStrategy);
         Assert.assertTrue(defn.getIdPEntityIdStrategy() instanceof IdPEntityIdStrategy);
     }
-
 }
