@@ -53,6 +53,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
 
     /** Store used to map tokens to principals. */
+    // TODO This needs to be changed when Persistence is finalized.
     private PersistenceManager<TransientIdEntry> idStore;
 
     /** Generator of random, hex-encoded, tokens. */
