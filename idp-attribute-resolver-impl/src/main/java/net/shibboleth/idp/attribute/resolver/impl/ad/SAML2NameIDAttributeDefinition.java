@@ -74,9 +74,9 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
     private Function<AttributeResolutionContext, String> relyingPartyEntityIdStrategy;
 
     /** Strategy used to locate the IdP EntityId given a {@link AttributeResolutionContext}. */
+    // TODO(rdw) These needs to be changed when the profile handling has been finalized
     private Function<AttributeResolutionContext, String> idPEntityIdStrategy;
 
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
 
     /**
      * Constructor.
@@ -206,14 +206,16 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the constructed NameID
      */
-    protected NameID buildNameId(String nameIdValue, AttributeResolutionContext resolutionContext) {
-        NameID nameId = nameIDBuilder.buildObject();
-        nameId.setValue(nameIdValue);
+    protected NameID buildNameId(@Nonnull String nameIdValue, @Nonnull AttributeResolutionContext resolutionContext) {
 
         log.debug("NameIdAttribute {} : Building a SAML2 NameID with value for {}", getId(), nameIdValue);
 
         final String relyingPartyEntityId = relyingPartyEntityIdStrategy.apply(resolutionContext);
         final String idpEntityId = idPEntityIdStrategy.apply(resolutionContext);
+
+        NameID nameId = nameIDBuilder.buildObject();
+        nameId.setValue(nameIdValue);
+
 
         if (nameIdFormat != null) {
             nameId.setFormat(nameIdFormat);
@@ -222,13 +224,13 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
         if (nameIdQualifier != null) {
             nameId.setNameQualifier(nameIdQualifier);
         } else {
-            nameId.setNameQualifier(relyingPartyEntityId);
+            nameId.setNameQualifier(idpEntityId);
         }
 
         if (nameIdSPQualifier != null) {
             nameId.setSPNameQualifier(nameIdSPQualifier);
         } else {
-            nameId.setSPNameQualifier(idpEntityId);
+            nameId.setSPNameQualifier(relyingPartyEntityId);
         }
 
         return nameId;

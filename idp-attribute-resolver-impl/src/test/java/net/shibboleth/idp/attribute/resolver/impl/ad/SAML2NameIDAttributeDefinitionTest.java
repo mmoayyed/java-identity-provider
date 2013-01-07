@@ -124,8 +124,8 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
             NameID id = (NameID) val.getValue();
             Assert.assertNull(id.getFormat());
             Assert.assertNull(id.getSPProvidedID());
-            Assert.assertEquals(id.getSPNameQualifier(), IDP_ENTITY_ID);
-            Assert.assertEquals(id.getNameQualifier(), SP_ENTITY_ID);
+            Assert.assertEquals(id.getSPNameQualifier(), SP_ENTITY_ID);
+            Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
             nameValues.add(id.getValue());
         }
         Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
