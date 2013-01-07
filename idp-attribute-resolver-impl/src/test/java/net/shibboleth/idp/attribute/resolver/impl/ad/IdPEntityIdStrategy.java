@@ -21,22 +21,14 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 
-import org.opensaml.messaging.context.BasicMessageMetadataContext;
-
 import com.google.common.base.Function;
 
 class IdPEntityIdStrategy implements Function<AttributeResolutionContext, String> {
 
-    private BasicMessageMetadataContext context;
     static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
-    
-    public IdPEntityIdStrategy() {
-        context = new BasicMessageMetadataContext();
-        context.setMessageId(IdPEntityIdStrategy.IDP_ENTITY_ID);
-    }
     
     /** {@inheritDoc} */
     @Nullable public String  apply(@Nullable AttributeResolutionContext arg0) {
-        return IdPEntityIdStrategy.IDP_ENTITY_ID;
+        return IDP_ENTITY_ID;
     }
 }

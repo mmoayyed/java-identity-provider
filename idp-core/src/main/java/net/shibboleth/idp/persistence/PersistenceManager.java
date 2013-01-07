@@ -67,11 +67,13 @@ public interface PersistenceManager<ItemType> extends IdentifiableComponent, Val
      * implementation of this interface may return a different object or update the provided object in some way during
      * this method call.
      * 
+     * @param id the ID of the item to be persisted
+     *
      * @param item item to be persisted, maybe null
      * 
      * @return the persisted item or null if the given item was null
      */
-    public ItemType persist(ItemType item);
+    public ItemType persist(String id, ItemType item);
 
     /**
      * Removes an item with the given ID from the persistence store.
