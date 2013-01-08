@@ -234,7 +234,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         if (resolvedAttribute.getValues().isEmpty()) {
             log.debug("Attribute definition '{}': produced an attribute with no values", getId());
         } else {
-            log.debug("Attribute definition '{}': produced an attribute with the following values", getId(),
+            log.debug("Attribute definition '{}': produced an attribute with the following values {}", getId(),
                     resolvedAttribute.getValues());
         }
 
