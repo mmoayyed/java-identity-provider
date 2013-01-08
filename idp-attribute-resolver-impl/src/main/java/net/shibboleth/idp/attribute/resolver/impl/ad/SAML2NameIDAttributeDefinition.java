@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -71,12 +72,11 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
 
     /** Strategy used to locate the RelyingParty EntityId given a {@link AttributeResolutionContext}. */
     // TODO(rdw) These needs to be changed when the profile handling has been finalized
-    private Function<AttributeResolutionContext, String> relyingPartyEntityIdStrategy;
+    private Function<AttributeResolutionContext, String> spEntityIdStrategy;
 
     /** Strategy used to locate the IdP EntityId given a {@link AttributeResolutionContext}. */
     // TODO(rdw) These needs to be changed when the profile handling has been finalized
     private Function<AttributeResolutionContext, String> idPEntityIdStrategy;
-
 
     /**
      * Constructor.
@@ -168,8 +168,8 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the required strategy.
      */
-    public Function<AttributeResolutionContext, String> getRelyingPartyEntityIdStrategy() {
-        return relyingPartyEntityIdStrategy;
+    public Function<AttributeResolutionContext, String> getSPEntityIdStrategy() {
+        return spEntityIdStrategy;
     }
 
     /**
@@ -177,16 +177,16 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param strategy to set.
      */
-    public void setRelyingPartyEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
+    public void setSPEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        relyingPartyEntityIdStrategy = strategy;
+        spEntityIdStrategy = strategy;
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (null == relyingPartyEntityIdStrategy) {
+        if (null == spEntityIdStrategy) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
                     + "': no Relying Party EntityId Lookup Strategy set");
         }
@@ -205,17 +205,19 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * @param resolutionContext current resolution context
      * 
      * @return the constructed NameID
+     * @throws AttributeResolutionException if the IdP Name is empty.
      */
-    protected NameID buildNameId(@Nonnull String nameIdValue, @Nonnull AttributeResolutionContext resolutionContext) {
+    protected NameID buildNameId(@Nonnull String nameIdValue, @Nonnull AttributeResolutionContext resolutionContext)
+            throws AttributeResolutionException {
 
         log.debug("NameIdAttribute {} : Building a SAML2 NameID with value for {}", getId(), nameIdValue);
 
-        final String relyingPartyEntityId = relyingPartyEntityIdStrategy.apply(resolutionContext);
-        final String idpEntityId = idPEntityIdStrategy.apply(resolutionContext);
+        final String spEntityId =
+                StringSupport.trimOrNull(spEntityIdStrategy.apply(resolutionContext));
+        final String idpEntityId = StringSupport.trimOrNull(idPEntityIdStrategy.apply(resolutionContext));
 
         NameID nameId = nameIDBuilder.buildObject();
         nameId.setValue(nameIdValue);
-
 
         if (nameIdFormat != null) {
             nameId.setFormat(nameIdFormat);
@@ -223,35 +225,42 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
 
         if (nameIdQualifier != null) {
             nameId.setNameQualifier(nameIdQualifier);
-        } else {
+        } else if (null != idpEntityId) {
             nameId.setNameQualifier(idpEntityId);
+        } else {
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " provided IdP EntityId was empty");
         }
 
         if (nameIdSPQualifier != null) {
             nameId.setSPNameQualifier(nameIdSPQualifier);
+        } else if (null != spEntityId) {
+            nameId.setSPNameQualifier(spEntityId);
         } else {
-            nameId.setSPNameQualifier(relyingPartyEntityId);
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " provided SP EntityId was empty");
         }
 
         return nameId;
     }
 
     /**
-     * Worker function for doAttributeDefintionResolve.  This returns an AttributeValue if the input value is
-     * appropriate for encoding as a NameID.
+     * Worker function for doAttributeDefintionResolve. This returns an AttributeValue if the input value is appropriate
+     * for encoding as a NameID.
      * 
      * @param theValue an arbitrary value.
      * @param resolutionContext the context to get the rest of the values from
-     * @return null or an attributeValue;
+     * @return null or an attributeValue.
+     * @throws AttributeResolutionException if the IdP Name is empty.
      */
     @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull AttributeValue theValue,
-            @Nonnull AttributeResolutionContext resolutionContext) {
+            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
         if (theValue instanceof StringAttributeValue) {
             StringAttributeValue value = (StringAttributeValue) theValue;
             NameID nid = buildNameId(value.getValue(), resolutionContext);
             XMLObjectAttributeValue val = new XMLObjectAttributeValue(nid);
             return val;
-        } 
+        }
         log.warn("NameIdAttribute {} : Value {} is not a string", getId(), theValue.toString());
         return null;
     }

@@ -23,12 +23,27 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 
 import com.google.common.base.Function;
 
-class RpEntityIdStrategy implements Function<AttributeResolutionContext, String> {
+class ConstantStringStrategy implements Function<AttributeResolutionContext, String> {
+
+    static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
+    
+    static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
 
     static final String SP_ENTITY_ID = "https://sp.example.org/idp";
+    
+    final String returnValue;
 
+    @SuppressWarnings("unused")
+    private ConstantStringStrategy() {
+        returnValue = "notSet";
+    }
+    
+    public ConstantStringStrategy(String value) {
+        returnValue = value;
+    } 
+    
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nullable AttributeResolutionContext arg0) {
-        return SP_ENTITY_ID;
+    @Nullable public String  apply(@Nullable AttributeResolutionContext arg0) {
+        return returnValue;
     }
 }

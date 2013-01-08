@@ -34,11 +34,11 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,13 +157,14 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * @param resolutionContext current resolution context
      * 
      * @return the constructed NameIdentifier
+     * @throws AttributeResolutionException if the IdP Name is empty.
      */
     protected NameIdentifier buildNameId(@Nonnull String nameIdValue,
-            @Nonnull AttributeResolutionContext resolutionContext) {
+            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
 
         log.debug("NameIdAttribute {} : Building a SAML1 NameIdentifier with value for {}", getId(), nameIdValue);
 
-        final String idpEntityId = idPEntityIdStrategy.apply(resolutionContext);
+        final String idpEntityId = StringSupport.trimOrNull(idPEntityIdStrategy.apply(resolutionContext));
 
         NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
         nameIdentifier.setNameIdentifier(nameIdValue);
@@ -174,8 +175,11 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
 
         if (nameIdQualifier != null) {
             nameIdentifier.setNameQualifier(nameIdQualifier);
-        } else {
+        } else if (null != idpEntityId) {
             nameIdentifier.setNameQualifier(idpEntityId);
+        } else {
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " provided IdP EntityId was empty");
         }
 
         return nameIdentifier;
@@ -188,9 +192,11 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * @param theValue an arbitrary value.
      * @param resolutionContext the context to get the rest of the values from
      * @return null or an attributeValue;
+     * @throws AttributeResolutionException if the IdP Name is empty.
      */
     @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull AttributeValue theValue,
-            @Nonnull AttributeResolutionContext resolutionContext) {
+            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+
         if (theValue instanceof StringAttributeValue) {
             StringAttributeValue value = (StringAttributeValue) theValue;
             NameIdentifier nid = buildNameId(value.getValue(), resolutionContext);

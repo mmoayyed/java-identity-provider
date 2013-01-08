@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
@@ -44,12 +43,13 @@ import com.google.common.base.Optional;
 /**
  * Test for {@link SAML2NameIDAttributeDefinition}.
  */
-public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCase {
+public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase {
 
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "simple";
+
     private static final String SECOND_ATTRIBUTE_NAME = "second";
-    
+
     private static final String ALTERNATIVE_FORMAT = "ALTERNATE_FORMAT";
 
     private static final String ALTERNATE_QUALIFIER = "ALTERNATE_QUALIFIER";
@@ -63,10 +63,10 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
             defn.initialize();
             Assert.fail("functions");
         } catch (ComponentInitializationException e) {
-            //OK
+            // OK
         }
-        defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
-        defn.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         defn.initialize();
 
@@ -74,20 +74,21 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
 
         Assert.assertTrue(result.get().getValues().isEmpty());
     }
-    
-    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+
+    private AttributeResolver setupResolver(String SpEntityID, String IdPEntityId)
+            throws ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(SpEntityID));
         try {
             defn.initialize();
             Assert.fail("functions");
         } catch (ComponentInitializationException e) {
-            //OK
+            // OK
         }
-        defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(IdPEntityId));
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
-                
+
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
@@ -103,36 +104,61 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         final AttributeResolver resolver = new AttributeResolver("foo", am, null);
         resolver.initialize();
 
+        return resolver;
+    }
+
+    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+        final AttributeResolver resolver =
+                setupResolver(ConstantStringStrategy.SP_ENTITY_ID, ConstantStringStrategy.IDP_ENTITY_ID);
+
         AttributeResolutionContext context = new AttributeResolutionContext();
-        try {
-            resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
-            Assert.fail("resolution failed", e);
-        }
+        resolver.resolveAttributes(context);
         final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
         Collection<String> nameValues = new HashSet<String>(2);
-        for (AttributeValue val: values) {
+        for (AttributeValue val : values) {
             NameID id = (NameID) val.getValue();
             Assert.assertNull(id.getFormat());
             Assert.assertNull(id.getSPProvidedID());
-            Assert.assertEquals(id.getSPNameQualifier(), RpEntityIdStrategy.SP_ENTITY_ID);
-            Assert.assertEquals(id.getNameQualifier(), IdPEntityIdStrategy.IDP_ENTITY_ID);
+            Assert.assertEquals(id.getSPNameQualifier(), ConstantStringStrategy.SP_ENTITY_ID);
+            Assert.assertEquals(id.getNameQualifier(), ConstantStringStrategy.IDP_ENTITY_ID);
             nameValues.add(id.getValue());
         }
         Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
         Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
-
     }
-    
+
+    @Test public void testNulls() throws ComponentInitializationException {
+
+        AttributeResolver resolver = setupResolver(ConstantStringStrategy.SP_ENTITY_ID, null);
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        try {
+            resolver.resolveAttributes(context);
+            Assert.fail("null IdP EntityId should throw");
+        } catch (AttributeResolutionException e) {
+            // OK
+        }
+
+        resolver = setupResolver(null, ConstantStringStrategy.IDP_ENTITY_ID);
+
+        context = new AttributeResolutionContext();
+        try {
+            resolver.resolveAttributes(context);
+            Assert.fail("null IdP EntityId should throw");
+        } catch (AttributeResolutionException e) {
+            // OK
+        }
+    }
+
     @Test public void testBadValue() throws AttributeResolutionException, ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
-        defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
-                
+
         // Set the dependency on the data connector
         Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
@@ -140,13 +166,12 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         defn.setDependencies(dependencySet);
         defn.initialize();
 
-
         final SAML2NameIDAttributeDefinition defn2 = new SAML2NameIDAttributeDefinition();
         defn2.setId(SECOND_ATTRIBUTE_NAME);
-        defn2.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
-        defn2.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
+        defn2.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
+        defn2.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
         defn2.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
-                
+
         // Set the dependency on the data connector
         dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TEST_ATTRIBUTE_NAME, null));
@@ -171,20 +196,20 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         Assert.assertNull(context.getResolvedAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
-    
-    @Test public void testSingleValueWithOptions() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSingleValueWithOptions() throws AttributeResolutionException,
+            ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
         try {
             defn.initialize();
             Assert.fail("functions");
         } catch (ComponentInitializationException e) {
-            //OK
+            // OK
         }
-        defn.setRelyingPartyEntityIdStrategy(new RpEntityIdStrategy());
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
-                
+
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
@@ -198,7 +223,8 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         // And resolve
         final Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();
         am.add(defn);
-        am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
+        am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
         final AttributeResolver resolver = new AttributeResolver("foo", am, null);
         resolver.initialize();
@@ -220,10 +246,10 @@ public class SAML2NameIDAttributeDefinitionTest  extends OpenSAMLInitBaseTestCas
         Assert.assertEquals(defn.getNameIdSPQualifier(), id.getSPNameQualifier());
         Assert.assertEquals(id.getNameQualifier(), ALTERNATE_QUALIFIER);
         Assert.assertEquals(defn.getNameIdQualifier(), id.getNameQualifier());
-        Assert.assertEquals(id.getValue(),TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
-        
-        Assert.assertTrue(defn.getRelyingPartyEntityIdStrategy() instanceof RpEntityIdStrategy);
-        Assert.assertTrue(defn.getIdPEntityIdStrategy() instanceof IdPEntityIdStrategy);
+        Assert.assertEquals(id.getValue(), TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+
+        Assert.assertEquals(defn.getSPEntityIdStrategy().apply(null), ConstantStringStrategy.SP_ENTITY_ID);
+        Assert.assertEquals(defn.getIdPEntityIdStrategy().apply(null), ConstantStringStrategy.IDP_ENTITY_ID);
     }
 
 }

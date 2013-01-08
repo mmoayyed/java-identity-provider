@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.persistence.PersistenceManager;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
@@ -156,7 +157,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param strategy what to set
      */
-    public void setPrincipaldStrategy(Function<AttributeResolutionContext, String> strategy) {
+    public void setPrincipalStrategy(Function<AttributeResolutionContext, String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         principalStrategy = strategy;
     }
@@ -230,10 +231,25 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
+        final String idpEntityId = StringSupport.trimOrNull(idPEntityIdStrategy.apply(resolutionContext));
+        if (null == idpEntityId) {
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " provided IdP EntityId was empty");
+        }
+
+        final String spEntityId = StringSupport.trimOrNull(spEntityIdStrategy.apply(resolutionContext));
+        if (null == spEntityId) {
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " provided SP EntityId was empty");
+        }
+
+        final String principalName = StringSupport.trimOrNull(principalStrategy.apply(resolutionContext));
+        if (null == principalName) {
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " provided Prinicipal Name name was empty");
+        }
+
         final Attribute result = new Attribute(getId());
-        final String idpEntityId = idPEntityIdStrategy.apply(resolutionContext);
-        final String spEntityId = spEntityIdStrategy.apply(resolutionContext);
-        final String principalName = principalStrategy.apply(resolutionContext);
 
         StringBuilder principalTokenIdBuilder = new StringBuilder();
         principalTokenIdBuilder.append(idpEntityId).append("!").append(spEntityId).append("!").append(principalName);

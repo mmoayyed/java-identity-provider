@@ -58,12 +58,6 @@ public class TransientIdAttributeDefinitionTest {
         }
     }
 
-    /**
-     * Test resolution a single resolution
-     * 
-     * @throws ComponentInitializationException
-     * @throws AttributeResolutionException
-     */
     @Test public void testSingle() throws ComponentInitializationException, AttributeResolutionException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
@@ -76,13 +70,13 @@ public class TransientIdAttributeDefinitionTest {
         defn.setIdStore(store);
         testInitializeFail(defn, "no idPEntityIdStrategy");
 
-        defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
         testInitializeFail(defn, "no sPEntityIdStrategy");
 
-        defn.setSPEntityIdStrategy(new RpEntityIdStrategy());
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
         testInitializeFail(defn, "no principalStrategy");
 
-        defn.setPrincipaldStrategy(new PrincipalStrategy());
+        defn.setPrincipalStrategy(new ConstantStringStrategy(ConstantStringStrategy.PRINCIPAL_ID));
         defn.initialize();
 
         final Optional<Attribute> result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
@@ -95,10 +89,35 @@ public class TransientIdAttributeDefinitionTest {
         Assert.assertEquals(val, store.getLastValue().getId());
         Assert.assertTrue(val.length() >= defn.getIdSize());
         
-        Assert.assertEquals(store.getLastValue().getPrincipalName(), PrincipalStrategy.PRINCIAL_ID );
-        Assert.assertEquals(store.getLastValue().getRelyingPartyId(), RpEntityIdStrategy.SP_ENTITY_ID);
-        Assert.assertTrue(store.getLastId().contains(IdPEntityIdStrategy.IDP_ENTITY_ID));
+        Assert.assertEquals(store.getLastValue().getPrincipalName(), ConstantStringStrategy.PRINCIPAL_ID );
+        Assert.assertEquals(store.getLastValue().getRelyingPartyId(), ConstantStringStrategy.SP_ENTITY_ID);
+        Assert.assertTrue(store.getLastId().contains(ConstantStringStrategy.IDP_ENTITY_ID));
         
+    }
+    
+    private void constructAndFail(String sp, String idp, String principal, String whyItFailed) throws ComponentInitializationException {
+        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
+        defn.setId(TEST_ATTRIBUTE_NAME);
+        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        final Store store = new Store();
+        defn.setIdStore(store);
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(idp));
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(sp));
+        defn.setPrincipalStrategy(new ConstantStringStrategy(principal));
+        defn.initialize();
+        try {
+            defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            Assert.fail(whyItFailed);
+        } catch (AttributeResolutionException e) {
+            // OK
+        }       
+    }
+
+    @Test public void testFails() throws ComponentInitializationException {
+        
+        constructAndFail(ConstantStringStrategy.SP_ENTITY_ID, null, ConstantStringStrategy.PRINCIPAL_ID, "Null IdP");
+        constructAndFail(ConstantStringStrategy.SP_ENTITY_ID, ConstantStringStrategy.IDP_ENTITY_ID, null, "Null principal");
+        constructAndFail(null, ConstantStringStrategy.IDP_ENTITY_ID, ConstantStringStrategy.PRINCIPAL_ID, "Null SP");
     }
 
     @Test public void testGetters() throws ComponentInitializationException {
@@ -107,9 +126,9 @@ public class TransientIdAttributeDefinitionTest {
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
-        defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
-        defn.setSPEntityIdStrategy(new RpEntityIdStrategy());
-        defn.setPrincipaldStrategy(new PrincipalStrategy());
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
+        defn.setPrincipalStrategy(new ConstantStringStrategy(ConstantStringStrategy.PRINCIPAL_ID));
         defn.setIdLiftetime(TEST_LIFETIME);
         defn.setIdSize(TEST_ID_SIZE);
         defn.initialize();
@@ -117,9 +136,9 @@ public class TransientIdAttributeDefinitionTest {
         Assert.assertEquals(defn.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertEquals(defn.getIdLifetime(), TEST_LIFETIME);
         Assert.assertEquals(defn.getIdSize(), TEST_ID_SIZE);
-        Assert.assertTrue(defn.getIdPEntityIdStrategy() instanceof IdPEntityIdStrategy);
-        Assert.assertTrue(defn.getSPEntityIdStrategy() instanceof RpEntityIdStrategy);
-        Assert.assertTrue(defn.getPrincipalStrategy() instanceof PrincipalStrategy);
+        Assert.assertEquals(defn.getIdPEntityIdStrategy().apply(null), ConstantStringStrategy.IDP_ENTITY_ID);
+        Assert.assertEquals(defn.getSPEntityIdStrategy().apply(null), ConstantStringStrategy.SP_ENTITY_ID);
+        Assert.assertEquals(defn.getPrincipalStrategy().apply(null), ConstantStringStrategy.PRINCIPAL_ID);
         Assert.assertEquals(defn.getIdStore(), store);
     }
     
@@ -131,9 +150,9 @@ public class TransientIdAttributeDefinitionTest {
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
-        defn.setIdPEntityIdStrategy(new IdPEntityIdStrategy());
-        defn.setSPEntityIdStrategy(new RpEntityIdStrategy());
-        defn.setPrincipaldStrategy(new PrincipalStrategy());
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
+        defn.setPrincipalStrategy(new ConstantStringStrategy(ConstantStringStrategy.PRINCIPAL_ID));
         defn.initialize();
 
         Optional<Attribute> result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
