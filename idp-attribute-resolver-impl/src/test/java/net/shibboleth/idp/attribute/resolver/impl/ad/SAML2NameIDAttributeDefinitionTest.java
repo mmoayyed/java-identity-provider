@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.impl.ConstantStringStrategy;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -87,7 +88,6 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
             // OK
         }
         defn.setIdPEntityIdStrategy(new ConstantStringStrategy(IdPEntityId));
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -153,30 +153,18 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testBadValue() throws AttributeResolutionException, ComponentInitializationException {
-        final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
-        defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
-        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
 
-        // Set the dependency on the data connector
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        defn.setDependencies(dependencySet);
-        defn.initialize();
+        final BaseAttributeDefinition defn = TestSources.nonStringAttributeDefiniton(TEST_ATTRIBUTE_NAME);
 
         final SAML2NameIDAttributeDefinition defn2 = new SAML2NameIDAttributeDefinition();
         defn2.setId(SECOND_ATTRIBUTE_NAME);
         defn2.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
         defn2.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
-        defn2.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        dependencySet = new LazySet<ResolverPluginDependency>();
+        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
         dependencySet.add(new ResolverPluginDependency(TEST_ATTRIBUTE_NAME, null));
         defn2.setDependencies(dependencySet);
-        defn2.initialize();
 
         // And resolve
         Set<BaseAttributeDefinition> am = new LazySet<BaseAttributeDefinition>();

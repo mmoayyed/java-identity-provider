@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.ad;
+package net.shibboleth.idp.attribute.resolver.impl;
 
 import javax.annotation.Nullable;
 
@@ -23,15 +23,15 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 
 import com.google.common.base.Function;
 
-class ConstantStringStrategy implements Function<AttributeResolutionContext, String> {
+public class ConstantStringStrategy implements Function<AttributeResolutionContext, String> {
 
-    static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
+    public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
     
-    static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
+    public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
 
-    static final String SP_ENTITY_ID = "https://sp.example.org/idp";
+    public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
     
-    final String returnValue;
+    private final String returnValue;
 
     @SuppressWarnings("unused")
     private ConstantStringStrategy() {

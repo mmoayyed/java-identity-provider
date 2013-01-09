@@ -25,8 +25,10 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.StaticAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.StaticDataConnector;
+import net.shibboleth.idp.attribute.resolver.impl.ad.SAML2NameIDAttributeDefinition;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -132,7 +134,9 @@ public final class TestSources {
 
         valuesSet = new LazySet<AttributeValue>();
 
-        valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
+        if (attributeCount > 0) {
+            valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
+        }
         if (attributeCount > 1) {
             valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
         }
@@ -147,6 +151,20 @@ public final class TestSources {
         definition.setValue(attr);
         definition.initialize();
         return definition;
+    }
+    
+    public static BaseAttributeDefinition nonStringAttributeDefiniton(String name) {
+        final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
+        defn.setId(name);
+        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
+        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
+
+        // Set the dependency on the data connector
+        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        defn.setDependencies(dependencySet);
+        return defn;
     }
 
 }
