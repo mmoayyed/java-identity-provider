@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver;
+package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 

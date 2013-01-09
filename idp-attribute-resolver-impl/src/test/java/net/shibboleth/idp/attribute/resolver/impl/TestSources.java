@@ -26,9 +26,9 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.StaticAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.StaticDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SAML2NameIDAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.ad.StaticAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

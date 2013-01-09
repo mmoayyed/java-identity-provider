@@ -48,18 +48,18 @@ public class ResolverTestSupport {
     public static AttributeResolutionContext buildResolutionContext(BaseResolverPlugin... plugins) {
         AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
 
-        StaticAttributeDefinition definition;
-        StaticDataConnector connector;
+        TestAttributeDefinition definition;
+        TestDataConnector connector;
         try {
             for (BaseResolverPlugin plugin : plugins) {
-                if (plugin instanceof StaticAttributeDefinition) {
-                    definition = (StaticAttributeDefinition) plugin;
+                if (plugin instanceof TestAttributeDefinition) {
+                    definition = (TestAttributeDefinition) plugin;
                     resolutionContext.recordAttributeDefinitionResolution(definition,
                             definition.resolve(resolutionContext));
                 }
 
-                if (plugin instanceof StaticDataConnector) {
-                    connector = (StaticDataConnector) plugin;
+                if (plugin instanceof TestDataConnector) {
+                    connector = (TestDataConnector) plugin;
                     resolutionContext.recordDataConnectorResolution(connector, connector.resolve(resolutionContext));
                 }
             }
@@ -80,11 +80,11 @@ public class ResolverTestSupport {
         return attribute;
     }
 
-    public static StaticAttributeDefinition buildAttributeDefinition(String attributeId, String... values) {
+    public static TestAttributeDefinition buildAttributeDefinition(String attributeId, String... values) {
         Attribute attribute = buildAttribute(attributeId, values);
 
         try {
-            StaticAttributeDefinition definition = new StaticAttributeDefinition();
+            TestAttributeDefinition definition = new TestAttributeDefinition();
             definition.setId(attributeId);
             definition.setValue(attribute);
             definition.initialize();
@@ -96,10 +96,10 @@ public class ResolverTestSupport {
         }
     }
 
-    public static StaticDataConnector buildDataConnector(String connectorId, Attribute... attributes) {
+    public static TestDataConnector buildDataConnector(String connectorId, Attribute... attributes) {
 
         try {
-            StaticDataConnector connector = new StaticDataConnector();
+            TestDataConnector connector = new TestDataConnector();
             connector.setId(connectorId);
             connector.setValues(Arrays.asList(attributes));
             connector.initialize();
