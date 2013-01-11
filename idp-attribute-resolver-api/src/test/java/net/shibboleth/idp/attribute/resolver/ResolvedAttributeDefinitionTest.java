@@ -37,7 +37,7 @@ public class ResolvedAttributeDefinitionTest {
 
     @Test public void testInit() {
         Attribute attribute = new Attribute("foo");
-        TestAttributeDefinition attrDef = new TestAttributeDefinition();
+        MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
 
         try {
             new ResolvedAttributeDefinition(null, Optional.of(attribute));
@@ -54,7 +54,7 @@ public class ResolvedAttributeDefinitionTest {
         }
 
         try {
-            new ResolvedAttributeDefinition(new TestAttributeDefinition(), Optional.of(attribute));
+            new ResolvedAttributeDefinition(new MockStaticAttributeDefinition(), Optional.of(attribute));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // OK
@@ -64,7 +64,7 @@ public class ResolvedAttributeDefinitionTest {
 
     @Test public void testEqualsHashToString() throws ComponentInitializationException {
         Attribute attribute = new Attribute("foo");
-        TestAttributeDefinition attrDef = new TestAttributeDefinition();
+        MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
         attrDef.setValue(attribute);
         attrDef.setId("Defn");
         attrDef.initialize();
@@ -74,7 +74,7 @@ public class ResolvedAttributeDefinitionTest {
         resolvedAttributeDefinition.toString();
 
         ResolvedAttributeDefinition otherResolvedAttributeDefinition;
-        TestAttributeDefinition otherDef = new TestAttributeDefinition();
+        MockStaticAttributeDefinition otherDef = new MockStaticAttributeDefinition();
         otherDef.setValue(new Attribute("bar"));
         otherDef.setId("OtherDefn");
         otherDef.initialize();
@@ -94,7 +94,7 @@ public class ResolvedAttributeDefinitionTest {
     @Test public void testNoops() throws ComponentInitializationException, ComponentValidationException {
 
         Attribute attribute = new Attribute("foo");
-        TestAttributeDefinition attrDef = new TestAttributeDefinition();
+        MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
         attrDef.setValue(attribute);
         attrDef.setId("Defn");
         ResolverPluginDependency dep = new ResolverPluginDependency("doo", "foo");

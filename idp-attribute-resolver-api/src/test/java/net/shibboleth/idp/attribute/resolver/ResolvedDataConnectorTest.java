@@ -40,7 +40,7 @@ public class ResolvedDataConnectorTest {
     private Optional<Map<String, Attribute>> resolvedData = Optional.of((Map<String, Attribute>) Collections.EMPTY_MAP);
 
     @Test public void testInit() {
-        TestDataConnector dc = new TestDataConnector();
+        MockStaticDataConnector dc = new MockStaticDataConnector();
 
         try {
             new ResolvedDataConnector(null, resolvedData);
@@ -66,7 +66,7 @@ public class ResolvedDataConnectorTest {
     }
 
     @Test public void testEqualsHashToString() throws ComponentInitializationException {
-        TestDataConnector dc = new TestDataConnector();
+        MockStaticDataConnector dc = new MockStaticDataConnector();
         dc.setValues(Arrays.asList(new Attribute("attr")));
         dc.setId("Defn");
         dc.initialize();
@@ -76,7 +76,7 @@ public class ResolvedDataConnectorTest {
 
         ResolvedDataConnector otherDc;
 
-        TestDataConnector otherDef = new TestDataConnector();
+        MockStaticDataConnector otherDef = new MockStaticDataConnector();
         otherDef.setId("OtherDefn");
         otherDef.setValues(Arrays.asList(new Attribute("otherAttr")));
         otherDef.initialize();
@@ -95,7 +95,7 @@ public class ResolvedDataConnectorTest {
 
     @Test public void testNoops() throws ComponentInitializationException, ComponentValidationException,
             AttributeResolutionException {
-        TestDataConnector dc = new TestDataConnector();
+        MockStaticDataConnector dc = new MockStaticDataConnector();
         dc.setValues(Arrays.asList(new Attribute("attr")));
         dc.setId("Defn");
         ResolverPluginDependency dep = new ResolverPluginDependency("doo", "foo");

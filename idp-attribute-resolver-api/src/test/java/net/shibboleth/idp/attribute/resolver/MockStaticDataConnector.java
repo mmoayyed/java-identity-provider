@@ -42,10 +42,10 @@ import com.google.common.collect.ImmutableMap;
 /** An attribute definition that simply returns a static value.   Used for testing only.  This is 
  * a cut and paste job from StaticDataConnector in idp-attribute-resolver-impl */
 @ThreadSafe
-public class TestDataConnector extends BaseDataConnector {
+public class MockStaticDataConnector extends BaseDataConnector {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TestDataConnector.class);
+    private final Logger log = LoggerFactory.getLogger(MockStaticDataConnector.class);
 
     /** Static collection of values returned by this connector. */
     private Optional<Map<String, Attribute>> attributes = Optional.absent();

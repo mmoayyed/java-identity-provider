@@ -36,10 +36,10 @@ import com.google.common.base.Optional;
 /** An attribute definition that simply returns a static value.   Used for testing only.  This is 
  * a cut and paste job from StaticAttributeDefinition in idp-attribute-resolver-impl */
 @ThreadSafe
-public class TestAttributeDefinition extends BaseAttributeDefinition {
+public class MockStaticAttributeDefinition extends BaseAttributeDefinition {
     
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TestAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(MockStaticAttributeDefinition.class);
 
     /** Static value returned by this definition. */
     private Optional<Attribute> value = Optional.absent();

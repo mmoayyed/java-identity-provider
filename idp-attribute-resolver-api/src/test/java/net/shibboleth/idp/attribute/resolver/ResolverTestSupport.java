@@ -48,18 +48,18 @@ public class ResolverTestSupport {
     public static AttributeResolutionContext buildResolutionContext(BaseResolverPlugin... plugins) {
         AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
 
-        TestAttributeDefinition definition;
-        TestDataConnector connector;
+        MockStaticAttributeDefinition definition;
+        MockStaticDataConnector connector;
         try {
             for (BaseResolverPlugin plugin : plugins) {
-                if (plugin instanceof TestAttributeDefinition) {
-                    definition = (TestAttributeDefinition) plugin;
+                if (plugin instanceof MockStaticAttributeDefinition) {
+                    definition = (MockStaticAttributeDefinition) plugin;
                     resolutionContext.recordAttributeDefinitionResolution(definition,
                             definition.resolve(resolutionContext));
                 }
 
-                if (plugin instanceof TestDataConnector) {
-                    connector = (TestDataConnector) plugin;
+                if (plugin instanceof MockStaticDataConnector) {
+                    connector = (MockStaticDataConnector) plugin;
                     resolutionContext.recordDataConnectorResolution(connector, connector.resolve(resolutionContext));
                 }
             }
@@ -80,11 +80,11 @@ public class ResolverTestSupport {
         return attribute;
     }
 
-    public static TestAttributeDefinition buildAttributeDefinition(String attributeId, String... values) {
+    public static MockStaticAttributeDefinition buildAttributeDefinition(String attributeId, String... values) {
         Attribute attribute = buildAttribute(attributeId, values);
 
         try {
-            TestAttributeDefinition definition = new TestAttributeDefinition();
+            MockStaticAttributeDefinition definition = new MockStaticAttributeDefinition();
             definition.setId(attributeId);
             definition.setValue(attribute);
             definition.initialize();
@@ -96,10 +96,10 @@ public class ResolverTestSupport {
         }
     }
 
-    public static TestDataConnector buildDataConnector(String connectorId, Attribute... attributes) {
+    public static MockStaticDataConnector buildDataConnector(String connectorId, Attribute... attributes) {
 
         try {
-            TestDataConnector connector = new TestDataConnector();
+            MockStaticDataConnector connector = new MockStaticDataConnector();
             connector.setId(connectorId);
             connector.setValues(Arrays.asList(attributes));
             connector.initialize();

@@ -194,7 +194,7 @@ public class AttributeResolutionContextTest {
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar").resolve(context) == Optional.<Map<String, Attribute>>absent());
         
         try {
-            TestDataConnector other = new TestDataConnector();
+            MockStaticDataConnector other = new MockStaticDataConnector();
             other.setId("bar");
             other.setValues(Collections.EMPTY_LIST);
             other.initialize();

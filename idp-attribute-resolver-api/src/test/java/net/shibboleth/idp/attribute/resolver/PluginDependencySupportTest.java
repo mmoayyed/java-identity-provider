@@ -68,12 +68,12 @@ public class PluginDependencySupportTest {
     }
 
     @Test public void testGetMergedAttributeValueWithMultipleDependencies() {
-        TestDataConnector connector1 =
+        MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
                         ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport
                         .buildAttribute(ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA2_VALUES));
 
-        TestAttributeDefinition definition1 =
+        MockStaticAttributeDefinition definition1 =
                 ResolverTestSupport.buildAttributeDefinition(ResolverTestSupport.EPA_ATTRIB_ID,
                         ResolverTestSupport.EPA1_VALUES);
 
@@ -94,12 +94,12 @@ public class PluginDependencySupportTest {
     }
 
     @Test public void testGetAllAttributeValues() {
-        TestDataConnector connector1 =
+        MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
                         ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport
                         .buildAttribute(ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA2_VALUES));
 
-        TestAttributeDefinition definition1 =
+        MockStaticAttributeDefinition definition1 =
                 ResolverTestSupport.buildAttributeDefinition(ResolverTestSupport.EPA_ATTRIB_ID,
                         ResolverTestSupport.EPA1_VALUES);
 
