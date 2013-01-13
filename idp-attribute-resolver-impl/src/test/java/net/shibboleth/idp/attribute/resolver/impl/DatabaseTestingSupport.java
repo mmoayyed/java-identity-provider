@@ -39,20 +39,20 @@ import com.google.common.io.CharStreams;
 /**
  *
  */
-public class DatabaseTestingSupport  {
+public class DatabaseTestingSupport {
 
     static Logger log = LoggerFactory.getLogger(DatabaseTestingSupport.class);
 
     protected static void InitializeDataSource(@Nullable String initializingSQLFile, DataSource source) {
-        
+
         final String file = StringSupport.trimOrNull(initializingSQLFile);
-        
+
         if (null == file) {
             return;
         }
 
         final InputStream is = DatabaseTestingSupport.class.getResourceAsStream(file);
-        
+
         if (null == is) {
             log.warn("Could not locate SQL file called {} ", file);
             return;
@@ -64,37 +64,52 @@ public class DatabaseTestingSupport  {
             log.warn("Could not read SQL file called {}.", file);
             return;
         }
-        
+
         if (null == sql) {
             log.warn("SQL file called {} was empty.", file);
             return;
         }
-        
+
         log.debug("Applying SQL: \n {}", sql);
-        
+
         try {
             Connection dbConn = source.getConnection();
             Statement statement = dbConn.createStatement();
-            
+
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             log.warn("Could not contact data source {} or execute commands: {}", source, e);
-            return;            
+            return;
         }
     }
-    
+
+    /**
+     * Summons up an in memory database with the provided identifier. The contents of the resource stream (if any) are
+     * then submitted to the database (so as to allow initializing to a known state.
+     * 
+     * @param initializingSQLFile a file in the classpath with SQL files. For instance
+     *            "/data/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql"
+     * @param identifier a name to uniquify this database.
+     * @return a DataSource which can then be used for testing.
+     */
     public static DataSource GetMockDataSource(@Nullable String initializingSQLFile, @Nonnull String identifier) {
-        
+
         return GetDataSourceFromUrl(initializingSQLFile, "jdbc:hsqldb:mem:" + identifier);
     }
 
+    /**
+     * Summons up a database connection to  an hsqldb server running somewhere.
+     * @param initializingSQLFile a file in the classpath with SQL files. For instance
+     *            "/data/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql"
+     * @param server the server name and database name.  For instance "//localhost/testdb"
+     * @return a DataSource which can then be used for testing
+     */
     public static DataSource GetDataSourceFromHsqlServer(@Nullable String initializingSQLFile, @Nonnull String server) {
-        
+
         return GetDataSourceFromUrl(initializingSQLFile, "jdbc:hsqldb:hsql:" + server);
     }
 
-        JDBCDataSource jdbcSource = new JDBCDataSource();
-
+    JDBCDataSource jdbcSource = new JDBCDataSource();
 
     protected static DataSource GetDataSourceFromUrl(String initializingSQLFile, String JdbcUri) {
         JDBCDataSource jdbcSource = new JDBCDataSource();
@@ -104,7 +119,7 @@ public class DatabaseTestingSupport  {
         jdbcSource.setPassword("");
 
         InitializeDataSource(initializingSQLFile, jdbcSource);
-        
+
         return jdbcSource;
     }
 }
