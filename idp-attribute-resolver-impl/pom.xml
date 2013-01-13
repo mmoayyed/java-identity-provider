@@ -35,7 +35,7 @@
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
         </dependency>
-        
+                
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
@@ -75,6 +75,14 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.2.9</version>
+            <scope>test</scope>
+        </dependency>
+        
 
     </dependencies>
     
