@@ -40,7 +40,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link ComputedIDDataConnector}
+ * Test for {@link BaseComputedIDDataConnector}
  */
 public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
@@ -51,16 +51,16 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     private static final String TEST_CONNECTOR_NAME = "computedAttributeConnector";
 
     /** What we end up looking at */
-    private static final String OUTPUT_ATTRIBUTE_NAME = "outputAttribute";
+    protected static final String OUTPUT_ATTRIBUTE_NAME = "outputAttribute";
 
-    /** VBalue calulated using V2 version.  DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */
-    private static final String RESULT = "Vl6z6K70iLc4AuBoNeb59Dj1rGw=";
+    /** Value calculated using V2 version.  DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */
+    protected static final String RESULT = "Vl6z6K70iLc4AuBoNeb59Dj1rGw=";
 
-    private static final byte salt[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+    protected static final byte salt[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
-    private static final byte smallSalt[] = {0, 1, 2};
+    protected static final byte smallSalt[] = {0, 1, 2};
 
-    private void testInit(ComputedIDDataConnector connector, String failMessage) {
+    private static void testInit(BaseComputedIDDataConnector connector, String failMessage) {
         try {
             connector.initialize();
             Assert.fail(failMessage);
@@ -142,6 +142,10 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     private AttributeResolver constructResolver(int values) throws ComponentInitializationException {
         ComputedIDDataConnector connector = new ComputedIDDataConnector();
 
+        return constructResolver(connector, values);
+    }
+    
+    protected static AttributeResolver constructResolver(BaseComputedIDDataConnector connector, int values) throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
@@ -166,8 +170,10 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     private AttributeResolver constructResolverWithNonString(String dependantOn) throws ComponentInitializationException {
-        ComputedIDDataConnector connector = new ComputedIDDataConnector();
-
+        return constructResolverWithNonString(new ComputedIDDataConnector(), dependantOn);
+    }
+    
+    protected static AttributeResolver constructResolverWithNonString(BaseComputedIDDataConnector connector, String dependantOn) throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(new ResolverPluginDependency(dependantOn, null)));
         connector.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
@@ -188,8 +194,8 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return new AttributeResolver("atresolver", set, Collections.singleton((BaseDataConnector) connector));
     }
 
-    private ComputedIDDataConnector connectorFromResolver(AttributeResolver resolver) {
-        return (ComputedIDDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
+    protected static BaseComputedIDDataConnector connectorFromResolver(AttributeResolver resolver) {
+        return (BaseComputedIDDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
 
     @Test public void testAltDataConnector() throws ComponentInitializationException, AttributeResolutionException {
@@ -200,7 +206,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        // Now test that we got exactly what we expected - two scoped attributes
+        // Now test that we got exactly what we expected 
         Set<AttributeValue> resultValues = context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
@@ -262,12 +268,8 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         
         resolver.initialize();
         
-        try {
-            resolver.resolveAttributes(new AttributeResolutionContext());
-            Assert.fail("Null SP");
-        } catch (AttributeResolutionException ex) {
-            // OK
-        }
+        resolver.resolveAttributes(new AttributeResolutionContext());
+        Assert.assertNull(context.getResolvedAttributes().get(OUTPUT_ATTRIBUTE_NAME));
 
         resolver = constructResolverWithNonString("nonString");
         resolver.initialize();

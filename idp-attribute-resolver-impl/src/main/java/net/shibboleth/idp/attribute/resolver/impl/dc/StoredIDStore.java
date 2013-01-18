@@ -134,7 +134,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == dataSource) {
-            throw new ComponentInitializationException("StoredId Connector: No database connection provided");
+            throw new ComponentInitializationException("StoredId Store: No database connection provided");
         }
     }
 
@@ -334,8 +334,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * (SQLException e) { log.error("Error closing database connection", e); } } }
      */
 
-    // TODO This is not currently used and should be removed
-    /*
+    /**
      * Gets the currently active identifier entry for a (principal, peer, local) tuple.
      * 
      * @param localId local ID part of the persistent ID
@@ -347,32 +346,51 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * @return the active identifier
      * 
      * @throws SQLException thrown if there is a problem communication with the database
-     * 
-     * public PersistentIdEntry getActivePersistentIdEntry(String localEntity, String peerEntity, String localId) throws
-     * SQLException { StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
-     * sqlBuilder.append(localEntityColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
-     * sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL"); String sql = sqlBuilder.toString();
-     * 
-     * log.debug("Selecting active persistent ID entry based on prepared sql statement: {}", sql); Connection dbConn =
-     * dataSource.getConnection(); try { PreparedStatement statement = dbConn.prepareStatement(sql);
-     * statement.setQueryTimeout(queryTimeout);
-     * 
-     * log.debug("Setting prepared statement parameter {}: {}", 1, localEntity); statement.setString(1, localEntity);
-     * log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity); statement.setString(2, peerEntity);
-     * log.debug("Setting prepared statement parameter {}: {}", 3, localId); statement.setString(3, localId);
-     * 
-     * log.debug("Getting active persistent Id entries."); List<PersistentIdEntry> entries =
-     * buildIdentifierEntries(statement.executeQuery());
-     * 
-     * if (entries == null || entries.size() == 0) { return null; }
-     * 
-     * if (entries.size() > 1) { log.warn("More than one active identifier, only the first will be used"); }
-     * 
-     * return entries.get(0); } finally { try { if (dbConn != null && !dbConn.isClosed()) { dbConn.close(); } } catch
-     * (SQLException e) { log.error("Error closing database connection", e); } } }
      */
+    public PersistentIdEntry getActivePersistentIdEntry(String localEntity, String peerEntity, String localId)
+            throws SQLException {
+        StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
+        sqlBuilder.append(localEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(localIdColumn).append(" = ?");
+        sqlBuilder.append(" AND ").append(deactivationTimeColumn).append(" IS NULL");
+        String sql = sqlBuilder.toString();
+
+        log.debug("Selecting active persistent ID entry based on prepared sql statement: {}", sql);
+        Connection dbConn = dataSource.getConnection();
+        try {
+            PreparedStatement statement = dbConn.prepareStatement(sql);
+            statement.setQueryTimeout(queryTimeout);
+
+            log.debug("Setting prepared statement parameter {}: {}", 1, localEntity);
+            statement.setString(1, localEntity);
+            log.debug("Setting prepared statement parameter {}: {}", 2, peerEntity);
+            statement.setString(2, peerEntity);
+            log.debug("Setting prepared statement parameter {}: {}", 3, localId);
+            statement.setString(3, localId);
+
+            log.debug("Getting active persistent Id entries.");
+            List<PersistentIdEntry> entries = buildIdentifierEntries(statement.executeQuery());
+
+            if (entries == null || entries.size() == 0) {
+                return null;
+            }
+
+            if (entries.size() > 1) {
+                log.warn("More than one active identifier, only the first will be used");
+            }
+
+            return entries.get(0);
+        } finally {
+            try {
+                if (dbConn != null && !dbConn.isClosed()) {
+                    dbConn.close();
+                }
+            } catch (SQLException e) {
+                log.error("Error closing database connection", e);
+            }
+        }
+    }
 
     // TODO (rdw) This is not used and may be rmeoved
     /*
@@ -412,21 +430,22 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * return entries; } finally { try { if (dbConn != null && !dbConn.isClosed()) { dbConn.close(); } } catch
      * (SQLException e) { log.error("Error closing database connection", e); } } }
      */
-    
+
     /**
      * Check that the entry meets the constraints imposed by the SQL DDL.
      * 
      * localEntity VARCHAR NOT NULL, <br/>
-     * peerEntity VARCHAR NOT NULL,  <br/>
+     * peerEntity VARCHAR NOT NULL, <br/>
      * principalName VARCHAR NOT NULL, <br/>
-     * localId VARCHAR NOT NULL,  <br/>
-     * persistentId VARCHAR NOT NULL,  <br/>
+     * localId VARCHAR NOT NULL, <br/>
+     * persistentId VARCHAR NOT NULL, <br/>
+     * 
      * @param entry what to look at
      * @throws SQLException if we go against the constraint.
      */
     protected void validatePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
         boolean doThrow = false;
-        
+
         if (null == entry.getLocalEntityId()) {
             log.warn("Entry {} has null localEntity", entry);
             doThrow = true;
@@ -436,27 +455,27 @@ public class StoredIDStore extends AbstractInitializableComponent {
             log.warn("Entry {} has null peerEntity", entry);
             doThrow = true;
         }
-        
+
         if (null == entry.getPrincipalName()) {
             log.warn("Entry {} has null principalName", entry);
             doThrow = true;
         }
-        
+
         if (null == entry.getLocalId()) {
             log.warn("Entry {} has null localId", entry);
             doThrow = true;
         }
-        
+
         if (null == entry.getPersistentId()) {
             log.warn("Entry {} has null persistentId", entry);
             doThrow = true;
         }
-        
+
         if (doThrow) {
             throw new SQLException();
         }
     }
-    
+
     /**
      * Code to build the INSERT SQL required by storePersistentIdEntry.
      * 
@@ -487,7 +506,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
     public void storePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
 
         validatePersistentIdEntry(entry);
-        
+
         String sql = getInsertSql();
 
         Connection dbConn = dataSource.getConnection();
@@ -519,7 +538,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
             statement.setTimestamp(7, timestamp);
 
             log.debug(statement.toString());
-            
+
             statement.executeUpdate();
         } finally {
             try {
