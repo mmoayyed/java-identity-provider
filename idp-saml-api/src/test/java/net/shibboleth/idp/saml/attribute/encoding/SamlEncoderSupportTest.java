@@ -22,17 +22,31 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.saml.xmlobject.ScopedValue;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.AbstractXMLObjectBuilder;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.AbstractXMLObjectMarshaller;
+import org.opensaml.core.xml.io.AbstractXMLObjectUnmarshaller;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.impl.XSAnyImpl;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+
+import com.google.common.base.Strings;
 
 /**
  * Test form {@link SamlEncoderSupport}.
@@ -43,8 +57,12 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     private final static String QNAME_LOCALPART = "myQName";
     private final static QName QNAME = new QName(QNAME_LOCALPART);
     private final static String STRING_VALUE = "TestValue";
+    private final static String STRING_SCOPE = "TestScope";
+    private final static String SCOPE_ATTRIBUTE_NAME = "Scpe"; //sic
+    private final static String DELIMITER = "@";
     private final static Attribute ATTR = new Attribute("attr");
     private final static byte[] BYTE_ARRAY_VALUE = {1, 2, 3, 4, 5};
+    private final static ScopedStringAttributeValue SCOPEDVAL = new ScopedStringAttributeValue(STRING_VALUE, STRING_SCOPE);
     
     @Test public void testEncodeStringValue() {
         
@@ -134,4 +152,191 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(other.getValue(), STRING_VALUE);
     }
 
+    @Test public void testEncodeScopedStringValueAttribute() {
+        
+        XMLObjectProviderRegistrySupport.registerObjectProvider(ScopedValue.TYPE_NAME, new ScopedValueBuilder(), new ScopedValueMarshaller(), new ScopedValueUnmarshaller());
+        
+        try {
+            SamlEncoderSupport.encodeScopedStringValueAttribute(null, QNAME, SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
+            Assert.fail("Missed contraint");
+        } catch (ConstraintViolationException ex) {
+            //OK
+        }
+        
+        try {
+            SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, null,  SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
+            Assert.fail("Missed contraint");
+        } catch (ConstraintViolationException ex) {
+            //OK
+        }
+        
+        try {
+            SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, SCOPEDVAL, null);
+            Assert.fail("Missed contraint");
+        } catch (ConstraintViolationException ex) {
+            //OK
+        }
+
+        Assert.assertNull(SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, null, SCOPE_ATTRIBUTE_NAME));
+        
+        XMLObject obj = SamlEncoderSupport.encodeScopedStringValueAttribute(ATTR, QNAME, SCOPEDVAL, SCOPE_ATTRIBUTE_NAME);
+        Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
+        Assert.assertTrue(obj instanceof ScopedValue);
+        ScopedValue sv = (ScopedValue) obj;
+        
+        Assert.assertEquals(sv.getValue(), STRING_VALUE);
+        Assert.assertEquals(sv.getScope(), STRING_SCOPE);
+    }
+
+    @Test public void testEncodeScopedStringValueInline() {
+        
+        try {
+            SamlEncoderSupport.encodeScopedStringValueInline(null, QNAME, SCOPEDVAL, DELIMITER);
+            Assert.fail("Missed contraint");
+        } catch (ConstraintViolationException ex) {
+            //OK
+        }
+        
+        try {
+            SamlEncoderSupport.encodeScopedStringValueInline(ATTR, null,  SCOPEDVAL, DELIMITER);
+            Assert.fail("Missed contraint");
+        } catch (ConstraintViolationException ex) {
+            //OK
+        }
+        
+        try {
+            SamlEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, SCOPEDVAL, null);
+            Assert.fail("Missed contraint");
+        } catch (ConstraintViolationException ex) {
+            //OK
+        }
+
+        Assert.assertNull(SamlEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, null, DELIMITER));
+        
+        XMLObject obj = SamlEncoderSupport.encodeScopedStringValueInline(ATTR, QNAME, SCOPEDVAL, DELIMITER);
+        Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
+        Assert.assertTrue(obj instanceof XSString);
+        XSString str = (XSString) obj;
+        
+        Assert.assertEquals(str.getValue(), STRING_VALUE + DELIMITER + STRING_SCOPE);
+        
+        
+        }
+    
+    //
+    // The rest of this function is cut and paste from the real providers in idp-saml-imp
+    //
+    
+    private class ScopedValueBuilder extends AbstractXMLObjectBuilder<ScopedValue> {
+
+        public ScopedValue buildObject(String namespaceURI, String localName, String namespacePrefix) {
+            return new ScopedValueImpl(namespaceURI, localName, namespacePrefix);
+        }
+    }
+
+    private class ScopedValueImpl extends XSAnyImpl implements ScopedValue {
+
+        /** Scope of this string element. */
+        private String scope;
+
+        /** Scope attribute name for this element. */
+        private String scopeAttributeName;
+
+        /**
+         * Constructor.
+         * 
+         * @param namespaceURI the namespace the element is in
+         * @param elementLocalName the local name of the XML element this Object represents
+         * @param namespacePrefix the prefix for the given namespace
+         */
+        protected ScopedValueImpl(String namespaceURI, String elementLocalName, String namespacePrefix) {
+            super(namespaceURI, elementLocalName, namespacePrefix);
+        }
+
+        /** {@inheritDoc} */
+        public String getScope() {
+            return scope;
+        }
+
+        /** {@inheritDoc} */
+        public String getScopeAttributeName() {
+            return scopeAttributeName;
+        }
+
+        /** {@inheritDoc} */
+        public void setScope(String newScope) {
+            scope = prepareForAssignment(scope, newScope);
+            if (scope != null && scopeAttributeName != null) {
+                getUnknownAttributes().put(new QName(scopeAttributeName), scope);
+            }
+        }
+
+        /** {@inheritDoc} */
+        public void setScopeAttributeName(String newScopeAttributeName) {
+            if (scopeAttributeName != null) {
+                QName oldName = new QName(scopeAttributeName);
+                if (getUnknownAttributes().containsKey(oldName)) {
+                    getUnknownAttributes().remove(oldName);
+                }
+            }
+
+            scopeAttributeName = prepareForAssignment(scopeAttributeName, newScopeAttributeName);
+
+            if (scope != null) {
+                getUnknownAttributes().put(new QName(scopeAttributeName), scope);
+            }
+        }
+
+        /** {@inheritDoc} */
+        public String getValue() {
+            return getTextContent();
+        }
+
+        /** {@inheritDoc} */
+        public void setValue(String newValue) {
+            setTextContent(newValue);
+        }
+        
+    }
+    
+    private class ScopedValueMarshaller extends AbstractXMLObjectMarshaller {
+
+        /** {@inheritDoc} */
+        protected void marshallAttributes(XMLObject xmlObject, Element domElement) throws MarshallingException {
+            ScopedValue scopedValue = (ScopedValue) xmlObject;
+
+            if (null != scopedValue.getScopeAttributeName()) {
+                domElement.setAttribute(scopedValue.getScopeAttributeName(), scopedValue.getScope());
+            }
+
+        }
+
+        /** {@inheritDoc} */
+        protected void marshallElementContent(XMLObject xmlObject, Element domElement) throws MarshallingException {
+            ScopedValue scopedValue = (ScopedValue) xmlObject;
+
+            ElementSupport.appendTextContent(domElement, scopedValue.getValue());
+        }
+    }
+    
+    private class ScopedValueUnmarshaller extends AbstractXMLObjectUnmarshaller {
+
+        /** {@inheritDoc} */
+        protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
+            ScopedValue sv = (ScopedValue) xmlObject;
+
+            if (Strings.isNullOrEmpty(sv.getScopeAttributeName())) {
+                sv.setScopeAttributeName(attribute.getName());
+                sv.setScope(attribute.getValue());
+            }
+
+        }
+
+        /** {@inheritDoc} */
+        protected void processElementContent(XMLObject xmlObject, String elementContent) {
+            ScopedValue sv = (ScopedValue) xmlObject;
+
+            sv.setValue(elementContent);
+        }
+    }
 }

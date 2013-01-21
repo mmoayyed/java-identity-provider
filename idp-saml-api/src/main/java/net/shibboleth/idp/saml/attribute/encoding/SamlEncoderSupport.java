@@ -22,6 +22,9 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.saml.xmlobject.ScopedValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -126,5 +129,69 @@ public final class SamlEncoderSupport {
         samlAttributeValue.getUnknownXMLObjects().add(value);
 
         return samlAttributeValue;
+    }
+
+    /**
+     * Encode a {@link ScopedStringAttributeValue} value in to an SAML attribute value element using the "attribute"
+     * (Shibboleth) sytnax.
+     * 
+     * @param attribute attribute to be encoded, never null
+     * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
+     * @param value value to encoded
+     * @param scopeAttributeName the name that the attribute will be given
+     * @return a {@link ShibbolethScopedValue}
+     */
+    public static XMLObject encodeScopedStringValueAttribute(@Nonnull final Attribute attribute,
+            @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
+            @Nonnull @NotEmpty final String scopeAttributeName) {
+
+
+        Constraint.isNotNull(attribute, "Attribute can not be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
+        Constraint.isNotNull(scopeAttributeName, "Scope Attribute Name can not be null");
+
+        if (null == value || Strings.isNullOrEmpty(value.getScope()) || Strings.isNullOrEmpty(value.getValue())) {
+            LOG.debug("Skipping empty value (or contents) for attribute {}", attribute.getId());
+            return null;
+        }
+        
+        final XMLObjectBuilder<ScopedValue> scopedValueBuilder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(ScopedValue.TYPE_NAME);
+        final ScopedValue scopedValue = scopedValueBuilder.buildObject(attributeValueElementName);
+
+        scopedValue.setScopeAttributeName(scopeAttributeName);
+        scopedValue.setScope(value.getScope());
+        scopedValue.setValue(value.getValue());
+
+        return scopedValue;
+    }
+
+    /**
+     * Encode a {@link ScopedStringAttributeValue} value in to an {@link XSString} SAML attribute value element using
+     * the "inline" syntax.
+     * 
+     * @param attribute attribute to be encoded, never null
+     * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
+     * @param value value to encoded
+     * @param scopeDelimiter the delimiter to put between the value and the scope
+     * @return a {@link ShibbolethScopedValue}
+     */
+    public static XMLObject encodeScopedStringValueInline(@Nonnull final Attribute attribute,
+            @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
+            @Nonnull String scopeDelimiter) {
+
+        Constraint.isNotNull(attribute, "Attribute can not be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name resolution context can not be null");
+        Constraint.isNotNull(scopeDelimiter, "Scope delimiter can not be null");
+
+        if (null == value || Strings.isNullOrEmpty(value.getScope()) || Strings.isNullOrEmpty(value.getValue())) {
+            LOG.debug("Skipping empty value (or contents) for attribute {}", attribute.getId());
+            return null;
+        }
+
+        final StringBuilder builder =
+                new StringBuilder(value.getValue()).append(scopeDelimiter).append(value.getScope());
+
+        return encodeStringValue(attribute, attributeValueElementName, builder.toString());
     }
 }
