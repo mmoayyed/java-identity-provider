@@ -210,7 +210,7 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
         }
         
         if (val == null) {
-            log.warn("Aattribute {} for connector resolved as empty or null.  Not used", getSourceAttributeId(),
+            log.warn("Attribute {} for connector resolved as empty or null.  Not used", getSourceAttributeId(),
                     getId());
         }
         return val;
