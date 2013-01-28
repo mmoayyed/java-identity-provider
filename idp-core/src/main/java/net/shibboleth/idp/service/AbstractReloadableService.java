@@ -142,7 +142,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * {@inheritDoc}
      * 
      * This implementation will set the current state to {@link ReloadableService#STATE_RELOADING}, call
-     * {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and {@link #doPostRelaod(HashMap)} in turn. It will
+     * {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and {@link #doPostReload(HashMap)} in turn. It will
      * manage the {@link #lastReloadInstant} and {@link #lastSuccessfulReleaseIntant} information and record the reload
      * performance event.
      */
@@ -160,7 +160,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
 
             doPreReload(context);
             doReload(context);
-            doPostRelaod(context);
+            doPostReload(context);
 
             lastSuccessfulReleaseIntant = now;
             perfEvent.stopTime(true);
@@ -192,7 +192,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * This method is called within the service write lock and may change service state.
      * 
      * @param context Collection of data carried through {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and
-     *            {@link #doPostRelaod(HashMap)}. This is an appropriate place to keep state as the reload process
+     *            {@link #doPostReload(HashMap)}. This is an appropriate place to keep state as the reload process
      *            progresses.
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
@@ -208,7 +208,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * This method is called within the service write lock and may change service state.
      * 
      * @param context Collection of data carried through {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and
-     *            {@link #doPostRelaod(HashMap)}. This is an appropriate place to keep state as the reload process
+     *            {@link #doPostReload(HashMap)}. This is an appropriate place to keep state as the reload process
      *            progresses
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
@@ -225,12 +225,12 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * The default implementation of this method does not do anything.
      * 
      * @param context Collection of data carried through {@link #doPreReload(HashMap)}, {@link #doReload(HashMap)}, and
-     *            {@link #doPostRelaod(HashMap)}. This is an appropriate place to keep state as the reload process
+     *            {@link #doPostReload(HashMap)}. This is an appropriate place to keep state as the reload process
      *            progresses
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
      */
-    protected void doPostRelaod(final HashMap context) throws ServiceException {
+    protected void doPostReload(final HashMap context) throws ServiceException {
         log.info("Service '{}' reloaded", getId());
     }
 

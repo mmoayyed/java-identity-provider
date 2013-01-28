@@ -156,7 +156,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
     }
 
     /** {@inheritDoc} */
-    protected void doPostRelaod(final HashMap context) throws ServiceException {
+    protected void doPostReload(final HashMap context) throws ServiceException {
         GenericApplicationContext appCtx =
                 (GenericApplicationContext) context.get(AbstractSpringService.APP_CTX_CTX_KEY);
         serviceContext = appCtx;
