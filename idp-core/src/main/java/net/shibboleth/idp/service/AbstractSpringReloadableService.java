@@ -20,6 +20,8 @@ package net.shibboleth.idp.service;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.spring.SpringSupport;
@@ -39,10 +41,10 @@ import com.google.common.collect.Iterables;
  * An extension to {@link AbstractSpringService} that allows the service's context to be reloaded if the underlying
  * configuration resources are changed.
  * 
- * Resources loaded in as configurations to this base class <strong>MUST</strong> must support the
+ * Resources loaded in as configurations to this base class <strong>MUST</strong> support the
  * {@link Resource#lastModified()} method.
  * 
- * <strong>NOTE:</strong> Service implementations must take out a read lock, through {@link #getServiceLock()}, whenever
+ * <strong>NOTE:</strong> Service implementations must acquire a read lock, through {@link #getServiceLock()}, whenever
  * reading or operating on information controlled by the service context. This will ensure that if a configuration
  * change occurs the service context will not be replaced until after all current reads have completed.
  * 
@@ -68,7 +70,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
      * 
      * @return application context that is the parent to this service's context
      */
-    public ApplicationContext getParentContext() {
+    @Nullable public ApplicationContext getParentContext() {
         return parentContext;
     }
 
@@ -79,7 +81,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
      * 
      * @param context context that is the parent to this service's context, may be null
      */
-    public synchronized void setParentContext(ApplicationContext context) {
+    public synchronized void setParentContext(@Nullable final ApplicationContext context) {
         if (isInitialized()) {
             return;
         }
@@ -92,7 +94,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
      * 
      * @return unmodifiable list of configurations for this service
      */
-    public List<Resource> getServiceConfigurations() {
+    @Nonnull public List<Resource> getServiceConfigurations() {
         return serviceConfigurations;
     }
 
@@ -103,7 +105,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
      * 
      * @param configs list of configurations for this service, may be null or empty
      */
-    public synchronized void setServiceConfigurations(List<Resource> configs) {
+    public synchronized void setServiceConfigurations(@Nonnull final List<Resource> configs) {
         if (isInitialized()) {
             return;
         }
@@ -120,7 +122,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
      * 
      * @return this service's context
      */
-    protected GenericApplicationContext getServiceContext() {
+    @Nullable protected GenericApplicationContext getServiceContext() {
         return serviceContext;
     }
 
@@ -128,15 +130,15 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
     protected boolean shouldReload() {
         // TODO implement
         // loop over each resource and check if the any resources have been changed since
-        // the last time the service was reloaded. Also have to take in to account locking
+        // the last time the service was reloaded. Also have to take into account locking
         // issue so that checking if reloading doesn't block use of service but does block
         // actual reloading
-
+        
         return false;
     }
 
     /** {@inheritDoc} */
-    protected void doPreReload(final HashMap context) throws ServiceException {
+    protected void doPreReload(@Nonnull final HashMap context) throws ServiceException {
         log.info("Configuration change detected, reloading configuration for service '{}'", getId());
 
         try {
@@ -156,7 +158,7 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
     }
 
     /** {@inheritDoc} */
-    protected void doPostReload(final HashMap context) throws ServiceException {
+    protected void doPostReload(@Nonnull final HashMap context) throws ServiceException {
         GenericApplicationContext appCtx =
                 (GenericApplicationContext) context.get(AbstractSpringService.APP_CTX_CTX_KEY);
         serviceContext = appCtx;

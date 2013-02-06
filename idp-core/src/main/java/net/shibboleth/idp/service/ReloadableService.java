@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.service;
 
+import javax.annotation.Nullable;
+
 import org.joda.time.DateTime;
 
 /** A service that supports reloading its configuration. */
@@ -30,7 +32,7 @@ public interface ReloadableService extends Service {
      * 
      * @return time when the service was last successfully reloaded
      */
-    public DateTime getLastSuccessfulReloadInstant();
+    @Nullable public DateTime getLastSuccessfulReloadInstant();
 
     /**
      * Gets the time when the service last attempted to reload. If the reload was successful this time should match the
@@ -38,14 +40,14 @@ public interface ReloadableService extends Service {
      * 
      * @return time when the service last attempted to reload
      */
-    public DateTime getLastReloadAttemptInstant();
+    @Nullable public DateTime getLastReloadAttemptInstant();
 
     /**
      * Gets the reason the last reload failed.
      * 
      * @return reason the last reload failed or null if the last reload was successful
      */
-    public Throwable getReloadFailureCause();
+    @Nullable public Throwable getReloadFailureCause();
 
     /**
      * Reloads the configuration of the service. Whether internal state is maintained between reloads is implementation

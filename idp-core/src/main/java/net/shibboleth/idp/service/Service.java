@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.service;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
@@ -44,10 +47,10 @@ public interface Service extends IdentifiableComponent, InitializableComponent, 
      * 
      * @return current state of the service
      */
-    public String getCurrentState();
+    @Nonnull @NotEmpty public String getCurrentState();
 
     /**
-     * Starts this service. Calling this on an started service should return immediately without affecting the service.
+     * Starts this service. Calling this on a started service should return immediately without affecting the service.
      * 
      * @throws ServiceException thrown if there is a problem initializing the service
      */

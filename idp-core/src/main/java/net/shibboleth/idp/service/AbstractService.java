@@ -22,10 +22,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
@@ -59,11 +61,11 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
     private final ImmutableSet<String> stopStates = new ImmutableSet.Builder<String>().add(STATE_STOPPING)
             .add(STATE_STOPPED).build();
 
+    /** Lock for this service. */
+    private final ReentrantReadWriteLock serviceLock;
+
     /** The current state of the service. */
     private String currentState;
-
-    /** Lock for this service. */
-    private ReentrantReadWriteLock serviceLock;
 
     /** Constructor. */
     public AbstractService() {
@@ -72,12 +74,12 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
     }
 
     /** {@inheritDoc} */
-    public synchronized void setId(String componentId) {
+    public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
         super.setId(componentId);
     }
 
     /** {@inheritDoc} */
-    public final String getCurrentState() {
+    @Nonnull @NotEmpty public final String getCurrentState() {
         return currentState;
     }
 
@@ -92,10 +94,10 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * All startup work is performed within a service write lock. A startup performance event will be recorded.
      */
     public final void start() throws ServiceException {
-        PerformanceEvent perfEvent = new PerformanceEvent(getId() + START_PERF_EVENT_ID_SUFFIX);
+        final PerformanceEvent perfEvent = new PerformanceEvent(getId() + START_PERF_EVENT_ID_SUFFIX);
 
-        Lock serviceWriteLock = getServiceLock().writeLock();
-        HashMap context = new HashMap();
+        final Lock serviceWriteLock = getServiceLock().writeLock();
+        final HashMap context = new HashMap();
 
         try {
             serviceWriteLock.lock();
@@ -132,10 +134,10 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * also be recorded.
      */
     public final void stop() throws ServiceException {
-        PerformanceEvent perfEvent = new PerformanceEvent(getId() + STOP_PERF_EVENT_ID_SUFFIX);
+        final PerformanceEvent perfEvent = new PerformanceEvent(getId() + STOP_PERF_EVENT_ID_SUFFIX);
 
-        Lock serviceWriteLock = getServiceLock().writeLock();
-        HashMap context = new HashMap();
+        final Lock serviceWriteLock = getServiceLock().writeLock();
+        final HashMap context = new HashMap();
 
         try {
             serviceWriteLock.lock();
@@ -164,7 +166,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @return lock guarding operations that mutate this service
      */
-    protected final ReadWriteLock getServiceLock() {
+    @Nonnull protected final ReadWriteLock getServiceLock() {
         return serviceLock;
     }
 
@@ -173,9 +175,8 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @param state current state of the service
      */
-    protected final void setCurrentState(final String state) {
-        currentState =
-                Constraint.isNotNull(StringSupport.trimOrNull(state), "State indicator may not be null or empty");
+    protected final void setCurrentState(@Nonnull @NotEmpty final String state) {
+        currentState = Constraint.isNotNull(StringSupport.trimOrNull(state), "State indicator cannot be null or empty");
     }
 
     /**
@@ -192,9 +193,9 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @throws ServiceException thrown if the service is stopped or stopping
      */
-    protected void doPreStart(final HashMap context) throws ServiceException {
+    protected void doPreStart(@Nonnull final HashMap context) throws ServiceException {
         if (stopStates.contains(getCurrentState())) {
-            throw new ServiceException(getId() + " service has been stopped, it may not be started again.");
+            throw new ServiceException(getId() + " service has been stopped, it cannot be started again.");
         }
         log.debug("Loading configuration for service '{}'", getId());
     }
@@ -212,7 +213,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @throws ServiceException thrown if there is a problem starting the service
      */
-    protected void doStart(final HashMap context) throws ServiceException {
+    protected void doStart(@Nonnull final HashMap context) throws ServiceException {
 
     }
 
@@ -229,7 +230,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @throws ServiceException thrown if there is a problem starting the service
      */
-    protected void doPostStart(final HashMap context) throws ServiceException {
+    protected void doPostStart(@Nonnull final HashMap context) throws ServiceException {
         log.info("Loaded configuration for service '{}'", getId());
     }
 
@@ -246,7 +247,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @throws ServiceException thrown if there is a problem stopping the service
      */
-    protected void doPreStop(final HashMap context) throws ServiceException {
+    protected void doPreStop(@Nonnull final HashMap context) throws ServiceException {
         log.debug("Stopping service '{}'", getId());
     }
 
@@ -263,7 +264,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @throws ServiceException thrown if there is a problem stopping the service
      */
-    protected void doStop(final HashMap context) throws ServiceException {
+    protected void doStop(@Nonnull final HashMap context) throws ServiceException {
 
     }
 
@@ -280,7 +281,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      * 
      * @throws ServiceException thrown if there is a problem stopping the service
      */
-    protected void doPostStop(final HashMap context) throws ServiceException {
+    protected void doPostStop(@Nonnull final HashMap context) throws ServiceException {
         log.info("Service '{}' has been stopped", getId());
     }
 

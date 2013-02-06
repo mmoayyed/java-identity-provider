@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.spring.SpringSupport;
@@ -40,12 +42,12 @@ import com.google.common.collect.Iterables;
  * A service whose Spring beans are loaded into a service specific {@link ApplicationContext} that is a child of the
  * context provided at service construction.
  * 
- * Resources loaded in as configurations to this base class <strong>MUST</strong> must support the
+ * Resources loaded in as configurations to this base class <strong>MUST</strong> support the
  * {@link Resource#getInputStream()} method.
  * 
  * Services derived from this base class may not be re-initialized after they have been destroyed.
  * 
- * <strong>NOTE:</strong> Service implementations must take out a read lock, through {@link #getServiceLock()}, whenever
+ * <strong>NOTE:</strong> Service implementations must acquire a read lock, through {@link #getServiceLock()}, whenever
  * reading or operating on information controlled by the service context. This will ensure that if a configuration
  * change occurs the service context will not be replaced until after all current reads have completed.
  */
@@ -61,10 +63,10 @@ public abstract class AbstractSpringService extends AbstractService {
     /** List of configuration resources for this service. */
     private List<Resource> serviceConfigurations = Collections.emptyList();
 
-    /** Application context owning this engine. */
+    /** Application context owning this service. */
     private ApplicationContext parentContext;
 
-    /** Context containing loaded with service content. */
+    /** Context containing service content. */
     private GenericApplicationContext serviceContext;
 
     /**
@@ -72,7 +74,7 @@ public abstract class AbstractSpringService extends AbstractService {
      * 
      * @return application context that is the parent to this service's context
      */
-    public ApplicationContext getParentContext() {
+    @Nullable public ApplicationContext getParentContext() {
         return parentContext;
     }
 
@@ -83,7 +85,7 @@ public abstract class AbstractSpringService extends AbstractService {
      * 
      * @param context context that is the parent to this service's context, may be null
      */
-    public synchronized void setParentContext(ApplicationContext context) {
+    public synchronized void setParentContext(@Nullable final ApplicationContext context) {
         if (isInitialized()) {
             return;
         }
@@ -96,7 +98,7 @@ public abstract class AbstractSpringService extends AbstractService {
      * 
      * @return unmodifiable list of configurations for this service
      */
-    public List<Resource> getServiceConfigurations() {
+    @Nonnull public List<Resource> getServiceConfigurations() {
         return serviceConfigurations;
     }
 
@@ -107,7 +109,7 @@ public abstract class AbstractSpringService extends AbstractService {
      * 
      * @param configs list of configurations for this service, may be null or empty
      */
-    public synchronized void setServiceConfigurations(List<Resource> configs) {
+    public synchronized void setServiceConfigurations(@Nonnull final List<Resource> configs) {
         if (isInitialized()) {
             return;
         }
@@ -124,7 +126,7 @@ public abstract class AbstractSpringService extends AbstractService {
      * 
      * @return this service's context
      */
-    protected GenericApplicationContext getServiceContext() {
+    @Nullable protected GenericApplicationContext getServiceContext() {
         return serviceContext;
     }
 
@@ -134,7 +136,7 @@ public abstract class AbstractSpringService extends AbstractService {
      * This method creates a new {@link GenericApplicationContext} from the service's configuration and stores it in the
      * context under the key {@link #APP_CTX_CTX_KEY}.
      */
-    protected void doPreStart(HashMap context) throws ServiceException {
+    protected void doPreStart(@Nonnull final HashMap context) throws ServiceException {
         super.doPreStart(context);
 
         try {
@@ -154,20 +156,20 @@ public abstract class AbstractSpringService extends AbstractService {
     }
 
     /** {@inheritDoc} */
-    protected void doPostStart(HashMap context) throws ServiceException {
+    protected void doPostStart(@Nonnull final HashMap context) throws ServiceException {
         super.doPostStart(context);
         GenericApplicationContext appCtx = (GenericApplicationContext) context.get(APP_CTX_CTX_KEY);
         serviceContext = appCtx;
     }
 
     /** {@inheritDoc} */
-    protected void doStop(final HashMap context) throws ServiceException {
+    protected void doStop(@Nonnull final HashMap context) throws ServiceException {
         serviceContext.close();
         super.doStop(context);
     }
 
     /** {@inheritDoc} */
-    protected void doPostStop(final HashMap context) throws ServiceException {
+    protected void doPostStop(@Nonnull final HashMap context) throws ServiceException {
         serviceContext = null;
         serviceConfigurations.clear();
         super.doStop(context);

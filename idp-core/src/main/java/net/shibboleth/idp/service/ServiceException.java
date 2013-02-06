@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.service;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.ShibbolethException;
 
 /**
@@ -39,7 +41,7 @@ public class ServiceException extends ShibbolethException {
      * 
      * @param message exception message
      */
-    public ServiceException(String message) {
+    public ServiceException(@Nullable final String message) {
         super(message);
     }
 
@@ -48,7 +50,7 @@ public class ServiceException extends ShibbolethException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public ServiceException(Exception wrappedException) {
+    public ServiceException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -58,7 +60,7 @@ public class ServiceException extends ShibbolethException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public ServiceException(String message, Exception wrappedException) {
+    public ServiceException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

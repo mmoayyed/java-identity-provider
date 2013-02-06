@@ -22,6 +22,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -93,7 +96,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * 
      * @return timer used to schedule configuration reload tasks
      */
-    public Timer getReloadTaskTimer() {
+    @Nullable public Timer getReloadTaskTimer() {
         return reloadTaskTimer;
     }
 
@@ -104,7 +107,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * 
      * @param timer timer used to schedule configuration reload tasks
      */
-    public synchronized void setReloadTaskTimer(Timer timer) {
+    public synchronized void setReloadTaskTimer(@Nullable final Timer timer) {
         if (isInitialized()) {
             return;
         }
@@ -113,17 +116,17 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     }
 
     /** {@inheritDoc} */
-    public DateTime getLastReloadAttemptInstant() {
+    @Nullable public DateTime getLastReloadAttemptInstant() {
         return lastReloadInstant;
     }
 
     /** {@inheritDoc} */
-    public DateTime getLastSuccessfulReloadInstant() {
+    @Nullable public DateTime getLastSuccessfulReloadInstant() {
         return lastSuccessfulReleaseIntant;
     }
 
     /** {@inheritDoc} */
-    public Throwable getReloadFailureCause() {
+    @Nullable public Throwable getReloadFailureCause() {
         return reloadFailureCause;
     }
 
@@ -132,7 +135,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
         super.doInitialize();
         
         if (reloadCheckDelay > 0) {
-            Constraint.isNotNull(reloadTaskTimer, "Reload task timer may not be null");
+            Constraint.isNotNull(reloadTaskTimer, "Reload task timer cannot be null");
             reloadTask = new ServiceReloadTask();
             reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
         }
@@ -147,12 +150,12 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * performance event.
      */
     public final void reload() {
-        PerformanceEvent perfEvent = new PerformanceEvent(getId() + ".reload");
+        final PerformanceEvent perfEvent = new PerformanceEvent(getId() + ".reload");
 
-        Lock serviceWriteLock = getServiceLock().writeLock();
-        HashMap context = new HashMap();
+        final Lock serviceWriteLock = getServiceLock().writeLock();
+        final HashMap context = new HashMap();
 
-        DateTime now = new DateTime(ISOChronology.getInstanceUTC());
+        final DateTime now = new DateTime(ISOChronology.getInstanceUTC());
         lastReloadInstant = now;
 
         try {
@@ -176,12 +179,15 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     /**
      * Called by the {@link ServiceReloadTask} to determine if the service should be reloaded.
      * 
-     * @return true if the service should be reloaded, false if not
+     * <p>No lock is held when this method is called, so any locking needed should be handled
+     * internally.</p>
+     * 
+     * @return true iff the service should be reloaded
      */
     protected abstract boolean shouldReload();
 
     /** {@inheritDoc} */
-    protected void doPreStop(final HashMap context) throws ServiceException {
+    protected void doPreStop(@Nonnull final HashMap context) throws ServiceException {
         reloadTask.cancel();
         super.doPreStop(context);
     }
@@ -197,7 +203,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
      */
-    protected void doPreReload(final HashMap context) throws ServiceException {
+    protected void doPreReload(@Nonnull final HashMap context) throws ServiceException {
         log.debug("Reloading service '{}'", getId());
 
     }
@@ -213,7 +219,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
      */
-    protected void doReload(final HashMap context) throws ServiceException {
+    protected void doReload(@Nonnull final HashMap context) throws ServiceException {
 
     }
 
@@ -230,13 +236,12 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      * 
      * @throws ServiceException thrown if there is a problem reloading the service
      */
-    protected void doPostReload(final HashMap context) throws ServiceException {
+    protected void doPostReload(@Nonnull final HashMap context) throws ServiceException {
         log.info("Service '{}' reloaded", getId());
     }
 
     /**
-     * A watcher that determines if one or more of configuration files for a service has been created, changed, or
-     * deleted.
+     * A watcher that determines if a service should be reloaded and does so as appropriate.
      */
     protected class ServiceReloadTask extends TimerTask {
 
