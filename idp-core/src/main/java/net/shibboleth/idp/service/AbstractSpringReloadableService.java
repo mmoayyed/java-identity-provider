@@ -19,6 +19,7 @@ package net.shibboleth.idp.service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +27,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.resource.Resource;
+import net.shibboleth.utilities.java.support.resource.ResourceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,12 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
     /** Context containing loaded with service content. */
     private GenericApplicationContext serviceContext;
 
+    /**
+     * Time, in milliseconds, when the service configuration for the given index was last observed to have changed.
+     * -1 indicates the configuration resource did not exist.
+     */
+    private long[] resourceLastModifiedTimes;
+    
     /**
      * Gets the application context that is the parent to this service's context.
      * 
@@ -112,6 +120,28 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
 
         serviceConfigurations =
                 ImmutableList.<Resource> builder().addAll(Iterables.filter(configs, Predicates.notNull())).build();
+        if (!serviceConfigurations.isEmpty()) {
+            resourceLastModifiedTimes = new long[serviceConfigurations.size()];
+
+            int numOfResources = serviceConfigurations.size();
+            Resource serviceConfig;
+            for (int i = 0; i < numOfResources; i++) {
+                serviceConfig = serviceConfigurations.get(i);
+                try {
+                    if (serviceConfig.exists()) {
+                        resourceLastModifiedTimes[i] = serviceConfig.getLastModifiedTime();
+                    } else {
+                        resourceLastModifiedTimes[i] = -1;
+                    }
+                } catch (ResourceException e) {
+                    log.info("Configuration resource '" + serviceConfig.getLocation()
+                            + "' last modification date could not be determined", e);
+                    resourceLastModifiedTimes[i] = -1;
+                }
+            }
+        } else {
+            resourceLastModifiedTimes = null;
+        }
     }
 
     /**
@@ -127,20 +157,29 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
     }
 
     /** {@inheritDoc} */
-    protected boolean shouldReload() {
-        // TODO implement
-        // loop over each resource and check if the any resources have been changed since
-        // the last time the service was reloaded. Also have to take into account locking
-        // issue so that checking if reloading doesn't block use of service but does block
-        // actual reloading
+    protected void doPreStart(@Nonnull final HashMap context) throws ServiceException {
+        super.doPreStart(context);
         
-        return false;
+        createContext(context);
     }
 
     /** {@inheritDoc} */
-    protected void doPreReload(@Nonnull final HashMap context) throws ServiceException {
-        log.info("Configuration change detected, reloading configuration for service '{}'", getId());
+    protected void doPostStart(@Nonnull final HashMap context) throws ServiceException {
+        super.doPostStart(context);
+        GenericApplicationContext appCtx =
+                (GenericApplicationContext) context.get(AbstractSpringService.APP_CTX_CTX_KEY);
+        serviceContext = appCtx;
+    }
 
+    /**
+     * Creates the Spring context during initial startup or as a reload operation.
+     * 
+     * @param context Collection of data carried through start and reload operations.
+     *  This is an appropriate place to keep state as the process progresses.
+     * 
+     * @throws ServiceException thrown if there is a problem starting or reloading the service
+     */
+    protected void createContext(@Nonnull final HashMap context) throws ServiceException {
         try {
             log.debug("Creating new ApplicationContext for service '{}'", getId());
             GenericApplicationContext appContext =
@@ -156,7 +195,14 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
             throw new ServiceException("Error creating new application context for service " + getId());
         }
     }
-
+    
+    /** {@inheritDoc} */
+    protected void doPreReload(@Nonnull final HashMap context) throws ServiceException {
+        log.info("Configuration change detected, reloading configuration for service '{}'", getId());
+        
+        createContext(context);
+    }
+    
     /** {@inheritDoc} */
     protected void doPostReload(@Nonnull final HashMap context) throws ServiceException {
         GenericApplicationContext appCtx =
@@ -164,81 +210,80 @@ public abstract class AbstractSpringReloadableService extends AbstractReloadable
         serviceContext = appCtx;
     }
 
-    /**
-     * A watcher that determines if one or more of configuration files for a service has been created, changed, or
-     * deleted.
-     */
-    // protected class ServiceConfigSetChangeWatcher extends TimerTask {
-    //
-    // /** Number of configuration resources. */
-    // private final int numOfResources;
-    //
-    // /**
-    // * Time, in milliseconds, when the service configuration for the given index was last observed to have changed.
-    // * -1 indicates the configuration resource did not exist.
-    // */
-    // private long[] resourceLastModifiedTimes = new long[getServiceConfigurations().size()];
-    //
-    // /** Constructor. */
-    // public ServiceConfigSetChangeWatcher() {
-    // List<Resource> serviceConfigs = getServiceConfigurations();
-    // numOfResources = serviceConfigs.size();
-    // Resource serviceConfig;
-    // for (int i = 0; i < numOfResources; i++) {
-    // serviceConfig = serviceConfigs.get(i);
-    // if (serviceConfig.exists()) {
-    // try {
-    // resourceLastModifiedTimes[i] = serviceConfigs.get(i).lastModified();
-    // } catch (IOException e) {
-    // log.debug("Configuration resource '{}' last modification date could not be determined", e);
-    // resourceLastModifiedTimes[i] = -1;
-    // }
-    // } else {
-    // resourceLastModifiedTimes[i] = -1;
-    // }
-    // }
-    // }
-    //
-    // /** {@inheritDoc} */
-    // public void run() {
-    // boolean configResourceChanged = false;
-    //
-    // List<Resource> serviceConfigs = getServiceConfigurations();
-    // Resource serviceConfig;
-    // long serviceConfigLastModified;
-    // for (int i = 0; i < numOfResources; i++) {
-    // serviceConfig = serviceConfigs.get(i);
-    //
-    // // check if resource did not exist and still does not exist
-    // if (resourceLastModifiedTimes[i] == -1 && !serviceConfig.exists()) {
-    // continue;
-    // }
-    //
-    // try {
-    // // check to see if the resource did not exist, but does now
-    // // or if the resource did exist but does not now
-    // if ((resourceLastModifiedTimes[i] == -1 && serviceConfig.exists())
-    // || (resourceLastModifiedTimes[i] > -1 && !serviceConfig.exists())) {
-    // configResourceChanged = true;
-    // resourceLastModifiedTimes[i] = serviceConfig.lastModified();
-    // continue;
-    // }
-    //
-    // // check to see if an existing resource, that still exists, has been modified since the last run
-    // serviceConfigLastModified = serviceConfigs.get(i).lastModified();
-    // if (serviceConfigLastModified != resourceLastModifiedTimes[i]) {
-    // configResourceChanged = true;
-    // resourceLastModifiedTimes[i] = serviceConfigLastModified;
-    // }
-    // } catch (IOException e) {
-    // log.debug("Configuration resource '{}' last modification date could not be determined", e);
-    // configResourceChanged = true;
-    // }
-    // }
-    //
-    // if (configResourceChanged) {
-    // reload();
-    // }
-    // }
-    // }
+    /** {@inheritDoc} */
+    protected void doStop(@Nonnull final HashMap context) throws ServiceException {
+        serviceContext.close();
+        super.doStop(context);
+    }
+
+    /** {@inheritDoc} */
+    protected void doPostStop(@Nonnull final HashMap context) throws ServiceException {
+        serviceContext = null;
+        serviceConfigurations.clear();
+        super.doStop(context);
+    }
+    
+    /** {@inheritDoc} */
+    protected boolean shouldReload() {
+        // Loop over each resource and check if the any resources have been changed since
+        // the last time the service was reloaded. I believe a read lock is all we need here
+        // to allow use of the service to proceed while we check on the state. Actual reloading
+        // requires the write lock, and the only post-initialization code that reads or writes
+        // the array of resource mod-time data is this code, which is on one thread.
+        
+        Lock readLock = getServiceLock().readLock();
+        try {
+            readLock.lock();
+        
+            if (!STATE_STARTED.equals(getCurrentState())) {
+                log.debug("Skipping check for changed configuration, service '{}' not yet started", getId());
+                return false;
+            } else if (resourceLastModifiedTimes == null) {
+                return false;
+            }
+    
+            boolean configResourceChanged = false;
+            int numOfResources = serviceConfigurations.size();
+            
+            Resource serviceConfig;
+            long serviceConfigLastModified;
+            for (int i = 0; i < numOfResources; i++) {
+                serviceConfig = serviceConfigurations.get(i);
+                try {
+                    if (resourceLastModifiedTimes[i] == -1 && !serviceConfig.exists()) {
+                        // Resource did not exist and still does not exist.
+                        log.debug("Resource remains unavailable/inaccessible: '{}'", serviceConfig.getLocation());
+                    } else if (resourceLastModifiedTimes[i] == -1 && serviceConfig.exists()) {
+                        // Resource did not exist, but does now.
+                        log.debug("Resource was unavailable, now present: '{}'", serviceConfig.getLocation());
+                        configResourceChanged = true;
+                        resourceLastModifiedTimes[i] = serviceConfig.getLastModifiedTime();
+                    } else if (resourceLastModifiedTimes[i] > -1 && !serviceConfig.exists()) {
+                        // Resource existed, but is now unavailable.
+                        log.debug("Resource was available, now is not: '{}'", serviceConfig.getLocation());
+                        configResourceChanged = true;
+                        resourceLastModifiedTimes[i] = -1;
+                    } else {
+                        // Check to see if an existing resource, that still exists, has been modified.
+                        serviceConfigLastModified = serviceConfig.getLastModifiedTime();
+                        if (serviceConfigLastModified != resourceLastModifiedTimes[i]) {
+                            log.debug("Resource has changed: '{}'", serviceConfig.getLocation());
+                            configResourceChanged = true;
+                            resourceLastModifiedTimes[i] = serviceConfigLastModified;
+                        }
+                    }
+                } catch (ResourceException e) {
+                    log.info("Configuration resource '" + serviceConfig.getLocation()
+                            + "' last modification date could not be determined", e);
+                    configResourceChanged = true;
+                }
+            }
+            
+            return configResourceChanged;
+            
+        } finally {
+            readLock.unlock();
+        }
+    }
+
 }
