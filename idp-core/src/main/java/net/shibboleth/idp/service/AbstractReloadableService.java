@@ -161,9 +161,11 @@ public abstract class AbstractReloadableService extends AbstractService implemen
         try {
             serviceWriteLock.lock();
 
+            setCurrentState(STATE_RELOADING);
             doPreReload(context);
             doReload(context);
             doPostReload(context);
+            setCurrentState(STATE_STARTED);
 
             lastSuccessfulReleaseIntant = now;
             perfEvent.stopTime(true);
@@ -205,7 +207,6 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      */
     protected void doPreReload(@Nonnull final HashMap context) throws ServiceException {
         log.debug("Reloading service '{}'", getId());
-
     }
 
     /**
