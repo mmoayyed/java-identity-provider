@@ -64,7 +64,7 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
     private byte[] salt;
 
     /** Strategy used to locate the SP EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
+    // TODO(rdw) These needs to be changed when the profile handling has been finalized.  Name and Interface type?
     private Function<AttributeResolutionContext, String> spEntityIdStrategy;
 
     /**

@@ -63,11 +63,11 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     private StoredIDStore pidStore;
 
     /** Strategy used to locate the local (idp) EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
+    // TODO(rdw) These needs to be changed when the profile handling has been finalized. Name and Interface type?
     private Function<AttributeResolutionContext, String> localEntityIdStrategy;
 
     /** Strategy used to locate the Principal given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
+    // TODO(rdw) These needs to be changed when the profile handling has been finalized. Name and Interface type?
     private Function<AttributeResolutionContext, String> principalStrategy;
 
     /**

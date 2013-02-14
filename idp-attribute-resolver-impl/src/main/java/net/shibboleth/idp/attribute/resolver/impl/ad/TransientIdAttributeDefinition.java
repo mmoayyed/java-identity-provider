@@ -68,14 +68,18 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
     /** Strategy used to locate the IdP EntityId given a {@link AttributeResolutionContext}. */
     // TODO(rdw) These needs to be changed when the profile handling has been finalized
+    // TODO Do we mean IdP or RelyingParty or what? Fix when [...]
+    // the questions in https://wiki.shibboleth.net/confluence/display/OS30/Messaging+Abstractions+Discussion+Document
+    // are answered
+    // TODO should this be a org.opensaml.messaging.context.navigate.ContextDataLookupFunction ?
     private Function<AttributeResolutionContext, String> idPEntityIdStrategy;
 
     /** Strategy used to locate the SP EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
+    // TODO(rdw) These needs to be changed when the profile handling has been finalized.  See notes above.
     private Function<AttributeResolutionContext, String> spEntityIdStrategy;
 
     /** Strategy used to locate the principal given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
+    // TODO(rdw) These needs to be changed when the profile handling has been finalized.   See notes above.
     private Function<AttributeResolutionContext, String> principalStrategy;
 
     /**
