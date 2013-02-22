@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -42,7 +41,6 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 /**
@@ -67,14 +65,6 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
 
     /** Name qualifier for the NameID. */
     private String nameIdQualifier;
-
-    /** Strategy used to locate the IdP EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
-    // TODO Do we mean IdP or RelyingParty or what? Fix when [...]
-    // the questions in https://wiki.shibboleth.net/confluence/display/OS30/Messaging+Abstractions+Discussion+Document
-    // are answered
-    // TODO should this be a org.opensaml.messaging.context.navigate.ContextDataLookupFunction ?
-    private Function<AttributeResolutionContext, String> idPEntityIdStrategy;
 
     /**
      * Constructor.
@@ -124,35 +114,6 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
     }
 
     /**
-     * Gets the strategy for finding the IdP EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getIdPEntityIdStrategy() {
-        return idPEntityIdStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the IdP EntityId from the resolution context.
-     * 
-     * @param strategy what to set
-     */
-    public void setIdPEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        idPEntityIdStrategy = strategy;
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (null == idPEntityIdStrategy) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no IdP Entity Id Lookup Strategy set");
-        }
-    }
-
-    /**
      * Builds a name ID. The provided value is the textual content of the NameIdentifier. If a {@link #nameIdQualifier}
      * is not null it is used as the NameIdentifier's name qualifier, otherwise the attribute issuer's entity id is
      * used.
@@ -168,7 +129,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
 
         log.debug("NameIdAttribute {} : Building a SAML1 NameIdentifier with value for {}", getId(), nameIdValue);
 
-        final String idpEntityId = StringSupport.trimOrNull(idPEntityIdStrategy.apply(resolutionContext));
+        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
 
         NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
         nameIdentifier.setNameIdentifier(nameIdValue);
@@ -179,11 +140,11 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
 
         if (nameIdQualifier != null) {
             nameIdentifier.setNameQualifier(nameIdQualifier);
-        } else if (null != idpEntityId) {
-            nameIdentifier.setNameQualifier(idpEntityId);
+        } else if (null != attributeIssuerID) {
+            nameIdentifier.setNameQualifier(attributeIssuerID);
         } else {
             throw new AttributeResolutionException("Attribute definition '" + getId()
-                    + " provided IdP EntityId was empty");
+                    + " provided attribute issuer ID was empty");
         }
 
         return nameIdentifier;
