@@ -26,8 +26,8 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
-import net.shibboleth.idp.attribute.resolver.impl.ConstantStringStrategy;
 import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
@@ -138,13 +138,13 @@ public class StoredIDStoreTest {
         String persistentId = UUID.randomUUID().toString();
         
         testValidate(store, id, "No Local Id");
-        id.setLocalEntityId(ConstantStringStrategy.IDP_ENTITY_ID);
+        id.setLocalEntityId(TestSources.IDP_ENTITY_ID);
         
         testValidate(store, id, "No Peer Entity Id");
-        id.setPeerEntityId(ConstantStringStrategy.SP_ENTITY_ID);
+        id.setPeerEntityId(TestSources.SP_ENTITY_ID);
         
         testValidate(store, id, "No Principal Name");
-        id.setPrincipalName(ConstantStringStrategy.PRINCIPAL_ID);
+        id.setPrincipalName(TestSources.PRINCIPAL_ID);
         
         testValidate(store, id, "No Local Id");
         id.setLocalId("localID");
@@ -161,7 +161,7 @@ public class StoredIDStoreTest {
         Assert.assertNull(gotback.getDeactivationTime());
         
         Assert.assertTrue(comparePersistentIdEntrys(gotback, id));
-        List<PersistentIdEntry> list = store.getPersistentIdEntries(ConstantStringStrategy.IDP_ENTITY_ID, ConstantStringStrategy.SP_ENTITY_ID, "localID");
+        List<PersistentIdEntry> list = store.getPersistentIdEntries(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID, "localID");
         
         Assert.assertEquals(list.size(), 1);
         Assert.assertTrue(comparePersistentIdEntrys(list.get(0), gotback));
@@ -170,12 +170,12 @@ public class StoredIDStoreTest {
         
         Assert.assertNull(store.getActivePersistentIdEntry(persistentId));
         
-        Assert.assertEquals(store.getNumberOfPersistentIdEntries(ConstantStringStrategy.IDP_ENTITY_ID, ConstantStringStrategy.SP_ENTITY_ID, "localID"), 1);
+        Assert.assertEquals(store.getNumberOfPersistentIdEntries(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID, "localID"), 1);
      
         persistentId = UUID.randomUUID().toString();
         id.setPersistentId(persistentId);
         id.setPeerProvidedId(null);
-        id.setPeerEntityId(ConstantStringStrategy.SP_ENTITY_ID + "2");
+        id.setPeerEntityId(TestSources.SP_ENTITY_ID + "2");
         store.storePersistentIdEntry(id);
         
         gotback = store.getActivePersistentIdEntry(persistentId);

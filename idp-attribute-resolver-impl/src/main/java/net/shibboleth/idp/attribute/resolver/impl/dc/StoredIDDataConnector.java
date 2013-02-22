@@ -35,7 +35,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 /**
@@ -61,14 +60,6 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
 
     /** Persistent identifier data store. */
     private StoredIDStore pidStore;
-
-    /** Strategy used to locate the local (idp) EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized. Name and Interface type?
-    private Function<AttributeResolutionContext, String> localEntityIdStrategy;
-
-    /** Strategy used to locate the Principal given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized. Name and Interface type?
-    private Function<AttributeResolutionContext, String> principalStrategy;
 
     /**
      * Gets the {@link DataSource} used to communicate with the database.
@@ -117,60 +108,12 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
         queryTimeout = timeout;
     }
 
-    /**
-     * Gets the strategy for finding the local EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getLocalEntityIdStrategy() {
-        return localEntityIdStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the RelyingPartyContext from the resolution context.
-     * 
-     * @param strategy to set.
-     */
-    public void setPrincipalStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        principalStrategy = strategy;
-    }
-
-    /**
-     * Gets the strategy for finding the local EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getPrincipalStrategy() {
-        return principalStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the RelyingPartyContext from the resolution context.
-     * 
-     * @param strategy to set.
-     */
-    public void setLocalEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        localEntityIdStrategy = strategy;
-    }
-
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == dataSource) {
             throw new ComponentInitializationException("StoredIdConnector " + getId()
                     + ": No database connection provided");
-        }
-
-        if (null == principalStrategy) {
-            throw new ComponentInitializationException("StoredIdConnector " + getId()
-                    + ": No principal strategy provided");
-        }
-
-        if (null == localEntityIdStrategy) {
-            throw new ComponentInitializationException("StoredIdConnector " + getId()
-                    + ": No local entity Id strategy provided ");
         }
 
         if (null != getSalt() && getSalt().length < 16) {
@@ -276,7 +219,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final String principal = StringSupport.trimOrNull(principalStrategy.apply(resolutionContext));
+        final String principal = StringSupport.trimOrNull(resolutionContext.getPrincipal());
         boolean returnAbsent = false;
 
         if (null == principal) {
@@ -290,15 +233,15 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             returnAbsent = true;
         }
 
-        final String localEntityId = StringSupport.trimOrNull(getLocalEntityIdStrategy().apply(resolutionContext));
-        if (null == localEntityId) {
-            log.warn("StoredID '{}' : Could not get localEntityId, skipping ID creation", getId());
+        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
+        if (null == attributeIssuerID) {
+            log.warn("StoredID '{}' : Could not get attribute issuer ID, skipping ID creation", getId());
             returnAbsent = true;
         }
 
-        final String spEntityId = StringSupport.trimOrNull(getSPEntityIdStrategy().apply(resolutionContext));
-        if (null == spEntityId) {
-            log.warn("StoredID '{}' : Could not get Relying Party EntityId, skipping ID creation", getId());
+        final String attributeRecipientID = StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
+        if (null == attributeRecipientID) {
+            log.warn("StoredID '{}' : Could not get attribute recipient ID, skipping ID creation", getId());
             returnAbsent = true;
         }
 
@@ -306,6 +249,6 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             return Optional.absent();
         }
 
-        return encodeAsAttribute(getStoredId(principal, localEntityId, spEntityId, localId));
+        return encodeAsAttribute(getStoredId(principal, attributeIssuerID, attributeRecipientID, localId));
     }
 }
