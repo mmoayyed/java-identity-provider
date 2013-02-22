@@ -70,22 +70,6 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
     /** SP name qualifier for the NameID. */
     private String nameIdSPQualifier;
 
-    /** Strategy used to locate the RelyingParty EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
-    // TODO Do we mean IdP or RelyingParty or what? Fix when [...]
-    // the questions in https://wiki.shibboleth.net/confluence/display/OS30/Messaging+Abstractions+Discussion+Document
-    // are answered
-    // TODO should this be a org.opensaml.messaging.context.navigate.ContextDataLookupFunction ?
-    private Function<AttributeResolutionContext, String> spEntityIdStrategy;
-
-    /** Strategy used to locate the IdP EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
-    // TODO Do we mean IdP or RelyingParty or what? Fix when [...]
-    // the questions in https://wiki.shibboleth.net/confluence/display/OS30/Messaging+Abstractions+Discussion+Document
-    // are answered
-    // TODO should this be a org.opensaml.messaging.context.navigate.ContextDataLookupFunction ?
-    private Function<AttributeResolutionContext, String> idPEntityIdStrategy;
-
     /**
      * Constructor.
      */
@@ -153,59 +137,6 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
-     * Gets the strategy for finding the IdP EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getIdPEntityIdStrategy() {
-        return idPEntityIdStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the IdP EntityId from the resolution context.
-     * 
-     * @param strategy what to set
-     */
-    public void setIdPEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        idPEntityIdStrategy = strategy;
-    }
-
-    /**
-     * Gets the strategy for finding the RelyingParty EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getSPEntityIdStrategy() {
-        return spEntityIdStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the RelyingPartyContext from the resolution context.
-     * 
-     * @param strategy to set.
-     */
-    public void setSPEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        spEntityIdStrategy = strategy;
-    }
-
-    /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (null == spEntityIdStrategy) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no Relying Party EntityId Lookup Strategy set");
-        }
-
-        if (null == idPEntityIdStrategy) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no IdP EntityId Lookup Strategy set");
-        }
-    }
-
-    /**
      * Builds a name ID. The provided value is the textual content of the NameID. The NameQualifier and SPNameQualifier
      * are set according to the configuration, or to the local and requesting entityIDs respectively.
      * 
@@ -220,9 +151,9 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
 
         log.debug("NameIdAttribute {} : Building a SAML2 NameID with value for {}", getId(), nameIdValue);
 
-        final String spEntityId =
-                StringSupport.trimOrNull(spEntityIdStrategy.apply(resolutionContext));
-        final String idpEntityId = StringSupport.trimOrNull(idPEntityIdStrategy.apply(resolutionContext));
+        final String attributeRecipientID = StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
+
+        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
 
         NameID nameId = nameIDBuilder.buildObject();
         nameId.setValue(nameIdValue);
@@ -233,8 +164,8 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
 
         if (nameIdQualifier != null) {
             nameId.setNameQualifier(nameIdQualifier);
-        } else if (null != idpEntityId) {
-            nameId.setNameQualifier(idpEntityId);
+        } else if (null != attributeIssuerID) {
+            nameId.setNameQualifier(attributeIssuerID);
         } else {
             throw new AttributeResolutionException("Attribute definition '" + getId()
                     + " provided IdP EntityId was empty");
@@ -242,8 +173,8 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
 
         if (nameIdSPQualifier != null) {
             nameId.setSPNameQualifier(nameIdSPQualifier);
-        } else if (null != spEntityId) {
-            nameId.setSPNameQualifier(spEntityId);
+        } else if (null != attributeRecipientID) {
+            nameId.setSPNameQualifier(attributeRecipientID);
         } else {
             throw new AttributeResolutionException("Attribute definition '" + getId()
                     + " provided SP EntityId was empty");
