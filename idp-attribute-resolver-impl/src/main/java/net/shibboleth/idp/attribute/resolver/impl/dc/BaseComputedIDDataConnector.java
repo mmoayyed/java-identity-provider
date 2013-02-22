@@ -41,7 +41,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 /**
@@ -62,10 +61,6 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
 
     /** Salt used when computing the ID. */
     private byte[] salt;
-
-    /** Strategy used to locate the SP EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized.  Name and Interface type?
-    private Function<AttributeResolutionContext, String> spEntityIdStrategy;
 
     /**
      * Gets the salt used when computing the ID.
@@ -124,33 +119,9 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
         generatedAttribute = newAttributeId;
     }
 
-    /**
-     * Gets the strategy for finding the RelyingParty EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getSPEntityIdStrategy() {
-        return spEntityIdStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the RelyingPartyContext from the resolution context.
-     * 
-     * @param strategy to set.
-     */
-    public void setSPEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        spEntityIdStrategy = strategy;
-    }
-
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
-        if (null == spEntityIdStrategy) {
-            throw new ComponentInitializationException("Stored/Computer Connector'" + getId()
-                    + "': no SP EntityId Lookup Strategy set");
-        }
 
         if (null == getSourceAttributeId()) {
             throw new ComponentInitializationException("Stored/Computer Connector'" + getId()

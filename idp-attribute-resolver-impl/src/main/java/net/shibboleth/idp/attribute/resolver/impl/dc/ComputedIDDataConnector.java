@@ -63,14 +63,14 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        String spEntityId = getSPEntityIdStrategy().apply(resolutionContext); 
+        String attributeRecipientID = resolutionContext.getAttributeRecipientID();
         
-        if (spEntityId == null) {
-            log.warn("ComputedIDDataConnector '{}' : No source SP identified, unable to compute ID", getId());
+        if (attributeRecipientID == null) {
+            log.warn("ComputedIDDataConnector '{}' : No Attribute Recipient ID located, unable to compute ID", getId());
             return Optional.absent();
         }
 
-        return encodeAsAttribute(generateComputedId(spEntityId, resolveSourceAttribute(resolutionContext)));
+        return encodeAsAttribute(generateComputedId(attributeRecipientID, resolveSourceAttribute(resolutionContext)));
     }
 
 }
