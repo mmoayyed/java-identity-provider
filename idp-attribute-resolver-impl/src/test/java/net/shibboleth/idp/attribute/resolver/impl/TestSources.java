@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -77,6 +78,12 @@ public final class TestSources {
 
     /** Authentication method for Principal method tests */
     public static final String TEST_AUTHN_METHOD = "AuthNmEthod";
+
+    public static final String IDP_ENTITY_ID = "https://idp.example.org/idp";
+
+    public static final String PRINCIPAL_ID = "PETER_THE_PRINCIPAL";
+
+    public static final String SP_ENTITY_ID = "https://sp.example.org/sp";
 
 
     /** Constructor. */
@@ -156,8 +163,6 @@ public final class TestSources {
     public static BaseAttributeDefinition nonStringAttributeDefiniton(String name) {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(name);
-        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
-        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
 
         // Set the dependency on the data connector
         Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -167,4 +172,12 @@ public final class TestSources {
         return defn;
     }
 
+    public static AttributeResolutionContext createResolutionContext(String principal, String issuerID, String recipientId) {
+        AttributeResolutionContext retVal = new AttributeResolutionContext();
+        
+        retVal.setPrincipal(principal);
+        retVal.setAttributeIssuerID(issuerID);
+        retVal.setAttributeRecipientID(recipientId);
+        return retVal;
+    }
 }

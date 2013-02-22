@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.impl.ConstantStringStrategy;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.persistence.PersistenceManager;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -69,56 +69,48 @@ public class TransientIdAttributeDefinitionTest {
 
         final Store store = new Store();
         defn.setIdStore(store);
-        testInitializeFail(defn, "no idPEntityIdStrategy");
 
-        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
-        testInitializeFail(defn, "no sPEntityIdStrategy");
-
-        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
-        testInitializeFail(defn, "no principalStrategy");
-
-        defn.setPrincipalStrategy(new ConstantStringStrategy(ConstantStringStrategy.PRINCIPAL_ID));
         defn.initialize();
 
-        final Optional<Attribute> result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        final Optional<Attribute> result =
+                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
         Set<AttributeValue> vals = result.get().getValues();
         Assert.assertEquals(vals.size(), 1);
 
         String val = (String) vals.iterator().next().getValue();
-        
+
         Assert.assertEquals(val, store.getLastValue().getId());
         Assert.assertTrue(val.length() >= defn.getIdSize());
-        
-        Assert.assertEquals(store.getLastValue().getPrincipalName(), ConstantStringStrategy.PRINCIPAL_ID );
-        Assert.assertEquals(store.getLastValue().getRelyingPartyId(), ConstantStringStrategy.SP_ENTITY_ID);
-        Assert.assertTrue(store.getLastId().contains(ConstantStringStrategy.IDP_ENTITY_ID));
-        
+
+        Assert.assertEquals(store.getLastValue().getPrincipalName(), TestSources.PRINCIPAL_ID);
+        Assert.assertEquals(store.getLastValue().getRelyingPartyId(), TestSources.SP_ENTITY_ID);
+        Assert.assertTrue(store.getLastId().contains(TestSources.IDP_ENTITY_ID));
+
     }
-    
-    private void constructAndFail(String sp, String idp, String principal, String whyItFailed) throws ComponentInitializationException {
+
+    private void constructAndFail(String sp, String idp, String principal, String whyItFailed)
+            throws ComponentInitializationException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
-        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(idp));
-        defn.setSPEntityIdStrategy(new ConstantStringStrategy(sp));
-        defn.setPrincipalStrategy(new ConstantStringStrategy(principal));
         defn.initialize();
         try {
-            defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+            defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(principal, idp, sp));
             Assert.fail(whyItFailed);
         } catch (AttributeResolutionException e) {
             // OK
-        }       
+        }
     }
 
     @Test public void testFails() throws ComponentInitializationException {
-        
-        constructAndFail(ConstantStringStrategy.SP_ENTITY_ID, null, ConstantStringStrategy.PRINCIPAL_ID, "Null IdP");
-        constructAndFail(ConstantStringStrategy.SP_ENTITY_ID, ConstantStringStrategy.IDP_ENTITY_ID, null, "Null principal");
-        constructAndFail(null, ConstantStringStrategy.IDP_ENTITY_ID, ConstantStringStrategy.PRINCIPAL_ID, "Null SP");
+
+        constructAndFail(TestSources.SP_ENTITY_ID, null, TestSources.PRINCIPAL_ID, "Null IdP");
+        constructAndFail(TestSources.SP_ENTITY_ID, TestSources.IDP_ENTITY_ID, null, "Null principal");
+        constructAndFail(null, TestSources.IDP_ENTITY_ID, TestSources.PRINCIPAL_ID, "Null SP");
     }
 
     @Test public void testGetters() throws ComponentInitializationException {
@@ -127,9 +119,7 @@ public class TransientIdAttributeDefinitionTest {
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
-        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
-        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
-        defn.setPrincipalStrategy(new ConstantStringStrategy(ConstantStringStrategy.PRINCIPAL_ID));
+
         defn.setIdLiftetime(TEST_LIFETIME);
         defn.setIdSize(TEST_ID_SIZE);
         defn.initialize();
@@ -137,13 +127,12 @@ public class TransientIdAttributeDefinitionTest {
         Assert.assertEquals(defn.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertEquals(defn.getIdLifetime(), TEST_LIFETIME);
         Assert.assertEquals(defn.getIdSize(), TEST_ID_SIZE);
-        Assert.assertEquals(defn.getIdPEntityIdStrategy().apply(null), ConstantStringStrategy.IDP_ENTITY_ID);
-        Assert.assertEquals(defn.getSPEntityIdStrategy().apply(null), ConstantStringStrategy.SP_ENTITY_ID);
-        Assert.assertEquals(defn.getPrincipalStrategy().apply(null), ConstantStringStrategy.PRINCIPAL_ID);
+
         Assert.assertEquals(defn.getIdStore(), store);
     }
-    
-    @Test public void testRerun() throws ComponentInitializationException, AttributeResolutionException, InterruptedException {
+
+    @Test public void testRerun() throws ComponentInitializationException, AttributeResolutionException,
+            InterruptedException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setIdLiftetime(TEST_LIFETIME);
@@ -151,32 +140,35 @@ public class TransientIdAttributeDefinitionTest {
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
-        defn.setIdPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.IDP_ENTITY_ID));
-        defn.setSPEntityIdStrategy(new ConstantStringStrategy(ConstantStringStrategy.SP_ENTITY_ID));
-        defn.setPrincipalStrategy(new ConstantStringStrategy(ConstantStringStrategy.PRINCIPAL_ID));
         defn.initialize();
 
-        Optional<Attribute> result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        Optional<Attribute> result =
+                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
         Set<AttributeValue> vals = result.get().getValues();
         String firstTime = (String) vals.iterator().next().getValue();
-        
-        result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+
+        result =
+                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
         Assert.assertEquals(firstTime, vals.iterator().next().getValue());
         Assert.assertTrue(firstTime.length() >= defn.getIdSize());
-    
+
         Thread.sleep(TEST_LIFETIME * 2);
 
-        result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        result =
+                defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
+                        TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
         vals = result.get().getValues();
         Assert.assertNotEquals(firstTime, vals.iterator().next().getValue());
-        
-    }
 
+    }
 
     private static class Store implements PersistenceManager<TransientIdEntry> {
 
         private TransientIdEntry lastValueAdded;
+
         private String lastIdAdded;
 
         private Map<String, TransientIdEntry> theMap;
@@ -188,7 +180,7 @@ public class TransientIdAttributeDefinitionTest {
         protected TransientIdEntry getLastValue() {
             return lastValueAdded;
         }
-        
+
         protected String getLastId() {
             return lastIdAdded;
         }

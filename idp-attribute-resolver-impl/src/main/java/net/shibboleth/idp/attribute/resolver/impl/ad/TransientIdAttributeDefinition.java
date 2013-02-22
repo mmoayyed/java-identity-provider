@@ -31,14 +31,12 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.persistence.PersistenceManager;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 /**
@@ -65,22 +63,6 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
     /** Length, in milliseconds, tokens are valid. */
     private long idLifetime;
-
-    /** Strategy used to locate the IdP EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized
-    // TODO Do we mean IdP or RelyingParty or what? Fix when [...]
-    // the questions in https://wiki.shibboleth.net/confluence/display/OS30/Messaging+Abstractions+Discussion+Document
-    // are answered
-    // TODO should this be a org.opensaml.messaging.context.navigate.ContextDataLookupFunction ?
-    private Function<AttributeResolutionContext, String> idPEntityIdStrategy;
-
-    /** Strategy used to locate the SP EntityId given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized.  See notes above.
-    private Function<AttributeResolutionContext, String> spEntityIdStrategy;
-
-    /** Strategy used to locate the principal given a {@link AttributeResolutionContext}. */
-    // TODO(rdw) These needs to be changed when the profile handling has been finalized.   See notes above.
-    private Function<AttributeResolutionContext, String> principalStrategy;
 
     /**
      * Constructor. Sets the defaults where required.
@@ -147,63 +129,6 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         idLifetime = lifetime;
     }
 
-    /**
-     * Gets the strategy for finding the Principal from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getPrincipalStrategy() {
-        return principalStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the Principal from the resolution context.
-     * 
-     * @param strategy what to set
-     */
-    public void setPrincipalStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        principalStrategy = strategy;
-    }
-
-    /**
-     * Gets the strategy for finding the IdP EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getIdPEntityIdStrategy() {
-        return idPEntityIdStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the IdP EntityId from the resolution context.
-     * 
-     * @param strategy what to set
-     */
-    public void setIdPEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        idPEntityIdStrategy = strategy;
-    }
-
-    /**
-     * Gets the strategy for finding the SP EntityId from the resolution context.
-     * 
-     * @return the required strategy.
-     */
-    public Function<AttributeResolutionContext, String> getSPEntityIdStrategy() {
-        return spEntityIdStrategy;
-    }
-
-    /**
-     * Sets the strategy for finding the SP from the resolution context.
-     * 
-     * @param strategy to set.
-     */
-    public void setSPEntityIdStrategy(Function<AttributeResolutionContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        spEntityIdStrategy = strategy;
-    }
-
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -214,18 +139,6 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
             throw new ComponentInitializationException("Attribute definition '" + getId() + ": No Id store set");
         }
         log.debug("Using the store called {}", idStore.getId());
-        if (null == idPEntityIdStrategy) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + ": No IdP EntityId Strategy set");
-        }
-        if (null == spEntityIdStrategy) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + ": No SP EntityId Strategy set");
-        }
-        if (null == principalStrategy) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + ": No Principal Strategy set");
-        }
     }
 
     /** {@inheritDoc} */
@@ -235,28 +148,29 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final String idpEntityId = StringSupport.trimOrNull(idPEntityIdStrategy.apply(resolutionContext));
-        if (null == idpEntityId) {
+        final String attributeIssuerID = resolutionContext.getAttributeIssuerID();
+        if (null == attributeIssuerID) {
             throw new AttributeResolutionException("Attribute definition '" + getId()
-                    + " provided IdP EntityId was empty");
+                    + " provided attribute issuer ID was empty");
         }
 
-        final String spEntityId = StringSupport.trimOrNull(spEntityIdStrategy.apply(resolutionContext));
-        if (null == spEntityId) {
+        final String attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        if (null == attributeRecipientID) {
             throw new AttributeResolutionException("Attribute definition '" + getId()
-                    + " provided SP EntityId was empty");
+                    + " provided attribute recipient ID was empty");
         }
 
-        final String principalName = StringSupport.trimOrNull(principalStrategy.apply(resolutionContext));
+        final String principalName = resolutionContext.getPrincipal();
         if (null == principalName) {
             throw new AttributeResolutionException("Attribute definition '" + getId()
-                    + " provided Prinicipal Name name was empty");
+                    + " provided Prinicipal name was empty");
         }
 
         final Attribute result = new Attribute(getId());
 
         StringBuilder principalTokenIdBuilder = new StringBuilder();
-        principalTokenIdBuilder.append(idpEntityId).append("!").append(spEntityId).append("!").append(principalName);
+        principalTokenIdBuilder.append(attributeIssuerID).append("!").append(attributeRecipientID);
+        principalTokenIdBuilder.append("!").append(principalName);
         String principalTokenId = principalTokenIdBuilder.toString();
 
         TransientIdEntry tokenEntry = idStore.get(principalTokenId);
@@ -268,7 +182,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
                 log.debug("Previous token expired, Creating new transient ID {} for request {}", token,
                         resolutionContext.getId());
             }
-            tokenEntry = new TransientIdEntry(idLifetime, spEntityId, principalName, token);
+            tokenEntry = new TransientIdEntry(idLifetime, attributeRecipientID, principalName, token);
             idStore.persist(token, tokenEntry);
             idStore.persist(principalTokenId, tokenEntry);
         } else {
