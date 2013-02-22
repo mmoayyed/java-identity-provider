@@ -163,7 +163,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         final String principalName = resolutionContext.getPrincipal();
         if (null == principalName) {
             throw new AttributeResolutionException("Attribute definition '" + getId()
-                    + " provided Prinicipal name was empty");
+                    + " provided prinicipal name was empty");
         }
 
         final Attribute result = new Attribute(getId());

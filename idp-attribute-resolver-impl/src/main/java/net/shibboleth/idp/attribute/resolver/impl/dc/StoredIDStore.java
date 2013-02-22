@@ -446,13 +446,13 @@ public class StoredIDStore extends AbstractInitializableComponent {
     protected void validatePersistentIdEntry(PersistentIdEntry entry) throws SQLException {
         boolean doThrow = false;
 
-        if (null == entry.getLocalEntityId()) {
-            log.warn("Entry {} has null localEntity", entry);
+        if (null == entry.getAttributeIssuerId()) {
+            log.warn("Entry {} has null attribute Issuer Id", entry);
             doThrow = true;
         }
 
-        if (null == entry.getPeerEntityId()) {
-            log.warn("Entry {} has null peerEntity", entry);
+        if (null == entry.getAttributeConsumerId()) {
+            log.warn("Entry {} has null attribute consumer Id", entry);
             doThrow = true;
         }
 
@@ -515,10 +515,10 @@ public class StoredIDStore extends AbstractInitializableComponent {
             PreparedStatement statement = dbConn.prepareStatement(sql);
             statement.setQueryTimeout(queryTimeout);
 
-            log.debug("Setting prepared statement parameter {}: {}", 1, entry.getLocalEntityId());
-            statement.setString(1, entry.getLocalEntityId());
-            log.debug("Setting prepared statement parameter {}: {}", 2, entry.getPeerEntityId());
-            statement.setString(2, entry.getPeerEntityId());
+            log.debug("Setting prepared statement parameter {}: {}", 1, entry.getAttributeIssuerId());
+            statement.setString(1, entry.getAttributeIssuerId());
+            log.debug("Setting prepared statement parameter {}: {}", 2, entry.getAttributeConsumerId());
+            statement.setString(2, entry.getAttributeConsumerId());
             log.debug("Setting prepared statement parameter {}: {}", 3, entry.getPrincipalName());
             statement.setString(3, entry.getPrincipalName());
             log.debug("Setting prepared statement parameter {}: {}", 4, entry.getLocalId());
@@ -600,7 +600,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
         PersistentIdEntry entry;
         while (resultSet.next()) {
             entry = new PersistentIdEntry();
-            entry.setLocalEntityId(resultSet.getString(localEntityColumn));
+            entry.setAttributeIssuerId(resultSet.getString(localEntityColumn));
             entry.setPeerEntityId(resultSet.getString(peerEntityColumn));
             entry.setPrincipalName(resultSet.getString(principalNameColumn));
             entry.setPersistentId(resultSet.getString(persistentIdColumn));

@@ -259,7 +259,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         resolver.initialize();
         PersistentIdEntry idEntry = new PersistentIdEntry();
-        idEntry.setLocalEntityId(TestSources.IDP_ENTITY_ID);
+        idEntry.setAttributeIssuerId(TestSources.IDP_ENTITY_ID);
         idEntry.setLocalId("wibble");
         idEntry.setPeerEntityId(TestSources.SP_ENTITY_ID + "2");
         idEntry.setPrincipalName("princ");

@@ -152,14 +152,14 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     protected PersistentIdEntry createPersistentId(String principalName, String localEntityId, String peerEntityId,
             String localId) throws SQLException, AttributeResolutionException {
         PersistentIdEntry entry = new PersistentIdEntry();
-        entry.setLocalEntityId(localEntityId);
+        entry.setAttributeIssuerId(localEntityId);
         entry.setPeerEntityId(peerEntityId);
         entry.setPrincipalName(principalName);
         entry.setLocalId(localId);
 
         String persistentId;
         int numberOfExistingEntries =
-                pidStore.getNumberOfPersistentIdEntries(entry.getLocalEntityId(), entry.getPeerEntityId(),
+                pidStore.getNumberOfPersistentIdEntries(entry.getAttributeIssuerId(), entry.getAttributeConsumerId(),
                         entry.getLocalId());
 
         if (numberOfExistingEntries == 0 && null != getSalt()) {

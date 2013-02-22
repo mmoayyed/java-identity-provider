@@ -106,8 +106,8 @@ public class StoredIDStoreTest {
         // Do not compare times
         //
         boolean result = Objects.equal(one.getPersistentId(), other.getPersistentId()) &&
-                Objects.equal(one.getLocalEntityId(), other.getLocalEntityId()) &&
-                Objects.equal(one.getPeerEntityId(), other.getPeerEntityId()) &&
+                Objects.equal(one.getAttributeIssuerId(), other.getAttributeIssuerId()) &&
+                Objects.equal(one.getAttributeConsumerId(), other.getAttributeConsumerId()) &&
                 Objects.equal(one.getLocalId(), other.getLocalId()) &&
                 Objects.equal(one.getPrincipalName(), other.getPrincipalName()) &&
                 Objects.equal(one.getPeerProvidedId(), other.getPeerProvidedId()) &&
@@ -138,7 +138,7 @@ public class StoredIDStoreTest {
         String persistentId = UUID.randomUUID().toString();
         
         testValidate(store, id, "No Local Id");
-        id.setLocalEntityId(TestSources.IDP_ENTITY_ID);
+        id.setAttributeIssuerId(TestSources.IDP_ENTITY_ID);
         
         testValidate(store, id, "No Peer Entity Id");
         id.setPeerEntityId(TestSources.SP_ENTITY_ID);

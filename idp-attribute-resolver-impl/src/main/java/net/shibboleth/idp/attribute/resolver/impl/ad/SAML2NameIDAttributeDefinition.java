@@ -168,7 +168,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
             nameId.setNameQualifier(attributeIssuerID);
         } else {
             throw new AttributeResolutionException("Attribute definition '" + getId()
-                    + " provided IdP EntityId was empty");
+                    + " provided attribute issuer ID  was empty");
         }
 
         if (nameIdSPQualifier != null) {
@@ -177,7 +177,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
             nameId.setSPNameQualifier(attributeRecipientID);
         } else {
             throw new AttributeResolutionException("Attribute definition '" + getId()
-                    + " provided SP EntityId was empty");
+                    + " provided attribute recipient ID was empty");
         }
 
         return nameId;

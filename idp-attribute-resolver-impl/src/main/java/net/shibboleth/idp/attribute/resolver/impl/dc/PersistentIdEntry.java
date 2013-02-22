@@ -27,7 +27,7 @@ public class PersistentIdEntry implements Serializable {
     private static final long serialVersionUID = -8711779466442306767L;
 
     /** ID of the entity that issued that identifier. */
-    private String localEntityId;
+    private String attributeIssuerId;
 
     /** ID of the entity to which the identifier was issued. */
     private String peerEntityId;
@@ -59,8 +59,8 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return ID of the entity that issued the identifier
      */
-    public String getLocalEntityId() {
-        return localEntityId;
+    public String getAttributeIssuerId() {
+        return attributeIssuerId;
     }
 
     /**
@@ -68,8 +68,8 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id ID of the entity that issued the identifier
      */
-    public void setLocalEntityId(String id) {
-        localEntityId = id;
+    public void setAttributeIssuerId(String id) {
+        attributeIssuerId = id;
     }
 
     /**
@@ -77,7 +77,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return ID of the entity to which the identifier was issued
      */
-    public String getPeerEntityId() {
+    public String getAttributeConsumerId() {
         return peerEntityId;
     }
 
@@ -202,7 +202,7 @@ public class PersistentIdEntry implements Serializable {
     public String toString() {
         StringBuilder stringForm = new StringBuilder("PersistentIdEntry{");
         stringForm.append("persistentId:").append(persistentId).append(", ");
-        stringForm.append("localEntityId:").append(localEntityId).append(", ");
+        stringForm.append("localEntityId:").append(attributeIssuerId).append(", ");
         stringForm.append("peerEntityId:").append(peerEntityId).append(", ");
         stringForm.append("localId:").append(localId).append(", ");
         stringForm.append("principalName:").append(principalName).append(", ");
