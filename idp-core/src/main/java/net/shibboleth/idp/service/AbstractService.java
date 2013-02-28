@@ -95,6 +95,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      */
     public final void start() throws ServiceException {
         final PerformanceEvent perfEvent = new PerformanceEvent(getId() + START_PERF_EVENT_ID_SUFFIX);
+        perfEvent.startTime();
 
         final Lock serviceWriteLock = getServiceLock().writeLock();
         final HashMap context = new HashMap();
@@ -135,6 +136,7 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
      */
     public final void stop() throws ServiceException {
         final PerformanceEvent perfEvent = new PerformanceEvent(getId() + STOP_PERF_EVENT_ID_SUFFIX);
+        perfEvent.startTime();
 
         final Lock serviceWriteLock = getServiceLock().writeLock();
         final HashMap context = new HashMap();

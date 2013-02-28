@@ -133,7 +133,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (reloadCheckDelay > 0) {
             Constraint.isNotNull(reloadTaskTimer, "Reload task timer cannot be null");
             reloadTask = new ServiceReloadTask();
@@ -151,6 +151,7 @@ public abstract class AbstractReloadableService extends AbstractService implemen
      */
     public final void reload() {
         final PerformanceEvent perfEvent = new PerformanceEvent(getId() + ".reload");
+        perfEvent.startTime();
 
         final Lock serviceWriteLock = getServiceLock().writeLock();
         final HashMap context = new HashMap();
