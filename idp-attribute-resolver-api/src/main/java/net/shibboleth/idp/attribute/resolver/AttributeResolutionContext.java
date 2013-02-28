@@ -58,15 +58,6 @@ public class AttributeResolutionContext extends BaseContext {
     /** Data connectors that have been resolved and the resultant attributes. */
     private final Map<String, ResolvedDataConnector> resolvedDataConnectors;
     
-    /** The unique principal. This is required by some resolvers and injected during setup. */
-    private String principal;
-    
-    /** The local entityID. This is required by some resolvers and injected during setup. */
-    private String attributeIssuerID;
-    
-    /** The other entityID. This is required by some resolvers and injected during setup. */
-    private String attributeRecipientID;
-
     /** Constructor. */
     public AttributeResolutionContext() {
         requestedAttributes = Constraints.constrainedSet(new HashSet<Attribute>(), Constraints.notNull());
@@ -79,54 +70,6 @@ public class AttributeResolutionContext extends BaseContext {
 
         resolvedDataConnectors =
                 MapConstraints.constrainedMap(new HashMap<String, ResolvedDataConnector>(), MapConstraints.notNull());
-    }
-    
-    /** Gets the principal associated with this resolution. 
-     * 
-     * @return the principal associated with this resolution. 
-     */
-    @Nullable public String getPrincipal() {
-        return principal;
-    }
-    
-    /** Sets the principal associated with this resolution. 
-     * 
-     * @param value the principal associated with this resolution. 
-     */
-    @Nullable public void setPrincipal(@Nullable String value) {
-        principal = value;
-    }
-    
-    /** Gets the attribute issuer (me) associated with this resolution. 
-     * 
-     * @return the attribute issuer associated with this resolution. 
-     */
-    @Nullable public String getAttributeIssuerID() {
-        return attributeIssuerID;
-    }
-    
-    /** Sets the attribute issuer (me)  associated with this resolution. 
-     * 
-     * @param value the attribute issuer associated with this resolution. 
-     */
-    @Nullable public void setAttributeIssuerID(@Nullable String value) {
-        attributeIssuerID = value;
-    }
-
-    /** Gets the attribute recipient (her) associated with this resolution. 
-     * 
-     * @return the attribute recipient associated with this resolution. 
-     */
-    @Nullable public String getAttributeRecipientID() {
-        return attributeRecipientID;
-    }
-    
-    /** Sets the attribute recipient (her)  associated with this resolution. 
-     * 
-     * @param value the attribute recipient associated with this resolution. 
-     */
-    @Nullable public void setAttributeRecipientID(@Nullable String value) {
-        attributeRecipientID = value;
     }
 
     /**

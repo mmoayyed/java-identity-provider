@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -175,9 +176,12 @@ public final class TestSources {
     public static AttributeResolutionContext createResolutionContext(String principal, String issuerID, String recipientId) {
         AttributeResolutionContext retVal = new AttributeResolutionContext();
         
-        retVal.setPrincipal(principal);
-        retVal.setAttributeIssuerID(issuerID);
-        retVal.setAttributeRecipientID(recipientId);
+        AttributeRecipientContext recipientContext = new AttributeRecipientContext();
+        
+        recipientContext.setPrincipal(principal);
+        recipientContext.setAttributeIssuerID(issuerID);
+        recipientContext.setAttributeRecipientID(recipientId);
+        retVal.addSubcontext(recipientContext);
         return retVal;
     }
 }

@@ -45,19 +45,6 @@ public class AttributeResolutionContextTest {
         Assert.assertTrue(context.getResolvedDataConnectors().isEmpty());
     }
     
-    @Test public void testInjectedValues() {
-        AttributeResolutionContext context = new AttributeResolutionContext();
-        Assert.assertNull(context.getPrincipal());
-        Assert.assertNull(context.getAttributeIssuerID());
-        Assert.assertNull(context.getAttributeRecipientID());
-        context.setPrincipal("Principal");
-        context.setAttributeIssuerID("AttributeIssuerID");
-        context.setAttributeRecipientID("AttributeRecipientID");
-        Assert.assertEquals(context.getPrincipal(),"Principal");
-        Assert.assertEquals(context.getAttributeIssuerID(),"AttributeIssuerID");
-        Assert.assertEquals(context.getAttributeRecipientID(),"AttributeRecipientID");
-    }
-
     /** Test {@link AttributeResolutionContext#setRequestedAttributes(java.util.Set)}. */
     @Test public void testSetRequesedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();

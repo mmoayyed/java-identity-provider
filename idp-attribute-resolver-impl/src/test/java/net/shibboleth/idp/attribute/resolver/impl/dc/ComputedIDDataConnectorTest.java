@@ -142,7 +142,6 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
         testInit(connector, "No source attr");
         connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
-        testInit(connector, "No salt");
         connector.setSalt(salt);
 
         SimpleAttributeDefinition simple = new SimpleAttributeDefinition();

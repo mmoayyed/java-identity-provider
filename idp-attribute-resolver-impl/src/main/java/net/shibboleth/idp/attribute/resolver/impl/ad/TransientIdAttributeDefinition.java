@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
@@ -148,19 +149,27 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final String attributeIssuerID = resolutionContext.getAttributeIssuerID();
+        final AttributeRecipientContext attributeRecipientContext =
+                resolutionContext.getSubcontext(AttributeRecipientContext.class);
+
+        if (null == attributeRecipientContext) {
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " no attribute recipient context provided ");
+        }
+
+        final String attributeIssuerID = attributeRecipientContext.getAttributeIssuerID();
         if (null == attributeIssuerID) {
             throw new AttributeResolutionException("Attribute definition '" + getId()
                     + " provided attribute issuer ID was empty");
         }
 
-        final String attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        final String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
         if (null == attributeRecipientID) {
             throw new AttributeResolutionException("Attribute definition '" + getId()
                     + " provided attribute recipient ID was empty");
         }
 
-        final String principalName = resolutionContext.getPrincipal();
+        final String principalName = attributeRecipientContext.getPrincipal();
         if (null == principalName) {
             throw new AttributeResolutionException("Attribute definition '" + getId()
                     + " provided prinicipal name was empty");

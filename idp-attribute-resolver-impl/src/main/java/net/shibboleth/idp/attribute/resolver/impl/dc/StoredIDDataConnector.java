@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -219,7 +220,16 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final String principal = StringSupport.trimOrNull(resolutionContext.getPrincipal());
+
+        final AttributeRecipientContext attributeRecipientContext =
+                resolutionContext.getSubcontext(AttributeRecipientContext.class);
+
+        if (null == attributeRecipientContext) {
+            log.warn("Attribute definition '{}' no attribute recipient context provided ", getId());
+            return Optional.absent();
+        }
+
+        final String principal = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
         boolean returnAbsent = false;
 
         if (null == principal) {
@@ -233,13 +243,14 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             returnAbsent = true;
         }
 
-        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
+        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
         if (null == attributeIssuerID) {
             log.warn("StoredID '{}' : Could not get attribute issuer ID, skipping ID creation", getId());
             returnAbsent = true;
         }
 
-        final String attributeRecipientID = StringSupport.trimOrNull(resolutionContext.getAttributeRecipientID());
+        final String attributeRecipientID =
+                StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
         if (null == attributeRecipientID) {
             log.warn("StoredID '{}' : Could not get attribute recipient ID, skipping ID creation", getId());
             returnAbsent = true;

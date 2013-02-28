@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -63,7 +64,15 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        String attributeRecipientID = resolutionContext.getAttributeRecipientID();
+        final AttributeRecipientContext attributeRecipientContext =
+                resolutionContext.getSubcontext(AttributeRecipientContext.class);
+
+        if (null == attributeRecipientContext) {
+            log.warn("Attribute definition '{}' no attribute recipient context provided ", getId());
+            return Optional.absent();
+        }
+
+        String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
         
         if (attributeRecipientID == null) {
             log.warn("ComputedIDDataConnector '{}' : No Attribute Recipient ID located, unable to compute ID", getId());

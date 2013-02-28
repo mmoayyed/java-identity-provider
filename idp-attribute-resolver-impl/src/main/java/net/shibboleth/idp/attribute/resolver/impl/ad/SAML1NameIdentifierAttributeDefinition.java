@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
@@ -129,7 +130,14 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
 
         log.debug("NameIdAttribute {} : Building a SAML1 NameIdentifier with value for {}", getId(), nameIdValue);
 
-        final String attributeIssuerID = StringSupport.trimOrNull(resolutionContext.getAttributeIssuerID());
+        final AttributeRecipientContext attributeRecipientContext =
+                resolutionContext.getSubcontext(AttributeRecipientContext.class);
+
+        if (null == attributeRecipientContext) {
+            throw new AttributeResolutionException("Attribute definition '" + getId()
+                    + " no attribute recipient context provided ");
+        }
+        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
 
         NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
         nameIdentifier.setNameIdentifier(nameIdValue);
