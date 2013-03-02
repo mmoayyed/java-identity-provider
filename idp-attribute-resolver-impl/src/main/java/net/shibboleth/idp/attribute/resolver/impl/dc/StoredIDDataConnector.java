@@ -28,7 +28,7 @@ import javax.sql.DataSource;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -148,10 +148,10 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * @return the created identifier
      * 
      * @throws SQLException thrown if there is a problem communication with the database
-     * @throws AttributeResolutionException if there is a problem with has generation
+     * @throws ResolutionException if there is a problem with has generation
      */
     protected PersistentIdEntry createPersistentId(String principalName, String localEntityId, String peerEntityId,
-            String localId) throws SQLException, AttributeResolutionException {
+            String localId) throws SQLException, ResolutionException {
         PersistentIdEntry entry = new PersistentIdEntry();
         entry.setAttributeIssuerId(localEntityId);
         entry.setPeerEntityId(peerEntityId);
@@ -191,10 +191,10 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @return persistent ID
      * 
-     * @throws AttributeResolutionException thrown if there is a problem retrieving or storing the persistent ID
+     * @throws ResolutionException thrown if there is a problem retrieving or storing the persistent ID
      */
     protected String getStoredId(String principalName, String localEntityId, String spEntityId, String localId)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         PersistentIdEntry idEntry;
         try {
             log.debug("Checking for existing, active, stored ID for principal '{}'", principalName);
@@ -211,13 +211,13 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
             return idEntry.getPersistentId();
         } catch (SQLException e) {
             log.debug("Database error retrieving persistent identifier", e);
-            throw new AttributeResolutionException("Database error retrieving persistent identifier", e);
+            throw new ResolutionException("Database error retrieving persistent identifier", e);
         }
     }
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

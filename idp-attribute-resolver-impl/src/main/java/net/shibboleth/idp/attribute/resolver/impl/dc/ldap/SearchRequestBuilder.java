@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import org.ldaptive.SearchRequest;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 
 //TODO(lajoie): probably want an abstract class that allows for setting things like which attributes are binary, handlers, scope, etc.
 
@@ -36,8 +36,8 @@ public interface SearchRequestBuilder {
      * 
      * @return search request to be executed
      * 
-     * @throws AttributeResolutionException throw if there is a problem creating the search request
+     * @throws ResolutionException throw if there is a problem creating the search request
      */
     @Nonnull public SearchRequest build(@Nonnull AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException;
+            throws ResolutionException;
 }

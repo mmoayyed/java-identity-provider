@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -60,7 +60,7 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

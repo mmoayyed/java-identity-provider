@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -123,10 +123,10 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * @param resolutionContext current resolution context
      * 
      * @return the constructed NameIdentifier
-     * @throws AttributeResolutionException if the IdP Name is empty.
+     * @throws ResolutionException if the IdP Name is empty.
      */
     protected NameIdentifier buildNameId(@Nonnull String nameIdValue,
-            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         log.debug("NameIdAttribute {} : Building a SAML1 NameIdentifier with value for {}", getId(), nameIdValue);
 
@@ -134,7 +134,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            throw new AttributeResolutionException("Attribute definition '" + getId()
+            throw new ResolutionException("Attribute definition '" + getId()
                     + " no attribute recipient context provided ");
         }
         final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
@@ -151,7 +151,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
         } else if (null != attributeIssuerID) {
             nameIdentifier.setNameQualifier(attributeIssuerID);
         } else {
-            throw new AttributeResolutionException("Attribute definition '" + getId()
+            throw new ResolutionException("Attribute definition '" + getId()
                     + " provided attribute issuer ID was empty");
         }
 
@@ -165,10 +165,10 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * @param theValue an arbitrary value.
      * @param resolutionContext the context to get the rest of the values from
      * @return null or an attributeValue;
-     * @throws AttributeResolutionException if the IdP Name is empty.
+     * @throws ResolutionException if the IdP Name is empty.
      */
     @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull AttributeValue theValue,
-            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         if (theValue instanceof StringAttributeValue) {
             StringAttributeValue value = (StringAttributeValue) theValue;
@@ -182,7 +182,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);

@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -177,7 +177,7 @@ public class LdapDataConnector extends BaseDataConnector {
 
     /** {@inheritDoc} */
     protected Optional<Map<String, Attribute>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         final SearchRequest request = requestBuilder.build(resolutionContext);
 
         //TODO(lajoie): this method needs debug logging statements for each step
@@ -250,11 +250,11 @@ public class LdapDataConnector extends BaseDataConnector {
      * 
      * @return attributes gotten from the database
      * 
-     * @throws AttributeResolutionException thrown if there is a problem retrieving data from the database or
+     * @throws ResolutionException thrown if there is a problem retrieving data from the database or
      *             transforming that data into {@link Attribute}s
      */
     protected Optional<Map<String, Attribute>> retrieveAttributesFromLdap(final SearchRequest request)
-            throws AttributeResolutionException {
+            throws ResolutionException {
 
         //TODO(lajoie): this method needs debug logging statements for each step
         
@@ -268,12 +268,12 @@ public class LdapDataConnector extends BaseDataConnector {
             final Optional<Map<String, Attribute>> resolvedAttributes = mappingStrategy.map(result);
             if (!resolvedAttributes.isPresent() && noResultIsAnError) {
                 //TODO should this be checked before or after mapping?
-                throw new AttributeResolutionException("No attributes returned from search");
+                throw new ResolutionException("No attributes returned from search");
             }
 
             return resolvedAttributes;
         } catch (LdapException e) {
-            throw new AttributeResolutionException("Unable to execute LDAP search", e);
+            throw new ResolutionException("Unable to execute LDAP search", e);
         } finally {
             if (connection != null) {
                 connection.close();

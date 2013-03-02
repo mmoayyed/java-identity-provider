@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -161,7 +161,7 @@ public abstract class BaseSamlAttributeDataConnector extends BaseDataConnector {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         final List<org.opensaml.saml.saml2.core.Attribute> samlAttributes = attributesStrategy.apply(resolutionContext);
         
         if (null == samlAttributes) {

@@ -22,7 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -39,7 +39,7 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Attribute result = new Attribute(getId());

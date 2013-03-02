@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -169,7 +169,7 @@ public class RdbmsDataConnector extends BaseDataConnector {
 
     /** {@inheritDoc} */
     protected Optional<Map<String, Attribute>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         ExecutableStatement statement = statementBuilder.build(resolutionContext);
 
         Optional<Map<String, Attribute>> resolvedAttributes = resultsCache.getIfPresent(statement.getResultCacheKey());
@@ -255,11 +255,11 @@ public class RdbmsDataConnector extends BaseDataConnector {
      * 
      * @return attributes gotten from the database
      * 
-     * @throws AttributeResolutionException thrown if there is a problem retrieving data from the database or
+     * @throws ResolutionException thrown if there is a problem retrieving data from the database or
      *             transforming that data into {@link Attribute}s
      */
     protected Optional<Map<String, Attribute>> retrieveAttributesFromDatabase(ExecutableStatement statement)
-            throws AttributeResolutionException {
+            throws ResolutionException {
 
         Connection connection = null;
         ResultSet queryResult = null;
@@ -269,12 +269,12 @@ public class RdbmsDataConnector extends BaseDataConnector {
 
             Optional<Map<String, Attribute>> resolvedAttributes = mappingStrategy.map(queryResult);
             if (!resolvedAttributes.isPresent() && noResultIsAnError) {
-                throw new AttributeResolutionException("No attributes returned from query");
+                throw new ResolutionException("No attributes returned from query");
             }
 
             return resolvedAttributes;
         } catch (SQLException e) {
-            throw new AttributeResolutionException("Unable to execute SQL query", e);
+            throw new ResolutionException("Unable to execute SQL query", e);
         } finally {
             try {
                 if (queryResult != null) {

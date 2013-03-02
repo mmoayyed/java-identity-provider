@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
@@ -193,10 +193,10 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
      * @param spEntityId The entitity of the SP/relying party.
      * @param sourceValue the source attribute value to use
      * @return the hash, or null if the attribute could not be resolved.
-     * @throws AttributeResolutionException if we could not get the SP Id.
+     * @throws ResolutionException if we could not get the SP Id.
      */
     @Nullable protected String generateComputedId(@Nonnull String spEntityId,
-            @Nullable String sourceValue) throws AttributeResolutionException {
+            @Nullable String sourceValue) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -214,7 +214,7 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
             return Base64Support.encode(md.digest(salt), Base64Support.UNCHUNKED);
         } catch (NoSuchAlgorithmException e) {
             log.error("JVM error, SHA-1 hash is not supported.");
-            throw new AttributeResolutionException("SHA-1A is not supported, unable to compute ID");
+            throw new ResolutionException("SHA-1A is not supported, unable to compute ID");
         }
     }
 

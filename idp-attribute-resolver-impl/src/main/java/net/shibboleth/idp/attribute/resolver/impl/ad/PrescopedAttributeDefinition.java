@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -80,7 +80,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -94,7 +94,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
 
         for (AttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new AttributeResolutionException(new UnsupportedAttributeTypeException(
+                throw new ResolutionException(new UnsupportedAttributeTypeException(
                         "This attribute definition only operates on attribute values of type "
                                 + StringAttributeValue.class.getName()));
             }
@@ -113,17 +113,17 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the scoped attribute value
      * 
-     * @throws AttributeResolutionException thrown if the given attribute value does not contain a delimited value
+     * @throws ResolutionException thrown if the given attribute value does not contain a delimited value
      */
     @Nonnull private ScopedStringAttributeValue buildScopedStringAttributeValue(@Nonnull StringAttributeValue value)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         Constraint.isNotNull(value, "Attribute value can not be null");
 
         final String[] stringValues = value.getValue().split(scopeDelimiter);
         if (stringValues.length < 2) {
             log.error("Attribute definition '{}': Input attribute value {} does not contain"
                     + " delimiter {} and can not be split", new Object[] {getId(), value.getValue(), scopeDelimiter,});
-            throw new AttributeResolutionException("Input attribute value can not be split.");
+            throw new ResolutionException("Input attribute value can not be split.");
         }
 
         log.debug("Attribute definition '{}': Value '{}' was split into {} at scope delimiter '{}'", new Object[] {

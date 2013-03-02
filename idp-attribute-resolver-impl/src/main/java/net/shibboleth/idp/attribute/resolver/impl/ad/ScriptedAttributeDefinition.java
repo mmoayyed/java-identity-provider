@@ -31,7 +31,7 @@ import javax.script.SimpleScriptContext;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -96,7 +96,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final ScriptContext context = getScriptContext(resolutionContext);
@@ -104,7 +104,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         try {
             script.eval(context);
         } catch (ScriptException e) {
-            throw new AttributeResolutionException("ScriptletAttributeDefinition " + getId()
+            throw new ResolutionException("ScriptletAttributeDefinition " + getId()
                     + " unable to execute script", e);
         }
 
@@ -128,11 +128,11 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return constructed script context
      * 
-     * @throws AttributeResolutionException thrown if dependent data connectors or attribute definitions can not be
+     * @throws ResolutionException thrown if dependent data connectors or attribute definitions can not be
      *             resolved
      */
     @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();

@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.persistence.PersistenceManager;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -144,7 +144,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -153,25 +153,25 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            throw new AttributeResolutionException("Attribute definition '" + getId()
+            throw new ResolutionException("Attribute definition '" + getId()
                     + " no attribute recipient context provided ");
         }
 
         final String attributeIssuerID = attributeRecipientContext.getAttributeIssuerID();
         if (null == attributeIssuerID) {
-            throw new AttributeResolutionException("Attribute definition '" + getId()
+            throw new ResolutionException("Attribute definition '" + getId()
                     + " provided attribute issuer ID was empty");
         }
 
         final String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
         if (null == attributeRecipientID) {
-            throw new AttributeResolutionException("Attribute definition '" + getId()
+            throw new ResolutionException("Attribute definition '" + getId()
                     + " provided attribute recipient ID was empty");
         }
 
         final String principalName = attributeRecipientContext.getPrincipal();
         if (null == principalName) {
-            throw new AttributeResolutionException("Attribute definition '" + getId()
+            throw new ResolutionException("Attribute definition '" + getId()
                     + " provided prinicipal name was empty");
         }
 

@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -73,7 +73,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -85,7 +85,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
         for (AttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new AttributeResolutionException(new UnsupportedAttributeTypeException(
+                throw new ResolutionException(new UnsupportedAttributeTypeException(
                         "This attribute definition only operates on attribute values of type "
                                 + StringAttributeValue.class.getName()));
             }

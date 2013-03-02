@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
 
     /** {@inheritDoc} */
     @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull final ResultSet results)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         Constraint.isNotNull(results, "Result set can not be null");
 
         try {
@@ -66,7 +66,7 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
 
             return Optional.of(attributes);
         } catch (SQLException e) {
-            throw new AttributeResolutionException("Error reading data from result set", e);
+            throw new ResolutionException("Error reading data from result set", e);
         }
     }
 }

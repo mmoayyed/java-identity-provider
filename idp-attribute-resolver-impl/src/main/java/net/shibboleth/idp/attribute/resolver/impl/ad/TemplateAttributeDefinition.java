@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
@@ -92,7 +92,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     protected Optional<Attribute> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
 
         final Attribute resultantAttribute = new Attribute(getId());
 
@@ -122,7 +122,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             } catch (VelocityException e) {
                 // TODO (rdw) uncovered path
                 log.error("Attribute definition '" + getId() + "': unable to evaluate velocity template", e);
-                throw new AttributeResolutionException("Unable to evaluate template", e);
+                throw new ResolutionException("Unable to evaluate template", e);
             }
         }
 
@@ -155,10 +155,10 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * @param resolutionContext to look for dependencies in.
      * @param sourceValues to populate with the attribute iterators
      * @return how many values in the attributes
-     * @throws AttributeResolutionException if there is a mismatched count of attributes
+     * @throws ResolutionException if there is a mismatched count of attributes
      */
     private int countAndSetupSourceValues(final AttributeResolutionContext resolutionContext,
-            Map<String, Iterator<AttributeValue>> sourceValues) throws AttributeResolutionException {
+            Map<String, Iterator<AttributeValue>> sourceValues) throws ResolutionException {
 
         final Map<String, Set<AttributeValue>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
@@ -173,7 +173,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                 if (value instanceof StringAttributeValue) {
                     attributeValues.add((String) value.getValue());
                 } else {
-                    throw new AttributeResolutionException(new UnsupportedAttributeTypeException(
+                    throw new ResolutionException(new UnsupportedAttributeTypeException(
                             "This attribute definition only supports attribute value types of "
                                     + StringAttributeValue.class.getName() + " not values of type "
                                     + value.getClass().getName()));
@@ -188,7 +188,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                         "All attributes used in TemplateAttributeDefinition " + getId()
                                 + " must have the same number of values.";
                 log.error(msg);
-                throw new AttributeResolutionException(msg);
+                throw new ResolutionException(msg);
             }
 
             sourceValues.put(dependencyAttribute.getKey(), dependencyAttribute.getValue().iterator());

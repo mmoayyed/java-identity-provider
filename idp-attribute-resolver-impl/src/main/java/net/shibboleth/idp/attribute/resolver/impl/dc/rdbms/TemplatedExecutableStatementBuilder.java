@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
@@ -43,7 +43,7 @@ public class TemplatedExecutableStatementBuilder implements ExecutableStatementB
     }
 
     /** {@inheritDoc} */
-    public ExecutableStatement build(AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+    public ExecutableStatement build(AttributeResolutionContext resolutionContext) throws ResolutionException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.ldaptive.LdapAttribute;
@@ -49,7 +49,7 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
 
     /** {@inheritDoc} */
     @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull final SearchResult results)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         Constraint.isNotNull(results, "Results can not be null");
 
         final Map<String, Attribute> attributes = new HashMap<String, Attribute>();

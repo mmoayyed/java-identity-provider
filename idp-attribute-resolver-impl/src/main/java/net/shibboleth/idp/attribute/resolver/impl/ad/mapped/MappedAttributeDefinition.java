@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -88,7 +88,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
@@ -103,7 +103,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
         Optional<String> mappingResult;
         for (AttributeValue unmappedValue : unmappedResults) {
             if (!(unmappedValue instanceof StringAttributeValue)) {
-                throw new AttributeResolutionException(new UnsupportedAttributeTypeException("Attribute definition '"
+                throw new ResolutionException(new UnsupportedAttributeTypeException("Attribute definition '"
                         + getId() + "' does not support dependency values of type "
                         + unmappedValue.getClass().getName()));
             }

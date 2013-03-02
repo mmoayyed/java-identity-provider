@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.Attribute;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 
 import com.google.common.base.Optional;
 
@@ -38,8 +38,8 @@ public interface MappingStrategy<T> {
      * 
      * @return the mapped attributes
      * 
-     * @throws AttributeResolutionException thrown if there is a problem reading data or mapping it
+     * @throws ResolutionException thrown if there is a problem reading data or mapping it
      */
     @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull T results)
-            throws AttributeResolutionException;
+            throws ResolutionException;
 }

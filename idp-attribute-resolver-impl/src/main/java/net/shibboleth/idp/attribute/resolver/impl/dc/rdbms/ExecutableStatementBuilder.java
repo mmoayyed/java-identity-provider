@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 
 /** Builder used to created {@link ExecutableStatement} instances. */
 public interface ExecutableStatementBuilder {
@@ -32,8 +32,8 @@ public interface ExecutableStatementBuilder {
      * 
      * @return statement to be executed
      * 
-     * @throws AttributeResolutionException throw if their is a problem creating the statement
+     * @throws ResolutionException throw if their is a problem creating the statement
      */
     @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException;
+            throws ResolutionException;
 }
