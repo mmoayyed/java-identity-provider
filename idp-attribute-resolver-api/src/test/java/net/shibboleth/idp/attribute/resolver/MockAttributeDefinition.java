@@ -46,7 +46,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
     private Optional<Attribute> staticValue;
 
     /** Exception thrown by {@link #doAttributeResolution(AttributeResolutionContext))}. */
-    private AttributeResolutionException resolutionException;
+    private ResolutionException resolutionException;
 
     /**
      * Constructor.
@@ -66,7 +66,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
      * @param id id of the data connector
      * @param exception exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}
      */
-    public MockAttributeDefinition(final String id, final AttributeResolutionException exception) {
+    public MockAttributeDefinition(final String id, final ResolutionException exception) {
         setId(id);
         invalid = false;
         resolutionException = exception;
@@ -83,7 +83,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
 
     /** {@inheritDoc} */
     protected Optional<Attribute> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         if (resolutionException != null) {
             throw resolutionException;
         }

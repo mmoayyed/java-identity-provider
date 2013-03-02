@@ -20,17 +20,15 @@ package net.shibboleth.idp.attribute.resolver;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.AttributeException;
-
 /** An exception indicating a problem resolving attribute data. */
 @ThreadSafe
-public class AttributeResolutionException extends AttributeException {
+public class ResolutionException extends Exception {
 
     /** Serial version UID. */
     private static final long serialVersionUID = -3921717206902437845L;
 
     /** Constructor. */
-    public AttributeResolutionException() {
+    public ResolutionException() {
         super();
     }
 
@@ -39,7 +37,7 @@ public class AttributeResolutionException extends AttributeException {
      * 
      * @param message exception message
      */
-    public AttributeResolutionException(@Nullable final String message) {
+    public ResolutionException(@Nullable final String message) {
         super(message);
     }
 
@@ -48,7 +46,7 @@ public class AttributeResolutionException extends AttributeException {
      * 
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(@Nullable final Exception wrappedException) {
+    public ResolutionException(@Nullable final Exception wrappedException) {
         super(wrappedException);
     }
 
@@ -58,7 +56,7 @@ public class AttributeResolutionException extends AttributeException {
      * @param message exception message
      * @param wrappedException exception to be wrapped by this one
      */
-    public AttributeResolutionException(@Nullable final String message, @Nullable final Exception wrappedException) {
+    public ResolutionException(@Nullable final String message, @Nullable final Exception wrappedException) {
         super(message, wrappedException);
     }
 }

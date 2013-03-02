@@ -48,7 +48,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
     private Optional<Map<String, Attribute>> values;
 
     /** Exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}. */
-    private AttributeResolutionException resolutionException;
+    private ResolutionException resolutionException;
 
     /**
      * Constructor.
@@ -67,7 +67,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
      * @param id id of the data connector
      * @param exception exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}
      */
-    public MockDataConnector(final String id, final AttributeResolutionException exception) {
+    public MockDataConnector(final String id, final ResolutionException exception) {
         setId(id);
         invalid = false;
         resolutionException = exception;
@@ -84,7 +84,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
 
     /** {@inheritDoc} */
     protected Optional<Map<String, Attribute>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         if (resolutionException != null) {
             throw resolutionException;
         }

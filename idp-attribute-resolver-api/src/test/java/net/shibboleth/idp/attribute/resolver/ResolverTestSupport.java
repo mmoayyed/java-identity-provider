@@ -63,7 +63,7 @@ public class ResolverTestSupport {
                     resolutionContext.recordDataConnectorResolution(connector, connector.resolve(resolutionContext));
                 }
             }
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // this can't happen here
             e.printStackTrace();
         }

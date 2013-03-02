@@ -74,7 +74,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * extension point for introducing new common behavior.
      */
     @Nonnull public final Optional<Map<String, Attribute>> doResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Optional<Map<String, Attribute>> optionalResult = doDataConnectorResolve(resolutionContext);
 
         if (!optionalResult.isPresent()) {
@@ -100,8 +100,8 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * 
      * @return collected attributes indexed by attribute ID
      * 
-     * @throws AttributeResolutionException thrown if there is a problem resolving the attributes
+     * @throws ResolutionException thrown if there is a problem resolving the attributes
      */
     @Nonnull protected abstract Optional<Map<String, Attribute>> doDataConnectorResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
 }

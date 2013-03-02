@@ -218,7 +218,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * and encoders to the resultant attribute.
      */
     @Nonnull protected Optional<Attribute> doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
 
         final Optional<Attribute> optionalAttribute =
                 Constraint.isNotNull(doAttributeDefinitionResolve(resolutionContext),
@@ -262,8 +262,8 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @return resolved attribute
      * 
-     * @throws AttributeResolutionException thrown if there is a problem resolving and creating the attribute
+     * @throws ResolutionException thrown if there is a problem resolving and creating the attribute
      */
     @Nonnull protected abstract Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
 }

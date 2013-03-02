@@ -66,7 +66,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
         return resolvedAttribute;
     }
 

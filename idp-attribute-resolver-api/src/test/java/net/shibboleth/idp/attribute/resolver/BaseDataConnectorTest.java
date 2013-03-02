@@ -101,7 +101,7 @@ public class BaseDataConnectorTest {
 
         /** {@inheritDoc} */
         protected Optional<Map<String, Attribute>> doDataConnectorResolve(
-                AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+                AttributeResolutionContext resolutionContext) throws ResolutionException {
             return staticValues;
         }
     }

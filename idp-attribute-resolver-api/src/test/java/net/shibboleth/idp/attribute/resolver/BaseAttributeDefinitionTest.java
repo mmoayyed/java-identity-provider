@@ -237,7 +237,7 @@ public class BaseAttributeDefinitionTest {
 
         /** {@inheritDoc} */
         protected Optional<Attribute> doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
-                throws AttributeResolutionException {
+                throws ResolutionException {
             return staticAttribute;
         }
     }

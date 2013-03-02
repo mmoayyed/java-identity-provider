@@ -64,7 +64,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
-            AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            AttributeResolutionContext resolutionContext) throws ResolutionException {
         return resolvedAttributes;
     }
 

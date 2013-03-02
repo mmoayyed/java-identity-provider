@@ -194,7 +194,7 @@ public class AttributeResolverTest {
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
-        BaseAttributeDefinition attrDef = new MockAttributeDefinition("ad1", new AttributeResolutionException());
+        BaseAttributeDefinition attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
         attrDef.setPropagateResolutionExceptions(true);
         definitions.add(attrDef);
 
@@ -205,12 +205,12 @@ public class AttributeResolverTest {
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // OK
         }
 
         definitions = new LazySet<BaseAttributeDefinition>();
-        attrDef = new MockAttributeDefinition("ad1", new AttributeResolutionException());
+        attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
         attrDef.setPropagateResolutionExceptions(false);
         definitions.add(attrDef);
 
@@ -277,12 +277,12 @@ public class AttributeResolverTest {
      * Test that resolve w/ dependencies returns the expected results.
      * 
      * @throws ComponentInitializationException if badness happens
-     * @throws AttributeResolutionException if badness happens in attribute resolution
+     * @throws ResolutionException if badness happens in attribute resolution
      */
     @Test public void testResolveWithDependencyFail1() throws ComponentInitializationException,
-            AttributeResolutionException
+            ResolutionException
     /* throws Exception */{
-        MockDataConnector dc1 = new MockDataConnector("dc1", new AttributeResolutionException());
+        MockDataConnector dc1 = new MockDataConnector("dc1", new ResolutionException());
         dc1.setFailoverDataConnectorId("dc2");
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
@@ -310,11 +310,11 @@ public class AttributeResolverTest {
      * Test that resolve w/ dependencies returns the expected results.
      * 
      * @throws ComponentInitializationException if badness happens
-     * @throws AttributeResolutionException if badness happens in attribute resolution
+     * @throws ResolutionException if badness happens in attribute resolution
      */
     @Test public void testResolveDataConnectorFail() throws ComponentInitializationException,
-            AttributeResolutionException {
-        MockDataConnector dc1 = new MockDataConnector("dc1", new AttributeResolutionException());
+            ResolutionException {
+        MockDataConnector dc1 = new MockDataConnector("dc1", new ResolutionException());
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
@@ -333,14 +333,14 @@ public class AttributeResolverTest {
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             //
             // OK
         }
     }
 
     @Test public void testCachedDataConnectorDependency() throws ComponentInitializationException,
-            AttributeResolutionException {
+            ResolutionException {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
@@ -371,11 +371,11 @@ public class AttributeResolverTest {
         Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("ad2"));
         Assert.assertEquals(context.getResolvedAttributes().size(), 2);
         
-        MockDataConnector dcfail1 = new MockDataConnector("failer1", new AttributeResolutionException());
+        MockDataConnector dcfail1 = new MockDataConnector("failer1", new ResolutionException());
         dcfail1.setInvalid(true);
         dcfail1.setPropagateResolutionExceptions(false);
         ResolverPluginDependency depFail1 = new ResolverPluginDependency("failer1", null);
-        MockDataConnector dcfail2 = new MockDataConnector("failer2", new AttributeResolutionException());
+        MockDataConnector dcfail2 = new MockDataConnector("failer2", new ResolutionException());
         dcfail2.setFailoverDataConnectorId("failer1");
         dcfail2.setInvalid(true);
         ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2", null);
@@ -409,7 +409,7 @@ public class AttributeResolverTest {
     }
 
     @Test public void testDataConnectorWithDataDependency() throws ComponentInitializationException,
-            AttributeResolutionException {
+            ResolutionException {
         Map<String, Attribute> values = new HashMap<String, Attribute>(1);
         Attribute attr = new Attribute("SubAttribute");
         attr.getValues().add(new StringAttributeValue("SubValue1"));

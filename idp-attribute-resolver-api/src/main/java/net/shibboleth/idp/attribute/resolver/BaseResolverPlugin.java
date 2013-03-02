@@ -80,7 +80,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * Gets whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
      * will cause the entire attribute resolution request to fail.
      * 
-     * @return true if {@link AttributeResolutionException}s are propagated, false if not
+     * @return true if {@link ResolutionException}s are propagated, false if not
      */
     public boolean isPropagateResolutionExceptions() {
         return propagateResolutionExceptions;
@@ -90,7 +90,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * Sets whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
      * will cause the entire attribute resolution request to fail.
      * 
-     * @param propagate true if {@link AttributeResolutionException}s are propagated, false if not
+     * @param propagate true if {@link ResolutionException}s are propagated, false if not
      */
     public synchronized void setPropagateResolutionExceptions(final boolean propagate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -159,10 +159,10 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * @return the attributes made available by the resolution, or {@link Optional#absent()} if no attributes were
      *         resolved
      * 
-     * @throws AttributeResolutionException thrown if there was a problem resolving the attributes
+     * @throws ResolutionException thrown if there was a problem resolving the attributes
      */
     @Nonnull public final Optional<ResolvedType> resolve(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -176,7 +176,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
         try {
             return Constraint.isNotNull(doResolve(resolutionContext), "Result of doResolve for resolver plugin '"
                     + getId() + "' was null");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             //
             // NOTE - if you change this logic you MUST make changes in any derived classes that
             // depend on our handling of propagateResolutionExceptions.
@@ -253,10 +253,10 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * 
      * @return the resolved attributes or null if no attributes were resolved
      * 
-     * @throws AttributeResolutionException thrown if there is a problem resolving the attributes
+     * @throws ResolutionException thrown if there is a problem resolving the attributes
      * 
      * @see BaseResolverPlugin#resolve(AttributeResolutionContext)
      */
     @Nonnull protected abstract Optional<ResolvedType> doResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException;
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
 }

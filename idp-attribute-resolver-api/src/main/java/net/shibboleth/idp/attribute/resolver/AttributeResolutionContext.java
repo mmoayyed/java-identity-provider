@@ -137,16 +137,16 @@ public class AttributeResolutionContext extends BaseContext {
      * @param definition the resolved attribute definition, must not be null
      * @param attribute the attribute produced by the given attribute definition, may be null
      * 
-     * @throws AttributeResolutionException thrown if a result of a resolution for the given attribute definition have
+     * @throws ResolutionException thrown if a result of a resolution for the given attribute definition have
      *             already been recorded
      */
     public void recordAttributeDefinitionResolution(@Nonnull final BaseAttributeDefinition definition,
-            @Nonnull final Optional<Attribute> attribute) throws AttributeResolutionException {
+            @Nonnull final Optional<Attribute> attribute) throws ResolutionException {
         Constraint.isNotNull(definition, "Resolver attribute definition can not be null");
         Constraint.isNotNull(attribute, "Resolved attribute can not be null");
 
         if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
-            throw new AttributeResolutionException("The resolution of attribute definition " + definition.getId()
+            throw new ResolutionException("The resolution of attribute definition " + definition.getId()
                     + " has already been recorded");
         }
 
@@ -169,16 +169,16 @@ public class AttributeResolutionContext extends BaseContext {
      * @param connector the resolved data connector, must not be null
      * @param attributes the attribute produced by the given data connector, may be null
      * 
-     * @throws AttributeResolutionException thrown if a result of a resolution for the given data connector has already
+     * @throws ResolutionException thrown if a result of a resolution for the given data connector has already
      *             been recorded
      */
     public void recordDataConnectorResolution(@Nonnull final BaseDataConnector connector,
-            @Nonnull final Optional<Map<String, Attribute>> attributes) throws AttributeResolutionException {
+            @Nonnull final Optional<Map<String, Attribute>> attributes) throws ResolutionException {
         Constraint.isNotNull(connector, "Resolver data connector can not be null");
         Constraint.isNotNull(attributes, "Resolved attributes can not be null");
 
         if (resolvedDataConnectors.containsKey(connector.getId())) {
-            throw new AttributeResolutionException("The resolution of data connector " + connector.getId()
+            throw new ResolutionException("The resolution of data connector " + connector.getId()
                     + " has already been recorded");
         }
 

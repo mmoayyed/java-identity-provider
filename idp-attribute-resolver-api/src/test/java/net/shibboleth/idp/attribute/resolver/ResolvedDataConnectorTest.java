@@ -94,7 +94,7 @@ public class ResolvedDataConnectorTest {
     }
 
     @Test public void testNoops() throws ComponentInitializationException, ComponentValidationException,
-            AttributeResolutionException {
+            ResolutionException {
         MockStaticDataConnector dc = new MockStaticDataConnector();
         dc.setValues(Arrays.asList(new Attribute("attr")));
         dc.setId("Defn");

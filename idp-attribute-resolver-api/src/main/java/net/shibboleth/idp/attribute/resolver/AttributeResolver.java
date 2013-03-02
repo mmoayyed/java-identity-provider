@@ -167,10 +167,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * @param resolutionContext the attribute resolution context that identifies the request subject and accumulates the
      *            resolved attributes
      * 
-     * @throws AttributeResolutionException thrown if there is a problem resolving the attributes for the subject
+     * @throws ResolutionException thrown if there is a problem resolving the attributes for the subject
      */
     public void resolveAttributes(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws AttributeResolutionException {
+            throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -245,10 +245,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * @param attributeId id of the attribute definition to resolve
      * @param resolutionContext resolution context that we are working in
      * 
-     * @throws AttributeResolutionException if unable to resolve the requested attribute definition
+     * @throws ResolutionException if unable to resolve the requested attribute definition
      */
     protected void resolveAttributeDefinition(@Nonnull final String attributeId,
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(attributeId, "Attribute ID can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -292,10 +292,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * @param connectorId id of the data connector to resolve
      * @param resolutionContext resolution context that we are working in
      * 
-     * @throws AttributeResolutionException if unable to resolve the requested connector
+     * @throws ResolutionException if unable to resolve the requested connector
      */
     protected void resolveDataConnector(@Nonnull final String connectorId,
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(connectorId, "Data connector ID can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -318,7 +318,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         try {
             log.debug("Attribute Resolver {}: resolving data connector {}", getId(), connectorId);
             resolvedAttributes = connector.resolve(resolutionContext);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             final Optional<String> failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (failoverDataConnectorId.isPresent()) {
                 log.debug("Attribute Resolver {}: data connector {} failed to resolve, invoking failover data"
@@ -348,10 +348,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
      * @param plugin plugin whose dependencies should be resolved
      * @param resolutionContext current resolution context
      * 
-     * @throws AttributeResolutionException thrown if there is a problem resolving a dependency
+     * @throws ResolutionException thrown if there is a problem resolving a dependency
      */
     protected void resolveDependencies(@Nonnull final BaseResolverPlugin<?> plugin,
-            @Nonnull final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(plugin, "Plugin dependency can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -370,7 +370,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                 resolveDataConnector(pluginId, resolutionContext);
             } else {
                 // This will not happen for as long as we test this in initialization
-                throw new AttributeResolutionException("Plugin " + plugin.getId() + " contains a depedency on plugin "
+                throw new ResolutionException("Plugin " + plugin.getId() + " contains a depedency on plugin "
                         + pluginId + " which does not exist.");
             }
         }

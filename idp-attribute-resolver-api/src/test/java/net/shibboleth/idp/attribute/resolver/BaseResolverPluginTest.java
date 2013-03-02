@@ -146,7 +146,7 @@ public class BaseResolverPluginTest {
 
         /** {@inheritDoc} */
         protected Optional<String> doResolve(AttributeResolutionContext resolutionContext)
-                throws AttributeResolutionException {
+                throws ResolutionException {
             return resolverValue;
         }
     }

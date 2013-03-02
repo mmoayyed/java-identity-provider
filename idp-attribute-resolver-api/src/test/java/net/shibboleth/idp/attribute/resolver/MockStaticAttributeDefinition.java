@@ -23,7 +23,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -69,7 +69,7 @@ public class MockStaticAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            final AttributeResolutionContext resolutionContext) throws AttributeResolutionException {
+            final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         log.debug("Attribute definition '{}': Resolving static attribute {}", getId(), value.get());

@@ -131,7 +131,7 @@ public class AttributeResolutionContextTest {
         try {
             context.recordAttributeDefinitionResolution(definition, Optional.<Attribute> fromNullable(attribute));
             Assert.fail("able to record a second resolution for a single attribute definition");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // expected this
         }
 
@@ -176,7 +176,7 @@ public class AttributeResolutionContextTest {
         try {
             context.recordDataConnectorResolution(connector, Optional.of(attributes));
             Assert.fail("able to record a second resolution for a single data connector");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // expected this
         }
 
@@ -200,7 +200,7 @@ public class AttributeResolutionContextTest {
             other.initialize();
             context.recordDataConnectorResolution(other, Optional.<Map<String, Attribute>>absent());
             Assert.fail("Cannot cross the same bridge twice or add the same resolvedId twice");
-        } catch (AttributeResolutionException ex) {
+        } catch (ResolutionException ex) {
             //OK
         }
     }
