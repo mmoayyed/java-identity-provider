@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -84,11 +84,11 @@ public class ScriptedAttributeTest {
     /**
      * Test resolution of an simple script (statically generated data).
      * 
-     * @throws AttributeResolutionException
+     * @throws ResolutionException
      * @throws ComponentInitializationException only if the test will fail
      * @throws ScriptException
      */
-    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException,
+    @Test public void testSimple() throws ResolutionException, ComponentInitializationException,
             ScriptException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
@@ -110,7 +110,7 @@ public class ScriptedAttributeTest {
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
-    @Test public void testFails() throws AttributeResolutionException, ComponentInitializationException,
+    @Test public void testFails() throws ResolutionException, ComponentInitializationException,
             ScriptException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
@@ -132,7 +132,7 @@ public class ScriptedAttributeTest {
         try {
             attr.doAttributeDefinitionResolve(new AttributeResolutionContext());
             Assert.fail("Should have thrown an exception");
-        } catch (AttributeResolutionException ex) {
+        } catch (ResolutionException ex) {
             //OK
         }
     }
@@ -140,11 +140,11 @@ public class ScriptedAttributeTest {
     /**
      * Test resolution of an script which looks at the provided attributes.
      * 
-     * @throws AttributeResolutionException if the resolve fails
+     * @throws ResolutionException if the resolve fails
      * @throws ComponentInitializationException only if things go wrong
      * @throws ScriptException
      */
-    @Test public void testWithAttributes() throws AttributeResolutionException, ComponentInitializationException,
+    @Test public void testWithAttributes() throws ResolutionException, ComponentInitializationException,
             ScriptException {
 
         // Set the dependency on the data connector
@@ -185,11 +185,11 @@ public class ScriptedAttributeTest {
     /**
      * Test resolution of an script which looks at the provided request context.
      * 
-     * @throws AttributeResolutionException if the resolve fails
+     * @throws ResolutionException if the resolve fails
      * @throws ComponentInitializationException only if the test has gone wrong
      * @throws ScriptException
      */
-    @Test public void testRequestContext() throws AttributeResolutionException, ComponentInitializationException,
+    @Test public void testRequestContext() throws ResolutionException, ComponentInitializationException,
             ScriptException {
 
         // Set the dependency on the data connector
@@ -219,7 +219,7 @@ public class ScriptedAttributeTest {
         container.addSubcontext(context);
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 

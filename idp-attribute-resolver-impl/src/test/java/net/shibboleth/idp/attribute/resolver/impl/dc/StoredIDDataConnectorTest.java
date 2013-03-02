@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.impl.DatabaseTestingSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -77,7 +77,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testInitializeAndGetters() throws ComponentInitializationException, SQLException,
-            AttributeResolutionException {
+            ResolutionException {
 
         StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
@@ -134,10 +134,10 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * 
      * @throws ComponentInitializationException if badness happens
      * @throws SQLException if badness happens
-     * @throws AttributeResolutionException if badness happens
+     * @throws ResolutionException if badness happens
      */
     @Test public void testStoreEntry() throws ComponentInitializationException, SQLException,
-            AttributeResolutionException {
+            ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
         resolver.initialize();
@@ -175,10 +175,10 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * 
      * @throws ComponentInitializationException if badness happens
      * @throws SQLException if badness happens
-     * @throws AttributeResolutionException if badness happens
+     * @throws ResolutionException if badness happens
      */
     @Test(dependsOnMethods = {"testStoreEntry"}) void testRetrieveEntry() throws ComponentInitializationException,
-            SQLException, AttributeResolutionException {
+            SQLException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
         resolver.initialize();
@@ -221,7 +221,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(dependsOnMethods = {"testRetrieveEntry"}) void testBadEntry() throws ComponentInitializationException,
-            SQLException, AttributeResolutionException {
+            SQLException, ResolutionException {
         StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setDataSource(testSource);
 
@@ -244,10 +244,10 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * 
      * @throws ComponentInitializationException if badness happens
      * @throws SQLException if badness happens
-     * @throws AttributeResolutionException if badness happens
+     * @throws ResolutionException if badness happens
      */
     @Test() void testPreviousEntry() throws ComponentInitializationException, SQLException,
-            AttributeResolutionException {
+            ResolutionException {
         AttributeResolver resolver = constructResolver(1);
         StoredIDDataConnector connector =
                 (StoredIDDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);

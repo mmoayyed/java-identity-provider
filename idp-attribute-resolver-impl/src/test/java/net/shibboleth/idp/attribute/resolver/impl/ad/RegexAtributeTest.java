@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -58,10 +58,10 @@ public class RegexAtributeTest {
      * Test regexp. We set up an attribute called 'at1-Connector', we throw this at 'at1-(.+)or' and look for group 1
      * 'Connect'.
      * 
-     * @throws AttributeResolutionException on resolution issues.
+     * @throws ResolutionException on resolution issues.
      * @throws ComponentInitializationException only if things went bad.
      */
-    @Test public void testRegex() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testRegex() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -111,12 +111,12 @@ public class RegexAtributeTest {
         try {
             attrDef.doAttributeDefinitionResolve(resolutionContext);
             Assert.fail("Invalid type");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             //
         }
     }
 
-    @Test public void testInitDestroyParms() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
         
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         Collection<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(new ResolverPluginDependency("connector1",

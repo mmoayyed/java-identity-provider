@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -61,10 +61,10 @@ public class ScopedAttributeTest {
     /**
      * Test resolution of the scoped attribute resolver.
      * 
-     * @throws AttributeResolutionException if resolution failed.
+     * @throws ResolutionException if resolution failed.
      * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
-    @Test public void testScopes() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testScopes() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -121,12 +121,12 @@ public class ScopedAttributeTest {
         try {
             attrDef.doAttributeDefinitionResolve(resolutionContext);
             Assert.fail("Invalid type");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             //
         }
     }
 
-    @Test public void testInitDestroyParms() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
         
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         Collection<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(new ResolverPluginDependency("connector1",

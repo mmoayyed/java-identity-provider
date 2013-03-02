@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -47,7 +47,7 @@ public class MappedAttributeTest {
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "mapped";
 
-    @Test public void testInstantiation() throws ComponentInitializationException, AttributeResolutionException {
+    @Test public void testInstantiation() throws ComponentInitializationException, ResolutionException {
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
 
@@ -139,7 +139,7 @@ public class MappedAttributeTest {
         try {
             definition.doAttributeDefinitionResolve(resolutionContext);
             Assert.fail("invalid types");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             //
         }
         

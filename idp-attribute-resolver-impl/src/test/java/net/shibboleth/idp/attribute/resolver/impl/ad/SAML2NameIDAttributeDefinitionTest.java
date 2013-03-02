@@ -25,7 +25,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -56,7 +56,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
 
     private static final String ALTERNATE_SP_QUALIFIER = "ALTERNATE_SP_QUAL";
 
-    @Test public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testEmpty() throws ResolutionException, ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
@@ -89,7 +89,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         return resolver;
     }
 
-    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimple() throws ResolutionException, ComponentInitializationException {
         final AttributeResolver resolver = setupResolver();
 
         AttributeResolutionContext context =
@@ -119,7 +119,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         try {
             resolver.resolveAttributes(context);
             Assert.fail("null IdP EntityId should throw");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // OK
         }
 
@@ -129,12 +129,12 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         try {
             resolver.resolveAttributes(context);
             Assert.fail("null IdP EntityId should throw");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // OK
         }
     }
 
-    @Test public void testBadValue() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testBadValue() throws ResolutionException, ComponentInitializationException {
 
         final BaseAttributeDefinition defn = TestSources.nonStringAttributeDefiniton(TEST_ATTRIBUTE_NAME);
 
@@ -159,13 +159,13 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
                 TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);;
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed");
         }
         Assert.assertNull(context.getResolvedAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
-    @Test public void testSingleValueWithOptions() throws AttributeResolutionException,
+    @Test public void testSingleValueWithOptions() throws ResolutionException,
             ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
@@ -193,7 +193,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();

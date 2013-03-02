@@ -25,7 +25,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -56,7 +56,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
 
     private static final String ALTERNATE_QUALIFIER = "ALTERNATE_QUALIFIER";
 
-    @Test public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testEmpty() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
@@ -69,7 +69,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Assert.assertTrue(result.get().getValues().isEmpty());
     }
 
-    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimple() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
@@ -90,7 +90,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
@@ -128,12 +128,12 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         try {
             resolver.resolveAttributes(context);
             Assert.fail("resolution Should have failed");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // OK
         }
     }
 
-    @Test public void testBadValue() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testBadValue() throws ResolutionException, ComponentInitializationException {
         final BaseAttributeDefinition defn = TestSources.nonStringAttributeDefiniton(TEST_ATTRIBUTE_NAME);
 
         final SAML1NameIdentifierAttributeDefinition defn2 = new SAML1NameIdentifierAttributeDefinition();
@@ -162,7 +162,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Assert.assertNull(context.getResolvedAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
-    @Test public void testSingleValueWithOptions() throws AttributeResolutionException,
+    @Test public void testSingleValueWithOptions() throws ResolutionException,
             ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
@@ -189,7 +189,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();

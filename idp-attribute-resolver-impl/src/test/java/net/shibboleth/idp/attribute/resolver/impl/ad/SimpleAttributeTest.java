@@ -24,7 +24,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -47,10 +47,10 @@ public class SimpleAttributeTest {
     /**
      * Test resolution of an empty definition to nothing.
      * 
-     * @throws AttributeResolutionException if resolution failed.
+     * @throws ResolutionException if resolution failed.
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test public void testEmpty() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testEmpty() throws ResolutionException, ComponentInitializationException {
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
         try {
@@ -97,7 +97,7 @@ public class SimpleAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
@@ -136,7 +136,7 @@ public class SimpleAttributeTest {
         AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<AttributeValue> values = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
@@ -180,7 +180,7 @@ public class SimpleAttributeTest {
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 

@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -44,7 +44,7 @@ import com.google.common.collect.Lists;
  */
 public class StaticDataConnectorTest {
 
-    @Test public void TestResolve() throws ComponentInitializationException, AttributeResolutionException {
+    @Test public void TestResolve() throws ComponentInitializationException, ResolutionException {
         Attribute attribute = new Attribute("attribute");
         attribute.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue("one"), new StringAttributeValue("two")));
 
@@ -90,7 +90,7 @@ public class StaticDataConnectorTest {
 
     }
     
-    @Test public void TestInitDestroy() throws ComponentInitializationException, AttributeResolutionException {
+    @Test public void TestInitDestroy() throws ComponentInitializationException, ResolutionException {
 
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");

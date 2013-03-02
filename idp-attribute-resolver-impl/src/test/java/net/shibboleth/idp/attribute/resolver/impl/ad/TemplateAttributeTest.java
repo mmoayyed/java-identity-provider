@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -92,10 +92,10 @@ public class TemplateAttributeTest {
     /**
      * Test resolution of an template script (statically generated data).
      * 
-     * @throws AttributeResolutionException id resolution fails
+     * @throws ResolutionException id resolution fails
      * @throws ComponentInitializationException only if bad things thingas
      */
-    @Test public void testSimple() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimple() throws ResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "1";
         TemplateAttributeDefinition attr = new TemplateAttributeDefinition();
@@ -131,10 +131,10 @@ public class TemplateAttributeTest {
     /**
      * Test resolution of an template script (statically generated data). By giving it attributes we create some values.
      * 
-     * @throws AttributeResolutionException if resolution fails
+     * @throws ResolutionException if resolution fails
      * @throws ComponentInitializationException only if things go wrong
      */
-    @Test public void testSimpleWithValues() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testSimpleWithValues() throws ResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "2";
 
@@ -169,10 +169,10 @@ public class TemplateAttributeTest {
     /**
      * Test resolution of an template script with data generated from the attributes.
      * 
-     * @throws AttributeResolutionException if it goes wrong.
+     * @throws ResolutionException if it goes wrong.
      * @throws ComponentInitializationException if it goes wrong.
      */
-    @Test public void testTemplateWithValues() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testTemplateWithValues() throws ResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
@@ -208,7 +208,7 @@ public class TemplateAttributeTest {
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
     }
 
-    @Test public void testFailMisMatchCount() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testFailMisMatchCount() throws ResolutionException, ComponentInitializationException {
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
@@ -235,12 +235,12 @@ public class TemplateAttributeTest {
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (AttributeResolutionException ex) {
+        } catch (ResolutionException ex) {
             // OK
         }        
     }
 
-    @Test public void testWrongType() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testWrongType() throws ResolutionException, ComponentInitializationException {
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
@@ -269,7 +269,7 @@ public class TemplateAttributeTest {
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (AttributeResolutionException ex) {
+        } catch (ResolutionException ex) {
             // OK
         }        
     }

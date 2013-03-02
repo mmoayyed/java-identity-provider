@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -58,7 +58,7 @@ public class TransientIdAttributeDefinitionTest {
         }
     }
 
-    @Test public void testSingle() throws ComponentInitializationException, AttributeResolutionException {
+    @Test public void testSingle() throws ComponentInitializationException, ResolutionException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         testInitializeFail(defn, "no dependencies");
@@ -100,7 +100,7 @@ public class TransientIdAttributeDefinitionTest {
         try {
             defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(principal, idp, sp));
             Assert.fail(whyItFailed);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // OK
         }
     }
@@ -130,7 +130,7 @@ public class TransientIdAttributeDefinitionTest {
         Assert.assertEquals(defn.getIdStore(), store);
     }
 
-    @Test public void testRerun() throws ComponentInitializationException, AttributeResolutionException,
+    @Test public void testRerun() throws ComponentInitializationException, ResolutionException,
             InterruptedException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);

@@ -24,7 +24,7 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -68,7 +68,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         }
     }
 
-    @Test public void testDataConnector() throws ComponentInitializationException, AttributeResolutionException {
+    @Test public void testDataConnector() throws ComponentInitializationException, ResolutionException {
         ComputedIDDataConnector connector = new ComputedIDDataConnector();
 
         connector.setId(TEST_CONNECTOR_NAME);
@@ -187,7 +187,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return (BaseComputedIDDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
 
-    @Test public void testAltDataConnector() throws ComponentInitializationException, AttributeResolutionException {
+    @Test public void testAltDataConnector() throws ComponentInitializationException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
         resolver.initialize();
@@ -232,7 +232,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     }
 
-    @Test public void testAttributeFails() throws ComponentInitializationException, AttributeResolutionException {
+    @Test public void testAttributeFails() throws ComponentInitializationException, ResolutionException {
         AttributeResolver resolver = constructResolver(3);
 
         connectorFromResolver(resolver).setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME + "1");

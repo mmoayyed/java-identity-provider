@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
@@ -59,10 +59,10 @@ public class PrescopedAtributeTest {
      * Test regexp. The test Data Connector provides an input attribute "at1" with values at1-Data and at1-Connector. We
      * can feed these into the prescoped, looking for '-'
      * 
-     * @throws AttributeResolutionException on resolution issues.
+     * @throws ResolutionException on resolution issues.
      * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
-    @Test public void testPreScoped() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testPreScoped() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -96,10 +96,10 @@ public class PrescopedAtributeTest {
     /**
      * Test the prescoped attribute resolve when there are no matches.
      * 
-     * @throws AttributeResolutionException if resolution fails.
+     * @throws ResolutionException if resolution fails.
      * @throws ComponentInitializationException if any of our initializations failed (which it shouldn't)
      */
-    @Test public void testPreScopedNoValues() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testPreScopedNoValues() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -125,7 +125,7 @@ public class PrescopedAtributeTest {
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             // OK
         }
    }
@@ -150,12 +150,12 @@ public class PrescopedAtributeTest {
         try {
             attrDef.doAttributeDefinitionResolve(resolutionContext);
             Assert.fail("Invalid type");
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             //
         }
     }
 
-    @Test public void testInitDestroyParms() throws AttributeResolutionException, ComponentInitializationException {
+    @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
         
         PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         Collection<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(new ResolverPluginDependency("connector1",
