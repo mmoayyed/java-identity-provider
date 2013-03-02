@@ -44,6 +44,7 @@ import com.google.common.base.Optional;
 /**
  * Data Connector to extra attributes from a saml2 {@link org.opensaml.saml.saml2.core.Assertion}.
  */
+@Deprecated // Work in progress
 public abstract class BaseSamlAttributeDataConnector extends BaseDataConnector {
 
     /** Class logger. */
