@@ -24,7 +24,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
@@ -167,7 +167,7 @@ public class ResolveAttributesTest {
         attribute.getValues().add(new StringAttributeValue("value1"));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
-        definitions.add(new MockAttributeDefinition("ad1", new AttributeResolutionException()));
+        definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
         AttributeResolver resolver = new AttributeResolver("resolver", definitions, null);
         resolver.initialize();

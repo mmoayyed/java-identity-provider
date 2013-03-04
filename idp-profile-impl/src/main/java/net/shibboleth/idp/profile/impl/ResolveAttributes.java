@@ -26,7 +26,7 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -137,7 +137,7 @@ public class ResolveAttributes extends AbstractProfileAction {
             attributeCtx.setAttributes(resolutionContext.getResolvedAttributes().values());
 
             relyingPartyCtx.addSubcontext(attributeCtx);
-        } catch (AttributeResolutionException e) {
+        } catch (ResolutionException e) {
             log.error("Action {}: Error resolving attributes", getId(), e);
             return ActionSupport.buildEvent(this, UNABLE_RESOLVE_ATTRIBS);
         }
