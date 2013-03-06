@@ -23,8 +23,8 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -33,20 +33,15 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchRequest;
+import org.ldaptive.Response;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.cache.Cache;
-
-//TODO(lajoie): log messages need to log plugin ID
-//TODO(lajoie): need to review to ensure code meets coding standards
-//TODO(lajoie): doInitialize and doValidate are identical except for the exception type they throw, refactor code
-//TODO(lajoie): doInitialize and doValidate check for a null connection from the factory but retrieveAttributesFromLdap does not, which is the correct model?
-//TODO(lajoie): should have a default mapping strategy
 
 /** A {@link BaseDataConnector} that queries an LDAP in order to retrieve attribute data. */
 public class LdapDataConnector extends BaseDataConnector {
@@ -57,11 +52,17 @@ public class LdapDataConnector extends BaseDataConnector {
     /** Factory for retrieving LDAP connections. */
     private ConnectionFactory connectionFactory;
 
-    /** Builder used to create the search requests executed against the LDAP. */
-    private SearchRequestBuilder requestBuilder;
+    /** For executing LDAP searches. */
+    private SearchExecutor searchExecutor;
+
+    /** Builder used to create the search filters executed against the LDAP. */
+    private SearchFilterBuilder filterBuilder;
+
+    /** Search filter for validating this connector. */
+    private SearchFilter validateFilter;
 
     /** Strategy for mapping from a {@link SearchResult} to a collection of {@link Attribute}s. */
-    private SearchResultMappingStrategy mappingStrategy;
+    private SearchResultMappingStrategy mappingStrategy = new StringAttributeValueMappingStrategy();
 
     /** Whether an empty result set is an error. */
     private boolean noResultIsAnError;
@@ -91,24 +92,66 @@ public class LdapDataConnector extends BaseDataConnector {
     }
 
     /**
-     * Gets the builder used to create the search requests executed against the LDAP.
+     * Gets the search executor for executing searches.
      * 
-     * @return builder used to create the search requests executed against the LDAP
+     * @return search executor for executing searches
      */
-    public SearchRequestBuilder getSearchRequestBuilder() {
-        return requestBuilder;
+    public SearchExecutor getSearchExecutor() {
+        return searchExecutor;
     }
 
     /**
-     * Sets the builder used to create the search requests executed against the LDAP.
+     * Sets the search executor for executing searches.
      * 
-     * @param builder builder used to create the search requests executed against the LDAP
+     * @param executor search executor for executing searches
      */
-    public void setSearchRequestBuilder(@Nonnull final SearchRequestBuilder builder) {
+    public synchronized void setSearchExecutor(@Nonnull final SearchExecutor executor) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        requestBuilder = Constraint.isNotNull(builder, "Search request builder can not be null");
+        searchExecutor = Constraint.isNotNull(executor, "LDAP search executor can not be null");
+    }
+
+    /**
+     * Gets the builder used to create the search filters executed against the LDAP.
+     * 
+     * @return builder used to create the search filters executed against the LDAP
+     */
+    public SearchFilterBuilder getSearchFilterBuilder() {
+        return filterBuilder;
+    }
+
+    /**
+     * Sets the builder used to create the search filters executed against the LDAP.
+     * 
+     * @param builder builder used to create the search filters executed against the LDAP
+     */
+    public void setSearchFilterBuilder(@Nonnull final SearchFilterBuilder builder) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        filterBuilder = Constraint.isNotNull(builder, "Search filter builder can not be null");
+    }
+
+    /**
+     * Gets the filter used to validate this connector.
+     * 
+     * @return filter used to validate this connector
+     */
+    public SearchFilter getValidateFilter() {
+        return validateFilter;
+    }
+
+    /**
+     * Sets the filter used to validate this connector.
+     * 
+     * @param filter used to validate this connector
+     */
+    public void setValidateFilter(@Nonnull final SearchFilter filter) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        validateFilter = Constraint.isNotNull(filter, "Validate search filter can not be null");
     }
 
     /**
@@ -176,19 +219,30 @@ public class LdapDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    protected Optional<Map<String, Attribute>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
-        final SearchRequest request = requestBuilder.build(resolutionContext);
+    protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        final SearchFilter filter = filterBuilder.build(resolutionContext);
+        log.debug("Data connector '{}': built search request {} with builder {}", new Object[] {getId(), filter,
+                filterBuilder,});
 
-        //TODO(lajoie): this method needs debug logging statements for each step
-        
-        //TODO(lajoie): by using the hash of the request might we have collisions?
-        String cacheKey = String.valueOf(request.hashCode());
-        Optional<Map<String, Attribute>> resolvedAttributes = resultsCache.getIfPresent(
-                cacheKey);
-        if (resolvedAttributes == null) {
-            resolvedAttributes = retrieveAttributesFromLdap(request);
-            resultsCache.put(cacheKey, resolvedAttributes);
+        Optional<Map<String, Attribute>> resolvedAttributes = null;
+        if (resultsCache != null) {
+            // TODO(lajoie): by using the hash of the filter might we have collisions?
+            final String cacheKey = String.valueOf(filter.hashCode());
+            resolvedAttributes = resultsCache.getIfPresent(cacheKey);
+            log.debug("Data connector '{}': cache found resolved attributes {} using cache {}", new Object[] {getId(),
+                    resolvedAttributes, resultsCache,});
+            if (resolvedAttributes == null) {
+                final Optional<SearchResult> result = retrieveAttributesFromLdap(filter);
+                resolvedAttributes = mappingStrategy.map(result.get());
+                log.debug("Data connector '{}': resolved LDAP attributes {}", getId(), resolvedAttributes);
+                resultsCache.put(cacheKey, resolvedAttributes);
+            }
+        } else {
+            final Optional<SearchResult> result = retrieveAttributesFromLdap(filter);
+            resolvedAttributes = mappingStrategy.map(result.get());
+            log.debug("Data connector '{}': resolved LDAP attributes {}", getId(), resolvedAttributes);
         }
 
         return resolvedAttributes;
@@ -202,43 +256,56 @@ public class LdapDataConnector extends BaseDataConnector {
             throw new ComponentInitializationException("Data connector '" + getId()
                     + "': no connection factory was configured");
         }
+        if (searchExecutor == null) {
+            throw new ComponentInitializationException("Data connector '" + getId()
+                    + "': no search executor was configured");
+        }
+        if (filterBuilder == null) {
+            throw new ComponentInitializationException("Data connector '" + getId()
+                    + "': no filter builder was configured");
+        }
 
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
-            if (connection == null) {
-                throw new ComponentInitializationException("Data connector '" + getId()
-                        + "': unable to retrieve connections from configured connection factory");
-            }
-            connection.open();
+            validateConnectionFactory();
         } catch (LdapException e) {
             log.error("Data connector '{}': invalid connector configuration", getId(), e);
             throw new ComponentInitializationException("Data connector '" + getId()
                     + "': invalid connector configuration", e);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
         }
     }
 
     /** {@inheritDoc} */
     protected void doValidate() throws ComponentValidationException {
-        Connection connection = null;
         try {
-            connection = connectionFactory.getConnection();
-            if (connection == null) {
-                throw new ComponentValidationException("Data connector '" + getId()
-                        + "': unable to retrieve connections from configured connection factory");
-            }
-            connection.open();
+            validateConnectionFactory();
         } catch (LdapException e) {
             log.error("Data connector '{}': invalid connector configuration", getId(), e);
-            throw new ComponentValidationException("Data connector '" + getId() 
-                    + "': invalid connector configuration", e);
-        } finally {
-            if (connection != null) {
-                connection.close();
+            throw new ComponentValidationException("Data connector '" + getId() + "': invalid connector configuration",
+                    e);
+        }
+    }
+
+    /**
+     * Attempts to retrieve a connection from the connection factory. The connection is opened and closed.
+     * 
+     * @throws LdapException if the connection cannot be opened
+     */
+    private void validateConnectionFactory() throws LdapException {
+        if (validateFilter != null) {
+            searchExecutor.search(connectionFactory, validateFilter);
+        } else {
+            // validate filter new for v3, this block is for v2 compatibility
+            Connection connection = null;
+            try {
+                connection = connectionFactory.getConnection();
+                if (connection == null) {
+                    throw new LdapException("Unable to retrieve connection from connection factory");
+                }
+                connection.open();
+            } finally {
+                if (connection != null) {
+                    connection.close();
+                }
             }
         }
     }
@@ -246,38 +313,31 @@ public class LdapDataConnector extends BaseDataConnector {
     /**
      * Attempts to retrieve attributes from the LDAP.
      * 
-     * @param request request used to retrieve data from the LDAP
+     * @param filter search filter used to retrieve data from the LDAP
      * 
-     * @return attributes gotten from the database
+     * @return search result from the LDAP
      * 
-     * @throws ResolutionException thrown if there is a problem retrieving data from the database or
-     *             transforming that data into {@link Attribute}s
+     * @throws ResolutionException thrown if there is a problem retrieving data from the LDAP
      */
-    protected Optional<Map<String, Attribute>> retrieveAttributesFromLdap(final SearchRequest request)
-            throws ResolutionException {
+    protected Optional<SearchResult> retrieveAttributesFromLdap(final SearchFilter filter) throws ResolutionException {
 
-        //TODO(lajoie): this method needs debug logging statements for each step
-        
-        Connection connection = null;
+        if (filter == null) {
+            throw new ResolutionException("Search filter cannot be null");
+        }
         try {
-            connection = connectionFactory.getConnection();
-            connection.open();
-            final SearchOperation search = new SearchOperation(connection);
-            final SearchResult result = search.execute(request).getResult();
-
-            final Optional<Map<String, Attribute>> resolvedAttributes = mappingStrategy.map(result);
-            if (!resolvedAttributes.isPresent() && noResultIsAnError) {
-                //TODO should this be checked before or after mapping?
-                throw new ResolutionException("No attributes returned from search");
+            final Response<SearchResult> response = searchExecutor.search(connectionFactory, filter);
+            log.trace("Data connector '{}': search returned {}", getId(), response);
+            final SearchResult result = response.getResult();
+            if (result.size() == 0) {
+                if (noResultIsAnError) {
+                    throw new ResolutionException("No attributes returned from search");
+                } else {
+                    return Optional.<SearchResult> absent();
+                }
             }
-
-            return resolvedAttributes;
+            return Optional.of(result);
         } catch (LdapException e) {
             throw new ResolutionException("Unable to execute LDAP search", e);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
         }
     }
 }

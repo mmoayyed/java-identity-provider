@@ -39,8 +39,8 @@ import com.google.common.base.Optional;
 //TODO(lajoie): want some settings to control what happens if there is more than one LdapEntry
 
 /**
- * A simple {@link SearchResultMappingStrategy} that iterates over all result entries and includes all attribute values as
- * strings.
+ * A simple {@link SearchResultMappingStrategy} that iterates over all result entries and includes all attribute values
+ * as strings.
  */
 public class StringAttributeValueMappingStrategy implements SearchResultMappingStrategy {
 
@@ -55,7 +55,6 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
         final Map<String, Attribute> attributes = new HashMap<String, Attribute>();
         for (LdapEntry entry : results.getEntries()) {
             for (LdapAttribute attr : entry.getAttributes()) {
-                log.debug("Mapping ldap attribute {}", attr);
                 final Attribute attribute = new Attribute(attr.getName());
                 for (String value : attr.getStringValues()) {
                     attribute.getValues().add(new StringAttributeValue(value));
@@ -63,6 +62,11 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
                 attributes.put(attribute.getId(), attribute);
             }
         }
-        return Optional.of(attributes);
+        log.trace("Mapping strategy mapped {} to {}", results, attributes);
+        if (attributes.isEmpty()) {
+            return Optional.<Map<String, Attribute>> absent();
+        } else {
+            return Optional.of(attributes);
+        }
     }
 }

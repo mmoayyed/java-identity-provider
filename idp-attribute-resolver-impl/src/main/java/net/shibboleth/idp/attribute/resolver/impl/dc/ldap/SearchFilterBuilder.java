@@ -19,35 +19,23 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import javax.annotation.Nonnull;
 
-import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchFilter;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.velocity.Template;
 
-/**
- * An {@link SearchRequestBuilder} that generates the search request to be executed by evaluating a
- * {@link Template} against the currently resolved attributes within a {@link AttributeResolutionContext}.
- */
-public class TemplatedSearchRequestBuilder implements SearchRequestBuilder {
-
-    /** Template evaluated to generate a search request. */
-    private final Template template;
+/** Builder used to created {@link SearchFilter} instances. */
+public interface SearchFilterBuilder {
 
     /**
-     * Constructor.
+     * Creates a search filter that can be executed against a given LDAP connection in order to produce results.
      * 
-     * @param searchRequestTemplate template evaluated to generate a search request
+     * @param resolutionContext current request context
+     * 
+     * @return search filter to be executed
+     * 
+     * @throws ResolutionException throw if there is a problem creating the search filter
      */
-    public TemplatedSearchRequestBuilder(@Nonnull final Template searchRequestTemplate) {
-        template = Constraint.isNotNull(searchRequestTemplate, "Search reqeust template can not be null");
-    }
-
-    /** {@inheritDoc} */
-    public SearchRequest build(@Nonnull final AttributeResolutionContext resolutionContext)
-            throws ResolutionException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    @Nonnull public SearchFilter build(@Nonnull AttributeResolutionContext resolutionContext)
+            throws ResolutionException;
 }
