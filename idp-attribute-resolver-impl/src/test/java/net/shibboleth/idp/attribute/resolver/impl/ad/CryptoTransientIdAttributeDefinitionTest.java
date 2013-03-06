@@ -108,7 +108,41 @@ public class CryptoTransientIdAttributeDefinitionTest {
         Assert.assertEquals(defn.getIdLifetime(), TIMEOUT);
         Assert.assertEquals(defn.getDataSealer(), dataSealer);
     }
+    
+    @Test public void testBadVals() throws ComponentInitializationException {
+        final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
+        defn.setId(ID);
+        defn.setDataSealer(dataSealer);
+        defn.setIdLifetime(TIMEOUT);
+        defn.initialize();
+        
+        try {
+            defn.resolve(new AttributeResolutionContext());
+            Assert.fail("No SP");
+        } catch (ResolutionException e) {
+            // OK
+        }
 
+        try {
+            defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID, null));
+            Assert.fail("No SP");
+        } catch (ResolutionException e) {
+            // OK
+        }
+        try {
+            defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, null, TestSources.SP_ENTITY_ID));
+            Assert.fail("No IdP");
+        } catch (ResolutionException e) {
+            // OK
+        }
+        try {
+            defn.resolve(TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
+            Assert.fail("No IdP");
+        } catch (ResolutionException e) {
+            // OK
+        }
+    }
+        
     @Test public void testEncode() throws ComponentInitializationException, ResolutionException, DataSealerException,
             InterruptedException {
         final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();

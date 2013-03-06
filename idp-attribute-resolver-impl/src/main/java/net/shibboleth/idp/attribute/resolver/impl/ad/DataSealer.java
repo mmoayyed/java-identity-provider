@@ -550,7 +550,7 @@ public class DataSealer {
      * @param exp timestamp to prefix the data with
      * @return the resulting MAC
      */
-    private static byte[] getMAC(Mac mac, String data, long exp) {
+    protected static byte[] getMAC(Mac mac, String data, long exp) {
         mac.update(getLongBytes(exp));
         mac.update(data.getBytes());
         return mac.doFinal();
@@ -562,7 +562,7 @@ public class DataSealer {
      * @param longValue value to convert
      * @return a byte array
      */
-    private static byte[] getLongBytes(long longValue) {
+    protected static byte[] getLongBytes(long longValue) {
         try {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             DataOutputStream dataStream = new DataOutputStream(byteStream);
