@@ -20,11 +20,14 @@ package net.shibboleth.idp.spring;
 import java.util.List;
 
 import net.shibboleth.utilities.java.support.resource.Resource;
+import net.shibboleth.utilities.java.support.resource.ResourceException;
 
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.InputStreamResource;
 import org.w3c.dom.Element;
 
 /**
@@ -50,10 +53,21 @@ public final class SpringSupport {
         GenericApplicationContext context = new GenericApplicationContext(parentContext);
         context.setDisplayName("ApplicationContext:" + name);
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(
-                context);
-        //TODO change opensaml resources in to Spring resource
-        // beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        // TODO change opensaml resources in to Spring resource
+        // beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));        
+        try {
+            for (Resource configurationResource : configurationResources) {
+                beanDefinitionReader.loadBeanDefinitions(new InputStreamResource(
+                        configurationResource.getInputStream(), configurationResource.getLocation()));
+            }
+        } catch (BeanDefinitionStoreException | ResourceException e) {
+            // TODO fix exception handling
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
 
         context.refresh();
         return context;
