@@ -304,7 +304,7 @@ public class RequestContextBuilder {
      * 
      * @return the constructed {@link ServletContext}
      */
-    protected ServletExternalContext buildServletExternalContext() {
+    @Nonnull public ServletExternalContext buildServletExternalContext() {
         if (servletContext == null) {
             servletContext = new MockServletContext();
         }
