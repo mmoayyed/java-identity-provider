@@ -25,6 +25,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -37,10 +38,22 @@ import org.springframework.webflow.execution.RequestContext;
 public final class InitializeProfileRequestContext extends AbstractProfileAction {
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext, final ProfileRequestContext profileRequestContext)
-            throws ProfileException {
-        springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, new ProfileRequestContext());
+    public Event execute(final RequestContext springRequestContext) throws ProfileException {
+
+        // TODO I think this is correct, we have to override execute() rather than doExecute().
+        
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+
+        final HttpServletRequest httpRequest =
+                (HttpServletRequest) getHttpRequestLookupStrategy().apply(springRequestContext);
+        final HttpServletResponse httpResponse =
+                (HttpServletResponse) getHttpResponseLookupStrategy().apply(springRequestContext);
+
+        ProfileRequestContext profileRequestContext = new ProfileRequestContext();
+        profileRequestContext.setHttpRequest(httpRequest);
+        profileRequestContext.setHttpResponse(httpResponse);
+        springRequestContext.getConversationScope().put(ProfileRequestContext.BINDING_KEY, profileRequestContext);
+
         return ActionSupport.buildProceedEvent(this);
     }
 }

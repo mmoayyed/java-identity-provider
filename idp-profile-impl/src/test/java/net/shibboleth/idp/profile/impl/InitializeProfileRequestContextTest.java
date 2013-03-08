@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.impl;
 import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 
-import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,12 +29,13 @@ public class InitializeProfileRequestContextTest {
 
     @Test public void testExecute() throws Exception {
 
-        RequestContext springRequestContext = new RequestContextBuilder().buildRequestContext();
+        MockRequestContext springRequestContext = new MockRequestContext();
+        springRequestContext.setExternalContext(new RequestContextBuilder().buildServletExternalContext());
 
         InitializeProfileRequestContext action = new InitializeProfileRequestContext();
         action.initialize();
 
-        action.doExecute(null, null, springRequestContext, null);
+        action.execute(springRequestContext);
 
         Assert.assertNotNull(springRequestContext.getConversationScope().get(ProfileRequestContext.BINDING_KEY));
     }
