@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:service="urn:mace:shibboleth:2.0:services" xmlns:res="urn:mace:shibboleth:2.0:resource" targetNamespace="urn:mace:shibboleth:2.0:services" elementFormDefault="qualified">
+
+    <import namespace="urn:mace:shibboleth:2.0:resource" schemaLocation="classpath:/schema/shibboleth-2.0-resource.xsd"/>
+
+    <annotation>
+        <documentation>Schema describing a set of isolated services used by Shibboleth.</documentation>
+    </annotation>
+    
+    <element name="Services" type="service:ServicesType"/>
+    <complexType name="ServicesType">
+        <sequence>
+            <element ref="service:Service" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+    
+    <element name="Service" type="service:ServiceType"/>
+    <complexType name="ReloadableServiceType" abstract="true">
+        <annotation>
+            <documentation>
+                A service that periodically checks if its configuration resources have changed. If a change has occurred
+                the service will reload its configuration.
+
+                If no polling frequency is specified this service will not reload its configuration files.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="service:ServiceType">
+                <attribute name="timerId" type="string" default="shibboleth.TaskTimer">
+                    <annotation>
+                        <documentation>
+                            Component ID for the task timer used to schedule configuration file polling.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="configurationResourcePollingFrequency" type="string">
+                    <annotation>
+                        <documentation>
+                            The frequency the configuration resources should be polled for changes.
+                            
+                            Frequency is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="configurationResourcePollingRetryAttempts" type="nonNegativeInteger">
+                    <annotation>
+                        <documentation>
+                            The number of times a particular resource should be retried if an error is encountered
+                            reading its content.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ServletContextAttributeExporter">
+        <annotation>
+            <documentation>
+                A service that exports all services that it depends on into the servlet context.
+                This requires that the loading application context is a WebApplicationContext.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="service:ServiceType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ServiceType" abstract="true">
+        <annotation>
+            <documentation>
+                A service that maintains its own Spring ApplicationContext loaded with the given configuration
+                resources.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="ConfigurationResource" type="res:ResourceType" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                        The configuration resources to load into the services ApplicationContext.
+                    </documentation>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="id" type="string" use="required">
+            <annotation>
+                <documentation>The application unique name of the service.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="depends-on">
+            <annotation>
+                <documentation>
+                    The services, identified by a space separated list of their IDs, upon which this service depends.
+                </documentation>
+            </annotation>
+            <simpleType>
+                <list itemType="string"/>
+            </simpleType>
+        </attribute>
+    </complexType>
+
+</schema>
