@@ -30,6 +30,7 @@ import net.shibboleth.idp.profile.EventIds;
 import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
 import net.shibboleth.idp.profile.ProfileException;
 import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
@@ -70,7 +71,7 @@ public class DecodeMessage extends AbstractProfileAction {
             log.debug("Action {}: Using message decoder of type {} for this request", getId(), decoder.getClass()
                     .getName());
 
-            log.debug("Action {}: Decoding incoming request", getId());
+            log.debug("Action {}: Decoding incoming request", getId());         
             decoder.decode();
             final MessageContext msgContext = decoder.getMessageContext();
             decoder.destroy();
