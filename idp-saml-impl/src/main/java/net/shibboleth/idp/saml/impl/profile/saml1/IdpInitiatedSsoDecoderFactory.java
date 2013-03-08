@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
 import net.shibboleth.idp.saml.impl.profile.BaseIdpInitiatedSsoRequestMessageDecoder;
 import net.shibboleth.idp.saml.impl.profile.saml1.IdpInitiatedSsoDecoderFactory.IdpInitatedSsoRequest;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -44,6 +45,12 @@ public class IdpInitiatedSsoDecoderFactory implements HttpServletRequestMessageD
     public MessageDecoder newDecoder(HttpServletRequest httpRequest) throws MessageDecodingException {
         IdpInitiatedSsoRequestMessageDecoder decoder = new IdpInitiatedSsoRequestMessageDecoder();
         decoder.setHttpServletRequest(httpRequest);
+        // TODO should we initialize the decoder here ?
+        try {
+            decoder.initialize();
+        } catch (ComponentInitializationException e) {
+           throw new MessageDecodingException("Unable to initialize message decoder", e);
+        }
         return decoder;
     }
 
