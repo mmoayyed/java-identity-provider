@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -35,7 +33,8 @@ public class TestAttributeResolverService {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(TestAttributeResolverService.class);
 
-    @Test public void testOne() {
+    // stub test
+    @Test public void testOne() throws ComponentInitializationException, ServiceException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + TestAttributeResolverService.class);
@@ -51,29 +50,12 @@ public class TestAttributeResolverService {
 
         log.info("attributeResolverService.getId() '{}'", attributeResolverService.getId());
 
-        // not sure about init
-        try {
-            attributeResolverService.initialize();
-        } catch (ComponentInitializationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // not sure about start
-        try {
-            attributeResolverService.start();
-        } catch (ServiceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        // not sure
+        attributeResolverService.initialize();
+        attributeResolverService.start();
 
         // try to resolve some attributes
-        AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
-        try {
-            attributeResolverService.resolveAttributes(resolutionContext);
-        } catch (ResolutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        // AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
+        // attributeResolverService.resolveAttributes(resolutionContext);
     }
 }
