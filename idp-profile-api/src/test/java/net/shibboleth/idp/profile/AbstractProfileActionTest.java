@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.springframework.webflow.execution.Event;
@@ -58,15 +59,19 @@ public class AbstractProfileActionTest {
         MockIdentityProviderAction action = new MockIdentityProviderAction(null);
         Assert.assertFalse(action.isInitialized());
         action.setId("mock");
-        
+
         try {
             action.initialize();
         } catch (ComponentInitializationException e) {
             Assert.fail();
         }
 
-        Assert.assertEquals(action.getId(), "mock");               
-        action.setId("foo");
+        Assert.assertEquals(action.getId(), "mock");
+        try {
+            action.setId("foo");
+        } catch (UnmodifiableComponentException e) {
+            // ignore
+        }
         Assert.assertEquals(action.getId(), "mock");
     }
 
