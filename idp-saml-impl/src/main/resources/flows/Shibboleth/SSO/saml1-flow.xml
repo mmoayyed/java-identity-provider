@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+    parent="parent-flow">
+
+    <on-start>
+        <evaluate expression="InitializeProfileRequestContext" />
+    </on-start>
+
+    <action-state id="DecodeIdpInitiatedSsoMessage">
+        <evaluate expression="DecodeIdpInitiatedSsoMessage" />
+        <!-- <transition on="proceed" to="CheckIsSaml1Request" /> -->
+        <transition on="proceed" to="CheckMandatoryIssuer" />
+    </action-state>
+
+    <action-state id="CheckIsSaml1Request">
+        <evaluate expression="CheckIsSaml1Request" />
+        <transition on="proceed" to="end" />
+    </action-state>
+
+    <action-state id="CheckMandatoryIssuer">
+        <evaluate expression="CheckMandatoryIssuer" />
+        <transition on="proceed" to="InitializeRelyingPartyContextBasedOnInboundMessageIssuer" />
+    </action-state>
+
+    <action-state id="InitializeRelyingPartyContextBasedOnInboundMessageIssuer">
+        <evaluate expression="InitializeRelyingPartyContextBasedOnInboundMessageIssuer" />
+        <transition on="proceed" to="CheckMessageLifetime" />
+    </action-state>
+
+    <action-state id="CheckMessageLifetime">
+        <evaluate expression="CheckMessageLifetime" />
+        <!-- <transition on="proceed" to="CheckReplayedMessage" /> -->
+        <transition on="proceed" to="end" />
+    </action-state>
+
+    <end-state id="end" />
+
+    <bean-import resource="saml1-flow-beans.xml" />
+
+</flow>
