@@ -27,6 +27,11 @@
             <artifactId>idp-authn-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-saml-impl</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
 
         <!-- Provided Dependencies -->
 
@@ -56,12 +61,6 @@
             <artifactId>idp-profile-api</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-saml-impl</artifactId>
-            <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
