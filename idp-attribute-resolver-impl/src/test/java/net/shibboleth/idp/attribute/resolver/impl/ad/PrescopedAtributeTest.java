@@ -27,10 +27,10 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -53,6 +53,7 @@ import com.google.common.collect.Sets;
 public class PrescopedAtributeTest {
     /** The name. resolve to */
     private static final String TEST_ATTRIBUTE_NAME = "prescoped";
+
     private static final String DELIMITER = "@";
 
     /**
@@ -128,8 +129,8 @@ public class PrescopedAtributeTest {
         } catch (ResolutionException e) {
             // OK
         }
-   }
-    
+    }
+
     @Test public void testInvalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
@@ -156,10 +157,10 @@ public class PrescopedAtributeTest {
     }
 
     @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
-        
+
         PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
-        Collection<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(new ResolverPluginDependency("connector1",
-                ResolverTestSupport.EPA_ATTRIB_ID));
+        Set<ResolverPluginDependency> pluginDependencies =
+                Sets.newHashSet(new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID));
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 
@@ -181,7 +182,7 @@ public class PrescopedAtributeTest {
             // OK
         }
         attrDef.setDependencies(pluginDependencies);
-        
+
         try {
             attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
@@ -189,16 +190,16 @@ public class PrescopedAtributeTest {
             // OK
         }
         attrDef.initialize();
-        
+
         Assert.assertEquals(attrDef.getScopeDelimiter(), DELIMITER);
-        
+
         try {
             attrDef.doAttributeDefinitionResolve(null);
             Assert.fail("Null context not allowed");
         } catch (ConstraintViolationException e) {
             // OK
         }
-            
+
         attrDef.destroy();
         try {
             attrDef.initialize();

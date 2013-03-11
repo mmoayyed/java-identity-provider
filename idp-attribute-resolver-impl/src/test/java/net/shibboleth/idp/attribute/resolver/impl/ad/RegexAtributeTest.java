@@ -26,10 +26,10 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -117,10 +117,10 @@ public class RegexAtributeTest {
     }
 
     @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
-        
+
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
-        Collection<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(new ResolverPluginDependency("connector1",
-                ResolverTestSupport.EPA_ATTRIB_ID));
+        Set<ResolverPluginDependency> pluginDependencies =
+                Sets.newHashSet(new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID));
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         try {
@@ -147,7 +147,7 @@ public class RegexAtributeTest {
             // OK
         }
         attrDef.setDependencies(pluginDependencies);
-        
+
         try {
             attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
@@ -155,16 +155,16 @@ public class RegexAtributeTest {
             // OK
         }
         attrDef.initialize();
-        
+
         Assert.assertEquals(attrDef.getRegularExpression(), TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-        
+
         try {
             attrDef.doAttributeDefinitionResolve(null);
             Assert.fail("Null context not allowed");
         } catch (ConstraintViolationException e) {
             // OK
         }
-            
+
         attrDef.destroy();
         try {
             attrDef.initialize();

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -78,7 +78,7 @@ public class BaseResolverPluginTest {
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
 
-        ArrayList<ResolverPluginDependency> depdencies = new ArrayList<ResolverPluginDependency>();
+        HashSet<ResolverPluginDependency> depdencies = new HashSet<ResolverPluginDependency>();
         plugin.setDependencies(depdencies);
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());

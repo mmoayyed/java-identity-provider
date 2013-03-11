@@ -27,10 +27,10 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
@@ -62,7 +62,7 @@ public class ScopedAttributeTest {
      * Test resolution of the scoped attribute resolver.
      * 
      * @throws ResolutionException if resolution failed.
-     * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
+     * @throws ComponentInitializationException if any of our initializations failed (which it shouldn't)
      */
     @Test public void testScopes() throws ResolutionException, ComponentInitializationException {
 
@@ -94,13 +94,15 @@ public class ScopedAttributeTest {
         final Collection<?> f = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(f.size(), 2);
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
+        Assert.assertTrue(
+                f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
                 "looking for COMMON_ATTRIBUTE_VALUE");
-        Assert.assertTrue(f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
+        Assert.assertTrue(
+                f.contains(new ScopedStringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING, TEST_SCOPE)),
                 "looking for CONNECTOR_ATTRIBUTE_VALUE");
 
     }
-    
+
     @Test public void testInvalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
@@ -127,10 +129,10 @@ public class ScopedAttributeTest {
     }
 
     @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
-        
+
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
-        Collection<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(new ResolverPluginDependency("connector1",
-                ResolverTestSupport.EPA_ATTRIB_ID));
+        Set<ResolverPluginDependency> pluginDependencies =
+                Sets.newHashSet(new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID));
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 
@@ -161,26 +163,26 @@ public class ScopedAttributeTest {
         } catch (ComponentInitializationException e) {
             // OK
         }
-        
+
         try {
             attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
         } catch (UninitializedComponentException e) {
             // OK
         }
-        
+
         attrDef.setScope(TEST_SCOPE);
-        attrDef.initialize();        
-        
+        attrDef.initialize();
+
         Assert.assertEquals(attrDef.getScope(), TEST_SCOPE);
-        
+
         try {
             attrDef.doAttributeDefinitionResolve(null);
             Assert.fail("Null context not allowed");
         } catch (ConstraintViolationException e) {
             // OK
         }
-            
+
         attrDef.destroy();
         try {
             attrDef.initialize();

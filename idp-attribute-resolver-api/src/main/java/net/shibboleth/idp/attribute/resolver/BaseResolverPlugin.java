@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -134,7 +133,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * @param pluginDependencies unmodifiable list of dependencies for this plugin
      */
     public synchronized void setDependencies(
-            @Nullable @NullableElements final Collection<ResolverPluginDependency> pluginDependencies) {
+            @Nullable @NullableElements final Set<ResolverPluginDependency> pluginDependencies) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
