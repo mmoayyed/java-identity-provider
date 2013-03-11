@@ -490,13 +490,13 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
 
         for (BaseDataConnector plugin : dataConnectors.values()) {
-            log.debug("Attribute resolver {}: checking if data connector {} is has a cirucular depdency", getId(),
+            log.debug("Attribute resolver {}: checking if data connector {} is has a circular dependency", getId(),
                     plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
 
         for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("Attribute resolver {}: checking if attribute definition {} has a circular depdency", getId(),
+            log.debug("Attribute resolver {}: checking if attribute definition {} has a circular dependency", getId(),
                     plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
