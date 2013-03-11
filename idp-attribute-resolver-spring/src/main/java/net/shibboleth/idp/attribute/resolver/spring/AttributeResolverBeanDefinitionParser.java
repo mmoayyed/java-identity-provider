@@ -52,8 +52,6 @@ public class AttributeResolverBeanDefinitionParser implements BeanDefinitionPars
     /** {@inheritDoc} */
     public BeanDefinition parse(Element config, ParserContext context) {
 
-        log.info("parse");
-
         // Map<QName, List<Element>> configChildren = XMLHelper.getChildElements(config);
         Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
@@ -63,6 +61,7 @@ public class AttributeResolverBeanDefinitionParser implements BeanDefinitionPars
 
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DataConnector"));
         // SpringConfigurationUtils.parseCustomElements(children, context);
+        SpringSupport.parseCustomElements(children, context);
 
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "AttributeDefinition"));
         // SpringConfigurationUtils.parseCustomElements(children, context);

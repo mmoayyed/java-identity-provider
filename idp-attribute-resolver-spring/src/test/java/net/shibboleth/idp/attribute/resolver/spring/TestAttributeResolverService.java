@@ -17,6 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import java.util.Map;
+
+import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -28,13 +34,14 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /** A work in progress to test the attribute resolver service. */
+// TODO incomplete
 public class TestAttributeResolverService {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(TestAttributeResolverService.class);
 
     // stub test
-    @Test public void testOne() throws ComponentInitializationException, ServiceException {
+    @Test public void testOne() throws ComponentInitializationException, ServiceException, ResolutionException {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + TestAttributeResolverService.class);
@@ -48,14 +55,21 @@ public class TestAttributeResolverService {
                 (AttributeResolverService) context.getBean("shibboleth.AttributeResolver");
         Assert.assertNotNull(attributeResolverService);
 
-        log.info("attributeResolverService.getId() '{}'", attributeResolverService.getId());
-
         // not sure
         attributeResolverService.initialize();
         attributeResolverService.start();
 
         // try to resolve some attributes
-        // AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
-        // attributeResolverService.resolveAttributes(resolutionContext);
+        AttributeResolutionContext resolutionContext = new AttributeResolutionContext();
+        attributeResolverService.resolveAttributes(resolutionContext);
+        Map<String, Attribute> resolvedAttributes = resolutionContext.getResolvedAttributes();
+        log.debug("resolved attributes '{}'", resolvedAttributes);
+
+        // just one attribute for now
+        Assert.assertEquals(resolvedAttributes.size(), 1);
+        Assert.assertNotNull(resolvedAttributes.get("eduPersonAffiliation"));
+        Assert.assertEquals(resolvedAttributes.get("eduPersonAffiliation").getValues().size(), 1);
+        Assert.assertTrue(resolvedAttributes.get("eduPersonAffiliation").getValues()
+                .contains(new StringAttributeValue("member")));
     }
 }

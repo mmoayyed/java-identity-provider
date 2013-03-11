@@ -1,15 +1,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.service.AbstractSpringService;
 import net.shibboleth.idp.service.ServiceException;
@@ -18,7 +18,6 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 // TODO incomplete
@@ -47,9 +46,8 @@ public class AttributeResolverService extends AbstractSpringService {
         attributeResolver.resolveAttributes(resolutionContext);
     }
 
+    // TODO probably wrong
     protected void doPreStart(HashMap context) throws ServiceException {
-
-        // TODO probably wrong
 
         // TODO do we have to init resources here ?
         log.debug("getServiceConfigurations() '{}'", getServiceConfigurations());
@@ -68,16 +66,14 @@ public class AttributeResolverService extends AbstractSpringService {
 
         GenericApplicationContext appCtx = (GenericApplicationContext) context.get(APP_CTX_CTX_KEY);
 
-        Collection<BaseAttributeDefinition> definitions = new ArrayList<BaseAttributeDefinition>();
-        String[] beanNames = appCtx.getBeanNamesForType(BaseAttributeDefinition.class);
-        log.debug("Loading {} attribute definitions", beanNames.length);
-        for (String beanName : beanNames) {
-            BaseAttributeDefinition aDefinition = (BaseAttributeDefinition) appCtx.getBean(beanName);
-            aDefinition.setId(beanName);
-            definitions.add(aDefinition);
-        }
+        Map<String, BaseAttributeDefinition> adMap = appCtx.getBeansOfType(BaseAttributeDefinition.class);
+        log.debug("Loading {} attribute definitions", adMap.size());
 
-        attributeResolver = new AttributeResolver("resolverId", definitions, null);
+        // data connectors
+        Map<String, BaseDataConnector> dataConnectorMap = appCtx.getBeansOfType(BaseDataConnector.class);
+        log.debug("Loading {} data connectors", dataConnectorMap.size());
+
+        attributeResolver = new AttributeResolver("resolverId", adMap.values(), dataConnectorMap.values());
 
         try {
             attributeResolver.initialize();

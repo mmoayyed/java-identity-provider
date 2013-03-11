@@ -21,15 +21,19 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
  * Spring Bean Definition Parser for static data connector.
  */
-public class SimpleAttributeDefinitionBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseResolverPluginBeanDefinitionParser {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(SimpleAttributeDefinitionBeanDefinitionParser.class);
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
@@ -42,8 +46,9 @@ public class SimpleAttributeDefinitionBeanDefinitionParser extends AbstractSingl
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        // TODO set the id properly
-        String id = element.getAttributeNS(null, "id");
-        builder.addPropertyValue("id", id);
+        // TODO sourceAttributeId
+        // String sourceAttributeId = element.getAttributeNS(null, "sourceAttributeID");
+        // log.debug("Setting source attribute ID for attribute definition {} to: {}", element, sourceAttributeId);
+        // pluginBuilder.addPropertyValue("sourceAttributeId", sourceAttributeId);
     }
 }
