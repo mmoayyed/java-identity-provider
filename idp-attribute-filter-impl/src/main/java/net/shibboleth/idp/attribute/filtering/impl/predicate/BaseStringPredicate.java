@@ -27,10 +27,10 @@ import com.google.common.base.Predicate;
 /**
  * General matching predicate for Equals comparison if strings in Attribute Filters.   
  */
-public class AttributeStringPredicate implements Predicate {
+public abstract class BaseStringPredicate implements Predicate {
 
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(AttributeStringPredicate.class);
+    private Logger log = LoggerFactory.getLogger(BaseStringPredicate.class);
 
     /** String to match for a positive evaluation. */
     private String matchString;

@@ -21,15 +21,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link AttributeStringPredicate}
+ * Tests for {@link BaseStringPredicate}
  */
-public class AttributeStringPredicateTest {
+public class BaseStringPredicateTest {
     
-    private final static String TEST_STRING = "nibbleahappywarthog"; 
-    private final static String TEST_STRING_UPPER = "nibbleahappywarthog".toUpperCase(); 
 
     @Test public void testSettersGetters() {
-        AttributeStringPredicate predicate = new AttributeStringPredicate();
+        BaseStringPredicate predicate = new BaseStringPredicate() {};
         
         Assert.assertNull(predicate.getMatchString());
         Assert.assertFalse(predicate.getCaseSensitive());
@@ -39,22 +37,23 @@ public class AttributeStringPredicateTest {
         predicate.setCaseSensitive(false);
         Assert.assertFalse(predicate.getCaseSensitive());
         
-        predicate.setMatchString(TEST_STRING);
-        Assert.assertEquals(predicate.getMatchString(), TEST_STRING);
+        predicate.setMatchString(DataSources.TEST_STRING);
+        Assert.assertEquals(predicate.getMatchString(), DataSources.TEST_STRING);
     }
     
     @Test public void testApply() {
-        AttributeStringPredicate predicate = new AttributeStringPredicate();
+        BaseStringPredicate predicate = new BaseStringPredicate() {};
         predicate.setCaseSensitive(true);
-        predicate.setMatchString(TEST_STRING);
+        predicate.setMatchString(DataSources.TEST_STRING);
 
-        Assert.assertTrue(predicate.apply(TEST_STRING));
-        Assert.assertFalse(predicate.apply(TEST_STRING_UPPER));
+        Assert.assertTrue(predicate.apply(DataSources.TEST_STRING));
+        Assert.assertFalse(predicate.apply(DataSources.TEST_STRING_UPPER));
         predicate.setCaseSensitive(false);
-        Assert.assertTrue(predicate.apply(TEST_STRING));
-        Assert.assertTrue(predicate.apply(TEST_STRING_UPPER));
+        Assert.assertTrue(predicate.apply(DataSources.TEST_STRING));
+        Assert.assertTrue(predicate.apply(DataSources.TEST_STRING_UPPER));
         
         Assert.assertFalse(predicate.apply(new Integer(2)));
         
     }
+    
 }
