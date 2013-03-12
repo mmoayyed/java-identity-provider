@@ -30,10 +30,9 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -43,7 +42,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 /**
