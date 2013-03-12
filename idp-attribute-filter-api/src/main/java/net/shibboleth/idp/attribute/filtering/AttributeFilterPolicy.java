@@ -130,7 +130,8 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @throws AttributeFilteringException thrown if there is a problem evaluating this filter's requirement rule
      */
-    public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
+    public boolean isApplicable(@Nonnull final AttributeFilterContext filterContext)
+            throws AttributeFilteringException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
