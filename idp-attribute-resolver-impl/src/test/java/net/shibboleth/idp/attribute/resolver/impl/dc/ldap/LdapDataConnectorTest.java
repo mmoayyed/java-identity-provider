@@ -122,7 +122,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         searchExecutor.setReturnAttributes(TEST_RETURN_ATTRIBUTES);
         connector.setSearchExecutor(searchExecutor);
         connector.setSearchFilterBuilder(builder == null ? new TestSearchFilterBuilder() : builder);
-        connector.setValidateFilter(new SearchFilter("(ou=people)"));
+        connector.setValidate(connector.new SearchValidator(new SearchFilter("(ou=people)")));
         connector.setSearchResultMappingStrategy(strategy == null ? new StringAttributeValueMappingStrategy()
                 : strategy);
         return connector;
