@@ -139,7 +139,13 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
-        boolean isActive = activationCriteria.apply(filterContext);
+        boolean isActive;
+        try {
+            isActive = activationCriteria.apply(filterContext);
+        } catch (RuntimeException e) {
+            // TODO deal with this.
+            throw new AttributeFilteringException(e);
+        }
         if (isActive) {
             log.debug("Attribute filter policy '{}' is active for this request", getId());
         } else {
