@@ -17,12 +17,18 @@
 
 package net.shibboleth.idp.spring;
 
+import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.resource.ResourceException;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
@@ -57,7 +63,7 @@ public final class SpringSupport {
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         // TODO change opensaml resources in to Spring resource
-        // beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));        
+        // beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));
         try {
             for (Resource configurationResource : configurationResources) {
                 beanDefinitionReader.loadBeanDefinitions(new InputStreamResource(
@@ -79,15 +85,18 @@ public final class SpringSupport {
      * @param elements list of elements to parse
      * @param parserContext current parsing context
      * 
-     * @return list of bean references
+     * @return list of bean definitions
      */
-    public static ManagedList parseCustomElements(List<Element> elements, ParserContext parserContext) {
+    // TODO better javadoc, annotations
+    @Nullable public static ManagedList<BeanDefinition> parseCustomElements(
+            @Nullable @NonnullElements final Collection<Element> elements, @Nonnull final ParserContext parserContext) {
         if (elements == null) {
             return null;
         }
 
-        ManagedList definitions = new ManagedList(elements.size());
+        ManagedList<BeanDefinition> definitions = new ManagedList<BeanDefinition>(elements.size());
         for (Element e : elements) {
+            // TODO null check e
             definitions.add(parserContext.getDelegate().parseCustomElement(e));
         }
 
