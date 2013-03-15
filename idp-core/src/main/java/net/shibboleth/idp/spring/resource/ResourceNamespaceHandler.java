@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.spring;
+package net.shibboleth.idp.spring.resource;
+
+import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete port from v2
 /** Namespace handler for resources. */

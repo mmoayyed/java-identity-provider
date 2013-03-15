@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.spring;
+package net.shibboleth.idp.spring.resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
