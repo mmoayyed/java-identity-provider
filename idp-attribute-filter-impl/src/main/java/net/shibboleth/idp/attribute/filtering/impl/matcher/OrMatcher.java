@@ -30,7 +30,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -38,20 +37,42 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Objects;
 
 /**
- * {@link AttributeValueMatcher} that implements the disjunction of matchers. That is, a given attribute value is
- * considered to have matched if it is returned by any of the composed {@link AttributeValueMatcher}.
+ * {@link MatchFunctor} that implements the disjunction of matchers. That is, a given attribute value is
+ * considered to have matched if it is returned by any of the composed {@link MatchFunctor}.
  */
 @ThreadSafe
-public class OrMatcher extends AbstractComposedMatcher implements AttributeValueMatcher {
+public class OrMatcher extends AbstractComposedMatcher implements MatchFunctor {
 
     /**
      * Constructor.
      * 
      * @param composedMatchers matchers being composed
      */
-    public OrMatcher(@Nullable @NullableElements final Collection<AttributeValueMatcher> composedMatchers) {
+    public OrMatcher(@Nullable @NullableElements final Collection<MatchFunctor> composedMatchers) {
         super(composedMatchers);
     }
+    
+    /** {@inheritDoc} */
+    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+        final List<MatchFunctor> currentMatchers = getComposedMatchers();
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        if (currentMatchers == null) {
+            //
+            // we should treat the null case the same as the empty list OR(null == OR({}) == FALSE
+            //
+            return false;
+        }
+
+        for (MatchFunctor child : currentMatchers) {
+            if (child.apply(filterContext)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
 
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
@@ -61,14 +82,14 @@ public class OrMatcher extends AbstractComposedMatcher implements AttributeValue
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final List<AttributeValueMatcher> currentMatchers = getComposedMatchers();
+        final List<MatchFunctor> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (currentMatchers.isEmpty()) {
             return Collections.emptySet();
         }
-        Iterator<AttributeValueMatcher> matcherItr = currentMatchers.iterator();
+        Iterator<MatchFunctor> matcherItr = currentMatchers.iterator();
 
         Set<AttributeValue> matchingValues = matcherItr.next().getMatchingValues(attribute, filterContext);
         while (matcherItr.hasNext()) {
@@ -107,4 +128,5 @@ public class OrMatcher extends AbstractComposedMatcher implements AttributeValue
     public String toString() {
         return Objects.toStringHelper(this).add("composedMatchers", getComposedMatchers()).toString();
     }
+
 }

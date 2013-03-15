@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
@@ -31,7 +32,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
@@ -48,18 +48,9 @@ import com.google.common.base.Optional;
 /**
  * A {@link AttributeValueMatcher} that delegates to a JSR-223 script for its actual processing.
  * 
- * <p>
- * When the script is evaluated, the following properties will be available via the {@link ScriptContext}:
- * <ul>
- * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
- * <li><code>attribute</code> - the attribute whose values are to be evaluated
- * </ul>
- * The script <strong>MUST</strong> return a {@link Set} containing the {@link AttributeValue} objects that were
- * matched.
- * </p>
  */
 @ThreadSafe
-public class ScriptedMatcher extends AbstractDestructableInitializableComponent implements AttributeValueMatcher,
+public class ScriptedMatcher extends AbstractDestructableInitializableComponent implements MatchFunctor,
         UnmodifiableComponent {
 
     /** Script to be evaluated. */
@@ -67,13 +58,13 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
 
     /**
      * Constructor.
-     *
+     * 
      * @param matchingScript script used to determine matching attibute values
      */
-    public ScriptedMatcher(@Nonnull EvaluableScript matchingScript){
+    public ScriptedMatcher(@Nonnull EvaluableScript matchingScript) {
         setScript(matchingScript);
     }
-    
+
     /**
      * Gets the script to be evaluated.
      * 
@@ -96,7 +87,57 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Calculate the PolicyRule.
+     * <p>
+     * When the script is evaluated, the following property will be available via the {@link ScriptContext}:
+     * <ul>
+     * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
+     * </ul>
+     * The script <strong>MUST</strong> return a {@link java.lang.Boolean}
+     * </p>
+     * {@inheritDoc}
+     */
+    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
+
+        final EvaluableScript currentScript = script;
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        final SimpleScriptContext scriptContext = new SimpleScriptContext();
+        scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
+
+        try {
+            final Optional<Object> optionalResult = currentScript.eval(scriptContext);
+            if (!optionalResult.isPresent()) {
+                throw new IllegalArgumentException("Matcher script did not return a result");
+            }
+
+            final Object result = optionalResult.get();
+            if (result instanceof Boolean) {
+                return ((Boolean) result).booleanValue();
+            } else {
+                throw new IllegalArgumentException("Matcher script did not return a Collection");
+            }
+        } catch (ScriptException e) {
+            throw new IllegalArgumentException("Error while executing value matching script", e);
+        }
+    }
+
+    /**
+     * Perform the AttributeValueMatching.
+     * <p>
+     * When the script is evaluated, the following properties will be available via the {@link ScriptContext}:
+     * <ul>
+     * <li><code>filterContext</code> - the current instance of {@link AttributeFilterContext}</li>
+     * <li><code>attribute</code> - the attribute whose values are to be evaluated
+     * </ul>
+     * The script <strong>MUST</strong> return a {@link Set} containing the {@link AttributeValue} objects that were
+     * matched.
+     * </p>
+     * {@inheritDoc}
+     */
     @Nonnull @NonnullElements @Unmodifiable public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
             @Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
@@ -143,7 +184,7 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
             throw new ComponentInitializationException("No script has been provided");
         }
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -172,4 +213,5 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
     public String toString() {
         return Objects.toStringHelper(this).add("Script", getScript()).toString();
     }
+
 }

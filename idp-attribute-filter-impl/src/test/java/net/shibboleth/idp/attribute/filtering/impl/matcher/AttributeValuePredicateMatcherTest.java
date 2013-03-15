@@ -32,7 +32,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link AttributeValuePredicateMatcher}. */
+/** Unit test for {@link BaseValuePredicateMatcher}. */
 public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
 
     @BeforeTest public void setup() throws Exception {
@@ -40,7 +40,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        AttributeValuePredicateMatcher matcher = new AttributeValuePredicateMatcher(alwaysTrue());
+        BaseValuePredicateMatcher matcher = new TestValuePredicateMatcher(alwaysTrue());
 
         boolean thrown = false;
         try {
@@ -68,7 +68,7 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
 
         thrown = false;
         try {
-            new AttributeValuePredicateMatcher(null);
+            new TestValuePredicateMatcher(null);
         } catch (ConstraintViolationException e) {
             thrown = true;
         }
@@ -76,8 +76,8 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testGetMatchingValues() throws AttributeFilteringException {
-        AttributeValuePredicateMatcher matcher =
-                new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
+        BaseValuePredicateMatcher matcher =
+                new TestValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
@@ -87,8 +87,8 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testFailingGetMatchingValues() {
-        AttributeValuePredicateMatcher matcher =
-                new AttributeValuePredicateMatcher(new ExceptionPredicate(new RuntimeException()));
+        BaseValuePredicateMatcher matcher =
+                new TestValuePredicateMatcher(new ExceptionPredicate(new RuntimeException()));
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
@@ -100,8 +100,8 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testEqualsHashToString() {
-        AttributeValuePredicateMatcher matcher =
-                new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
+        BaseValuePredicateMatcher matcher =
+                new TestValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         matcher.toString();
 
@@ -109,12 +109,12 @@ public class AttributeValuePredicateMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(matcher.equals(matcher));
         Assert.assertFalse(matcher.equals(this));
 
-        AttributeValuePredicateMatcher other = new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
+        BaseValuePredicateMatcher other = new TestValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 
-        other = new AttributeValuePredicateMatcher(or(equalTo(value2), equalTo(value1)));
+        other = new TestValuePredicateMatcher(or(equalTo(value2), equalTo(value1)));
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());

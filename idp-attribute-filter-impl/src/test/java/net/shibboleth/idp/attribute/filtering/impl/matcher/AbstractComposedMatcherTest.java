@@ -23,11 +23,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
@@ -44,7 +45,7 @@ public class AbstractComposedMatcherTest {
 
     @Test
     public void testInitDestroy() throws ComponentInitializationException, AttributeFilteringException, ComponentValidationException {
-        List<AttributeValueMatcher> firstList = new ArrayList<AttributeValueMatcher>(2);
+        List<MatchFunctor> firstList = new ArrayList<MatchFunctor>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
         
         for (int i = 0; i < 2;i++) {
@@ -149,7 +150,7 @@ public class AbstractComposedMatcherTest {
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Initial state - no matchers");
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add null - no matchers");
         
-        List<AttributeValueMatcher> list = new ArrayList<AttributeValueMatcher>();
+        List<MatchFunctor> list = new ArrayList<MatchFunctor>();
         
         for (int i = 0; i < 30; i++) {
             list.add(null);
@@ -188,7 +189,7 @@ public class AbstractComposedMatcherTest {
          *
          * @param composedMatchers
          */
-        public ComposedMatcher(Collection<AttributeValueMatcher> composedMatchers) {
+        public ComposedMatcher(Collection<MatchFunctor> composedMatchers) {
             super(composedMatchers);
         }
 
@@ -196,13 +197,21 @@ public class AbstractComposedMatcherTest {
                 throws AttributeFilteringException {
             return null;
         }
+
+        public boolean apply(@Nullable AttributeFilterContext arg0) {
+            return false;
+        }
     }
     
-    public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  AttributeValueMatcher, DestructableComponent, InitializableComponent, ValidatableComponent {
+    public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  MatchFunctor, DestructableComponent, InitializableComponent, ValidatableComponent {
 
         public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
                 throws AttributeFilteringException {
             return null;
+        }
+
+        public boolean apply(@Nullable AttributeFilterContext arg0) {
+            return false;
         }
         
     }

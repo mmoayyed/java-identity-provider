@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -44,8 +43,8 @@ public class OrMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        AttributeValuePredicateMatcher valuePredicate = new AttributeValuePredicateMatcher(alwaysTrue());
-        OrMatcher matcher = new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(valuePredicate));
+        BaseValuePredicateMatcher valuePredicate = new TestValuePredicateMatcher(alwaysTrue());
+        OrMatcher matcher = new OrMatcher(Lists.<MatchFunctor> newArrayList(valuePredicate));
         matcher.initialize();
 
         try {
@@ -72,9 +71,9 @@ public class OrMatcherTest extends AbstractMatcherTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         OrMatcher matcher =
-                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(
-                        new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
-                        new AttributeValuePredicateMatcher(equalTo(value2))));
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(
+                        new TestValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
+                        new TestValuePredicateMatcher(equalTo(value2))));
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
@@ -105,8 +104,8 @@ public class OrMatcherTest extends AbstractMatcherTest {
 
     @Test public void testNoMatchingValues() throws Exception {
         OrMatcher matcher =
-                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo("Nothing")), new AttributeValuePredicateMatcher(equalTo("Zippo"))));
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo("Nothing")), new TestValuePredicateMatcher(equalTo("Zippo"))));
 
         matcher.initialize();
 
@@ -118,8 +117,8 @@ public class OrMatcherTest extends AbstractMatcherTest {
 
     @Test public void testEqualsHashToString() {
         OrMatcher matcher =
-                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo(value2)), new TestValuePredicateMatcher(equalTo(value3))));
 
         matcher.toString();
 
@@ -128,15 +127,15 @@ public class OrMatcherTest extends AbstractMatcherTest {
         Assert.assertFalse(matcher.equals(this));
 
         OrMatcher other =
-                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo(value2)), new TestValuePredicateMatcher(equalTo(value3))));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 
         other =
-                new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo(value3)), new AttributeValuePredicateMatcher(equalTo(value2))));
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo(value3)), new TestValuePredicateMatcher(equalTo(value2))));
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());

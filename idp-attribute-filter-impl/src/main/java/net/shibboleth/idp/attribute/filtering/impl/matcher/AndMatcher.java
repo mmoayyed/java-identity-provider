@@ -31,7 +31,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -40,8 +39,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Objects;
 
 /**
- * {@link AttributeValueMatcher} that implements the conjunction of matchers. That is, a given attribute value is
- * considered to have matched if, and only if, it is returned by every composed {@link AttributeValueMatcher}.
+ * {@link MatchFunctor} that implements the conjunction of matchers. That is, a given attribute value is considered to
+ * have matched if, and only if, it is returned by every composed {@link MatchFunctor}. The predicate is true if and
+ * only if all composed {@link MatchFunctor} returns true.
  */
 @ThreadSafe
 public class AndMatcher extends AbstractComposedMatcher {
@@ -51,11 +51,40 @@ public class AndMatcher extends AbstractComposedMatcher {
      * 
      * @param composedMatchers matchers being composed
      */
-    public AndMatcher(@Nullable @NullableElements final Collection<AttributeValueMatcher> composedMatchers) {
+    public AndMatcher(@Nullable @NullableElements final Collection<MatchFunctor> composedMatchers) {
         super(composedMatchers);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Return true iff all composed matchers return true. {@inheritDoc}
+     */
+    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+        final List<MatchFunctor> currentMatchers = getComposedMatchers();
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        if (currentMatchers.isEmpty()) {
+            //
+            // we should treat the null case the same as the empty list.
+            // Based on a "default deny" we make AND(null) false, (just like
+            // if (null))
+            //
+            return false;
+        }
+
+        for (MatchFunctor child : currentMatchers) {
+            if (!child.apply(filterContext)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * A given attribute value is considered to have matched if, and only if, it is returned by every composed
+     * {@link MatchFunctor}. {@inheritDoc}
+     */
     @Nonnull @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
             @Nonnull final AttributeFilterContext filterContext) throws AttributeFilteringException {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
@@ -63,14 +92,14 @@ public class AndMatcher extends AbstractComposedMatcher {
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final List<AttributeValueMatcher> currentMatchers = getComposedMatchers();
+        final List<MatchFunctor> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (currentMatchers.isEmpty()) {
             return Collections.emptySet();
         }
-        Iterator<AttributeValueMatcher> matcherItr = currentMatchers.iterator();
+        Iterator<MatchFunctor> matcherItr = currentMatchers.iterator();
 
         Set<AttributeValue> matchingValues = matcherItr.next().getMatchingValues(attribute, filterContext);
         while (matcherItr.hasNext()) {
@@ -109,4 +138,5 @@ public class AndMatcher extends AbstractComposedMatcher {
     public String toString() {
         return Objects.toStringHelper(this).add("composedMatchers", getComposedMatchers()).toString();
     }
+
 }

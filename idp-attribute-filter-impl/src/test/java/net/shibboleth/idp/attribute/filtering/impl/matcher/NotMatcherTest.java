@@ -25,7 +25,6 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -47,13 +46,13 @@ public class NotMatcherTest extends AbstractMatcherTest {
 
     @Test public void testNullArguments() throws Exception {
         try {
-            new AttributeValuePredicateMatcher(null);
+            new TestValuePredicateMatcher(null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
-        AttributeValuePredicateMatcher valuePredicate = new AttributeValuePredicateMatcher(alwaysTrue());
+        BaseValuePredicateMatcher valuePredicate = new TestValuePredicateMatcher(alwaysTrue());
         NotMatcher matcher = new NotMatcher(valuePredicate);
         matcher.initialize();
 
@@ -144,7 +143,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testGetMatchingValues() throws Exception {
-        NotMatcher matcher = new NotMatcher(new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
+        NotMatcher matcher = new NotMatcher(new TestValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
 
         matcher.initialize();
 
@@ -161,9 +160,9 @@ public class NotMatcherTest extends AbstractMatcherTest {
         }
 
         matcher =
-                new NotMatcher(new OrMatcher(Lists.<AttributeValueMatcher> newArrayList(
-                        new AttributeValuePredicateMatcher(equalTo(value1)), new AttributeValuePredicateMatcher(
-                                equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3)))));
+                new NotMatcher(new OrMatcher(Lists.<MatchFunctor> newArrayList(
+                        new TestValuePredicateMatcher(equalTo(value1)), new TestValuePredicateMatcher(
+                                equalTo(value2)), new TestValuePredicateMatcher(equalTo(value3)))));
 
         matcher.initialize();
 
@@ -173,7 +172,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testEqualsHashToString() {
-        NotMatcher matcher = new NotMatcher(new AttributeValuePredicateMatcher(equalTo(value2)));
+        NotMatcher matcher = new NotMatcher(new TestValuePredicateMatcher(equalTo(value2)));
 
         matcher.toString();
 
@@ -181,12 +180,12 @@ public class NotMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(matcher.equals(matcher));
         Assert.assertFalse(matcher.equals(this));
 
-        NotMatcher other = new NotMatcher(new AttributeValuePredicateMatcher(equalTo(value2)));
+        NotMatcher other = new NotMatcher(new TestValuePredicateMatcher(equalTo(value2)));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 
-        other = new NotMatcher(new AttributeValuePredicateMatcher(equalTo(value3)));
+        other = new NotMatcher(new TestValuePredicateMatcher(equalTo(value3)));
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());

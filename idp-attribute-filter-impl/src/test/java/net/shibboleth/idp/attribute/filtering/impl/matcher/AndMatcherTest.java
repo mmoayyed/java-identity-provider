@@ -26,7 +26,6 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -46,8 +45,8 @@ public class AndMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        AttributeValuePredicateMatcher valuePredicate = new AttributeValuePredicateMatcher(alwaysTrue());
-        AndMatcher matcher = new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(valuePredicate));
+        BaseValuePredicateMatcher valuePredicate = new TestValuePredicateMatcher(alwaysTrue());
+        AndMatcher matcher = new AndMatcher(Lists.<MatchFunctor> newArrayList(valuePredicate));
         matcher.initialize();
 
         try {
@@ -74,9 +73,9 @@ public class AndMatcherTest extends AbstractMatcherTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         AndMatcher matcher =
-                new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(
-                        new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
-                        new AttributeValuePredicateMatcher(or(equalTo(value2), equalTo(value3)))));
+                new AndMatcher(Lists.<MatchFunctor> newArrayList(
+                        new TestValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
+                        new TestValuePredicateMatcher(or(equalTo(value2), equalTo(value3)))));
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
@@ -108,9 +107,9 @@ public class AndMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
 
         matcher =
-                new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(
-                        new AttributeValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
-                        new AttributeValuePredicateMatcher(equalTo(value3))));
+                new AndMatcher(Lists.<MatchFunctor> newArrayList(
+                        new TestValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
+                        new TestValuePredicateMatcher(equalTo(value3))));
 
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
@@ -118,8 +117,8 @@ public class AndMatcherTest extends AbstractMatcherTest {
 
     @Test public void testEqualsHashToString() {
         AndMatcher matcher =
-                new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
+                new AndMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo(value2)), new TestValuePredicateMatcher(equalTo(value3))));
 
         matcher.toString();
 
@@ -128,15 +127,15 @@ public class AndMatcherTest extends AbstractMatcherTest {
         Assert.assertFalse(matcher.equals(this));
 
         AndMatcher other =
-                new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo(value2)), new AttributeValuePredicateMatcher(equalTo(value3))));
+                new AndMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo(value2)), new TestValuePredicateMatcher(equalTo(value3))));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 
         other =
-                new AndMatcher(Lists.<AttributeValueMatcher> newArrayList(new AttributeValuePredicateMatcher(
-                        equalTo(value3)), new AttributeValuePredicateMatcher(equalTo(value2))));
+                new AndMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo(value3)), new TestValuePredicateMatcher(equalTo(value2))));
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());

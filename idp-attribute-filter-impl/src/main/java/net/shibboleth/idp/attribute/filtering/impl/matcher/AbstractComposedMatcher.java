@@ -24,7 +24,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -41,14 +40,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
- * Base class for {@link AttributeValueMatcher} implementations that are compositions of other
- * {@link AttributeValueMatcher}.
+ * Base class for {@link MatchFunctor} implementations that are compositions of other
+ * {@link MatchFunctor}.
  */
 public abstract class AbstractComposedMatcher extends AbstractDestructableInitializableComponent implements
-        AttributeValueMatcher, UnmodifiableComponent, ValidatableComponent {
+        MatchFunctor, UnmodifiableComponent, ValidatableComponent {
 
     /** The composed matchers. */
-    private final List<AttributeValueMatcher> matchers;
+    private final List<MatchFunctor> matchers;
 
     /**
      * Constructor.
@@ -56,8 +55,8 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
      * @param composedMatchers matchers being composed
      */
     public AbstractComposedMatcher(@Nullable @NullableElements final 
-            Collection<AttributeValueMatcher> composedMatchers) {
-        ArrayList<AttributeValueMatcher> checkedMatchers = new ArrayList<AttributeValueMatcher>();
+            Collection<MatchFunctor> composedMatchers) {
+        ArrayList<MatchFunctor> checkedMatchers = new ArrayList<MatchFunctor>();
 
         if (composedMatchers != null) {
             CollectionSupport.addIf(checkedMatchers, composedMatchers, Predicates.notNull());
@@ -71,7 +70,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
      * 
      * @return the composed matchers
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AttributeValueMatcher> getComposedMatchers() {
+    @Nonnull @NonnullElements @Unmodifiable public List<MatchFunctor> getComposedMatchers() {
         return matchers;
     }
 
@@ -85,14 +84,14 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
             throw new ComponentValidationException("Matcher has been destroyed");
         }
 
-        for (AttributeValueMatcher matcher : matchers) {
+        for (MatchFunctor matcher : matchers) {
             ComponentSupport.validate(matcher);
         }
     }
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        for (AttributeValueMatcher matcher : matchers) {
+        for (MatchFunctor matcher : matchers) {
             ComponentSupport.destroy(matcher);
         }
 
@@ -103,7 +102,7 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        for (AttributeValueMatcher matcher : matchers) {
+        for (MatchFunctor matcher : matchers) {
             ComponentSupport.initialize(matcher);
         }
     }
