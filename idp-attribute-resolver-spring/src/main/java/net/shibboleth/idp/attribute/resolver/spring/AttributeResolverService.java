@@ -66,6 +66,7 @@ public class AttributeResolverService extends AbstractSpringService {
 
         GenericApplicationContext appCtx = (GenericApplicationContext) context.get(APP_CTX_CTX_KEY);
 
+        // attribute definitions
         Map<String, BaseAttributeDefinition> adMap = appCtx.getBeansOfType(BaseAttributeDefinition.class);
         log.debug("Loading {} attribute definitions", adMap.size());
 
@@ -73,7 +74,7 @@ public class AttributeResolverService extends AbstractSpringService {
         Map<String, BaseDataConnector> dataConnectorMap = appCtx.getBeansOfType(BaseDataConnector.class);
         log.debug("Loading {} data connectors", dataConnectorMap.size());
 
-        attributeResolver = new AttributeResolver("resolverId", adMap.values(), dataConnectorMap.values());
+        attributeResolver = new AttributeResolver(getId(), adMap.values(), dataConnectorMap.values());
 
         try {
             attributeResolver.initialize();
