@@ -22,7 +22,7 @@ import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 // TODO incomplete
-/** Spring namespace handler for the Shibboleth resolver namespace. */
+/** Namespace handler for the attribute resolver. */
 public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
@@ -30,19 +30,14 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
 
     /** {@inheritDoc} */
     public void init() {
-
-        // BeanDefinitionParser parser = new ShibbolethAttributeResolverBeanDefinitionParser();
-        // registerBeanDefinitionParser(ShibbolethAttributeResolverBeanDefinitionParser.SCHEMA_TYPE, parser);
-
         registerBeanDefinitionParser(AttributeResolverServiceBeanDefinitionParser.SCHEMA_TYPE,
                 new AttributeResolverServiceBeanDefinitionParser());
-
-        // parser = new AttributeResolverBeanDefinitionParser();
-        // registerBeanDefinitionParser(AttributeResolverBeanDefinitionParser.SCHEMA_TYPE, parser);
-        // registerBeanDefinitionParser(AttributeResolverBeanDefinitionParser.ELEMENT_NAME, parser);
 
         BeanDefinitionParser parser = new AttributeResolverBeanDefinitionParser();
         registerBeanDefinitionParser(AttributeResolverBeanDefinitionParser.SCHEMA_TYPE, parser);
         registerBeanDefinitionParser(AttributeResolverBeanDefinitionParser.ELEMENT_NAME, parser);
+        
+        registerBeanDefinitionParser(ResolverPluginDependencyBeanDefinitionParser.ELEMENT_NAME,
+                new ResolverPluginDependencyBeanDefinitionParser());
     }
 }

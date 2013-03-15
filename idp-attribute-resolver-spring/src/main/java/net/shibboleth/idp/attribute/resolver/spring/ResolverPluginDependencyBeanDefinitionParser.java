@@ -17,11 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import java.util.List;
+import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,21 +29,34 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Bean definition parser for a {@link BaseResolverPlugin}. */
-public abstract class BaseResolverPluginBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+/** Bean definition parser for a {@link ResolverPluginDependency}. */
+public class ResolverPluginDependencyBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+
+    /** Element name. */
+    public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Dependency");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseResolverPluginBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(ResolverPluginDependencyBeanDefinitionParser.class);
+
+    /** {@inheritDoc} */
+    protected Class<?> getBeanClass(Element element) {
+        return ResolverPluginDependency.class;
+    }
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
-        log.info("Parsing configuration for {} plugin with id : {}", config.getLocalName(), id);
-        builder.addPropertyValue("id", id);
+        String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
+        log.info("Parsing configuration for {} with pluginId : {}", config.getLocalName(), pluginId);
+        builder.addConstructorArgValue(pluginId);
 
-        // TODO possibly incorrect dependency handling
-        List<Element> dependencyElements =
-                ElementSupport.getChildElements(config, ResolverPluginDependencyBeanDefinitionParser.ELEMENT_NAME);
-        builder.addPropertyValue("dependencies", SpringSupport.parseCustomElements(dependencyElements, parserContext));
+        // TODO null checking ?
+        String attributeId = config.getParentNode().getAttributes().getNamedItemNS(null, "id").getNodeValue();
+        log.info("Parsing configuration for {} with attributeId : {}", config.getLocalName(), attributeId);
+        builder.addConstructorArgValue(attributeId);
+    }
+
+    /** {@inheritDoc} */
+    protected boolean shouldGenerateId() {
+        return true;
     }
 }

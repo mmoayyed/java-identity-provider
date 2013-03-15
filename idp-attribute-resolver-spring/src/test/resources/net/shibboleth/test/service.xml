@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Renamed the <srv:Services/> top level element to <beans/> for the time being. -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<srv:Services xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:resource="urn:mace:shibboleth:2.0:resource" xmlns:srv="urn:mace:shibboleth:2.0:services"
     xmlns:attribute-resolver="urn:mace:shibboleth:2.0:resolver"
     xsi:schemaLocation="
@@ -13,4 +12,4 @@
         <srv:ConfigurationResource file="net/shibboleth/test/attribute-resolver.xml" xsi:type="resource:ClasspathResource"/>
     </srv:Service>
 
-</beans>
+</srv:Services>

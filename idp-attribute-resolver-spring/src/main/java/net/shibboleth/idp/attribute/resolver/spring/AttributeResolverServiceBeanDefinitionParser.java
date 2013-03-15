@@ -17,58 +17,22 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import java.util.List;
-
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.spring.SpringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
+import net.shibboleth.idp.spring.service.AbstractServiceBeanDefinitionParser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 // TODO incomplete
-/** Spring bean definition parser for {@link ShibbolethAttributeResolver} services. */
-public class AttributeResolverServiceBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceBeanDefinitionParser.class);
+/** Bean definition parser for a {@link AttributeResolverService}. */
+public class AttributeResolverServiceBeanDefinitionParser extends AbstractServiceBeanDefinitionParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "ShibbolethAttributeResolver");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element arg0) {
+    protected Class getBeanClass(Element element) {
         return AttributeResolverService.class;
-    }
-
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        super.doParse(element, parserContext, builder);
-
-        // TODO correct ?
-        List<Element> children =
-                ElementSupport.getChildElementsByTagNameNS(element, "urn:mace:shibboleth:2.0:services",
-                        "ConfigurationResource");
-        ManagedList<BeanDefinition> bds = SpringSupport.parseCustomElements(children, parserContext);
-        builder.addPropertyValue("serviceConfigurations", bds);
-
-        // TODO set the id properly
-        String id = element.getAttributeNS(null, "id");
-        builder.addPropertyValue("id", id);
-    }
-
-    /** {@inheritDoc} */
-    protected String resolveId(Element configElement, AbstractBeanDefinition beanDef, ParserContext parserContext) {
-        // TODO not sure either
-        log.info("resoveId '{}'", configElement.getAttributeNS(null, "id"));
-        return configElement.getAttributeNS(null, "id");
     }
 }

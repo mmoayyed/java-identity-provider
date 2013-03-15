@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
-/** Spring namespace handler for the Shibboleth simple attribute definition namespace. */
+/** Namespace handler for {@link BaseAttributeDefinition}s. */
 public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */

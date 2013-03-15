@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +33,9 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Spring Bean Definition Parser for static data connector.
- */
-// TODO
-public class StaticDataConnectorBeanDefinitionParser extends BaseResolverPluginBeanDefinitionParser {
+// TODO incomplete
+/** Bean definition Parser for a {@link StaticDataConnector}. */
+public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
@@ -65,7 +63,7 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseResolverPluginB
             Attribute attribute = new Attribute(attrId);
             List<Element> values =
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
-            for(Element val : values) {
+            for (Element val : values) {
                 StringAttributeValue av = new StringAttributeValue(val.getTextContent());
                 attribute.getValues().add(av);
             }

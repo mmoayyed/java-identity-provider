@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
-/**
- * Spring namespace handler for the Shibboleth static data connector namespace.
- */
+/** Namespace handler for the Shibboleth static data connector namespace. */
 public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */

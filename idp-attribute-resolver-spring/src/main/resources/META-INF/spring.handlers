@@ -1,4 +1,4 @@
 urn\:mace\:shibboleth\:2.0\:resolver = net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler
-urn\:mace\:shibboleth\:2.0\:resolver\:ad = net.shibboleth.idp.attribute.resolver.spring.AttributeDefinitionNamespaceHandler
-urn\:mace\:shibboleth\:2.0\:resolver\:dc = net.shibboleth.idp.attribute.resolver.spring.DataConnectorNamespaceHandler
-urn\:mace\:shibboleth\:2.0\:resolver\:pc = net.shibboleth.idp.attribute.resolver.spring.PrincipalConnectorNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:resolver\:ad = net.shibboleth.idp.attribute.resolver.spring.ad.AttributeDefinitionNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:resolver\:dc = net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler
+urn\:mace\:shibboleth\:2.0\:resolver\:pc = net.shibboleth.idp.attribute.resolver.spring.pc.PrincipalConnectorNamespaceHandler
