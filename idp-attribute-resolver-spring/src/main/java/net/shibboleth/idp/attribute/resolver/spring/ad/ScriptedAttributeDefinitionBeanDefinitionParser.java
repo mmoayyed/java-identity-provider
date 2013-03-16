@@ -76,7 +76,7 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 String scriptFile = scriptFileElem.get(0).getTextContent();
                 try {
-                    script = StringSupport.inputstreamToString(new FileInputStream(scriptFile), null);
+                    script = StringSupport.inputStreamToString(new FileInputStream(scriptFile), null);
                 } catch (IOException e) {
                     throw new BeanCreationException("Unable to read script file " + scriptFile, e);
                 }
