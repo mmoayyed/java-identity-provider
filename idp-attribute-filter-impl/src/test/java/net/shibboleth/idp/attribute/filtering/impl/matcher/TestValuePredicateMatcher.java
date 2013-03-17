@@ -22,21 +22,27 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import com.google.common.base.Predicate;
-class TestValuePredicateMatcher extends BaseValuePredicateMatcher {
+public class TestValuePredicateMatcher extends BaseValuePredicateMatcher {
 
+    final boolean predicateValue;
     
     /**
      * Constructor.
      *
      * @param valueMatchingPredicate
      */
-    protected TestValuePredicateMatcher(Predicate valueMatchingPredicate) {
+    public TestValuePredicateMatcher(Predicate valueMatchingPredicate) {
         super(valueMatchingPredicate);
+        predicateValue = false;
+    }
+    
+    public TestValuePredicateMatcher(boolean value) {
+        predicateValue = value;
     }
 
     /** {@inheritDoc} */
     public boolean apply(@Nullable AttributeFilterContext arg0) {
-        return false;
+        return predicateValue;
     }
     
 }

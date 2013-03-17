@@ -45,6 +45,12 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
     /** A script that returns null. */
     private EvaluableScript nullReturnScript;
 
+    /** A script that returns Boolean.True. */
+    private EvaluableScript trueReturnScript;
+
+    /** A script that returns Boolean.false . */
+    private EvaluableScript falseReturnScript;
+
     /** A script that returns an object other than a set. */
     private EvaluableScript invalidReturnObjectScript;
 
@@ -71,6 +77,10 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
                         .append("x.add(attribute.getValues().iterator().next());")
                         .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));").append("x;")
                         .toString());
+
+        trueReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(true);");
+
+        falseReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(false);");
     }
 
     @Test public void testGetMatcher() throws Exception {
@@ -202,6 +212,13 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
+
+        try {
+            matcher.apply(filterContext);
+        } catch (DestroyedComponentException e) {
+            thrown = true;
+        }
+        Assert.assertTrue(thrown, "apply after destroy");
     }
 
     @Test public void testEqualsHashToString() {
@@ -222,6 +239,27 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());
+
+    }
+    
+    @Test public void testPredicate() throws ComponentInitializationException {
+        ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
+        matcher.initialize();
+
+        try {
+            matcher.apply(filterContext);
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            // expected this
+        }
+        
+        matcher = new ScriptedMatcher(trueReturnScript);
+        matcher.initialize();
+        Assert.assertTrue(matcher.apply(filterContext));
+        
+        matcher = new ScriptedMatcher(falseReturnScript);
+        matcher.initialize();
+        Assert.assertFalse(matcher.apply(filterContext));
 
     }
 

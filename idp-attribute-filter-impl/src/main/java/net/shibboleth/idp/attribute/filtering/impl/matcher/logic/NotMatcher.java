@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.matcher;
+package net.shibboleth.idp.attribute.filtering.impl.matcher.logic;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -73,7 +74,7 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
      * The predicate is the logical NOT of the composed {@link MatchFunctor}. {@inheritDoc}
      */
     public boolean apply(@Nullable AttributeFilterContext filterContext) {
-        return negatedMatcher.apply(filterContext);
+        return !negatedMatcher.apply(filterContext);
     }
 
     /**

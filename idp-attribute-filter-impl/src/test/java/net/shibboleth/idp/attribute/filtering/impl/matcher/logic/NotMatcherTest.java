@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.matcher;
+package net.shibboleth.idp.attribute.filtering.impl.matcher.logic;
 
 import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.equalTo;
@@ -25,6 +25,10 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.BaseValuePredicateMatcher;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.TestValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -160,9 +164,9 @@ public class NotMatcherTest extends AbstractMatcherTest {
         }
 
         matcher =
-                new NotMatcher(new OrMatcher(Lists.<MatchFunctor> newArrayList(
-                        new TestValuePredicateMatcher(equalTo(value1)), new TestValuePredicateMatcher(
-                                equalTo(value2)), new TestValuePredicateMatcher(equalTo(value3)))));
+                new NotMatcher(new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(
+                        equalTo(value1)), new TestValuePredicateMatcher(equalTo(value2)),
+                        new TestValuePredicateMatcher(equalTo(value3)))));
 
         matcher.initialize();
 
@@ -189,6 +193,17 @@ public class NotMatcherTest extends AbstractMatcherTest {
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());
+
+    }
+
+    @Test public void testPredicate() throws ComponentInitializationException {
+        NotMatcher matcher = new NotMatcher(new TestValuePredicateMatcher(true));
+        matcher.initialize();
+        Assert.assertFalse(matcher.apply(null));
+
+        matcher = new NotMatcher(new TestValuePredicateMatcher(false));
+        matcher.initialize();
+        Assert.assertTrue(matcher.apply(null));
 
     }
 

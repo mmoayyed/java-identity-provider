@@ -39,9 +39,9 @@ import com.google.common.base.Predicate;
  * This is the bases of all implementations of {@link MatchFunctor} which do some sort or element comparison.<br/>
  * <br/>
  * 
- * PolicyRequirementRule implementations will implement the {@link Predicate<AttributeFilterContext>} part 
- * and will get a default result for {@link BaseValuePredicateMatcher#getMatchingRules} which states that 
- * if the predicate is true then we get all values for the attribute otherwise none.
+ * PolicyRequirementRule implementations will implement the {@link Predicate<AttributeFilterContext>} part and will get
+ * a default result for {@link BaseValuePredicateMatcher#getMatchingRules} which states that if the predicate is true
+ * then we get all values for the attribute otherwise none.
  * 
  * AttributeRule implementations will extend a superclass of thi:s {@link BaseValuePredicateMatcher} or
  * {@link BaseRegexpValuePredicateMatcher} which will implement a sensible default for the PolicyRequirementRule and
@@ -64,6 +64,14 @@ public abstract class BaseValuePredicateMatcher implements MatchFunctor {
     protected BaseValuePredicateMatcher(@Nonnull Predicate<AttributeValue> valueMatchingPredicate) {
         valuePredicate =
                 Constraint.isNotNull(valueMatchingPredicate, "Attribute value matching predicate can not be null");
+    }
+
+    /**
+     * Constructor.
+     *
+     */
+    protected BaseValuePredicateMatcher() {
+        valuePredicate = null;
     }
 
     /** {@inheritDoc} */

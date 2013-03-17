@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.matcher;
+package net.shibboleth.idp.attribute.filtering.impl.matcher.logic;
 
 import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.equalTo;
@@ -25,6 +25,12 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.BaseValuePredicateMatcher;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.TestValuePredicateMatcher;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.logic.OrMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -139,6 +145,35 @@ public class OrMatcherTest extends AbstractMatcherTest {
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());
+    }
+
+    @Test public void testPredicate() throws ComponentInitializationException {
+        OrMatcher matcher = new OrMatcher(null);
+        matcher.initialize();
+        Assert.assertFalse(matcher.apply(null));
+
+        matcher = new OrMatcher(Collections.EMPTY_SET);
+        matcher.initialize();
+        Assert.assertFalse(matcher.apply(null));
+
+        matcher =
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(false),
+                        new TestValuePredicateMatcher(false)));
+        matcher.initialize();
+        Assert.assertFalse(matcher.apply(null));
+
+        matcher =
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(false), null,
+                        new TestValuePredicateMatcher(true)));
+        matcher.initialize();
+        Assert.assertTrue(matcher.apply(null));
+
+        matcher =
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new TestValuePredicateMatcher(true), null,
+                        new TestValuePredicateMatcher(true)));
+        matcher.initialize();
+        Assert.assertTrue(matcher.apply(null));
+
     }
 
 }
