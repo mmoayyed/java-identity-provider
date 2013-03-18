@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractStringMatchFunctor;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 /**
  * Compare the principal name for this resolution with the provided name.
@@ -36,6 +37,9 @@ public class PrincipalNameMatcher extends AbstractStringMatchFunctor {
 
     /** {@inheritDoc} */
     public boolean apply(@Nullable AttributeFilterContext filterContext) {
+        
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
         final String principal = recipient.getPrincipal();

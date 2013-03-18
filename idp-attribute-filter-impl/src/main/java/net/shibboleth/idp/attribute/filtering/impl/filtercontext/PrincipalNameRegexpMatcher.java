@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractRegexpStringMatchFunctor;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,9 @@ public class PrincipalNameRegexpMatcher extends AbstractRegexpStringMatchFunctor
 
     /** {@inheritDoc} */
     public boolean apply(@Nullable AttributeFilterContext filterContext) {
+
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
         final String principal = recipient.getPrincipal();
