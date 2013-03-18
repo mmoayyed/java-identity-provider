@@ -111,6 +111,7 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
         try {
             final Optional<Object> optionalResult = currentScript.eval(scriptContext);
             if (!optionalResult.isPresent()) {
+                //TODO
                 throw new IllegalArgumentException("Matcher script did not return a result");
             }
 
@@ -118,9 +119,11 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
             if (result instanceof Boolean) {
                 return ((Boolean) result).booleanValue();
             } else {
+                //TODO
                 throw new IllegalArgumentException("Matcher script did not return a Collection");
             }
         } catch (ScriptException e) {
+            //TODO
             throw new IllegalArgumentException("Error while executing value matching script", e);
         }
     }

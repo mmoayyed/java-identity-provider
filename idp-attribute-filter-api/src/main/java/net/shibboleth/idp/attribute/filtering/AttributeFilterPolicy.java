@@ -143,7 +143,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
         try {
             isActive = activationCriteria.apply(filterContext);
         } catch (RuntimeException e) {
-            // TODO deal with this.
+            // TODO deal with this. It is pig ugly.
             throw new AttributeFilteringException(e);
         }
         if (isActive) {
