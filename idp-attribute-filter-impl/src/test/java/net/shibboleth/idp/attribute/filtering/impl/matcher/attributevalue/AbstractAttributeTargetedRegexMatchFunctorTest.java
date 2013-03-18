@@ -15,29 +15,26 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
+package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
-import org.testng.Assert;
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
 import org.testng.annotations.Test;
 
 /**
- * Test For {@link AttributeValueRegexpPredicate}
+ * Tests for {@link AbstractAttributeTargetedRegexMatchFunctor}.
  */
-public class AttributeValueRegexpPredicateTest {
-    
-    @Test public void testApply() {
-        AttributeValueRegexpPredicate predicate = new AttributeValueRegexpPredicate();
-        predicate.setRegularExpression(DataSources.TEST_REGEX);
-        
-        Assert.assertFalse(predicate.apply(DataSources.TEST_STRING_UPPER));
-        Assert.assertTrue(predicate.apply(DataSources.STRING_VALUE));
-        Assert.assertTrue(predicate.apply(DataSources.SCOPED_VALUE_VALUE_MATCH));
-        Assert.assertFalse(predicate.apply(DataSources.SCOPED_VALUE_SCOPE_MATCH));
-        Assert.assertFalse(predicate.apply(DataSources.BYTE_ATTRIBUTE_VALUE));
-        
-        
-        Assert.assertTrue(predicate.apply(DataSources.OTHER_VALUE));
-        
-    }
+public class AbstractAttributeTargetedRegexMatchFunctorTest extends TargetedMatchFunctorTest {
 
+    @Test public void setterGetterTest() throws ComponentInitializationException {
+        setterGetterTest(new AbstractAttributeTargetedRegexMatchFunctor() {
+            
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return false;
+            }
+        });
+    }
 }

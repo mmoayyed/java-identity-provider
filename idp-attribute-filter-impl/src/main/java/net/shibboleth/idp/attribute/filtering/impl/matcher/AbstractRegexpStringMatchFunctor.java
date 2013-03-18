@@ -15,22 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
+package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-
 /**
- * General Matching Predicate for regexp comparison if strings in Attribute Filters.   
+ * General {@link MatchFunctor} for regexp comparison of strings in Attribute Filters.  
  */
-public abstract class BaseRegexpPredicate implements Predicate {
-
-    /** Logger. */
-    private Logger log = LoggerFactory.getLogger(BaseRegexpPredicate.class);
+public abstract class AbstractRegexpStringMatchFunctor extends AbstractValueMatcherFunctor implements MatchFunctor {
 
     /** Regular expression to match. */
     private Pattern regex;
@@ -54,27 +46,18 @@ public abstract class BaseRegexpPredicate implements Predicate {
     }
 
     /**
-     * Matches the given value against the provided regular expression. {@link Object#toString()} is used to produce the
-     * string value to evaluate.
+     * Matches the given value against the provided regular expression. 
      * 
      * @param value the value to evaluate
      * 
      * @return true if the value matches the given match string, false if not
      */
-    public boolean apply(Object value) {
+    public boolean regexpCompare(String value) {
         if (regex == null || value == null) {
             return false;
         }
 
-        if (!(value instanceof String)) {
-            log.error("FilterPredicate : Object supplied to String comparison was of class {}, not String", value
-                    .getClass().getName());
-            return false;
-        }
-
-        final String valueAsString = (String) value;
-
-        if (regex.matcher(valueAsString).matches()) {
+        if (regex.matcher(value).matches()) {
             return true;
         }
 

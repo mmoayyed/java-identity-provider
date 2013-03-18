@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
+package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
 import javax.annotation.Nullable;
 
@@ -25,32 +25,30 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
-
 /**
  * Test that an {@link ScopedStringAttributeValue} is a regexp match to the supplied parameter.
  */
-public class AttributeScopeRegexpPredicate extends BaseRegexpPredicate implements Predicate {
+public class AttributeScopeRegexpMatcher extends AbstractAttributeTargetedRegexMatchFunctor {
 
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(AttributeScopeRegexpPredicate.class);
+    private Logger log = LoggerFactory.getLogger(AttributeScopeRegexpMatcher.class);
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable Object input) {
+    public boolean compareAttributeValue(@Nullable AttributeValue value) {
 
-        if (input instanceof ScopedStringAttributeValue) {
-            final ScopedStringAttributeValue scopedValue = (ScopedStringAttributeValue) input;
-            return super.apply(scopedValue.getScope());
-
-        } else if (input instanceof AttributeValue) {
-            log.warn("FilterPredicate : Object supplied to ScopedAttributeValue comparison"
-                    + " was of class {}, not ScopedAttributeValue", input.getClass().getName());
-            return false;
-        } else {
-            log.error("FilterPredicate : Object supplied to ScopedAttributeValue comparison"
-                    + " was of class {}, not ScopedAttributeValue", input.getClass().getName());
+        if (null == value) {
             return false;
         }
+
+        if (value instanceof ScopedStringAttributeValue) {
+            final ScopedStringAttributeValue scopedValue = (ScopedStringAttributeValue) value;
+            return super.regexpCompare(scopedValue.getScope());
+
+        } else {
+            log.warn("FilterPredicate : Object supplied to ScopedRegexpAttributeValue comparison"
+                    + " was of class '{}', not ScopedAttributeValue", value.getClass().getName());
+            return false;
+        } 
     }
 
 }

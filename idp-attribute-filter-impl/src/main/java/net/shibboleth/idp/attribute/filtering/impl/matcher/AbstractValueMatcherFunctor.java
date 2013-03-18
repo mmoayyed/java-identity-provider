@@ -27,56 +27,51 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 
 /**
- * This is the bases of all implementations of {@link MatchFunctor} which do some sort or element comparison.<br/>
+ * This is the bases of all implementations of {@link MatchFunctor} which do some sort of element comparison.<br/>
  * <br/>
  * 
  * PolicyRequirementRule implementations will implement the {@link Predicate<AttributeFilterContext>} part and will get
- * a default result for {@link BaseValuePredicateMatcher#getMatchingRules} which states that if the predicate is true
+ * a default result for {@link AbstractValueMatcherFunctor#getMatchingRules} which states that if the predicate is true
  * then we get all values for the attribute otherwise none.
  * 
- * AttributeRule implementations will extend a superclass of thi:s {@link BaseValuePredicateMatcher} or
+ * AttributeRule implementations will extend a superclass of thi:s {@link AbstractValueMatcherFunctor} or
  * {@link BaseRegexpValuePredicateMatcher} which will implement a sensible default for the PolicyRequirementRule and
  * inject the required valuePredicate into the constructor.
  */
 
-public abstract class BaseValuePredicateMatcher implements MatchFunctor {
+public abstract class AbstractValueMatcherFunctor extends AbstractInitializableComponent implements MatchFunctor {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseValuePredicateMatcher.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractValueMatcherFunctor.class);
 
     /** Predicate used to check attribute values. */
-    private final Predicate<AttributeValue> valuePredicate;
+    private Predicate<AttributeValue> valuePredicate;
 
     /**
-     * Constructor. This is only called for AttributeRule type functors
+     * Set the predicate we used to do AttributeValueFiltering.
      * 
-     * @param valueMatchingPredicate predicate used to check attribute values
+     * @param newPredicate the predicate.
      */
-    protected BaseValuePredicateMatcher(@Nonnull Predicate<AttributeValue> valueMatchingPredicate) {
-        valuePredicate =
-                Constraint.isNotNull(valueMatchingPredicate, "Attribute value matching predicate can not be null");
-    }
-
-    /**
-     * Constructor.
-     *
-     */
-    protected BaseValuePredicateMatcher() {
-        valuePredicate = null;
+    protected void setValuePredicate(@Nonnull Predicate<AttributeValue> newPredicate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        valuePredicate = Constraint.isNotNull(newPredicate, "Value Predicate should not be Null");
     }
 
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
             @Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
+
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
@@ -85,6 +80,8 @@ public abstract class BaseValuePredicateMatcher implements MatchFunctor {
             // This is a "PolicyRule" rule. So the rule is, if we are true then everything,
             // else nothing.
             //
+            log.info("Attribute Filter:  No value predicate present for attribute '{}',"
+                    + " applying policy predicate to all values", attribute.getId());
             if (apply(filterContext)) {
                 return attribute.getValues();
             } else {
@@ -94,15 +91,19 @@ public abstract class BaseValuePredicateMatcher implements MatchFunctor {
 
         HashSet matchedValues = new HashSet();
 
+        log.debug("Attribute Filter:  Applying value predicate to all values of Attribute '{}'", attribute.getId());
+
         for (AttributeValue value : attribute.getValues()) {
+            // TODO.  If the target is a name matcher we should check the name.
             try {
                 if (valuePredicate.apply(value)) {
                     matchedValues.add(value);
                 }
             } catch (Exception e) {
-                // TODO
-                log.debug("Attribute value '{}' of type '{}' caused an error while being evaluated '{}':\n{}",
-                        new Object[] {value, value.getClass().getName(), valuePredicate.getClass().getName(), e});
+                // TODO - this is pig ugly
+                log.debug("Attribute value '{}' of type '{}' in Attribute '{}' "
+                        + "caused an error while being evaluated '{}':\n{}", new Object[] {value,
+                        value.getClass().getName(), attribute.getId(), valuePredicate.getClass().getName(), e,});
                 throw new AttributeFilteringException("Unable to apply predicate to attribute value", e);
             }
         }
@@ -110,30 +111,4 @@ public abstract class BaseValuePredicateMatcher implements MatchFunctor {
         return matchedValues;
     }
 
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj == this) {
-            return true;
-        }
-
-        if (!(obj instanceof BaseValuePredicateMatcher)) {
-            return false;
-        }
-
-        return Objects.equal(valuePredicate, ((BaseValuePredicateMatcher) obj).valuePredicate);
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return valuePredicate.hashCode();
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return Objects.toStringHelper(this).add("valuePredicate", valuePredicate).toString();
-    }
 }

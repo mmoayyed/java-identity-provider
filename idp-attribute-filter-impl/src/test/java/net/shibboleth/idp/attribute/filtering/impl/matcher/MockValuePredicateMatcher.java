@@ -20,29 +20,33 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import com.google.common.base.Predicate;
-public class TestValuePredicateMatcher extends BaseValuePredicateMatcher {
+
+public class MockValuePredicateMatcher extends AbstractValueMatcherFunctor {
 
     final boolean predicateValue;
-    
+
     /**
      * Constructor.
-     *
+     * 
      * @param valueMatchingPredicate
+     * @throws ComponentInitializationException
      */
-    public TestValuePredicateMatcher(Predicate valueMatchingPredicate) {
-        super(valueMatchingPredicate);
+    public MockValuePredicateMatcher(Predicate valueMatchingPredicate) throws ComponentInitializationException {
+        setValuePredicate(valueMatchingPredicate);
         predicateValue = false;
+        initialize();
     }
-    
-    public TestValuePredicateMatcher(boolean value) {
+
+    public MockValuePredicateMatcher(boolean value) throws ComponentInitializationException {
         predicateValue = value;
+        initialize();
     }
 
     /** {@inheritDoc} */
     public boolean apply(@Nullable AttributeFilterContext arg0) {
         return predicateValue;
     }
-    
 }

@@ -15,11 +15,27 @@
  * limitations under the License.
  */
 
+package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
+
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.testng.annotations.Test;
+
 /**
- * Implementation of the various policy match predicates.  
- * 
- * The (non abstract) classes in this package all implement {@link com.google.common.base.Predicate} 
+ * Tests for {@link AbstractAttributeTargetedStringMatchFunctor}.
  */
+public class AbstractAttributeTargetedStringMatchFunctorTest extends TargetedMatchFunctorTest {
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
+    @Test public void setterGetterTest() throws ComponentInitializationException {
+        setterGetterTest(new AbstractAttributeTargetedStringMatchFunctor() {
+            
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return false;
+            }
+        });
+    }
 
+}

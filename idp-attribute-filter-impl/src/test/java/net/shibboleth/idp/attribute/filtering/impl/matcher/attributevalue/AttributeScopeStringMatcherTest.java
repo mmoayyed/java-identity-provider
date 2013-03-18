@@ -15,7 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
+package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
+
+import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue.AttributeScopeStringMatcher;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -23,16 +27,17 @@ import org.testng.annotations.Test;
 /**
  * Test For {@link AttributeScopeStringPredicate}
  */
-public class AttributeScopeStringPredicateTest {
+public class AttributeScopeStringMatcherTest {
     
-    @Test public void testApply() {
-        AttributeScopeStringPredicate predicate = new AttributeScopeStringPredicate();
-        predicate.setCaseSensitive(false);
-        predicate.setMatchString(DataSources.TEST_STRING);
+    @Test public void testApply() throws ComponentInitializationException {
+        AttributeScopeStringMatcher matcher = new AttributeScopeStringMatcher();
+        matcher.setCaseSensitive(false);
+        matcher.setMatchString(DataSources.TEST_STRING);
+        matcher.initialize();
         
-        Assert.assertFalse(predicate.apply(DataSources.STRING_VALUE));
-        Assert.assertFalse(predicate.apply(DataSources.SCOPED_VALUE_VALUE_MATCH));
-        Assert.assertTrue(predicate.apply(DataSources.SCOPED_VALUE_SCOPE_MATCH));
+        Assert.assertFalse(matcher.compareAttributeValue(DataSources.STRING_VALUE));
+        Assert.assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
+        Assert.assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
         
     }
 

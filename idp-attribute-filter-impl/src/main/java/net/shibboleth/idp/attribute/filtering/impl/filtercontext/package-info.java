@@ -15,24 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 /**
- * Tests for {@link BaseRegexpPredicate}
+ * Implementation of the filter context matchers Matchers.  
+ * 
+ * The classes in this package perform testing against 
+ * {@link net.shibboleth.idp.attribute.filtering.AttributeFilterContext} and
+ * implement {@link net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor}. 
  */
-public class BaseRegexpPredicateTest {
 
+package net.shibboleth.idp.attribute.filtering.impl.filtercontext;
 
-    @Test public void testApply() {
-        BaseRegexpPredicate predicate = new BaseRegexpPredicate() {};
-        predicate.setRegularExpression(DataSources.TEST_REGEX);
-
-        Assert.assertTrue(predicate.apply(DataSources.TEST_STRING));
-        Assert.assertFalse(predicate.apply("o" + DataSources.TEST_STRING));
-
-    }
-
-}

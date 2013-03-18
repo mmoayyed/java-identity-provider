@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
+package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import javax.annotation.Nonnull;
 
@@ -29,27 +29,27 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
  */
 public class DataSources {
 
-    protected final static String TEST_STRING = "nibbleahappywarthog";
+    public final static String TEST_STRING = "nibbleahappywarthog";
 
-    protected final static String TEST_STRING_UPPER = TEST_STRING.toUpperCase();
+    public final static String TEST_STRING_UPPER = TEST_STRING.toUpperCase();
 
-    protected final static String NON_MATCH_STRING = "ThisIsADifferentString";
+    public final static String NON_MATCH_STRING = "ThisIsADifferentString";
 
-    protected final static String TEST_REGEX = "^n.*g";
+    public final static String TEST_REGEX = "^n.*g";
 
-    protected final static StringAttributeValue STRING_VALUE = new StringAttributeValue(TEST_STRING);
+    public final static StringAttributeValue STRING_VALUE = new StringAttributeValue(TEST_STRING);
 
-    protected final static StringAttributeValue NON_MATCH_STRING_VALUE = new StringAttributeValue(NON_MATCH_STRING);
+    public final static StringAttributeValue NON_MATCH_STRING_VALUE = new StringAttributeValue(NON_MATCH_STRING);
 
-    protected final static ScopedStringAttributeValue SCOPED_VALUE_VALUE_MATCH = new ScopedStringAttributeValue(
+    public final static ScopedStringAttributeValue SCOPED_VALUE_VALUE_MATCH = new ScopedStringAttributeValue(
             TEST_STRING, NON_MATCH_STRING);
 
-    protected final static ScopedStringAttributeValue SCOPED_VALUE_SCOPE_MATCH = new ScopedStringAttributeValue(
+    public final static ScopedStringAttributeValue SCOPED_VALUE_SCOPE_MATCH = new ScopedStringAttributeValue(
             NON_MATCH_STRING, TEST_STRING);
 
-    protected final static ByteAttributeValue BYTE_ATTRIBUTE_VALUE = new ByteAttributeValue(TEST_STRING.getBytes());
+    public final static ByteAttributeValue BYTE_ATTRIBUTE_VALUE = new ByteAttributeValue(TEST_STRING.getBytes());
 
-    protected final static AttributeValue OTHER_VALUE = new AttributeValue() {
+    public final static AttributeValue OTHER_VALUE = new AttributeValue() {
 
         @Nonnull public Object getValue() {
             return TEST_STRING;

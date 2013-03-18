@@ -15,22 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
+package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-
 /**
- * General matching predicate for Equals comparison if strings in Attribute Filters.   
+ * General {@link MatchFunctor} for {@link String} comparison of strings in Attribute Filters.   
  */
-public abstract class BaseStringPredicate implements Predicate {
-
-    /** Logger. */
-    private Logger log = LoggerFactory.getLogger(BaseStringPredicate.class);
+public abstract class AbstractStringMatchFunctor extends AbstractValueMatcherFunctor implements MatchFunctor {
 
     /** String to match for a positive evaluation. */
     private String matchString;
@@ -75,30 +67,21 @@ public abstract class BaseStringPredicate implements Predicate {
     }
 
     /**
-     * Matches the given value against the provided match string. {@link Object#toString()} is used to produce the
-     * string value to evaluate.
+     * Matches the given value against the provided match string. 
      * 
      * @param value the value to evaluate
      * 
      * @return true if the value matches the given match string, false if not
      */
-    public boolean apply(@Nullable Object value) {
+    protected boolean stringCompare(@Nullable String value) {
         if (value == null) {
             return matchString == null;
         }
 
-        if (!(value instanceof String)) {
-            log.error("FilterPredicate : Object supplied to String comparison was of class {}, not String", value
-                    .getClass().getName());
-            return false;
-        }
-
-        final String valueAsString = (String) value;
-
         if (caseSensitive) {
-            return valueAsString.equals(matchString);
+            return value.equals(matchString);
         } else {
-            return value.toString().equalsIgnoreCase(matchString);
+            return value.equalsIgnoreCase(matchString);
         }
     }
 }

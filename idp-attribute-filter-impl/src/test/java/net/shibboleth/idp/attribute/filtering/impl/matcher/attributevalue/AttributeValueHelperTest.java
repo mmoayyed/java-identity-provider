@@ -15,24 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filtering.impl.predicate;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
+package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
 /**
- * Test For {@link AttributeScopeRegexpPredicate}
+ * Testsfor {@link AttributeValueHelper}.
  */
-public class AttributeScopeRegexpPredicateTest {
-    
-    @Test public void testApply() {
-        AttributeScopeRegexpPredicate predicate = new AttributeScopeRegexpPredicate();
-        predicate.setRegularExpression(DataSources.TEST_REGEX);
-        
-        Assert.assertFalse(predicate.apply(DataSources.STRING_VALUE));
-        Assert.assertFalse(predicate.apply(DataSources.SCOPED_VALUE_VALUE_MATCH));
-        Assert.assertTrue(predicate.apply(DataSources.SCOPED_VALUE_SCOPE_MATCH));
-        
-    }
+public class AttributeValueHelperTest {
 
 }
