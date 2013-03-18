@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.testng.Assert;
 
@@ -37,6 +38,12 @@ public class TargetedMatchFunctorTest {
         Assert.assertNotEquals(functor.getAttributeId(), NAME.toUpperCase());
         
         functor.initialize();
+        try {
+            functor.setAttributeId(NAME);
+            Assert.fail();
+        } catch (UnmodifiableComponentException e) {
+            // OK
+        }
         
     }
 }

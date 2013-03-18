@@ -25,6 +25,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractStringMatchFunctor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -44,6 +45,7 @@ public abstract class AbstractAttributeTargetedStringMatchFunctor extends Abstra
 
     /** {@inheritDoc} */
     public void setAttributeId(String id) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributeId = StringSupport.trimOrNull(id);
     }
     
