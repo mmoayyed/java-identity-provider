@@ -45,30 +45,44 @@ public class DatabaseTestingSupport {
 
     protected static void InitializeDataSource(@Nullable String initializingSQLFile, DataSource source) {
 
+        final String sql = ReadSqlFromFile(initializingSQLFile);
+        if (sql == null) {
+            return;
+        }
+        ExecuteUpdate(sql, source);
+    }
+
+    protected static String ReadSqlFromFile(@Nullable String initializingSQLFile) {
+
         final String file = StringSupport.trimOrNull(initializingSQLFile);
 
         if (null == file) {
-            return;
+            return null;
         }
 
         final InputStream is = DatabaseTestingSupport.class.getResourceAsStream(file);
 
         if (null == is) {
             log.warn("Could not locate SQL file called {} ", file);
-            return;
+            return null;
         }
         String sql;
         try {
             sql = StringSupport.trimOrNull(CharStreams.toString(new InputStreamReader(is)));
         } catch (IOException e) {
             log.warn("Could not read SQL file called {}.", file);
-            return;
+            return null;
         }
 
         if (null == sql) {
             log.warn("SQL file called {} was empty.", file);
-            return;
+            return null;
         }
+
+        return sql;
+    }
+
+    protected static void ExecuteUpdate(@Nullable String sql, DataSource source) {
 
         log.debug("Applying SQL: \n {}", sql);
 
@@ -109,7 +123,13 @@ public class DatabaseTestingSupport {
         return GetDataSourceFromUrl(initializingSQLFile, "jdbc:hsqldb:hsql:" + server);
     }
 
-    JDBCDataSource jdbcSource = new JDBCDataSource();
+    public static void InitializeDataSourceFromFile(String sqlFile, DataSource source) {
+        final String sql = ReadSqlFromFile(sqlFile);
+        final String[] statements = sql.split(";");
+        for (String statement : statements) {
+            ExecuteUpdate(statement.trim(), source);
+        }
+    }
 
     protected static DataSource GetDataSourceFromUrl(String initializingSQLFile, String JdbcUri) {
         JDBCDataSource jdbcSource = new JDBCDataSource();
