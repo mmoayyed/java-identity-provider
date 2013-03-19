@@ -15,28 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+package net.shibboleth.idp.attribute.resolver.impl.dc;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearch;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 
-/** A statement that can be executed against a database to fetch results. */
-public interface ExecutableStatement extends ExecutableSearch {
+/** Builder used to created {@link ExecutableSearch} instances. */
+public interface ExecutableSearchBuilder<T extends ExecutableSearch> {
 
     /**
-     * Executes the statement and returns the results. This method <strong>MUST NOT</strong> close the given
-     * {@link Connection}.
+     * Creates an executable search that can be executed against a data source in order to produce results.
      * 
-     * @param connection ready-to-use connection to the database
+     * @param resolutionContext current request context
      * 
-     * @return the result of the executed statement
+     * @return executable search
      * 
-     * @throws SQLException thrown if there is a problem executing the statement
+     * @throws ResolutionException throw if their is a problem creating the executable search
      */
-    @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException;
+    @Nonnull public T build(@Nonnull AttributeResolutionContext resolutionContext)
+            throws ResolutionException;
 }

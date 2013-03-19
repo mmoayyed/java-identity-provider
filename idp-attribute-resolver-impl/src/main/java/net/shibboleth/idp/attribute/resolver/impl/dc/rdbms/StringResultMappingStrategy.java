@@ -62,6 +62,7 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
             for (int i = 1; i <= resultMetadata.getColumnCount(); i++) {
                 attribute = new Attribute(resultMetadata.getColumnName(i));
                 attribute.getValues().add(new StringAttributeValue(results.getString(i)));
+                attributes.put(attribute.getId(), attribute);
             }
 
             return Optional.of(attributes);

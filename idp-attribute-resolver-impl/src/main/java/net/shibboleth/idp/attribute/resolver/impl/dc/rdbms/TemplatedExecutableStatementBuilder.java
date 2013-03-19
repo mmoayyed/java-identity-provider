@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
@@ -28,7 +29,7 @@ import net.shibboleth.utilities.java.support.velocity.Template;
  * An {@link ExecutableStatementBuilder} that generates the SQL statement to be executed by evaluating a
  * {@link Template} against the currently resolved attributes within a {@link AttributeResolutionContext}.
  */
-public class TemplatedExecutableStatementBuilder implements ExecutableStatementBuilder {
+public class TemplatedExecutableStatementBuilder implements ExecutableSearchBuilder<ExecutableStatement> {
 
     /** Template evaluated to generate a SQL query. */
     private final Template template;

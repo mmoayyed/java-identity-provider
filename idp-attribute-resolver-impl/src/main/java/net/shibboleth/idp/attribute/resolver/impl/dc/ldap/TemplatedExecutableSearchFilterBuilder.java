@@ -19,20 +19,19 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import javax.annotation.Nonnull;
 
-import org.ldaptive.SearchFilter;
-
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
 /**
- * An {@link SearchFilterBuilder} that generates the search request to be executed by evaluating a {@link Template}
- * against the currently resolved attributes within a {@link AttributeResolutionContext}.
+ * An {@link ExecutableSearchFilterBuilder} that generates the search filter to be executed by evaluating a
+ * {@link Template} against the currently resolved attributes within a {@link AttributeResolutionContext}.
  */
-public class TemplatedSearchFilterBuilder implements SearchFilterBuilder {
+public class TemplatedExecutableSearchFilterBuilder implements ExecutableSearchBuilder<ExecutableSearchFilter> {
 
-    /** Template evaluated to generate a search request. */
+    /** Template evaluated to generate a search filter. */
     private final Template template;
 
     /**
@@ -40,12 +39,13 @@ public class TemplatedSearchFilterBuilder implements SearchFilterBuilder {
      * 
      * @param searchRequestTemplate template evaluated to generate a search request
      */
-    public TemplatedSearchFilterBuilder(@Nonnull final Template searchRequestTemplate) {
+    public TemplatedExecutableSearchFilterBuilder(@Nonnull final Template searchRequestTemplate) {
         template = Constraint.isNotNull(searchRequestTemplate, "Search reqeust template can not be null");
     }
 
     /** {@inheritDoc} */
-    public SearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
+    public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext)
+            throws ResolutionException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -45,6 +45,9 @@ import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearch;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.impl.dc.TestCache;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -68,14 +71,14 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
     private InMemoryDirectoryServer directoryServer;
 
     /** Simple search filter builder that leverages a custom filter. */
-    private class TestSearchFilterBuilder implements SearchFilterBuilder {
+    private class TestSearchFilterBuilder implements ExecutableSearchBuilder<ExecutableSearchFilter> {
 
         /** {@inheritDoc} */
-        @Nonnull public SearchFilter build(@Nonnull AttributeResolutionContext resolutionContext)
+        @Nonnull public ExecutableSearchFilter build(@Nonnull AttributeResolutionContext resolutionContext)
                 throws ResolutionException {
             final AttributeRecipientContext subContext =
                     resolutionContext.getSubcontext(AttributeRecipientContext.class);
-            return new SearchFilter(String.format("(uid=%s)", subContext.getPrincipal()));
+            return new StringExecutableSearchFilter(String.format("(uid=%s)", subContext.getPrincipal()));
         }
     }
 
@@ -111,7 +114,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @param strategy to map search results
      * @return ldap data connector
      */
-    protected LdapDataConnector createLdapDataConnector(SearchFilterBuilder builder,
+    protected LdapDataConnector createLdapDataConnector(ExecutableSearchBuilder builder,
             SearchResultMappingStrategy strategy) {
         LdapDataConnector connector = new LdapDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
@@ -121,10 +124,9 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         searchExecutor.setBaseDn(TEST_BASE_DN);
         searchExecutor.setReturnAttributes(TEST_RETURN_ATTRIBUTES);
         connector.setSearchExecutor(searchExecutor);
-        connector.setSearchFilterBuilder(builder == null ? new TestSearchFilterBuilder() : builder);
-        connector.setValidate(connector.new SearchValidator(new SearchFilter("(ou=people)")));
-        connector.setSearchResultMappingStrategy(strategy == null ? new StringAttributeValueMappingStrategy()
-                : strategy);
+        connector.setExecutableSearchBuilder(builder == null ? new TestSearchFilterBuilder() : builder);
+        connector.setValidator(connector.new SearchValidator(new SearchFilter("(ou=people)")));
+        connector.setMappingStrategy(strategy == null ? new StringAttributeValueMappingStrategy() : strategy);
         return connector;
     }
 
@@ -159,8 +161,8 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
             // OK
         }
 
-        SearchFilterBuilder requestBuilder = new TestSearchFilterBuilder();
-        connector.setSearchFilterBuilder(requestBuilder);
+        ExecutableSearchBuilder requestBuilder = new TestSearchFilterBuilder();
+        connector.setExecutableSearchBuilder(requestBuilder);
         try {
             connector.initialize();
             Assert.fail("Invalid Connection Factory");
@@ -172,10 +174,10 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setConnectionFactory(connectionFactory);
 
         SearchResultMappingStrategy mappingStrategy = new StringAttributeValueMappingStrategy();
-        connector.setSearchResultMappingStrategy(mappingStrategy);
+        connector.setMappingStrategy(mappingStrategy);
 
         try {
-            connector.doDataConnectorResolve(null);
+            connector.doResolve(null);
             Assert.fail("Need to initialize first");
         } catch (UninitializedComponentException e) {
             // OK
@@ -190,8 +192,8 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         }
         Assert.assertEquals(connector.getConnectionFactory(), connectionFactory);
         Assert.assertEquals(connector.getSearchExecutor(), searchExecutor);
-        Assert.assertEquals(connector.getSearchFilterBuilder(), requestBuilder);
-        Assert.assertEquals(connector.getSearchResultMappingStrategy(), mappingStrategy);
+        Assert.assertEquals(connector.getExecutableSearchBuilder(), requestBuilder);
+        Assert.assertEquals(connector.getMappingStrategy(), mappingStrategy);
     }
 
     @Test public void testResolve() throws ComponentInitializationException, ResolutionException {
@@ -201,7 +203,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Optional<Map<String, Attribute>> optional = connector.doDataConnectorResolve(context);
+        Optional<Map<String, Attribute>> optional = connector.doResolve(context);
         Assert.assertTrue(optional.isPresent());
         Map<String, Attribute> attrs = optional.get();
         // check total attributes: uid, cn, sn, mail
@@ -230,9 +232,9 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void testResolveNoFilter()
             throws ComponentInitializationException, ResolutionException {
-        LdapDataConnector connector = createLdapDataConnector(new SearchFilterBuilder() {
+        LdapDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder() {
 
-            @Nonnull public SearchFilter build(@Nonnull AttributeResolutionContext resolutionContext)
+            @Nonnull public ExecutableSearch build(@Nonnull AttributeResolutionContext resolutionContext)
                     throws ResolutionException {
                 return null;
             }
@@ -242,7 +244,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        connector.doDataConnectorResolve(context);
+        connector.doResolve(context);
     }
 
     @Test(expectedExceptions = ResolutionException.class) public void testResolveNoResultIsError()
@@ -255,7 +257,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         try {
-            Optional<Map<String, Attribute>> optional = connector.doDataConnectorResolve(context);
+            Optional<Map<String, Attribute>> optional = connector.doResolve(context);
             Assert.assertTrue(optional.isPresent());
         } catch (ResolutionException e) {
             Assert.fail("Resolution exception occurred", e);
@@ -264,6 +266,21 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         context =
                 TestSources.createResolutionContext("NOT_A_PRINCIPAL", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        connector.doDataConnectorResolve(context);
+        connector.doResolve(context);
+    }
+
+    @Test public void testResolveWithCache() throws ComponentInitializationException, ResolutionException {
+        LdapDataConnector connector = createLdapDataConnector(null, null);
+        final TestCache cache = new TestCache();
+        connector.setResultsCache(cache);
+        connector.initialize();
+
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        Assert.assertTrue(cache.size() == 0);
+        Optional<Map<String, Attribute>> optional = connector.doResolve(context);
+        Assert.assertTrue(cache.size() == 1);
+        Assert.assertEquals(cache.iterator().next(), optional);
     }
 }

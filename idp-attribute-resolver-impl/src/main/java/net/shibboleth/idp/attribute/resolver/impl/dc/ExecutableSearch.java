@@ -15,25 +15,19 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
+package net.shibboleth.idp.attribute.resolver.impl.dc;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
-/** Builder used to created {@link ExecutableStatement} instances. */
-public interface ExecutableStatementBuilder {
+/** Should be implemented by objects used to search for attributes, that uniquely identify those search results. */
+public interface ExecutableSearch {
 
     /**
-     * Creates an statement that can be executed against a given database connection in order to produce results.
+     * Gets a key that uniquely identifies this object and may be used as a key in a result cache.
      * 
-     * @param resolutionContext current request context
-     * 
-     * @return statement to be executed
-     * 
-     * @throws ResolutionException throw if their is a problem creating the statement
+     * @return the result cache key
      */
-    @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext)
-            throws ResolutionException;
+    @Nonnull @NotEmpty public String getResultCacheKey();
 }

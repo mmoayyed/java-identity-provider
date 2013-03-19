@@ -19,23 +19,26 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 
 import javax.annotation.Nonnull;
 
-import org.ldaptive.SearchFilter;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapException;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchResult;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearch;
 
-/** Builder used to created {@link SearchFilter} instances. */
-public interface SearchFilterBuilder {
+/** A search filter that can be executed against an LDAP to fetch results. */
+public interface ExecutableSearchFilter extends ExecutableSearch {
 
     /**
-     * Creates a search filter that can be executed against a given LDAP connection in order to produce results.
+     * Performs an LDAP search and returns the results.
      * 
-     * @param resolutionContext current request context
+     * @param executor configured to perform searches
+     * @param factory ready-to-use connection factory
      * 
-     * @return search filter to be executed
+     * @return the result of this search filter
      * 
-     * @throws ResolutionException throw if there is a problem creating the search filter
+     * @throws LdapException thrown if there is an error performing the search
      */
-    @Nonnull public SearchFilter build(@Nonnull AttributeResolutionContext resolutionContext)
-            throws ResolutionException;
+    @Nonnull public SearchResult execute(@Nonnull SearchExecutor executor, @Nonnull ConnectionFactory factory)
+            throws LdapException;
 }
