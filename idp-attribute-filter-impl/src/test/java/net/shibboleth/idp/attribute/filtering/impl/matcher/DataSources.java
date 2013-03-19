@@ -23,6 +23,11 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+
+import org.opensaml.messaging.context.BaseContext;
 
 /**
  * Strings and such used for testing.
@@ -55,5 +60,18 @@ public class DataSources {
             return TEST_STRING;
         }
     };
+    
+    public static AttributeFilterContext populatedFilterContext(String principal, String issuerID, String recipientId) {
 
+        BaseContext parent = new BaseContext() {};
+        parent.addSubcontext(TestSources.createResolutionContext(principal, issuerID, recipientId));
+        return parent.getSubcontext(AttributeFilterContext.class, true);
+    }
+
+    public static AttributeFilterContext unPopulatedFilterContext() {
+
+        BaseContext parent = new BaseContext() {};
+        parent.addSubcontext(new AttributeResolutionContext());
+        return parent.getSubcontext(AttributeFilterContext.class, true);
+    }
 }
