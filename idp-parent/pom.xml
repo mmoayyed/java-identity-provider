@@ -73,7 +73,7 @@
         <!-- Compile Dependencies -->
         <dependency>
             <!-- needed for logback SMTP appender -->
-            <groupId>janino</groupId>
+            <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
         </dependency>
         <dependency>
