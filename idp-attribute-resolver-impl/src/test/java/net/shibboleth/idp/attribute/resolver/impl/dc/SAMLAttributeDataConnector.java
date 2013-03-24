@@ -46,7 +46,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 /**
- * Data Connector to extra attributes from a saml2 {@link org.opensaml.saml.saml2.core.Assertion}.
+ * Data Connector to extra attributes from a saml2 {@link org.opensaml.saml.saml2.core.Assertion}. It is hoped that this
+ * connector will eventually end up being used in mainline operation, which is why the code looks more suitable for
+ * being plugged into a webflow than into a test.
  */
 public class SAMLAttributeDataConnector extends BaseDataConnector {
 
@@ -54,12 +56,12 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
     private final Logger log = LoggerFactory.getLogger(SAMLAttributeDataConnector.class);
 
     /**
-     * The way to get the list of attributes from the resolution context.
+     * The way to get the list of (SAML) attributes from the resolution context.
      */
     private Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>> attributesStrategy;
 
     /**
-     * Gets the strategy for finding the Attributes from the resolution context.
+     * Gets the strategy for finding the (SAML) Attributes from the resolution context.
      * 
      * @return the required strategy.
      */
@@ -68,7 +70,7 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
     }
 
     /**
-     * Sets the strategy for finding the Attributes from the resolution context.
+     * Sets the strategy for finding the(SAML) Attributes from the resolution context.
      * 
      * @param strategy to set.
      */
@@ -91,7 +93,8 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
 
     /**
      * Method to convert a singled {@link XMLObject} into an {@link AttributeValue} if possible. TODO for testing this
-     * is hardwired - strings become scoped or non scoped, everything else an {@link XMLObjectAttributeValue}
+     * is hard-wired - strings become scoped or non scoped (with the scope delimiter being '@'), everything else an
+     * {@link XMLObjectAttributeValue}
      * 
      * @param object the object to encode
      * @return an {@link AttributeValue}, or null if no encoding exists.
@@ -111,13 +114,13 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
      * @return
      */
     private AttributeValue encodeString(XSString inputString) {
-        String value =  inputString.getValue();
+        String value = inputString.getValue();
         int separator = value.indexOf('@');
 
-        if (separator < 0 ) {
+        if (separator < 0) {
             return new StringAttributeValue(value);
         } else {
-            return new ScopedStringAttributeValue(value.substring(0, separator), value.substring(separator+1));
+            return new ScopedStringAttributeValue(value.substring(0, separator), value.substring(separator + 1));
         }
     }
 
