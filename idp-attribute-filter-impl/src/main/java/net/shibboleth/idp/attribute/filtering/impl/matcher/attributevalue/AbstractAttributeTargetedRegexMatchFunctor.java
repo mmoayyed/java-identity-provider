@@ -51,17 +51,26 @@ public abstract class AbstractAttributeTargetedRegexMatchFunctor extends Abstrac
 
     /** {@inheritDoc} */
     public boolean apply(@Nullable AttributeFilterContext filterContext) {
-        return AttributeValueHelper.filterContextPredicate(this, filterContext, attributeId);
+        if (null != attributeId) {
+            return AttributeValueHelper.filterContextPredicate(this, filterContext, attributeId);
+        } else {
+            return AttributeValueHelper.filterContextPredicate(this, filterContext);            
+        }
     }
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
-        setValuePredicate(new Predicate<AttributeValue>() {
-
-            public boolean apply(@Nullable AttributeValue input) {
-                return compareAttributeValue(input);
-            }
-        });
+        
+        if (null == attributeId) {
+            // This is a UNTARGETTED filter, so we expect to be called to compare
+            // attribute values
+            setValuePredicate(new Predicate<AttributeValue>() {
+    
+                public boolean apply(@Nullable AttributeValue input) {
+                    return compareAttributeValue(input);
+                }
+            });
+        }
         super.doInitialize();
     }
 }

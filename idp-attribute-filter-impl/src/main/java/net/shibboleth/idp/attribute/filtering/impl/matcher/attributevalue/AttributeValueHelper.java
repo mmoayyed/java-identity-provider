@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
@@ -30,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public final class AttributeValueHelper {
 
     /** log. */
-     private static Logger log = LoggerFactory.getLogger(AttributeValueHelper.class);
+    private static Logger log = LoggerFactory.getLogger(AttributeValueHelper.class);
 
     /** (hidden) Constructor. */
     private AttributeValueHelper() {
@@ -38,9 +40,8 @@ public final class AttributeValueHelper {
     }
 
     /**
-     * Helper method to convert {@link AttributeValue} matchers into {@link Predicate<AttributeFilterContext>}. We take
-     * the rule that if an matcher is true for any attribute value in the input set then the predicate is true. This
-     * function applies this rule in such a way that it can be plugged into various implementations.
+     * Helper method to convert an un-targeted {@link AttributeValue} matchers into {@link Predicate
+     * <AttributeFilterContext>}. We look up the attribute whose name is supplied and compare against the values.
      * 
      * @param valueComparator The class we are providing the helper function to. We will use its implementation of
      *            comparison to apply the rule described above.
@@ -48,14 +49,8 @@ public final class AttributeValueHelper {
      * @param attributeId the attribute ID.
      * @return whether the rule holds or not.
      */
-    protected static boolean filterContextPredicate(final TargetedMatchFunctor valueComparator,
-            final AttributeFilterContext context, String attributeId) {
-
-        if (null == attributeId) {
-            // TODO logging
-            log.info("No attribute Id supplied");
-            return false;
-        }
+    protected static boolean filterContextPredicate(@Nonnull final TargetedMatchFunctor valueComparator,
+            @Nonnull final AttributeFilterContext context, @Nonnull final String attributeId) {
 
         final Attribute attribute = context.getPrefilteredAttributes().get(attributeId);
 
@@ -72,4 +67,36 @@ public final class AttributeValueHelper {
         }
         return false;
     }
+
+    /**
+     * Helper method to convert an un-targeted {@link AttributeValue} matchers into {@link Predicate
+     * <AttributeFilterContext>}. We take the rule that if an matcher is true for any attribute value in the input set
+     * then the predicate is true. This function applies this rule in such a way that it can be plugged into various
+     * implementations.
+     * 
+     * @param valueComparator The class we are providing the helper function to. We will use its implementation of
+     *            comparison to apply the rule described above.
+     * @param context the context we are looking at.
+     * @return whether the rule holds or not.
+     */
+    protected static boolean filterContextPredicate(@Nonnull final TargetedMatchFunctor valueComparator,
+            @Nonnull final AttributeFilterContext context) {
+
+        for (Attribute attribute : context.getPrefilteredAttributes().values()) {
+
+            if (null == attribute) {
+                // TODO logging
+                log.info("No attribute available");
+                continue;
+            }
+
+            for (AttributeValue value : attribute.getValues()) {
+                if (valueComparator.compareAttributeValue(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
