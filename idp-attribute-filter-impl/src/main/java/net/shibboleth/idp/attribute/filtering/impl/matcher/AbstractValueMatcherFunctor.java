@@ -81,7 +81,7 @@ public abstract class AbstractValueMatcherFunctor extends AbstractInitializableC
             // else nothing.
             //
             log.info("Attribute Filter:  No value predicate present for attribute '{}',"
-                    + " applying policy predicate to all values", attribute.getId());
+                    + " applying the policy predicate", attribute.getId());
             if (apply(filterContext)) {
                 return attribute.getValues();
             } else {
