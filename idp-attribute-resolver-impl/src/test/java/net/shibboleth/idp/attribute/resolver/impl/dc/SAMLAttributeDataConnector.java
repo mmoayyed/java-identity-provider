@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -131,7 +131,7 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
      * @return a list of values, Possibly empty.
      */
     @Nullable protected @Nonnull Collection<AttributeValue> encodeValues(final List<XMLObject> attributeValues) {
-        final HashSet<AttributeValue> result = new HashSet<AttributeValue>(attributeValues.size());
+        final ArrayList<AttributeValue> result = new ArrayList<AttributeValue>(attributeValues.size());
 
         for (XMLObject object : attributeValues) {
             AttributeValue val = encodeValue(object);
