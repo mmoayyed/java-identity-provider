@@ -51,11 +51,21 @@ public class ScriptedAttributeTest {
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
 
-    /** A simple script to set a constant value. */
+    /**
+     * A simple script to set a constant value.
+     */
     private static final String TEST_SIMPLE_SCRIPT =
             "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n" + TEST_ATTRIBUTE_NAME
                     + " = res = new JscriptAttribute(\"" + TEST_ATTRIBUTE_NAME + "\");\n" + TEST_ATTRIBUTE_NAME
                     + ".addValue(\"" + SIMPLE_VALUE + "\");\n";
+
+    private static final String TEST_SIMPLE_SCRIPT_USING_PREDEF_ATTRIBUTE =
+            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);importPackage(Packages.net.shibboleth.idp.attribute);\n"
+                    + "tmp = "
+                    + TEST_ATTRIBUTE_NAME
+                    + ".getValues(); val = new StringAttributeValue(\""
+                    + SIMPLE_VALUE
+                    + "\");tmp.add(val);" + TEST_ATTRIBUTE_NAME + ".setValues(tmp);";
 
     /** A simple script to set a value based on input values. */
     private static final String TEST_ATTRIBUTES_SCRIPT =
@@ -75,11 +85,9 @@ public class ScriptedAttributeTest {
                     + "claz = clazloader.loadClass(\"net.shibboleth.idp.attribute.resolver.AttributeResolutionContext\");\n"
                     + "parent = requestContext.getParent();\n" + "child = parent.getSubcontext(claz);\n"
                     + TEST_ATTRIBUTE_NAME + ".addValue(child);\n";
-    
-    private static final String TEST_FAIL_SCRIPT =
-            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n"
-                    + " flibby.nonexistant();";
 
+    private static final String TEST_FAIL_SCRIPT =
+            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n" + " flibby.nonexistant();";
 
     /**
      * Test resolution of an simple script (statically generated data).
@@ -88,8 +96,7 @@ public class ScriptedAttributeTest {
      * @throws ComponentInitializationException only if the test will fail
      * @throws ScriptException
      */
-    @Test public void testSimple() throws ResolutionException, ComponentInitializationException,
-            ScriptException {
+    @Test public void testSimple() throws ResolutionException, ComponentInitializationException, ScriptException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
@@ -101,7 +108,7 @@ public class ScriptedAttributeTest {
         attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT));
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
-        
+
         final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext()).get();
         final Set<AttributeValue> results = val.getValues();
 
@@ -110,8 +117,28 @@ public class ScriptedAttributeTest {
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
-    @Test public void testFails() throws ResolutionException, ComponentInitializationException,
-            ScriptException {
+    @Test public void testSimpleWithPredef() throws ResolutionException, ComponentInitializationException, ScriptException {
+
+        final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
+
+        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
+
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        Assert.assertNull(attr.getScript());
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT_USING_PREDEF_ATTRIBUTE));
+        attr.initialize();
+        Assert.assertNotNull(attr.getScript());
+
+        final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext()).get();
+        final Set<AttributeValue> results = val.getValues();
+
+        Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
+        Assert.assertEquals(results.size(), 1, "Scripted result value count");
+        Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+    }
+
+    @Test public void testFails() throws ResolutionException, ComponentInitializationException, ScriptException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
@@ -125,7 +152,7 @@ public class ScriptedAttributeTest {
         } catch (ComponentInitializationException ex) {
             // OK
         }
-        
+
         attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_FAIL_SCRIPT));
         attr.initialize();
 
@@ -133,7 +160,7 @@ public class ScriptedAttributeTest {
             attr.doAttributeDefinitionResolve(new AttributeResolutionContext());
             Assert.fail("Should have thrown an exception");
         } catch (ResolutionException ex) {
-            //OK
+            // OK
         }
     }
 
