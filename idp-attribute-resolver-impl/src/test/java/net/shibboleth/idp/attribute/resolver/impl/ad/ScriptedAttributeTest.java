@@ -60,7 +60,7 @@ public class ScriptedAttributeTest {
                     + ".addValue(\"" + SIMPLE_VALUE + "\");\n";
 
     private static final String TEST_SIMPLE_SCRIPT_USING_PREDEF_ATTRIBUTE =
-            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);importPackage(Packages.net.shibboleth.idp.attribute);\n"
+            "importPackage(Packages.net.shibboleth.idp.attribute);\n"
                     + "tmp = "
                     + TEST_ATTRIBUTE_NAME
                     + ".getValues(); val = new StringAttributeValue(\""
@@ -74,16 +74,16 @@ public class ScriptedAttributeTest {
                     + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + ".iterator();\n" + "while (values.hasNext()) {\n"
                     + "  val = values.next();\n" + "  " + TEST_ATTRIBUTE_NAME + ".addValue(val);\n}\n";
 
-    /** Something to look at the requestContext. */
-    private static final String TEST_REQUEST_SCRIPT =
+    /** Something to look at the resolutionContext. */
+    private static final String TEST_RESOLUTION_CONTEXT_SCRIPT =
             "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n"
                     + TEST_ATTRIBUTE_NAME
                     + " = res = new JscriptAttribute(\""
                     + TEST_ATTRIBUTE_NAME
                     + "\");\n"
-                    + "clazloader = requestContext.getClass().getClassLoader();\n"
+                    + "clazloader = resolutionContext.getClass().getClassLoader();\n"
                     + "claz = clazloader.loadClass(\"net.shibboleth.idp.attribute.resolver.AttributeResolutionContext\");\n"
-                    + "parent = requestContext.getParent();\n" + "child = parent.getSubcontext(claz);\n"
+                    + "parent = resolutionContext.getParent();\n" + "child = parent.getSubcontext(claz);\n"
                     + TEST_ATTRIBUTE_NAME + ".addValue(child);\n";
 
     private static final String TEST_FAIL_SCRIPT =
@@ -216,7 +216,7 @@ public class ScriptedAttributeTest {
      * @throws ComponentInitializationException only if the test has gone wrong
      * @throws ScriptException
      */
-    @Test public void testRequestContext() throws ResolutionException, ComponentInitializationException,
+    @Test public void testWithContext() throws ResolutionException, ComponentInitializationException,
             ScriptException {
 
         // Set the dependency on the data connector
@@ -226,7 +226,7 @@ public class ScriptedAttributeTest {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_REQUEST_SCRIPT));
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_RESOLUTION_CONTEXT_SCRIPT));
         scripted.setDependencies(ds);
         scripted.initialize();
 

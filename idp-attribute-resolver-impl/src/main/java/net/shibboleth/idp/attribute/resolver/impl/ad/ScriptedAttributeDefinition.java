@@ -141,7 +141,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         scriptContext.setAttribute(getId(), new Attribute(getId()), ScriptContext.ENGINE_SCOPE);
 
         log.debug("Attribute definition '{}': adding current attribute resolution context to script context", getId());
-        scriptContext.setAttribute("requestContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
 
         final Map<String, Set<AttributeValue>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
