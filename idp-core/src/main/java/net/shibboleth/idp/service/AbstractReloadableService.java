@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -133,14 +133,27 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
-        if (reloadCheckDelay > 0) {
-            Constraint.isNotNull(reloadTaskTimer, "Reload task timer cannot be null");
-            reloadTask = new ServiceReloadTask();
-            reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
-        }
     }
 
+    /** {@inheritDoc} */
+    public void validate() throws ComponentValidationException {
+        super.validate();
+        if (reloadCheckDelay > 0 && reloadTaskTimer == null) {
+            throw new ComponentValidationException("Reload task timer cannot be null");
+        }
+    }
+    
+    /** {@inheritDoc} */
+    protected void doStart(@Nonnull final HashMap context) throws ServiceException {
+        super.doStart(context);
+        if (reloadCheckDelay > 0) {
+            reloadTask = new ServiceReloadTask();
+            reloadTaskTimer.schedule(reloadTask, reloadCheckDelay, reloadCheckDelay);
+        } else {
+            doReload(context);
+        }
+    }    
+    
     /**
      * {@inheritDoc}
      * 
@@ -190,9 +203,9 @@ public abstract class AbstractReloadableService extends AbstractService implemen
     protected abstract boolean shouldReload();
 
     /** {@inheritDoc} */
-    protected void doPreStop(@Nonnull final HashMap context) throws ServiceException {
+    protected void doStop(@Nonnull final HashMap context) throws ServiceException {
         reloadTask.cancel();
-        super.doPreStop(context);
+        super.doStop(context);
     }
 
     /**
