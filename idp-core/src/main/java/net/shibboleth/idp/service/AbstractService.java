@@ -29,6 +29,7 @@ import net.shibboleth.idp.log.EventLogger;
 import net.shibboleth.idp.log.PerformanceEvent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -96,12 +97,15 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
     public final void start() throws ServiceException {
         final PerformanceEvent perfEvent = new PerformanceEvent(getId() + START_PERF_EVENT_ID_SUFFIX);
         perfEvent.startTime();
-
+        
         final Lock serviceWriteLock = getServiceLock().writeLock();
         final HashMap context = new HashMap();
 
         try {
             serviceWriteLock.lock();
+
+            initialize();
+            validate();
 
             if (startStates.contains(getCurrentState())) {
                 return;
@@ -118,6 +122,14 @@ public abstract class AbstractService extends AbstractIdentifiableInitializableC
             setCurrentState(STATE_STOPPED);
             perfEvent.stopTime(false);
             throw e;
+        } catch (ComponentInitializationException e) {
+            setCurrentState(STATE_STOPPED);
+            perfEvent.stopTime(false);
+            throw new ServiceException("Exception during component initialization", e);
+        } catch (ComponentValidationException e) {
+            setCurrentState(STATE_STOPPED);
+            perfEvent.stopTime(false);
+            throw new ServiceException("Exception during component validation", e);
         } finally {
             serviceWriteLock.unlock();
             EventLogger.log(perfEvent);
