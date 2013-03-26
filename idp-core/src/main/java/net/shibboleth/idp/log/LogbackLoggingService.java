@@ -81,6 +81,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
+        super.validate();
         try {
             if (!configurationResource.exists()) {
                 throw new ComponentValidationException("Logging service configuration resource "
