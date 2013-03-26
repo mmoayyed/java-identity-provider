@@ -163,7 +163,7 @@ public class LogbackLoggingService extends AbstractReloadableService {
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
-        super.initialize();
+        super.doInitialize();
 
         if (configurationResource == null) {
             throw new ComponentInitializationException("Logging configuration must be specified.");
