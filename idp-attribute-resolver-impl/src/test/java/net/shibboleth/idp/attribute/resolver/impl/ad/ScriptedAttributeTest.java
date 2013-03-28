@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
@@ -34,12 +35,13 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.impl.ScriptedAttribute}. */
+/** test for {@link net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute}. */
 public class ScriptedAttributeTest {
 
     /** The name. */
@@ -51,43 +53,10 @@ public class ScriptedAttributeTest {
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
 
-    /**
-     * A simple script to set a constant value.
-     */
-    private static final String TEST_SIMPLE_SCRIPT =
-            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n" + TEST_ATTRIBUTE_NAME
-                    + " = res = new JscriptAttribute(\"" + TEST_ATTRIBUTE_NAME + "\");\n" + TEST_ATTRIBUTE_NAME
-                    + ".addValue(\"" + SIMPLE_VALUE + "\");\n";
-
-    private static final String TEST_SIMPLE_SCRIPT_USING_PREDEF_ATTRIBUTE =
-            "importPackage(Packages.net.shibboleth.idp.attribute);\n"
-                    + "tmp = "
-                    + TEST_ATTRIBUTE_NAME
-                    + ".getValues(); val = new StringAttributeValue(\""
-                    + SIMPLE_VALUE
-                    + "\");tmp.add(val);" + TEST_ATTRIBUTE_NAME + ".setValues(tmp);";
-
-    /** A simple script to set a value based on input values. */
-    private static final String TEST_ATTRIBUTES_SCRIPT =
-            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n" + TEST_ATTRIBUTE_NAME
-                    + " = res = new JscriptAttribute(\"" + TEST_ATTRIBUTE_NAME + "\");\n" + "values = "
-                    + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + ".iterator();\n" + "while (values.hasNext()) {\n"
-                    + "  val = values.next();\n" + "  " + TEST_ATTRIBUTE_NAME + ".addValue(val);\n}\n";
-
-    /** Something to look at the resolutionContext. */
-    private static final String TEST_RESOLUTION_CONTEXT_SCRIPT =
-            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n"
-                    + TEST_ATTRIBUTE_NAME
-                    + " = res = new JscriptAttribute(\""
-                    + TEST_ATTRIBUTE_NAME
-                    + "\");\n"
-                    + "clazloader = resolutionContext.getClass().getClassLoader();\n"
-                    + "claz = clazloader.loadClass(\"net.shibboleth.idp.attribute.resolver.AttributeResolutionContext\");\n"
-                    + "parent = resolutionContext.getParent();\n" + "child = parent.getSubcontext(claz);\n"
-                    + TEST_ATTRIBUTE_NAME + ".addValue(child);\n";
-
-    private static final String TEST_FAIL_SCRIPT =
-            "importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);\n" + " flibby.nonexistant();";
+    private String getScript(String fileName) throws IOException {
+        String pathName = "/data/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
+        return StringSupport.inputStreamToString(getClass().getResourceAsStream(pathName), null);
+    }
 
     /**
      * Test resolution of an simple script (statically generated data).
@@ -95,8 +64,10 @@ public class ScriptedAttributeTest {
      * @throws ResolutionException
      * @throws ComponentInitializationException only if the test will fail
      * @throws ScriptException
+     * @throws IOException
      */
-    @Test public void testSimple() throws ResolutionException, ComponentInitializationException, ScriptException {
+    @Test public void testSimple() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
@@ -105,7 +76,7 @@ public class ScriptedAttributeTest {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simple.script")));
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
@@ -117,7 +88,8 @@ public class ScriptedAttributeTest {
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
-    @Test public void testSimpleWithPredef() throws ResolutionException, ComponentInitializationException, ScriptException {
+    @Test public void testSimpleWithPredef() throws ResolutionException, ComponentInitializationException,
+            ScriptException, IOException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
@@ -126,7 +98,7 @@ public class ScriptedAttributeTest {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
         attr.setId(TEST_ATTRIBUTE_NAME);
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_SIMPLE_SCRIPT_USING_PREDEF_ATTRIBUTE));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simpleWithPredef.script")));
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
@@ -138,7 +110,8 @@ public class ScriptedAttributeTest {
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
-    @Test public void testFails() throws ResolutionException, ComponentInitializationException, ScriptException {
+    @Test public void testFails() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
 
@@ -153,7 +126,7 @@ public class ScriptedAttributeTest {
             // OK
         }
 
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_FAIL_SCRIPT));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("fails.script")));
         attr.initialize();
 
         try {
@@ -170,9 +143,10 @@ public class ScriptedAttributeTest {
      * @throws ResolutionException if the resolve fails
      * @throws ComponentInitializationException only if things go wrong
      * @throws ScriptException
+     * @throws IOException
      */
     @Test public void testWithAttributes() throws ResolutionException, ComponentInitializationException,
-            ScriptException {
+            ScriptException, IOException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
@@ -180,7 +154,7 @@ public class ScriptedAttributeTest {
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_ATTRIBUTES_SCRIPT));
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes.script")));
         scripted.setDependencies(ds);
         scripted.initialize();
 
@@ -215,9 +189,10 @@ public class ScriptedAttributeTest {
      * @throws ResolutionException if the resolve fails
      * @throws ComponentInitializationException only if the test has gone wrong
      * @throws ScriptException
+     * @throws IOException
      */
-    @Test public void testWithContext() throws ResolutionException, ComponentInitializationException,
-            ScriptException {
+    @Test public void testWithContext() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
@@ -226,7 +201,7 @@ public class ScriptedAttributeTest {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(TEST_ATTRIBUTE_NAME);
-        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, TEST_RESOLUTION_CONTEXT_SCRIPT));
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("context.script")));
         scripted.setDependencies(ds);
         scripted.initialize();
 
