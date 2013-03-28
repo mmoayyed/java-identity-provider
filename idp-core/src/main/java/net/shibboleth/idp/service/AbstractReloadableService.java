@@ -204,7 +204,9 @@ public abstract class AbstractReloadableService extends AbstractService implemen
 
     /** {@inheritDoc} */
     protected void doStop(@Nonnull final HashMap context) throws ServiceException {
-        reloadTask.cancel();
+        if (reloadTask != null) {
+            reloadTask.cancel();
+        }
         super.doStop(context);
     }
 
