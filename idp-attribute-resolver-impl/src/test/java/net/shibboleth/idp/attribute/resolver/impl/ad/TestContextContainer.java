@@ -50,9 +50,8 @@ class TestContextContainer extends InOutOperationContext {
         return null;
     }
 
-    /** Not used. */
     public String getId() {
-        return null;
+        return "TestContainerContextid";
     }
 
     /** {@inheritDoc} */

@@ -1,9 +1,7 @@
 importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);
-Scripted = new JscriptAttribute("Scripted");
 
 clazloader = resolutionContext.getClass().getClassLoader();
 claz = clazloader.loadClass("net.shibboleth.idp.attribute.resolver.AttributeResolutionContext");
-parent = resolutionContext.getParent();
-child = parent.getSubcontext(claz);
+child = resolutionContext.getParent().getSubcontext(claz);
 
-Scripted.addValue(child);
+Scripted.addValue(child.getParent().getId());

@@ -1,5 +1,6 @@
 importPackage(Packages.net.shibboleth.idp.attribute);
-tmp = Scripted.getValues(); 
+nativeAttribute = Scripted.getNativeAttribute();
+tmp = nativeAttribute.getValues(); 
 val = new StringAttributeValue("simple");
 tmp.add(val);
-Scripted.setValues(tmp);
+nativeAttribute.setValues(tmp);

@@ -104,11 +104,26 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         try {
             script.eval(context);
         } catch (ScriptException e) {
-            throw new ResolutionException("ScriptletAttributeDefinition " + getId()
-                    + " unable to execute script", e);
+            throw new ResolutionException("AttributeDefinition '" + getId() + "' unable to execute script", e);
+        }
+        Object result = context.getAttribute(getId());
+
+        if (null == result) {
+            log.info("AttributeDefinition '{}' No value returned", getId());
+            return Optional.absent();
         }
 
-        return Optional.fromNullable((Attribute) context.getAttribute(getId()));
+        if (result instanceof ScriptedAttribute) {
+            
+            ScriptedAttribute scriptedAttribute = (ScriptedAttribute) result;
+            return Optional.of(scriptedAttribute.getResultingAttribute());
+            
+        } else {
+            
+            throw new ResolutionException("AttributeDefinition '" + getId() + "'returned variable was of wrong type ("
+                    + result.getClass().toString() + ")");
+        }
+
     }
 
     /** {@inheritDoc} */
@@ -128,28 +143,35 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return constructed script context
      * 
-     * @throws ResolutionException thrown if dependent data connectors or attribute definitions can not be
-     *             resolved
+     * @throws ResolutionException thrown if dependent data connectors or attribute definitions can not be resolved
      */
     @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
+        final Map<String, Set<AttributeValue>> dependencyAttributes =
+                PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
 
-        log.debug("Attribute definition '{}': adding to-be-populated attribute to script context", getId());
-        scriptContext.setAttribute(getId(), new Attribute(getId()), ScriptContext.ENGINE_SCOPE);
+        if (dependencyAttributes.containsKey(getId())) {
+            log.debug("Attribute definition '{}': to-be-populated attribute is a dependency.  Not created");
+        } else {
+            log.debug("Attribute definition '{}': adding to-be-populated attribute to script context", getId());
+            final Attribute newAttribute = new Attribute(getId());
+            scriptContext.setAttribute(getId(), new ScriptedAttribute(newAttribute), ScriptContext.ENGINE_SCOPE);
+        }
 
         log.debug("Attribute definition '{}': adding current attribute resolution context to script context", getId());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
 
-        final Map<String, Set<AttributeValue>> dependencyAttributes =
-                PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
         for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("Attribute definition '{}': adding dependant attribute '{}' "
                     + " with the following values to the script context: {}", new Object[] {getId(),
                     dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
-            scriptContext.setAttribute(dependencyAttribute.getKey(), dependencyAttribute.getValue(),
+            final Attribute pseudoAttribute = new Attribute(dependencyAttribute.getKey());
+            pseudoAttribute.setValues(dependencyAttribute.getValue());
+
+            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedAttribute(pseudoAttribute),
                     ScriptContext.ENGINE_SCOPE);
         }
 

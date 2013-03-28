@@ -88,6 +88,36 @@ public class ScriptedAttributeTest {
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
+    /**
+     * Test resolution of an simple script (statically generated data).
+     * 
+     * @throws ResolutionException
+     * @throws ComponentInitializationException only if the test will fail
+     * @throws ScriptException
+     * @throws IOException
+     */
+    @Test public void testSimple2() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
+
+        final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
+
+        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
+
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        Assert.assertNull(attr.getScript());
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("simple2.script")));
+        attr.initialize();
+        Assert.assertNotNull(attr.getScript());
+
+        final Attribute val = attr.doAttributeDefinitionResolve(new AttributeResolutionContext()).get();
+        final Set<AttributeValue> results = val.getValues();
+
+        Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
+        Assert.assertEquals(results.size(), 1, "Scripted result value count");
+        Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+    }
+
     @Test public void testSimpleWithPredef() throws ResolutionException, ComponentInitializationException,
             ScriptException, IOException {
 
@@ -176,10 +206,11 @@ public class ScriptedAttributeTest {
 
         Assert.assertEquals(values.size(), 2);
         for (AttributeValue value : values) {
-            Assert.assertTrue(value.getValue().equals(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT)
-                    || value.getValue().equals(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT), "looking for value "
-                    + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + " or " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING
-                    + ", found:" + value.toString());
+            Assert.assertTrue(
+                    value.equals(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT)
+                            || value.equals(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT), "looking for value "
+                            + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + " or "
+                            + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + ", found:" + value.toString());
         }
     }
 
@@ -216,9 +247,10 @@ public class ScriptedAttributeTest {
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
-        TestContextContainer container = new TestContextContainer();
+        TestContextContainer parent = new TestContextContainer();
         final AttributeResolutionContext context = new AttributeResolutionContext();
-        container.addSubcontext(context);
+        parent.addSubcontext(context);
+
         try {
             resolver.resolveAttributes(context);
         } catch (ResolutionException e) {
@@ -228,9 +260,10 @@ public class ScriptedAttributeTest {
         // The script just put the resolution context in as the attribute value. Yea it makes
         // no sense but it is easy to test.
         final Attribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
-        final Collection values = attribute.getValues();
+        final Collection<AttributeValue> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 1, "looking for context");
+        Assert.assertEquals(values.iterator().next().getValue(), "TestContainerContextid");
     }
 
 }
