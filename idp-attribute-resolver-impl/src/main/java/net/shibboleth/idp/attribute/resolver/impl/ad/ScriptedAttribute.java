@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,15 +25,15 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An encapsulated Attribute suitable for handing to scripts. This handles some of the cumbersome issues associated with
@@ -85,9 +86,10 @@ public class ScriptedAttribute {
 
         log.debug("Attribute resolution '{}': Attribute Values being prepared", getId());
 
-        Set<Object> newValues = new HashSet<Object>(encapsulatedAttribute.getValues().size());
+        // NOTE.  This has to be a List - the examples use get(0)
+        ArrayList<Object> newValues = new ArrayList<Object>(encapsulatedAttribute.getValues().size());
         for (AttributeValue value : encapsulatedAttribute.getValues()) {
-            if ((value instanceof StringAttributeValue) && (value instanceof ScopedStringAttributeValue)) {
+            if ((value instanceof StringAttributeValue) && !(value instanceof ScopedStringAttributeValue)) {
                 newValues.add(((StringAttributeValue) value).getValue());
             } else {
                 newValues.add(value);

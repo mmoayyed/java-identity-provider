@@ -19,30 +19,40 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.script.ScriptException;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
+import net.shibboleth.idp.attribute.resolver.impl.dc.SAMLAttributeDataConnector;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
+
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute}. */
-public class ScriptedAttributeTest {
+public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "Scripted";
@@ -52,10 +62,13 @@ public class ScriptedAttributeTest {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
+    
+    private String fileNameToPath(String fileName) {
+        return "/data/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
+    }
 
     private String getScript(String fileName) throws IOException {
-        String pathName = "/data/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
-        return StringSupport.inputStreamToString(getClass().getResourceAsStream(pathName), null);
+        return StringSupport.inputStreamToString(getClass().getResourceAsStream(fileNameToPath(fileName)), null);
     }
 
     /**
@@ -265,5 +278,96 @@ public class ScriptedAttributeTest {
         Assert.assertEquals(values.size(), 1, "looking for context");
         Assert.assertEquals(values.iterator().next().getValue(), "TestContainerContextid");
     }
+    
+    protected Attribute runExample(String exampleScript, String exampleData, String attributeName) throws ScriptException, IOException, ComponentInitializationException {
+        SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
+        connector.setAttributesStrategy(new Locator(exampleData));
+        connector.setId("Connector");
+        
+        final Set<ResolverPluginDependency> ds = Collections.singleton(new ResolverPluginDependency("Connector",null));
+        
+        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
+        scripted.setId(attributeName);
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript)));
+        scripted.setDependencies(ds);
+
+        final Set<BaseDataConnector> dataDefinitions = Collections.singleton((BaseDataConnector) connector);
+        final Set<BaseAttributeDefinition> attrDefinitions = Collections.singleton((BaseAttributeDefinition) scripted);
+        
+        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = TestSources.createResolutionContext("principal", "issuer", "recipient");
+                
+        try {
+            resolver.resolveAttributes(context);
+        } catch (ResolutionException e) {
+            Assert.fail("resolution failed", e);
+        }
+
+        return context.getResolvedAttributes().get(attributeName);
+
+    }
+    
+    @Test public void testExamples() throws ScriptException, IOException, ComponentInitializationException {
+        
+        Attribute attribute = runExample("example1.script", "example1.attribute.xml", "swissEduPersonUniqueID");
+        
+        Assert.assertEquals(attribute.getValues().iterator().next().getValue(), 
+                            DigestUtils.md5Hex("12345678some#salt#value#12345679")+"@switch.ch");
+        
+        attribute = runExample("example2.script", "example2.attribute.xml", "eduPersonAffiliation");
+        HashSet<AttributeValue> set = new HashSet(attribute.getValues());
+        Assert.assertEquals(set.size(), 3);
+        Assert.assertTrue(set.contains(new StringAttributeValue("affiliate")));
+        Assert.assertTrue(set.contains(new StringAttributeValue("student")));
+        Assert.assertTrue(set.contains(new StringAttributeValue("staff")));
+
+        attribute = runExample("example3.script", "example3.attribute.xml", "eduPersonAffiliation");
+        set = new HashSet(attribute.getValues());
+        Assert.assertEquals(set.size(), 2);
+        Assert.assertTrue(set.contains(new StringAttributeValue("member")));
+        Assert.assertTrue(set.contains(new StringAttributeValue("staff")));
+
+        attribute = runExample("example3.script", "example3.attribute.2.xml", "eduPersonAffiliation");
+        set = new HashSet(attribute.getValues());
+        Assert.assertEquals(set.size(), 3);
+        Assert.assertTrue(set.contains(new StringAttributeValue("member")));
+        Assert.assertTrue(set.contains(new StringAttributeValue("staff")));
+        Assert.assertTrue(set.contains(new StringAttributeValue("walkin")));
+        
+        attribute = runExample("example4.script", "example4.attribute.xml", "eduPersonEntitlement");
+        set = new HashSet(attribute.getValues());
+        Assert.assertEquals(set.size(), 1);
+        Assert.assertTrue(set.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
+
+        attribute = runExample("example4.script", "example4.attribute.2.xml", "eduPersonEntitlement");
+        set = new HashSet(attribute.getValues());
+        Assert.assertEquals(set.size(), 2);
+        Assert.assertTrue(set.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
+        Assert.assertTrue(set.contains(new StringAttributeValue("LittleGreenMen")));
+
+        attribute = runExample("example4.script", "example4.attribute.3.xml", "eduPersonEntitlement");
+        Assert.assertNull(attribute);
+
+    }
+    
+    
+    final class Locator implements Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>> {
+
+        final EntityAttributes obj;
+
+        public Locator(String file) {
+            obj = (EntityAttributes) unmarshallElement(fileNameToPath(file));
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public List<org.opensaml.saml.saml2.core.Attribute> apply(@Nullable AttributeResolutionContext input) {
+            return obj.getAttributes();
+        }
+
+    }
+
+
 
 }
