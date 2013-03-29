@@ -165,11 +165,7 @@ public class ScriptedAttribute {
             // We have called getValues - this is what we will keep up to date
             attributeValues.add(what);
         } else {
-            // update the encapsulated attribute
-            Set<AttributeValue> values = new HashSet<AttributeValue>(encapsulatedAttribute.getValues());
-
-            addValue(values, what);
-            encapsulatedAttribute.setValues(values);
+            addValue(encapsulatedAttribute.getValues(), what);
         }
     }
 

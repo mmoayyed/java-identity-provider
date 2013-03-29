@@ -155,9 +155,9 @@ public class Attribute implements Comparable<Attribute>, Cloneable {
     }
 
     /**
-     * Gets the unordered, unmodifiable collection of values of the attribute.
+     * Gets the unordered, but guarded, collection of values of the attribute.
      * 
-     * @return values of the attribute
+     * @return values of the attribute.  
      */
     @Nonnull @NonnullElements public Set<AttributeValue> getValues() {
         return values;
