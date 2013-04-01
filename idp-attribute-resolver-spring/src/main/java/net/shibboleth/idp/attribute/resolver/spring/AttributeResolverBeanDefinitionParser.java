@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorBeanDefinitionParser;
 import net.shibboleth.idp.spring.SpringSupport;
@@ -34,7 +33,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 // TODO incomplete port from v2
-/** Bean definition parser for an {@link AttributeResolver}. */
+/** Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. */
 public class AttributeResolverBeanDefinitionParser implements BeanDefinitionParser {
 
     /** Element name. */

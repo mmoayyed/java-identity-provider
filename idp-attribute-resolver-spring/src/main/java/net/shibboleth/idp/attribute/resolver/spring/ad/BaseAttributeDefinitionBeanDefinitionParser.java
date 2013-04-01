@@ -17,13 +17,16 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginBeanDefinitionParser;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +55,11 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
     private Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
+    // TODO Needs refitted into the V3 skeleton
     protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
 
+        log.debug("Old code");
         // String sourceAttributeId = pluginConfig.getAttributeNS(null, "sourceAttributeID");
         // log.debug("Setting source attribute ID for attribute definition {} to: {}", pluginId, sourceAttributeId);
         // pluginBuilder.addPropertyValue("sourceAttributeId", sourceAttributeId);
@@ -96,12 +101,12 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
      * 
      * @return the localized string indexed by locale
      */
-    // protected Map<Locale, String> processLocalizedElement(List<Element> elements) {
-    // HashMap<Locale, String> localizedString = new HashMap<Locale, String>(elements.size());
-    // for (Element element : elements) {
-    // localizedString.put(XMLHelper.getLanguage(element), element.getTextContent());
-    // }
+    protected Map<Locale, String> processLocalizedElement(List<Element> elements) {
+        HashMap<Locale, String> localizedString = new HashMap<Locale, String>(elements.size());
+        for (Element element : elements) {
+            localizedString.put(AttributeSupport.getXMLLangAsLocale(element), element.getTextContent());
+        }
 
-    // return localizedString;
-    // }
+        return localizedString;
+    }
 }

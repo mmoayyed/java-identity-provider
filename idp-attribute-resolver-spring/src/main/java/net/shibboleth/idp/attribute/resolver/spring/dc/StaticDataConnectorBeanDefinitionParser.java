@@ -74,6 +74,7 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
     }
 
     /** {@inheritDoc} */
+    // TODO Remove code or remove comment
     // protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
     // BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
     // super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
@@ -90,6 +91,7 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
      * 
      * @return the static {@link BaseAttribute}s
      */
+    // TODO Remove code or remove comment
     // protected List<BaseAttribute<String>> processAttributes(List<Element> attributeElems) {
     // if (attributeElems == null || attributeElems.size() == 0) {
     // return null;

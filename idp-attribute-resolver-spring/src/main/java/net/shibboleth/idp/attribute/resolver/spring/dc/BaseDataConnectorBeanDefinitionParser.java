@@ -54,6 +54,7 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends BaseResolver
     private final Logger log = LoggerFactory.getLogger(BaseDataConnectorBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
+    // TODO Needs refitted into the V3 skeleton
     protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
 

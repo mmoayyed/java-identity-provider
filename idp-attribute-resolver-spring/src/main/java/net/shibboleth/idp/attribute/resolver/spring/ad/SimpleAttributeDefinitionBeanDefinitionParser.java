@@ -31,11 +31,11 @@ import org.w3c.dom.Element;
 /** Bean definition parser for a {@link SimpleAttributeDefinition}. */
 public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseResolverPluginBeanDefinitionParser {
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(SimpleAttributeDefinitionBeanDefinitionParser.class);
-
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(SimpleAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -46,9 +46,8 @@ public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseResolverP
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        // TODO sourceAttributeId
-        // String sourceAttributeId = element.getAttributeNS(null, "sourceAttributeID");
-        // log.debug("Setting source attribute ID for attribute definition {} to: {}", element, sourceAttributeId);
-        // pluginBuilder.addPropertyValue("sourceAttributeId", sourceAttributeId);
+        String sourceAttributeId = config.getAttributeNS(null, "sourceAttributeID");
+        log.debug("Setting source attribute ID for attribute definition {} to: {}", config, sourceAttributeId);
+        builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
     }
 }
