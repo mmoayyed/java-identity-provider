@@ -43,7 +43,11 @@ public class WebflowRequestContextHttpServletRequestLookup implements
             log.debug("Webflow RequestContext's ExternalContext was null");
             return null;
         }
-
-        return (HttpServletRequest) externalContext.getNativeRequest();
+        
+        if (externalContext.getNativeRequest() instanceof HttpServletRequest) {
+            return (HttpServletRequest) externalContext.getNativeRequest();
+        }
+        
+        return null;
     }
 }

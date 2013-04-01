@@ -45,6 +45,10 @@ public class WebflowRequestContextHttpServletResponseLookup implements
             return null;
         }
 
-        return (HttpServletResponse) externalContext.getNativeResponse();
+        if (externalContext.getNativeResponse() instanceof HttpServletResponse) {
+            return (HttpServletResponse) externalContext.getNativeResponse();
+        }
+        
+        return null;
     }
 }
