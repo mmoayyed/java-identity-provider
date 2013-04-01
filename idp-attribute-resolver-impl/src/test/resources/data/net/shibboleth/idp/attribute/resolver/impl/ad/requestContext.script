@@ -1,3 +1,5 @@
-scripted.addValue(requestContext.getPrincipalName());
-scripted.addValue(requestContext.getLocalEntityId());
-scripted.addValue(requestContext.getPeerEntityId());
+if (scripted.getId() == "scripted") {
+  scripted.addValue(requestContext.getPrincipalName());
+  scripted.addValue(requestContext.getLocalEntityId());
+  scripted.addValue(requestContext.getPeerEntityId());
+}

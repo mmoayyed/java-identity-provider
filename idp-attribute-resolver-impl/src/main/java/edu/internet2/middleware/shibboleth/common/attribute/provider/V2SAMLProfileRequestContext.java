@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.mail.Session;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -37,11 +36,6 @@ import org.opensaml.saml.metadata.MetadataProvider;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.security.credential.Credential;
-import org.opensaml.ws.message.handler.HandlerChainResolver;
-import org.opensaml.ws.security.SecurityPolicyResolver;
-import org.opensaml.ws.transport.InTransport;
-import org.opensaml.ws.transport.OutTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,7 +189,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public Credential getOuboundSAMLMessageSigningCredential() {
+    public Object getOuboundSAMLMessageSigningCredential() {
         log.error("AttributeDefinition: '{}' call unsupported method getOuboundSAMLMessageSigningCredential", getId());
         return null;
     }
@@ -415,7 +409,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setMetadataProvider(MetadataProvider param) {
+    public void setMetadataProvider(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setMetadataProvider", getId());
 
     }
@@ -465,7 +459,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setOutboundSAMLMessageSigningCredential(Credential param) {
+    public void setOutboundSAMLMessageSigningCredential(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setOutboundSAMLMessageSigningCredential", getId());
 
     }
@@ -585,7 +579,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public InTransport getInboundMessageTransport() {
+    public Object getInboundMessageTransport() {
         log.error("AttributeDefinition: '{}' call unsupported method getInboundMessageTransport", getId());
         return null;
     }
@@ -615,7 +609,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public OutTransport getOutboundMessageTransport() {
+    public Object getOutboundMessageTransport() {
         log.error("AttributeDefinition: '{}' call unsupported method getOutboundMessageTransport", getId());
         return null;
     }
@@ -625,7 +619,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public SecurityPolicyResolver getSecurityPolicyResolver() {
+    public Object getSecurityPolicyResolver() {
         log.error("AttributeDefinition: '{}' call unsupported method getSecurityPolicyResolver", getId());
         return null;
     }
@@ -675,7 +669,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setInboundMessageTransport(InTransport param) {
+    public void setInboundMessageTransport(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setInboundMessageTransport", getId());
 
     }
@@ -705,7 +699,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setOutboundMessageTransport(OutTransport param) {
+    public void setOutboundMessageTransport(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setOutboundMessageTransport", getId());
 
     }
@@ -715,7 +709,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setSecurityPolicyResolver(SecurityPolicyResolver param) {
+    public void setSecurityPolicyResolver(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setSecurityPolicyResolver", getId());
 
     }
@@ -725,7 +719,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public HandlerChainResolver getPreSecurityInboundHandlerChainResolver() {
+    public Object getPreSecurityInboundHandlerChainResolver() {
         log.error("AttributeDefinition: '{}' call unsupported method getPreSecurityInboundHandlerChainResolver",
                 getId());
         return null;
@@ -736,7 +730,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setPreSecurityInboundHandlerChainResolver(HandlerChainResolver param) {
+    public void setPreSecurityInboundHandlerChainResolver(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setPreSecurityInboundHandlerChainResolver",
                 getId());
 
@@ -747,7 +741,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public HandlerChainResolver getPostSecurityInboundHandlerChainResolver() {
+    public Object getPostSecurityInboundHandlerChainResolver() {
         log.error("AttributeDefinition: '{}' call unsupported method getPostSecurityInboundHandlerChainResolver",
                 getId());
         return null;
@@ -758,7 +752,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setPostSecurityInboundHandlerChainResolver(HandlerChainResolver param) {
+    public void setPostSecurityInboundHandlerChainResolver(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setPostSecurityInboundHandlerChainResolver",
                 getId());
 
@@ -769,7 +763,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public HandlerChainResolver getOutboundHandlerChainResolver() {
+    public Object getOutboundHandlerChainResolver() {
         log.error("AttributeDefinition: '{}' call unsupported method getOutboundHandlerChainResolver", getId());
         return null;
     }
@@ -779,7 +773,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setOutboundHandlerChainResolver(HandlerChainResolver param) {
+    public void setOutboundHandlerChainResolver(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setOutboundHandlerChainResolver", getId());
 
     }
@@ -809,7 +803,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public Session getUserSession() {
+    public Object getUserSession() {
         log.error("AttributeDefinition: '{}' call unsupported method getUserSession", getId());
         return null;
     }
@@ -839,7 +833,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setUserSession(Session param) {
+    public void setUserSession(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setUserSession", getId());
 
     }

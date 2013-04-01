@@ -369,6 +369,19 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         
     }
     
+    @Test public void testUnimplementedV2Context() throws IOException, ComponentInitializationException, ResolutionException, ScriptException {
+        
+        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
+        scripted.setId("scripted");
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContextUnimplemented.script")));
+        scripted.initialize();
+        
+        Optional<Attribute> result = scripted.doAttributeDefinitionResolve(generateContext());
+        Assert.assertEquals(result.get().getValues().iterator().next(), new StringAttributeValue("AllDone"));
+        
+    }
+
+    
     private static AttributeResolutionContext generateContext() {
         return TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
     }
