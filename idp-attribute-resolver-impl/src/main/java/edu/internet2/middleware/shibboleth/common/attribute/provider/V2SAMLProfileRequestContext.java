@@ -26,8 +26,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -791,7 +789,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public ProfileConfiguration getProfileConfiguration() {
+    public Object getProfileConfiguration() {
         log.error("AttributeDefinition: '{}' call unsupported method getProfileConfiguration", getId());
         return null;
     }
@@ -801,7 +799,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @return null
      */
-    public RelyingPartyConfiguration getRelyingPartyConfiguration() {
+    public Object getRelyingPartyConfiguration() {
         log.error("AttributeDefinition: '{}' call unsupported method getRelyingPartyConfiguration", getId());
         return null;
     }
@@ -821,7 +819,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setProfileConfiguration(ProfileConfiguration param) {
+    public void setProfileConfiguration(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setProfileConfiguration", getId());
 
     }
@@ -831,7 +829,7 @@ public class V2SAMLProfileRequestContext implements IdentifiableComponent {
      * 
      * @param param ignored.
      */
-    public void setRelyingPartyConfiguration(RelyingPartyConfiguration param) {
+    public void setRelyingPartyConfiguration(Object param) {
         log.error("AttributeDefinition: '{}' call unsupported method setRelyingPartyConfiguration", getId());
 
     }
