@@ -17,20 +17,29 @@
 
 package edu.internet2.middleware.shibboleth.common.attribute.provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute;
 
 /**
- * A class which is here solely to provide compatibility for V2 scripted attribute definitions. 
- * The assumption is that a constructor will be called with a string and that only {@link #getValues()} 
- * would be called from then on.
+ * A class which is here solely to provide compatibility for V2 scripted attribute definitions. The assumption is that a
+ * constructor will be called with a string and that only {@link #getValues()} would be called from then on.
  */
-public class BasicAttribute extends ScriptedAttribute{
+public class BasicAttribute extends ScriptedAttribute {
+
+    /** Log. */
+    private Logger log = LoggerFactory.getLogger(BasicAttribute.class);
+
     /**
      * Constructor.
+     * 
      * @param id The attribute Id.
      */
     public BasicAttribute(String id) {
         super(new Attribute(id));
+        log.info("Scripted Attribute Definition: {} Use of V2 emulated class \""
+                + "BasicAttribute\", consider replacing this code", id);
     }
 }

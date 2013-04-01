@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
+import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
+
 /**
  * An {@link BaseAttributeDefinition} that executes a script in order to populate the values of the generated attribute.
  * 
@@ -114,12 +116,12 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         }
 
         if (result instanceof ScriptedAttribute) {
-            
+
             ScriptedAttribute scriptedAttribute = (ScriptedAttribute) result;
             return Optional.of(scriptedAttribute.getResultingAttribute());
-            
+
         } else {
-            
+
             throw new ResolutionException("AttributeDefinition '" + getId() + "'returned variable was of wrong type ("
                     + result.getClass().toString() + ")");
         }
@@ -163,6 +165,10 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
         log.debug("Attribute definition '{}': adding current attribute resolution context to script context", getId());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
+
+        log.debug("Attribute definition '{}': adding emulated V2 request context context to script context", getId());
+        scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
+                ScriptContext.ENGINE_SCOPE);
 
         for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("Attribute definition '{}': adding dependant attribute '{}' "
