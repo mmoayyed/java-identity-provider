@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.messaging.profile.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,9 +213,9 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
      * 
      * @throws ProfileException thrown if there is a problem executing the profile action
      */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final RequestContext springRequestContext,
-            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+    protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
             throws ProfileException {
         return doExecute(httpRequest, httpResponse, profileRequestContext);
     }
@@ -228,8 +231,9 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
      * 
      * @throws ProfileException thrown if there is a problem executing the profile action
      */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
+    protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
+            @Nullable final HttpServletResponse httpResponse,
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
             throws ProfileException {
         throw new UnsupportedOperationException();
     }
