@@ -1,0 +1,31 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <on-start>
+        <evaluate expression="InitializeProfileRequestContext" />
+    </on-start>
+    
+    <action-state id="StaticResolver">
+        <evaluate expression="StaticResolver" />
+        <transition on="proceed" to="OutputAttributes" />
+    </action-state>
+
+    <action-state id="OutputAttributes">
+        <evaluate expression="OutputAttributes" />
+        <transition on="proceed" to="end" />
+    </action-state>
+
+    <end-state id="end" />
+
+    <end-state id="error" />
+
+    <global-transitions>
+        <transition on="#{currentEvent.id.startsWith('Unable')}" to="error" />
+        <transition on="#{currentEvent.id.startsWith('Invalid')}" to="error" />
+    </global-transitions>
+
+    <bean-import resource="cli-flow-beans.xml" />
+
+</flow>

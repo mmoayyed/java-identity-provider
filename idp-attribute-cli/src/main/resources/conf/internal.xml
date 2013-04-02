@@ -6,7 +6,7 @@
         <property name="id" value="shibboleth.LogbackLogging"/>
         <property name="loggingConfiguration">
             <bean class="net.shibboleth.utilities.java.support.resource.ClasspathResource" init-method="initialize" destroy-method="destroy">
-                <constructor-arg value="logging.xml"/>
+                <constructor-arg value="conf/logging.xml"/>
             </bean>
         </property>
         <property name="reloadCheckDelay" value="0"/>
@@ -50,9 +50,9 @@
                         <value>http://apache.org/xml/properties/security-manager</value>
                     </key>
                     <!-- Works for Xerces. -->
-                    <!-- <bean id="shibboleth.XercesSecurityManager" class="org.apache.xerces.util.SecurityManager"/> -->
+                    <bean id="shibboleth.XercesSecurityManager" class="org.apache.xerces.util.SecurityManager"/>
                     <!-- Sun's version. -->
-                    <bean id="shibboleth.XercesSecurityManager" class="com.sun.org.apache.xerces.internal.util.SecurityManager"/>
+                    <!-- <bean id="shibboleth.XercesSecurityManager" class="com.sun.org.apache.xerces.internal.util.SecurityManager"/> -->
                 </entry>
             </map>
         </property>

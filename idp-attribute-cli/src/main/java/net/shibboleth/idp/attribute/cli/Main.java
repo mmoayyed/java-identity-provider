@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.executor.FlowExecutionResult;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.test.MockExternalContext;
 
@@ -76,7 +77,17 @@ public final class Main {
         ApplicationContext appCtx = buildApplicationContext();
         
         FlowExecutor flowExecutor = appCtx.getBean("flowExecutor", FlowExecutor.class);
-        flowExecutor.launchExecution("myFlow", null, new MockExternalContext());
+        MockExternalContext mockCtx = new MockExternalContext();
+        FlowExecutionResult result = flowExecutor.launchExecution("cli-flow", null, mockCtx);
+        if (result.isEnded()) {
+            if ("end".equals(result.getOutcome().getId())) {
+                System.out.print(mockCtx.getMockResponseWriter().toString());
+            } else {
+                System.err.println("Flow did not end successfully.");
+            }
+        } else {
+            System.err.println("Flow did not end.");
+        }
     }
 
     /**
