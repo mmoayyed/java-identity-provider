@@ -28,6 +28,8 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /** Bean definition parser for a {@link ResolverPluginDependency}. */
 public class ResolverPluginDependencyBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -49,8 +51,21 @@ public class ResolverPluginDependencyBeanDefinitionParser extends AbstractSingle
         log.info("Parsing configuration for {} with pluginId : {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);
 
-        // TODO null checking ?
-        String attributeId = config.getParentNode().getAttributes().getNamedItemNS(null, "id").getNodeValue();
+        NamedNodeMap parentAttr = config.getParentNode().getAttributes();
+        String attributeId;
+        if (null == parentAttr) {
+            log.error("Parsing configuration for {}: no parent element or no attributes.",  config.getLocalName());
+            attributeId = config.getLocalName() + "MISSING_PARENT";
+        } else {
+            Node attr = parentAttr.getNamedItemNS(null, "id");
+            if (null == attr) {
+                log.error("Parsing configuration for {}: no 'id' in parent element.",  config.getLocalName());
+                attributeId = config.getLocalName() + "MISSING_PARENTS_ID";
+            } else {
+                attributeId = attr.getNodeValue();
+            }
+        }
+        
         log.info("Parsing configuration for {} with attributeId : {}", config.getLocalName(), attributeId);
         builder.addConstructorArgValue(attributeId);
     }

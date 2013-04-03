@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration>
+    <logger name="net.shibboleth.idp.attribute.resolver.spring" level="DEBUG"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -10,7 +11,7 @@
     </appender>
 
     <root>
-        <level value="warn" />
+        <level value="WARN" />
         <appender-ref ref="STDOUT" />
     </root>
     
