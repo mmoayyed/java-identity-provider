@@ -106,12 +106,12 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         try {
             script.eval(context);
         } catch (ScriptException e) {
-            throw new ResolutionException("AttributeDefinition '" + getId() + "' unable to execute script", e);
+            throw new ResolutionException("AttributeDefinition '" + getId() + "': unable to execute script", e);
         }
         Object result = context.getAttribute(getId());
 
         if (null == result) {
-            log.info("AttributeDefinition '{}' No value returned", getId());
+            log.info("AttributeDefinition '{}': No value returned", getId());
             return Optional.absent();
         }
 
@@ -122,7 +122,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
         } else {
 
-            throw new ResolutionException("AttributeDefinition '" + getId() + "'returned variable was of wrong type ("
+            throw new ResolutionException("AttributeDefinition '" + getId() + "': returned variable was of wrong type ("
                     + result.getClass().toString() + ")");
         }
 
