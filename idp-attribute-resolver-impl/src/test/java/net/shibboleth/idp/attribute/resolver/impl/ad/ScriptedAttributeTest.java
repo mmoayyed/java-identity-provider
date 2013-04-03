@@ -30,6 +30,7 @@ import javax.script.ScriptException;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
@@ -63,7 +64,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
-    
+
     private String fileNameToPath(String fileName) {
         return "/data/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
     }
@@ -136,8 +137,9 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             ScriptException, IOException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
+        final AttributeValue attributeValue = new StringAttributeValue(SIMPLE_VALUE);
 
-        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
+        test.getValues().add(attributeValue);
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
@@ -151,16 +153,11 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
-        Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+        Assert.assertEquals(results.iterator().next(), attributeValue, "Scripted result contains known value");
     }
 
-    @Test public void testFails() throws ResolutionException, ComponentInitializationException, ScriptException,
-            IOException {
-
-        final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
-
-        test.getValues().add(new StringAttributeValue(SIMPLE_VALUE));
-
+    private ScriptedAttributeDefinition buildTest(String failingScript) throws ScriptException, IOException,
+            ComponentInitializationException {
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         attr.setId(TEST_ATTRIBUTE_NAME);
         try {
@@ -170,15 +167,44 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             // OK
         }
 
-        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("fails.script")));
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(failingScript)));
         attr.initialize();
 
+        return attr;
+    }
+
+    private void failureTest(String failingScript, String failingMessage) throws ScriptException, IOException,
+            ComponentInitializationException {
         try {
-            attr.doAttributeDefinitionResolve(generateContext());
-            Assert.fail("Should have thrown an exception");
+            buildTest(failingScript).doAttributeDefinitionResolve(generateContext());
+            Assert.fail("Script: '" + failingScript + "' should have thrown an exception: " + failingMessage);
         } catch (ResolutionException ex) {
             // OK
         }
+    }
+
+    @Test public void testFails() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
+
+        failureTest("fail1.script", "Unknown method");
+        failureTest("fail2.script", "Bad output type");
+        Assert.assertFalse(buildTest("fail3.script").doAttributeDefinitionResolve(generateContext()).isPresent(),
+                "returns nothing");
+        failureTest("fail4.script", "getValues, then getNativeAttributes");
+        failureTest("fail5.script", "getNativeAttributes, then getValues");
+
+        failureTest("fail6.script", "bad type added");
+        failureTest("fail7.script", "null added ");
+    }
+
+    @Test public void testAddAfterGetValues() throws ResolutionException, ScriptException, IOException,
+            ComponentInitializationException {
+
+        final Attribute result =
+                buildTest("addAfterGetValues.script").doAttributeDefinitionResolve(generateContext()).get();
+        final Set<AttributeValue> values = result.getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("newValue")));
     }
 
     /**
@@ -216,15 +242,47 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final AttributeResolutionContext context = generateContext();
         resolver.resolveAttributes(context);
         final Attribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
-        final Collection<AttributeValue> values = attribute.getValues();
+        final Set<AttributeValue> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
-        for (AttributeValue value : values) {
-            Assert.assertTrue(
-                    value.equals(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT)
-                            || value.equals(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT), "looking for value "
-                            + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + " or "
-                            + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + ", found:" + value.toString());
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
+        Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT));
+
+    }
+
+    @Test public void testWithNonString() throws ResolutionException, ComponentInitializationException,
+            ScriptException, IOException {
+
+        // Set the dependency on the data connector
+        final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        ds.add(new ResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, null));
+        
+        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
+        scripted.setId(TEST_ATTRIBUTE_NAME);
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes2.script")));
+        scripted.setDependencies(ds);
+        scripted.initialize();
+
+        // And resolve
+        final Set<BaseAttributeDefinition> attrDefinitions = new HashSet<BaseAttributeDefinition>(3);
+        attrDefinitions.add(scripted);
+        BaseAttributeDefinition nonString = TestSources.nonStringAttributeDefiniton(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR); 
+        attrDefinitions.add(nonString);
+        attrDefinitions.add(TestSources.populatedStaticAttribute());
+
+        final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, null);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = generateContext();
+        resolver.resolveAttributes(context);
+        final Attribute attribute = context.getResolvedAttributes().get(TEST_ATTRIBUTE_NAME);
+        final Set<AttributeValue> values = attribute.getValues();
+
+        Assert.assertEquals(values.size(), 2);
+        for (AttributeValue value: values) {
+            if (!(value instanceof XMLObjectAttributeValue)) {
+                Assert.fail("Wrong type: " + value.getClass().getName());
+            }
         }
     }
 
@@ -279,14 +337,15 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(values.size(), 1, "looking for context");
         Assert.assertEquals(values.iterator().next().getValue(), "TestContainerContextid");
     }
-    
-    protected Attribute runExample(String exampleScript, String exampleData, String attributeName) throws ScriptException, IOException, ComponentInitializationException {
+
+    protected Attribute runExample(String exampleScript, String exampleData, String attributeName)
+            throws ScriptException, IOException, ComponentInitializationException {
         SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setAttributesStrategy(new Locator(exampleData));
         connector.setId("Connector");
-        
-        final Set<ResolverPluginDependency> ds = Collections.singleton(new ResolverPluginDependency("Connector",null));
-        
+
+        final Set<ResolverPluginDependency> ds = Collections.singleton(new ResolverPluginDependency("Connector", null));
+
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId(attributeName);
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript(exampleScript)));
@@ -294,12 +353,13 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final Set<BaseDataConnector> dataDefinitions = Collections.singleton((BaseDataConnector) connector);
         final Set<BaseAttributeDefinition> attrDefinitions = Collections.singleton((BaseAttributeDefinition) scripted);
-        
+
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
 
-        final AttributeResolutionContext context = TestSources.createResolutionContext("principal", "issuer", "recipient");
-                
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext("principal", "issuer", "recipient");
+
         try {
             resolver.resolveAttributes(context);
         } catch (ResolutionException e) {
@@ -309,14 +369,14 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         return context.getResolvedAttributes().get(attributeName);
 
     }
-    
+
     @Test public void testExamples() throws ScriptException, IOException, ComponentInitializationException {
-        
+
         Attribute attribute = runExample("example1.script", "example1.attribute.xml", "swissEduPersonUniqueID");
-        
-        Assert.assertEquals(attribute.getValues().iterator().next().getValue(), 
-                            DigestUtils.md5Hex("12345678some#salt#value#12345679")+"@switch.ch");
-        
+
+        Assert.assertEquals(attribute.getValues().iterator().next().getValue(),
+                DigestUtils.md5Hex("12345678some#salt#value#12345679") + "@switch.ch");
+
         attribute = runExample("example2.script", "example2.attribute.xml", "eduPersonAffiliation");
         HashSet<AttributeValue> set = new HashSet(attribute.getValues());
         Assert.assertEquals(set.size(), 3);
@@ -336,7 +396,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertTrue(set.contains(new StringAttributeValue("member")));
         Assert.assertTrue(set.contains(new StringAttributeValue("staff")));
         Assert.assertTrue(set.contains(new StringAttributeValue("walkin")));
-        
+
         attribute = runExample("example4.script", "example4.attribute.xml", "eduPersonEntitlement");
         set = new HashSet(attribute.getValues());
         Assert.assertEquals(set.size(), 1);
@@ -353,39 +413,41 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     }
 
-    @Test public void testV2Context() throws IOException, ComponentInitializationException, ResolutionException, ScriptException {
-        
+    @Test public void testV2Context() throws IOException, ComponentInitializationException, ResolutionException,
+            ScriptException {
+
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId("scripted");
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContext.script")));
         scripted.initialize();
-        
+
         Optional<Attribute> result = scripted.doAttributeDefinitionResolve(generateContext());
         HashSet<AttributeValue> set = new HashSet(result.get().getValues());
         Assert.assertEquals(set.size(), 3);
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.IDP_ENTITY_ID)));
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.SP_ENTITY_ID)));
-        
+
     }
-    
-    @Test public void testUnimplementedV2Context() throws IOException, ComponentInitializationException, ResolutionException, ScriptException {
-        
+
+    @Test public void testUnimplementedV2Context() throws IOException, ComponentInitializationException,
+            ResolutionException, ScriptException {
+
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
         scripted.setId("scripted");
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContextUnimplemented.script")));
         scripted.initialize();
-        
+
         Optional<Attribute> result = scripted.doAttributeDefinitionResolve(generateContext());
         Assert.assertEquals(result.get().getValues().iterator().next(), new StringAttributeValue("AllDone"));
-        
+
     }
 
-    
     private static AttributeResolutionContext generateContext() {
-        return TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
+        return TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                TestSources.SP_ENTITY_ID);
     }
-    
+
     final class Locator implements Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>> {
 
         final EntityAttributes obj;
