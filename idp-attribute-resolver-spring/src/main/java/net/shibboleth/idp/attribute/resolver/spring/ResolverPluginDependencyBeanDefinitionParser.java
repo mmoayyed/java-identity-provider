@@ -52,22 +52,25 @@ public class ResolverPluginDependencyBeanDefinitionParser extends AbstractSingle
         builder.addConstructorArgValue(pluginId);
 
         NamedNodeMap parentAttr = config.getParentNode().getAttributes();
-        String attributeId;
+        //
+        // TODO, these are only present in Attribute Definitions, maybe we should inject them post ad hoc 
+        // in the BaseAttributeefinitionParser
+        String sourceAttributeId;
         if (null == parentAttr) {
-            log.error("Parsing configuration for {}: no parent element or no attributes.",  config.getLocalName());
-            attributeId = config.getLocalName() + "MISSING_PARENT";
+            log.debug("Parsing configuration for {}: no parent element or no attributes.",  config.getLocalName());
+            sourceAttributeId = null;
         } else {
-            Node attr = parentAttr.getNamedItemNS(null, "id");
+            Node attr = parentAttr.getNamedItemNS(null, "sourceAttributeID");
             if (null == attr) {
-                log.error("Parsing configuration for {}: no 'id' in parent element.",  config.getLocalName());
-                attributeId = config.getLocalName() + "MISSING_PARENTS_ID";
+                log.debug("Parsing configuration for {}: no 'sourceAttributeID' in parent element, probably a DataConnector.",  config.getLocalName());
+                sourceAttributeId = null;
             } else {
-                attributeId = attr.getNodeValue();
+                sourceAttributeId = attr.getNodeValue();
             }
         }
         
-        log.info("Parsing configuration for {} with attributeId : {}", config.getLocalName(), attributeId);
-        builder.addConstructorArgValue(attributeId);
+        log.info("Parsing configuration for {} with attributeId : {}", config.getLocalName(), sourceAttributeId);
+        builder.addConstructorArgValue(sourceAttributeId);
     }
 
     /** {@inheritDoc} */

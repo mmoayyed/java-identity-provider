@@ -1,4 +1,4 @@
-<thing id="TheThing">
+<thing sourceAttributeID="TheThing">
   <resolver:Dependency xmlns:resolver="urn:mace:shibboleth:2.0:resolver" ref="TheHasRef" /> 
 </thing>
   

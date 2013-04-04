@@ -22,8 +22,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginBeanDefinitionParser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -34,9 +32,6 @@ public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseResolverP
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(SimpleAttributeDefinitionBeanDefinitionParser.class);
-
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
         return SimpleAttributeDefinition.class;
@@ -45,9 +40,5 @@ public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseResolverP
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-
-        String sourceAttributeId = config.getAttributeNS(null, "sourceAttributeID");
-        log.debug("Setting source attribute ID for attribute definition {} to: {}", config, sourceAttributeId);
-        builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
     }
 }
