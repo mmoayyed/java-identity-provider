@@ -169,7 +169,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * @param attributeEncoders encoders used to encode the values of this attribute in to protocol specific formats
      */
     public synchronized void setAttributeEncoders(
-            @Nullable @NullableElements final List<AttributeEncoder<?>> attributeEncoders) {
+            @Nullable @NullableElements final Set<AttributeEncoder<?>> attributeEncoders) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

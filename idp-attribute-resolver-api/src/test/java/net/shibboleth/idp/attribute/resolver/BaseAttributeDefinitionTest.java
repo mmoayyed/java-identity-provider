@@ -18,10 +18,13 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
@@ -82,7 +85,7 @@ public class BaseAttributeDefinitionTest {
         MockAttributeEncoder enc1 = new MockAttributeEncoder(null, null);
         MockAttributeEncoder enc2 = new MockAttributeEncoder(null, null);
 
-        ArrayList<AttributeEncoder<?>> encoders = new ArrayList<AttributeEncoder<?>>();
+        Set<AttributeEncoder<?>> encoders = new HashSet<AttributeEncoder<?>>(2);
 
         definition.setAttributeEncoders(null);
         Assert.assertNotNull(definition.getAttributeEncoders());
@@ -190,8 +193,9 @@ public class BaseAttributeDefinitionTest {
         MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
         MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", (Attribute) null);
         
-        List list = Lists.newArrayList((AttributeEncoder<?>)encoder); 
-        definition.setAttributeEncoders(list);
+        Set<AttributeEncoder<?>> encoders = new HashSet<AttributeEncoder<?>>(1);
+        encoders.add(encoder);
+        definition.setAttributeEncoders(encoders);
         
         Assert.assertFalse(encoder.isInitialized());
         Assert.assertFalse(encoder.getValidateCount() > 0);
