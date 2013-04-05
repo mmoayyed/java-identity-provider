@@ -17,11 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +32,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 
 /**
  * Unit test for {@link BaseAttributeDefinition}. This test does not test any methods inherited from
@@ -60,7 +56,7 @@ public class BaseAttributeDefinitionTest {
 
     /** Tests setting and retrieving the dependency only option. */
     @Test
-    public void testDependecyOnly() {
+    public void testDependencyOnly() {
         MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
         Assert.assertFalse(definition.isDependencyOnly());
 
