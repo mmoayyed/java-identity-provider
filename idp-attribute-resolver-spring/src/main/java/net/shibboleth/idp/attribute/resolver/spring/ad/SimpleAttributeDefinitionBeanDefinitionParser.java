@@ -20,14 +20,13 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginBeanDefinitionParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Bean definition parser for a {@link SimpleAttributeDefinition}. */
-public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseResolverPluginBeanDefinitionParser {
+public class SimpleAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");

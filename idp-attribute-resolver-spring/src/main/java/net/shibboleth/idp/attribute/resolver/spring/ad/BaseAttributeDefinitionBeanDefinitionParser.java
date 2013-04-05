@@ -26,7 +26,9 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginBeanDefinitionParser;
+import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO incomplete port from v2
 /**
  * Base spring bean definition parser for attribute definitions. AttributeDefinition implementations should provide a
  * custom BeanDefinitionParser by extending this class and overriding the doParse() method to parse any additional
@@ -55,43 +56,52 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
     private Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
-    // TODO Needs refitted into the V3 skeleton
-    protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
-            BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(config, parserContext, builder);
 
-        log.debug("Old code");
-        // String sourceAttributeId = pluginConfig.getAttributeNS(null, "sourceAttributeID");
-        // log.debug("Setting source attribute ID for attribute definition {} to: {}", pluginId, sourceAttributeId);
-        // pluginBuilder.addPropertyValue("sourceAttributeId", sourceAttributeId);
+        final List<Element> displayNames =
+                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+                        "DisplayName"));
+        if (displayNames != null && !displayNames.isEmpty()) {
+            final Map<Locale, String> names = processLocalizedElement(displayNames);
+            log.debug("AttributeDefinition {}: setting displayNames {}", getDefinitionId(), names);
+            builder.addPropertyValue("displayNames", names);
+        }
 
-        // List<Element> displayNames = pluginConfigChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-        // "DisplayName"));
-        // if (displayNames != null) {
-        // log.debug("Setting {} display names for attribute definition {}", displayNames.size(), pluginId);
-        // pluginBuilder.addPropertyValue("displayNames", processLocalizedElement(displayNames));
-        // }
+        final List<Element> displayDescriptions =
+                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+                        "DisplayDescription"));
+        if (displayDescriptions != null && !displayDescriptions.isEmpty()) {
+            final Map<Locale, String> names = processLocalizedElement(displayDescriptions);
+            log.debug("AttributeDefinition {}: setting displayDescriptions {}", getDefinitionId(), names);
+            builder.addPropertyValue("displayDescriptions", names);
+        }
 
-        // List<Element> displayDescriptions = pluginConfigChildren.get(new QName(
-        // AttributeResolverNamespaceHandler.NAMESPACE, "DisplayDescription"));
-        // if (displayDescriptions != null) {
-        // log.debug("Setting {} display descriptions for attribute definition {}", displayDescriptions.size(),
-        // pluginId);
-        // pluginBuilder.addPropertyValue("displayDescriptions", processLocalizedElement(displayDescriptions));
-        // }
+        Boolean dependencyOnly = new Boolean(false);
+        if (config.hasAttributeNS(null, "dependencyOnly")) {
+            dependencyOnly =
+                    AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "dependencyOnly"));
+            if (null == dependencyOnly) {
+                log.error("AttributeDefinition {}: value for 'dependencyOnly'"
+                        + " should be 'true','0','false', or '0'", getDefinitionId());
+                dependencyOnly = new Boolean(false);
+            }
+        }
 
-        // boolean dependencyOnly = false;
-        // if (pluginConfig.hasAttributeNS(null, "dependencyOnly")) {
-        // dependencyOnly = XMLHelper.getAttributeValueAsBoolean(pluginConfig.getAttributeNodeNS(null,
-        // "dependencyOnly"));
-        // }
-        // if (log.isDebugEnabled()) {
-        // log.debug("Attribute definition {} produces attributes that are only dependencies: {}", pluginId,
-        // dependencyOnly);
-        // }
-        // pluginBuilder.addPropertyValue("dependencyOnly", dependencyOnly);
+        log.debug("Configuration for {}: setting displayDescriptions {}", config.getLocalName(), dependencyOnly);
 
-        // pluginBuilder.addPropertyValue("attributeEncoders", SpringConfigurationUtils.parseInnerCustomElements(
-        // pluginConfigChildren.get(ATTRIBUTE_ENCODER_ELEMENT_NAME), parserContext));
+        builder.addPropertyValue("dependencyOnly", dependencyOnly);
+
+        final List<Element> attributeEncoders =
+                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+                        "AttributeEncoder"));
+
+        if (attributeEncoders != null && !attributeEncoders.isEmpty()) {
+            log.debug("Configuration for {}: adding {} encoders.", getDefinitionId(), attributeEncoders.size());
+            builder.addPropertyValue("attributeEncoders",
+                    SpringSupport.parseCustomElements(attributeEncoders, parserContext));
+        }
+
     }
 
     /**
