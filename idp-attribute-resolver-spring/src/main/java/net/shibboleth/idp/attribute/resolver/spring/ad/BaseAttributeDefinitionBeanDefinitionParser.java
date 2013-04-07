@@ -87,10 +87,14 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
                 dependencyOnly = new Boolean(false);
             }
         }
-
         log.debug("Configuration for {}: setting displayDescriptions {}", config.getLocalName(), dependencyOnly);
-
         builder.addPropertyValue("dependencyOnly", dependencyOnly);
+        
+        if (config.hasAttributeNS(null, "sourceAttributeID")) {
+            String sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
+            log.debug("Configuration for {}: setting sourceAttributeId {}", config.getLocalName(), sourceAttributeId);
+            builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
+        }
 
         final List<Element> attributeEncoders =
                 ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
@@ -101,7 +105,6 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
             builder.addPropertyValue("attributeEncoders",
                     SpringSupport.parseCustomElements(attributeEncoders, parserContext));
         }
-
     }
 
     /**

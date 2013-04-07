@@ -65,8 +65,9 @@ public class RegexAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
+        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        dependencySet.add(depend);
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
@@ -104,8 +105,9 @@ public class RegexAtributeTest {
         final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
-        attrDef.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
-                ResolverTestSupport.EPA_ATTRIB_ID)));
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        attrDef.setDependencies(Sets.newHashSet(depend));
         attrDef.initialize();
 
         try {
@@ -119,8 +121,9 @@ public class RegexAtributeTest {
     @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
-        Set<ResolverPluginDependency> pluginDependencies =
-                Sets.newHashSet(new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID));
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        Set<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(depend);
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         try {

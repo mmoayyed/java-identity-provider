@@ -27,27 +27,30 @@ public class ResolverPluginDependencyTest {
 
     /** Tests the state of a newly instantiated object. */
     @Test public void testInstantiation() {
-        ResolverPluginDependency dep = new ResolverPluginDependency(" foo ", " bar ");
+        ResolverPluginDependency dep = new ResolverPluginDependency(" foo ");
+        dep.setDependencyAttributeId(" bar ");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
         Assert.assertEquals(dep.getDependencyAttributeId().get(), "bar");
 
-        dep = new ResolverPluginDependency("foo ", "");
+        dep = new ResolverPluginDependency("foo ");
+        dep.setDependencyAttributeId( "");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
         Assert.assertFalse(dep.getDependencyAttributeId().isPresent());
 
-        dep = new ResolverPluginDependency("foo ", null);
+        dep = new ResolverPluginDependency("foo ");
+        dep.setDependencyAttributeId(null);
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
         Assert.assertFalse(dep.getDependencyAttributeId().isPresent());
 
         try {
-            dep = new ResolverPluginDependency(null, null);
+            dep = new ResolverPluginDependency(null);
             Assert.fail("able to set null dependency ID");
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            dep = new ResolverPluginDependency(" ", null);
+            dep = new ResolverPluginDependency(" ");
             Assert.fail("able to set empty dependency ID");
         } catch (ConstraintViolationException e) {
             // expected this
@@ -55,7 +58,8 @@ public class ResolverPluginDependencyTest {
     }
 
     @Test public void testEqualsToString() {
-        ResolverPluginDependency dep = new ResolverPluginDependency(" foo ", " bar ");
+        ResolverPluginDependency dep = new ResolverPluginDependency(" foo ");
+        dep.setDependencyAttributeId(" bar ");
 
         dep.toString();
 
@@ -63,12 +67,14 @@ public class ResolverPluginDependencyTest {
         Assert.assertTrue(dep.equals(dep));
         Assert.assertFalse(dep.equals(this));
 
-        ResolverPluginDependency other = new ResolverPluginDependency("foo", "bar  ");
+        ResolverPluginDependency other = new ResolverPluginDependency("foo");
+        other.setDependencyAttributeId("bar  ");
 
         Assert.assertTrue(dep.equals(other));
         Assert.assertEquals(dep.hashCode(), other.hashCode());
 
-        other = new ResolverPluginDependency(" bar ", " foo");
+        other = new ResolverPluginDependency(" bar ");
+        other.setDependencyAttributeId(" foo");
 
         Assert.assertFalse(dep.equals(other));
         Assert.assertNotSame(dep.hashCode(), other.hashCode());

@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -33,14 +35,27 @@ import org.w3c.dom.Element;
 /** Bean definition parser for a {@link BaseResolverPlugin}. */
 public abstract class BaseResolverPluginBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
+    /** An Id for the definition, used for debugging messages. */
+    private String defnId = "<Unnamed Attribute>";
+    
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseResolverPluginBeanDefinitionParser.class);
 
+    /** Helper for logging.
+     * @return the definition ID
+     */
+    @Nonnull protected String getDefinitionId() {
+        return defnId;
+    }
+    
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         log.info("Parsing configuration for {} plugin with id : {}", config.getLocalName(), id);
         builder.addPropertyValue("id", id);
+        if (null != id) {
+            defnId = id;
+        }
 
         // TODO possibly incorrect dependency handling
         List<Element> dependencyElements =

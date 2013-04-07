@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -166,10 +167,9 @@ public final class TestSources {
         defn.setId(name);
 
         // Set the dependency on the data connector
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
-        defn.setDependencies(dependencySet);
+        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME);
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        defn.setDependencies(Collections.singleton(depend));
         return defn;
     }
 
@@ -182,6 +182,12 @@ public final class TestSources {
         recipientContext.setAttributeIssuerID(issuerID);
         recipientContext.setAttributeRecipientID(recipientId);
         retVal.addSubcontext(recipientContext);
+        return retVal;
+    }
+    
+    public static ResolverPluginDependency makeResolverPluginDependency(String pluginId, String attributeId) {
+        ResolverPluginDependency retVal = new ResolverPluginDependency(pluginId);
+        retVal.setDependencyAttributeId(attributeId);
         return retVal;
     }
 }

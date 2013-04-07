@@ -59,7 +59,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
     @Test public void testEmpty() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
 
         final Optional<Attribute> result =
@@ -74,7 +74,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.initialize();
@@ -110,11 +110,11 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
     @Test public void testNulls() throws ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.initialize();
@@ -138,11 +138,11 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
 
         final SAML1NameIdentifierAttributeDefinition defn2 = new SAML1NameIdentifierAttributeDefinition();
         defn2.setId(SECOND_ATTRIBUTE_NAME);
-        defn2.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn2.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
         Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TEST_ATTRIBUTE_NAME, null));
+        dependencySet.add(new ResolverPluginDependency(TEST_ATTRIBUTE_NAME));
         defn2.setDependencies(dependencySet);
 
         // And resolve
@@ -157,20 +157,20 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         //
         // Attribute recipient needed because the nonStringAttributeDefinition needs it
         //
-        AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
         Assert.assertNull(context.getResolvedAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
-    @Test public void testSingleValueWithOptions() throws ResolutionException,
-            ComponentInitializationException {
+    @Test public void testSingleValueWithOptions() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.setNameIdFormat(ALTERNATIVE_FORMAT);

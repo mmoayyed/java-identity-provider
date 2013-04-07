@@ -59,7 +59,7 @@ public class MappedAttributeTest {
         }
 
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
         definition.setDependencies(dependencySet);
 
@@ -75,7 +75,7 @@ public class MappedAttributeTest {
         definition.setValueMappings(valueMappings);
 
         definition.initialize();
-        
+
         definition.destroy();
         try {
             definition.initialize();
@@ -83,7 +83,7 @@ public class MappedAttributeTest {
         } catch (DestroyedComponentException e) {
             // expected this
         }
-        
+
         try {
             definition.doAttributeDefinitionResolve(new AttributeResolutionContext());
             Assert.fail("resolve a torn down mapper?");
@@ -91,7 +91,6 @@ public class MappedAttributeTest {
             // expected this
         }
 
-        
     }
 
     @Test public void testNoAttributeValues() throws Exception {
@@ -106,7 +105,8 @@ public class MappedAttributeTest {
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1", "NoSuchAttribute")));
+        definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
+                "NoSuchAttribute")));
         definition.setValueMappings(valueMappings);
         definition.initialize();
 
@@ -121,8 +121,8 @@ public class MappedAttributeTest {
 
     @Test public void testInvalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
-        attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1,2,3})));
-        
+        attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
+
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
 
@@ -131,18 +131,18 @@ public class MappedAttributeTest {
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
+        definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         definition.setValueMappings(valueMappings);
         definition.initialize();
-        
+
         try {
             definition.doAttributeDefinitionResolve(resolutionContext);
             Assert.fail("invalid types");
         } catch (ResolutionException e) {
             //
         }
-        
+
     }
 
     @Test public void testValidValueType() throws Exception {
@@ -157,7 +157,7 @@ public class MappedAttributeTest {
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        definition.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
+        definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         Assert.assertTrue(definition.getValueMappings().isEmpty());
         definition.setValueMappings(valueMappings);

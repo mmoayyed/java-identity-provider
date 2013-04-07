@@ -97,7 +97,8 @@ public class ResolvedAttributeDefinitionTest {
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
         attrDef.setValue(attribute);
         attrDef.setId("Defn");
-        ResolverPluginDependency dep = new ResolverPluginDependency("doo", "foo");
+        ResolverPluginDependency dep = new ResolverPluginDependency("doo");
+        dep.setDependencyAttributeId("foo");
         attrDef.setDependencies(Collections.singleton(dep));
         attrDef.setPropagateResolutionExceptions(false);
         attrDef.initialize();

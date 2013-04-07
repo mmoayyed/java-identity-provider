@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -183,6 +184,32 @@ public class BaseAttributeDefinitionTest {
         definition.initialize();
         Assert.assertEquals(definition.resolve(context).get(), attribute);
 
+    }
+    
+    @Test
+    public void testDependencies() throws ComponentInitializationException {
+        MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
+        
+        definition.setDependencies(Collections.singleton(new ResolverPluginDependency("plugin")));
+        definition.initialize();
+        
+        Set<ResolverPluginDependency> depends = definition.getDependencies();
+        
+        Assert.assertEquals(depends.size(), 1);
+        Assert.assertNull(definition.getSourceAttributeId());
+        Assert.assertFalse(depends.iterator().next().getDependencyAttributeId().isPresent());
+        
+        definition = new MockBaseAttributeDefinition("foo", null);
+        definition.setSourceAttributeId("source");
+        definition.setDependencies(Collections.singleton(new ResolverPluginDependency("plugin")));
+        definition.initialize();
+        
+        Assert.assertEquals(definition.getSourceAttributeId(), "source");
+        
+        depends = definition.getDependencies();
+        
+        Assert.assertEquals(depends.size(), 1);
+        Assert.assertEquals(depends.iterator().next().getDependencyAttributeId().get(), "source");
     }
     
     @Test public void testInitDestroyValidate() throws ComponentInitializationException, ComponentValidationException {

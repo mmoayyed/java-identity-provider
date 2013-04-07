@@ -23,12 +23,12 @@
     <!--      Attribute Definitions                 -->
     <!-- ========================================== -->
 
-    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="eduPersonAffiliation">
+    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="eduPersonAffiliation" sourceAttributeID="staticEpA">
         <resolver:Dependency ref="staticAttributes" />
     </resolver:AttributeDefinition>
     
     <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
-        <dc:Attribute id="eduPersonAffiliation">
+        <dc:Attribute id="staticEpA">
             <dc:Value>member</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="eduPersonEntitlement">

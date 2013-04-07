@@ -241,14 +241,14 @@ public class AttributeResolverTest {
     @Test public void testResolveWithDependencies() throws Exception {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
         ad1.setDependencies(Sets.newHashSet(dep1));
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute("test"));
 
-        ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1", null);
-        ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2", null);
+        ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1");
+        ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2");
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep2, dep3));
 
@@ -284,7 +284,7 @@ public class AttributeResolverTest {
         MockDataConnector dc1 = new MockDataConnector("dc1", new ResolutionException());
         dc1.setFailoverDataConnectorId("dc2");
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
         ad1.setDependencies(Sets.newHashSet(dep1));
 
@@ -314,7 +314,7 @@ public class AttributeResolverTest {
     @Test public void testResolveDataConnectorFail() throws ComponentInitializationException, ResolutionException {
         MockDataConnector dc1 = new MockDataConnector("dc1", new ResolutionException());
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
         ad1.setDependencies(Sets.newHashSet(dep1));
 
@@ -340,7 +340,7 @@ public class AttributeResolverTest {
     @Test public void testCachedDataConnectorDependency() throws ComponentInitializationException, ResolutionException {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         Attribute attr = new Attribute("test1");
         attr.getValues().add(new StringAttributeValue("value1"));
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
@@ -349,7 +349,7 @@ public class AttributeResolverTest {
         attr = new Attribute("test2");
         attr.getValues().add(new StringAttributeValue("value2"));
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", attr);
-        ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1", null)));
+        ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
 
         LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
         connectors.add(dc1);
@@ -371,11 +371,11 @@ public class AttributeResolverTest {
         MockDataConnector dcfail1 = new MockDataConnector("failer1", new ResolutionException());
         dcfail1.setInvalid(true);
         dcfail1.setPropagateResolutionExceptions(false);
-        ResolverPluginDependency depFail1 = new ResolverPluginDependency("failer1", null);
+        ResolverPluginDependency depFail1 = new ResolverPluginDependency("failer1");
         MockDataConnector dcfail2 = new MockDataConnector("failer2", new ResolutionException());
         dcfail2.setFailoverDataConnectorId("failer1");
         dcfail2.setInvalid(true);
-        ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2", null);
+        ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2");
 
         connectors = new LazySet<BaseDataConnector>();
         connectors.add(dcfail1);
@@ -414,7 +414,8 @@ public class AttributeResolverTest {
         values.put("SubAttribute", attr);
         MockDataConnector dc1 = new MockDataConnector("dc1", values);
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", "SubAttribute");
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
+        dep1.setDependencyAttributeId("SubAttribute");
         attr = new Attribute("test1");
         attr.getValues().add(new StringAttributeValue("value1"));
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
@@ -527,14 +528,14 @@ public class AttributeResolverTest {
     @Test public void testSimpleValidate() throws Exception {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
         ad1.setDependencies(Sets.newHashSet(dep1));
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute("test"));
 
-        ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1", null);
-        ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2", null);
+        ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1");
+        ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2");
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep2, dep3));
 
@@ -641,11 +642,11 @@ public class AttributeResolverTest {
 
     /** Test that validation fails when a plugin depends on a non-existent plugin. */
     @Test public void testBadPluginIdInitialize() throws Exception {
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1", null);
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
         ad1.setDependencies(Sets.newHashSet(dep1));
 
-        ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1", null);
+        ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1");
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep2));
 
@@ -661,7 +662,7 @@ public class AttributeResolverTest {
             // OK
         }
 
-        ResolverPluginDependency dep3 = new ResolverPluginDependency("ad0", null);
+        ResolverPluginDependency dep3 = new ResolverPluginDependency("ad0");
         ad0 = new MockAttributeDefinition("ad0", new Attribute("test"));
         ad0.setDependencies(Sets.newHashSet(dep3));
         definitions = new LazySet<BaseAttributeDefinition>();
@@ -680,7 +681,7 @@ public class AttributeResolverTest {
     /** Test that validation fails when there are circular dependencies between plugins. */
     @Test public void testCircularDependencyInitialize() throws Exception {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
-        ad1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1", null)));
+        ad1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1")));
 
         LazySet<BaseAttributeDefinition> definitions = new LazySet<BaseAttributeDefinition>();
         definitions.add(ad1);
@@ -694,17 +695,17 @@ public class AttributeResolverTest {
         }
 
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
-        dc1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad0", null)));
+        dc1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad0")));
 
         ad1 = new MockAttributeDefinition("ad1", new Attribute("test"));
-        ad1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1", null)));
+        ad1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new Attribute("test"));
-        ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1", null)));
+        ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
 
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new Attribute("test"));
-        ad0.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1", null), new ResolverPluginDependency(
-                "ad2", null)));
+        ad0.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1"), new ResolverPluginDependency(
+                "ad2")));
 
         LazySet<BaseDataConnector> connectors = new LazySet<BaseDataConnector>();
         connectors.add(dc1);

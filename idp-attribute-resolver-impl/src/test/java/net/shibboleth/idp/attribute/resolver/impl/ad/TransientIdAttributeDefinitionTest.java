@@ -25,9 +25,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.persistence.PersistenceManager;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -63,7 +62,7 @@ public class TransientIdAttributeDefinitionTest {
         defn.setId(TEST_ATTRIBUTE_NAME);
         testInitializeFail(defn, "no dependencies");
 
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         testInitializeFail(defn, "no IdStore");
 
         final Store store = new Store();
@@ -93,7 +92,7 @@ public class TransientIdAttributeDefinitionTest {
             throws ComponentInitializationException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
         defn.initialize();
@@ -115,7 +114,7 @@ public class TransientIdAttributeDefinitionTest {
     @Test public void testGetters() throws ComponentInitializationException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
 
@@ -136,7 +135,7 @@ public class TransientIdAttributeDefinitionTest {
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setIdLiftetime(TEST_LIFETIME);
         defn.setIdSize(TEST_ID_SIZE);
-        defn.setDependencies(Collections.singleton(new ResolverPluginDependency("foo", "bar")));
+        defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         final Store store = new Store();
         defn.setIdStore(store);
         defn.initialize();

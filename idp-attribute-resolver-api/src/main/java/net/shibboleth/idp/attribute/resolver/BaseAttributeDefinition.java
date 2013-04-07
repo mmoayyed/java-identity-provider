@@ -58,6 +58,9 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
 
     /** Whether this attribute definition is only a dependency and thus its values should never be released. */
     private boolean dependencyOnly;
+    
+    /** The sourceAttributeID attributeName. */
+    private String sourceAttributeID;
 
     /** Attribute encoders associated with this definition. */
     private Set<AttributeEncoder<?>> encoders = Collections.emptySet();
@@ -176,6 +179,21 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         CollectionSupport.addIf(checkedEncoders, attributeEncoders, Predicates.notNull());
         encoders = ImmutableSet.copyOf(checkedEncoders);
     }
+    
+    /** Gets the source attribute id.
+     * @return the source attribute id
+     */
+    public String getSourceAttributeId() {
+        return sourceAttributeID;
+    }
+
+    /** Sets the source attribute id.
+     * @param attributeId the source attribute id
+     */
+    public void setSourceAttributeId(String attributeId) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        sourceAttributeID = StringSupport.trimOrNull(attributeId);
+    }
 
     /** {@inheritDoc} */
     protected void doDestroy() {
@@ -192,8 +210,16 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
+        
+        // Set up the dependencies first.  Then the initialize in the parent
+        // will correctly rehash the dependenies.
+        if (null != sourceAttributeID) {
+            for (ResolverPluginDependency depends : getDependencies()) {
+                depends.setDependencyAttributeId(sourceAttributeID);
+            }
+        }
         super.doInitialize();
-
+        
         for (AttributeEncoder encoder : encoders) {
             ComponentSupport.initialize(encoder);
         }

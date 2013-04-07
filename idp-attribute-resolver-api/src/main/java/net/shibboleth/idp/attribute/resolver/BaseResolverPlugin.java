@@ -139,7 +139,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
 
         HashSet<ResolverPluginDependency> checkedDeps = new HashSet<ResolverPluginDependency>();
         CollectionSupport.addIf(checkedDeps, pluginDependencies, Predicates.notNull());
-        dependencies = ImmutableSet.copyOf(checkedDeps);
+        dependencies = Collections.unmodifiableSet(checkedDeps);
     }
 
     /**
@@ -209,6 +209,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+
+        // rebuild the hash set - we may have modified the dependencies in the 
+        // child class initialization.
+        HashSet<ResolverPluginDependency> checkedDeps = new HashSet<ResolverPluginDependency>(dependencies);
+        dependencies = ImmutableSet.copyOf(checkedDeps);
 
         ComponentSupport.initialize(activationCriteria);
     }

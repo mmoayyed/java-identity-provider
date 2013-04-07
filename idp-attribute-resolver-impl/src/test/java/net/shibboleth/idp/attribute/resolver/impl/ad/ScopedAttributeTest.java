@@ -68,7 +68,7 @@ public class ScopedAttributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
+        dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
 
         final ScopedAttributeDefinition scoped = new ScopedAttributeDefinition();
@@ -116,7 +116,7 @@ public class ScopedAttributeTest {
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScope(TEST_SCOPE);
-        attrDef.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
+        attrDef.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
         attrDef.initialize();
 
@@ -132,7 +132,7 @@ public class ScopedAttributeTest {
 
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         Set<ResolverPluginDependency> pluginDependencies =
-                Sets.newHashSet(new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID));
+                Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID));
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 

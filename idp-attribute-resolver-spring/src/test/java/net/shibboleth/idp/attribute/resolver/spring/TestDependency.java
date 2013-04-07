@@ -65,6 +65,6 @@ public class TestDependency {
         ResolverPluginDependency depend = getDependency("idInParentDependency.xml");
         
         Assert.assertEquals(depend.getDependencyPluginId(), "TheHasRef");
-        Assert.assertEquals(depend.getDependencyAttributeId().get(), "TheThing");
+        Assert.assertFalse(depend.getDependencyAttributeId().isPresent());
     }
 }

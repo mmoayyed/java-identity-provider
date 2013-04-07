@@ -36,21 +36,17 @@ public final class ResolverPluginDependency {
     private final String dependencyPluginId;
 
     /** ID of the attribute, produced by the identified plugin, whose values will be used by the dependent plugin. */
-    private final Optional<String> dependencyAttributeId;
+    private Optional<String> dependencyAttributeId = Optional.absent();
 
     /**
      * Constructor.
      * 
      * @param pluginId ID of the plugin that will produce the attribute, never null or empty
-     * @param attributeId ID of the attribute, produced by the identified plugin, whose values will be used by the
-     *            dependent plugin
      */
-    public ResolverPluginDependency(@Nonnull @NotEmpty final String pluginId, @Nullable final String attributeId) {
+    public ResolverPluginDependency(@Nonnull @NotEmpty final String pluginId) {
         dependencyPluginId =
                 Constraint.isNotNull(StringSupport.trimOrNull(pluginId),
                         "Dependency plugin ID may not be null or empty");
-
-        dependencyAttributeId = Optional.fromNullable(StringSupport.trimOrNull(attributeId));
     }
 
     /**
@@ -60,6 +56,15 @@ public final class ResolverPluginDependency {
      */
     @Nonnull public String getDependencyPluginId() {
         return dependencyPluginId;
+    }
+    
+    /** Set the attributeId.
+     * 
+     * @param attributeId ID of the attribute, produced by the identified plugin, whose values will be used by the
+     *            dependent plugin
+     */
+    public void setDependencyAttributeId(@Nullable String attributeId) {
+        dependencyAttributeId = Optional.fromNullable(StringSupport.trimOrNull(attributeId));
     }
 
     /**

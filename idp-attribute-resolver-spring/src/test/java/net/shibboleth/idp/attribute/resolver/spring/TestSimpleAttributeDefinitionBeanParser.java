@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionBeanDefinitionParser;
@@ -88,9 +89,9 @@ public class TestSimpleAttributeDefinitionBeanParser {
 
         Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
         Assert.assertEquals(dependencies.size(), 3, "getDisplayDescriptions");
-        Assert.assertTrue(dependencies.contains(new ResolverPluginDependency("dep1", "flibble")));
-        Assert.assertTrue(dependencies.contains(new ResolverPluginDependency("dep2", "flibble")));
-        Assert.assertTrue(dependencies.contains(new ResolverPluginDependency("dep3", "flibble")));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep1", "flibble")));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep2", "flibble")));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", "flibble")));
 
         //
         // TODO
@@ -116,7 +117,7 @@ public class TestSimpleAttributeDefinitionBeanParser {
 
         Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
         Assert.assertEquals(dependencies.size(), 1, "getDisplayDescriptions");
-        Assert.assertTrue(dependencies.contains(new ResolverPluginDependency("dep3", null)));
+        Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", null)));
 
         //
         // TODO

@@ -41,7 +41,7 @@ public class PluginDependencySupportTest {
 
         Set<AttributeValue> result =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext,
-                        Lists.newArrayList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID, null)));
+                        Lists.newArrayList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
@@ -56,9 +56,10 @@ public class PluginDependencySupportTest {
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
 
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPE_ATTRIB_ID);
         Set<AttributeValue> result =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, Lists
-                        .newArrayList(new ResolverPluginDependency("connector1", ResolverTestSupport.EPE_ATTRIB_ID)));
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext, Lists.newArrayList(depend));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
@@ -80,10 +81,11 @@ public class PluginDependencySupportTest {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(connector1, definition1);
 
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
         Set<AttributeValue> result =
-                PluginDependencySupport.getMergedAttributeValues(resolutionContext, Lists.newArrayList(
-                        new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID),
-                        new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID, null)));
+                PluginDependencySupport.getMergedAttributeValues(resolutionContext,
+                        Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 3);
@@ -106,10 +108,11 @@ public class PluginDependencySupportTest {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(connector1, definition1);
 
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
         Map<String, Set<AttributeValue>> result =
-                PluginDependencySupport.getAllAttributeValues(resolutionContext, Lists.newArrayList(
-                        new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID),
-                        new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID, null)));
+                PluginDependencySupport.getAllAttributeValues(resolutionContext,
+                        Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);

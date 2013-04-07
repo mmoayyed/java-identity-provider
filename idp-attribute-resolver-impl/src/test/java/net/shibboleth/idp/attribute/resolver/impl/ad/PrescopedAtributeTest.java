@@ -67,8 +67,9 @@ public class PrescopedAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
+        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter("-");
@@ -104,8 +105,9 @@ public class PrescopedAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
-        dependencySet.add(new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
-                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
+        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter(DELIMITER);
@@ -144,8 +146,9 @@ public class PrescopedAtributeTest {
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter("@");
-        attrDef.setDependencies(Sets.newHashSet(new ResolverPluginDependency("connector1",
-                ResolverTestSupport.EPA_ATTRIB_ID)));
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        attrDef.setDependencies(Sets.newHashSet(depend));
         attrDef.initialize();
 
         try {
@@ -159,8 +162,10 @@ public class PrescopedAtributeTest {
     @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
         Set<ResolverPluginDependency> pluginDependencies =
-                Sets.newHashSet(new ResolverPluginDependency("connector1", ResolverTestSupport.EPA_ATTRIB_ID));
+                Sets.newHashSet(depend);
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 

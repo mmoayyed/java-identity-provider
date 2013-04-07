@@ -88,8 +88,10 @@ public class BaseResolverPluginTest {
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
 
-        ResolverPluginDependency dep1 = new ResolverPluginDependency("foo", "bar");
-        ResolverPluginDependency dep2 = new ResolverPluginDependency("foo", "baz");
+        ResolverPluginDependency dep1 = new ResolverPluginDependency("foo");
+        dep1.setDependencyAttributeId("bar");
+        ResolverPluginDependency dep2 = new ResolverPluginDependency("foo");
+        dep2.setDependencyAttributeId("baz");
 
         depdencies.add(dep1);
         depdencies.add(dep1);

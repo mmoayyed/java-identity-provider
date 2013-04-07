@@ -28,8 +28,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 /** Bean definition parser for a {@link ResolverPluginDependency}. */
 public class ResolverPluginDependencyBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
@@ -51,26 +49,7 @@ public class ResolverPluginDependencyBeanDefinitionParser extends AbstractSingle
         log.info("Parsing configuration for {} with pluginId : {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);
 
-        NamedNodeMap parentAttr = config.getParentNode().getAttributes();
-        //
-        // TODO, these are only present in Attribute Definitions, maybe we should inject them post ad hoc 
-        // in the BaseAttributeefinitionParser
-        String sourceAttributeId;
-        if (null == parentAttr) {
-            log.debug("Parsing configuration for {}: no parent element or no attributes.",  config.getLocalName());
-            sourceAttributeId = null;
-        } else {
-            Node attr = parentAttr.getNamedItemNS(null, "sourceAttributeID");
-            if (null == attr) {
-                log.debug("Parsing configuration for {}: no 'sourceAttributeID' in parent element, probably a DataConnector.",  config.getLocalName());
-                sourceAttributeId = null;
-            } else {
-                sourceAttributeId = attr.getNodeValue();
-            }
-        }
-        
-        log.info("Parsing configuration for {} with attributeId : {}", config.getLocalName(), sourceAttributeId);
-        builder.addConstructorArgValue(sourceAttributeId);
+        log.info("Parsing configuration for {} with attributeId : {}", config.getLocalName());
     }
 
     /** {@inheritDoc} */
