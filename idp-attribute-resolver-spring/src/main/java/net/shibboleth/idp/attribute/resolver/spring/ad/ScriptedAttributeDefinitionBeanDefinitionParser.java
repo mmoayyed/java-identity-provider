@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptException;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,15 +57,13 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
     /** {@inheritDoc} */
     protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
             BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
-        super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
+ /*       super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
 
-        //String scriptLanguage = "javascript";
-        String scriptLanguage = pluginConfig.getAttributeNS(null, "language");
-        //if (pluginConfig.hasAttributeNS(null, "language")) {
-        //    scriptLanguage = pluginConfig.getAttributeNS(null, "language");
-        //}
+        String scriptLanguage = "javascript";
+        if (pluginConfig.hasAttributeNS(null, "language")) {
+            scriptLanguage = pluginConfig.getAttributeNS(null, "language");
+        }
         log.debug("Attribute definition {} scripting language: {}", pluginId, scriptLanguage);
-        pluginBuilder.addPropertyValue("language", scriptLanguage);
 
         String script = null;
         List<Element> scriptElem = pluginConfigChildren.get(new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
@@ -87,6 +87,11 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             throw new BeanCreationException("No script specified for this attribute definition");
         }
         log.debug("Attribute definition {} script: {}", pluginId, script);
-        pluginBuilder.addPropertyValue("script", script);
+        try {
+            pluginBuilder.addPropertyValue("script", new EvaluableScript(scriptLanguage, script));
+        } catch (ScriptException e) {
+            log.error("Attribute definition {}, could not create the EvaluableScript", new Object[]{pluginId, e,} );
+            throw new BeanCreationException("Could not create the EvaluableScript");
+        }*/
     }
 }
