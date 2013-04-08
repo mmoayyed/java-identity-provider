@@ -17,14 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
-import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
@@ -32,33 +27,19 @@ import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionBeanDefinitionParser;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Test for {@link SimpleAttributeDefinitionBeanDefinitionParser} and by extension
  * {@link BaseAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestSimpleAttributeDefinitionBeanParser {
+public class TestSimpleAttributeDefinitionBeanParser extends BaseTestAttributeDefinitionBeanParser {
 
-    private BaseAttributeDefinition getAttributeDefn(String fileName) {
-
-        GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestDependency.class);
-
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/" + fileName);
-
-        Collection<SimpleAttributeDefinition> beans = context.getBeansOfType(SimpleAttributeDefinition.class).values();
-        Assert.assertEquals(beans.size(), 1);
-
-        return beans.iterator().next();
-    }
-    
     @Test public void testSimple() {
-        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributeUnpopulated.xml");
+        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
         
         Assert.assertEquals(attrDef.getId(), "simpleUnpopulated");
         Assert.assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
@@ -69,7 +50,7 @@ public class TestSimpleAttributeDefinitionBeanParser {
 }
     
     @Test public void testPopulated() throws ComponentInitializationException {
-        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml");
+        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
         
         attrDef.initialize();
         
@@ -101,7 +82,7 @@ public class TestSimpleAttributeDefinitionBeanParser {
     }
 
     @Test public void testPopulated2() throws ComponentInitializationException {
-        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated2.xml");
+        BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
         
         attrDef.initialize();
         
@@ -126,6 +107,6 @@ public class TestSimpleAttributeDefinitionBeanParser {
     }
 
     @Test public void testBad() throws ComponentInitializationException {
-        getAttributeDefn("simpleAttributeBadValues.xml");
+        getAttributeDefn("simpleAttributeBadValues.xml", SimpleAttributeDefinition.class);
     }
 }

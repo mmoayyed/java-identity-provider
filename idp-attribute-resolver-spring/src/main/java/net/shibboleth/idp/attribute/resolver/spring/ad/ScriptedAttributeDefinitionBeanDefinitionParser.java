@@ -20,14 +20,16 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.script.ScriptException;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +37,6 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
 
 // TODO incomplete port from v2
 /**
@@ -53,32 +54,33 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
     protected Class getBeanClass(Element arg0) {
         return ScriptedAttributeDefinition.class;
     }
-
-    /** {@inheritDoc} */
-    protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
-            BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
- /*       super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
-
-        String scriptLanguage = "javascript";
-        if (pluginConfig.hasAttributeNS(null, "language")) {
-            scriptLanguage = pluginConfig.getAttributeNS(null, "language");
-        }
-        log.debug("Attribute definition {} scripting language: {}", pluginId, scriptLanguage);
-
+    
+    /** Query the DOM and get the script from the appropriate subelements.
+     * @param config The DOM we are interested in
+     * @return The script as a string or throws an {@link BeanCreationException}
+     */
+    @Nonnull private String getScript(Element config) {
         String script = null;
-        List<Element> scriptElem = pluginConfigChildren.get(new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-                "Script"));
+        List<Element> scriptElem =
+                ElementSupport.getChildElements(config,
+                        new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Script"));
+        List<Element> scriptFileElem =
+                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+                        "ScriptFile"));
         if (scriptElem != null && scriptElem.size() > 0) {
+            if (scriptFileElem != null && scriptFileElem.size() > 0) {
+                log.info("Attribute definition {}: definition contains both <Script> "
+                        + "and <ScriptFile> elements, taking the <Script> element", getDefinitionId());
+            }
             script = scriptElem.get(0).getTextContent();
         } else {
-            List<Element> scriptFileElem = pluginConfigChildren.get(new QName(
-                    AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile"));
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 String scriptFile = scriptFileElem.get(0).getTextContent();
                 try {
                     script = StringSupport.inputStreamToString(new FileInputStream(scriptFile), null);
                 } catch (IOException e) {
-                    throw new BeanCreationException("Unable to read script file " + scriptFile, e);
+                    throw new BeanCreationException("Attribute definition " + getDefinitionId()
+                            + ": Unable to read script file " + scriptFile, e);
                 }
             }
         }
@@ -86,12 +88,27 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
         if (script == null) {
             throw new BeanCreationException("No script specified for this attribute definition");
         }
-        log.debug("Attribute definition {} script: {}", pluginId, script);
+        return script;
+    }
+
+    /** {@inheritDoc} */
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(config, parserContext, builder);
+
+        String scriptLanguage = "javascript";
+        if (config.hasAttributeNS(null, "language")) {
+            scriptLanguage = config.getAttributeNS(null, "language");
+        }
+        log.debug("Attribute definition {}: scripting language: {}", getDefinitionId(), scriptLanguage);
+
+        String script = getScript(config);
+        log.debug("Attribute definition {} script: {}", getDefinitionId(), script);
         try {
-            pluginBuilder.addPropertyValue("script", new EvaluableScript(scriptLanguage, script));
+            builder.addPropertyValue("script", new EvaluableScript(scriptLanguage, script));
         } catch (ScriptException e) {
-            log.error("Attribute definition {}, could not create the EvaluableScript", new Object[]{pluginId, e,} );
+            log.error("Attribute definition {}, could not create the EvaluableScript : {} ", new Object[] {
+                    getDefinitionId(), e,});
             throw new BeanCreationException("Could not create the EvaluableScript");
-        }*/
+        }
     }
 }
