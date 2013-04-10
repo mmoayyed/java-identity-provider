@@ -1,0 +1,10 @@
+ <resolver:AttributeDefinition 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+    xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+    
+    id="cryptoTransientId"
+    xsi:type="ad:CryptoTransientId"
+    dataSealerRef="shibboleth.TransientIDDataSealer"
+    lifetime="PT3M"
+    />

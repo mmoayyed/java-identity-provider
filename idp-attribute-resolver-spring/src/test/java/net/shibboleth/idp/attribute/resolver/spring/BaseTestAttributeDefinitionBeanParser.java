@@ -33,10 +33,7 @@ import org.testng.Assert;
  */
 public abstract class BaseTestAttributeDefinitionBeanParser {
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
-
-        GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestDependency.class);
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
@@ -48,4 +45,13 @@ public abstract class BaseTestAttributeDefinitionBeanParser {
 
         return (Type) beans.iterator().next();
     }
+    
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
+
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + TestDependency.class);
+
+        return getAttributeDefn(fileName, claz, context);
+    }
+
 }

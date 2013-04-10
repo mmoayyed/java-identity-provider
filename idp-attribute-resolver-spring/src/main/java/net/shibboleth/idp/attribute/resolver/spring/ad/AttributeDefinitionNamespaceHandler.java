@@ -20,7 +20,9 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
-/** Namespace handler for {@link BaseAttributeDefinition}s. */
+/**
+ * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition.BaseAttributeDefinition}s.
+ */
 public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
@@ -32,5 +34,7 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
                 new SimpleAttributeDefinitionBeanDefinitionParser());
         registerBeanDefinitionParser(ScriptedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new ScriptedAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new CryptoTransientIdAttributeDefinitionBeanDefinitionParser());
     }
 }
