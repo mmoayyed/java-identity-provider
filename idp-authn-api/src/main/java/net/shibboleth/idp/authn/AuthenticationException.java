@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.authn;
 
-import net.shibboleth.idp.profile.ProfileException;
+import org.opensaml.profile.ProfileException;
 
 /** Exception indicating a problem authenticating a user. */
 public class AuthenticationException extends ProfileException {

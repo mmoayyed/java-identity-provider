@@ -18,21 +18,19 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.opensaml.messaging.context.BasicMessageMetadataContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.util.storage.ReplayCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 /** Checks that the given message has not be replayed. */
 public final class CheckMessageReplay extends AbstractProfileAction {
@@ -48,7 +46,7 @@ public final class CheckMessageReplay extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event
-            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+            doExecute(@Nonnull final RequestContext springRequestContext,
                     @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final MessageContext msgCtx = profileRequestContext.getInboundMessageContext();

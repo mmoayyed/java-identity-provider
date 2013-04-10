@@ -18,12 +18,10 @@
 package net.shibboleth.idp.authn;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.springframework.webflow.execution.Event;
@@ -39,11 +37,8 @@ import com.google.common.base.Function;
  * In addition to the work performed by {@link AbstractProfileAction}, this action also looks up and makes available the
  * {@link AuthenticationRequestContext}.
  * 
- * Authentication action implementations should generally override
- * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext, AuthenticationRequestContext)},
- * however if an action needs access to the Spring Webflow {@link RequestContext} it may override
- * {@link #doExecute(HttpServletRequest, HttpServletResponse, RequestContext, ProfileRequestContext, AuthenticationRequestContext)}
- * instead. In general, implementations should avoid doing this however.
+ * Authentication action implementations should override
+ * {@link #doExecute(RequestContext, ProfileRequestContext, AuthenticationRequestContext)}
  */
 public abstract class AbstractAuthenticationAction extends AbstractProfileAction {
 
@@ -63,8 +58,7 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
     }
 
     /** {@inheritDoc} */
-    protected final Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+    protected final Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         AuthenticationRequestContext authenticationContext = authnCtxLookupStrategy.apply(profileRequestContext);
@@ -72,15 +66,12 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
             throw new NoAuthenticationContextException();
         }
 
-        return doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext, authenticationContext);
+        return doExecute(springRequestContext, profileRequestContext, authenticationContext);
     }
 
     /**
-     * Performs this authentication action. Default implementation of this simply invokes
-     * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext, AuthenticationRequestContext)}.
+     * Performs this authentication action. Default implementation throws an exception.
      * 
-     * @param httpRequest current HTTP request
-     * @param httpResponse current HTTP response
      * @param springRequestContext current WebFlow request context
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
@@ -89,28 +80,7 @@ public abstract class AbstractAuthenticationAction extends AbstractProfileAction
      * 
      * @throws AuthenticationException thrown if there is a problem performing the authentication action
      */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
-            @Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
-        return doExecute(httpRequest, httpResponse, profileRequestContext, authenticationContext);
-    }
-
-    /**
-     * Performs this authentication action. Default implementation of this method throws an
-     * {@link UnsupportedOperationException}.
-     * 
-     * @param httpRequest current HTTP request
-     * @param httpResponse current HTTP response
-     * @param profileRequestContext the current IdP profile request context
-     * @param authenticationContext the current authentication context
-     * 
-     * @return the result of this action
-     * 
-     * @throws AuthenticationException thrown if there is a problem performing the authentication action
-     */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse,
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
         throw new UnsupportedOperationException();

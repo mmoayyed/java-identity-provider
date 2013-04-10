@@ -22,8 +22,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
@@ -31,7 +29,7 @@ import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.collection.Pair;
 
 import org.opensaml.core.xml.XMLObject;
@@ -43,6 +41,7 @@ import org.opensaml.soap.wssecurity.Username;
 import org.opensaml.soap.wssecurity.UsernameToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 //TODO(lajoie) should we support nonce and created checks?  probably
 
@@ -56,8 +55,7 @@ public class ExtractUsernamePasswordFromWssToken extends AbstractAuthenticationA
     private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromWssToken.class);
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 

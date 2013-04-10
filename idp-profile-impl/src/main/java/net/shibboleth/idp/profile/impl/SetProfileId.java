@@ -18,19 +18,17 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /** A profile action that sets the ID of the profile in use. */
 public class SetProfileId extends AbstractProfileAction {
@@ -60,7 +58,7 @@ public class SetProfileId extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     protected Event
-            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+            doExecute(@Nonnull final RequestContext springRequestContext,
                     @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         profileRequestContext.setProfileId(profileId);
         return ActionSupport.buildProceedEvent(this);

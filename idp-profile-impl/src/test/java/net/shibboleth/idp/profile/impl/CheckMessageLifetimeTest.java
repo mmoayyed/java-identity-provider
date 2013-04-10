@@ -24,6 +24,7 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -54,7 +55,7 @@ public class CheckMessageLifetimeTest {
         action.initialize();
 
         Event result =
-                action.doExecute(null, null,
+                action.doExecute(new MockRequestContext(),
                         new RequestContextBuilder().setInboundMessageId(ActionTestingSupport.INBOUND_MSG_ID)
                                 .setInboundMessageIssuer(ActionTestingSupport.INBOUND_MSG_ISSUER)
                                 .setInboundMessageIssueInstant(System.currentTimeMillis()).buildProfileRequestContext());
@@ -67,7 +68,7 @@ public class CheckMessageLifetimeTest {
         action.initialize();
 
         Event result =
-                action.doExecute(null, null,
+                action.doExecute(new MockRequestContext(),
                         new RequestContextBuilder().setInboundMessageId(ActionTestingSupport.INBOUND_MSG_ID)
                                 .setInboundMessageIssuer(ActionTestingSupport.INBOUND_MSG_ISSUER)
                                 .setInboundMessageIssueInstant(System.currentTimeMillis() + 1000000)
@@ -82,7 +83,7 @@ public class CheckMessageLifetimeTest {
         action.initialize();
 
         Event result =
-                action.doExecute(null, null,
+                action.doExecute(new MockRequestContext(),
                         new RequestContextBuilder().setInboundMessageId(ActionTestingSupport.INBOUND_MSG_ID)
                                 .setInboundMessageIssuer(ActionTestingSupport.INBOUND_MSG_ISSUER)
                                 .setInboundMessageIssueInstant(System.currentTimeMillis() - 1000000)

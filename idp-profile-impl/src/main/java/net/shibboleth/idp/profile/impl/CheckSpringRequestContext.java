@@ -21,17 +21,14 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
+import org.opensaml.profile.ProfileException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -40,8 +37,7 @@ import org.springframework.webflow.execution.RequestContext;
  * debugging purposes.
  */
 @ThreadSafe
-public class CheckSpringRequestContext extends AbstractIdentifiableInitializableComponent implements
-        ValidatableComponent, Action {
+public class CheckSpringRequestContext extends AbstractProfileAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(CheckSpringRequestContext.class);
@@ -53,13 +49,6 @@ public class CheckSpringRequestContext extends AbstractIdentifiableInitializable
      */
     public CheckSpringRequestContext() {
         super();
-
-        setId(getClass().getName());
-    }
-
-    /** {@inheritDoc} */
-    public synchronized void setId(String componentId) {
-        super.setId(componentId);
     }
 
     /** {@inheritDoc} */
@@ -83,11 +72,6 @@ public class CheckSpringRequestContext extends AbstractIdentifiableInitializable
         }
 
         return ActionSupport.buildProceedEvent(this);
-    }
-
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        // nothing to do here
     }
 
     /** Exception thrown if there is a problem with the Spring Webflow {@link RequestContext}. */

@@ -20,9 +20,9 @@ package net.shibboleth.idp.saml.profile.config;
 import java.util.Collections;
 import java.util.Set;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

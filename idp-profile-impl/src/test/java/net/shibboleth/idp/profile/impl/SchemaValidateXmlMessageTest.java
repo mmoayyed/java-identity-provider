@@ -21,7 +21,7 @@ import javax.xml.validation.Schema;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.resource.ClasspathResource;
 import net.shibboleth.utilities.java.support.resource.Resource;
@@ -34,6 +34,7 @@ import org.opensaml.core.xml.mock.SimpleXMLObject;
 import org.opensaml.core.xml.mock.SimpleXMLObjectBuilder;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -75,7 +76,7 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
 
         ProfileRequestContext profileRequestContext = new ProfileRequestContext();
 
-        Event result = action.doExecute(null, null, profileRequestContext);
+        Event result = action.doExecute(new MockRequestContext(), profileRequestContext);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_MSG_CTX);
     }
@@ -89,7 +90,7 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
         SimpleXMLObject simpleXml = new SimpleXMLObjectBuilder().buildObject();
 
         Event result =
-                action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(simpleXml)
+                action.doExecute(new MockRequestContext(), new RequestContextBuilder().setInboundMessage(simpleXml)
                         .buildProfileRequestContext());
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_MSG_CTX);
@@ -108,7 +109,7 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
                 XMLObjectSupport.unmarshallFromInputStream(parserPool, invalidXmlResource.getInputStream());
 
         Event result =
-                action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(invalidXml)
+                action.doExecute(new MockRequestContext(), new RequestContextBuilder().setInboundMessage(invalidXml)
                         .buildProfileRequestContext());
 
         ActionTestingSupport.assertEvent(result, SchemaValidateXmlMessage.SCHEMA_INVALID);
@@ -126,7 +127,7 @@ public class SchemaValidateXmlMessageTest extends XMLObjectBaseTestCase {
         XMLObject validXml = XMLObjectSupport.unmarshallFromInputStream(parserPool, validXmlResource.getInputStream());
 
         Event result =
-                action.doExecute(null, null, new RequestContextBuilder().setInboundMessage(validXml)
+                action.doExecute(new MockRequestContext(), new RequestContextBuilder().setInboundMessage(validXml)
                         .buildProfileRequestContext());
 
         ActionTestingSupport.assertProceedEvent(result);

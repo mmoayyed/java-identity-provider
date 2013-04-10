@@ -20,9 +20,6 @@ package net.shibboleth.idp.authn.impl;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
@@ -31,14 +28,15 @@ import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.IdPSessionContext;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -69,9 +67,8 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event
-            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
-                    @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final IdPSessionContext sessionCtx = sessionCtxLookupStrategy.apply(profileRequestContext);
 

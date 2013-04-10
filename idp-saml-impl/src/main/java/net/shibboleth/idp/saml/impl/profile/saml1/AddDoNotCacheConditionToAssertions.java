@@ -19,16 +19,15 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionSupport;
 
@@ -40,6 +39,7 @@ import org.opensaml.saml.saml1.core.DoNotCacheCondition;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Adds a {@link DoNotCacheCondition} to every {@link Assertion} in the outgoing {@link Response} retrieved from the
@@ -60,8 +60,8 @@ public class AddDoNotCacheConditionToAssertions extends AbstractProfileAction<Ob
     private final Logger log = LoggerFactory.getLogger(AddDoNotCacheConditionToAssertions.class);
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse, ProfileRequestContext<Object, Response> profileRequestContext)
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
             throws ProfileException {
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 

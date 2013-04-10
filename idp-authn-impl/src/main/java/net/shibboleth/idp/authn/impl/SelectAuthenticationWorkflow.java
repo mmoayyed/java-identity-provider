@@ -21,9 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
@@ -31,11 +28,12 @@ import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An authentication action that selects an authentication workflow to invoke.
@@ -56,9 +54,8 @@ public class SelectAuthenticationWorkflow extends AbstractAuthenticationAction {
     private final Logger log = LoggerFactory.getLogger(SelectAuthenticationWorkflow.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse,
-            @Nullable final ProfileRequestContext profileRequestContext,
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
         final Map<String, AuthenticationWorkflowDescriptor> potentialWorkflows =

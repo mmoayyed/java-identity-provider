@@ -33,11 +33,12 @@ import net.shibboleth.idp.attribute.filtering.AttributeValueFilterPolicy;
 import net.shibboleth.idp.attribute.filtering.MockAttributeValueMatcher;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -57,7 +58,7 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
@@ -72,7 +73,7 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_ATTRIBUTE_CTX);
     }
@@ -90,7 +91,7 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
     }
@@ -132,7 +133,7 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 
@@ -193,7 +194,7 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 
@@ -250,7 +251,7 @@ public class FilterAttributesTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, FilterAttributes.UNABLE_FILTER_ATTRIBS);
     }

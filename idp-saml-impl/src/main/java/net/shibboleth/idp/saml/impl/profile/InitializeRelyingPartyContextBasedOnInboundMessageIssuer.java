@@ -18,13 +18,11 @@
 package net.shibboleth.idp.saml.impl.profile;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -35,6 +33,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -89,8 +88,8 @@ public class InitializeRelyingPartyContextBasedOnInboundMessageIssuer extends Ab
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            ProfileRequestContext profileRequestContext) throws ProfileException {
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final BasicMessageMetadataContext messageSubcontext =
                 messageMetadataContextLookupStrategy.apply(profileRequestContext.getInboundMessageContext());

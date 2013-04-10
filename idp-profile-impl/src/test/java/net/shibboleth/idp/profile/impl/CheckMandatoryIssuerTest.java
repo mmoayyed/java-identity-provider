@@ -22,6 +22,7 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.impl.CheckMandatoryIssuer.NoMessageIssuerException;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -34,8 +35,8 @@ public class CheckMandatoryIssuerTest {
         action.initialize();
 
         Event result =
-                action.doExecute(null, null, new RequestContextBuilder().setInboundMessageIssuer("issuer")
-                        .buildProfileRequestContext());
+                action.doExecute(new MockRequestContext(),
+                        new RequestContextBuilder().setInboundMessageIssuer("issuer").buildProfileRequestContext());
 
         ActionTestingSupport.assertProceedEvent(result);
     }
@@ -46,8 +47,8 @@ public class CheckMandatoryIssuerTest {
         action.initialize();
 
         try {
-            action.doExecute(null, null, new RequestContextBuilder().setInboundMessageIssuer(null)
-                    .buildProfileRequestContext());
+            action.doExecute(new MockRequestContext(),
+                    new RequestContextBuilder().setInboundMessageIssuer(null).buildProfileRequestContext());
             Assert.fail();
         } catch (NoMessageIssuerException e) {
             // expected this

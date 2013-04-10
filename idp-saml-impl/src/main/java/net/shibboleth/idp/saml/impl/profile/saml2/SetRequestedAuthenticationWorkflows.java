@@ -24,8 +24,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
@@ -35,7 +33,7 @@ import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
@@ -44,6 +42,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An authentication action that populates the requested authentication workflows based on the incoming SAML 2
@@ -57,8 +56,7 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
     private Logger log = LoggerFactory.getLogger(SetRequestedAuthenticationWorkflows.class);
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
@@ -136,7 +134,8 @@ public class SetRequestedAuthenticationWorkflows extends AbstractAuthenticationA
 
         final RequestedAuthnContext requestedCtx = authnRequest.getRequestedAuthnContext();
         if (requestedCtx == null) {
-            log.debug("Action {}: inbound AuthnRequest did not contain a RequestedAuthnContext, nothing to do", getId());
+            log.debug("Action {}: inbound AuthnRequest did not contain a RequestedAuthnContext, nothing to do",
+                    getId());
             return requestedRefs;
         }
 

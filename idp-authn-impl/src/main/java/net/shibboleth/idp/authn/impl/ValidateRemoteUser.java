@@ -19,19 +19,21 @@ package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An authentication stage that checks that the request's REMOTE_USER is set and, if so, sets the identified user as the
@@ -46,11 +48,13 @@ public class ValidateRemoteUser extends AbstractAuthenticationAction {
     private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse,
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
+        HttpServletRequest httpRequest =
+                Constraint.isNotNull(profileRequestContext.getHttpRequest(), "HttpServletRequest cannot be null");
+        
         final String remoteUser = StringSupport.trimOrNull(httpRequest.getRemoteUser());
         if (remoteUser == null) {
             log.debug("Action {}: HTTP request did not contain a remote user", getId());

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.profile.navigate;
 
-import org.opensaml.messaging.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;

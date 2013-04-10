@@ -17,20 +17,20 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml2;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Objects;
 
@@ -42,8 +42,7 @@ import com.google.common.base.Objects;
 public class CheckRequestVersion extends AbstractProfileAction<RequestAbstractType, Object> {
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(final HttpServletRequest httpRequest,
-            final HttpServletResponse httpResponse,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             final ProfileRequestContext<RequestAbstractType, Object> profileRequestContext) throws ProfileException {
 
         final RequestAbstractType request = profileRequestContext.getInboundMessageContext().getMessage();

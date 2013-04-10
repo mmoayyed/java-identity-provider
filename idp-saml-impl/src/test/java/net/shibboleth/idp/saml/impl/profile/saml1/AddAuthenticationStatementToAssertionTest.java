@@ -21,7 +21,7 @@ import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml1.Saml1ActionTestingSupport;
@@ -31,6 +31,7 @@ import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -45,7 +46,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
@@ -58,7 +59,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
     }
@@ -73,7 +74,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 
@@ -98,7 +99,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         action.initialize();
 
         try {
-            action.doExecute(null, null, profileCtx);
+            action.doExecute(new MockRequestContext(), profileCtx);
             Assert.fail();
         } catch (IllegalStateException e) {
             // ok
@@ -125,7 +126,7 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 

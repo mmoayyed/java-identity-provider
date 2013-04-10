@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -50,7 +51,7 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
@@ -65,7 +66,7 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CONFIG);
     }
@@ -84,7 +85,7 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CONFIG);
     }
@@ -102,7 +103,7 @@ public class SelectRelyingPartyConfigurationTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.PROCEED_EVENT_ID);
 

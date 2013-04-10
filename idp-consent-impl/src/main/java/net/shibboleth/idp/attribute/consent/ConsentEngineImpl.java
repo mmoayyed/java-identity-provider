@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.consent.ConsentContext.Consent;
 import net.shibboleth.idp.attribute.consent.storage.Storage;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

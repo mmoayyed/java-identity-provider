@@ -19,9 +19,9 @@ package net.shibboleth.idp.saml.profile.config.saml2;
 
 import java.util.ArrayList;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

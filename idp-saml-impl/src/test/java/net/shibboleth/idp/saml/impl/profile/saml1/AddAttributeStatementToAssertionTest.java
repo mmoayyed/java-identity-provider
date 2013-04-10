@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.attribute.encoding.Saml1StringAttributeEncoder;
@@ -46,6 +46,7 @@ import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AttributeStatement;
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -75,7 +76,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_RELYING_PARTY_CTX);
     }
@@ -91,7 +92,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, SamlEventIds.NO_RESPONSE);
     }
@@ -106,7 +107,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_ATTRIBUTE_CTX);
     }
@@ -124,7 +125,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
     }
@@ -153,7 +154,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setIgnoringUnencodableAttributes(true);
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
     }
@@ -181,7 +182,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, SamlEventIds.UNABLE_ENCODE_ATTRIBUTE);
     }
@@ -199,7 +200,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.initialize();
 
         try {
-            action.doExecute(null, null, profileCtx);
+            action.doExecute(new MockRequestContext(), profileCtx);
             Assert.fail();
         } catch (ClassCastException e) {
             // ok
@@ -227,7 +228,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setStatementInOwnAssertion(true);
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 
@@ -265,7 +266,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 
@@ -300,7 +301,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 

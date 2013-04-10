@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;

@@ -21,21 +21,21 @@ import java.util.Enumeration;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Charsets;
 import com.google.common.net.HttpHeaders;
@@ -48,12 +48,12 @@ import com.google.common.net.HttpHeaders;
 public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends AbstractAuthenticationAction {
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse,
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
-        final String encodedCredentials = extractAuthorizationCredentials(httpRequest);
+        final String encodedCredentials = extractAuthorizationCredentials(
+                Constraint.isNotNull(profileRequestContext.getHttpRequest(), "HttpServletRequest cannot be null"));
         final Pair<String, String> decodedCredentials = decodeAuthorizationCredentials(encodedCredentials);
 
         authenticationContext.getSubcontext(UsernamePasswordContext.class, true)
@@ -71,8 +71,8 @@ public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends Abstrac
      * 
      * @return the Base64 encoded credentials
      * 
-     * @throws ProfileException thrown if the authorization header is missing or malformed or if the credentials are for
-     *             the incorrect scheme
+     * @throws AuthenticationException thrown if the authorization header is missing or malformed or if the credentials
+     *  are for the incorrect scheme
      */
     protected String extractAuthorizationCredentials(@Nonnull final HttpServletRequest httpRequest)
             throws AuthenticationException {
@@ -101,7 +101,7 @@ public class ExtractUsernamePasswordFromBasicAuthorizationHeader extends Abstrac
      * 
      * @return a pair containing the username and password, respectively
      * 
-     * @throws ProfileException thrown if the encoded credentials were improperly encoded or are malformed
+     * @throws AuthenticationException thrown if the encoded credentials were improperly encoded or are malformed
      */
     protected Pair<String, String> decodeAuthorizationCredentials(@Nonnull @NotEmpty final String encodedCredentials)
             throws AuthenticationException {

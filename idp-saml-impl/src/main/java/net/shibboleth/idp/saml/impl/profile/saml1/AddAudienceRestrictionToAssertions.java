@@ -20,16 +20,14 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.config.AbstractSamlProfileConfiguration;
@@ -47,6 +45,7 @@ import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -138,8 +137,9 @@ public class AddAudienceRestrictionToAssertions extends AbstractProfileAction<Ob
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event
-            doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-                    final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+            doExecute(@Nonnull final RequestContext springRequestContext,
+                    @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext)
+                            throws ProfileException {
         log.debug("Action {}: Attempting to add an AudienceRestrictionCondition to outgoing assertions", getId());
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);

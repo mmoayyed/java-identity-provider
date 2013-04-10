@@ -18,20 +18,20 @@
 package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.net.HttpHeaders;
 
@@ -56,16 +56,18 @@ public class SendBasicHttpAuthenticationChallenge extends AbstractAuthentication
         super();
 
         String checkedRealm =
-                Constraint.isNotNull(StringSupport.trimOrNull(realm), "Realm name can not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(realm), "Realm name cannot be null or empty");
         authenticateValue = BASIC + " " + REALM + "=\"" + checkedRealm + "\"";
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse,
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
+        HttpServletResponse httpResponse =
+                Constraint.isNotNull(profileRequestContext.getHttpResponse(), "HttpServletResponse cannot be null");
+        
         HttpServletSupport.addNoCacheHeaders(httpResponse);
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpResponse.setHeader(HttpHeaders.WWW_AUTHENTICATE, authenticateValue);

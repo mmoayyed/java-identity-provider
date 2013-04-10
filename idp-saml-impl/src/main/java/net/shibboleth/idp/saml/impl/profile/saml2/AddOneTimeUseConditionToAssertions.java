@@ -19,17 +19,16 @@ package net.shibboleth.idp.saml.impl.profile.saml2;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
 import net.shibboleth.idp.saml.profile.saml2.Saml2ActionSupport;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Conditions;
@@ -38,6 +37,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Adds a {@link OneTimeUse} to every {@link Assertion} in the outgoing {@link Response} retrieved from the
@@ -53,8 +53,8 @@ public class AddOneTimeUseConditionToAssertions extends AbstractProfileAction<Ob
     private Logger log = LoggerFactory.getLogger(AddOneTimeUseConditionToAssertions.class);
 
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-            ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add DoNotCache condition to every Assertion in outgoing Response", getId());
 
         final Response response = profileRequestContext.getOutboundMessageContext().getMessage();

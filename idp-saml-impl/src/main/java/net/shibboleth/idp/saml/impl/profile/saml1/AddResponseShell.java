@@ -18,16 +18,14 @@
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
@@ -47,6 +45,7 @@ import org.opensaml.saml.saml1.core.Status;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -104,9 +103,8 @@ public class AddResponseShell extends AbstractProfileAction<Object, Response> {
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event
-            doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-                    final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
 
         final MessageContext<Response> outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageCtx.getMessage() != null) {

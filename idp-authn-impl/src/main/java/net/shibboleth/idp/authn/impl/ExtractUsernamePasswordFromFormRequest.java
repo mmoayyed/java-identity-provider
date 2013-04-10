@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
@@ -30,10 +29,13 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UsernamePasswordContext;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * A stage that extracts a username/password from the request. This stage is expected to be used in conjunction with
@@ -47,11 +49,13 @@ public class ExtractUsernamePasswordFromFormRequest extends AbstractAuthenticati
     private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromFormRequest.class);
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
+        HttpServletRequest httpRequest =
+                Constraint.isNotNull(profileRequestContext.getHttpRequest(), "HttpServletRequest cannot be null");
+        
         final String username = httpRequest.getParameter(DisplayUsernamePasswordPage.USERNAME_FIELD_NAME);
         if (username == null) {
             log.debug("Action {}: no username in request", getId());

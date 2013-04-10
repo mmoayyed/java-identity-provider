@@ -28,7 +28,7 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationException;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
@@ -37,6 +37,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.VelocityException;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 //TODO(lajoie) internationalized pages based on Accept-Language
 
@@ -76,15 +77,17 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
     public DisplayUsernamePasswordPage(@Nonnull final Template template) {
         setId(DisplayUsernamePasswordPage.class.getName());
 
-        pageTemplate = Constraint.isNotNull(template, "Page template can not be null");
+        pageTemplate = Constraint.isNotNull(template, "Page template cannot be null");
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final HttpServletRequest httpRequest,
-            @Nonnull final HttpServletResponse httpResponse,
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
+        final HttpServletResponse httpResponse =
+                Constraint.isNotNull(profileRequestContext.getHttpResponse(), "HttpServletResponse cannot be null");
+        
         final Context templateContext = buildTemplateContext(profileRequestContext);
 
         HttpServletSupport.setContentType(httpResponse, "text/html");
@@ -110,7 +113,6 @@ public class DisplayUsernamePasswordPage extends AbstractAuthenticationAction {
      * @return the constructed Velocity context
      */
     @Nonnull protected Context buildTemplateContext(@Nonnull final ProfileRequestContext profileRequestContext) {
-        Constraint.isNotNull(profileRequestContext, "Profile request context can not be null");
 
         VelocityContext templateContext = new VelocityContext();
 

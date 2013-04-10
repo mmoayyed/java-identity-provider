@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.impl;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
 
-import org.opensaml.messaging.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;

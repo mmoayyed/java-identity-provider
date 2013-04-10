@@ -23,10 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.ProfileException;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-import org.opensaml.messaging.profile.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -40,7 +41,7 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
     /** {@inheritDoc} */
     public Event execute(final RequestContext springRequestContext) throws ProfileException {
 
-        // TODO I think this is correct, we have to override execute() rather than doExecute().
+        // We have to override execute() because the profile request context doesn't exist yet.
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

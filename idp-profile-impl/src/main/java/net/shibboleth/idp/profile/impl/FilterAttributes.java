@@ -18,9 +18,6 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
@@ -31,8 +28,8 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -40,6 +37,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -73,7 +71,7 @@ public class FilterAttributes extends AbstractProfileAction {
     public FilterAttributes(@Nonnull final AttributeFilteringEngine engine) {
         super();
 
-        filterEngine = Constraint.isNotNull(engine, "Attribute filtering engine can not be null");
+        filterEngine = Constraint.isNotNull(engine, "Attribute filtering engine cannot be null");
 
         relyingPartyContextLookupStrategy =
                 new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
@@ -111,12 +109,12 @@ public class FilterAttributes extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy can not be null");
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event
-            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+            doExecute(@Nonnull final RequestContext springRequestContext,
                     @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);

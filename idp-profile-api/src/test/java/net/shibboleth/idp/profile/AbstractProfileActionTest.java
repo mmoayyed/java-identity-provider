@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.profile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -125,8 +124,7 @@ public class AbstractProfileActionTest {
         }
 
         /** {@inheritDoc} */
-        protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-                RequestContext springRequestContext, ProfileRequestContext profileRequestContext)
+        protected Event doExecute(RequestContext springRequestContext, ProfileRequestContext profileRequestContext)
                 throws ProfileException {
 
             executed = true;
@@ -135,7 +133,7 @@ public class AbstractProfileActionTest {
                 throw thrownException;
             }
 
-            return ActionSupport.buildProceedEvent(this);
+            return super.doExecute(springRequestContext, profileRequestContext);
         }
     }
 }

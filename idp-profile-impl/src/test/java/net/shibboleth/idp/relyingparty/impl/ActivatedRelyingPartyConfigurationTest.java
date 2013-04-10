@@ -19,7 +19,7 @@ package net.shibboleth.idp.relyingparty.impl;
 
 import java.util.Collections;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;

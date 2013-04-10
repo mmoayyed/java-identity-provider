@@ -18,17 +18,14 @@
 package net.shibboleth.idp.profile.impl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -39,6 +36,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -117,7 +115,7 @@ public final class SelectRelyingPartyConfiguration extends AbstractProfileAction
 
     /** {@inheritDoc} */
     public org.springframework.webflow.execution.Event
-            doExecute(@Nullable final HttpServletRequest httpRequest, @Nullable final HttpServletResponse httpResponse,
+            doExecute(@Nonnull final RequestContext springRequestContext,
                     @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);

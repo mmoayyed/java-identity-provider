@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;

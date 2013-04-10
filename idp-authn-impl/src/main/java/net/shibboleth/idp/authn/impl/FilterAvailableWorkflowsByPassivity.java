@@ -22,9 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
@@ -35,10 +32,11 @@ import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * An authentication action that filters out potential authentication workflows if the current request is a passive
@@ -52,8 +50,7 @@ public class FilterAvailableWorkflowsByPassivity extends AbstractAuthenticationA
     private final Logger log = LoggerFactory.getLogger(FilterAvailableWorkflowsByPassivity.class);
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationRequestContext authenticationContext) throws AuthenticationException {
 
@@ -86,7 +83,8 @@ public class FilterAvailableWorkflowsByPassivity extends AbstractAuthenticationA
             }
         }
 
-        log.debug("Action {}: potential authentication workflows left after filtering: {}", getId(), potentialWorkflows);
+        log.debug("Action {}: potential authentication workflows left after filtering: {}", getId(),
+                potentialWorkflows);
 
         if (potentialWorkflows.size() == 0) {
             return ActionSupport.buildEvent(this, AuthnEventIds.NO_POTENTIAL_WORKFLOW);

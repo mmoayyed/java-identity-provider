@@ -18,7 +18,6 @@
 package net.shibboleth.idp.profile;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +31,8 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,28 +45,24 @@ import com.google.common.base.Function;
 //TODO perf metrics
 
 /**
- * Base class for IdP profile processing steps.
+ * Base class for Spring-aware profile actions.
  * 
- * This base class takes care of the following things:
+ * This base class takes care of the following:
  * <ul>
  * <li>retrieving the {@link ProfileRequestContext} from the current request environment</li>
- * <li>ensuring the {@link javax.servlet.http.HttpServletRequest} and {@link javax.servlet.http.HttpServletResponse} is
- * available on the {@link ProfileRequestContext}</li>
+ * <li>ensuring the {@link javax.servlet.http.HttpServletRequest} and {@link javax.servlet.http.HttpServletResponse} are
+ * available on the {@link ProfileRequestContext}, if they exist</li>
  * <li>tracking performance metrics for the action</li>
  * </ul>
  * 
- * Action implementations should generally override
- * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext)}, however if an action needs access
- * to the Spring Webflow {@link RequestContext} it may override
- * {@link #doExecute(HttpServletRequest, HttpServletResponse, RequestContext, ProfileRequestContext)} instead. In
- * general, implementations should avoid doing this however.
+ * Action implementations should override {@link #doExecute(RequestContext, ProfileRequestContext)}.
  * 
  * @param <InboundMessageType> type of in-bound message
  * @param <OutboundMessageType> type of out-bound message
  */
 @ThreadSafe
 public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageType> extends
-        AbstractIdentifiableInitializableComponent implements ValidatableComponent, Action {
+    AbstractIdentifiableInitializableComponent implements ValidatableComponent, Action {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractProfileAction.class);
@@ -102,7 +98,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     public synchronized void setId(String componentId) {
         super.setId(componentId);
     }
-
+    
     /**
      * Gets the strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}.
      * 
@@ -123,7 +119,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         httpRequestLookupStrategy =
-                Constraint.isNotNull(strategy, "HttpServletRequest lookup strategy can not be null");
+                Constraint.isNotNull(strategy, "HttpServletRequest lookup strategy cannot be null");
     }
 
     /**
@@ -146,7 +142,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         this.httpResponseLookupStrategy =
-                Constraint.isNotNull(strategy, "HttpServletResponse lookup strategy can not be null");
+                Constraint.isNotNull(strategy, "HttpServletResponse lookup strategy cannot be null");
     }
 
     /**
@@ -169,11 +165,11 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         profileContextLookupStrategy =
-                Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy can not be null");
+                Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    public Event execute(final RequestContext springRequestContext) throws ProfileException {
+    @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         // we assume Spring set up its request context properly, if we needed to check this we would put a
@@ -192,7 +188,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
         profileRequestContext.setHttpRequest(httpRequest);
         profileRequestContext.setHttpResponse(httpResponse);
 
-        return doExecute(httpRequest, httpResponse, springRequestContext, profileRequestContext);
+        return doExecute(springRequestContext, profileRequestContext);
     }
 
     /** {@inheritDoc} */
@@ -201,40 +197,18 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     }
 
     /**
-     * Performs this action. Default implementation of this simply invokes
-     * {@link #doExecute(HttpServletRequest, HttpServletResponse, ProfileRequestContext)}.
+     * Performs this action. Default implementation returns a "proceed" event.
      * 
-     * @param httpRequest current HTTP request
-     * @param httpResponse current HTTP response
-     * @param springRequestContext current WebFlow request context, never null
-     * @param profileRequestContext the current IdP profile request context, never null
+     * @param springRequestContext current WebFlow request context
+     * @param profileRequestContext the current IdP profile request context
      * 
-     * @return the result of this action, never null
+     * @return the result of this action
      * 
      * @throws ProfileException thrown if there is a problem executing the profile action
      */
-    protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse, @Nonnull final RequestContext springRequestContext,
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
             throws ProfileException {
-        return doExecute(httpRequest, httpResponse, profileRequestContext);
-    }
-
-    /**
-     * Performs this action. Default implementation of this method throws an {@link UnsupportedOperationException}.
-     * 
-     * @param httpRequest current HTTP request
-     * @param httpResponse current HTTP response
-     * @param profileRequestContext the current IdP profile request context, never null
-     * 
-     * @return the result of this action, never null
-     * 
-     * @throws ProfileException thrown if there is a problem executing the profile action
-     */
-    protected Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse,
-            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-            throws ProfileException {
-        throw new UnsupportedOperationException();
+        return ActionSupport.buildProceedEvent(this);
     }
 }

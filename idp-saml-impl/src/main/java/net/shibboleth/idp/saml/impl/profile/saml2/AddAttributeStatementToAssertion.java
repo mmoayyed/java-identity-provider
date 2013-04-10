@@ -22,9 +22,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
@@ -35,8 +32,6 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;
@@ -46,6 +41,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -53,6 +50,7 @@ import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
@@ -150,8 +148,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction<Obje
     }
 
     /** {@inheritDoc} */
-    protected org.springframework.webflow.execution.Event doExecute(@Nullable final HttpServletRequest httpRequest,
-            @Nullable final HttpServletResponse httpResponse,
+    protected org.springframework.webflow.execution.Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         log.debug("Action {}: Attempting to add an AttributeStatement to outgoing Response", getId());
 

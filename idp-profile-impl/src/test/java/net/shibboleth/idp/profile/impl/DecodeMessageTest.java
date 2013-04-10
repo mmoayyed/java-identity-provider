@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -33,6 +33,7 @@ import org.opensaml.messaging.decoder.servlet.HttpServletRequestMessageDecoder;
 import org.opensaml.saml.common.SAMLObject;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -43,6 +44,7 @@ public class DecodeMessageTest extends XMLObjectBaseTestCase {
     @Test public void testDecodeMessage() throws Exception {
 
         ProfileRequestContext profileCtx = new ProfileRequestContext();
+        profileCtx.setHttpRequest(new MockHttpServletRequest());
 
         MockHttpServletRequestMessageDecoderFactory decoderFactory = new MockHttpServletRequestMessageDecoderFactory();
 
@@ -50,7 +52,7 @@ public class DecodeMessageTest extends XMLObjectBaseTestCase {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(new MockHttpServletRequest(), null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertProceedEvent(result);
 
@@ -70,7 +72,7 @@ public class DecodeMessageTest extends XMLObjectBaseTestCase {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         ActionTestingSupport.assertEvent(result, DecodeMessage.UNABLE_TO_DECODE);
     }

@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  *
@@ -33,8 +33,8 @@ import org.springframework.webflow.execution.Event;
 public class SignAssertions extends AbstractProfileAction<Object, Response> {
 
     /** {@inheritDoc} */
-    protected Event doExecute(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse,
-            final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         // TODO Auto-generated method stub
         return null;
     }

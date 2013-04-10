@@ -20,7 +20,7 @@ package net.shibboleth.idp.relyingparty.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

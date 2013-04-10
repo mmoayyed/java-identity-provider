@@ -19,11 +19,12 @@ package net.shibboleth.idp.authn.impl;
 
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.profile.EventIds;
-import net.shibboleth.idp.profile.ProfileRequestContext;
+import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.IdPSessionContext;
 
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -48,7 +49,7 @@ public class InitializeAuthenticationContextTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         Assert.assertNotNull(result);
         Assert.assertNotNull(result.getSource());
@@ -75,7 +76,7 @@ public class InitializeAuthenticationContextTest {
         action.setId("test");
         action.initialize();
 
-        Event result = action.doExecute(null, null, profileCtx);
+        Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
         Assert.assertNotNull(result);
         Assert.assertNotNull(result.getSource());

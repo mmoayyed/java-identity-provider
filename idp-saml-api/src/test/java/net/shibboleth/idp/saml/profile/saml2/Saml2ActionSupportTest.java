@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.profile.saml2;
 
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.ActionTestSupportAction;
@@ -25,6 +24,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Response;

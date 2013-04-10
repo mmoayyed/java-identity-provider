@@ -17,16 +17,14 @@
 
 package net.shibboleth.idp.saml.profile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ProfileException;
-import net.shibboleth.idp.profile.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml1.core.Response;
 import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 public class ActionTestSupportAction extends AbstractProfileAction<Object, Response> {
 
@@ -36,7 +34,7 @@ public class ActionTestSupportAction extends AbstractProfileAction<Object, Respo
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+    protected Event doExecute(RequestContext springRequestContext,
             ProfileRequestContext<Object, Response> profileRequestContext) throws ProfileException {
         return null;
     }

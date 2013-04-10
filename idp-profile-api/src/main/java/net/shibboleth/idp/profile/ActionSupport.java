@@ -52,7 +52,9 @@ public final class ActionSupport {
      * 
      * @return the constructed event
      */
-    @Nonnull public static Event buildEvent(@Nonnull final IdentifiableComponent source, @Nonnull final String eventId) {
+    @Nonnull public static Event buildEvent(@Nonnull final IdentifiableComponent source,
+            @Nonnull final String eventId) {
+        
         return buildEvent(source, eventId, null);
     }
 
