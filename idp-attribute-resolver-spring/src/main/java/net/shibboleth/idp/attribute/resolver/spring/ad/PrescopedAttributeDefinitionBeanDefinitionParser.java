@@ -19,9 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.idp.attribute.resolver.impl.ad.PrescopedAttributeDefinition;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,38 +27,29 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Spring bean definition parser for {@link CryptoTransientIdAttributeDefinition}s.
- */
-public class CryptoTransientIdAttributeDefinitionBeanDefinitionParser extends
-        BaseAttributeDefinitionBeanDefinitionParser {
+/** Spring bean definition parser for prescoped attributes. */
+public class PrescopedAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "CryptoTransientId");
+    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Prescoped");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinitionBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return CryptoTransientIdAttributeDefinition.class;
+        return PrescopedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        Long lifetime = null;
+        String scopeDelimiter = "@";
         
-        if (config.hasAttributeNS(null, "lifetime")) {
-            lifetime = AttributeSupport.getDurationAttributeValueAsLong(config.getAttributeNodeNS(null, "lifetime"));
-            log.debug("Attribute definition {}: lifetime {} specified ", getDefinitionId(), lifetime);
+        if (config.hasAttributeNS(null, "scopeDelimiter")) {
+            scopeDelimiter = config.getAttributeNS(null, "scopeDelimiter");
         }
-
-        if (null != lifetime) {
-            builder.addPropertyValue("idLifetime", lifetime.longValue());
-        }
-
-        builder.addPropertyReference("dataSealer",
-                StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef")));
+        log.debug("Attribute definition {}: scope delimiter of {} specified ", getDefinitionId(), scopeDelimiter);
+        builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
     }
 }

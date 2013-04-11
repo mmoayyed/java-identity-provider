@@ -24,6 +24,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionBe
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 
@@ -31,7 +32,7 @@ import org.testng.Assert;
  * Test for {@link SimpleAttributeDefinitionBeanDefinitionParser} and by extension
  * {@link BaseAttributeDefinitionBeanDefinitionParser}.
  */
-public abstract class BaseTestAttributeDefinitionBeanParser {
+public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInitBaseTestCase  {
 
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
 

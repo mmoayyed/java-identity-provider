@@ -17,50 +17,63 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import java.util.regex.Pattern;
+
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.ad.RegexSplitAttributeDefinition;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for {@link CryptoTransientIdAttributeDefinition}s.
+ * Spring Bean Definition Parser for static data connector.
  */
-public class CryptoTransientIdAttributeDefinitionBeanDefinitionParser extends
-        BaseAttributeDefinitionBeanDefinitionParser {
+public class RegexSplitAttributeDefinitionBeanDefinitionParser extends BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "CryptoTransientId");
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinitionBeanDefinitionParser.class);
+    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "RegexSplit");
+    
+    /** Logger.*/
+    private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionBeanDefinitionParser.class); 
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return CryptoTransientIdAttributeDefinition.class;
+        return RegexSplitAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        Long lifetime = null;
+
+        final String regexp = StringSupport.trimOrNull(config.getAttributeNS(null, "regex"));
         
-        if (config.hasAttributeNS(null, "lifetime")) {
-            lifetime = AttributeSupport.getDurationAttributeValueAsLong(config.getAttributeNodeNS(null, "lifetime"));
-            log.debug("Attribute definition {}: lifetime {} specified ", getDefinitionId(), lifetime);
+        if (null == regexp) {
+            log.error("Attribute definition {}: No regexp specified", getDefinitionId());
+            throw new BeanCreationException("Attribute definition " + getDefinitionId()
+                    + ": No regexp text provided"); 
         }
-
-        if (null != lifetime) {
-            builder.addPropertyValue("idLifetime", lifetime.longValue());
+        
+        boolean caseSensitive = true;
+        if (config.hasAttributeNS(null, "caseSensitive")) {
+            caseSensitive =
+                    AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "caseSensitive"));
         }
-
-        builder.addPropertyReference("dataSealer",
-                StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef")));
+        
+        Pattern pattern;
+        if (caseSensitive) {
+            pattern = Pattern.compile(regexp);
+        } else {
+            pattern = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
+        }
+        
+        
+        builder.addPropertyValue("regularExpression", pattern);
     }
 }

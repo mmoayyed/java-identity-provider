@@ -19,9 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.ad.SAML1NameIdentifierAttributeDefinition;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,38 +28,36 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Spring bean definition parser for {@link CryptoTransientIdAttributeDefinition}s.
- */
-public class CryptoTransientIdAttributeDefinitionBeanDefinitionParser extends
+/** Spring bean definition parser for SAML 1 NameIdentifier attribute definitions. */
+public class SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser extends
         BaseAttributeDefinitionBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "CryptoTransientId");
+    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "SAML1NameIdentifier");
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinitionBeanDefinitionParser.class);
+    /** Logger. */
+    private final Logger log = LoggerFactory
+            .getLogger(SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
-        return CryptoTransientIdAttributeDefinition.class;
+        return SAML1NameIdentifierAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        Long lifetime = null;
-        
-        if (config.hasAttributeNS(null, "lifetime")) {
-            lifetime = AttributeSupport.getDurationAttributeValueAsLong(config.getAttributeNodeNS(null, "lifetime"));
-            log.debug("Attribute definition {}: lifetime {} specified ", getDefinitionId(), lifetime);
-        }
 
-        if (null != lifetime) {
-            builder.addPropertyValue("idLifetime", lifetime.longValue());
+        String nameIdFormat = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+        if (config.hasAttributeNS(null, "nameIdFormat")) {
+            nameIdFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdFormat"));
         }
+        final String nameIdQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdQualifier"));
 
-        builder.addPropertyReference("dataSealer",
-                StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef")));
+        log.debug("Attribute definition '{}': nameIdFormat {}, nameIdQualifier {}", new Object[] {getDefinitionId(),
+                nameIdFormat, nameIdQualifier,});
+        builder.addPropertyValue("nameIdFormat", nameIdFormat);
+        builder.addPropertyValue("nameIdQualifier", nameIdQualifier);
     }
 }
