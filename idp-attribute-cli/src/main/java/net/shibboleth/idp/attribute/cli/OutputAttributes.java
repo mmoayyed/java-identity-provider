@@ -88,6 +88,6 @@ public final class OutputAttributes extends AbstractProfileAction {
             throw new ProfileException("I/O error writing attributes to output context", e);
         }
         
-        return super.doExecute(springRequestContext, profileRequestContext);
+        return ActionSupport.buildProceedEvent(this);
     }
 }

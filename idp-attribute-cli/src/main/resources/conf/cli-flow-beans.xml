@@ -12,7 +12,7 @@
     <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" />
 
     <!-- Dummy resolver that can run without Spring and is adapted using the WebFlowAdaptor. -->
-    <bean id="StaticResolver" class="net.shibboleth.idp.profile.impl.WebFlowAdaptor">
+    <bean id="StaticResolver" class="net.shibboleth.idp.profile.impl.WebFlowProfileActionAdaptor">
         <constructor-arg>
             <bean id="StaticResolverBean" class="net.shibboleth.idp.attribute.cli.StaticResolver" />
         </constructor-arg>
