@@ -21,12 +21,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.ProfileAction;
-import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -66,33 +64,16 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
      */
     public WebFlowProfileActionAdaptor(@Nonnull final ProfileAction profileAction) {
         super();
-
-        setId(getClass().getName());
         
         action = Constraint.isNotNull(profileAction, "ProfileAction cannot be null");
     }
 
     /** {@inheritDoc} */
-    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
                     throws ProfileException {
 
         action.execute(profileRequestContext);
-        
-        // Check for an EventContext on output. Do not autocreate it.
-        EventContext eventCtx = profileRequestContext.getSubcontext(EventContext.class, false);
-        if (eventCtx != null) {
-            profileRequestContext.removeSubcontext(eventCtx);
-            if (eventCtx.getEvent() instanceof Event) {
-                return (Event) eventCtx.getEvent();
-            } else if (eventCtx.getEvent() instanceof String) {
-                return ActionSupport.buildEvent(action, (String) eventCtx.getEvent());
-            } else {
-                return null;
-            }
-        } else {
-            // Assume the result is to proceed.
-            return ActionSupport.buildProceedEvent(this);
-        }
+        return getResult(action, profileRequestContext);
     }
 }

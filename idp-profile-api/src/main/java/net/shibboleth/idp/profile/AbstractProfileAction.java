@@ -22,16 +22,16 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.profile.navigate.WebflowRequestContextHttpServletRequestLookup;
 import net.shibboleth.idp.profile.navigate.WebflowRequestContextHttpServletResponseLookup;
 import net.shibboleth.idp.profile.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.ProfileAction;
+import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ import com.google.common.base.Function;
  */
 @ThreadSafe
 public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageType> extends
-    AbstractIdentifiableInitializableComponent implements ValidatableComponent, Action {
+    org.opensaml.profile.action.AbstractProfileAction<InboundMessageType, OutboundMessageType> implements Action {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractProfileAction.class);
@@ -94,11 +94,6 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
         profileContextLookupStrategy = new WebflowRequestContextProfileRequestContextLookup();
     }
 
-    /** {@inheritDoc} */
-    public synchronized void setId(String componentId) {
-        super.setId(componentId);
-    }
-    
     /**
      * Gets the strategy used to lookup the {@link HttpServletRequest} from a given WebFlow {@link RequestContext}.
      * 
@@ -171,10 +166,7 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
     /** {@inheritDoc} */
     @Nonnull public Event execute(@Nonnull final RequestContext springRequestContext) throws ProfileException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-
-        // we assume Spring set up its request context properly, if we needed to check this we would put a
-        // checking action anywhere in a flow where a request would be (re-)entering a flow
-
+        
         final HttpServletRequest httpRequest = httpRequestLookupStrategy.apply(springRequestContext);
         final HttpServletResponse httpResponse = httpResponseLookupStrategy.apply(springRequestContext);
 
@@ -191,24 +183,70 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
         return doExecute(springRequestContext, profileRequestContext);
     }
 
-    /** {@inheritDoc} */
-    public void validate() throws ComponentValidationException {
-        // nothing to do here
-    }
-
     /**
-     * Performs this action. Default implementation returns a "proceed" event.
+     * Spring-aware actions can override this method to fully control the execution of an Action
+     * by the Web Flow engine.
      * 
-     * @param springRequestContext current WebFlow request context
-     * @param profileRequestContext the current IdP profile request context
+     * <p>Alternatively they may override {@link #doExecute(ProfileRequestContext)} and access
+     * Spring information via a {@link SpringRequestContext} attached to the profile request context.</p>
      * 
-     * @return the result of this action
+     * <p>The default implementation attaches the Spring Web Flow request context to the profile
+     * request context tree to "narrow" the execution signature to the basic OpenSAML {@link ProfileAction}
+     * interface. After execution, an {@link EventContext} is sought, and used to return a result back to
+     * the Web Flow engine. If no context exists, a "proceed" event is signaled.</p>
      * 
-     * @throws ProfileException thrown if there is a problem executing the profile action
+     * @param springRequestContext the Spring request context
+     * @param profileRequestContext a profile request context
+     * @return a Web Flow event produced by the action
+     * @throws ProfileException if an error occurs during execution
      */
     @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext)
-            throws ProfileException {
-        return ActionSupport.buildProceedEvent(this);
+                    throws ProfileException {
+        
+        // Attach the Spring context to the context tree.
+        SpringRequestContext springSubcontext =
+                profileRequestContext.getSubcontext(SpringRequestContext.class, true);      
+        springSubcontext.setRequestContext(springRequestContext);
+
+        try {
+            execute(profileRequestContext);
+        } finally {     
+            // Remove the Spring context from the context tree.     
+            profileRequestContext.removeSubcontext(springSubcontext);
+        }
+        
+        return getResult(this, profileRequestContext);
+    }
+    
+    /**
+     * Examines the profile context for an event to return, or signals a "proceed" event if
+     * no {@link EventContext} is located; the EventContext will be removed upon completion.
+     * 
+     * <p>The EventContext must contain a Spring Web Flow {@link Event} or a {@link String}.
+     * Any other type of context data will be ignored.</p>
+     * 
+     * @param action    the action signaling the event
+     * @param profileRequestContext the profile request context to examine
+     * @return  an event based on the profile request context, or "proceed"
+     */
+    @Nonnull protected Event getResult(@Nonnull final ProfileAction action,
+            @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
+        
+        // Check for an EventContext on output. Do not autocreate it.
+        EventContext eventCtx = profileRequestContext.getSubcontext(EventContext.class, false);
+        if (eventCtx != null) {
+            profileRequestContext.removeSubcontext(eventCtx);
+            if (eventCtx.getEvent() instanceof Event) {
+                return (Event) eventCtx.getEvent();
+            } else if (eventCtx.getEvent() instanceof String) {
+                return ActionSupport.buildEvent(action, (String) eventCtx.getEvent());
+            } else {
+                return null;
+            }
+        } else {
+            // Assume the result is to proceed.
+            return ActionSupport.buildProceedEvent(action);
+        }
     }
 }
