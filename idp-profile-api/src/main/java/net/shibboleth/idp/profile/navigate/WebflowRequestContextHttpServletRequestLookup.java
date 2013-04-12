@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.navigate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -37,7 +39,7 @@ public class WebflowRequestContextHttpServletRequestLookup implements
     private final Logger log = LoggerFactory.getLogger(WebflowRequestContextHttpServletRequestLookup.class);
 
     /** {@inheritDoc} */
-    public HttpServletRequest apply(RequestContext requestContext) {
+    @Nullable public HttpServletRequest apply(@Nonnull final RequestContext requestContext) {
         final ExternalContext externalContext = requestContext.getExternalContext();
         if (externalContext == null) {
             log.debug("Webflow RequestContext's ExternalContext was null");

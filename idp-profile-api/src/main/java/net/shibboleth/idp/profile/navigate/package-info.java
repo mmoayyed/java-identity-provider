@@ -16,7 +16,7 @@
  */
 
 /** 
- * Functions dealing with traversing and extracting data from {@link org.opensaml.messaging.context.BaseContext} trees. 
+ * Functions dealing with traversing and extracting data from
+ * Spring or Web Flow context objects.
  */
-
 package net.shibboleth.idp.profile.navigate;
