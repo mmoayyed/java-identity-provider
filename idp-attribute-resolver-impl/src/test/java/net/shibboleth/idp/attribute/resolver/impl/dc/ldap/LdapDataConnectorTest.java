@@ -25,8 +25,11 @@ import javax.annotation.Nonnull;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapException;
+import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
+import org.ldaptive.SearchResult;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
@@ -78,7 +81,27 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 throws ResolutionException {
             final AttributeRecipientContext subContext =
                     resolutionContext.getSubcontext(AttributeRecipientContext.class);
-            return new StringExecutableSearchFilter(String.format("(uid=%s)", subContext.getPrincipal()));
+            return new ExecutableSearchFilter() {
+
+                private final SearchFilter sf = new SearchFilter(String.format("(uid=%s)", subContext.getPrincipal()));
+
+                /** {@inheritDoc} */
+                @Nonnull public String getResultCacheKey() {
+                    return String.valueOf(sf.hashCode());
+                }
+
+                /** {@inheritDoc} */
+                @Nonnull public SearchResult execute(@Nonnull final SearchExecutor executor,
+                        @Nonnull final ConnectionFactory factory) throws LdapException {
+                    final Response<SearchResult> response = executor.search(factory, sf);
+                    return response.getResult();
+                }
+
+                /** {@inheritDoc} */
+                public String toString() {
+                    return sf.toString();
+                }
+            };
         }
     }
 

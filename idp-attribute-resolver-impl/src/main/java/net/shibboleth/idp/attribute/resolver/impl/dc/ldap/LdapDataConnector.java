@@ -205,9 +205,4 @@ public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSea
 
     }
 
-    /** {@inheritDoc} */
-
-    /** {@inheritDoc} */
-
-    /** {@inheritDoc} */
 }

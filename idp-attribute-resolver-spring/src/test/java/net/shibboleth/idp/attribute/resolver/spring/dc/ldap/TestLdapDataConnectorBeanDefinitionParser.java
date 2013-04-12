@@ -1,0 +1,163 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
+
+import java.util.Map;
+
+import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
+import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.ParameterizedExecutableSearchFilterBuilder;
+import net.shibboleth.idp.service.ServiceException;
+import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
+import org.ldaptive.BindConnectionInitializer;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.pool.BlockingConnectionPool;
+import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.pool.PoolConfig;
+import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.pool.SearchValidator;
+import org.springframework.context.support.GenericApplicationContext;
+import org.testng.Assert;
+import org.testng.AssertJUnit;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Optional;
+import com.google.common.cache.Cache;
+import com.unboundid.ldap.listener.InMemoryDirectoryServer;
+import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
+import com.unboundid.ldap.listener.InMemoryListenerConfig;
+import com.unboundid.ldap.sdk.LDAPException;
+
+/** Test for {@link LdapDataConnectorBeanDefinitionParser}. */
+public class TestLdapDataConnectorBeanDefinitionParser {
+
+    /** In-memory directory server. */
+    private InMemoryDirectoryServer directoryServer;
+
+    /**
+     * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
+     * 
+     * @throws LDAPException if the in-memory directory server cannot be created
+     */
+    @BeforeTest public void setupDirectoryServer() throws LDAPException {
+
+        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
+        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
+        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
+        directoryServer = new InMemoryDirectoryServer(config);
+        directoryServer.importFromLDIF(true,
+                "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldapDataConnectorTest.ldif");
+        directoryServer.startListening();
+    }
+
+    /**
+     * Shutdown the in-memory directory server.
+     */
+    @AfterTest public void teardownDirectoryServer() {
+        directoryServer.shutDown(true);
+    }
+
+    @Test public void testV2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
+        LdapDataConnector dataConnector =
+                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml");
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+    }
+
+    @Test public void testSpringConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+        LdapDataConnector dataConnector =
+                getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml");
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+    }
+
+    protected LdapDataConnector getLdapDataConnector(final String springContext) {
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + TestLdapDataConnectorBeanDefinitionParser.class);
+
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+        beanDefinitionReader.loadBeanDefinitions(springContext);
+
+        return (LdapDataConnector) context.getBean("myLDAP");
+    }
+
+    protected void doTest(final LdapDataConnector dataConnector) throws ResolutionException {
+
+        String id = dataConnector.getId();
+        AssertJUnit.assertEquals("myLDAP", id);
+
+        PooledConnectionFactory connFactory = (PooledConnectionFactory) dataConnector.getConnectionFactory();
+        AssertJUnit.assertNotNull(connFactory);
+        BlockingConnectionPool connPool = (BlockingConnectionPool) connFactory.getConnectionPool();
+        AssertJUnit.assertNotNull(connPool);
+        AssertJUnit.assertEquals(5000, connPool.getBlockWaitTime());
+        PoolConfig poolConfig = connPool.getPoolConfig();
+        AssertJUnit.assertNotNull(poolConfig);
+        AssertJUnit.assertEquals(5, poolConfig.getMinPoolSize());
+        AssertJUnit.assertEquals(10, poolConfig.getMaxPoolSize());
+        AssertJUnit.assertEquals(true, poolConfig.isValidatePeriodically());
+        AssertJUnit.assertEquals(900, poolConfig.getValidatePeriod());
+
+        SearchValidator searchValidator = (SearchValidator) connPool.getValidator();
+        AssertJUnit.assertNotNull(searchValidator);
+        AssertJUnit.assertEquals("dc=shibboleth,dc=net", searchValidator.getSearchRequest().getBaseDn());
+        AssertJUnit.assertEquals("(ou=people)", searchValidator.getSearchRequest().getSearchFilter().getFilter());
+
+        IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) connPool.getPruneStrategy();
+        AssertJUnit.assertNotNull(pruneStrategy);
+        AssertJUnit.assertEquals(300, pruneStrategy.getPrunePeriod());
+        AssertJUnit.assertEquals(600, pruneStrategy.getIdleTime());
+
+        ConnectionConfig connConfig = connPool.getConnectionFactory().getConnectionConfig();
+        AssertJUnit.assertNotNull(connConfig);
+        AssertJUnit.assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
+        AssertJUnit.assertEquals(false, connConfig.getUseSSL());
+        AssertJUnit.assertEquals(false, connConfig.getUseStartTLS());
+        BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
+        AssertJUnit.assertEquals("cn=Directory Manager", connInitializer.getBindDn());
+        AssertJUnit.assertEquals("password", connInitializer.getBindCredential().getString());
+
+        SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
+        AssertJUnit.assertNotNull(searchExecutor);
+        AssertJUnit.assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
+        AssertJUnit.assertEquals("(uid={principalName})", searchExecutor.getSearchFilter().getFilter());
+
+        Validator validator = dataConnector.getValidator();
+        AssertJUnit.assertNotNull(validator);
+
+        ParameterizedExecutableSearchFilterBuilder searchBuilder =
+                (ParameterizedExecutableSearchFilterBuilder) dataConnector.getExecutableSearchBuilder();
+        AssertJUnit.assertNotNull(searchBuilder);
+
+        MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();
+        AssertJUnit.assertNotNull(mappingStrategy);
+
+        Cache<String, Optional<Map<String, Attribute>>> resultCache = dataConnector.getResultCache();
+        AssertJUnit.assertNull(resultCache);
+    }
+}
