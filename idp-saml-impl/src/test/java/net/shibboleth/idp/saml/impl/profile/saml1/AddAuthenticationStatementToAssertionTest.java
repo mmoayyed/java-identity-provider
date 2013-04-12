@@ -20,7 +20,8 @@ package net.shibboleth.idp.saml.impl.profile.saml1;
 import net.shibboleth.idp.authn.AuthenticationRequestContext;
 import net.shibboleth.idp.authn.AuthenticationWorkflowDescriptor;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.EventIds;
+
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.SamlEventIds;

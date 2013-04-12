@@ -34,7 +34,8 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.UserAgentAddressContext;
 import net.shibboleth.idp.authn.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.EventIds;
+
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;

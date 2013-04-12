@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile;
 
+import org.opensaml.profile.action.EventIds;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 

@@ -30,9 +30,9 @@ import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.EventIds;
 
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

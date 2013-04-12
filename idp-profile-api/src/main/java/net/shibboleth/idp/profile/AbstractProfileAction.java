@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.action.ProfileAction;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;

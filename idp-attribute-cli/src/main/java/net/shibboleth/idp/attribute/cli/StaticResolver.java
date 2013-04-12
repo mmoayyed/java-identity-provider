@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.profile.ProfileException;
 import org.opensaml.profile.action.AbstractProfileAction;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.ext.spring.webflow.Event;
@@ -29,7 +30,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.profile.EventIds;
 
 import com.google.common.collect.ImmutableList;
 
