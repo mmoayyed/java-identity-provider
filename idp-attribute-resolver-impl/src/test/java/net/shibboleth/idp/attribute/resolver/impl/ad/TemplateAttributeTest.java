@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -28,10 +29,10 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
@@ -51,18 +52,20 @@ public class TemplateAttributeTest {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE_STRING = "simple";
+
     private static final StringAttributeValue SIMPLE_VALUE_RESULT = new StringAttributeValue(SIMPLE_VALUE_STRING);
 
     /** A simple script to set a constant value. */
     private static final String TEST_SIMPLE_TEMPLATE = SIMPLE_VALUE_STRING;
 
     /** A simple script to set a value based on input values. */
-    private static final String TEST_ATTRIBUTES_TEMPLATE_ATTR = "Att " + "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}-"
-            + "${" + TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME + "}";
+    private static final String TEST_ATTRIBUTES_TEMPLATE_ATTR = "Att " + "${"
+            + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}-" + "${" + TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME
+            + "}";
 
-
-    private static final String TEST_ATTRIBUTES_TEMPLATE_CONNECTOR = "Att " + "${" + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR + "}-"
-            + "${" + TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME + "}";
+    private static final String TEST_ATTRIBUTES_TEMPLATE_CONNECTOR = "Att " + "${"
+            + TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "}-" + "${"
+            + TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME + "}";
 
     /** Our singleton engine. */
     private static VelocityEngine engineSingleton;
@@ -106,9 +109,9 @@ public class TemplateAttributeTest {
             attr.initialize();
             Assert.fail("No template");
         } catch (ComponentInitializationException ex) {
-            //OK
+            // OK
         }
-        
+
         attr = new TemplateAttributeDefinition();
         attr.setId(name);
         attr.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE_ATTR));
@@ -116,7 +119,7 @@ public class TemplateAttributeTest {
             attr.initialize();
             Assert.fail("No dependencies");
         } catch (ComponentInitializationException ex) {
-            //OK
+            // OK
         }
         Assert.assertNotNull(attr.getTemplate());
 
@@ -143,8 +146,11 @@ public class TemplateAttributeTest {
         templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_SIMPLE_TEMPLATE));
 
         final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR));
+        ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME));
+        // ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR,
+        // TestSources.STATIC_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
+        templateDef.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.initialize();
 
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
@@ -181,10 +187,13 @@ public class TemplateAttributeTest {
         templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE_CONNECTOR));
 
         Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.setDependencies(ds);
+        templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR,
+                TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.initialize();
 
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
@@ -195,16 +204,18 @@ public class TemplateAttributeTest {
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, dataDefinitions);
         resolver.initialize();
-        
+
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
         final Attribute a = context.getResolvedAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 2, "Templated value count");
-        String s = "Att " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[0];
+        String s =
+                "Att " + TestSources.COMMON_ATTRIBUTE_VALUE_STRING + "-"
+                        + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[0];
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "First Match");
-        s = "Att " + TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[1];
+        s = "Att " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[1];
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
     }
 
@@ -218,9 +229,11 @@ public class TemplateAttributeTest {
         final String otherAttrName = TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "2";
 
         Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         ds.add(TestSources.makeResolverPluginDependency(otherDefName, otherAttrName));
         templateDef.setDependencies(ds);
+        templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, otherAttrName));
         templateDef.initialize();
 
         final Set<BaseAttributeDefinition> attrDefinitions = new LazySet<BaseAttributeDefinition>();
@@ -230,14 +243,14 @@ public class TemplateAttributeTest {
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, Collections.EMPTY_SET);
         resolver.initialize();
-        
+
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
         } catch (ResolutionException ex) {
             // OK
-        }        
+        }
     }
 
     @Test public void testWrongType() throws ResolutionException, ComponentInitializationException {
@@ -248,13 +261,16 @@ public class TemplateAttributeTest {
         templateDef.setTemplate(Template.fromTemplate(getEngine(), TEST_ATTRIBUTES_TEMPLATE_ATTR));
 
         Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
-        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.setDependencies(ds);
+        templateDef.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        
         templateDef.initialize();
 
         Attribute attr = new Attribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
-        StaticAttributeDefinition  simple = new StaticAttributeDefinition ();
+        StaticAttributeDefinition simple = new StaticAttributeDefinition();
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
         simple.setValue(attr);
         simple.initialize();
@@ -264,14 +280,14 @@ public class TemplateAttributeTest {
 
         final AttributeResolver resolver = new AttributeResolver("foo", attrDefinitions, Collections.EMPTY_SET);
         resolver.initialize();
-        
+
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
         } catch (ResolutionException ex) {
             // OK
-        }        
+        }
     }
-    
+
 }

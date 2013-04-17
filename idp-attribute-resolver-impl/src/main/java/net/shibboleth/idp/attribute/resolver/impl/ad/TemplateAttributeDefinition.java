@@ -17,10 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -32,9 +33,12 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.UnsupportedAttributeTypeException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -47,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
 
 /**
  * An attribute definition that constructs its values based on the values of its dependencies using the Velocity
@@ -68,6 +73,32 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** Template to be evaluated. */
     private Template template;
+
+    /** The names of the attributes we need. */
+    private List<String> sourceAttributes = Collections.EMPTY_LIST;
+
+    /**
+     * Get the source attribute IDs.
+     * 
+     * @return the source attribute IDs
+     */
+    @Nonnull @Unmodifiable @NonnullElements public List<String> getSourceAttributes() {
+        return Collections.unmodifiableList(sourceAttributes);
+    }
+
+    /**
+     * Set the source attribute IDs.
+     * 
+     * @param newSourceAttributes the source attribute IDs
+     */
+    public void setSourceAttributes(List<String> newSourceAttributes) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        ArrayList<String> checkedSourceAttrs = new ArrayList<String>(newSourceAttributes.size());
+        CollectionSupport.addIf(checkedSourceAttrs, newSourceAttributes, Predicates.notNull());
+        sourceAttributes = Collections.unmodifiableList(checkedSourceAttrs);
+    }
 
     /**
      * Gets the template to be evaluated.
@@ -97,7 +128,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         final Attribute resultantAttribute = new Attribute(getId());
 
         final Map<String, Iterator<AttributeValue>> sourceValues = new LazyMap<String, Iterator<AttributeValue>>();
-        final int valueCount = countAndSetupSourceValues(resolutionContext, sourceValues);
+        final int valueCount = setupSourceValues(resolutionContext, sourceValues);
 
         // build velocity context
         VelocityContext velocityContext;
@@ -109,6 +140,13 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
             for (String attributeId : sourceValues.keySet()) {
                 final AttributeValue value = sourceValues.get(attributeId).next();
+                if (!(value instanceof StringAttributeValue)) {
+                    throw new ResolutionException(new UnsupportedAttributeTypeException(
+                            "This attribute definition only supports attribute value types of "
+                                    + StringAttributeValue.class.getName() + " not values of type "
+                                    + value.getClass().getName()));
+                }
+
                 log.debug("Attribute definition '{}': adding value '{}' for attribute '{}' to the template context",
                         new Object[] {getId(), value.toString(), attributeId,});
                 velocityContext.put(attributeId, value.getValue());
@@ -142,6 +180,10 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             throw new ComponentInitializationException("Attribute definition '" + getId()
                     + "': no template was configured");
         }
+        
+        if (sourceAttributes.isEmpty()) {
+            log.info("Attribute Definition '{}': No Source Attributes supplied, was this intended?");
+        }
     }
 
     /**
@@ -157,7 +199,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * @return how many values in the attributes
      * @throws ResolutionException if there is a mismatched count of attributes
      */
-    private int countAndSetupSourceValues(final AttributeResolutionContext resolutionContext,
+    private int setupSourceValues(final AttributeResolutionContext resolutionContext,
             Map<String, Iterator<AttributeValue>> sourceValues) throws ResolutionException {
 
         final Map<String, Set<AttributeValue>> dependencyAttributes =
@@ -166,20 +208,14 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         int valueCount = 0;
         boolean valueCountSet = false;
 
-        HashSet<String> attributeValues;
-        for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
-            attributeValues = new HashSet<String>();
-            for (AttributeValue value : dependencyAttribute.getValue()) {
-                if (value instanceof StringAttributeValue) {
-                    attributeValues.add((String) value.getValue());
-                } else {
-                    throw new ResolutionException(new UnsupportedAttributeTypeException(
-                            "This attribute definition only supports attribute value types of "
-                                    + StringAttributeValue.class.getName() + " not values of type "
-                                    + value.getClass().getName()));
-                }
+        for (String attributeName : sourceAttributes) {
+
+            final Set<AttributeValue> attributeValues = dependencyAttributes.get(attributeName);
+            if (null == attributeValues) {
+                throw new ResolutionException("Attribute Resolution '" + getId()
+                        + "' : no values found for attribute named '" + attributeName + "'");
             }
-            
+
             if (!valueCountSet) {
                 valueCount = attributeValues.size();
                 valueCountSet = true;
@@ -191,7 +227,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                 throw new ResolutionException(msg);
             }
 
-            sourceValues.put(dependencyAttribute.getKey(), dependencyAttribute.getValue().iterator());
+            sourceValues.put(attributeName, attributeValues.iterator());
         }
 
         return valueCount;
