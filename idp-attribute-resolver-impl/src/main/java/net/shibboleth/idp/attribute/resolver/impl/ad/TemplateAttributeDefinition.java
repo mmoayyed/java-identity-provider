@@ -42,10 +42,11 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,12 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** Template to be evaluated. */
     private Template template;
+    
+    /** Template (as Text) to be evaluated. */
+    private String templateText;
+
+    /** VelocityEngine. */
+    private VelocityEngine engine;
 
     /** The names of the attributes we need. */
     private List<String> sourceAttributes = Collections.EMPTY_LIST;
@@ -101,7 +108,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
-     * Gets the template to be evaluated.
+     * Gets the template text to be evaluated.
      * 
      * @return the template
      */
@@ -110,15 +117,45 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
+     * Gets the template text to be evaluated.
+     * 
+     * @return the template
+     */
+    @Nullable public String getTemplateText() {
+        return templateText;
+    }
+
+    /**
      * Sets the template to be evaluated.
      * 
      * @param velocityTemplate template to be evaluated
      */
-    public synchronized void setTemplate(@Nonnull Template velocityTemplate) {
+    public synchronized void setTemplateText(String velocityTemplate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        template = Constraint.isNotNull(velocityTemplate, "Template can not be null");
+        templateText = velocityTemplate;
+    }
+    
+    /**
+     * Gets the {@link VelocityEngine} to be used.
+     * 
+     * @return the template
+     */
+    @Nullable public VelocityEngine getVelocityEngine() {
+        return engine;
+    }
+
+    /**
+     * Sets the {@link VelocityEngine} to be used.
+     * 
+     * @param velocityEngine engine to be used
+     */
+    public synchronized void setVelocityEngine(VelocityEngine velocityEngine) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        engine = velocityEngine;
     }
 
     /** {@inheritDoc} */
@@ -176,14 +213,33 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
                     + "': no dependencies were configured");
         }
 
-        if (null == template) {
+        if (null == engine) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no template was configured");
+                    + "': no velocity engine was configured" );
         }
         
         if (sourceAttributes.isEmpty()) {
             log.info("Attribute Definition '{}': No Source Attributes supplied, was this intended?");
         }
+
+        templateText = StringSupport.trimOrNull(templateText);
+
+        if (null == templateText) {
+            StringBuffer defaultTemplate = new StringBuffer();
+            for (String id : sourceAttributes) {
+                defaultTemplate.append("${").append(id).append("} ");
+            }
+            if (defaultTemplate.length() > 0) {
+                templateText = defaultTemplate.toString();
+            } else {
+                throw new ComponentInitializationException("Attribute definition '" + getId()
+                        + "': no template and no source attributes were configured");                
+            }
+            log.info("Attribute definition '{}' no template supplied default generated '{}'", getId(), templateText);
+        }
+        
+        template = Template.fromTemplate(engine, templateText);
+        
     }
 
     /**
