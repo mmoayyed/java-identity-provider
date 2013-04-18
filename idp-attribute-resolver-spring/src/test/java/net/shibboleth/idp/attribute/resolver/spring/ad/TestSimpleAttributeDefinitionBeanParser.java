@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.Locale;
 import java.util.Map;

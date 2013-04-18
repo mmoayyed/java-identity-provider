@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.Collection;
 
@@ -35,7 +35,7 @@ import org.testng.Assert;
  */
 public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInitBaseTestCase  {
     
-    protected static final String FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/"; 
+    public static final String FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/"; 
 
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
 

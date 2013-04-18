@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.SAML1NameIdentifierAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser;

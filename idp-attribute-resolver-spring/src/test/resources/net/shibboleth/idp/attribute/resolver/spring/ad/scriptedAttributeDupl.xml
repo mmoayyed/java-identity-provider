@@ -6,5 +6,5 @@
     dependencyOnly="1"
     xsi:type="ad:Script" id="scriptedDupl">
     <ad:Script>stuff="stuff";</ad:Script>
-    <ad:ScriptFile>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/file.script</ad:ScriptFile>
+    <ad:ScriptFile>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ad/file.script</ad:ScriptFile>
     </AttributeDefinition>

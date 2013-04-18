@@ -49,7 +49,7 @@ public class TestAttributeResolverService {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/test/service.xml");
+        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/service.xml");
 
         AttributeResolverService attributeResolverService =
                 (AttributeResolverService) context.getBean("shibboleth.AttributeResolver");

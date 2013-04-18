@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.ScopedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.impl.ad.SAML2NameIDAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser;
 
 import org.testng.Assert;
@@ -26,13 +26,24 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestScopedAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class TestSAML2NameIDdentifierAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
 
     @Test public void testDefault() {
-        ScopedAttributeDefinition attrDef =
-                getAttributeDefn("scoped.xml", ScopedAttributeDefinition.class);
+        SAML2NameIDAttributeDefinition attrDef =
+                getAttributeDefn("saml2NameIdDefault.xml", SAML2NameIDAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "scoped");
-        Assert.assertEquals(attrDef.getScope(), "mYsCoPe");
+        Assert.assertEquals(attrDef.getId(), "SAML2NameID");
+        Assert.assertEquals(attrDef.getNameIdFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+        Assert.assertNull(attrDef.getNameIdQualifier());
+    }
+
+    @Test public void testAttributes() {
+        SAML2NameIDAttributeDefinition attrDef =
+                getAttributeDefn("saml2NameIdAttributes.xml", SAML2NameIDAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "SAML2NameId-Attr");
+        Assert.assertEquals(attrDef.getNameIdFormat(), "format");
+        Assert.assertEquals(attrDef.getNameIdQualifier(), "qualifier");
+        Assert.assertEquals(attrDef.getNameIdSPQualifier(),"name-Id-SP-Qualifier");
     }
 }

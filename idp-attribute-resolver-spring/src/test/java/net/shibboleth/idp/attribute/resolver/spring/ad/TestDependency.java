@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.Collection;
 
@@ -41,7 +41,7 @@ public class TestDependency {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/" + fileName);
+        beanDefinitionReader.loadBeanDefinitions(BaseTestAttributeDefinitionBeanParser.FILE_PATH +  fileName);
 
         Collection<ResolverPluginDependency> beans = context.getBeansOfType(ResolverPluginDependency.class).values();
         Assert.assertEquals(beans.size(), 1);

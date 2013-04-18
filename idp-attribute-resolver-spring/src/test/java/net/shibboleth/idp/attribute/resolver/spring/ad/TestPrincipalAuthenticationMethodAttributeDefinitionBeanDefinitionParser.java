@@ -15,23 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalNameAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.PrincipalNameAttributeDefinitionBeanDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalAuthenticationMethodAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link PrincipalNameAttributeDefinitionBeanDefinitionParser}.
+ * Test for {@link PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestPrincipalNameAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class TestPrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
 
     @Test public void test() {
-        PrincipalNameAttributeDefinition attrDef =
-                getAttributeDefn("principalName.xml", PrincipalNameAttributeDefinition.class);
+        PrincipalAuthenticationMethodAttributeDefinition attrDef =
+                getAttributeDefn("principalAuthenticationMethod.xml", PrincipalAuthenticationMethodAttributeDefinition.class);
 
-        Assert.assertEquals(attrDef.getId(), "PrincipalName");
+        Assert.assertEquals(attrDef.getId(), "PrincipalAuthenticationMethod");
     }
+
 }
