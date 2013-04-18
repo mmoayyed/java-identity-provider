@@ -1,0 +1,9 @@
+ <resolver:AttributeDefinition 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+    xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+    storageServiceRef="testStore"
+    id="transientIdWithTime"
+    xsi:type="ad:TransientId"
+    lifetime="PT3M"
+    />
