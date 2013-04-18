@@ -25,6 +25,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinition
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 
@@ -33,19 +34,34 @@ import org.testng.Assert;
  * {@link BaseAttributeDefinitionBeanDefinitionParser}.
  */
 public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInitBaseTestCase  {
+    
+    protected static final String FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/"; 
 
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/" + fileName);
+        beanDefinitionReader.loadBeanDefinitions(FILE_PATH + fileName);
 
         Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
 
         return (Type) beans.iterator().next();
     }
+    
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName, Class<Type> claz) {
+
+    
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + TestDependency.class);
+        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        
+        configReader .loadBeanDefinitions(FILE_PATH + beanFileName);
+    
+        return getAttributeDefn(fileName, claz, context);
+    }
+
     
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
 

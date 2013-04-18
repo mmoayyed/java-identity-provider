@@ -22,8 +22,6 @@ import net.shibboleth.idp.attribute.resolver.impl.ad.DataSealer;
 import net.shibboleth.idp.attribute.resolver.spring.ad.CryptoTransientIdAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -34,13 +32,7 @@ public class TestCryptoTransientIdAttributeDefinitionBeanDefinitionParser extend
 
     private CryptoTransientIdAttributeDefinition getDefinition(String fileName) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestDependency.class);
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
-        
-        configReader .loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/sealer.xml");
-
-        return getAttributeDefn(fileName, CryptoTransientIdAttributeDefinition.class, context);
+        return getAttributeDefn(fileName, "sealer.xml", CryptoTransientIdAttributeDefinition.class);
     }
     
     @Test

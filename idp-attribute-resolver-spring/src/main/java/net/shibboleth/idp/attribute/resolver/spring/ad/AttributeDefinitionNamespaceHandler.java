@@ -30,10 +30,6 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(SimpleAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new SimpleAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(ScriptedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new ScriptedAttributeDefinitionBeanDefinitionParser());
         registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new CryptoTransientIdAttributeDefinitionBeanDefinitionParser());
         registerBeanDefinitionParser(PrescopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
@@ -46,5 +42,15 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
                 new RegexSplitAttributeDefinitionBeanDefinitionParser());
         registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(SAML2NameIDAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new SAML2NameIDAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(ScopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new ScopedAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(ScriptedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new ScriptedAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(SimpleAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new SimpleAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(TemplateAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new TemplateAttributeDefinitionBeanDefinitionParser());
     }
 }

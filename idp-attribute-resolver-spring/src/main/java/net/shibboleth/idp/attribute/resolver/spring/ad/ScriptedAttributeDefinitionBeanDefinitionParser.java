@@ -26,7 +26,6 @@ import javax.script.ScriptException;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -47,6 +46,13 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
 
+    /** Script file element name. */
+    public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "ScriptFile");
+
+    /** Inline Script element name. */
+    public static final QName SCRIPT_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionBeanDefinitionParser.class);
 
@@ -54,19 +60,17 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
     protected Class getBeanClass(Element arg0) {
         return ScriptedAttributeDefinition.class;
     }
-    
-    /** Query the DOM and get the script from the appropriate subelements.
+
+    /**
+     * Query the DOM and get the script from the appropriate subelements.
+     * 
      * @param config The DOM we are interested in
      * @return The script as a string or throws an {@link BeanCreationException}
      */
     @Nonnull private String getScript(Element config) {
         String script = null;
-        List<Element> scriptElem =
-                ElementSupport.getChildElements(config,
-                        new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Script"));
-        List<Element> scriptFileElem =
-                ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-                        "ScriptFile"));
+        List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
+        List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 log.info("Attribute definition {}: definition contains both <Script> "

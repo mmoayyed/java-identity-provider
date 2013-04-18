@@ -1,0 +1,11 @@
+ <resolver:AttributeDefinition 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+    xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+    id="templateIdAttr"
+    velocityEngine="otherVe"
+    xsi:type="ad:Template" >
+  <ad:Template>TheTemplate</ad:Template>
+  <ad:SourceAttribute>att1</ad:SourceAttribute>
+  <ad:SourceAttribute>att2</ad:SourceAttribute>
+</resolver:AttributeDefinition>

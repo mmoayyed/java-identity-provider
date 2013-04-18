@@ -1,0 +1,10 @@
+ <AttributeDefinition 
+    xmlns="urn:mace:shibboleth:2.0:resolver"
+    xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad"
+    xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:type="ad:SAML2NameID" id="SAML2NameId-Attr"
+    nameIdFormat = "format" 
+    nameIdQualifier = "qualifier"
+    nameIdSPQualifier = "name-Id-SP-Qualifier" 
+    />
