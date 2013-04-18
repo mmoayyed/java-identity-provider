@@ -4,4 +4,4 @@
     xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     dependencyOnly="1"
-    xsi:type="ad:Script" id="scriptedBad"><Script>fo=</Script></AttributeDefinition>
+    xsi:type="ad:Script" id="scriptedBad"><ad:Script>fo=</ad:Script></AttributeDefinition>

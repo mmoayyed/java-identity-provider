@@ -5,6 +5,6 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     dependencyOnly="1"
     xsi:type="ad:Script" id="scriptedDupl">
-    <Script>stuff="stuff";</Script>
-    <ScriptFile>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/file.script</ScriptFile>
+    <ad:Script>stuff="stuff";</ad:Script>
+    <ad:ScriptFile>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/file.script</ad:ScriptFile>
     </AttributeDefinition>

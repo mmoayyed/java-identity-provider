@@ -4,4 +4,4 @@
     xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     dependencyOnly="1"
-    xsi:type="ad:Script" id="scriptedFile"><ScriptFile>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/file.script</ScriptFile></AttributeDefinition>
+    xsi:type="ad:Script" id="scriptedFile"><ad:ScriptFile>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/file.script</ad:ScriptFile></AttributeDefinition>
