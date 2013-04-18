@@ -18,8 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionBeanDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionBeanDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.ScriptedAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -27,8 +26,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link SimpleAttributeDefinitionBeanDefinitionParser} and by extension
- * {@link BaseAttributeDefinitionBeanDefinitionParser}.
+ * Test for {@link ScriptedAttributeDefinitionBeanDefinitionParser}.
  */
 public class TestScriptedAttributeDefinitionBeanParser extends BaseTestAttributeDefinitionBeanParser {
 
