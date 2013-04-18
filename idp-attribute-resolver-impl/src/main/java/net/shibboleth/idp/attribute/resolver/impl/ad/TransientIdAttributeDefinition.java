@@ -125,7 +125,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param lifetime time, in milliseconds, ids are valid
      */
-    public void setIdLiftetime(long lifetime) {
+    public void setIdLifetime(long lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idLifetime = lifetime;
     }

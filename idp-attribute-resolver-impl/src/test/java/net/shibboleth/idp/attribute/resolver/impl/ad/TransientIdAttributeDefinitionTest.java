@@ -18,21 +18,16 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
-import net.shibboleth.idp.persistence.PersistenceManager;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -65,7 +60,7 @@ public class TransientIdAttributeDefinitionTest {
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         testInitializeFail(defn, "no IdStore");
 
-        final Store store = new Store();
+        final TestIdStore store = new TestIdStore();
         defn.setIdStore(store);
 
         defn.initialize();
@@ -93,7 +88,7 @@ public class TransientIdAttributeDefinitionTest {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        final Store store = new Store();
+        final TestIdStore store = new TestIdStore();
         defn.setIdStore(store);
         defn.initialize();
         try {
@@ -115,10 +110,10 @@ public class TransientIdAttributeDefinitionTest {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        final Store store = new Store();
+        final TestIdStore store = new TestIdStore();
         defn.setIdStore(store);
 
-        defn.setIdLiftetime(TEST_LIFETIME);
+        defn.setIdLifetime(TEST_LIFETIME);
         defn.setIdSize(TEST_ID_SIZE);
         defn.initialize();
 
@@ -133,10 +128,10 @@ public class TransientIdAttributeDefinitionTest {
             InterruptedException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
-        defn.setIdLiftetime(TEST_LIFETIME);
+        defn.setIdLifetime(TEST_LIFETIME);
         defn.setIdSize(TEST_ID_SIZE);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        final Store store = new Store();
+        final TestIdStore store = new TestIdStore();
         defn.setIdStore(store);
         defn.initialize();
 
@@ -161,70 +156,5 @@ public class TransientIdAttributeDefinitionTest {
         vals = result.get().getValues();
         Assert.assertNotEquals(firstTime, vals.iterator().next().getValue());
 
-    }
-
-    private static class Store implements PersistenceManager<TransientIdEntry> {
-
-        private TransientIdEntry lastValueAdded;
-
-        private String lastIdAdded;
-
-        private Map<String, TransientIdEntry> theMap;
-
-        protected Store() {
-            theMap = new HashedMap();
-        }
-
-        protected TransientIdEntry getLastValue() {
-            return lastValueAdded;
-        }
-
-        protected String getLastId() {
-            return lastIdAdded;
-        }
-
-        /** {@inheritDoc} */
-        @Nullable public String getId() {
-            return "TestStore";
-        }
-
-        /** {@inheritDoc} */
-        public void validate() throws ComponentValidationException {
-            throw new ComponentValidationException();
-        }
-
-        /** {@inheritDoc} */
-        public boolean contains(String id) {
-            return theMap.containsKey(id);
-        }
-
-        /** {@inheritDoc} */
-        public boolean contains(TransientIdEntry item) {
-            return theMap.containsValue(item);
-        }
-
-        /** {@inheritDoc} */
-        public TransientIdEntry get(String id) {
-            return theMap.get(id);
-        }
-
-        /** {@inheritDoc} */
-        public TransientIdEntry persist(String id, TransientIdEntry item) {
-            lastValueAdded = item;
-            lastIdAdded = id;
-            theMap.put(id, item);
-            return item;
-        }
-
-        /** {@inheritDoc} */
-        public TransientIdEntry remove(String id) {
-            return theMap.remove(id);
-        }
-
-        /** {@inheritDoc} */
-        public TransientIdEntry remove(TransientIdEntry item) {
-            Assert.fail("Not implemented");
-            return item;
-        }
     }
 }
