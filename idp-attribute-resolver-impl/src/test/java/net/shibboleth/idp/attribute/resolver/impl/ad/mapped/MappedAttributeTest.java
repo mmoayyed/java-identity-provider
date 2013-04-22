@@ -48,6 +48,8 @@ public class MappedAttributeTest {
     @Test public void testInstantiation() throws ComponentInitializationException, ResolutionException {
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
+        
+        Assert.assertFalse(definition.isPassThru());
 
         try {
             definition.initialize();

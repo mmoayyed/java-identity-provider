@@ -18,16 +18,21 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +46,7 @@ import com.google.common.collect.Iterables;
  * Performs many to one mapping of source values to a return value. SourceValue strings may include regular expressions
  * and the ReturnValue may include back references to capturing groups as supported by {@link java.util.regex.Pattern}.
  */
-public class ValueMap implements Function<String, Set<StringAttributeValue>>{
+public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValueMap.class);
@@ -50,7 +55,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>>{
     private String returnValue;
 
     /** Source values. */
-    private Collection<SourceValue> sourceValues;
+    @Nonnull @NonnullElements private Collection<SourceValue> sourceValues = Collections.EMPTY_SET;
 
     /** Constructor. */
     public ValueMap() {
@@ -71,10 +76,11 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>>{
      * 
      * @param newReturnValue the return value
      */
-    public void setReturnValue(String newReturnValue) {
-        returnValue = newReturnValue;
+    public void setReturnValue(@Nonnull String newReturnValue) {
+        returnValue =
+                Constraint.isNotNull(StringSupport.trimOrNull(newReturnValue), "ReturnValue must be non null or empty");
     }
-    
+
     /**
      * Sets the Source values for the mapping.
      * 
@@ -84,7 +90,6 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>>{
 
         sourceValues = ImmutableSet.copyOf(Iterables.filter(newValues, Predicates.notNull()));
     }
-
 
     /**
      * Gets the collection of source values.
@@ -114,7 +119,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>>{
                 log.debug("Performing partial match comparison.");
                 if (attributeValue.contains(sourceValue.getValue())) {
                     log.debug("Attribute value '{}' matches source value '{}' it will be mapped to '{}'", new Object[] {
-                            attributeValue, sourceValue.getValue(), newValue, });
+                            attributeValue, sourceValue.getValue(), newValue,});
                     newValue = returnValue;
                 }
             } else {

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import com.google.common.base.Objects;
 
 /**
@@ -47,7 +49,7 @@ public class SourceValue {
      * @param thePartialMatch whether partial matches should be allowed
      */
     public SourceValue(String theValue, boolean theIgnoreCase, boolean thePartialMatch) {
-        value = theValue;
+        value = StringSupport.trimOrNull(theValue);
         ignoreCase = theIgnoreCase;
         partialMatch = thePartialMatch;
     }
