@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -34,8 +33,6 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
-import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.SubstringValueMapping;
-import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMapping;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -139,9 +136,6 @@ public class PrescopedAtributeTest {
 
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-
-        Collection<ValueMapping> valueMappings = new ArrayList<ValueMapping>();
-        valueMappings.add(new SubstringValueMapping("student", false, "student"));
 
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);

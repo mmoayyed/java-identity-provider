@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -70,9 +68,7 @@ public class MappedAttributeTest {
             // expected this
         }
 
-        Collection<ValueMapping> valueMappings = new ArrayList<ValueMapping>();
-        valueMappings.add(new SubstringValueMapping("foo", false, "foo"));
-        definition.setValueMappings(valueMappings);
+        definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
 
         definition.initialize();
 
@@ -100,14 +96,12 @@ public class MappedAttributeTest {
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
 
-        Collection<ValueMapping> valueMappings = new ArrayList<ValueMapping>();
-        valueMappings.add(new SubstringValueMapping("foo", false, "foo"));
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
                 "NoSuchAttribute")));
-        definition.setValueMappings(valueMappings);
+        definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
         definition.initialize();
 
         Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
@@ -119,6 +113,34 @@ public class MappedAttributeTest {
         Assert.assertTrue(result.getValues().isEmpty());
     }
 
+    @Test public void testNoAttributeValuesDefault() throws Exception {
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
+                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
+                                ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
+
+
+        MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        definition.setId(TEST_ATTRIBUTE_NAME);
+        definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
+                "NoSuchAttribute")));
+        definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
+        definition.setDefaultValue("");
+        Assert.assertNull(definition.getDefaultValue());
+        definition.setDefaultValue("default");
+        definition.initialize();
+
+        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
+        Assert.assertNotNull(optionalResult);
+        Assert.assertTrue(optionalResult.isPresent());
+
+        Attribute result = optionalResult.get();
+        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        Assert.assertFalse(result.getValues().isEmpty());
+        Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
+    }
+
     @Test public void testInvalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
@@ -126,14 +148,11 @@ public class MappedAttributeTest {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
 
-        Collection<ValueMapping> valueMappings = new ArrayList<ValueMapping>();
-        valueMappings.add(new SubstringValueMapping("student", false, "student"));
-
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
-        definition.setValueMappings(valueMappings);
+        definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
         definition.initialize();
 
         try {
@@ -152,16 +171,14 @@ public class MappedAttributeTest {
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
 
-        Collection<ValueMapping> valueMappings = new ArrayList<ValueMapping>();
-        valueMappings.add(new SubstringValueMapping("student", false, "student"));
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
-        Assert.assertTrue(definition.getValueMappings().isEmpty());
-        definition.setValueMappings(valueMappings);
-        Assert.assertEquals(definition.getValueMappings().size(), 1);
+        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
+        Assert.assertEquals(definition.getValueMaps().size(), 1);
         definition.initialize();
 
         Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
@@ -173,5 +190,76 @@ public class MappedAttributeTest {
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertEquals(result.getValues().size(), 1);
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("student")));
+    }
+    
+    @Test public void testDefault() throws Exception {
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
+                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
+                                ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
+
+
+        MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        definition.setId(TEST_ATTRIBUTE_NAME);
+        definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID)));
+        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
+        definition.setDefaultValue("default");
+        Assert.assertEquals(definition.getDefaultValue().getValue(), "default");
+        Assert.assertFalse(definition.isPassThru());
+        definition.initialize();
+
+        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
+        Assert.assertNotNull(optionalResult);
+        Assert.assertTrue(optionalResult.isPresent());
+
+        Attribute result = optionalResult.get();
+        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        Assert.assertFalse(result.getValues().isEmpty());
+        Assert.assertEquals(result.getValues().size(), 1);
+        Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
+    }
+    
+    @Test public void testPassThrough() throws Exception {
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
+                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
+                                ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
+
+
+        MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        definition.setId(TEST_ATTRIBUTE_NAME);
+        definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID)));
+        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
+        definition.setDefaultValue("default");
+        Assert.assertEquals(definition.getDefaultValue().getValue(), "default");
+        definition.setPassThru(true);
+        definition.initialize();
+
+        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
+        Assert.assertNotNull(optionalResult);
+        Assert.assertTrue(optionalResult.isPresent());
+
+        Attribute result = optionalResult.get();
+        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        Assert.assertFalse(result.getValues().isEmpty());
+        Assert.assertEquals(result.getValues().size(), ResolverTestSupport.EPA3_VALUES.length);
+        for (String val: ResolverTestSupport.EPA3_VALUES) {
+            Assert.assertTrue(result.getValues().contains(new StringAttributeValue(val)));
+        }
+    }
+
+
+    
+    protected ValueMap substringValueMapping(String targetValue, boolean caseInsensitive, String returnValue) {
+        ValueMap retVal = new ValueMap();
+        retVal.setReturnValue(returnValue);
+        retVal.setSourceValues(Collections.singleton(new SourceValue(returnValue, caseInsensitive, true)));
+        return retVal;
     }
 }
