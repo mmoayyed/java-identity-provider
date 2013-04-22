@@ -37,7 +37,7 @@ public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInit
     
     public static final String FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/"; 
 
-    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
+    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
@@ -49,15 +49,21 @@ public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInit
 
         return (Type) beans.iterator().next();
     }
+
+    
+    protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
+
+        return getBean(fileName, claz, context);
+    }
     
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName, Class<Type> claz) {
 
     
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestDependency.class);
+        context.setDisplayName("ApplicationContext: " + claz);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
         
-        configReader .loadBeanDefinitions(FILE_PATH + beanFileName);
+        configReader.loadBeanDefinitions(FILE_PATH + beanFileName);
     
         return getAttributeDefn(fileName, claz, context);
     }
@@ -66,7 +72,7 @@ public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInit
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
 
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestDependency.class);
+        context.setDisplayName("ApplicationContext: " + claz);
 
         return getAttributeDefn(fileName, claz, context);
     }

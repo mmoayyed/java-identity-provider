@@ -1,0 +1,7 @@
+
+<ad:ValueMap xmlns="urn:mace:shibboleth:2.0:resolver"
+	xmlns:ad="urn:mace:shibboleth:2.0:resolver:ad" xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ad:ReturnValue>return</ad:ReturnValue>
+	<ad:SourceValue>source</ad:SourceValue>
+</ad:ValueMap>

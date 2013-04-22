@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.MappedAttributeDefinitionBeanDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.SourceValueBeanDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapBeanDefinitionParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
@@ -54,5 +57,11 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
                 new TemplateAttributeDefinitionBeanDefinitionParser());
         registerBeanDefinitionParser(TransientIdAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
                 new TransientIdAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(SourceValueBeanDefinitionParser.TYPE_NAME,
+                new SourceValueBeanDefinitionParser());
+        registerBeanDefinitionParser(ValueMapBeanDefinitionParser.TYPE_NAME,
+                new ValueMapBeanDefinitionParser());
+        registerBeanDefinitionParser(MappedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
+                new MappedAttributeDefinitionBeanDefinitionParser());
     }
 }

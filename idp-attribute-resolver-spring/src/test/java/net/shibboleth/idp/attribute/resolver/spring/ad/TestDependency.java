@@ -17,12 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import java.util.Collection;
-
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.service.ServiceException;
-import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.context.support.GenericApplicationContext;
@@ -31,22 +28,14 @@ import org.testng.annotations.Test;
 
 /** A work in progress to test the attribute resolver service. */
 // TODO incomplete
-public class TestDependency {
+public class TestDependency extends BaseTestAttributeDefinitionBeanParser {
 
     private ResolverPluginDependency getDependency(String fileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + TestDependency.class);
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.loadBeanDefinitions(BaseTestAttributeDefinitionBeanParser.FILE_PATH +  fileName);
-
-        Collection<ResolverPluginDependency> beans = context.getBeansOfType(ResolverPluginDependency.class).values();
-        Assert.assertEquals(beans.size(), 1);
-
-        return beans.iterator().next();
+        return getBean(fileName, ResolverPluginDependency.class, context);
     }
 
     @Test public void testOrphan() throws ComponentInitializationException, ServiceException, ResolutionException {

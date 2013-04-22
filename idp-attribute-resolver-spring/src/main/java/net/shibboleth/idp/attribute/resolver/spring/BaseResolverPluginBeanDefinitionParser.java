@@ -57,7 +57,6 @@ public abstract class BaseResolverPluginBeanDefinitionParser extends AbstractSin
             defnId = id;
         }
 
-        // TODO possibly incorrect dependency handling
         List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyBeanDefinitionParser.ELEMENT_NAME);
         builder.addPropertyValue("dependencies", SpringSupport.parseCustomElements(dependencyElements, parserContext));
