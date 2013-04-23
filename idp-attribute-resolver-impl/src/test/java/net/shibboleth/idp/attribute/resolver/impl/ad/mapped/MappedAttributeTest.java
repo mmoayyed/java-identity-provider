@@ -129,8 +129,10 @@ public class MappedAttributeTest {
                 "NoSuchAttribute")));
         definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
         definition.setDefaultValue("");
+        Assert.assertNull(definition.getDefaultAttributeValue());
         Assert.assertNull(definition.getDefaultValue());
         definition.setDefaultValue("default");
+        Assert.assertEquals(definition.getDefaultValue(), "default");
         definition.initialize();
 
         Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
@@ -209,7 +211,7 @@ public class MappedAttributeTest {
         Assert.assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
         definition.setDefaultValue("default");
-        Assert.assertEquals(definition.getDefaultValue().getValue(), "default");
+        Assert.assertEquals(definition.getDefaultAttributeValue().getValue(), "default");
         Assert.assertFalse(definition.isPassThru());
         definition.initialize();
 
@@ -239,7 +241,7 @@ public class MappedAttributeTest {
         Assert.assertTrue(definition.getValueMaps().isEmpty());
         definition.setValueMaps(Collections.singleton(substringValueMapping("elephant", false, "banana")));
         definition.setDefaultValue("default");
-        Assert.assertEquals(definition.getDefaultValue().getValue(), "default");
+        Assert.assertEquals(definition.getDefaultAttributeValue().getValue(), "default");
         definition.setPassThru(true);
         definition.initialize();
 

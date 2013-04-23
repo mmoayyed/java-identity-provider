@@ -78,7 +78,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return functions used to map an input value to an output value
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<ValueMap> getValueMaps() {
+    @Nonnull @NonnullElements @Unmodifiable public Collection<ValueMap> getValueMaps() {
         return valueMaps;
     }
 
@@ -99,8 +99,20 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the default return value.
      */
-    public StringAttributeValue getDefaultValue() {
+    public StringAttributeValue getDefaultAttributeValue() {
         return defaultValue;
+    }
+
+    /**
+     * Gets the default return value.
+     * 
+     * @return the default return value.
+     */
+    public String getDefaultValue() {
+        if (null == defaultValue) {
+            return null;
+        }
+        return defaultValue.getValue();
     }
 
     /**
