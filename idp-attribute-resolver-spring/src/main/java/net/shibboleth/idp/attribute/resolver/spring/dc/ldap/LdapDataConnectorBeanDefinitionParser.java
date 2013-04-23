@@ -180,10 +180,10 @@ public class LdapDataConnectorBeanDefinitionParser extends BaseDataConnectorBean
         }
 
         final Map<String, Object> props = new HashMap<String, Object>();
-        final Element propertyElement =
-                getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPProperty"));
-        final List<Element> elements = ElementSupport.getChildElements(propertyElement);
-        for (Element e : elements) {
+        final List<Element> propertyElements =
+                ElementSupport.getChildElements(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                        "LDAPProperty"));
+        for (Element e : propertyElements) {
             props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));
         }

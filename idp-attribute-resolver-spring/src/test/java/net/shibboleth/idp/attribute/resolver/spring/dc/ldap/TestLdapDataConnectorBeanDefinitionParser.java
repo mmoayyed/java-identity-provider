@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -37,6 +38,7 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.provider.ProviderConfig;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
@@ -141,6 +143,13 @@ public class TestLdapDataConnectorBeanDefinitionParser {
         BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
         AssertJUnit.assertEquals("cn=Directory Manager", connInitializer.getBindDn());
         AssertJUnit.assertEquals("password", connInitializer.getBindCredential().getString());
+
+        final Map<String, Object> providerProps = new HashMap<String, Object>();
+        providerProps.put("name1", "value1");
+        providerProps.put("name2", "value2");
+        ProviderConfig providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
+        AssertJUnit.assertNotNull(providerConfig);
+        AssertJUnit.assertEquals(providerProps, providerConfig.getProperties());
 
         SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         AssertJUnit.assertNotNull(searchExecutor);
