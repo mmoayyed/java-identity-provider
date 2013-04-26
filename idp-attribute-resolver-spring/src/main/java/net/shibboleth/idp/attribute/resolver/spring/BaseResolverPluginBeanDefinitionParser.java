@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 public abstract class BaseResolverPluginBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /** An Id for the definition, used for debugging messages. */
-    private String defnId = "<Unnamed Attribute>";
+    private String defnId = "<Unnamed Attribute or Connector>";
     
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseResolverPluginBeanDefinitionParser.class);

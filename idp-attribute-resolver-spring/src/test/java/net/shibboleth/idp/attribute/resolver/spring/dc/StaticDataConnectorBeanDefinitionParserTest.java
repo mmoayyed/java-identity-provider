@@ -29,9 +29,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test for {@link StaticDataConnector}
+ * test for {@link StaticDataConnectorBeanDefinitionParser}
  */
-public class StaticDataConnectorTest extends BaseTestAttributeDefinitionBeanParser {
+public class StaticDataConnectorBeanDefinitionParserTest extends BaseTestAttributeDefinitionBeanParser {
     
     @Test public void simple() {
         StaticDataConnector connector = getDataConnector("staticAttributes.xml", StaticDataConnector.class);
