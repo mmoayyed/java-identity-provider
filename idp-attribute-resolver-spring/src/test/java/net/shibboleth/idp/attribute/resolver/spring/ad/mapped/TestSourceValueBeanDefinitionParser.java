@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.SourceValue;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
@@ -34,7 +34,7 @@ public class TestSourceValueBeanDefinitionParser extends BaseTestAttributeDefini
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + TestSourceValueBeanDefinitionParser.class);
 
-        return getBean("mapped/" + fileName, SourceValue.class, context);
+        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, SourceValue.class, context);
     }
 
     @Test public void testSimple() {

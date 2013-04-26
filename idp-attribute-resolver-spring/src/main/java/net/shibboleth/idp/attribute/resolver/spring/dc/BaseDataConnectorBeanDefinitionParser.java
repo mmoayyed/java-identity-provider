@@ -20,16 +20,9 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
-import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -38,25 +31,21 @@ import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
-// TODO incomplete port from v2
 /**
  * Base spring bean definition parser for data connectors. DataConnector implementations should provide a custom
  * BeanDefinitionParser by extending this class and overriding the
- * {@link #doParse(String, Element, Map, BeanDefinitionBuilder, ParserContext)} method to parse any additional
- * attributes or elements it requires. Standard attributes and elements defined by the ResolutionPlugIn and
- * DataConnector schemas will automatically attempt to be parsed.
+ * {@link #doParse(Element, ParserContext, BeanDefinitionBuilder)} method to parse any additional attributes or elements
+ * it requires. Standard attributes and elements defined by the ResolutionPlugIn and DataConnector schemas will
+ * automatically attempt to be parsed.
  */
 public abstract class BaseDataConnectorBeanDefinitionParser extends BaseResolverPluginBeanDefinitionParser {
 
@@ -75,16 +64,16 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends BaseResolver
     private final Logger log = LoggerFactory.getLogger(BaseDataConnectorBeanDefinitionParser.class);
 
     /** {@inheritDoc} */
-    // TODO Needs refitted into the V3 skeleton
-    protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
-            BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
+    protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(config, parserContext, builder);
 
-        List<Element> failoverConnector = pluginConfigChildren.get(FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
+        final List<Element> failoverConnector =
+                ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
         if (failoverConnector != null && !failoverConnector.isEmpty()) {
             String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
-            log.debug("Setting the following failover data connector dependencies for plugin {}: {}", pluginId,
-                    connectorId);
-            pluginBuilder.addPropertyValue("failoverDataConnectorIds", connectorId);
+            log.debug("Setting the following failover data connector dependencies for plugin {}: {}",
+                    getDefinitionId(), connectorId);
+            builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
     }
 

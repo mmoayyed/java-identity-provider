@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMap;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.support.GenericApplicationContext;
@@ -35,7 +35,7 @@ public class TestValueMapBeanDefinitionParser extends BaseTestAttributeDefinitio
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + TestValueMapBeanDefinitionParser.class);
 
-        return getBean("mapped/" + fileName, ValueMap.class, context);
+        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, ValueMap.class, context);
     }
 
     @Test public void testValueMap() {

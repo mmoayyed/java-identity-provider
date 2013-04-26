@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.TemplateAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.CryptoTransientIdAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

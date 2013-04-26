@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalNameAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.PrincipalNameAttributeDefinitionBeanDefinitionParser;
 
 import org.testng.Assert;

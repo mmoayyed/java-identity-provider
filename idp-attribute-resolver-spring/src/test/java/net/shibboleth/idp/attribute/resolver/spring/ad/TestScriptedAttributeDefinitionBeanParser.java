@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.ScriptedAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 

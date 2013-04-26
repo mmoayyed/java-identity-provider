@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring.ad;
+package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.idp.spring.SchemaTypeAwareXMLBeanDefinitionReader;
@@ -35,14 +36,15 @@ import org.testng.Assert;
  */
 public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInitBaseTestCase  {
     
-    public static final String FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/"; 
+    public static final String ATTRIBUTE_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/"; 
+    public static final String DATACONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/dc/"; 
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions(FILE_PATH + fileName);
+        beanDefinitionReader.loadBeanDefinitions(fileName);
 
         Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
@@ -53,7 +55,7 @@ public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInit
     
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
-        return getBean(fileName, claz, context);
+        return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context);
     }
     
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName, Class<Type> claz) {
@@ -63,7 +65,7 @@ public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInit
         context.setDisplayName("ApplicationContext: " + claz);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
         
-        configReader.loadBeanDefinitions(FILE_PATH + beanFileName);
+        configReader.loadBeanDefinitions(ATTRIBUTE_FILE_PATH + beanFileName);
     
         return getAttributeDefn(fileName, claz, context);
     }
@@ -75,6 +77,15 @@ public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInit
         context.setDisplayName("ApplicationContext: " + claz);
 
         return getAttributeDefn(fileName, claz, context);
+    }
+    
+    protected <Type extends BaseDataConnector> Type getDataConnector(String fileName, Class<Type> claz) {
+        
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + claz);
+        
+        return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context);
+
     }
 
 }

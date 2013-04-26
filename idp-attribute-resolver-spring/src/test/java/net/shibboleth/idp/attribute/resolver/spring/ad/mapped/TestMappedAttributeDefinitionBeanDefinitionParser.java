@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.MappedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;

@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -35,7 +36,7 @@ public class TestDependency extends BaseTestAttributeDefinitionBeanParser {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + TestDependency.class);
 
-        return getBean(fileName, ResolverPluginDependency.class, context);
+        return getBean(ATTRIBUTE_FILE_PATH + fileName, ResolverPluginDependency.class, context);
     }
 
     @Test public void testOrphan() throws ComponentInitializationException, ServiceException, ResolutionException {

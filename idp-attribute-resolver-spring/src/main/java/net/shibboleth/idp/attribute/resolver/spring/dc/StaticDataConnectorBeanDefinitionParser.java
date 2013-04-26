@@ -33,7 +33,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-// TODO incomplete
 /** Bean definition Parser for a {@link StaticDataConnector}. */
 public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBeanDefinitionParser {
 
@@ -54,7 +53,6 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        log.debug("doParse {}", config);
 
         List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
         List<Attribute> attributes = new ArrayList<Attribute>();
@@ -65,52 +63,16 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
             for (Element val : values) {
                 StringAttributeValue av = new StringAttributeValue(val.getTextContent());
+                log.trace("DataConnector {} : Attribute {}, adding value {} ", new Object[] {getDefinitionId(), attrId,
+                        av.getValue(),});
                 attribute.getValues().add(av);
             }
+            log.debug("DataConnector {} : Adding Attribute {} with {} values", new Object[] {getDefinitionId(), attrId,
+                    attribute.getValues().size(),});
             attributes.add(attribute);
         }
 
         builder.addPropertyValue("values", attributes);
     }
 
-    /** {@inheritDoc} */
-    // TODO Remove code or remove comment
-    // protected void doParse(String pluginId, Element pluginConfig, Map<QName, List<Element>> pluginConfigChildren,
-    // BeanDefinitionBuilder pluginBuilder, ParserContext parserContext) {
-    // super.doParse(pluginId, pluginConfig, pluginConfigChildren, pluginBuilder, parserContext);
-
-    // List<BaseAttribute<String>> attributes = processAttributes(pluginConfigChildren.get(ATTRIBUTE_ELEMENT_NAME));
-
-    // pluginBuilder.addPropertyValue("staticAttributes", attributes);
-    // }
-
-    /**
-     * Parses the configuration elements defining the static {@link BaseAttribute}s.
-     * 
-     * @param attributeElems configuration elements defining the static {@link BaseAttribute}s
-     * 
-     * @return the static {@link BaseAttribute}s
-     */
-    // TODO Remove code or remove comment
-    // protected List<BaseAttribute<String>> processAttributes(List<Element> attributeElems) {
-    // if (attributeElems == null || attributeElems.size() == 0) {
-    // return null;
-    // }
-
-    // List<BaseAttribute<String>> attributes = new ArrayList<BaseAttribute<String>>();
-    // BasicAttribute<String> attribute;
-    // for (Element attributeElem : attributeElems) {
-    // attribute =
-    // new BasicAttribute<String>(DatatypeHelper.safeTrimOrNullString(attributeElem.getAttributeNS(null,
-    // "id")));
-    // for (Element valueElem : XMLHelper.getChildElementsByTagNameNS(attributeElem,
-    // DataConnectorNamespaceHandler.NAMESPACE, "Value")) {
-    // attribute.getValues().add(valueElem.getTextContent());
-    // }
-
-    // attributes.add(attribute);
-    // }
-
-    // return attributes;
-    // }
 }
