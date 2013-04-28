@@ -8,15 +8,13 @@
                            http://www.springframework.org/schema/util/spring-util.xsd"
        default-init-method="initialize">
 
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
     <!-- Spring-aware action that bootstraps us. We need *something* to create a profile context. -->
     <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype" />
 
     <!-- Dummy resolver that can run without Spring and is adapted using the WebFlowAdaptor. -->
-    <bean id="StaticResolver" class="net.shibboleth.idp.profile.impl.WebFlowProfileActionAdaptor" scope="prototype">
-        <constructor-arg>
-            <bean id="StaticResolverBean" class="net.shibboleth.idp.attribute.cli.StaticResolver" scope="prototype" />
-        </constructor-arg>
-    </bean>
+    <bean id="StaticResolver" class="net.shibboleth.idp.attribute.cli.StaticResolver" scope="prototype" />
 
     <!-- Another Spring-aware action, this one writes data to the ExternalContext output writer. -->
     <bean id="OutputAttributes" class="net.shibboleth.idp.attribute.cli.OutputAttributes" scope="prototype" />
