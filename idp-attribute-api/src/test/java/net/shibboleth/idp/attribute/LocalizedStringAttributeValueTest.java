@@ -39,7 +39,7 @@ public class LocalizedStringAttributeValueTest {
         foo.add(val);
         foo.add(new LocalizedStringAttributeValue("for", new Locale("en")));
         foo.add(new LocalizedStringAttributeValue("for", new Locale("fr")));
-        Assert.assertEquals(val.getValueLocale().get().getLanguage(), "en");
+        Assert.assertEquals(val.getValueLocale().getLanguage(), "en");
         Assert.assertFalse(val.equals(null));
         Assert.assertTrue(val.equals(val));
         Assert.assertFalse(val.equals(new Integer(2)));

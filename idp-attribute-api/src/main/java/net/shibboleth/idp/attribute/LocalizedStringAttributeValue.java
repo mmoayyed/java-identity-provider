@@ -25,13 +25,12 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 
 /** An optionally localized String value of an {@link Attribute}. */
 public class LocalizedStringAttributeValue extends StringAttributeValue {
 
     /** The locale of the attribute value. */
-    private final Optional<Locale> valueLocale;
+    private final Locale valueLocale;
 
     /**
      * Constructor.
@@ -42,7 +41,7 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
     public LocalizedStringAttributeValue(@Nonnull @NotEmpty final String attributeValue,
             @Nullable Locale attributeValueLocale) {
         super(attributeValue);
-        valueLocale = Optional.fromNullable(attributeValueLocale);
+        valueLocale = attributeValueLocale;
     }
 
     /**
@@ -50,7 +49,7 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
      * 
      * @return the local of the attribute or {@link Optional#absent()} if there no explicity locale
      */
-    @Nonnull public final Optional<Locale> getValueLocale() {
+    @Nullable public final Locale getValueLocale() {
         return valueLocale;
     }
 
