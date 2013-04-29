@@ -49,7 +49,7 @@ public class ScopedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
 
 
         String scope = config.getAttributeNS(null, "scope");
-        log.debug("Attribute definition '{}': setting scope to '{}'", getDefinitionId(), scope);
+        log.debug("{} setting scope to '{}'.", getLogPrefix(), scope);
         builder.addPropertyValue("scope", scope);
     }
 }

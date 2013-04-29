@@ -22,11 +22,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginBeanDefinitionParser;
 import net.shibboleth.idp.spring.SpringSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -55,6 +57,9 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
     /** Class logger. */
     private Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionBeanDefinitionParser.class);
 
+    /** cache for the log prefix - to save multiple recalculations. */
+    private String logPrefix;
+
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -64,7 +69,7 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
                         "DisplayName"));
         if (displayNames != null && !displayNames.isEmpty()) {
             final Map<Locale, String> names = processLocalizedElement(displayNames);
-            log.debug("AttributeDefinition {}: setting displayNames {}", getDefinitionId(), names);
+            log.debug("{} setting displayNames {}.", getLogPrefix(), names);
             builder.addPropertyValue("displayNames", names);
         }
 
@@ -73,7 +78,7 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
                         "DisplayDescription"));
         if (displayDescriptions != null && !displayDescriptions.isEmpty()) {
             final Map<Locale, String> names = processLocalizedElement(displayDescriptions);
-            log.debug("AttributeDefinition {}: setting displayDescriptions {}", getDefinitionId(), names);
+            log.debug("{} setting displayDescriptions {}.", getLogPrefix(), names);
             builder.addPropertyValue("displayDescriptions", names);
         }
 
@@ -82,17 +87,16 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
             dependencyOnly =
                     AttributeSupport.getAttributeValueAsBoolean(config.getAttributeNodeNS(null, "dependencyOnly"));
             if (null == dependencyOnly) {
-                log.error("AttributeDefinition {}: value for 'dependencyOnly'"
-                        + " should be 'true','0','false', or '0'", getDefinitionId());
+                log.error("{} value for 'dependencyOnly' should be 'true','1','false', or '0'.", getLogPrefix());
                 dependencyOnly = new Boolean(false);
             }
         }
-        log.debug("Configuration for {}: setting displayDescriptions {}", config.getLocalName(), dependencyOnly);
+        log.debug("{} setting displayDescriptions {}.", getLogPrefix(), dependencyOnly);
         builder.addPropertyValue("dependencyOnly", dependencyOnly);
-        
+
         if (config.hasAttributeNS(null, "sourceAttributeID")) {
             String sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
-            log.debug("Configuration for {}: setting sourceAttributeId {}", config.getLocalName(), sourceAttributeId);
+            log.debug("{} setting sourceAttributeId {}.", getLogPrefix(), sourceAttributeId);
             builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
         }
 
@@ -101,7 +105,7 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
                         "AttributeEncoder"));
 
         if (attributeEncoders != null && !attributeEncoders.isEmpty()) {
-            log.debug("Configuration for {}: adding {} encoders.", getDefinitionId(), attributeEncoders.size());
+            log.debug("{} adding {} encoders.", getLogPrefix(), attributeEncoders.size());
             builder.addPropertyValue("attributeEncoders",
                     SpringSupport.parseCustomElements(attributeEncoders, parserContext));
         }
@@ -121,5 +125,18 @@ public abstract class BaseAttributeDefinitionBeanDefinitionParser extends BaseRe
         }
 
         return localizedString;
+    }
+
+    /**
+     * return a string which is to be prepended to all log messages.
+     * 
+     * @return "Attribute Definition: '<definitionID>' :"
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        if (null == logPrefix) {
+            StringBuilder builder = new StringBuilder("Attribute Definition '").append(getDefinitionId()).append("':");
+            logPrefix = builder.toString();
+        }
+        return logPrefix;
     }
 }

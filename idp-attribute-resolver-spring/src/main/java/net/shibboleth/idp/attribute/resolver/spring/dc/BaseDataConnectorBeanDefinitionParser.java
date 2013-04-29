@@ -21,10 +21,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginBeanDefinitionParser;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -60,6 +62,9 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends BaseResolver
     public static final QName SPRING_BEANS_ELEMENT_NAME = new QName("http://www.springframework.org/schema/beans",
             "beans");
 
+    /** cache for the log prefix - to save multiple recalculations. */
+    private String logPrefix;
+
     /** Log4j logger. */
     private final Logger log = LoggerFactory.getLogger(BaseDataConnectorBeanDefinitionParser.class);
 
@@ -71,8 +76,8 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends BaseResolver
                 ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
         if (failoverConnector != null && !failoverConnector.isEmpty()) {
             String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
-            log.debug("Setting the following failover data connector dependencies for plugin {}: {}",
-                    getDefinitionId(), connectorId);
+            log.debug("{} setting the following failover data connector dependencies {}",
+                    getLogPrefix(), connectorId);
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
     }
@@ -128,5 +133,18 @@ public abstract class BaseDataConnectorBeanDefinitionParser extends BaseResolver
             log.debug("no spring bean configured of type {}", clazz);
         }
         return t;
+    }
+
+    /**
+     * return a string which is to be prepended to all log messages.
+     * 
+     * @return "Attribute Definition: '<definitionID>' :"
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        if (null == logPrefix) {
+            StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
+            logPrefix = builder.toString();
+        }
+        return logPrefix;
     }
 }

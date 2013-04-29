@@ -56,7 +56,7 @@ public class TransientIdAttributeDefinitionBeanDefinitionParser extends BaseAttr
         }
 
         if (null != lifetime) {
-            log.debug("Attribute definition {}: lifetime {}", getDefinitionId(), lifetime);
+            log.debug("{}: lifetime {}", getLogPrefix(), lifetime);
             builder.addPropertyValue("idLifetime", lifetime.longValue());
         }
 
@@ -65,7 +65,7 @@ public class TransientIdAttributeDefinitionBeanDefinitionParser extends BaseAttr
             idStore = StringSupport.trimOrNull(config.getAttributeNS(null, "storageServiceRef"));
         }
 
-        log.debug("Attribute definition {}: idStore '{}'", getDefinitionId(), idStore);
+        log.debug("{} idStore '{}'", getLogPrefix(), idStore);
         builder.addPropertyReference("idStore", idStore);
     }
 }

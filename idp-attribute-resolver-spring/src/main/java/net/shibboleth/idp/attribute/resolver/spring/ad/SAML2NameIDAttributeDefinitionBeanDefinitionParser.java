@@ -59,7 +59,7 @@ public class SAML2NameIDAttributeDefinitionBeanDefinitionParser extends BaseAttr
         final String nameIdSPQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdSPQualifier"));
         builder.addPropertyValue("nameIdSPQualifier", nameIdSPQualifier);
 
-        log.debug("Attribute definition '{}': nameIdFormat '{}', nameIdQualifier '{}', nameIdSPQualifier '{}'",
-                new Object[] {getDefinitionId(), nameIdFormat, nameIdQualifier, nameIdSPQualifier,});
+        log.debug("{} nameIdFormat '{}', nameIdQualifier '{}', nameIdSPQualifier '{}'.",
+                new Object[] {getLogPrefix(), nameIdFormat, nameIdQualifier, nameIdSPQualifier,});
     }
 }

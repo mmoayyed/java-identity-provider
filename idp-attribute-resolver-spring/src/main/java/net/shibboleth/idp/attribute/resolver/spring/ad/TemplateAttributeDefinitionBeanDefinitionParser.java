@@ -65,7 +65,7 @@ public class TemplateAttributeDefinitionBeanDefinitionParser extends BaseAttribu
 
         if (null != templateElements && templateElements.size() >= 1) {
             final String templateText = StringSupport.trimOrNull(templateElements.get(0).getTextContent());
-            log.debug("Attribute definition '{}': template is '{}'", getDefinitionId(), templateText);
+            log.debug("{} template is '{}'", getLogPrefix(), templateText);
 
             builder.addPropertyValue("templateText", templateText);
         }
@@ -77,7 +77,7 @@ public class TemplateAttributeDefinitionBeanDefinitionParser extends BaseAttribu
             for (Element element : sourceAttributeElements) {
                 sourceAttributes.add(StringSupport.trimOrNull(element.getTextContent()));
             }
-            log.debug("Attribute definition '{}': source attributes are '{}'", getDefinitionId(), sourceAttributes);
+            log.debug("{} source attributes are '{}'.", getLogPrefix(), sourceAttributes);
             builder.addPropertyValue("sourceAttributes", sourceAttributes);
         }
 
@@ -85,7 +85,7 @@ public class TemplateAttributeDefinitionBeanDefinitionParser extends BaseAttribu
         if (null == velocityEngineRef) {
             velocityEngineRef = "shibboleth.VelocityEngine";
         }
-        log.debug("Attribute definition '{}': velocity engine reference '{}'", getDefinitionId(), velocityEngineRef);
+        log.debug("{} velocity engine reference '{}'.", getLogPrefix(), velocityEngineRef);
         builder.addPropertyReference("velocityEngine", velocityEngineRef);
     }
 }

@@ -53,7 +53,7 @@ public class CryptoTransientIdAttributeDefinitionBeanDefinitionParser extends
         
         if (config.hasAttributeNS(null, "lifetime")) {
             lifetime = AttributeSupport.getDurationAttributeValueAsLong(config.getAttributeNodeNS(null, "lifetime"));
-            log.debug("Attribute definition {}: lifetime {} specified ", getDefinitionId(), lifetime);
+            log.debug("{} lifetime of {} specified.", getLogPrefix(), lifetime);
         }
 
         if (null != lifetime) {

@@ -103,16 +103,16 @@ public class ScriptedAttributeDefinitionBeanDefinitionParser extends BaseAttribu
         if (config.hasAttributeNS(null, "language")) {
             scriptLanguage = config.getAttributeNS(null, "language");
         }
-        log.debug("Attribute definition {}: scripting language: {}", getDefinitionId(), scriptLanguage);
+        log.debug("{} scripting language: {}.", getLogPrefix(), scriptLanguage);
 
         String script = getScript(config);
-        log.debug("Attribute definition {} script: {}", getDefinitionId(), script);
+        log.debug("{} script: {}.", getLogPrefix(), script);
         try {
             builder.addPropertyValue("script", new EvaluableScript(scriptLanguage, script));
         } catch (ScriptException e) {
-            log.error("Attribute definition {}, could not create the EvaluableScript : {} ", new Object[] {
-                    getDefinitionId(), e,});
-            throw new BeanCreationException("Could not create the EvaluableScript");
+            log.error("{} could not create the EvaluableScript : {}.", new Object[] {
+                    getLogPrefix(), e,});
+            throw new BeanCreationException(getLogPrefix() + " Could not create the EvaluableScript");
         }
     }
 }

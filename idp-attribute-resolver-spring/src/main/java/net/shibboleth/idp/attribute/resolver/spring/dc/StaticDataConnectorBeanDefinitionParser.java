@@ -63,11 +63,11 @@ public class StaticDataConnectorBeanDefinitionParser extends BaseDataConnectorBe
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
             for (Element val : values) {
                 StringAttributeValue av = new StringAttributeValue(val.getTextContent());
-                log.trace("DataConnector {} : Attribute {}, adding value {} ", new Object[] {getDefinitionId(), attrId,
+                log.trace("{} Attribute: {}, adding value {} ", new Object[] {getLogPrefix(), attrId,
                         av.getValue(),});
                 attribute.getValues().add(av);
             }
-            log.debug("DataConnector {} : Adding Attribute {} with {} values", new Object[] {getDefinitionId(), attrId,
+            log.debug("{} Adding Attribute: {} with {} values", new Object[] {getLogPrefix(), attrId,
                     attribute.getValues().size(),});
             attributes.add(attribute);
         }

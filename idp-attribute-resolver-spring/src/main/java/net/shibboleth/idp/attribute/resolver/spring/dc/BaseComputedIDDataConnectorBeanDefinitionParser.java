@@ -60,12 +60,12 @@ public abstract class BaseComputedIDDataConnectorBeanDefinitionParser extends Ba
         String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
         byte[] saltBytes = null;
         if (null == salt) {
-            log.debug("Data Connector '{}' : generated Attribute : '{}', sourceAttribute = '{}', no salt provided",
-                    new Object[] {getDefinitionId(), generatedAttribute, sourceAttribute,});
+            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', no salt provided.",
+                    new Object[] {getLogPrefix(), generatedAttribute, sourceAttribute,});
         } else {
             saltBytes = salt.getBytes();
-            log.debug("Data Connector '{}' : generated Attribute : '{}', sourceAttribute = '{}', salt: '{}'",
-                    new Object[] {getDefinitionId(), generatedAttribute, sourceAttribute, saltBytes,});
+            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', salt: '{}'.",
+                    new Object[] {getLogPrefix(), generatedAttribute, sourceAttribute, saltBytes,});
         }
 
         builder.addPropertyValue("generatedAttributeId", generatedAttribute);

@@ -55,8 +55,8 @@ public class SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser extends
         }
         final String nameIdQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdQualifier"));
 
-        log.debug("Attribute definition '{}': nameIdFormat '{}', nameIdQualifier '{}'", new Object[] {getDefinitionId(),
-                nameIdFormat, nameIdQualifier,});
+        log.debug("{} nameIdFormat '{}', nameIdQualifier '{}'.", new Object[] {getLogPrefix(), nameIdFormat,
+                nameIdQualifier,});
         builder.addPropertyValue("nameIdFormat", nameIdFormat);
         builder.addPropertyValue("nameIdQualifier", nameIdQualifier);
     }

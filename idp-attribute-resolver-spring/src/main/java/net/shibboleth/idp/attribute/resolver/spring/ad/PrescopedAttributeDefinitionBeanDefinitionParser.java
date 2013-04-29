@@ -49,7 +49,7 @@ public class PrescopedAttributeDefinitionBeanDefinitionParser extends BaseAttrib
         if (config.hasAttributeNS(null, "scopeDelimiter")) {
             scopeDelimiter = config.getAttributeNS(null, "scopeDelimiter");
         }
-        log.debug("Attribute definition {}: scope delimiter of {} specified ", getDefinitionId(), scopeDelimiter);
+        log.debug("{} scope delimiter of {} specified.", getLogPrefix(), scopeDelimiter);
         builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
     }
 }

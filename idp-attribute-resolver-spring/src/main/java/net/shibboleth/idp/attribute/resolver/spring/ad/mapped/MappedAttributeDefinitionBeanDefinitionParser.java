@@ -88,9 +88,9 @@ public class MappedAttributeDefinitionBeanDefinitionParser extends BaseAttribute
 
         ManagedList<BeanDefinition> valueMaps = SpringSupport.parseCustomElements(valueMapElements, parserContext);
 
-        log.debug("AttributeDefinition '{}': passThru = {}, defaultValue = {}, {} value maps", new Object[] {
-                getDefinitionId(), passThru, defaultValue, valueMaps.size(),});
-        log.trace("AttributeDefinition '{}': value maps {}", getDefinitionId(), valueMaps);
+        log.debug("{} passThru = {}, defaultValue = {}, {} value maps.", new Object[] {
+                getLogPrefix(), passThru, defaultValue, valueMaps.size(),});
+        log.trace("{} value maps {}", getLogPrefix(), valueMaps);
 
         builder.addPropertyValue("defaultValue", defaultValue);
         builder.addPropertyValue("passThru", passThru);
