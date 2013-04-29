@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -53,7 +54,7 @@ public class SourceValue {
      * @param thePartialMatch whether partial matches should be allowed
      */
     public SourceValue(String theValue, boolean theIgnoreCase, boolean thePartialMatch) {
-        value = Constraint.isNotNull(StringSupport.trimOrNull(theValue), "All values specified should be non empty");
+        value = StringSupport.trimOrNull(theValue);
         ignoreCase = theIgnoreCase;
         partialMatch = thePartialMatch;
     }
@@ -81,7 +82,7 @@ public class SourceValue {
      * 
      * @return the value string.
      */
-    @Nonnull @NotEmpty public String getValue() {
+    @Nullable public String getValue() {
         return value;
     }
 
