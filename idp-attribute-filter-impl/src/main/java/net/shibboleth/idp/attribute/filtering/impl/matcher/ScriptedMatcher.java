@@ -109,13 +109,12 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
 
         try {
-            final Optional<Object> optionalResult = currentScript.eval(scriptContext);
-            if (!optionalResult.isPresent()) {
+            final Object result = currentScript.eval(scriptContext);
+            if (null == result) {
                 //TODO
                 throw new IllegalArgumentException("Matcher script did not return a result");
             }
 
-            final Object result = optionalResult.get();
             if (result instanceof Boolean) {
                 return ((Boolean) result).booleanValue();
             } else {
@@ -155,12 +154,11 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
         scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
 
         try {
-            final Optional<Object> optionalResult = currentScript.eval(scriptContext);
-            if (!optionalResult.isPresent()) {
+            final Object result = currentScript.eval(scriptContext);
+            if (null == result) {
                 throw new AttributeFilteringException("Matcher script did not return a result");
             }
 
-            final Object result = optionalResult.get();
             if (result instanceof Set) {
                 HashSet<AttributeValue> returnValues = new HashSet<AttributeValue>(attribute.getValues());
                 returnValues.retainAll((Set) result);
