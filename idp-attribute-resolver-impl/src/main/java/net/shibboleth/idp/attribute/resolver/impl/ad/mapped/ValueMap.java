@@ -30,7 +30,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -59,7 +61,6 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
 
     /** Constructor. */
     public ValueMap() {
-        sourceValues = new HashSet<SourceValue>();
     }
 
     /**
@@ -67,7 +68,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      * 
      * @return the return value
      */
-    public String getReturnValue() {
+    @Nullable public String getReturnValue() {
         return returnValue;
     }
 
@@ -76,7 +77,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      * 
      * @param newReturnValue the return value
      */
-    public void setReturnValue(@Nonnull String newReturnValue) {
+    public void setReturnValue(@Nonnull @NotEmpty String newReturnValue) {
         returnValue =
                 Constraint.isNotNull(StringSupport.trimOrNull(newReturnValue), "ReturnValue must be non null or empty");
     }
@@ -96,7 +97,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      * 
      * @return the collection of source values
      */
-    public Collection<SourceValue> getSourceValues() {
+    @Nonnull @NonnullElements @Unmodifiable public Collection<SourceValue> getSourceValues() {
         return sourceValues;
     }
 

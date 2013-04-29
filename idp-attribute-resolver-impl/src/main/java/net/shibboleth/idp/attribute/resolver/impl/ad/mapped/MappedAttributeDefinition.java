@@ -99,7 +99,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the default return value.
      */
-    public StringAttributeValue getDefaultAttributeValue() {
+    @Nullable public StringAttributeValue getDefaultAttributeValue() {
         return defaultValue;
     }
 
@@ -108,7 +108,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the default return value.
      */
-    public String getDefaultValue() {
+    @Nullable public String getDefaultValue() {
         if (null == defaultValue) {
             return null;
         }
@@ -120,7 +120,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param newDefaultValue the default return value
      */
-    public void setDefaultValue(String newDefaultValue) {
+    public void setDefaultValue(@Nullable String newDefaultValue) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         String trimmedDefault = StringSupport.trimOrNull(newDefaultValue);
@@ -158,7 +158,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the set of attribute values that the given dependency value maps in to
      */
-    protected Set<AttributeValue> mapValue(String value) {
+    protected Set<AttributeValue> mapValue(@Nullable String value) {
         log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
         
         final String trimmedValue = StringSupport.trimOrNull(value);

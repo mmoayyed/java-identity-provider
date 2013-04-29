@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.ad;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -27,6 +28,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -63,7 +65,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
      * 
      * @return strategy the strategy
      */
-    public Function<AttributeResolutionContext, String> getLookupStrategy() {
+    @Nullable @NonnullAfterInit public Function<AttributeResolutionContext, String> getLookupStrategy() {
         return lookupStrategy;
     }
 

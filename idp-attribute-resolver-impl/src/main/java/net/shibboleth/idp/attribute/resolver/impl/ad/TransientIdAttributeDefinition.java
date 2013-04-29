@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -30,8 +31,11 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.persistence.PersistenceManager;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
@@ -78,7 +82,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the ID store we are using.
      */
-    public PersistenceManager<TransientIdEntry> getIdStore() {
+    @Nullable @NonnullAfterInit public PersistenceManager<TransientIdEntry> getIdStore() {
         return idStore;
     }
 
@@ -142,6 +146,57 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         log.debug("Using the store called {}", idStore.getId());
     }
 
+    /**
+     * Police and get the AttributeIssuerID.
+     * 
+     * @param attributeRecipientContext where to look
+     * @return the AttributeIssuerID
+     * @throws ResolutionException if it was non null
+     */
+    @Nonnull @NotEmpty private String getAttributeIssuerID(
+            @Nonnull final AttributeRecipientContext attributeRecipientContext) throws ResolutionException {
+        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
+        if (null == attributeIssuerID) {
+            throw new ResolutionException("Attribute definition '" + getId()
+                    + " provided attribute issuer ID was empty");
+        }
+        return attributeIssuerID;
+    }
+
+    /**
+     * Police and get the AttributeRecipientID.
+     * 
+     * @param attributeRecipientContext where to look
+     * @return the AttributeRecipientID
+     * @throws ResolutionException if it was non null
+     */
+    @Nonnull @NotEmpty private String getAttributeRecipientID(
+            @Nonnull final AttributeRecipientContext attributeRecipientContext) throws ResolutionException {
+        final String attributeRecipientID =
+                StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
+        if (null == attributeRecipientID) {
+            throw new ResolutionException("Attribute definition '" + getId()
+                    + " provided attribute recipient ID was empty");
+        }
+        return attributeRecipientID;
+    }
+    
+    /**
+     * Police and get the Principal.
+     * 
+     * @param attributeRecipientContext where to look
+     * @return the Principal
+     * @throws ResolutionException if it was non null
+     */
+    @Nonnull @NotEmpty private String getPrincipal(
+            @Nonnull final AttributeRecipientContext attributeRecipientContext) throws ResolutionException {
+        final String principalName = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
+        if (null == principalName) {
+            throw new ResolutionException("Attribute definition '" + getId() + " provided prinicipal name was empty");
+        }
+        return principalName;
+    }
+
     /** {@inheritDoc} */
     @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
@@ -157,23 +212,11 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
                     + " no attribute recipient context provided ");
         }
 
-        final String attributeIssuerID = attributeRecipientContext.getAttributeIssuerID();
-        if (null == attributeIssuerID) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided attribute issuer ID was empty");
-        }
+        final String attributeIssuerID = getAttributeIssuerID(attributeRecipientContext);
 
-        final String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
-        if (null == attributeRecipientID) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided attribute recipient ID was empty");
-        }
+        final String attributeRecipientID = getAttributeRecipientID(attributeRecipientContext);
 
-        final String principalName = attributeRecipientContext.getPrincipal();
-        if (null == principalName) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided prinicipal name was empty");
-        }
+        final String principalName = getPrincipal(attributeRecipientContext);
 
         final Attribute result = new Attribute(getId());
 

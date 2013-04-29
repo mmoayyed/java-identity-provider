@@ -36,7 +36,9 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
@@ -98,7 +100,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param newSourceAttributes the source attribute IDs
      */
-    public void setSourceAttributes(List<String> newSourceAttributes) {
+    public void setSourceAttributes(@Nonnull @NullableElements List<String> newSourceAttributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -112,7 +114,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the template
      */
-    @Nullable public Template getTemplate() {
+    @Nullable @NonnullAfterInit public Template getTemplate() {
         return template;
     }
 
@@ -121,7 +123,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the template
      */
-    @Nullable public String getTemplateText() {
+    @Nullable @NonnullAfterInit public String getTemplateText() {
         return templateText;
     }
 
@@ -130,7 +132,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param velocityTemplate template to be evaluated
      */
-    public synchronized void setTemplateText(String velocityTemplate) {
+    public synchronized void setTemplateText(@Nullable String velocityTemplate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -142,7 +144,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the template
      */
-    @Nullable public VelocityEngine getVelocityEngine() {
+    @Nullable @NonnullAfterInit public VelocityEngine getVelocityEngine() {
         return engine;
     }
 

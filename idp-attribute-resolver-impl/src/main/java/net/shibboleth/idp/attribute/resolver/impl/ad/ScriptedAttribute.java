@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class ScriptedAttribute {
      * All other attributes as their native representation. If null then the {@link #getValues()} method has not been
      * called.
      */
-    @Nullable private Collection<Object> attributeValues;
+    private Collection<Object> attributeValues;
 
     /**
      * Constructor.
@@ -120,7 +121,7 @@ public class ScriptedAttribute {
      * 
      * @return the id
      */
-    public String getId() {
+    @Nonnull @NotEmpty public String getId() {
         return encapsulatedAttribute.getId();
     }
 

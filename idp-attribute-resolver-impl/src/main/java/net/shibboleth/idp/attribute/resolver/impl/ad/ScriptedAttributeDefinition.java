@@ -34,6 +34,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -80,7 +81,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the script to be evaluated
      */
-    @Nullable public EvaluableScript getScript() {
+    @Nullable @NonnullAfterInit public EvaluableScript getScript() {
         return script;
     }
 

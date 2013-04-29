@@ -81,7 +81,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * 
      * @return format for the NameID used as an attribute value
      */
-    public String getNameIdFormat() {
+    @Nullable public String getNameIdFormat() {
         return nameIdFormat;
     }
 
@@ -90,7 +90,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * 
      * @param format format for the NameID used as an attribute value
      */
-    public void setNameIdFormat(String format) {
+    @Nullable public void setNameIdFormat(@Nullable String format) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         nameIdFormat = format;
     }
@@ -100,7 +100,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * 
      * @return NameQualifier for the NameID used as an attribute value
      */
-    public String getNameIdQualifier() {
+    @Nullable public String getNameIdQualifier() {
         return nameIdQualifier;
     }
 
@@ -109,7 +109,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
      * 
      * @param qualifier NameQualifier for the NameID used as an attribute value
      */
-    public void setNameIdQualifier(String qualifier) {
+    public void setNameIdQualifier(@Nullable String qualifier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         nameIdQualifier = qualifier;
     }

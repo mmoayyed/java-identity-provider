@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad.mapped;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
@@ -29,17 +33,17 @@ public class SourceValue {
     /**
      * Value string. This may contain regular expressions.
      */
-    private String value;
+    private final String value;
 
     /**
      * Whether case should be ignored when matching.
      */
-    private boolean ignoreCase;
+    private final boolean ignoreCase;
 
     /**
      * Whether partial matches should be allowed.
      */
-    private boolean partialMatch;
+    private final boolean partialMatch;
 
     /**
      * Constructor.
@@ -49,7 +53,7 @@ public class SourceValue {
      * @param thePartialMatch whether partial matches should be allowed
      */
     public SourceValue(String theValue, boolean theIgnoreCase, boolean thePartialMatch) {
-        value = StringSupport.trimOrNull(theValue);
+        value = Constraint.isNotNull(StringSupport.trimOrNull(theValue), "All values specified should be non empty");
         ignoreCase = theIgnoreCase;
         partialMatch = thePartialMatch;
     }
@@ -77,7 +81,7 @@ public class SourceValue {
      * 
      * @return the value string.
      */
-    public String getValue() {
+    @Nonnull @NotEmpty public String getValue() {
         return value;
     }
 

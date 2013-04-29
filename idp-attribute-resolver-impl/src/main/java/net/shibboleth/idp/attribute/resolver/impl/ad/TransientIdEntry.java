@@ -17,26 +17,32 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import org.joda.time.DateTime;
 import org.opensaml.util.storage.AbstractExpiringObject;
 
 /** Storage service entry used to store information associated with a transient ID. */
 //
 // TODO - this class needs to be changed in response to the storage service work.
-// It appears that 
+// It appears that
 
 public class TransientIdEntry extends AbstractExpiringObject {
     /** Serial version UID. */
     private static final long serialVersionUID = 3594553144206354129L;
 
     /** Relying party the token was issued to. */
-    private String relyingPartyId;
+    private final String relyingPartyId;
 
     /** Principal for which the token was issued. */
-    private String principalName;
+    private final String principalName;
 
     /** Transient id. */
-    private String id;
+    private final String id;
 
     /**
      * Constructor.
@@ -46,11 +52,18 @@ public class TransientIdEntry extends AbstractExpiringObject {
      * @param principal principal the token was issued for
      * @param randomId the random ID token
      */
-    public TransientIdEntry(long lifetime, String relyingParty, String principal, String randomId) {
+    public TransientIdEntry(long lifetime, @Nonnull @NotEmpty String relyingParty, @Nonnull @NotEmpty String principal,
+            @Nonnull @NotEmpty String randomId) {
         super(new DateTime().plus(lifetime));
-        relyingPartyId = relyingParty;
-        principalName = principal;
-        id = randomId;
+        relyingPartyId =
+                Constraint.isNotNull(StringSupport.trimOrNull(relyingParty),
+                        "RelyingParty in TransientID must not be null or empty");
+        principalName =
+                Constraint.isNotNull(StringSupport.trimOrNull(principal),
+                        "Principal in TransientID must not be null or empty");
+        id =
+                Constraint.isNotNull(StringSupport.trimOrNull(randomId),
+                        "Random Id in TransientID must not be null or empty");
     }
 
     /**
@@ -58,7 +71,7 @@ public class TransientIdEntry extends AbstractExpiringObject {
      * 
      * @return principal the token was issued for
      */
-    public String getPrincipalName() {
+    @Nonnull public String getPrincipalName() {
         return principalName;
     }
 
@@ -67,7 +80,7 @@ public class TransientIdEntry extends AbstractExpiringObject {
      * 
      * @return relying party the token was issued to
      */
-    public String getRelyingPartyId() {
+    @Nonnull public String getRelyingPartyId() {
         return relyingPartyId;
     }
 
@@ -76,7 +89,7 @@ public class TransientIdEntry extends AbstractExpiringObject {
      * 
      * @return ID
      */
-    public String getId() {
+    @Nonnull public String getId() {
         return id;
     }
 }

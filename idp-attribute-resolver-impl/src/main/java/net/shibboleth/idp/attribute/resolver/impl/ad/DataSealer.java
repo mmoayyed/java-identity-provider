@@ -33,6 +33,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -129,7 +130,7 @@ public class DataSealer {
      * 
      * @return the encryption key
      */
-    public SecretKey getCipherKey() {
+    @Nullable public SecretKey getCipherKey() {
         return cipherKey;
     }
 
@@ -138,7 +139,7 @@ public class DataSealer {
      * 
      * @return the MAC key
      */
-    public SecretKey getMacKey() {
+    @Nullable public SecretKey getMacKey() {
         return macKey;
     }
 
@@ -147,7 +148,7 @@ public class DataSealer {
      * 
      * @return the pseudorandom generator
      */
-    public SecureRandom getRandom() {
+    @Nullable public SecureRandom getRandom() {
         return random;
     }
 
@@ -156,7 +157,7 @@ public class DataSealer {
      * 
      * @return the keystore type.
      */
-    public String getKeystoreType() {
+    @Nullable public String getKeystoreType() {
         return keystoreType;
     }
 
@@ -165,7 +166,7 @@ public class DataSealer {
      * 
      * @return the keystore path
      */
-    public String getKeystorePath() {
+    @Nullable public String getKeystorePath() {
         return keystorePath;
     }
 
@@ -174,7 +175,7 @@ public class DataSealer {
      * 
      * @return the keystore password
      */
-    public String getKeystorePassword() {
+    @Nullable public String getKeystorePassword() {
         return keystorePassword;
     }
 
@@ -183,7 +184,7 @@ public class DataSealer {
      * 
      * @return the encryption key alias
      */
-    public String getCipherKeyAlias() {
+    @Nullable public String getCipherKeyAlias() {
         return cipherKeyAlias;
     }
 
@@ -192,7 +193,7 @@ public class DataSealer {
      * 
      * @return the encryption key password
      */
-    public String getCipherKeyPassword() {
+    @Nullable public String getCipherKeyPassword() {
         return cipherKeyPassword;
     }
 
@@ -201,7 +202,7 @@ public class DataSealer {
      * 
      * @return the encryption algorithm
      */
-    public String getCipherAlgorithm() {
+    @Nullable public String getCipherAlgorithm() {
         return cipherAlgorithm;
     }
 
@@ -210,7 +211,7 @@ public class DataSealer {
      * 
      * @return the MAC key alias
      */
-    public String getMacKeyAlias() {
+    @Nullable public String getMacKeyAlias() {
         return macKeyAlias;
     }
 
@@ -219,7 +220,7 @@ public class DataSealer {
      * 
      * @return the MAC key password
      */
-    public String getMacKeyPassword() {
+    @Nullable public String getMacKeyPassword() {
         return macKeyPassword;
     }
 
@@ -228,7 +229,7 @@ public class DataSealer {
      * 
      * @return the MAC algorithm
      */
-    public String getMacAlgorithm() {
+    @Nullable public String getMacAlgorithm() {
         return macAlgorithm;
     }
 
@@ -300,7 +301,7 @@ public class DataSealer {
      * 
      * @param password the encryption key password to set
      */
-    public void setCipherKeyPassword(String password) {
+    public void setCipherKeyPassword(@Nullable String password) {
         cipherKeyPassword = password;
     }
 
@@ -309,7 +310,7 @@ public class DataSealer {
      * 
      * @param alg the encryption algorithm to set
      */
-    public void setCipherAlgorithm(String alg) {
+    public void setCipherAlgorithm(@Nullable String alg) {
         cipherAlgorithm = alg;
     }
 
@@ -318,7 +319,7 @@ public class DataSealer {
      * 
      * @param alias the MAC key alias to set
      */
-    public void setMacKeyAlias(String alias) {
+    public void setMacKeyAlias(@Nullable String alias) {
         macKeyAlias = alias;
     }
 
@@ -327,7 +328,7 @@ public class DataSealer {
      * 
      * @param password the the MAC key password to set
      */
-    public void setMacKeyPassword(String password) {
+    public void setMacKeyPassword(@Nullable String password) {
         macKeyPassword = password;
     }
 
@@ -336,7 +337,7 @@ public class DataSealer {
      * 
      * @param alg the MAC algorithm to set
      */
-    public void setMacAlgorithm(String alg) {
+    public void setMacAlgorithm(@Nullable String alg) {
         macAlgorithm = alg;
     }
 
@@ -347,7 +348,7 @@ public class DataSealer {
      * @return the decrypted data, if it's unexpired
      * @throws DataSealerException if the data cannot be unwrapped and verified
      */
-    public String unwrap(String wrapped) throws DataSealerException {
+    @Nonnull public String unwrap(@Nonnull String wrapped) throws DataSealerException {
 
         try {
             byte[] in = Base64Support.decode(wrapped);
@@ -447,7 +448,7 @@ public class DataSealer {
      * @return the encoded blob
      * @throws DataSealerException if the wrapping operation fails
      */
-    public String wrap(String data, long exp) throws DataSealerException {
+    @Nonnull public String wrap(@Nonnull String data, long exp) throws DataSealerException {
 
         if (data == null) {
             throw new IllegalArgumentException("Data must be supplied for the wrapping operation.");
@@ -550,7 +551,7 @@ public class DataSealer {
      * @param exp timestamp to prefix the data with
      * @return the resulting MAC
      */
-    protected static byte[] getMAC(Mac mac, String data, long exp) {
+    @Nonnull protected static byte[] getMAC(@Nonnull Mac mac, @Nonnull String data, long exp) {
         mac.update(getLongBytes(exp));
         mac.update(data.getBytes());
         return mac.doFinal();
@@ -562,7 +563,7 @@ public class DataSealer {
      * @param longValue value to convert
      * @return a byte array
      */
-    protected static byte[] getLongBytes(long longValue) {
+    @Nonnull protected static byte[] getLongBytes(long longValue) {
         try {
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             DataOutputStream dataStream = new DataOutputStream(byteStream);

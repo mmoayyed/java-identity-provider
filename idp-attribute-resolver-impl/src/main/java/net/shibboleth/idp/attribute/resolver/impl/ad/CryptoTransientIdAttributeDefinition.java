@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -149,7 +150,7 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
      * 
      * @return sealer object used to protect and encrypt the data
      */
-    @Nullable public DataSealer getDataSealer() {
+    @Nullable @NonnullAfterInit public DataSealer getDataSealer() {
         return dataSealer;
     }
 

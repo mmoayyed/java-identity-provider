@@ -83,7 +83,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return format for the NameID used as an attribute value
      */
-    public String getNameIdFormat() {
+    @Nullable public String getNameIdFormat() {
         return nameIdFormat;
     }
 
@@ -92,7 +92,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param format format for the NameID used as an attribute value
      */
-    public void setNameIdFormat(String format) {
+    public void setNameIdFormat(@Nullable String format) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         nameIdFormat = format;
     }
@@ -102,7 +102,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return NameQualifier for the NameID used as an attribute value
      */
-    public String getNameIdQualifier() {
+    @Nullable public String getNameIdQualifier() {
         return nameIdQualifier;
     }
 
@@ -111,7 +111,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param qualifier NameQualifier for the NameID used as an attribute value
      */
-    public void setNameIdQualifier(String qualifier) {
+    public void setNameIdQualifier(@Nullable String qualifier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         nameIdQualifier = qualifier;
     }
@@ -121,7 +121,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return SPNameQualifier for the NameID used as an attribute value
      */
-    public String getNameIdSPQualifier() {
+    @Nullable public String getNameIdSPQualifier() {
         return nameIdSPQualifier;
     }
 
@@ -130,7 +130,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param qualifier SPNameQualifier for the NameID used as an attribute value
      */
-    public void setNameIdSPQualifier(String qualifier) {
+    public void setNameIdSPQualifier(@Nullable String qualifier) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         nameIdSPQualifier = qualifier;
     }

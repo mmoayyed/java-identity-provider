@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -60,7 +61,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return regular expression used to split input values
      */
-    @Nullable public Pattern getRegularExpression() {
+    @Nullable @NonnullAfterInit public Pattern getRegularExpression() {
         return regexp;
     }
 
