@@ -20,7 +20,9 @@ package net.shibboleth.idp.attribute.resolver.impl.dc;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-/** Data object representing a persistent identifier entry in the persisten storage. */
+import javax.annotation.Nullable;
+
+/** Data object representing a persistent identifier entry in the persistent storage. */
 public class PersistentIdEntry implements Serializable {
 
     /** Serial version UID . */
@@ -77,7 +79,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return ID of the entity to which the identifier was issued
      */
-    public String getAttributeConsumerId() {
+    @Nullable public String getAttributeConsumerId() {
         return peerEntityId;
     }
 
@@ -86,7 +88,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id ID of the entity to which the identifier was issued
      */
-    public void setPeerEntityId(String id) {
+    public void setPeerEntityId(@Nullable String id) {
         peerEntityId = id;
     }
 
@@ -95,7 +97,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return name of the principal the identifier represents
      */
-    public String getPrincipalName() {
+    @Nullable public String getPrincipalName() {
         return principalName;
     }
 
@@ -104,7 +106,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param name name of the principal the identifier represents
      */
-    public void setPrincipalName(String name) {
+    public void setPrincipalName(@Nullable String name) {
         principalName = name;
     }
 
@@ -113,7 +115,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return local ID component of the persistent identifier
      */
-    public String getLocalId() {
+    @Nullable public String getLocalId() {
         return localId;
     }
 
@@ -122,7 +124,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id local ID component of the persistent identifier
      */
-    public void setLocalId(String id) {
+    public void setLocalId(@Nullable String id) {
         localId = id;
     }
 
@@ -131,7 +133,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return the persistent identifier
      */
-    public String getPersistentId() {
+    @Nullable public String getPersistentId() {
         return persistentId;
     }
 
@@ -140,7 +142,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id the persistent identifier
      */
-    public void setPersistentId(String id) {
+    public void setPersistentId(@Nullable String id) {
         persistentId = id;
     }
 
@@ -149,7 +151,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return ID, provided by the peer, associated with this ID
      */
-    public String getPeerProvidedId() {
+    @Nullable public String getPeerProvidedId() {
         return peerProvidedId;
     }
 
@@ -158,7 +160,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param id ID, provided by the peer, associated with this ID
      */
-    public void setPeerProvidedId(String id) {
+    public void setPeerProvidedId(@Nullable String id) {
         peerProvidedId = id;
     }
 
@@ -167,7 +169,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return time the identifier was created
      */
-    public Timestamp getCreationTime() {
+    @Nullable public Timestamp getCreationTime() {
         return creationTime;
     }
 
@@ -176,7 +178,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param time time the identifier was created
      */
-    public void setCreationTime(Timestamp time) {
+    public void setCreationTime(@Nullable Timestamp time) {
         creationTime = time;
     }
 
@@ -185,7 +187,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @return time the identifier was deactivated
      */
-    public Timestamp getDeactivationTime() {
+    @Nullable public Timestamp getDeactivationTime() {
         return deactivationTime;
     }
 
@@ -194,7 +196,7 @@ public class PersistentIdEntry implements Serializable {
      * 
      * @param time the time the identifier was deactivated
      */
-    public void setDeactivationTime(Timestamp time) {
+    public void setDeactivationTime(@Nullable Timestamp time) {
         this.deactivationTime = time;
     }
 

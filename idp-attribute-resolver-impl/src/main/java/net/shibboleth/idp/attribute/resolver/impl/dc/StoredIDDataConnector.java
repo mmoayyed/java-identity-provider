@@ -23,14 +23,18 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -60,14 +64,14 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     private int queryTimeout;
 
     /** Persistent identifier data store. */
-    private StoredIDStore pidStore;
+    private StoredIDStore pidStore = new StoredIDStore();
 
     /**
      * Gets the {@link DataSource} used to communicate with the database.
      * 
      * @return the {@link DataSource}.
      */
-    public DataSource getDataSource() {
+    @Nullable @NonnullAfterInit public DataSource getDataSource() {
         return dataSource;
     }
 
@@ -86,7 +90,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @return data store used to manage stored IDs
      */
-    public StoredIDStore getStoredIDStore() {
+    @Nonnull public StoredIDStore getStoredIDStore() {
         return pidStore;
     }
 
@@ -150,12 +154,16 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * @throws SQLException thrown if there is a problem communication with the database
      * @throws ResolutionException if there is a problem with has generation
      */
-    protected PersistentIdEntry createPersistentId(String principalName, String localEntityId, String peerEntityId,
-            String localId) throws SQLException, ResolutionException {
+    @Nonnull protected PersistentIdEntry createPersistentId(@Nonnull @NotEmpty String principalName,
+            @Nonnull @NotEmpty String localEntityId, @Nonnull @NotEmpty String peerEntityId,
+            @Nonnull @NotEmpty String localId) throws SQLException, ResolutionException {
         PersistentIdEntry entry = new PersistentIdEntry();
-        entry.setAttributeIssuerId(localEntityId);
-        entry.setPeerEntityId(peerEntityId);
-        entry.setPrincipalName(principalName);
+        entry.setAttributeIssuerId(Constraint.isNotNull(StringSupport.trimOrNull(localEntityId),
+                "Attribute Issuer entity Id must not be null"));
+        entry.setPeerEntityId(Constraint.isNotNull(StringSupport.trimOrNull(peerEntityId),
+                "Attribute Recipient entity Id must not be null"));
+        entry.setPrincipalName(Constraint.isNotNull(StringSupport.trimOrNull(principalName),
+                "Principal must not be null"));
         entry.setLocalId(localId);
 
         String persistentId;
@@ -193,8 +201,8 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
      * 
      * @throws ResolutionException thrown if there is a problem retrieving or storing the persistent ID
      */
-    protected String getStoredId(String principalName, String localEntityId, String spEntityId, String localId)
-            throws ResolutionException {
+    @Nonnull @NotEmpty protected String getStoredId(String principalName, String localEntityId, String spEntityId,
+            String localId) throws ResolutionException {
         PersistentIdEntry idEntry;
         try {
             log.debug("Checking for existing, active, stored ID for principal '{}'", principalName);
@@ -208,9 +216,15 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
                 log.debug("Located existing stored ID {}", idEntry);
             }
 
-            return idEntry.getPersistentId();
+            final String pid = StringSupport.trimOrNull(idEntry.getPersistentId());
+            if (null == pid) {
+                log.debug("Attribute resolution '{}': returned persistent ID was empty", getId());
+                throw new ResolutionException("Attribute resolution '"+getId()+"': returned persistent ID was empty");
+            }
+            
+            return pid;
         } catch (SQLException e) {
-            log.debug("Database error retrieving persistent identifier", e);
+            log.debug("Attribute resolution '{}': Database error retrieving persistent identifier", getId(), e);
             throw new ResolutionException("Database error retrieving persistent identifier", e);
         }
     }

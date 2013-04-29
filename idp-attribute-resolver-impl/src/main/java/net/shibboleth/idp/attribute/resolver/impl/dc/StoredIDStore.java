@@ -30,6 +30,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -97,7 +98,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @return the data source;
      */
-    public DataSource getDataSource() {
+    @Nullable @NonnullAfterInit public DataSource getDataSource() {
         return dataSource;
     }
 
@@ -106,7 +107,7 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @param source the data source;
      */
-    public void setDataSource(DataSource source) {
+    public void setDataSource(@Nullable DataSource source) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         dataSource = source;
     }
@@ -149,8 +150,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @throws SQLException thrown if there is a problem communication with the database
      */
-    public int getNumberOfPersistentIdEntries(String localEntity, String peerEntity, String localId)
-            throws SQLException {
+    public int getNumberOfPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
+            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws SQLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("SELECT");
@@ -201,8 +202,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @throws SQLException thrown if there is a problem communication with the database
      */
-    public List<PersistentIdEntry> getPersistentIdEntries(String localEntity, String peerEntity, String localId)
-            throws SQLException {
+    @Nonnull public List<PersistentIdEntry> getPersistentIdEntries(@Nonnull @NotEmpty String localEntity,
+            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws SQLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(localEntityColumn).append(" = ?");
@@ -260,8 +261,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @throws SQLException thrown if there is a problem communication with the database
      */
-    @Nullable public PersistentIdEntry getPersistentIdEntry(@NotEmpty String persistentId, boolean onlyActiveId)
-            throws SQLException {
+    @Nullable public PersistentIdEntry
+            getPersistentIdEntry(@Nonnull @NotEmpty String persistentId, boolean onlyActiveId) throws SQLException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(persistentIdColumn).append(" = ?");
@@ -347,8 +348,8 @@ public class StoredIDStore extends AbstractInitializableComponent {
      * 
      * @throws SQLException thrown if there is a problem communication with the database
      */
-    public PersistentIdEntry getActivePersistentIdEntry(String localEntity, String peerEntity, String localId)
-            throws SQLException {
+    @Nonnull public PersistentIdEntry getActivePersistentIdEntry(@Nonnull @NotEmpty String localEntity,
+            @Nonnull @NotEmpty String peerEntity, @Nonnull @NotEmpty String localId) throws SQLException {
         StringBuilder sqlBuilder = new StringBuilder(idEntrySelectSQL);
         sqlBuilder.append(localEntityColumn).append(" = ?");
         sqlBuilder.append(" AND ").append(peerEntityColumn).append(" = ?");
