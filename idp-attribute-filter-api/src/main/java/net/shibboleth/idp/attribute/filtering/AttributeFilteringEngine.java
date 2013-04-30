@@ -46,7 +46,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -144,17 +143,16 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
             policy.apply(filterContext);
         }
 
-        Optional<Collection> filteredAttributeValues;
         Attribute filteredAttribute;
         for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
-            filteredAttributeValues = getFilteredValues(attributeId, filterContext);
-            if (filteredAttributeValues.isPresent() && !filteredAttributeValues.get().isEmpty()) {
+            final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
+            if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
                 try {
                     filteredAttribute = prefilteredAttributes.get(attributeId).clone();
                 } catch (CloneNotSupportedException e) {
                     throw new AttributeFilteringException(e);
                 }
-                filteredAttribute.setValues(filteredAttributeValues.get());
+                filteredAttribute.setValues(filteredAttributeValues);
                 filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
             }
         }
@@ -168,11 +166,10 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
      * @param attributeId ID of the attribute whose values are to be retrieved
      * @param filterContext current attribute filter context
      * 
-     * @return {@link Optional#absent()} if no values were permitted to be released, {@link Optional} containing an
-     *         empty collection if values were permitted but then all were removed by deny policies, or {@link Optional}
-     *         with a collection containing permitted values
+     * @return null if no values were permitted to be released, an empty collection if values were permitted but 
+     *         then all were removed by deny policies, a collection containing permitted values
      */
-    protected Optional<Collection> getFilteredValues(@Nonnull @NotEmpty final String attributeId,
+    @Nullable protected Collection getFilteredValues(@Nonnull @NotEmpty final String attributeId,
             @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attributeId, "attributeId can not be null");
         Constraint.isNotNull(filterContext, "filterContext can not be null");
@@ -182,7 +179,7 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         if (filteredAttributeValues == null || filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': no policy permitted release of attribute {} values", getId(),
                     attributeId);
-            return Optional.absent();
+            return null;
         }
 
         if (filterContext.getDeniedAttributeValues().containsKey(attributeId)) {
@@ -192,13 +189,12 @@ public class AttributeFilteringEngine extends AbstractDestructableIdentifiableIn
         if (filteredAttributeValues.isEmpty()) {
             log.debug("Attribute filtering engine '{}': deny policies filtered out all values for attribute '{}'",
                     getId(), attributeId);
-            return Optional.absent();
         } else {
             log.debug("Attribute filtering engine '{}': {} values for attribute '{}' remained after filtering",
                     new Object[] {getId(), filteredAttributeValues.size(), attributeId,});
         }
 
-        return Optional.of(filteredAttributeValues);
+        return filteredAttributeValues;
     }
 
     /** {@inheritDoc} */
