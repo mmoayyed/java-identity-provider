@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 
 /** A work in progress to test the attribute resolver service. */
 
-public class DependencyTest extends BaseAttributeDefinitionBeanParserTest {
+public class DependencyTest extends BaseAttributeDefinitionParserTest {
 
     private ResolverPluginDependency getDependency(String fileName) {
 

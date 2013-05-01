@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.MappedAttributeDefinitionBeanDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.SourceValueBeanDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapBeanDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.MappedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.SourceValueParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
@@ -33,35 +33,35 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new CryptoTransientIdAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(PrescopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new PrescopedAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(PrincipalNameAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new PrincipalNameAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(RegexSplitAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new RegexSplitAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(SAML2NameIDAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new SAML2NameIDAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(ScopedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new ScopedAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(ScriptedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new ScriptedAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(SimpleAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new SimpleAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(TemplateAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new TemplateAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(TransientIdAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new TransientIdAttributeDefinitionBeanDefinitionParser());
-        registerBeanDefinitionParser(SourceValueBeanDefinitionParser.TYPE_NAME,
-                new SourceValueBeanDefinitionParser());
-        registerBeanDefinitionParser(ValueMapBeanDefinitionParser.TYPE_NAME,
-                new ValueMapBeanDefinitionParser());
-        registerBeanDefinitionParser(MappedAttributeDefinitionBeanDefinitionParser.TYPE_NAME,
-                new MappedAttributeDefinitionBeanDefinitionParser());
+        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME,
+                new CryptoTransientIdAttributeDefinitionParser());
+        registerBeanDefinitionParser(PrescopedAttributeDefinitionParser.TYPE_NAME,
+                new PrescopedAttributeDefinitionParser());
+        registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionParser.TYPE_NAME,
+                new PrincipalAuthenticationMethodAttributeDefinitionParser());
+        registerBeanDefinitionParser(PrincipalNameAttributeDefinitionParser.TYPE_NAME,
+                new PrincipalNameAttributeDefinitionParser());
+        registerBeanDefinitionParser(RegexSplitAttributeDefinitionParser.TYPE_NAME,
+                new RegexSplitAttributeDefinitionParser());
+        registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionParser.TYPE_NAME,
+                new SAML1NameIdentifierAttributeDefinitionParser());
+        registerBeanDefinitionParser(SAML2NameIDAttributeDefinitionParser.TYPE_NAME,
+                new SAML2NameIDAttributeDefinitionParser());
+        registerBeanDefinitionParser(ScopedAttributeDefinitionParser.TYPE_NAME,
+                new ScopedAttributeDefinitionParser());
+        registerBeanDefinitionParser(ScriptedAttributeDefinitionParser.TYPE_NAME,
+                new ScriptedAttributeDefinitionParser());
+        registerBeanDefinitionParser(SimpleAttributeDefinitionParser.TYPE_NAME,
+                new SimpleAttributeDefinitionParser());
+        registerBeanDefinitionParser(TemplateAttributeDefinitionParser.TYPE_NAME,
+                new TemplateAttributeDefinitionParser());
+        registerBeanDefinitionParser(TransientIdAttributeDefinitionParser.TYPE_NAME,
+                new TransientIdAttributeDefinitionParser());
+        registerBeanDefinitionParser(SourceValueParser.TYPE_NAME,
+                new SourceValueParser());
+        registerBeanDefinitionParser(ValueMapParser.TYPE_NAME,
+                new ValueMapParser());
+        registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME,
+                new MappedAttributeDefinitionParser());
     }
 }

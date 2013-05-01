@@ -15,25 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.spring.service;
+package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.impl.ad.ScopedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.SAML1NameIdentifierAttributeDefinitionParser;
 
-// TODO incomplete port from v2
-/** Namespace handler for a {@link Service}. */
-public class ServiceNamespaceHandler extends BaseSpringNamespaceHandler {
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:services";
+/**
+ * Test for {@link SAML1NameIdentifierAttributeDefinitionParser}.
+ */
+public class ScopedAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
-    /** {@inheritDoc} */
-    public void init() {
-        ServicesParser parser = new ServicesParser();
-        registerBeanDefinitionParser(ServicesParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(ServicesParser.SCHEMA_TYPE, parser);
+    @Test public void defaultCase() {
+        ScopedAttributeDefinition attrDef =
+                getAttributeDefn("scoped.xml", ScopedAttributeDefinition.class);
 
-        // TODO remove
-        // registerBeanDefinitionParser(ServletContextAttributeExporterBeanDefinitionParser.TYPE_NAME,
-        // new ServletContextAttributeExporterBeanDefinitionParser());
+        Assert.assertEquals(attrDef.getId(), "scoped");
+        Assert.assertEquals(attrDef.getScope(), "mYsCoPe");
     }
 }

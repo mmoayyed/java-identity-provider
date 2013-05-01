@@ -15,25 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.spring.service;
+package net.shibboleth.idp.attribute.resolver.spring;
 
-import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
+import javax.xml.namespace.QName;
 
-// TODO incomplete port from v2
-/** Namespace handler for a {@link Service}. */
-public class ServiceNamespaceHandler extends BaseSpringNamespaceHandler {
+import net.shibboleth.idp.spring.service.AbstractServiceParser;
 
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:services";
+import org.w3c.dom.Element;
+
+// TODO incomplete
+/** Bean definition parser for a {@link AttributeResolverService}. */
+public class AttributeResolverServiceParser extends AbstractServiceParser {
+
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+            "ShibbolethAttributeResolver");
 
     /** {@inheritDoc} */
-    public void init() {
-        ServicesParser parser = new ServicesParser();
-        registerBeanDefinitionParser(ServicesParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(ServicesParser.SCHEMA_TYPE, parser);
-
-        // TODO remove
-        // registerBeanDefinitionParser(ServletContextAttributeExporterBeanDefinitionParser.TYPE_NAME,
-        // new ServletContextAttributeExporterBeanDefinitionParser());
+    protected Class getBeanClass(Element element) {
+        return AttributeResolverService.class;
     }
 }
