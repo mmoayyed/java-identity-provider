@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 
+    <!-- TODO Quite incomplete work-in-progress. -->
+ 
     <display-name>Shibboleth Identity Provider</display-name>
 
     <!-- Parameter that allows the domain of all cookies to be explicitly set. If not set the domain is let empty which means 
@@ -9,107 +12,57 @@
 
     <!-- Spring 2.0 application context files. Files are loaded in the order they appear with subsequent files overwriting 
         same named beans in previous files. -->
+    
+    <!-- 
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>$IDP_HOME$/conf/internal.xml; $IDP_HOME$/conf/service.xml;</param-value>
     </context-param>
+    -->
 
     <!-- Spring 2.0 listener used to load up the configuration -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <!-- Add IdP SLF4J MDC cleanup filter to all requests -->
-    <filter>
-        <filter-name>SL4JCleanupFilter</filter-name>
-        <filter-class>edu.internet2.middleware.shibboleth.common.log.SLF4JMDCCleanupFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>SL4JCleanupFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <!-- <servlet> <servlet-name>dispatcherServlet</servlet-name> <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> 
+        <load-on-startup>1</load-on-startup> </servlet> -->
 
+    <!-- Add IdP SLF4J MDC cleanup filter to all requests -->
+    <!-- <filter> <filter-name>SL4JCleanupFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.common.log.SLF4JMDCCleanupFilter</filter-class> 
+        </filter> <filter-mapping> <filter-name>SL4JCleanupFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
 
     <!-- Add IdP Session object to incoming profile requests -->
-    <filter>
-        <filter-name>IdPSessionFilter</filter-name>
-        <filter-class>edu.internet2.middleware.shibboleth.idp.session.IdPSessionFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>IdPSessionFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <!-- <filter> <filter-name>IdPSessionFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.idp.session.IdPSessionFilter</filter-class> 
+        </filter> <filter-mapping> <filter-name>IdPSessionFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
 
     <!-- HTTP headers to every response in order to prevent response caching -->
-    <filter>
-        <filter-name>IdPNoCacheFilter</filter-name>
-        <filter-class>edu.internet2.middleware.shibboleth.idp.util.NoCacheFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>IdPNoCacheFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <!-- <filter> <filter-name>IdPNoCacheFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.idp.util.NoCacheFilter</filter-class> 
+        </filter> <filter-mapping> <filter-name>IdPNoCacheFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
 
     <!-- Profile Request Dispatcher -->
-    <servlet>
-        <servlet-name>ProfileRequestDispatcher</servlet-name>
-        <servlet-class>edu.internet2.middleware.shibboleth.common.profile.ProfileRequestDispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>ProfileRequestDispatcher</servlet-name>
-        <url-pattern>/profile/*</url-pattern>
-    </servlet-mapping>
+    <!-- <servlet> <servlet-name>ProfileRequestDispatcher</servlet-name> <servlet-class>edu.internet2.middleware.shibboleth.common.profile.ProfileRequestDispatcherServlet</servlet-class> 
+        <load-on-startup>1</load-on-startup> </servlet> <servlet-mapping> <servlet-name>ProfileRequestDispatcher</servlet-name> <url-pattern>/profile/*</url-pattern> 
+        </servlet-mapping> -->
 
     <!-- Authentication Engine Entry Point -->
-    <servlet>
-        <servlet-name>AuthenticationEngine</servlet-name>
-        <servlet-class>edu.internet2.middleware.shibboleth.idp.authn.AuthenticationEngine</servlet-class>
-
-        <!-- Whether public credentials returned by a login handler are retained in the subject. -->
-        <!-- <init-param> <param-name>retainSubjectsPublicCredentials</param-name> <param-value>false</param-value> </init-param> -->
-
-        <!-- Whether private credentials returned by a login handler are retained in the subject. -->
-        <!-- <init-param> <param-name>retainSubjectsPrivateCredentials</param-name> <param-value>false</param-value> </init-param> -->
-
-        <load-on-startup>2</load-on-startup>
-
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>AuthenticationEngine</servlet-name>
-        <url-pattern>/AuthnEngine</url-pattern>
-    </servlet-mapping>
+    <!-- ... <servlet-mapping> <servlet-name>AuthenticationEngine</servlet-name> <url-pattern>/AuthnEngine</url-pattern> 
+        </servlet-mapping> -->
 
     <!-- Servlet protected by container used for RemoteUser authentication -->
-    <servlet>
-        <servlet-name>RemoteUserAuthHandler</servlet-name>
-        <servlet-class>edu.internet2.middleware.shibboleth.idp.authn.provider.RemoteUserAuthServlet</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>RemoteUserAuthHandler</servlet-name>
-        <url-pattern>/Authn/RemoteUser</url-pattern>
-    </servlet-mapping>
+    <!-- <servlet> <servlet-name>RemoteUserAuthHandler</servlet-name> <servlet-class>edu.internet2.middleware.shibboleth.idp.authn.provider.RemoteUserAuthServlet</servlet-class> 
+        <load-on-startup>3</load-on-startup> </servlet> <servlet-mapping> <servlet-name>RemoteUserAuthHandler</servlet-name> <url-pattern>/Authn/RemoteUser</url-pattern> 
+        </servlet-mapping> -->
 
     <!-- Servlet for doing Username/Password authentication -->
-    <servlet>
-        <servlet-name>UsernamePasswordAuthHandler</servlet-name>
-        <servlet-class>edu.internet2.middleware.shibboleth.idp.authn.provider.UsernamePasswordLoginServlet</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>UsernamePasswordAuthHandler</servlet-name>
-        <url-pattern>/Authn/UserPassword</url-pattern>
-    </servlet-mapping>
+    <!-- <servlet> <servlet-name>UsernamePasswordAuthHandler</servlet-name> <servlet-class>edu.internet2.middleware.shibboleth.idp.authn.provider.UsernamePasswordLoginServlet</servlet-class> 
+        <load-on-startup>3</load-on-startup> </servlet> <servlet-mapping> <servlet-name>UsernamePasswordAuthHandler</servlet-name> 
+        <url-pattern>/Authn/UserPassword</url-pattern> </servlet-mapping> -->
 
     <!-- Servlet for displaying IdP status. -->
     <servlet>
         <servlet-name>Status</servlet-name>
-        <servlet-class>edu.internet2.middleware.shibboleth.idp.StatusServlet</servlet-class>
+        <servlet-class>net.shibboleth.idp.StatusServlet</servlet-class>
 
         <!-- Space separated list of CIDR blocks allowed to access the status page -->
         <init-param>
