@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,9 +11,41 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-distribution</name>
+    <name>Shibboleth IdP :: Distribution</name>
     <artifactId>idp-distribution</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
+
+    <properties>
+        <assembly-directory>target/${project.artifactId}</assembly-directory>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>shib-release</id>
+            <url>https://shibboleth.net/nexus/content/groups/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>shib-snapshot</id>
+            <url>https://shibboleth.net/nexus/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+
+        <!-- TODO Jetty SNAPSHOT repository, to be removed post-9.0.3 release. -->
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>sonatype-snapshots</id>
+            <name>Sonatype Jetty Snapshots</name>
+            <url>http://oss.sonatype.org/content/groups/jetty</url>
+        </repository>
+
+    </repositories>
 
     <dependencies>
         <!-- Compile Dependencies -->
@@ -26,5 +58,167 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <build>
+        <plugins>
+            <!-- Unpack the IdP war and Jetty distribution to assembly directory. -->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-dependencies</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>net.shibboleth.idp</groupId>
+                                    <artifactId>idp-war</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <outputDirectory>${assembly-directory}/webapps</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${jetty.groupId}</groupId>
+                                    <artifactId>jetty-distribution</artifactId>
+                                    <version>${jetty.version}</version>
+                                    <type>zip</type>
+                                    <outputDirectory>${assembly-directory}</outputDirectory>
+                                    <excludes>
+                                        **/.donotdelete,
+                                        **/webapps/**,
+                                        **/webapps.demo/**
+                                    </excludes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <!-- Copy endorsed libraries to assembly-directory/jetty/lib/endorsed. -->
+                    <execution>
+                        <id>copy-endorsed-dependencies</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${xerces.groupId}</groupId>
+                                    <artifactId>xml-apis</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${xerces.groupId}</groupId>
+                                    <artifactId>xercesImpl</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${xerces.groupId}</groupId>
+                                    <artifactId>serializer</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>xml-resolver</groupId>
+                                    <artifactId>xml-resolver</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${xalan.groupId}</groupId>
+                                    <artifactId>xalan</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${assembly-directory}/jetty/lib/endorsed</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!-- Copy jetty9-dta-ssl to assembly-directory/jetty/lib/shibboleth -->
+                    <execution>
+                        <id>copy-jetty-delegate-ssl-dependency</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>net.shibboleth.utilities.jetty9</groupId>
+                                    <artifactId>jetty9-dta-ssl</artifactId>
+                                    <version>1.0.0-SNAPSHOT</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${assembly-directory}/jetty/lib/shibboleth</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Copy src/main/resources to assembly directory. -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-base-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources</directory>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${assembly-directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Replace antrun plugin with something else ? -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Make files in bin executable. -->
+                                <chmod dir="${assembly-directory}/bin" perm="755" includes="**/*.sh" />
+                                <!-- Disable Jetty start.d/*.ini files by renaming with ".disabled" suffix. -->
+                                <move todir="${assembly-directory}/jetty-distribution-${jetty.version}/start.d">
+                                    <fileset dir="${assembly-directory}/jetty-distribution-${jetty.version}/start.d">
+                                        <include name="**/*.ini" />
+                                    </fileset>
+                                    <mapper type="glob" from="*" to="*.disabled" />
+                                </move>
+                                <!-- Rename "jetty-distribution-<version>" to "jetty". -->
+                                <move file="${assembly-directory}/jetty-distribution-${jetty.version}" tofile="${assembly-directory}/jetty" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Assemble. -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/main/assembly/idp-assembly.xml</descriptor>
+                    </descriptors>
+                    <tarLongFileMode>gnu</tarLongFileMode>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
