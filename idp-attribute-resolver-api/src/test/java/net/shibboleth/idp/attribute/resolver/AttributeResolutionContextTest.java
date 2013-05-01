@@ -33,7 +33,7 @@ import com.google.common.base.Optional;
 public class AttributeResolutionContextTest {
 
     /** Test instantiation and post-instantiation state. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
 
         AttributeResolutionContext context = new AttributeResolutionContext();
         Assert.assertNull(context.getParent());
@@ -46,7 +46,7 @@ public class AttributeResolutionContextTest {
     }
     
     /** Test {@link AttributeResolutionContext#setRequestedAttributes(java.util.Set)}. */
-    @Test public void testSetRequesedAttributes() {
+    @Test public void setRequesedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
         context.setRequestedAttributes(null);
@@ -78,7 +78,7 @@ public class AttributeResolutionContextTest {
     }
 
     /** Test {@link AttributeResolutionContext#setRequestedAttributes(java.util.Set)}. */
-    @Test public void testSetResolvedAttributes() {
+    @Test public void setResolvedAttributes() {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
         context.setResolvedAttributes(null);
@@ -110,7 +110,7 @@ public class AttributeResolutionContextTest {
     }
 
     /** Test adding and retrieving attribute definitions. */
-    @Test public void testResolvedAttributeDefinitions() throws Exception {
+    @Test public void resolvedAttributeDefinitions() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
         Assert.assertNotNull(context.getResolvedAttributeDefinitions());
@@ -151,7 +151,7 @@ public class AttributeResolutionContextTest {
     }
 
     /** Test adding and retrieving data connectors. */
-    @Test public void testResolvedDataConnectors() throws Exception {
+    @Test public void resolvedDataConnectors() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
         Assert.assertNotNull(context.getResolvedDataConnectors());

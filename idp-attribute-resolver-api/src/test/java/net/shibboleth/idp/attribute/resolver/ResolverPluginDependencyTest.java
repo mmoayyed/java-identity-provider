@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 public class ResolverPluginDependencyTest {
 
     /** Tests the state of a newly instantiated object. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         ResolverPluginDependency dep = new ResolverPluginDependency(" foo ");
         dep.setDependencyAttributeId(" bar ");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
@@ -57,7 +57,7 @@ public class ResolverPluginDependencyTest {
         }
     }
 
-    @Test public void testEqualsToString() {
+    @Test public void equalsToString() {
         ResolverPluginDependency dep = new ResolverPluginDependency(" foo ");
         dep.setDependencyAttributeId(" bar ");
 

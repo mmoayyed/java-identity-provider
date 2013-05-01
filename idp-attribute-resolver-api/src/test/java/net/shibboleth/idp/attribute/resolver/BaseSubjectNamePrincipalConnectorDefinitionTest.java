@@ -48,7 +48,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
     
     private final static String IDENTIFIER = "TestInsideTheNameID";
 
-    @Test public void testSetterGetters() throws ComponentInitializationException {
+    @Test public void setterGetters() throws ComponentInitializationException {
         
         BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         
@@ -84,7 +84,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         Assert.assertTrue(defn.getRelyingParties().contains(RELYING_PARTY));
     }
     
-    @Test public void testNavigationSAML1() throws ResolutionException, ComponentInitializationException {
+    @Test public void navigationSAML1() throws ResolutionException, ComponentInitializationException {
         
         final NameIdentifier nameId = new NameIdentifierBuilder().buildObject();
         nameId.setFormat(FORMAT);
@@ -102,7 +102,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         Assert.assertEquals(defn.issuerIdOf(null), ISSUER);
     }
         
-    @Test public void testNavigationSAML2() throws ResolutionException, ComponentInitializationException {
+    @Test public void navigationSAML2() throws ResolutionException, ComponentInitializationException {
 
         final NameID nameId = new NameIDBuilder().buildObject();
         nameId.setFormat(FORMAT);
@@ -120,7 +120,7 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         Assert.assertEquals(defn.issuerIdOf(null), ISSUER);
     }
     
-    @Test public void testBadNavigation() throws ResolutionException, ComponentInitializationException {
+    @Test public void badNavigation() throws ResolutionException, ComponentInitializationException {
 
         final Assertion entity = new AssertionBuilder().buildObject();
         final SAMLMessageContext context = new MockMessageContext(ISSUER, entity);

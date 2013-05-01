@@ -1,3 +1,19 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package net.shibboleth.idp.attribute.resolver;
 
@@ -34,7 +50,7 @@ import com.google.common.collect.Lists;
  */
 public class PluginDependencySupportTest {
 
-    @Test public void testGetMergedAttributeValueWithAttributeDefinitionDependency() {
+    @Test public void getMergedAttributeValueWithAttributeDefinitionDependency() {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildAttributeDefinition(
                         ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES));
@@ -49,7 +65,7 @@ public class PluginDependencySupportTest {
         Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
     }
 
-    @Test public void testGetMergedAttributeValuesWithDataConnectorDependency() {
+    @Test public void getMergedAttributeValuesWithDataConnectorDependency() {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
@@ -68,7 +84,7 @@ public class PluginDependencySupportTest {
 
     }
 
-    @Test public void testGetMergedAttributeValueWithMultipleDependencies() {
+    @Test public void getMergedAttributeValueWithMultipleDependencies() {
         MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
                         ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport
@@ -95,7 +111,7 @@ public class PluginDependencySupportTest {
 
     }
 
-    @Test public void testGetAllAttributeValues() {
+    @Test public void getAllAttributeValues() {
         MockStaticDataConnector connector1 =
                 ResolverTestSupport.buildDataConnector("connector1", ResolverTestSupport.buildAttribute(
                         ResolverTestSupport.EPE_ATTRIB_ID, ResolverTestSupport.EPE1_VALUES), ResolverTestSupport

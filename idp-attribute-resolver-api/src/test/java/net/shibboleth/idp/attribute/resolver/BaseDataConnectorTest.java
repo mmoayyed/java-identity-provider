@@ -35,14 +35,14 @@ import com.google.common.base.Optional;
 public class BaseDataConnectorTest {
 
     /** Test instantiation and post-instantiation state. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
         Assert.assertFalse(connector.getFailoverDataConnectorId().isPresent());
     }
 
     /** Test getting/setting dependency ID. */
-    @Test public void testFailoverDependencyId() {
+    @Test public void failoverDependencyId() {
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
         connector.setFailoverDataConnectorId(" foo ");
@@ -56,7 +56,7 @@ public class BaseDataConnectorTest {
     }
 
     /** Test the resolution of the data connector. */
-    @Test public void testResolve() throws Exception {
+    @Test public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", (Map<String, Attribute>) null);

@@ -31,7 +31,7 @@ import com.google.common.base.Predicates;
 public class BaseResolverPluginTest {
 
     /** Test an instantiated object has the proper state. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
 
         Assert.assertEquals(plugin.getId(), "foo");
@@ -42,7 +42,7 @@ public class BaseResolverPluginTest {
     }
 
     /** Test get/set activation criteria. */
-    @Test public void testActivationCriteria() {
+    @Test public void activationCriteria() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin(" foo ", "bar");
 
         plugin.setActivationCriteria(Predicates.<AttributeResolutionContext> alwaysFalse());
@@ -57,7 +57,7 @@ public class BaseResolverPluginTest {
     }
 
     /** Test setters to {@link BaseResolverPlugin#setPropagateResolutionExceptions(boolean)}. */
-    @Test public void testPropogateSetters() {
+    @Test public void propogateSetters() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
 
         plugin.setPropagateResolutionExceptions(true);
@@ -71,7 +71,7 @@ public class BaseResolverPluginTest {
     }
 
     /** Test add, removing, setting dependencies. */
-    @Test public void testDependencies() {
+    @Test public void dependencies() {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
 
         plugin.setDependencies(null);
@@ -110,7 +110,7 @@ public class BaseResolverPluginTest {
     }
 
     /** Test {@link BaseResolverPlugin#resolve(AttributeResolutionContext)}. */
-    @Test public void testResolver() throws Exception {
+    @Test public void resolver() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
         plugin.initialize();

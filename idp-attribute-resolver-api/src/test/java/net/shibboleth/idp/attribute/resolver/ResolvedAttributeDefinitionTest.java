@@ -35,7 +35,7 @@ import com.google.common.base.Optional;
  */
 public class ResolvedAttributeDefinitionTest {
 
-    @Test public void testInit() {
+    @Test public void init() {
         Attribute attribute = new Attribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
 
@@ -62,7 +62,7 @@ public class ResolvedAttributeDefinitionTest {
 
     }
 
-    @Test public void testEqualsHashToString() throws ComponentInitializationException {
+    @Test public void equalsHashToString() throws ComponentInitializationException {
         Attribute attribute = new Attribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
         attrDef.setValue(attribute);
@@ -91,7 +91,7 @@ public class ResolvedAttributeDefinitionTest {
 
     }
 
-    @Test public void testNoops() throws ComponentInitializationException, ComponentValidationException {
+    @Test public void noops() throws ComponentInitializationException, ComponentValidationException {
 
         Attribute attribute = new Attribute("foo");
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();

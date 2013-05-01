@@ -42,7 +42,7 @@ public class BaseAttributeDefinitionTest {
 
     /** Tests the state of a newly instantiated object. */
     @Test
-    public void testInstantiation() {
+    public void instantiation() {
         MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
 
         Assert.assertEquals(definition.getId(), "foo");
@@ -57,7 +57,7 @@ public class BaseAttributeDefinitionTest {
 
     /** Tests setting and retrieving the dependency only option. */
     @Test
-    public void testDependencyOnly() {
+    public void dependencyOnly() {
         MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
         Assert.assertFalse(definition.isDependencyOnly());
 
@@ -76,7 +76,7 @@ public class BaseAttributeDefinitionTest {
 
     /** Tests setting and retrieving encoders. */
     @Test
-    public void testEncoders() {
+    public void encoders() {
         MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
 
         MockAttributeEncoder enc1 = new MockAttributeEncoder(null, null);
@@ -120,7 +120,7 @@ public class BaseAttributeDefinitionTest {
 
     /** Tests that display descriptions are properly added and modified. */
     @Test
-    public void testDisplayDescriptions() {
+    public void displayDescriptions() {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
@@ -146,7 +146,7 @@ public class BaseAttributeDefinitionTest {
 
     /** Tests that display names are properly added and modified. */
     @Test
-    public void testDisplayNames() {
+    public void displayNames() {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
@@ -172,7 +172,7 @@ public class BaseAttributeDefinitionTest {
 
     /** Test resolve an attribute. */
     @Test
-    public void testResolve() throws Exception {
+    public void resolve() throws Exception {
         AttributeResolutionContext context = new AttributeResolutionContext();
 
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute) null);
@@ -187,7 +187,7 @@ public class BaseAttributeDefinitionTest {
     }
     
     @Test
-    public void testDependencies() throws ComponentInitializationException {
+    public void dependencies() throws ComponentInitializationException {
         MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", null);
         
         definition.setDependencies(Collections.singleton(new ResolverPluginDependency("plugin")));
@@ -212,7 +212,7 @@ public class BaseAttributeDefinitionTest {
         Assert.assertEquals(depends.iterator().next().getDependencyAttributeId().get(), "source");
     }
     
-    @Test public void testInitDestroyValidate() throws ComponentInitializationException, ComponentValidationException {
+    @Test public void initDestroyValidate() throws ComponentInitializationException, ComponentValidationException {
         MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
         MockBaseAttributeDefinition definition = new MockBaseAttributeDefinition("foo", (Attribute) null);
         

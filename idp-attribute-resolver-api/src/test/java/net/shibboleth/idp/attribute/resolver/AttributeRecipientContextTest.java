@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 /** Unit test for {@link AttributeRecipientContext}. */
 public class AttributeRecipientContextTest {
 
-    @Test public void testInjectedValues() {
+    @Test public void injectedValues() {
         AttributeRecipientContext context = new AttributeRecipientContext();
         Assert.assertNull(context.getPrincipal());
         Assert.assertNull(context.getAttributeIssuerID());
