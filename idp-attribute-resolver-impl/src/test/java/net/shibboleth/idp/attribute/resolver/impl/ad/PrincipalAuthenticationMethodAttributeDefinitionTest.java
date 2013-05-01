@@ -37,7 +37,7 @@ import com.google.common.base.Optional;
 public class PrincipalAuthenticationMethodAttributeDefinitionTest {
     
     @Test
-    public void testNullStrategy() {
+    public void nullStrategy() {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
         defn.setId("id");
         
@@ -50,7 +50,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
     }
 
     @Test
-    public void testEmptyMethod() throws ComponentInitializationException, ResolutionException {
+    public void emptyMethod() throws ComponentInitializationException, ResolutionException {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
         defn.setId("id");
         defn.setLookupStrategy(new Strategy(""));
@@ -59,7 +59,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
     }
     
     @Test
-    public void testUsual() throws ComponentInitializationException, ResolutionException {
+    public void usual() throws ComponentInitializationException, ResolutionException {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
         defn.setId("id");
         defn.setLookupStrategy(new Strategy("Method"));
@@ -74,7 +74,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
     }
     
     @Test
-    public void testGetterSetter() {
+    public void getterSetter() {
         PrincipalAuthenticationMethodAttributeDefinition defn = new PrincipalAuthenticationMethodAttributeDefinition();
         defn.setId("id");
         Assert.assertNull(defn.getLookupStrategy());

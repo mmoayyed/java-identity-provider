@@ -60,7 +60,7 @@ public class PrescopedAtributeTest {
      * @throws ResolutionException on resolution issues.
      * @throws ComponentInitializationException if any of our initializtions failed (which it shouldn't)
      */
-    @Test public void testPreScoped() throws ResolutionException, ComponentInitializationException {
+    @Test public void preScoped() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -98,7 +98,7 @@ public class PrescopedAtributeTest {
      * @throws ResolutionException if resolution fails.
      * @throws ComponentInitializationException if any of our initializations failed (which it shouldn't)
      */
-    @Test public void testPreScopedNoValues() throws ResolutionException, ComponentInitializationException {
+    @Test public void preScopedNoValues() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -130,7 +130,7 @@ public class PrescopedAtributeTest {
         }
     }
 
-    @Test public void testInvalidValueType() throws ComponentInitializationException {
+    @Test public void invalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
 
@@ -153,7 +153,7 @@ public class PrescopedAtributeTest {
         }
     }
 
-    @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
+    @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         ResolverPluginDependency depend = new ResolverPluginDependency("connector1");

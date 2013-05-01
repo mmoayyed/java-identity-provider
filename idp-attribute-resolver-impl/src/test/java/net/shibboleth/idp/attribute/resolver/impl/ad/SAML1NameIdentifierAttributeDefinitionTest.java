@@ -56,7 +56,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
 
     private static final String ALTERNATE_QUALIFIER = "ALTERNATE_QUALIFIER";
 
-    @Test public void testEmpty() throws ResolutionException, ComponentInitializationException {
+    @Test public void empty() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
@@ -69,7 +69,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Assert.assertTrue(result.get().getValues().isEmpty());
     }
 
-    @Test public void testSimple() throws ResolutionException, ComponentInitializationException {
+    @Test public void simple() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
@@ -107,7 +107,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
     }
 
-    @Test public void testNulls() throws ComponentInitializationException {
+    @Test public void nulls() throws ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
@@ -133,7 +133,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         }
     }
 
-    @Test public void testBadValue() throws ResolutionException, ComponentInitializationException {
+    @Test public void badValue() throws ResolutionException, ComponentInitializationException {
         final BaseAttributeDefinition defn = TestSources.nonStringAttributeDefiniton(TEST_ATTRIBUTE_NAME);
 
         final SAML1NameIdentifierAttributeDefinition defn2 = new SAML1NameIdentifierAttributeDefinition();
@@ -163,7 +163,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Assert.assertNull(context.getResolvedAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
-    @Test public void testSingleValueWithOptions() throws ResolutionException, ComponentInitializationException {
+    @Test public void singleValueWithOptions() throws ResolutionException, ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));

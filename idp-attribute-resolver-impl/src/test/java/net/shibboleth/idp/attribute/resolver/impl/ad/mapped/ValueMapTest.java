@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 public class ValueMapTest {
     
     
-    @Test public void testSetterGetter() {
+    @Test public void setterGetter() {
         final SourceValue value = new SourceValue("value", true, true);
         
         final ValueMap map = new ValueMap();
@@ -46,7 +46,7 @@ public class ValueMapTest {
         Assert.assertTrue(map.getSourceValues().contains(value));
     }
     
-    @Test public void testSubString() {
+    @Test public void subString() {
         final SourceValue value = new SourceValue("value", true, true);
         
         final ValueMap map = new ValueMap();
@@ -63,7 +63,7 @@ public class ValueMapTest {
         Assert.assertTrue(result.contains(new StringAttributeValue("return")));
     }
 
-    @Test public void testRegexp() {
+    @Test public void regexp() {
         final HashSet<SourceValue> sources = new HashSet<SourceValue>(3);
         
         sources.add(new SourceValue("R(.+)", false, false));

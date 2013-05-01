@@ -67,7 +67,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         }
     }
 
-    @Test public void testDataConnector() throws ComponentInitializationException, ResolutionException {
+    @Test public void dataConnector() throws ComponentInitializationException, ResolutionException {
         ComputedIDDataConnector connector = new ComputedIDDataConnector();
 
         connector.setId(TEST_CONNECTOR_NAME);
@@ -105,7 +105,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
     }
 
-    @Test public void testGetters() throws ComponentInitializationException {
+    @Test public void getters() throws ComponentInitializationException {
         ComputedIDDataConnector connector = new ComputedIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(
@@ -186,7 +186,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return (BaseComputedIDDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
 
-    @Test public void testAltDataConnector() throws ComponentInitializationException, ResolutionException {
+    @Test public void altDataConnector() throws ComponentInitializationException, ResolutionException {
         AttributeResolver resolver = constructResolver(1);
 
         resolver.initialize();
@@ -231,7 +231,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     }
 
-    @Test public void testAttributeFails() throws ComponentInitializationException, ResolutionException {
+    @Test public void attributeFails() throws ComponentInitializationException, ResolutionException {
         AttributeResolver resolver = constructResolver(3);
 
         connectorFromResolver(resolver).setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME + "1");

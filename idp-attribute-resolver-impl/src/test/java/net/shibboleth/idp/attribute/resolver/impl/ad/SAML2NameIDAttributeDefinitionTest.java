@@ -89,7 +89,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         return resolver;
     }
 
-    @Test public void testSimple() throws ResolutionException, ComponentInitializationException {
+    @Test public void simple() throws ResolutionException, ComponentInitializationException {
         final AttributeResolver resolver = setupResolver();
 
         AttributeResolutionContext context =
@@ -111,7 +111,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
     }
 
-    @Test public void testNulls() throws ComponentInitializationException {
+    @Test public void nulls() throws ComponentInitializationException {
 
         AttributeResolver resolver = setupResolver();
 
@@ -134,7 +134,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         }
     }
 
-    @Test public void testBadValue() throws ResolutionException, ComponentInitializationException {
+    @Test public void badValue() throws ResolutionException, ComponentInitializationException {
 
         final BaseAttributeDefinition defn = TestSources.nonStringAttributeDefiniton(TEST_ATTRIBUTE_NAME);
 
@@ -165,7 +165,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         Assert.assertNull(context.getResolvedAttributes().get(SECOND_ATTRIBUTE_NAME));
     }
 
-    @Test public void testSingleValueWithOptions() throws ResolutionException,
+    @Test public void singleValueWithOptions() throws ResolutionException,
             ComponentInitializationException {
         final SAML2NameIDAttributeDefinition defn = new SAML2NameIDAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);

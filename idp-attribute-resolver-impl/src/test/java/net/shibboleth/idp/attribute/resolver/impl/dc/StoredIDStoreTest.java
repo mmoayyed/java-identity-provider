@@ -60,7 +60,7 @@ public class StoredIDStoreTest {
         testSource = DatabaseTestingSupport.GetMockDataSource("/data/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql", "StoredIDStore");
     }
     
-    @Test public void testInitializeAndGetters() throws ComponentInitializationException, SQLException {
+    @Test public void initializeAndGetters() throws ComponentInitializationException, SQLException {
 
         StoredIDStore store = new StoredIDStore();
         try {
@@ -118,7 +118,7 @@ public class StoredIDStoreTest {
         return result;
     }
     
-    private void testValidate(StoredIDStore store, PersistentIdEntry id, String errorMessage) {
+    private void tryToValidate(StoredIDStore store, PersistentIdEntry id, String errorMessage) {
 
         try {
             store.validatePersistentIdEntry(id);
@@ -129,7 +129,7 @@ public class StoredIDStoreTest {
 
     }
    
-    @Test public void testStoreEntry() throws ComponentInitializationException, SQLException {
+    @Test public void storeEntry() throws ComponentInitializationException, SQLException {
         StoredIDStore store = new StoredIDStore();
         store.setDataSource(testSource);
         store.initialize();
@@ -137,21 +137,21 @@ public class StoredIDStoreTest {
         final PersistentIdEntry id = new PersistentIdEntry();
         String persistentId = UUID.randomUUID().toString();
         
-        testValidate(store, id, "No Local Id");
+        tryToValidate(store, id, "No Local Id");
         id.setAttributeIssuerId(TestSources.IDP_ENTITY_ID);
         
-        testValidate(store, id, "No Peer Entity Id");
+        tryToValidate(store, id, "No Peer Entity Id");
         id.setPeerEntityId(TestSources.SP_ENTITY_ID);
         
-        testValidate(store, id, "No Principal Name");
+        tryToValidate(store, id, "No Principal Name");
         id.setPrincipalName(TestSources.PRINCIPAL_ID);
         
-        testValidate(store, id, "No Local Id");
+        tryToValidate(store, id, "No Local Id");
         id.setLocalId("localID");
         
         id.setPeerProvidedId("PeerprovidedId");
         
-        testValidate(store, id, "No PersistentId");
+        tryToValidate(store, id, "No PersistentId");
         id.setPersistentId(persistentId);
         
         store.storePersistentIdEntry(id);

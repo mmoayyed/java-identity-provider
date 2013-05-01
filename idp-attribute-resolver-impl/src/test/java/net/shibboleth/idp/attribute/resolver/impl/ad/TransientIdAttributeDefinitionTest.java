@@ -52,7 +52,7 @@ public class TransientIdAttributeDefinitionTest {
         }
     }
 
-    @Test public void testSingle() throws ComponentInitializationException, ResolutionException {
+    @Test public void single() throws ComponentInitializationException, ResolutionException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         testInitializeFail(defn, "no dependencies");
@@ -99,7 +99,7 @@ public class TransientIdAttributeDefinitionTest {
         }
     }
 
-    @Test public void testFails() throws ComponentInitializationException {
+    @Test public void fails() throws ComponentInitializationException {
 
         constructAndFail(TestSources.SP_ENTITY_ID, null, TestSources.PRINCIPAL_ID, "Null IdP");
         constructAndFail(TestSources.SP_ENTITY_ID, TestSources.IDP_ENTITY_ID, null, "Null principal");
@@ -124,7 +124,7 @@ public class TransientIdAttributeDefinitionTest {
         Assert.assertEquals(defn.getIdStore(), store);
     }
 
-    @Test public void testRerun() throws ComponentInitializationException, ResolutionException,
+    @Test public void rerun() throws ComponentInitializationException, ResolutionException,
             InterruptedException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);

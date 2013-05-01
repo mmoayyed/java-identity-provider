@@ -76,14 +76,14 @@ public class DataSealerTest {
         outStream.close();
     }
 
-    @Test public void testDefaults() {
+    @Test public void defaults() {
         DataSealer sealer = new DataSealer();
         Assert.assertEquals(sealer.getKeystoreType(), "JCEKS");
         Assert.assertEquals(sealer.getCipherAlgorithm(), "AES/CBC/PKCS5Padding");
         Assert.assertEquals(sealer.getMacAlgorithm(), "HmacSHA256");
     }
 
-    @Test public void testSetterGetters() {
+    @Test public void setterGetters() {
         final SecureRandom random = new SecureRandom();
         final String CIPHER_ALGORITHM = "CipherAlgo";
         final String CIPHER_KEY_ALIIAS = "CipherAlias";
@@ -149,14 +149,14 @@ public class DataSealerTest {
         return sealer;
     }
 
-    @Test public void testEncodeDecode() throws DataSealerException {
+    @Test public void encodeDecode() throws DataSealerException {
         final DataSealer sealer = createDataSealer();
 
         String encoded = sealer.wrap(THE_DATA, System.currentTimeMillis() + 50000);
         Assert.assertEquals(sealer.unwrap(encoded), THE_DATA);
     }
 
-    @Test public void testWithTimeOut() throws DataSealerException, InterruptedException {
+    @Test public void timeOut() throws DataSealerException, InterruptedException {
         final DataSealer sealer = createDataSealer();
 
         String encoded = sealer.wrap(THE_DATA, System.currentTimeMillis() + THE_DELAY);
@@ -169,7 +169,7 @@ public class DataSealerTest {
         }
     }
 
-    @Test public void testBadValues() throws DataSealerException {
+    @Test public void badValues() throws DataSealerException {
         DataSealer sealer = new DataSealer();
 
         try {
@@ -263,7 +263,7 @@ public class DataSealerTest {
         return Base64Support.encode(handleBytes, false);
     }
 
-    @Test public void testTamper() throws DataSealerException, NoSuchAlgorithmException, NoSuchPaddingException,
+    @Test public void tamper() throws DataSealerException, NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, InvalidAlgorithmParameterException, IOException, IllegalBlockSizeException,
             BadPaddingException {
 

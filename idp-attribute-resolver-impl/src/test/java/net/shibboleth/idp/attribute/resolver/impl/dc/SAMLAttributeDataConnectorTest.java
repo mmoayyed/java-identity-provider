@@ -46,7 +46,7 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
 
     static final private String PATH =  "/data/net/shibboleth/idp/attribute/resolver/impl/dc/entityAttributes.xml";
 
-    @Test public void testConnector() throws ResolutionException, ComponentInitializationException {
+    @Test public void connector() throws ResolutionException, ComponentInitializationException {
         
         Locator entityLocator = new Locator(PATH);
         

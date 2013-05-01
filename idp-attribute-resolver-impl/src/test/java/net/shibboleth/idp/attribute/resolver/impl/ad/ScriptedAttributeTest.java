@@ -81,7 +81,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * @throws ScriptException
      * @throws IOException
      */
-    @Test public void testSimple() throws ResolutionException, ComponentInitializationException, ScriptException,
+    @Test public void simple() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
@@ -111,7 +111,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * @throws ScriptException
      * @throws IOException
      */
-    @Test public void testSimple2() throws ResolutionException, ComponentInitializationException, ScriptException,
+    @Test public void simple2() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
@@ -133,7 +133,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
-    @Test public void testSimpleWithPredef() throws ResolutionException, ComponentInitializationException,
+    @Test public void simpleWithPredef() throws ResolutionException, ComponentInitializationException,
             ScriptException, IOException {
 
         final Attribute test = new Attribute(TEST_ATTRIBUTE_NAME);
@@ -183,7 +183,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         }
     }
 
-    @Test public void testFails() throws ResolutionException, ComponentInitializationException, ScriptException,
+    @Test public void fails() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
 
         failureTest("fail1.script", "Unknown method");
@@ -197,7 +197,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         failureTest("fail7.script", "null added ");
     }
 
-    @Test public void testAddAfterGetValues() throws ResolutionException, ScriptException, IOException,
+    @Test public void addAfterGetValues() throws ResolutionException, ScriptException, IOException,
             ComponentInitializationException {
 
         final Attribute result =
@@ -215,7 +215,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * @throws ScriptException
      * @throws IOException
      */
-    @Test public void testWithAttributes() throws ResolutionException, ComponentInitializationException,
+    @Test public void attributes() throws ResolutionException, ComponentInitializationException,
             ScriptException, IOException {
 
         // Set the dependency on the data connector
@@ -250,7 +250,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     }
 
-    @Test public void testWithNonString() throws ResolutionException, ComponentInitializationException,
+    @Test public void nonString() throws ResolutionException, ComponentInitializationException,
             ScriptException, IOException {
 
         // Set the dependency on the data connector
@@ -294,7 +294,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * @throws ScriptException
      * @throws IOException
      */
-    @Test public void testWithContext() throws ResolutionException, ComponentInitializationException, ScriptException,
+    @Test public void context() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
 
         // Set the dependency on the data connector
@@ -370,7 +370,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     }
 
-    @Test public void testExamples() throws ScriptException, IOException, ComponentInitializationException {
+    @Test public void examples() throws ScriptException, IOException, ComponentInitializationException {
 
         Attribute attribute = runExample("example1.script", "example1.attribute.xml", "swissEduPersonUniqueID");
 
@@ -413,7 +413,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     }
 
-    @Test public void testV2Context() throws IOException, ComponentInitializationException, ResolutionException,
+    @Test public void v2Context() throws IOException, ComponentInitializationException, ResolutionException,
             ScriptException {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
@@ -430,7 +430,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     }
 
-    @Test public void testUnimplementedV2Context() throws IOException, ComponentInitializationException,
+    @Test public void unimplementedV2Context() throws IOException, ComponentInitializationException,
             ResolutionException, ScriptException {
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();

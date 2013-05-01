@@ -45,7 +45,7 @@ public class MappedAttributeTest {
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "mapped";
 
-    @Test public void testInstantiation() throws ComponentInitializationException, ResolutionException {
+    @Test public void instantiation() throws ComponentInitializationException, ResolutionException {
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
         
@@ -91,7 +91,7 @@ public class MappedAttributeTest {
 
     }
 
-    @Test public void testNoAttributeValues() throws Exception {
+    @Test public void noAttributeValues() throws Exception {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
@@ -115,7 +115,7 @@ public class MappedAttributeTest {
         Assert.assertTrue(result.getValues().isEmpty());
     }
 
-    @Test public void testNoAttributeValuesDefault() throws Exception {
+    @Test public void noAttributeValuesDefault() throws Exception {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
@@ -145,7 +145,7 @@ public class MappedAttributeTest {
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
     }
 
-    @Test public void testInvalidValueType() throws ComponentInitializationException {
+    @Test public void invalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
 
@@ -168,7 +168,7 @@ public class MappedAttributeTest {
 
     }
 
-    @Test public void testValidValueType() throws Exception {
+    @Test public void validValueType() throws Exception {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
@@ -196,7 +196,7 @@ public class MappedAttributeTest {
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("student")));
     }
     
-    @Test public void testDefault() throws Exception {
+    @Test public void defaultCase() throws Exception {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
@@ -226,7 +226,7 @@ public class MappedAttributeTest {
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
     }
     
-    @Test public void testPassThrough() throws Exception {
+    @Test public void passThrough() throws Exception {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,

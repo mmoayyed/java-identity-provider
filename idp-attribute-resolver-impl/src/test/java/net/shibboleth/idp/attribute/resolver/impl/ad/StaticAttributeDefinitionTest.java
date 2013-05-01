@@ -39,7 +39,7 @@ import com.google.common.collect.Lists;
  */
 public class StaticAttributeDefinitionTest {
 
-    @Test public void TestResolve() throws ComponentInitializationException, ResolutionException {
+    @Test public void resolve() throws ComponentInitializationException, ResolutionException {
         StaticAttributeDefinition attrDef = new StaticAttributeDefinition();
         attrDef.setId("Static");
         Assert.assertFalse(attrDef.getValue().isPresent());

@@ -44,7 +44,7 @@ import com.google.common.collect.Lists;
  */
 public class StaticDataConnectorTest {
 
-    @Test public void TestResolve() throws ComponentInitializationException, ResolutionException {
+    @Test public void resolve() throws ComponentInitializationException, ResolutionException {
         Attribute attribute = new Attribute("attribute");
         attribute.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue("one"), new StringAttributeValue("two")));
 
@@ -90,7 +90,7 @@ public class StaticDataConnectorTest {
 
     }
     
-    @Test public void TestInitDestroy() throws ComponentInitializationException, ResolutionException {
+    @Test public void initDestroy() throws ComponentInitializationException, ResolutionException {
 
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");

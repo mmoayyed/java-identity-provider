@@ -153,7 +153,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         return connector;
     }
 
-    @Test public void testInitializeAndGetters() throws ComponentInitializationException, ResolutionException {
+    @Test public void initializeAndGetters() throws ComponentInitializationException, ResolutionException {
 
         LdapDataConnector connector = new LdapDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
@@ -219,7 +219,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(connector.getMappingStrategy(), mappingStrategy);
     }
 
-    @Test public void testResolve() throws ComponentInitializationException, ResolutionException {
+    @Test public void resolve() throws ComponentInitializationException, ResolutionException {
         LdapDataConnector connector = createLdapDataConnector(null, null);
         connector.initialize();
 
@@ -253,7 +253,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(mail, attrs.get("mail").getValues());
     }
 
-    @Test(expectedExceptions = ResolutionException.class) public void testResolveNoFilter()
+    @Test(expectedExceptions = ResolutionException.class) public void resolveNoFilter()
             throws ComponentInitializationException, ResolutionException {
         LdapDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder() {
 
@@ -270,7 +270,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.doResolve(context);
     }
 
-    @Test(expectedExceptions = ResolutionException.class) public void testResolveNoResultIsError()
+    @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
             throws ComponentInitializationException, ResolutionException {
         LdapDataConnector connector = createLdapDataConnector(null, null);
         connector.setNoResultAnError(true);
@@ -292,7 +292,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.doResolve(context);
     }
 
-    @Test public void testResolveWithCache() throws ComponentInitializationException, ResolutionException {
+    @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
         LdapDataConnector connector = createLdapDataConnector(null, null);
         final TestCache cache = new TestCache();
         connector.setResultsCache(cache);

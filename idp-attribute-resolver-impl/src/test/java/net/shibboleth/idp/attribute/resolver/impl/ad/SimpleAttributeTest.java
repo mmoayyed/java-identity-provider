@@ -50,7 +50,7 @@ public class SimpleAttributeTest {
      * @throws ResolutionException if resolution failed.
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test public void testEmpty() throws ResolutionException, ComponentInitializationException {
+    @Test public void empty() throws ResolutionException, ComponentInitializationException {
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
         try {
@@ -72,7 +72,7 @@ public class SimpleAttributeTest {
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test public void testDataConnector() throws ComponentInitializationException {
+    @Test public void dataConnector() throws ComponentInitializationException {
 
         // Set the dependency on the data connector
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
@@ -113,7 +113,7 @@ public class SimpleAttributeTest {
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test public void testAttribute() throws ComponentInitializationException {
+    @Test public void attribute() throws ComponentInitializationException {
 
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
@@ -153,7 +153,7 @@ public class SimpleAttributeTest {
      * 
      * @throws ComponentInitializationException if initialization fails (which it shouldn't).
      */
-    @Test public void testBoth() throws ComponentInitializationException {
+    @Test public void both() throws ComponentInitializationException {
 
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);

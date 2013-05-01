@@ -58,7 +58,7 @@ public class RegexAtributeTest {
      * @throws ResolutionException on resolution issues.
      * @throws ComponentInitializationException only if things went bad.
      */
-    @Test public void testRegex() throws ResolutionException, ComponentInitializationException {
+    @Test public void regex() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -89,7 +89,7 @@ public class RegexAtributeTest {
         Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");
     }
 
-    @Test public void testInvalidValueType() throws ComponentInitializationException {
+    @Test public void invalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
 
@@ -112,7 +112,7 @@ public class RegexAtributeTest {
         }
     }
 
-    @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
+    @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         ResolverPluginDependency depend = new ResolverPluginDependency("connector1");

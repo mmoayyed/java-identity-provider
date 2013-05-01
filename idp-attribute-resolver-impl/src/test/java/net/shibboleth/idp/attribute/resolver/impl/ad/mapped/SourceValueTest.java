@@ -29,7 +29,7 @@ public class SourceValueTest {
     
     Logger log = LoggerFactory.getLogger(SourceValueTest.class);
 
-    @Test public void testSourceValue() {
+    @Test public void sourceValue() {
         SourceValue value = new SourceValue("value", false,  true);
         
         Assert.assertEquals(value.getValue(), "value");

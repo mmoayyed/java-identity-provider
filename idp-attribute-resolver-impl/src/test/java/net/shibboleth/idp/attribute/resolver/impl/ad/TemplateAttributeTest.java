@@ -97,7 +97,7 @@ public class TemplateAttributeTest {
      * @throws ResolutionException id resolution fails
      * @throws ComponentInitializationException only if bad things thingas
      */
-    @Test public void testSimple() throws ResolutionException, ComponentInitializationException {
+    @Test public void simple() throws ResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "1";
         TemplateAttributeDefinition attr = new TemplateAttributeDefinition();
@@ -183,7 +183,7 @@ public class TemplateAttributeTest {
      * @throws ResolutionException if resolution fails
      * @throws ComponentInitializationException only if things go wrong
      */
-    @Test public void testSimpleWithValues() throws ResolutionException, ComponentInitializationException {
+    @Test public void simpleWithValues() throws ResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "2";
 
@@ -225,7 +225,7 @@ public class TemplateAttributeTest {
      * @throws ResolutionException if it goes wrong.
      * @throws ComponentInitializationException if it goes wrong.
      */
-    @Test public void testTemplateWithValues() throws ResolutionException, ComponentInitializationException {
+    @Test public void templateWithValues() throws ResolutionException, ComponentInitializationException {
 
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
@@ -267,7 +267,7 @@ public class TemplateAttributeTest {
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
     }
 
-    @Test public void testFailMisMatchCount() throws ResolutionException, ComponentInitializationException {
+    @Test public void failMisMatchCount() throws ResolutionException, ComponentInitializationException {
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
@@ -302,7 +302,7 @@ public class TemplateAttributeTest {
         }
     }
 
-    @Test public void testWrongType() throws ResolutionException, ComponentInitializationException {
+    @Test public void wrongType() throws ResolutionException, ComponentInitializationException {
         final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
 
         final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();

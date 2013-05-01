@@ -85,7 +85,7 @@ public class CryptoTransientIdAttributeDefinitionTest {
 
     }
 
-    @Test public void testSetterGetters() throws ComponentInitializationException {
+    @Test public void setterGetters() throws ComponentInitializationException {
         CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
         defn.setId(ID);
         Assert.assertEquals(defn.getIdLifetime(), 0);
@@ -109,7 +109,7 @@ public class CryptoTransientIdAttributeDefinitionTest {
         Assert.assertEquals(defn.getDataSealer(), dataSealer);
     }
     
-    @Test public void testBadVals() throws ComponentInitializationException {
+    @Test public void badVals() throws ComponentInitializationException {
         final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
         defn.setId(ID);
         defn.setDataSealer(dataSealer);
@@ -143,7 +143,7 @@ public class CryptoTransientIdAttributeDefinitionTest {
         }
     }
         
-    @Test public void testEncode() throws ComponentInitializationException, ResolutionException, DataSealerException,
+    @Test public void encode() throws ComponentInitializationException, ResolutionException, DataSealerException,
             InterruptedException {
         final CryptoTransientIdAttributeDefinition defn = new CryptoTransientIdAttributeDefinition();
         defn.setId(ID);

@@ -34,7 +34,7 @@ import com.google.common.base.Optional;
  */
 public class PrincipalNameAttributeDefinitionTest {
 
-    @Test public void nullContextTest() throws ComponentInitializationException {
+    @Test public void nullContext() throws ComponentInitializationException {
         PrincipalNameAttributeDefinition defn;
         defn = new PrincipalNameAttributeDefinition();
         defn.setId("id");
@@ -48,7 +48,7 @@ public class PrincipalNameAttributeDefinitionTest {
     }
 
     @Test
-    public void nullNameTest() throws ComponentInitializationException{
+    public void nullName() throws ComponentInitializationException{
         PrincipalNameAttributeDefinition defn;
         defn = new PrincipalNameAttributeDefinition();
         defn.setId("id");
@@ -63,7 +63,7 @@ public class PrincipalNameAttributeDefinitionTest {
     }
 
     @Test
-    public void normalTest() throws ComponentInitializationException, ResolutionException{
+    public void normal() throws ComponentInitializationException, ResolutionException{
         PrincipalNameAttributeDefinition defn;
         defn = new PrincipalNameAttributeDefinition();
         defn.setId("id");

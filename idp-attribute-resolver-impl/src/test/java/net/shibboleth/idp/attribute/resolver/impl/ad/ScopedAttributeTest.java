@@ -61,7 +61,7 @@ public class ScopedAttributeTest {
      * @throws ResolutionException if resolution failed.
      * @throws ComponentInitializationException if any of our initializations failed (which it shouldn't)
      */
-    @Test public void testScopes() throws ResolutionException, ComponentInitializationException {
+    @Test public void scopes() throws ResolutionException, ComponentInitializationException {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
@@ -100,7 +100,7 @@ public class ScopedAttributeTest {
 
     }
 
-    @Test public void testInvalidValueType() throws ComponentInitializationException {
+    @Test public void invalidValueType() throws ComponentInitializationException {
         Attribute attr = new Attribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singleton((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3})));
 
@@ -122,7 +122,7 @@ public class ScopedAttributeTest {
         }
     }
 
-    @Test public void testInitDestroyParms() throws ResolutionException, ComponentInitializationException {
+    @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         Set<ResolverPluginDependency> pluginDependencies =
