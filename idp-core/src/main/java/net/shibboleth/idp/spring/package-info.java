@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** Classes for extending, or supporting, Spring based configuraiton and object management. */
+/** Classes for extending, or supporting, Spring based configuration and object management. */
 
 package net.shibboleth.idp.spring;
