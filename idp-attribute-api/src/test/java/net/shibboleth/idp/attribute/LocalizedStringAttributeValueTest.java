@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  */
 public class LocalizedStringAttributeValueTest {
 
-    @Test public void testLocalizedStringAttributeValue() {
+    @Test public void localizedStringAttributeValue() {
         Set foo = new HashSet();
         
         LocalizedStringAttributeValue val = new LocalizedStringAttributeValue("for", new Locale("en"));

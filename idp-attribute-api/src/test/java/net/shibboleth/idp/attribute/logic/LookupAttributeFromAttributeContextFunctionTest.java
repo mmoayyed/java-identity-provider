@@ -38,7 +38,7 @@ public class LookupAttributeFromAttributeContextFunctionTest {
 
     private static final String NAME_THREE = "three";
 
-    @Test public void testLookupAttributeFromAttributeContextFunction() {
+    @Test public void lookupAttributeFromAttributeContextFunction() {
 
         final Attribute attrOne = new Attribute(NAME_ONE);
         final Attribute attrTwo = new Attribute(NAME_TWO);

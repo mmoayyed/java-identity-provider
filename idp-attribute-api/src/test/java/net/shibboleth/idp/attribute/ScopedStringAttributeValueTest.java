@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 public class ScopedStringAttributeValueTest {
 
     /** Test proper instantiation of the object. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         ScopedStringAttributeValue value = new ScopedStringAttributeValue(" foo ", " bar ");
         Assert.assertEquals(value.getValue(), "foo");
         Assert.assertEquals(value.getScope(), "bar");
@@ -61,7 +61,7 @@ public class ScopedStringAttributeValueTest {
     }
 
     /** Test equality of two objects. */
-    @Test public void testEquality() {
+    @Test public void equality() {
         ScopedStringAttributeValue value1 = new ScopedStringAttributeValue(" foo ", " bar ");
         ScopedStringAttributeValue value2 = new ScopedStringAttributeValue("foo", "bar");
         ScopedStringAttributeValue value3 = new ScopedStringAttributeValue(" foo ", "baz ");

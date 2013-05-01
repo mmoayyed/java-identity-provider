@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
 public class AttributeTest {
 
     /** Tests that the attribute has its expected state after instantiation. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         Attribute attrib = new Attribute("foo");
 
         Assert.assertEquals(attrib.getId(), "foo");
@@ -59,7 +59,7 @@ public class AttributeTest {
     }
 
     /** Tests that null/empty IDs aren't accepted. */
-    @Test public void testNullEmptyId() {
+    @Test public void nullEmptyId() {
         try {
             new Attribute(null);
             Assert.fail("able to create attribute with null ID");
@@ -83,7 +83,7 @@ public class AttributeTest {
     }
 
     /** Tests that display names are properly added and modified. */
-    @Test public void testDisplayNames() {
+    @Test public void displayNames() {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
@@ -149,7 +149,7 @@ public class AttributeTest {
     }
 
     /** Tests that display descriptions are properly added and modified. */
-    @Test public void testDisplayDescriptions() {
+    @Test public void displayDescriptions() {
         Locale en = new Locale("en");
         Locale enbr = new Locale("en", "br");
 
@@ -215,7 +215,7 @@ public class AttributeTest {
     }
 
     /** Tests that values are properly added and modified. */
-    @Test public void testValues() {
+    @Test public void values() {
         LocalizedStringAttributeValue value1 = new LocalizedStringAttributeValue("value1", null);
         LocalizedStringAttributeValue value2 = new LocalizedStringAttributeValue("value2", null);
 
@@ -307,7 +307,7 @@ public class AttributeTest {
     }
 
     /** Tests that values are properly added and modified. */
-    @Test public void testEncoders() {
+    @Test public void encoders() {
         AttributeEncoder<String> enc1 = new MockEncoder<String>();
         AttributeEncoder<String> enc2 = new MockEncoder<String>();
 
@@ -362,7 +362,7 @@ public class AttributeTest {
         
     }
     
-    @Test public void testCloneToString() {
+    @Test public void cloneToString() {
         Attribute attrib = new Attribute("foo");
         Attribute dupl = new Attribute("foo");
         Attribute diff = new Attribute("bar");

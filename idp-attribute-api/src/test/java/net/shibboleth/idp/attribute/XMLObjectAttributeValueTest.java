@@ -45,7 +45,7 @@ public class XMLObjectAttributeValueTest {
     }
 
     /** Test proper instantiation of the object. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         XMLObjectAttributeValue value = new XMLObjectAttributeValue(xsId1);
         Assert.assertEquals(value.getValue(), xsId1);
 
@@ -58,7 +58,7 @@ public class XMLObjectAttributeValueTest {
     }
 
     /** Test equality of two objects. */
-    @Test public void testEquality() {
+    @Test public void equality() {
         XMLObjectAttributeValue value1 = new XMLObjectAttributeValue(xsId1);
         XMLObjectAttributeValue value2 = new XMLObjectAttributeValue(xsId2);
         XMLObjectAttributeValue value3 = new XMLObjectAttributeValue(xsId3);

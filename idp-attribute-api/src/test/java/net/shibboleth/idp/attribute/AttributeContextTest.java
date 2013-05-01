@@ -31,7 +31,7 @@ public class AttributeContextTest {
      * Test that the attributes from the supplied context cannot be modified
      * and that there as many as we expected. 
      */
-    private void testContextAttributes( AttributeContext context, int expectedSize) {
+    private void contextAttributes( AttributeContext context, int expectedSize) {
         Assert.assertEquals(context.getAttributes().size(), expectedSize);
         try {
             context.getAttributes().put("attr", new Attribute("attr") );
@@ -41,20 +41,20 @@ public class AttributeContextTest {
         }
     }
     
-    @Test public void testAttributeContext() {
+    @Test public void attributeContext() {
         AttributeContext context = new AttributeContext();
         
         context.setAttributes(Arrays.asList((Attribute)null, null));
-        testContextAttributes(context, 0);
+        contextAttributes(context, 0);
 
         context.setAttributes(Arrays.asList(new Attribute("foo"), null));
-        testContextAttributes(context, 1);
+        contextAttributes(context, 1);
         
         context.setAttributes(null);
-        testContextAttributes(context, 0);
+        contextAttributes(context, 0);
         
         context.setAttributes(Collections.EMPTY_SET);
-        testContextAttributes(context, 0);
+        contextAttributes(context, 0);
     }
 
 }

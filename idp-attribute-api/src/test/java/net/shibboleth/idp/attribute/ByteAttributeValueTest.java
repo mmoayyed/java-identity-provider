@@ -33,7 +33,7 @@ public class ByteAttributeValueTest {
     static final byte[] DATA2 = {2,3,1};
     
     /** Test proper instantiation of the object. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         ByteAttributeValue value = new ByteAttributeValue(DATA1);
         Assert.assertEquals(value.getValue(), DATA1);
 
@@ -46,7 +46,7 @@ public class ByteAttributeValueTest {
     }
 
     /** Test equality of two objects. */
-    @Test public void testEquality() {
+    @Test public void equality() {
         ByteAttributeValue value1 = new ByteAttributeValue(DATA1);
         ByteAttributeValue value2 = new ByteAttributeValue(DATAEQUALS1);
         ByteAttributeValue value3 = new ByteAttributeValue(DATA2);
@@ -66,7 +66,7 @@ public class ByteAttributeValueTest {
         Assert.assertFalse(value3.equals(value2));
     }
 
-    @Test public void testToHexStringBase64() {
+    @Test public void toHexStringBase64() {
         ByteAttributeValue value = new ByteAttributeValue(DATA1);
         
         value.toString();

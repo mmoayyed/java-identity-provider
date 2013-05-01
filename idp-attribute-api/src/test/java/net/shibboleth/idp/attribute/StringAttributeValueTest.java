@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 public class StringAttributeValueTest {
 
     /** Test proper instantiation of the object. */
-    @Test public void testInstantiation() {
+    @Test public void instantiation() {
         StringAttributeValue value = new StringAttributeValue(" foo ");
         Assert.assertEquals(value.getValue(), "foo");
 
@@ -47,7 +47,7 @@ public class StringAttributeValueTest {
     }
 
     /** Test equality of two objects. */
-    @Test public void testEquality() {
+    @Test public void equality() {
         StringAttributeValue value1 = new StringAttributeValue(" foo ");
         StringAttributeValue value2 = new StringAttributeValue("foo");
         StringAttributeValue value3 = new StringAttributeValue(" baz ");

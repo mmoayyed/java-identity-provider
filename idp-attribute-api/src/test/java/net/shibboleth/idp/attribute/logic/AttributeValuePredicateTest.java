@@ -37,7 +37,7 @@ public class AttributeValuePredicateTest {
 
     private static final String VALUE_TWO = "two";
 
-    @Test public void testAttributeValuePredicate() throws CloneNotSupportedException {
+    @Test public void attributeValuePredicate() throws CloneNotSupportedException {
         final Attribute oneVal = new Attribute("oneVal");
         oneVal.setValues(Arrays.asList((AttributeValue) new StringAttributeValue(VALUE_ONE)));
 
