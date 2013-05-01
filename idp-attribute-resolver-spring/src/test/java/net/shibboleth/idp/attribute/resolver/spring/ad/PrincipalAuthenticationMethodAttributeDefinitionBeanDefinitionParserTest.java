@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalAuthenticationMethodAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser;
 
 import org.testng.Assert;
@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestPrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class PrincipalAuthenticationMethodAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     @Test public void test() {
         PrincipalAuthenticationMethodAttributeDefinition attrDef =

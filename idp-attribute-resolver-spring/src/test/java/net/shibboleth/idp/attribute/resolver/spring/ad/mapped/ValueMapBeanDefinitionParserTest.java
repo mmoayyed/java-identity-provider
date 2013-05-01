@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.ValueMap;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.support.GenericApplicationContext;
@@ -28,17 +28,17 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link ValueMapBeanDefinitionParser}.
  */
-public class TestValueMapBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class ValueMapBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     private ValueMap getValueMap(String fileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestValueMapBeanDefinitionParser.class);
+        context.setDisplayName("ApplicationContext: " + ValueMapBeanDefinitionParserTest.class);
 
         return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, ValueMap.class, context);
     }
 
-    @Test public void testValueMap() {
+    @Test public void valueMap() {
         
         ValueMap value = getValueMap("valueMap.xml");
         Assert.assertEquals(value.getReturnValue(), "return");
@@ -46,7 +46,7 @@ public class TestValueMapBeanDefinitionParser extends BaseTestAttributeDefinitio
         Assert.assertEquals(value.getSourceValues().iterator().next().getValue(), "source");
     }
     
-    @Test public void testNoSourceValues() {
+    @Test public void noSourceValues() {
         
         try {
             getValueMap("valueMapNoSourceValue.xml");
@@ -56,7 +56,7 @@ public class TestValueMapBeanDefinitionParser extends BaseTestAttributeDefinitio
         }
     }
     
-    @Test public void testNoValues() {
+    @Test public void noValues() {
         
         try {
             getValueMap("valueMapNoValues.xml");

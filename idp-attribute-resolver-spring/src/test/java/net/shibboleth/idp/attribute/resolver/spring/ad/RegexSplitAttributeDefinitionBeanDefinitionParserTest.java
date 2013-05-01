@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 import java.util.regex.Pattern;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.RegexSplitAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.PrescopedAttributeDefinitionBeanDefinitionParser;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -30,9 +30,9 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link PrescopedAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestRegexSplitAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class RegexSplitAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
-    @Test public void testDefault() {
+    @Test public void defaultCase() {
         RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("regexDefault.xml", RegexSplitAttributeDefinition.class);
 
@@ -44,7 +44,7 @@ public class TestRegexSplitAttributeDefinitionBeanDefinitionParser extends BaseT
         Assert.assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
     }
 
-    @Test public void testSensitive() {
+    @Test public void sensitive() {
         RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("regexSensitive.xml", RegexSplitAttributeDefinition.class);
 
@@ -56,7 +56,7 @@ public class TestRegexSplitAttributeDefinitionBeanDefinitionParser extends BaseT
         Assert.assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
     }
 
-    @Test public void testInsensitive() {
+    @Test public void insensitive() {
         RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("regexInsensitive.xml", RegexSplitAttributeDefinition.class);
 
@@ -68,7 +68,7 @@ public class TestRegexSplitAttributeDefinitionBeanDefinitionParser extends BaseT
         Assert.assertTrue(pat.matcher("AT1-foobleconneECTOR").matches());
     }
 
-    @Test public void testNone() {
+    @Test public void none() {
         try {
             getAttributeDefn("regexNone.xml", RegexSplitAttributeDefinition.class);
             Assert.fail();

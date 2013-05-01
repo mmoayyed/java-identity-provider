@@ -25,7 +25,7 @@ import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.idp.attribute.resolver.impl.ad.SimpleAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SimpleAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -37,9 +37,9 @@ import org.testng.annotations.Test;
  * Test for {@link SimpleAttributeDefinitionBeanDefinitionParser} and by extension
  * {@link BaseAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestSimpleAttributeDefinitionBeanParser extends BaseTestAttributeDefinitionBeanParser {
+public class SimpleAttributeDefinitionBeanParserTest extends BaseAttributeDefinitionBeanParserTest {
 
-    @Test public void testSimple() {
+    @Test public void simple() {
         BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
         
         Assert.assertEquals(attrDef.getId(), "simpleUnpopulated");
@@ -50,7 +50,7 @@ public class TestSimpleAttributeDefinitionBeanParser extends BaseTestAttributeDe
         Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(),"getgetAttributeEncoders().isEmpty()");
 }
     
-    @Test public void testPopulated() throws ComponentInitializationException {
+    @Test public void populated() throws ComponentInitializationException {
         BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
         
         attrDef.initialize();
@@ -82,7 +82,7 @@ public class TestSimpleAttributeDefinitionBeanParser extends BaseTestAttributeDe
         
     }
 
-    @Test public void testPopulated2() throws ComponentInitializationException {
+    @Test public void populated2() throws ComponentInitializationException {
         BaseAttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
         
         attrDef.initialize();
@@ -107,7 +107,7 @@ public class TestSimpleAttributeDefinitionBeanParser extends BaseTestAttributeDe
         Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(),"getgetAttributeEncoders().isEmpty()");
     }
 
-    @Test public void testBad() throws ComponentInitializationException {
+    @Test public void bad() throws ComponentInitializationException {
         getAttributeDefn("simpleAttributeBadValues.xml", SimpleAttributeDefinition.class);
     }
 }

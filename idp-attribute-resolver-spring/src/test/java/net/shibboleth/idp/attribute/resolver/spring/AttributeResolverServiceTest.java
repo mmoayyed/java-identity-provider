@@ -35,16 +35,16 @@ import org.testng.annotations.Test;
 
 /** A work in progress to test the attribute resolver service. */
 // TODO incomplete
-public class TestAttributeResolverService {
+public class AttributeResolverServiceTest {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TestAttributeResolverService.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceTest.class);
 
     // stub test
-    @Test public void testOne() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {
 
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestAttributeResolverService.class);
+        context.setDisplayName("ApplicationContext: " + AttributeResolverServiceTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);

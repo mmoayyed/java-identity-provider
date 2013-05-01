@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.TransientIdAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.beans.factory.BeanCreationException;
@@ -28,14 +28,14 @@ import org.testng.annotations.Test;
 /**
  * test for {@link TransientIdAttributeDefinitionBeanDefinitionParser}
  */
-public class TestTransientIdAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class TransientIdAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     private TransientIdAttributeDefinition getDefinition(String fileName) {
 
         return getAttributeDefn(fileName, "idStore.xml", TransientIdAttributeDefinition.class);
     }
 
-    @Test public void testWithTime() throws ComponentInitializationException {
+    @Test public void withTime() throws ComponentInitializationException {
 
         try {
             getDefinition("transientWithTime.xml");
@@ -51,7 +51,7 @@ public class TestTransientIdAttributeDefinitionBeanDefinitionParser extends Base
         Assert.assertEquals(defn.getIdSize(), 16);
     }
 
-    @Test public void testNoTime() throws ComponentInitializationException {
+    @Test public void noTime() throws ComponentInitializationException {
 
         TransientIdAttributeDefinition defn = getDefinition("transientNoTime.xml");
         defn.initialize();

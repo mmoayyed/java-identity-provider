@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.TemplateAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.CryptoTransientIdAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -29,10 +29,10 @@ import org.testng.annotations.Test;
 /**
  * test for {@link CryptoTransientIdAttributeDefinitionBeanDefinitionParser}
  */
-public class TestTemplateAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class TemplateAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     @Test
-    public void testNoAttr() throws ComponentInitializationException {
+    public void noAttr() throws ComponentInitializationException {
 
         TemplateAttributeDefinition defn = getAttributeDefn("templateNoAttributes.xml", "velocity.xml", TemplateAttributeDefinition.class);
         
@@ -43,7 +43,7 @@ public class TestTemplateAttributeDefinitionBeanDefinitionParser extends BaseTes
     
     
     @Test
-    public void testWithAttr() throws ComponentInitializationException {
+    public void withAttr() throws ComponentInitializationException {
 
         try {
             getAttributeDefn("templateAttributes.xml", "velocity.xml", TemplateAttributeDefinition.class);

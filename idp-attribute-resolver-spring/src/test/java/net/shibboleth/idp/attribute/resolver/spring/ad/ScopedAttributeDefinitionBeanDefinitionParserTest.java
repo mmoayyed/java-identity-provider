@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScopedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser;
 
 import org.testng.Assert;
@@ -27,9 +27,9 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestScopedAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class ScopedAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
-    @Test public void testDefault() {
+    @Test public void defaultCase() {
         ScopedAttributeDefinition attrDef =
                 getAttributeDefn("scoped.xml", ScopedAttributeDefinition.class);
 

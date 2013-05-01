@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.impl.ad.DataSealer;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.CryptoTransientIdAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link CryptoTransientIdAttributeDefinitionBeanDefinitionParser}
  */
-public class TestCryptoTransientIdAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class CryptoTransientIdAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     private CryptoTransientIdAttributeDefinition getDefinition(String fileName) {
 
@@ -37,7 +37,7 @@ public class TestCryptoTransientIdAttributeDefinitionBeanDefinitionParser extend
     }
     
     @Test
-    public void testWithTime() throws ComponentInitializationException {
+    public void withTime() throws ComponentInitializationException {
 
         CryptoTransientIdAttributeDefinition defn = getDefinition("cryptoWithTime.xml");
         
@@ -50,7 +50,7 @@ public class TestCryptoTransientIdAttributeDefinitionBeanDefinitionParser extend
     
     
     @Test
-    public void testNoTime() throws ComponentInitializationException {
+    public void noTime() throws ComponentInitializationException {
 
         CryptoTransientIdAttributeDefinition defn = getDefinition("cryptoNoTime.xml");
         defn.initialize();

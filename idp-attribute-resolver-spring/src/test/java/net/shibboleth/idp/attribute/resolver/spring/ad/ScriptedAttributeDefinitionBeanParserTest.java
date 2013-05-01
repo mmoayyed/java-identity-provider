@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.ScriptedAttributeDefinitionBeanDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -29,9 +29,9 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link ScriptedAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestScriptedAttributeDefinitionBeanParser extends BaseTestAttributeDefinitionBeanParser {
+public class ScriptedAttributeDefinitionBeanParserTest extends BaseAttributeDefinitionBeanParserTest {
 
-    @Test public void testInline() {
+    @Test public void inline() {
         ScriptedAttributeDefinition attrDef = getAttributeDefn("scriptedAttributeInline.xml", ScriptedAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "scriptedInline");
@@ -39,7 +39,7 @@ public class TestScriptedAttributeDefinitionBeanParser extends BaseTestAttribute
         Assert.assertEquals(attrDef.getScript().getScript(), "foo=\"bar\";");
     }
 
-    @Test public void testFile() {
+    @Test public void file() {
         ScriptedAttributeDefinition attrDef = getAttributeDefn("scriptedAttributeFile.xml", ScriptedAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "scriptedFile");
@@ -47,7 +47,7 @@ public class TestScriptedAttributeDefinitionBeanParser extends BaseTestAttribute
         Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
     }
     
-    @Test public void testDupl() {
+    @Test public void dupl() {
         ScriptedAttributeDefinition attrDef = getAttributeDefn("scriptedAttributeDupl.xml", ScriptedAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "scriptedDupl");
@@ -55,7 +55,7 @@ public class TestScriptedAttributeDefinitionBeanParser extends BaseTestAttribute
         Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "stuff=\"stuff\";");
     }
 
-    @Test public void testBad() {
+    @Test public void bad() {
         try {
             getAttributeDefn("scriptedAttributeBad.xml", ScriptedAttributeDefinition.class);     
             Assert.fail("Bad script worked?");
@@ -64,7 +64,7 @@ public class TestScriptedAttributeDefinitionBeanParser extends BaseTestAttribute
         }
     }
 
-    @Test public void testAbsent() {
+    @Test public void absent() {
         try {
             getAttributeDefn("scriptedAttributeAbsent.xml", ScriptedAttributeDefinition.class);
             Assert.fail("Missing script worked?");
@@ -73,7 +73,7 @@ public class TestScriptedAttributeDefinitionBeanParser extends BaseTestAttribute
         }
     }
     
-    @Test public void testMissing() {
+    @Test public void missingFile() {
         try {
             getAttributeDefn("scriptedAttributeFileMissing.xml", ScriptedAttributeDefinition.class);
             Assert.fail("Missing script worked?");

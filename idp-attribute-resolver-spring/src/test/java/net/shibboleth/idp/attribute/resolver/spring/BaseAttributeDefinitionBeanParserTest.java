@@ -34,7 +34,7 @@ import org.testng.Assert;
  * Test for {@link SimpleAttributeDefinitionBeanDefinitionParser} and by extension
  * {@link BaseAttributeDefinitionBeanDefinitionParser}.
  */
-public abstract class BaseTestAttributeDefinitionBeanParser extends OpenSAMLInitBaseTestCase  {
+public abstract class BaseAttributeDefinitionBeanParserTest extends OpenSAMLInitBaseTestCase  {
     
     public static final String ATTRIBUTE_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/"; 
     public static final String DATACONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/dc/"; 

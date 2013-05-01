@@ -54,7 +54,7 @@ import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /** Test for {@link LdapDataConnectorBeanDefinitionParser}. */
-public class TestLdapDataConnectorBeanDefinitionParser {
+public class LdapDataConnectorBeanDefinitionParserTest {
 
     /** In-memory directory server. */
     private InMemoryDirectoryServer directoryServer;
@@ -82,14 +82,14 @@ public class TestLdapDataConnectorBeanDefinitionParser {
         directoryServer.shutDown(true);
     }
 
-    @Test public void testV2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
         LdapDataConnector dataConnector =
                 getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
-    @Test public void testSpringConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
         LdapDataConnector dataConnector =
                 getLdapDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml");
         Assert.assertNotNull(dataConnector);
@@ -98,7 +98,7 @@ public class TestLdapDataConnectorBeanDefinitionParser {
 
     protected LdapDataConnector getLdapDataConnector(final String springContext) {
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestLdapDataConnectorBeanDefinitionParser.class);
+        context.setDisplayName("ApplicationContext: " + LdapDataConnectorBeanDefinitionParserTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);

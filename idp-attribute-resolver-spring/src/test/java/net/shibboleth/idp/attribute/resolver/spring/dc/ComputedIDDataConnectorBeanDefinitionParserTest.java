@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.ComputedIDDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link ComputedIDDataConnectorBeanDefinitionParser}
  */
-public class ComputedIDDataConnectorBeanDefinitionParserTest extends BaseTestAttributeDefinitionBeanParser {
+public class ComputedIDDataConnectorBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {
         ComputedIDDataConnector connector = getDataConnector("computed.xml", ComputedIDDataConnector.class);

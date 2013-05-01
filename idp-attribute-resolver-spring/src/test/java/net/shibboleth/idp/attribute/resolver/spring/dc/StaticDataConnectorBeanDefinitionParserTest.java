@@ -23,7 +23,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.impl.dc.StaticDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link StaticDataConnectorBeanDefinitionParser}
  */
-public class StaticDataConnectorBeanDefinitionParserTest extends BaseTestAttributeDefinitionBeanParser {
+public class StaticDataConnectorBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
     
     @Test public void simple() {
         StaticDataConnector connector = getDataConnector("staticAttributes.xml", StaticDataConnector.class);

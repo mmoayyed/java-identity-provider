@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.PrincipalNameAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.PrincipalNameAttributeDefinitionBeanDefinitionParser;
 
 import org.testng.Assert;
@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link PrincipalNameAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestPrincipalNameAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class PrincipalNameAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     @Test public void test() {
         PrincipalNameAttributeDefinition attrDef =

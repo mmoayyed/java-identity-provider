@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.SourceValue;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
@@ -27,17 +27,17 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link SourceValueBeanDefinitionParser}.
  */
-public class TestSourceValueBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class SourceValueBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     private SourceValue getSourceValue(String fileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + TestSourceValueBeanDefinitionParser.class);
+        context.setDisplayName("ApplicationContext: " + SourceValueBeanDefinitionParserTest.class);
 
         return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, SourceValue.class, context);
     }
 
-    @Test public void testSimple() {
+    @Test public void simple() {
         SourceValue value = getSourceValue("sourceValue.xml");
         
         Assert.assertFalse(value.isIgnoreCase());
@@ -45,7 +45,7 @@ public class TestSourceValueBeanDefinitionParser extends BaseTestAttributeDefini
         Assert.assertNull(value.getValue());
     }
     
-    @Test public void testValues1() {
+    @Test public void values1() {
         SourceValue value = getSourceValue("sourceValueAttributes1.xml");
         
         Assert.assertTrue(value.isIgnoreCase());
@@ -53,7 +53,7 @@ public class TestSourceValueBeanDefinitionParser extends BaseTestAttributeDefini
         Assert.assertEquals(value.getValue(), "sourceValueAttributes1");
     }
 
-    @Test public void testValues2() {
+    @Test public void values2() {
         SourceValue value = getSourceValue("sourceValueAttributes2.xml");
         
         Assert.assertFalse(value.isIgnoreCase());

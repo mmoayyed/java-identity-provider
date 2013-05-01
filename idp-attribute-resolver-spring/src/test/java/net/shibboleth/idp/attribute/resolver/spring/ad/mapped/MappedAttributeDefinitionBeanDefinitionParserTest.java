@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
 import net.shibboleth.idp.attribute.resolver.impl.ad.mapped.MappedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseTestAttributeDefinitionBeanParser;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionBeanParserTest;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
@@ -27,14 +27,14 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link MappedAttributeDefinitionBeanDefinitionParser}.
  */
-public class TestMappedAttributeDefinitionBeanDefinitionParser extends BaseTestAttributeDefinitionBeanParser {
+public class MappedAttributeDefinitionBeanDefinitionParserTest extends BaseAttributeDefinitionBeanParserTest {
 
     private MappedAttributeDefinition getDefinition(String fileName) {
 
         return getAttributeDefn("mapped/" + fileName, MappedAttributeDefinition.class);
     }
 
-    @Test public void testDefault() {
+    @Test public void defaultCase() {
         MappedAttributeDefinition defn = getDefinition("mapped.xml");
 
         Assert.assertTrue(defn.isPassThru());
@@ -42,7 +42,7 @@ public class TestMappedAttributeDefinitionBeanDefinitionParser extends BaseTestA
         Assert.assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
     }
 
-    @Test public void testNoDefault() {
+    @Test public void noDefault() {
         MappedAttributeDefinition defn = getDefinition("mappedNoDefault.xml");
 
         Assert.assertFalse(defn.isPassThru());
@@ -50,7 +50,7 @@ public class TestMappedAttributeDefinitionBeanDefinitionParser extends BaseTestA
         Assert.assertNull(defn.getDefaultAttributeValue());
     }
 
-    @Test public void testNoValues() {
+    @Test public void noValues() {
 
         try {
             getDefinition("mappedNoValueMap.xml");
