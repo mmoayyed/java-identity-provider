@@ -44,6 +44,27 @@ public final class CheckMessageReplay extends AbstractProfileAction {
     /** Cache used to store message issuer/id pairs and check to see if a message is being replayed. */
     private ReplayCache replayCache;
 
+    /** Time in seconds to expire cache entries. Default value: (180) */
+    private long expires = 180L;
+
+    /**
+     * Gets the lifetime in seconds of replay entries.
+     * 
+     * @return lifetime in seconds of entries
+     */
+    public long getExpires() {
+        return expires;
+    }
+
+    /**
+     * Sets the lifetime in seconds of replay entries.
+     * 
+     * @param exp lifetime in seconds of entries
+     */
+    public void setExpires(long exp) {
+        expires = exp;
+    }
+    
     /** {@inheritDoc} */
     protected org.springframework.webflow.execution.Event
             doExecute(@Nonnull final RequestContext springRequestContext,
@@ -61,10 +82,14 @@ public final class CheckMessageReplay extends AbstractProfileAction {
             return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
         }
 
-        final String msgIssuer = msgMdCtx.getMessageIssuer();
+        String msgIssuer = msgMdCtx.getMessageIssuer();
         if (msgIssuer == null) {
-            log.debug("Action {}: Message metadata does not contain an issuer, unable to proceed", getId());
-            return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
+            msgIssuer = "(unknown)";
+        }
+        
+        long msgIssueInstant = msgMdCtx.getMessageIssueInstant();
+        if (msgIssueInstant <= 0) {
+            msgIssueInstant = System.currentTimeMillis();
         }
 
         final String msgId = msgMdCtx.getMessageId();
@@ -73,7 +98,7 @@ public final class CheckMessageReplay extends AbstractProfileAction {
             return ActionSupport.buildEvent(this, EventIds.INVALID_MSG_MD);
         }
 
-        if (replayCache.isReplay(msgIssuer, msgId)) {
+        if (!replayCache.check(getClass().getName(), msgId, msgIssueInstant / 1000 + expires)) {
             log.debug("Action {}: Message {} issued by {} has been replayed", new Object[] {getId(), msgId, msgIssuer});
             return ActionSupport.buildEvent(this, REPLAYED_MSG);
         }
