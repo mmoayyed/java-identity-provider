@@ -23,7 +23,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameID;
 
 /** Base class for attribute encoders that produce a SAML 2 {@link NameID}. */
-public abstract class AbstractSaml2NameIdentifierEncoder extends AbstractSamlNameIdentifierEncoder<NameID> {
+public abstract class AbstractSaml2NameIDEncoder extends AbstractSamlNameIdentifierEncoder<NameID> {
 
     /** {@inheritDoc} */
     @Nonnull public final String getProtocol() {

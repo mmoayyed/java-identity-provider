@@ -34,6 +34,7 @@ import com.google.common.base.Objects;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
  * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.Attribute}.
  */
+// TODO Is this class redundant?
 public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSaml1NameIdentifierEncoder {
 
     /** Class logger. */

@@ -25,13 +25,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test for {@link AbstractSaml2NameIdentifierEncoder}
+ * test for {@link AbstractSaml2NameIDEncoder}
  */
-public class AbstractSaml2NameIdentifierEncoderTest {
+public class AbstractSaml2NameIDEncoderTest {
 
-    @Test public void testAbstractSaml2NameIdentifierEncoder() {
+    @Test public void protocol() {
         
-        AbstractSaml2NameIdentifierEncoder encoder = new AbstractSaml2NameIdentifierEncoder() {
+        AbstractSaml2NameIDEncoder encoder = new AbstractSaml2NameIDEncoder() {
             public NameID encode(Attribute attribute) throws AttributeEncodingException {
                 return null;
             }

@@ -22,7 +22,7 @@ import java.util.Collection;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2NameIdentifierEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2NameIDEncoder;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
@@ -34,7 +34,8 @@ import com.google.common.base.Objects;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 2 NameID used for the Subject from the
  * first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.Attribute}.
  */
-public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIdentifierEncoder {
+// TODO this class is redundant.  
+public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncoder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(Saml2XmlObjectSubjectNameIDEncoder.class);
