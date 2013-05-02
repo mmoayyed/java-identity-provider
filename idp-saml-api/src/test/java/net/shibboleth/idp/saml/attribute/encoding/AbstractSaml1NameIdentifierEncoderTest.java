@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  */
 public class AbstractSaml1NameIdentifierEncoderTest {
 
-    @Test public void testAbstractSaml1NameIdentifierEncoder() {
+    @Test public void abstractSaml1NameIdentifierEncoder() {
         
         AbstractSaml1NameIdentifierEncoder encoder = new AbstractSaml1NameIdentifierEncoder() {
             public NameIdentifier encode(Attribute attribute) throws AttributeEncodingException {

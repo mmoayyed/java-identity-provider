@@ -62,7 +62,7 @@ public class AbstractSaml1AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         theBuilder = new XSStringBuilder();
     }
 
-    @Test public void testAbstractSaml1AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
+    @Test public void abstractSaml1AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
         AbstractSaml1AttributeEncoder encoder = new AbstractSamlAttributeEncoderTest.mockEncoder(theBuilder, theQName);
         encoder.setName(MY_NAME);
         encoder.setNamespace(MY_NAMESPACE);

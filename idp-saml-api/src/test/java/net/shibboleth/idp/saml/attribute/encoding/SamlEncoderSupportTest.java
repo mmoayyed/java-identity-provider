@@ -64,7 +64,7 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     private final static byte[] BYTE_ARRAY_VALUE = {1, 2, 3, 4, 5};
     private final static ScopedStringAttributeValue SCOPEDVAL = new ScopedStringAttributeValue(STRING_VALUE, STRING_SCOPE);
     
-    @Test public void testEncodeStringValue() {
+    @Test public void encodeStringValue() {
         
         try {
             SamlEncoderSupport.encodeStringValue(null, QNAME, STRING_VALUE );
@@ -91,7 +91,7 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(str.getValue(), STRING_VALUE);
     }
     
-    @Test public void testEncodeByteArrayValue() {
+    @Test public void encodeByteArrayValue() {
         
         try {
             SamlEncoderSupport.encodeByteArrayValue(null, QNAME, BYTE_ARRAY_VALUE);
@@ -118,7 +118,7 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(Base64Support.decode(str.getValue()), BYTE_ARRAY_VALUE);
     }
 
-    @Test public void testEncodeXmlObjectValue() {
+    @Test public void encodeXmlObjectValue() {
         
         final NameID objToEncode= new NameIDBuilder().buildObject();
         objToEncode.setValue(STRING_VALUE);
@@ -152,7 +152,7 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(other.getValue(), STRING_VALUE);
     }
 
-    @Test public void testEncodeScopedStringValueAttribute() {
+    @Test public void encodeScopedStringValueAttribute() {
         
         XMLObjectProviderRegistrySupport.registerObjectProvider(ScopedValue.TYPE_NAME, new ScopedValueBuilder(), new ScopedValueMarshaller(), new ScopedValueUnmarshaller());
         
@@ -188,7 +188,7 @@ public class SamlEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(sv.getScope(), STRING_SCOPE);
     }
 
-    @Test public void testEncodeScopedStringValueInline() {
+    @Test public void encodeScopedStringValueInline() {
         
         try {
             SamlEncoderSupport.encodeScopedStringValueInline(null, QNAME, SCOPEDVAL, DELIMITER);

@@ -61,7 +61,7 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         theBuilder = new XSStringBuilder();
     }
     
-    @Test public void testInitializeAndSetters() throws AttributeEncodingException, ComponentInitializationException {
+    @Test public void initializeAndSetters() throws AttributeEncodingException, ComponentInitializationException {
         AbstractSamlAttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
         
         Assert.assertNull(encoder.getName());
@@ -119,7 +119,7 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     }
 
-    @Test public void testEncode() throws AttributeEncodingException, ComponentInitializationException {
+    @Test public void encode() throws AttributeEncodingException, ComponentInitializationException {
         AbstractSamlAttributeEncoder encoder = new mockEncoder(theBuilder, theQName);
         encoder.setNamespace(MY_NAMESPACE);
         encoder.setName(MY_NAME);
@@ -165,7 +165,7 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     }
     
-    @Test public void testEqualsHash() {
+    @Test public void equalsHash() {
         mockEncoder enc1 = new mockEncoder(theBuilder, theQName);
         Assert.assertEquals(enc1, enc1);
         Assert.assertNotSame(enc1, null);

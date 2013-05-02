@@ -66,7 +66,7 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         theBuilder = new XSStringBuilder();
     }
 
-    @Test public void testAbstractSaml2AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
+    @Test public void abstractSaml2AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {
         AbstractSaml2AttributeEncoder encoder = new mockEncoder();
         
         encoder.setName(MY_NAME);
@@ -97,7 +97,7 @@ public class AbstractSaml2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         Assert.assertTrue(resultSet.contains(ATTRIBUTE_VALUE_2));
     }
     
-    @Test public void testFriendlyName() throws ComponentInitializationException {
+    @Test public void friendlyName() throws ComponentInitializationException {
         AbstractSaml2AttributeEncoder encoder = new mockEncoder();
         Assert.assertNull(encoder.getFriendlyName());
         encoder.setName(MY_NAME);
