@@ -59,7 +59,7 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.initialize();
     }
 
-    @Test(expectedExceptions={AttributeEncodingException.class,})   public void testEmpty() throws Exception {
+    @Test(expectedExceptions={AttributeEncodingException.class,})   public void empty() throws Exception {
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -67,7 +67,7 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.encode(inputAttribute);
     }
 
-    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testInappropriate() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         encoder.initialize();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
@@ -85,7 +85,7 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.encode(inputAttribute);
     }
 
-    @Test public void testSingle() throws Exception {
+    @Test public void single() throws Exception {
         final Collection<AttributeValue> values =
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1)));
@@ -114,7 +114,7 @@ public class Saml1StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(childAsString.getValue(), STRING_1, "Input equals output");
     }
 
-    @Test public void testMulti() throws Exception {
+    @Test public void multi() throws Exception {
         final Collection<AttributeValue> values =
                 Lists.newArrayList(Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2)));

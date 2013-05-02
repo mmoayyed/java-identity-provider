@@ -114,14 +114,14 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         Assert.assertTrue(false, "No potential matched matched");
     }
 
-    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testEmpty() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
         encoder.encode(inputAttribute);
     }
 
-    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testInappropriate() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
@@ -138,7 +138,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         encoder.encode(inputAttribute);
     }
 
-    @Test public void testSingle() throws Exception {
+    @Test public void single() throws Exception {
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
@@ -160,7 +160,7 @@ public class Saml2XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         CheckValues(children.get(0).getOrderedChildren().get(0), STRING_1);
     }
 
-    @Test public void testMulti() throws Exception {
+    @Test public void multi() throws Exception {
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) ObjectFor(STRING_1), ObjectFor(STRING_2));
 

@@ -84,7 +84,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
         saml2Builder = new NameIDBuilder();
     }
 
-    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testEmpty() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty() throws Exception {
         final Saml2XmlObjectSubjectNameIDEncoder encoder = new Saml2XmlObjectSubjectNameIDEncoder();
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
@@ -93,7 +93,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
         encoder.encode(inputAttribute);
     }
 
-    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testInappropriate() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
@@ -109,7 +109,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
         encoder.encode(inputAttribute);
     }
 
-    @Test public void testSingle() throws Exception {
+    @Test public void single() throws Exception {
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), new StringAttributeValue("foo"),
                         saml2NameIdFor(NAME_1), saml1NameIdFor(NAME_2));
@@ -126,7 +126,7 @@ public class Saml2XmlObjectSubjectNameIDEncoderTest extends OpenSAMLInitBaseTest
 
     }
 
-    @Test public void testMulti() throws Exception {
+    @Test public void multi() throws Exception {
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) saml1NameIdFor(OTHERID), saml2NameIdFor(NAME_1),
                         saml2NameIdFor(NAME_1));
