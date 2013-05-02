@@ -2,3 +2,4 @@ urn\:mace\:shibboleth\:2.0\:resolver = schema/shibboleth-2.0-attribute-resolver.
 urn\:mace\:shibboleth\:2.0\:resolver\:ad = schema/shibboleth-2.0-attribute-resolver-ad.xsd
 urn\:mace\:shibboleth\:2.0\:resolver\:dc = schema/shibboleth-2.0-attribute-resolver-dc.xsd
 urn\:mace\:shibboleth\:2.0\:resolver\:pc = schema/shibboleth-2.0-attribute-resolver-pc.xsd
+urn\:mace\:shibboleth\:2.0\:resolver\:encoder = schema/shibboleth-2.0-attribute-encoder.xsd
