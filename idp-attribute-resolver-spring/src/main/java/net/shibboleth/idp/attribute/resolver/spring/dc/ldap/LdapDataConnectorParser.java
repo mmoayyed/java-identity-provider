@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -31,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.ParameterizedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.DataConnectorNamespaceHandler;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -77,7 +80,7 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(LdapDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
+    protected Class getBeanClass(final Element element) {
         return LdapDataConnector.class;
     }
 
@@ -108,33 +111,34 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
             final BeanDefinitionBuilder builder) {
 
         final Element springBeans = getSpringBeansElement(config);
-        final BeanFactory bf = createBeanFactory(springBeans);
-        final ConnectionFactory cf = bf.getBean(ConnectionFactory.class);
-        final SearchExecutor se = bf.getBean(SearchExecutor.class);
+        final BeanFactory beanFactory = createBeanFactory(springBeans);
+        final ConnectionFactory connectionFactory = beanFactory.getBean(ConnectionFactory.class);
+        final SearchExecutor searchExecutor = beanFactory.getBean(SearchExecutor.class);
 
-        ExecutableSearchBuilder sb = getBean(bf, ExecutableSearchBuilder.class);
-        if (sb == null) {
+        ExecutableSearchBuilder searchBuilder = getBean(beanFactory, ExecutableSearchBuilder.class);
+        if (searchBuilder == null) {
             // TODO this should use the Templated builder once the velocity engine is working
-            sb = new ParameterizedExecutableSearchFilterBuilder(se.getSearchFilter().getFilter());
-            log.debug("no executable search builder configured, created {}", sb);
+            searchBuilder =
+                    new ParameterizedExecutableSearchFilterBuilder(searchExecutor.getSearchFilter().getFilter());
+            log.debug("no executable search builder configured, created {}", searchBuilder);
         }
 
-        final Validator v = getBean(bf, Validator.class);
-        final MappingStrategy ms = getBean(bf, MappingStrategy.class);
-        final Cache<String, Optional<Map<String, Attribute>>> cache = getBean(bf, Cache.class);
+        final Validator validator = getBean(beanFactory, Validator.class);
+        final MappingStrategy strategy = getBean(beanFactory, MappingStrategy.class);
+        final Cache<String, Optional<Map<String, Attribute>>> cache = getBean(beanFactory, Cache.class);
         final Boolean noResultAnError =
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
                         "noResultIsError")));
         log.debug("parsed noResultAnError {}", noResultAnError);
 
-        builder.addPropertyValue("connectionFactory", cf);
-        builder.addPropertyValue("searchExecutor", se);
-        builder.addPropertyValue("executableSearchBuilder", sb);
-        if (v != null) {
-            builder.addPropertyValue("validator", v);
+        builder.addPropertyValue("connectionFactory", connectionFactory);
+        builder.addPropertyValue("searchExecutor", searchExecutor);
+        builder.addPropertyValue("executableSearchBuilder", searchBuilder);
+        if (validator != null) {
+            builder.addPropertyValue("validator", validator);
         }
-        if (ms != null) {
-            builder.addPropertyValue("mappingStrategy", ms);
+        if (strategy != null) {
+            builder.addPropertyValue("mappingStrategy", strategy);
         }
         if (noResultAnError != null && noResultAnError.booleanValue()) {
             builder.addPropertyValue("noResultAnError", true);
@@ -167,15 +171,16 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
 
         final String templateEngine = config.getAttribute("templateEngine");
 
-        final ConnectionConfig cc = v2Parser.createConnectionConfig();
-        final DefaultConnectionFactory cf = new DefaultConnectionFactory(cc);
+        final ConnectionConfig connectionConfig = v2Parser.createConnectionConfig();
+        final DefaultConnectionFactory connectionFactory = new DefaultConnectionFactory(connectionConfig);
         final String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
         if (connectionStrategy != null) {
-            final ConnectionStrategy cs = ConnectionStrategy.valueOf(connectionStrategy);
-            if (cs != null) {
-                cf.getProvider().getProviderConfig().setConnectionStrategy(cs);
+            final ConnectionStrategy strategy = ConnectionStrategy.valueOf(connectionStrategy);
+            if (strategy != null) {
+                connectionFactory.getProvider().getProviderConfig().setConnectionStrategy(strategy);
             } else {
-                cf.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.ACTIVE_PASSIVE);
+                connectionFactory.getProvider().getProviderConfig()
+                        .setConnectionStrategy(ConnectionStrategy.ACTIVE_PASSIVE);
             }
         }
 
@@ -188,46 +193,32 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                     AttributeSupport.getAttributeValue(e, new QName("value")));
         }
         if (!props.isEmpty()) {
-            cf.getProvider().getProviderConfig().setProperties(props);
+            connectionFactory.getProvider().getProviderConfig().setProperties(props);
         }
 
-        final SearchExecutor se = v2Parser.createSearchExecutor();
+        final SearchExecutor searchExecutor = v2Parser.createSearchExecutor();
 
         // TODO this should use the Templated builder once the velocity engine is working
-        ExecutableSearchBuilder sb = new ParameterizedExecutableSearchFilterBuilder(se.getSearchFilter().getFilter());
+        ExecutableSearchBuilder searchBuilder =
+                new ParameterizedExecutableSearchFilterBuilder(searchExecutor.getSearchFilter().getFilter());
 
-        final BlockingConnectionPool cp = v2Parser.createConnectionPool();
-        if (cp != null) {
-            cp.setConnectionFactory(cf);
-            cp.initialize();
-            builder.addPropertyValue("connectionFactory", new PooledConnectionFactory(cp));
+        final BlockingConnectionPool connectionPool = v2Parser.createConnectionPool();
+        if (connectionPool != null) {
+            connectionPool.setConnectionFactory(connectionFactory);
+            connectionPool.initialize();
+            builder.addPropertyValue("connectionFactory", new PooledConnectionFactory(connectionPool));
         } else {
-            builder.addPropertyValue("connectionFactory", cf);
+            builder.addPropertyValue("connectionFactory", connectionFactory);
         }
 
         // TODO add support for cacheResults and ResultCache
 
-        builder.addPropertyValue("searchExecutor", se);
-        builder.addPropertyValue("executableSearchBuilder", sb);
+        builder.addPropertyValue("searchExecutor", searchExecutor);
+        builder.addPropertyValue("executableSearchBuilder", searchBuilder);
         if (noResultAnError != null && noResultAnError.booleanValue()) {
             builder.addPropertyValue("noResultAnError", true);
         }
         builder.setInitMethodName("initialize");
-    }
-
-    /**
-     * Returns the first child element of the supplied element if it exists. Otherwise null.
-     * 
-     * @param element to parse child elements
-     * @param name of the child elements to parse
-     * @return first child element or null
-     */
-    protected static Element getFirstChildElement(final Element element, final QName name) {
-        final List<Element> elements = ElementSupport.getChildElements(element, name);
-        if (elements.size() > 0) {
-            return elements.get(0);
-        }
-        return null;
     }
 
     /** Utility class for parsing v2 schema configuration. */
@@ -241,7 +232,8 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
          * 
          * @param config LDAPDirectory element
          */
-        public V2Parser(final Element config) {
+        public V2Parser(@Nonnull final Element config) {
+            Constraint.isNotNull(config, "LDAPDirectory element cannot be null");
             configElement = config;
         }
 
@@ -250,7 +242,7 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
          * 
          * @return connection config
          */
-        public ConnectionConfig createConnectionConfig() {
+        @Nonnull public ConnectionConfig createConnectionConfig() {
             // TODO need the 2.0 security schema to set trust and authentication credential
             final String url = AttributeSupport.getAttributeValue(configElement, new QName("ldapURL"));
             final Boolean useStartTLS =
@@ -262,30 +254,30 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
             final String authenticationType =
                     AttributeSupport.getAttributeValue(configElement, new QName("authenticationType"));
 
-            final ConnectionConfig cc = new ConnectionConfig();
-            cc.setLdapUrl(url);
+            final ConnectionConfig connectionConfig = new ConnectionConfig();
+            connectionConfig.setLdapUrl(url);
             if (useStartTLS != null && useStartTLS.booleanValue()) {
-                cc.setUseStartTLS(true);
+                connectionConfig.setUseStartTLS(true);
             }
-            final BindConnectionInitializer ci = new BindConnectionInitializer();
+            final BindConnectionInitializer connectionInitializer = new BindConnectionInitializer();
             if (principal != null) {
-                ci.setBindDn(principal);
+                connectionInitializer.setBindDn(principal);
             }
             if (principalCredential != null) {
-                ci.setBindCredential(new Credential(principalCredential));
+                connectionInitializer.setBindCredential(new Credential(principalCredential));
             }
             if (authenticationType != null) {
-                final Mechanism m = Mechanism.valueOf(authenticationType);
-                if (m != null) {
-                    final SaslConfig sc = new SaslConfig();
-                    sc.setMechanism(m);
-                    ci.setBindSaslConfig(sc);
+                final Mechanism mechanism = Mechanism.valueOf(authenticationType);
+                if (mechanism != null) {
+                    final SaslConfig config = new SaslConfig();
+                    config.setMechanism(mechanism);
+                    connectionInitializer.setBindSaslConfig(config);
                 }
             }
-            if (!ci.isEmpty()) {
-                cc.setConnectionInitializer(ci);
+            if (!connectionInitializer.isEmpty()) {
+                connectionConfig.setConnectionInitializer(connectionInitializer);
             }
-            return cc;
+            return connectionConfig;
         }
 
         /**
@@ -293,7 +285,7 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
          * 
          * @return search executor
          */
-        public SearchExecutor createSearchExecutor() {
+        @Nonnull public SearchExecutor createSearchExecutor() {
             final String baseDn = AttributeSupport.getAttributeValue(configElement, new QName("baseDN"));
             final String searchScope = AttributeSupport.getAttributeValue(configElement, new QName("searchScope"));
             final String searchTimeLimit =
@@ -306,50 +298,50 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                     AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(configElement, new QName(
                             "lowercaseAttributeNames")));
 
-            final SearchExecutor se = new SearchExecutor();
-            se.setBaseDn(baseDn);
+            final SearchExecutor searchExecutor = new SearchExecutor();
+            searchExecutor.setBaseDn(baseDn);
             if (searchScope != null) {
-                se.setSearchScope(SearchScope.valueOf(searchScope));
+                searchExecutor.setSearchScope(SearchScope.valueOf(searchScope));
             }
             if (searchTimeLimit != null) {
-                se.setTimeLimit(Long.valueOf(searchTimeLimit));
+                searchExecutor.setTimeLimit(Long.valueOf(searchTimeLimit));
             } else {
-                se.setTimeLimit(3000);
+                searchExecutor.setTimeLimit(3000);
             }
             if (maxResultSize != null) {
-                se.setSizeLimit(Long.valueOf(maxResultSize));
+                searchExecutor.setSizeLimit(Long.valueOf(maxResultSize));
             } else {
-                se.setSizeLimit(1);
+                searchExecutor.setSizeLimit(1);
             }
             if (mergeResults != null && mergeResults.booleanValue()) {
-                se.setSearchEntryHandlers(new MergeAttributeEntryHandler());
+                searchExecutor.setSearchEntryHandlers(new MergeAttributeEntryHandler());
             }
             if (lowercaseAttributeNames != null && lowercaseAttributeNames.booleanValue()) {
-                final CaseChangeEntryHandler eh = new CaseChangeEntryHandler();
-                eh.setAttributeNameCaseChange(CaseChange.LOWER);
-                se.setSearchEntryHandlers(eh);
+                final CaseChangeEntryHandler entryHandler = new CaseChangeEntryHandler();
+                entryHandler.setAttributeNameCaseChange(CaseChange.LOWER);
+                searchExecutor.setSearchEntryHandlers(entryHandler);
             }
 
             List<String> returnAttrs = null;
             final Element returnAttrsElement =
-                    getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                            "ReturnAttributes"));
+                    ElementSupport.getFirstChildElement(configElement, new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "ReturnAttributes"));
             if (returnAttrsElement != null) {
                 returnAttrs = ElementSupport.getElementContentAsList(returnAttrsElement);
                 if (returnAttrs != null && !returnAttrs.isEmpty()) {
-                    se.setReturnAttributes(returnAttrs.toArray(new String[returnAttrs.size()]));
+                    searchExecutor.setReturnAttributes(returnAttrs.toArray(new String[returnAttrs.size()]));
                 }
             }
 
             String filter = "";
             final Element filterElement =
-                    getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                            "FilterTemplate"));
+                    ElementSupport.getFirstChildElement(configElement, new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate"));
             if (filterElement != null) {
                 filter = filterElement.getTextContent().trim();
-                se.setSearchFilter(new SearchFilter(filter));
+                searchExecutor.setSearchFilter(new SearchFilter(filter));
             }
-            return se;
+            return searchExecutor;
         }
 
         /**
@@ -357,10 +349,10 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
          * 
          * @return connection pool
          */
-        public BlockingConnectionPool createConnectionPool() {
+        @Nullable public BlockingConnectionPool createConnectionPool() {
             final Element poolConfigElement =
-                    getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                            "ConnectionPool"));
+                    ElementSupport.getFirstChildElement(configElement, new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
             if (poolConfigElement == null) {
                 return null;
             }
@@ -392,8 +384,8 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                 pool.setPruneStrategy(new IdlePruneStrategy(expirationTime / 2000, expirationTime / 1000));
             }
 
-            final PoolConfig pc = createPoolConfig();
-            pool.setPoolConfig(pc);
+            final PoolConfig poolConfig = createPoolConfig();
+            pool.setPoolConfig(poolConfig);
 
             final String validateDN = AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateDN"));
             final String validateFilter =
@@ -416,10 +408,10 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
          * 
          * @return pool config
          */
-        protected PoolConfig createPoolConfig() {
+        @Nullable protected PoolConfig createPoolConfig() {
             final Element poolConfigElement =
-                    getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                            "ConnectionPool"));
+                    ElementSupport.getFirstChildElement(configElement, new QName(
+                            DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
             if (poolConfigElement == null) {
                 return null;
             }
@@ -433,26 +425,26 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
                     AttributeSupport.getDurationAttributeValueAsLong(AttributeSupport.getAttribute(poolConfigElement,
                             new QName("validateTimerPeriod")));
 
-            final PoolConfig pc = new PoolConfig();
+            final PoolConfig poolConfig = new PoolConfig();
             if (minPoolSize != null) {
-                pc.setMinPoolSize(Integer.parseInt(minPoolSize));
+                poolConfig.setMinPoolSize(Integer.parseInt(minPoolSize));
             } else {
-                pc.setMinPoolSize(0);
+                poolConfig.setMinPoolSize(0);
             }
             if (maxPoolSize != null) {
-                pc.setMaxPoolSize(Integer.parseInt(maxPoolSize));
+                poolConfig.setMaxPoolSize(Integer.parseInt(maxPoolSize));
             } else {
-                pc.setMaxPoolSize(3);
+                poolConfig.setMaxPoolSize(3);
             }
             if (validatePeriodically != null && validatePeriodically.booleanValue()) {
-                pc.setValidatePeriodically(true);
+                poolConfig.setValidatePeriodically(true);
             }
             if (validateTimerPeriod != null) {
-                pc.setValidatePeriod(validateTimerPeriod / 1000);
+                poolConfig.setValidatePeriod(validateTimerPeriod / 1000);
             } else {
-                pc.setValidatePeriod(1800);
+                poolConfig.setValidatePeriod(1800);
             }
-            return pc;
+            return poolConfig;
         }
     }
 }
