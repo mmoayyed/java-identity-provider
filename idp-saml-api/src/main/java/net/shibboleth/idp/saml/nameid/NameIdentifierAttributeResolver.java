@@ -27,15 +27,12 @@ import net.shibboleth.utilities.java.support.resolver.Resolver;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
- *
- */
-
-/*
  * Criteria: Attributes SAML protocol or Encoder Class Supported formats - from metadata Format precedence - from
- * profile config
+ * profile config.
  * 
  * Needs helpers getting supported formats
  */
+//TODO
 public class NameIdentifierAttributeResolver implements
         Resolver<Pair<Attribute, AbstractSamlNameIdentifierEncoder>, CriteriaSet> {
 
