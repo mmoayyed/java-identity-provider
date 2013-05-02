@@ -116,7 +116,7 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
     }
 
     /** {@inheritDoc} */
-    @Nullable public AttributeType encode(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute)
+    @Nonnull public AttributeType encode(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute)
             throws AttributeEncodingException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(attribute, "attribute passed in to encode must not be null");
@@ -124,8 +124,8 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
         log.debug("Beginning to encode attribute {}", attributeId);
 
         if (attribute.getValues().isEmpty()) {
-            log.debug("Unable to encode {} attribute.  It does not contain any values", attributeId);
-            return null;
+            throw new AttributeEncodingException("Unable to encode " + attributeId
+                    + " attribute.  It does not contain any values");
         }
 
         final List<XMLObject> samlAttributeValues = new ArrayList<XMLObject>();
@@ -155,14 +155,14 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
         }
 
         if (samlAttributeValues.isEmpty()) {
-            log.debug("Attribute {} did not contain any non-empty String values, nothing to encode", attributeId);
-            return null;
+            throw new AttributeEncodingException("Attribute " + attributeId
+                    + " did not contain any non-empty String values, nothing to encode");
         }
 
         log.debug("Completed encoding {} values for attribute {}", samlAttributeValues.size(), attributeId);
         return buildAttribute(attribute, samlAttributeValues);
     }
-    
+
     /** {@inheritDoc} */
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -176,14 +176,13 @@ public abstract class AbstractSamlAttributeEncoder<AttributeType extends SAMLObj
         if (!(obj instanceof AbstractSamlAttributeEncoder)) {
             return false;
         }
-        
+
         AbstractSamlAttributeEncoder other = (AbstractSamlAttributeEncoder) obj;
-        
-        return Objects.equal(getName(), other.getName()) &&
-               Objects.equal(getNamespace(), other.getNamespace()) &&
-               Objects.equal(getProtocol(), other.getProtocol());
+
+        return Objects.equal(getName(), other.getName()) && Objects.equal(getNamespace(), other.getNamespace())
+                && Objects.equal(getProtocol(), other.getProtocol());
     }
-    
+
     /** {@inheritDoc} */
     public int hashCode() {
         return Objects.hashCode(getName(), getNamespace(), getProtocol());

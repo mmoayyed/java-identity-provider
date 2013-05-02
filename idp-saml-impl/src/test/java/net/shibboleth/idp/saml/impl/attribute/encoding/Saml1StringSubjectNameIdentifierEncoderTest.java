@@ -91,7 +91,8 @@ public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBas
         Assert.assertEquals(nameId.getNameQualifier(), "nameQualifier");
     }
 
-    @Test public void innappropriateTypes() throws AttributeEncodingException {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void innappropriateTypes()
+            throws AttributeEncodingException {
         Attribute attribute = new Attribute("id");
 
         final Saml1StringSubjectNameIdentifierEncoder enc1 = new Saml1StringSubjectNameIdentifierEncoder();
@@ -113,22 +114,17 @@ public class Saml1StringSubjectNameIdentifierEncoderTest extends OpenSAMLInitBas
         try {
             enc1.encode(attribute);
             Assert.fail();
-        } catch (Exception e) {
+        } catch (AttributeEncodingException e) {
             // OK
         }
-        
+
         final AttributeValue wrong = new AttributeValue<Integer>() {
             @Nonnull public Integer getValue() {
                 return new Integer(3);
             }
-        }; 
+        };
 
         attribute.setValues(Collections.singleton(wrong));
-        try {
-            enc1.encode(attribute);
-            Assert.fail();
-        } catch (Exception e) {
-            // OK
-        }
+        enc1.encode(attribute);
     }
 }

@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -34,20 +36,19 @@ import com.google.common.base.Objects;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 2 NameID used for the Subject from the
  * first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.Attribute}.
  */
-// TODO this class is redundant.  
+// TODO this class is redundant.
 public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncoder {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(Saml2XmlObjectSubjectNameIDEncoder.class);
 
     /** {@inheritDoc} */
-    public NameID encode(Attribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameID encode(Attribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<AttributeValue> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
-            log.debug("Attribute {} contains no value, nothing to encode", attributeId);
-            return null;
+            throw new AttributeEncodingException("Attribute " + attributeId + " contains no value, nothing to encode");
         }
 
         for (AttributeValue attrValue : attributeValues) {
@@ -68,9 +69,8 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIDEncod
             }
         }
 
-        log.debug("Attribute {} did not contain any NameID values, nothing to encode as subject name identifier",
-                attributeId);
-        return null;
+        throw new AttributeEncodingException("Attribute " + attributeId
+                + " did not contain any NameID values, nothing to encode as subject name identifier");
     }
 
     /** {@inheritDoc} */

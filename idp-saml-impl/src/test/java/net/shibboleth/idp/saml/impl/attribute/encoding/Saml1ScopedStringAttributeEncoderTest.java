@@ -74,19 +74,17 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         return encoder;
     }
 
-    @Test public void testEmpty() throws AttributeEncodingException, ComponentInitializationException {
+    @Test(expectedExceptions={AttributeEncodingException.class,})   public void testEmpty() throws AttributeEncodingException, ComponentInitializationException {
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
         Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         encoder.initialize();
-        final Attribute outputAttribute = encoder.encode(inputAttribute);
-
-        Assert.assertNull(outputAttribute, "Encoding the empty set should yield a null attribute");
+                encoder.encode(inputAttribute);
     }
 
-    @Test public void testInappropriate() throws AttributeEncodingException, ComponentInitializationException {
+    @Test(expectedExceptions={AttributeEncodingException.class,})   public void testInappropriate() throws AttributeEncodingException, ComponentInitializationException {
         final Saml1ScopedStringAttributeEncoder encoder = makeEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
@@ -110,8 +108,7 @@ public class Saml1ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.initialize();
         
 
-        final Attribute outputAttribute = encoder.encode(inputAttribute);
-        Assert.assertNull(outputAttribute, "Encoding a series of invalid inputs should yield a null attribute");
+        encoder.encode(inputAttribute);
     }
 
     @Test public void testSingle() throws ComponentInitializationException, AttributeEncodingException  {

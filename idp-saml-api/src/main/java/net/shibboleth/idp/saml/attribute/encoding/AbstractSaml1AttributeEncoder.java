@@ -58,7 +58,7 @@ public abstract class AbstractSaml1AttributeEncoder<EncodedType extends Attribut
     }
 
     /** {@inheritDoc} */
-    protected Attribute buildAttribute(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
+    @Nonnull protected Attribute buildAttribute(@Nonnull final net.shibboleth.idp.attribute.Attribute attribute,
             @Nonnull @NonnullElements final List<XMLObject> attributeValues) throws AttributeEncodingException {
 
         final Attribute samlAttribute = attributeBuilder.buildObject();

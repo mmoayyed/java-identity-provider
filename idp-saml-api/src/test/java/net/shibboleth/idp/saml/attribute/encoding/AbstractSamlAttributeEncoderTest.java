@@ -126,7 +126,11 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.initialize();
         Attribute attr = new Attribute(ATTRIBUTE_ID);
         
-        Assert.assertNull(encoder.encode(attr));
+        try {
+            encoder.encode(attr);
+        } catch (AttributeEncodingException e) {
+            // OK
+        }
         
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
@@ -139,7 +143,11 @@ public class AbstractSamlAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                         }
                         );
         attr.setValues(values);
-        Assert.assertNull(encoder.encode(attr));
+        try {
+            encoder.encode(attr);
+        } catch (AttributeEncodingException e) {
+            // OK
+        }
         values.add(new StringAttributeValue(ATTRIBUTE_VALUE_1));
         values.add(new StringAttributeValue(ATTRIBUTE_VALUE_2));
         attr.setValues(values);

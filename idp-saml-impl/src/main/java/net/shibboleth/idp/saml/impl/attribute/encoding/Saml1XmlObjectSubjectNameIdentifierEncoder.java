@@ -19,6 +19,8 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -41,13 +43,12 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSaml1Nam
     private final Logger log = LoggerFactory.getLogger(Saml1XmlObjectSubjectNameIdentifierEncoder.class);
 
     /** {@inheritDoc} */
-    public NameIdentifier encode(Attribute attribute) throws AttributeEncodingException {
+    @Nonnull public NameIdentifier encode(Attribute attribute) throws AttributeEncodingException {
         final String attributeId = attribute.getId();
 
         final Collection<AttributeValue> attributeValues = attribute.getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
-            log.debug("Attribute {} contains no value, nothing to encode", attributeId);
-            return null;
+            throw new AttributeEncodingException("Attribute " + attributeId + " contains no value, nothing to encode");
         }
 
         for (AttributeValue attrValue : attributeValues) {
@@ -69,10 +70,8 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSaml1Nam
             }
         }
 
-        log.warn(
-                "Attribute {} did not contain any NameIdentifier values, nothing to encode as subject name identifier",
-                attributeId);
-        return null;
+        throw new AttributeEncodingException("Attribute " + attributeId
+                + " did not contain any NameIdentifier values, nothing to encode as subject name identifier");
     }
 
     /** {@inheritDoc} */

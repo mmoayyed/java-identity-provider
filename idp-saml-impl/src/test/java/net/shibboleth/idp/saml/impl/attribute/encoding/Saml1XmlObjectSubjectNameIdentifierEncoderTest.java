@@ -19,6 +19,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 
 import java.util.Collection;
 
+import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -79,23 +80,21 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
     private Saml1XmlObjectSubjectNameIdentifierEncoder encoder;
 
     @BeforeClass public void initTest() throws ComponentInitializationException {
-        
+
         encoder = new Saml1XmlObjectSubjectNameIdentifierEncoder();
         saml1Builder = new NameIdentifierBuilder();
         saml2Builder = new NameIDBuilder();
     }
 
-    @Test public void testEmpty() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testEmpty() throws Exception {
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
-        final NameIdentifier outputNameId = encoder.encode(inputAttribute);
-
-        Assert.assertNull(outputNameId, "Encoding the empty set should yield a null attribute");
+        encoder.encode(inputAttribute);
     }
 
-    @Test public void testInappropriate() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testInappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
@@ -108,9 +107,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoderTest extends OpenSAMLInit
         net.shibboleth.idp.attribute.Attribute inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
-        final NameIdentifier outputNameId = encoder.encode(inputAttribute);
-
-        Assert.assertNull(outputNameId, "Encoding a series of invalid inputs should yield a null nameId");
+        encoder.encode(inputAttribute);
     }
 
     @Test public void testSingle() throws Exception {

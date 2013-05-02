@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.impl.attribute.encoding;
 import java.util.Collection;
 import java.util.List;
 
+import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -52,8 +53,9 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** A second test value. */
     private final static byte[] BYTE_ARRAY_2 = {4, 3, 2, 1};
+
     private Saml2ByteAttributeEncoder encoder;
-    
+
     @BeforeClass public void initTest() throws ComponentInitializationException {
         encoder = new Saml2ByteAttributeEncoder();
         encoder.setName(ATTR_NAME);
@@ -61,17 +63,16 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.setFriendlyName("friendly");
         encoder.initialize();
     }
-    @Test public void testEmpty() throws Exception {
+
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testEmpty() throws Exception {
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
-        final Attribute outputAttribute = encoder.encode(inputAttribute);
-
-        Assert.assertNull(outputAttribute, "Encoding the empty set should yield a null attribute");
+        encoder.encode(inputAttribute);
     }
 
-    @Test public void testInappropriate() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testInappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<AttributeValue> values =
                 Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ScopedStringAttributeValue(
@@ -85,13 +86,13 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
-        final Attribute outputAttribute = encoder.encode(inputAttribute);
-
-        Assert.assertNull(outputAttribute, "Encoding a series of invalid inputs should yield a null attribute");
+        encoder.encode(inputAttribute);
     }
 
     @Test public void testSingle() throws Exception {
-        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ByteAttributeValue(BYTE_ARRAY_1));
+        final Collection<AttributeValue> values =
+                Lists.newArrayList((AttributeValue) new StringAttributeValue("foo"), new ByteAttributeValue(
+                        BYTE_ARRAY_1));
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
 
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -118,7 +119,9 @@ public class Saml2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void testMulti() throws Exception {
-        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(BYTE_ARRAY_2));
+        final Collection<AttributeValue> values =
+                Lists.newArrayList((AttributeValue) new ByteAttributeValue(BYTE_ARRAY_1), new ByteAttributeValue(
+                        BYTE_ARRAY_2));
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);

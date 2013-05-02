@@ -118,7 +118,7 @@ public class Saml2StringSubjectNameIDEncoder extends AbstractSaml2NameIDEncoder 
         }
 
         for (AttributeValue attrValue : attributeValues) {
-            if (attrValue == null) {
+            if (attrValue == null || attrValue.getValue() == null) {
                 // Should not be null, but check anyway
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;

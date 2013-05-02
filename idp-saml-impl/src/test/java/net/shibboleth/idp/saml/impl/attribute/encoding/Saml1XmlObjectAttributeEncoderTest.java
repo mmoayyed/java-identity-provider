@@ -43,7 +43,7 @@ import com.google.common.collect.Lists;
  * 
  * Identical code to the {@link Saml1ByteAttributeEncoder} except that the type of assertion and encoder is changed.
  */
-public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase  {
+public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
@@ -55,8 +55,9 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     private final static String STRING_2 = "Second string the value is";
 
     private Saml1XmlObjectAttributeEncoder encoder;
+
     private Saml1StringAttributeEncoder strEncoder;
-    
+
     @BeforeClass public void initTest() throws ComponentInitializationException {
         encoder = new Saml1XmlObjectAttributeEncoder();
         encoder.setName(ATTR_NAME);
@@ -67,7 +68,7 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         strEncoder.setNamespace("NameSpace");
         strEncoder.initialize();
     }
-    
+
     /**
      * Create an XML object from a string which we can test against later. We use the Saml1StringEncoder to do the work
      * because it is handy in this package.
@@ -81,7 +82,7 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.getValues().add(new StringAttributeValue(value));
         try {
-            return  new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
+            return new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
         } catch (AttributeEncodingException e) {
             return null;
         }
@@ -111,18 +112,18 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         Assert.assertTrue(false, "No potential matched matched");
     }
 
-    @Test public void testEmpty() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testEmpty() throws Exception {
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
 
-        final Attribute outputAttribute = encoder.encode(inputAttribute);
-        Assert.assertNull(outputAttribute, "Encoding the empty set should yield a null attribute");
+        encoder.encode(inputAttribute);
     }
 
-    @Test public void testInappropriate() throws Exception {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void testInappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
-        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
+        final Collection<AttributeValue> values =
+                Lists.newArrayList((AttributeValue) new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         new ScopedStringAttributeValue("foo", "bar"), new AttributeValue() {
                             public Object getValue() {
                                 return intArray;
@@ -133,8 +134,7 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
         inputAttribute.setValues(values);
 
-        final Attribute outputAttribute = encoder.encode(inputAttribute);
-        Assert.assertNull(outputAttribute, "Encoding a series of invalid inputs should yield a null attribute");
+        encoder.encode(inputAttribute);
     }
 
     @Test public void testSingle() throws Exception {
@@ -150,7 +150,8 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 1, "Encoding one entry");
-        Assert.assertEquals(children.get(0).getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(children.get(0).getElementQName(),
+                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/>");
@@ -159,7 +160,8 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     }
 
     @Test public void testMulti() throws Exception {
-        final Collection<AttributeValue> values = Lists.newArrayList((AttributeValue) ObjectFor(STRING_1), ObjectFor(STRING_2));
+        final Collection<AttributeValue> values =
+                Lists.newArrayList((AttributeValue) ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final net.shibboleth.idp.attribute.Attribute inputAttribute;
         inputAttribute = new net.shibboleth.idp.attribute.Attribute(ATTR_NAME);
@@ -171,12 +173,14 @@ public class Saml1XmlObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
         Assert.assertEquals(children.size(), 2, "Encoding two entries");
 
-        Assert.assertEquals(children.get(0).getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(children.get(0).getElementQName(),
+                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(0).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/> for first Attribute");
 
-        Assert.assertEquals(children.get(1).getElementQName(), org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
+        Assert.assertEquals(children.get(1).getElementQName(),
+                org.opensaml.saml.saml1.core.AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         Assert.assertEquals(children.get(1).getOrderedChildren().size(), 1,
                 "Expected exactly one child inside the <AttributeValue/> for second Attribute");

@@ -57,7 +57,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
         final Saml2StringSubjectNameIDEncoder enc2 = new Saml2StringSubjectNameIDEncoder();
         enc2.setNameFormat("nameFormat");
         enc2.setNameQualifier("nameQualifier");
-        
+
         final Saml2StringSubjectNameIDEncoder enc3 = new Saml2StringSubjectNameIDEncoder();
         enc3.setNameFormat("nameQualifier");
         enc3.setNameQualifier("nameFormat");
@@ -71,7 +71,7 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
         Assert.assertFalse(enc1.equals(enc3));
         Assert.assertTrue(enc1.equals(enc2));
         Assert.assertTrue(enc1.equals(enc1));
-        
+
         Assert.assertEquals(enc1.hashCode(), enc2.hashCode());
         Assert.assertNotEquals(enc1.hashCode(), enc3.hashCode());
         Assert.assertNotEquals(enc1.hashCode(), enc4.hashCode());
@@ -79,15 +79,15 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
 
     @Test public void encode() throws AttributeEncodingException {
         Attribute attribute = new Attribute("id");
-        attribute.setValues(Collections.singleton((AttributeValue)new StringAttributeValue("value")));
-        
+        attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue("value")));
+
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
         NameID nameId = enc1.encode(attribute);
         Assert.assertEquals(nameId.getValue(), "value");
         Assert.assertNull(nameId.getFormat());
         Assert.assertNull(nameId.getNameQualifier());
-        
+
         enc1.setNameFormat("nameFormat");
         enc1.setNameQualifier("nameQualifier");
         nameId = enc1.encode(attribute);
@@ -96,17 +96,20 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
         Assert.assertEquals(nameId.getNameQualifier(), "nameQualifier");
     }
 
-    @Test public void innappropriateTypes() throws AttributeEncodingException {
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void empty()
+            throws AttributeEncodingException {
         Attribute attribute = new Attribute("id");
 
         final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
-        try {
-            enc1.encode(attribute);
-            Assert.fail();
-        } catch (Exception e) {
-            // OK
-        }
+        enc1.encode(attribute);
+    }
+
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void nullValues()
+            throws AttributeEncodingException {
+        Attribute attribute = new Attribute("id");
+
+        final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
 
         final AttributeValue empty = new AttributeValue<String>() {
             @Nonnull public String getValue() {
@@ -115,25 +118,21 @@ public class Saml2StringSubjectNameIDEncoderTest extends OpenSAMLInitBaseTestCas
         };
 
         attribute.setValues(Collections.singleton(empty));
-        try {
-            enc1.encode(attribute);
-            Assert.fail();
-        } catch (Exception e) {
-            // OK
-        }
-        
+        enc1.encode(attribute);
+    }
+
+    @Test(expectedExceptions = {AttributeEncodingException.class,}) public void wrongType()
+            throws AttributeEncodingException {
+        Attribute attribute = new Attribute("id");
+        final Saml2StringSubjectNameIDEncoder enc1 = new Saml2StringSubjectNameIDEncoder();
         final AttributeValue wrong = new AttributeValue<Integer>() {
             @Nonnull public Integer getValue() {
                 return new Integer(3);
             }
-        }; 
+        };
 
         attribute.setValues(Collections.singleton(wrong));
-        try {
-            enc1.encode(attribute);
-            Assert.fail();
-        } catch (Exception e) {
-            // OK
-        }
+        enc1.encode(attribute);
     }
+
 }

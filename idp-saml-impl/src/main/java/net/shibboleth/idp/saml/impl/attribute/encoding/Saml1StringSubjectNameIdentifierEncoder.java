@@ -118,7 +118,7 @@ public class Saml1StringSubjectNameIdentifierEncoder extends AbstractSaml1NameId
         }
 
         for (AttributeValue attrValue : attributeValues) {
-            if (attrValue == null) {
+            if (attrValue == null || attrValue.getValue() == null) {
                 // Should not be null, but check anyway
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;
