@@ -17,14 +17,9 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
-import javax.annotation.Nullable;
+import net.shibboleth.idp.attribute.AttributeEncoder;
 
 import org.opensaml.saml.common.SAMLObject;
-
-import com.google.common.base.Objects;
-
-import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Base class for attribute encoders that produce SAML name identifiers.
@@ -33,73 +28,5 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public abstract class AbstractSamlNameIdentifierEncoder<NameIdType extends SAMLObject> implements
         AttributeEncoder<NameIdType> {
-
-    /** The format of the name identifier. */
-    private String format;
-
-    /** The security or administrative domain that qualifies the name identifier. */
-    private String qualifier;
-
-    /**
-     * Gets the format of the name identifier.
-     * 
-     * @return format of the name identifier
-     */
-    @Nullable public final String getNameFormat() {
-        return format;
-    }
-
-    /**
-     * Sets the format of the name identifier.
-     * 
-     * @param nameFormat format of the name identifier
-     */
-    public final void setNameFormat(@Nullable final String nameFormat) {
-        format = StringSupport.trimOrNull(nameFormat);
-    }
-
-    /**
-     * Gets the security or administrative domain that qualifies the name identifier.
-     * 
-     * @return security or administrative domain that qualifies the name identifier
-     */
-    @Nullable public final String getNameQualifier() {
-        return qualifier;
-    }
-
-    /**
-     * Sets the security or administrative domain that qualifies the name identifier.
-     * 
-     * @param nameQualifier security or administrative domain that qualifies the name identifier
-     */
-    @Nullable public final void setNameQualifier(final String nameQualifier) {
-        qualifier = StringSupport.trimOrNull(nameQualifier);
-    }
-    
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj == this) {
-            return true;
-        }
-
-        if (!(obj instanceof AbstractSamlNameIdentifierEncoder)) {
-            return false;
-        }
-        
-        AbstractSamlNameIdentifierEncoder other = (AbstractSamlNameIdentifierEncoder) obj;
-        
-        return Objects.equal(getNameFormat(), other.getNameFormat()) &&
-               Objects.equal(getNameQualifier(), other.getNameQualifier()) &&
-               Objects.equal(getProtocol(), other.getProtocol());
-    }
-    
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return Objects.hashCode(getNameFormat(), getNameQualifier(), getProtocol());
-    }
 
 }

@@ -28,6 +28,8 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 2 NameID used for the Subject from the
  * first non-null {@link NameID} value of an {@link net.shibboleth.idp.attribute.Attribute}.
@@ -68,5 +70,26 @@ public class Saml2XmlObjectSubjectNameIDEncoder extends AbstractSaml2NameIdentif
         log.debug("Attribute {} did not contain any NameID values, nothing to encode as subject name identifier",
                 attributeId);
         return null;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Saml2XmlObjectSubjectNameIDEncoder)) {
+            return false;
+        }
+
+        Saml2XmlObjectSubjectNameIDEncoder other = (Saml2XmlObjectSubjectNameIDEncoder) obj;
+
+        return Objects.equal(getProtocol(), other.getProtocol());
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getProtocol(), Saml2XmlObjectSubjectNameIDEncoder.class);
     }
 }

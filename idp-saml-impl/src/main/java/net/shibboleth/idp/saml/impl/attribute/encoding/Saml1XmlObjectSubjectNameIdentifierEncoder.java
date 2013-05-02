@@ -28,6 +28,8 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Objects;
+
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces the SAML 1 NameIdentifier used for the Subject
  * from the first non-null {@link NameIdentifier} value of an {@link net.shibboleth.idp.attribute.Attribute}.
@@ -57,8 +59,7 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSaml1Nam
 
             if (value instanceof NameIdentifier) {
                 NameIdentifier identifier = (NameIdentifier) value;
-                log.debug(
-                        "Chose NameIdentifier, with value {}, of attribute {} for subject name identifier encoding",
+                log.debug("Chose NameIdentifier, with value {}, of attribute {} for subject name identifier encoding",
                         identifier.getNameIdentifier(), attributeId);
                 return identifier;
             } else {
@@ -67,9 +68,30 @@ public class Saml1XmlObjectSubjectNameIdentifierEncoder extends AbstractSaml1Nam
             }
         }
 
-        log.debug(
+        log.warn(
                 "Attribute {} did not contain any NameIdentifier values, nothing to encode as subject name identifier",
                 attributeId);
         return null;
+    }
+
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Saml1XmlObjectSubjectNameIdentifierEncoder)) {
+            return false;
+        }
+
+        Saml1XmlObjectSubjectNameIdentifierEncoder other = (Saml1XmlObjectSubjectNameIdentifierEncoder) obj;
+
+        return Objects.equal(getProtocol(), other.getProtocol());
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hashCode(getProtocol(), Saml1XmlObjectSubjectNameIdentifierEncoder.class);
     }
 }
