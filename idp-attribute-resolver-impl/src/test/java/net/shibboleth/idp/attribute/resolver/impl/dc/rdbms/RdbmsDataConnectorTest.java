@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.dc.rdbms;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -66,8 +68,20 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 throws ResolutionException {
             final AttributeRecipientContext subContext =
                     resolutionContext.getSubcontext(AttributeRecipientContext.class);
-            return new SqlStringExecutableStatement(String.format(
-                    "SELECT userid, name, homephone, mail FROM people WHERE userid='%s'", subContext.getPrincipal()));
+            return new ExecutableStatement() {
+
+                private final String query = String
+                        .format("SELECT userid, name, homephone, mail FROM people WHERE userid='%s'",
+                                subContext.getPrincipal());
+
+                @Nonnull public String getResultCacheKey() {
+                    return query;
+                }
+
+                @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
+                    return connection.createStatement().executeQuery(query);
+                }
+            };
         }
     }
 
@@ -168,17 +182,20 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(attrs.size() == 4);
         // check userid
         Assert.assertTrue(attrs.get("USERID").getValues().size() == 1);
-        Assert.assertEquals(new StringAttributeValue(TestSources.PRINCIPAL_ID), attrs.get("USERID").getValues().iterator()
-                .next());
+        Assert.assertEquals(new StringAttributeValue(TestSources.PRINCIPAL_ID), attrs.get("USERID").getValues()
+                .iterator().next());
         // check name
         Assert.assertTrue(attrs.get("NAME").getValues().size() == 1);
-        Assert.assertEquals(new StringAttributeValue("Peter Principal"), attrs.get("NAME").getValues().iterator().next());
+        Assert.assertEquals(new StringAttributeValue("Peter Principal"), attrs.get("NAME").getValues().iterator()
+                .next());
         // check homephone
         Assert.assertTrue(attrs.get("HOMEPHONE").getValues().size() == 1);
-        Assert.assertEquals(new StringAttributeValue("555-111-2222"), attrs.get("HOMEPHONE").getValues().iterator().next());
+        Assert.assertEquals(new StringAttributeValue("555-111-2222"), attrs.get("HOMEPHONE").getValues().iterator()
+                .next());
         // check mail
         Assert.assertTrue(attrs.get("MAIL").getValues().size() == 1);
-        Assert.assertEquals(new StringAttributeValue("peter.principal@shibboleth.net"), attrs.get("MAIL").getValues().iterator().next());
+        Assert.assertEquals(new StringAttributeValue("peter.principal@shibboleth.net"), attrs.get("MAIL").getValues()
+                .iterator().next());
     }
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoStatement()
