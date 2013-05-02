@@ -23,7 +23,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml1AttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.AbstractSaml2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SamlEncoderSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 2 attributes from
  * {@link net.shibboleth.idp.attribute.Attribute} that contains scope string values.
  */
-public class Saml2ScopedStringAttributeEncoder extends AbstractSaml1AttributeEncoder<ScopedStringAttributeValue> {
+public class Saml2ScopedStringAttributeEncoder extends AbstractSaml2AttributeEncoder<ScopedStringAttributeValue> {
 
     /** The log. */
     private final Logger log = LoggerFactory.getLogger(Saml2ScopedStringAttributeEncoder.class);

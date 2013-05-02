@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.saml.saml1.core.Attribute;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
