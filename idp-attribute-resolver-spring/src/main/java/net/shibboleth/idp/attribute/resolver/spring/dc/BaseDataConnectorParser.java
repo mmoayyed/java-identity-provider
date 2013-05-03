@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
@@ -87,9 +88,10 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * multiple <beans/> declarations, only the first is returned.
      * 
      * @param config to check for spring beans declaration
+     *
      * @return spring beans element
      */
-    protected Element getSpringBeansElement(final Element config) {
+    @Nullable protected Element getSpringBeansElement(@Nullable final Element config) {
         final List<Element> configElements = ElementSupport.getChildElements(config, SPRING_BEANS_ELEMENT_NAME);
         if (configElements.size() > 0) {
             return configElements.get(0);
@@ -101,18 +103,19 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * Creates a Spring bean factory from the supplied Spring beans element.
      * 
      * @param springBeans to create bean factory from
+     *
      * @return bean factory
      */
-    protected BeanFactory createBeanFactory(final Element springBeans) {
-        final DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
-        final XmlBeanDefinitionReader dr = new XmlBeanDefinitionReader(bf);
+    @Nonnull protected BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
+        final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(beanFactory);
         // TODO why does validation need to be turned off?
-        dr.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
-        dr.setNamespaceAware(true);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        SerializeSupport.writeNode(springBeans, baos);
-        dr.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(baos.toByteArray())));
-        return bf;
+        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
+        definitionReader.setNamespaceAware(true);
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        SerializeSupport.writeNode(springBeans, outputStream);
+        definitionReader.loadBeanDefinitions(new InputSource(new ByteArrayInputStream(outputStream.toByteArray())));
+        return beanFactory;
     }
 
     /**
@@ -122,17 +125,18 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * @param <T> type of bean to return
      * @param beanFactory to get the bean from
      * @param clazz type of the bean to retrieve
+     *
      * @return spring bean
      */
-    protected <T> T getBean(final BeanFactory beanFactory, final Class<T> clazz) {
-        T t = null;
+    @Nullable protected <T> T getBean(@Nonnull final BeanFactory beanFactory, @Nonnull final Class<T> clazz) {
+        T bean = null;
         try {
-            t = beanFactory.getBean(clazz);
-            log.debug("created spring bean {}", t);
+            bean = beanFactory.getBean(clazz);
+            log.debug("created spring bean {}", bean);
         } catch (NoSuchBeanDefinitionException e) {
             log.debug("no spring bean configured of type {}", clazz);
         }
-        return t;
+        return bean;
     }
 
     /**

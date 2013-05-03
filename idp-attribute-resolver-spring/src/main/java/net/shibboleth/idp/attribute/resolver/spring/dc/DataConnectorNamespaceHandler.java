@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.LdapDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RdbmsDataConnectorParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 /** Namespace handler for the Shibboleth static data connector namespace. */
@@ -28,16 +29,12 @@ public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME,
-                new StaticDataConnectorParser());
+        registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME, new StaticDataConnectorParser());
         // TODO
-        registerBeanDefinitionParser(ComputedIDDataConnectorParser.TYPE_NAME,
-                new ComputedIDDataConnectorParser());
+        registerBeanDefinitionParser(ComputedIDDataConnectorParser.TYPE_NAME, new ComputedIDDataConnectorParser());
         // registerBeanDefinitionParser(StoredIDDataConnectorBeanDefinitionParser.TYPE_NAME,
         // new StoredIDDataConnectorBeanDefinitionParser());
-        // registerBeanDefinitionParser(RDBMSDataConnectorBeanDefinitionParser.TYPE_NAME,
-        // new RDBMSDataConnectorBeanDefinitionParser());
-        registerBeanDefinitionParser(LdapDataConnectorParser.TYPE_NAME,
-                new LdapDataConnectorParser());
+        registerBeanDefinitionParser(RdbmsDataConnectorParser.TYPE_NAME, new RdbmsDataConnectorParser());
+        registerBeanDefinitionParser(LdapDataConnectorParser.TYPE_NAME, new LdapDataConnectorParser());
     }
 }
