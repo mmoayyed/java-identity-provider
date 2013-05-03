@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
-import net.shibboleth.idp.attribute.resolver.spring.ad.CryptoTransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete
@@ -29,8 +28,36 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
 
     /** {@inheritDoc} */
     public void init() {
-        // TODO
-        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME,
-                new CryptoTransientIdAttributeDefinitionParser());
+        registerBeanDefinitionParser(Saml1StringAttributeEncoderParser.TYPE_NAME,
+                new Saml1StringAttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml1Base64AttributeEncoderParser.TYPE_NAME,
+                new Saml1Base64AttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml1ScopedStringAttributeEncoderParser.TYPE_NAME,
+                new Saml1ScopedStringAttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml1XmlObjectAttributeEncoderParser.TYPE_NAME,
+                new Saml1XmlObjectAttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml1StringNameIdentifierEncoderParser.SCHEMA_TYPE,
+                new Saml1StringNameIdentifierEncoderParser());
+
+        registerBeanDefinitionParser(Saml2StringAttributeEncoderParser.TYPE_NAME,
+                new Saml2StringAttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml2ScopedStringAttributeEncoderParser.TYPE_NAME,
+                new Saml2ScopedStringAttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml2Base64AttributeEncoderParser.TYPE_NAME,
+                new Saml2Base64AttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml2XmlObjectAttributeEncoderParser.TYPE_NAME,
+                new Saml2XmlObjectAttributeEncoderParser());
+
+        registerBeanDefinitionParser(Saml2StringNameIDEncoderParser.SCHEMA_TYPE,
+                new Saml2StringNameIDEncoderParser());
+
+ 
     }
 }

@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Collection;
 
+import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
@@ -38,6 +39,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     
     public static final String ATTRIBUTE_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/ad/"; 
     public static final String DATACONNECTOR_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/dc/"; 
+    public static final String ENCODER_FILE_PATH = "net/shibboleth/idp/attribute/resolver/spring/enc/"; 
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
@@ -52,14 +54,12 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return (Type) beans.iterator().next();
     }
 
-    
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context);
     }
     
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName, Class<Type> claz) {
-
     
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + claz);
@@ -69,7 +69,6 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     
         return getAttributeDefn(fileName, claz, context);
     }
-
     
     protected <Type extends BaseAttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
 
@@ -85,7 +84,14 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         context.setDisplayName("ApplicationContext: " + claz);
         
         return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context);
-
     }
 
+    protected <Type extends AttributeEncoder> Type getAttributeEncoder(String fileName, Class<Type> claz) {
+        
+        GenericApplicationContext context = new GenericApplicationContext();
+        context.setDisplayName("ApplicationContext: " + claz);
+        
+        return getBean(ENCODER_FILE_PATH + fileName, claz, context);
+
+    }
 }

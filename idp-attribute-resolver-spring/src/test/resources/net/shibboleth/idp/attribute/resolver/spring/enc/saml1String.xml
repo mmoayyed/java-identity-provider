@@ -1,0 +1,9 @@
+<resolver:AttributeEncoder 
+    xsi:type="enc:SAML1String"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
+	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+	name="SAML1_STRING_ATTRIBUTE_NAME" 
+	namespace="SAML1_STRING_ATTRIBUTE_NAME_SPACE"
+/> 
+ 

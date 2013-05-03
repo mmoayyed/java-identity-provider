@@ -1,0 +1,7 @@
+<resolver:AttributeEncoder 
+    xsi:type="enc:SAML2Base64"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" 
+	xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+ /> 
+ 

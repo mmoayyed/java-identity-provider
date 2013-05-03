@@ -38,6 +38,17 @@
             <version>0.9.2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-saml-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-saml-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>        
+
         <!-- Provided Dependencies -->
 
         <!-- Runtime Dependencies -->
