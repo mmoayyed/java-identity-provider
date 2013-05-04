@@ -77,12 +77,12 @@ public final class PluginDependencySupport {
             ResolvedDataConnector dataConnector =
                     resolutionContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
-                Constraint.isTrue(dependency.getDependencyAttributeId().isPresent(), "Data connector dependencies "
+                Constraint.isTrue(dependency.getDependencyAttributeId() != null, "Data connector dependencies "
                         + "must specify a dependant attribute ID");
 
                 if (null != dataConnector.getResolvedAttributes()) {
                     resolvedAttribute =
-                            dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId().get());
+                            dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId());
                     addAttributeValues(resolvedAttribute, values);
                     continue;
                 }

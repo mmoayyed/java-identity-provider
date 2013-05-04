@@ -55,6 +55,6 @@ public class DependencyTest extends BaseAttributeDefinitionParserTest {
         ResolverPluginDependency depend = getDependency("idInParentDependency.xml");
         
         Assert.assertEquals(depend.getDependencyPluginId(), "TheHasRef");
-        Assert.assertFalse(depend.getDependencyAttributeId().isPresent());
+        Assert.assertNull(depend.getDependencyAttributeId());
     }
 }

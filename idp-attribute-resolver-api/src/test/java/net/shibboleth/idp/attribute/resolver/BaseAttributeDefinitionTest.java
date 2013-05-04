@@ -195,7 +195,7 @@ public class BaseAttributeDefinitionTest {
         
         Assert.assertEquals(depends.size(), 1);
         Assert.assertNull(definition.getSourceAttributeId());
-        Assert.assertFalse(depends.iterator().next().getDependencyAttributeId().isPresent());
+        Assert.assertNull(depends.iterator().next().getDependencyAttributeId());
         
         definition = new MockBaseAttributeDefinition("foo", null);
         definition.setSourceAttributeId("source");
@@ -207,7 +207,7 @@ public class BaseAttributeDefinitionTest {
         depends = definition.getDependencies();
         
         Assert.assertEquals(depends.size(), 1);
-        Assert.assertEquals(depends.iterator().next().getDependencyAttributeId().get(), "source");
+        Assert.assertEquals(depends.iterator().next().getDependencyAttributeId(), "source");
     }
     
     @Test public void initDestroyValidate() throws ComponentInitializationException, ComponentValidationException {

@@ -30,17 +30,17 @@ public class ResolverPluginDependencyTest {
         ResolverPluginDependency dep = new ResolverPluginDependency(" foo ");
         dep.setDependencyAttributeId(" bar ");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
-        Assert.assertEquals(dep.getDependencyAttributeId().get(), "bar");
+        Assert.assertEquals(dep.getDependencyAttributeId(), "bar");
 
         dep = new ResolverPluginDependency("foo ");
         dep.setDependencyAttributeId( "");
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
-        Assert.assertFalse(dep.getDependencyAttributeId().isPresent());
+        Assert.assertNull(dep.getDependencyAttributeId());
 
         dep = new ResolverPluginDependency("foo ");
         dep.setDependencyAttributeId(null);
         Assert.assertEquals(dep.getDependencyPluginId(), "foo");
-        Assert.assertFalse(dep.getDependencyAttributeId().isPresent());
+        Assert.assertNull(dep.getDependencyAttributeId());
 
         try {
             dep = new ResolverPluginDependency(null);

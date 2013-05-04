@@ -26,7 +26,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 
 /** Represents the dependency of one {@link BaseResolverPlugin} upon another plugin. */
 @ThreadSafe
@@ -36,7 +35,7 @@ public final class ResolverPluginDependency {
     private final String dependencyPluginId;
 
     /** ID of the attribute, produced by the identified plugin, whose values will be used by the dependent plugin. */
-    private Optional<String> dependencyAttributeId = Optional.absent();
+    private String dependencyAttributeId;
 
     /**
      * Constructor.
@@ -64,7 +63,7 @@ public final class ResolverPluginDependency {
      *            dependent plugin
      */
     public void setDependencyAttributeId(@Nullable String attributeId) {
-        dependencyAttributeId = Optional.fromNullable(StringSupport.trimOrNull(attributeId));
+        dependencyAttributeId =StringSupport.trimOrNull(attributeId);
     }
 
     /**
@@ -74,7 +73,7 @@ public final class ResolverPluginDependency {
      * @return ID of the attribute, produced by the identified plugin, whose values will be used by the dependent
      *         plugin, never null or empty
      */
-    @Nonnull public Optional<String> getDependencyAttributeId() {
+    @Nullable public String getDependencyAttributeId() {
         return dependencyAttributeId;
     }
 
