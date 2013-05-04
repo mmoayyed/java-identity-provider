@@ -130,9 +130,11 @@ public class AddSamlMetadataToMessageContext extends AbstractProfileAction {
             if (protocolCtx.getProtocol() != null) {
                 protocolCriterion = new ProtocolCriterion(protocolCtx.getProtocol());
             }
+            /* TODO this is changing
             if (protocolCtx.getRole() != null) {
                 roleCriterion = new EntityRoleCriterion(protocolCtx.getRole());
             }
+            */
         }
 
         final CriteriaSet criteria = new CriteriaSet(entityIdCriterion, protocolCriterion, roleCriterion);
