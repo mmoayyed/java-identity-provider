@@ -44,7 +44,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Optional;
 import com.google.common.cache.Cache;
 
 /** Bean definition Parser for a {@link RdbmsDataConnector}. */
@@ -98,7 +97,7 @@ public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
 
         final Validator validator = getBean(beanFactory, Validator.class);
         final MappingStrategy strategy = getBean(beanFactory, MappingStrategy.class);
-        final Cache<String, Optional<Map<String, Attribute>>> cache = getBean(beanFactory, Cache.class);
+        final Cache<String, Map<String, Attribute>> cache = getBean(beanFactory, Cache.class);
         final Boolean noResultAnError =
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
                         "noResultIsError")));
