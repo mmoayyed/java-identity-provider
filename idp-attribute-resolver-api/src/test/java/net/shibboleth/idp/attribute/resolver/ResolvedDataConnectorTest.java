@@ -29,15 +29,13 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /**
  * Largely boilerplate test for {@link ResolvedDataConnector}
  * 
  */
 public class ResolvedDataConnectorTest {
 
-    private Optional<Map<String, Attribute>> resolvedData = Optional.of((Map<String, Attribute>) Collections.EMPTY_MAP);
+    private Map<String, Attribute> resolvedData = Collections.EMPTY_MAP;
 
     @Test public void init() {
         MockStaticDataConnector dc = new MockStaticDataConnector();
@@ -107,7 +105,7 @@ public class ResolvedDataConnectorTest {
 
         Assert.assertEquals(resolvedDataConnector.doDataConnectorResolve(new AttributeResolutionContext()),
                 resolvedData);
-        Assert.assertFalse(resolvedDataConnector.getFailoverDataConnectorId().isPresent());
+        Assert.assertNull(resolvedDataConnector.getFailoverDataConnectorId());
         Assert.assertEquals(resolvedDataConnector.getResolvedConnector(), dc);
         Assert.assertTrue(resolvedDataConnector.isInitialized());
 

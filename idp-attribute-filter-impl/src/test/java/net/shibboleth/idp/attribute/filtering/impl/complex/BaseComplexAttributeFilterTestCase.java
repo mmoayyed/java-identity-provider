@@ -68,7 +68,7 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
         
         connector.initialize();
         
-        return connector.doResolve(null);
+        return Optional.fromNullable(connector.doResolve(null));
     }
 
     protected AttributeFilteringEngine getPolicy(String xmlFileName) {

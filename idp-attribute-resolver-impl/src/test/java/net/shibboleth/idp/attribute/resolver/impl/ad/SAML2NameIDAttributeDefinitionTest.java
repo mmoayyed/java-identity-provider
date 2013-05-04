@@ -25,9 +25,9 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
@@ -37,8 +37,6 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.saml.saml2.core.NameID;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Optional;
 
 /**
  * Test for {@link SAML2NameIDAttributeDefinition}.
@@ -62,9 +60,9 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();
 
-        final Optional<Attribute> result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        final Attribute result = defn.doAttributeDefinitionResolve(new AttributeResolutionContext());
 
-        Assert.assertTrue(result.get().getValues().isEmpty());
+        Assert.assertTrue(result.getValues().isEmpty());
     }
 
     private AttributeResolver setupResolver() throws ComponentInitializationException {

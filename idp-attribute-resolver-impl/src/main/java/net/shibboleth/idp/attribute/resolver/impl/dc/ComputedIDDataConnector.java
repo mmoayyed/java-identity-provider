@@ -20,9 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.dc;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -31,7 +29,8 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-import com.google.common.base.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A data connector that generates a unique ID by computing the SHA-1 hash of a given attribute value, the entity ID of
@@ -59,7 +58,7 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -69,14 +68,14 @@ public class ComputedIDDataConnector extends BaseComputedIDDataConnector {
 
         if (null == attributeRecipientContext) {
             log.warn("Attribute definition '{}' no attribute recipient context provided ", getId());
-            return Optional.absent();
+            return null;
         }
 
         String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
         
         if (attributeRecipientID == null) {
             log.warn("ComputedIDDataConnector '{}' : No Attribute Recipient ID located, unable to compute ID", getId());
-            return Optional.absent();
+            return null;
         }
 
         return encodeAsAttribute(generateComputedId(attributeRecipientID, resolveSourceAttribute(resolutionContext)));

@@ -41,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
@@ -155,12 +154,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * 
      * @param resolutionContext current attribute resolution context
      * 
-     * @return the attributes made available by the resolution, or {@link Optional#absent()} if no attributes were
-     *         resolved
+     * @return the attributes made available by the resolution, or null if no attributes were resolved
      * 
      * @throws ResolutionException thrown if there was a problem resolving the attributes
      */
-    @Nonnull public final Optional<ResolvedType> resolve(@Nonnull final AttributeResolutionContext resolutionContext)
+    @Nullable public final ResolvedType resolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -169,12 +167,11 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
 
         if (!activationCriteria.apply(resolutionContext)) {
             log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
-            return Optional.absent();
+            return null;
         }
 
         try {
-            return Constraint.isNotNull(doResolve(resolutionContext), "Result of doResolve for resolver plugin '"
-                    + getId() + "' was null");
+            return doResolve(resolutionContext);
         } catch (ResolutionException e) {
             //
             // NOTE - if you change this logic you MUST make changes in any derived classes that
@@ -185,7 +182,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
             } else {
                 log.debug("Resolver {} produced the following" + " error but was configured not to propogate it.",
                         new Object[] {getId(), e,});
-                return Optional.absent();
+                return null;
             }
         }
     }
@@ -210,7 +207,7 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        // rebuild the hash set - we may have modified the dependencies in the 
+        // rebuild the hash set - we may have modified the dependencies in the
         // child class initialization.
         HashSet<ResolverPluginDependency> checkedDeps = new HashSet<ResolverPluginDependency>(dependencies);
         dependencies = ImmutableSet.copyOf(checkedDeps);
@@ -261,6 +258,6 @@ public abstract class BaseResolverPlugin<ResolvedType> extends AbstractDestructa
      * 
      * @see BaseResolverPlugin#resolve(AttributeResolutionContext)
      */
-    @Nonnull protected abstract Optional<ResolvedType> doResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
+    @Nullable protected abstract ResolvedType doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
+            throws ResolutionException;
 }

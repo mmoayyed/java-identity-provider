@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -30,7 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -48,7 +48,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
     private final BaseAttributeDefinition resolvedDefinition;
 
     /** The attribute produced by the resolved attribute definition. */
-    private final Optional<Attribute> resolvedAttribute;
+    private final Attribute resolvedAttribute;
 
     /**
      * Constructor.
@@ -57,15 +57,15 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * @param attribute attribute produced by the given attribute definition
      */
     public ResolvedAttributeDefinition(@Nonnull BaseAttributeDefinition definition,
-            @Nonnull Optional<Attribute> attribute) {
+            @Nullable Attribute attribute) {
         resolvedDefinition = Constraint.isNotNull(definition, "Resolved attribute definition can not be null");
         Constraint.isTrue(definition.isInitialized(), "Resolved definition must have been initialized");
         Constraint.isFalse(definition.isDestroyed(), "Resolved definition can not have been destroyed");
-        resolvedAttribute = Constraint.isNotNull(attribute, "Resolved attribute can not be null");
+        resolvedAttribute = attribute;
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nullable protected Attribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
         return resolvedAttribute;
     }
@@ -110,7 +110,7 @@ public final class ResolvedAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return resolved attribute, or null
      */
-    @Nonnull public Optional<Attribute> getResolvedAttribute() {
+    @Nullable public Attribute getResolvedAttribute() {
         return resolvedAttribute;
     }
 

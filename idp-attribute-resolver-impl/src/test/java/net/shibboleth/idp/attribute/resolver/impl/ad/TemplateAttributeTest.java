@@ -139,7 +139,7 @@ public class TemplateAttributeTest {
         
         attr.initialize();
         Assert.assertNotNull(attr.getTemplate());
-        final Attribute val = attr.resolve(new AttributeResolutionContext()).get();
+        final Attribute val = attr.resolve(new AttributeResolutionContext());
         final Collection<?> results = val.getValues();
 
         Assert.assertEquals(results.size(), 0, "Templated value count");
@@ -154,7 +154,7 @@ public class TemplateAttributeTest {
         attr.initialize();
         Assert.assertNotNull(attr.getTemplate());
         try {
-            attr.resolve(new AttributeResolutionContext()).get();
+            attr.resolve(new AttributeResolutionContext());
         } catch (ResolutionException e) {
             // OK
         }

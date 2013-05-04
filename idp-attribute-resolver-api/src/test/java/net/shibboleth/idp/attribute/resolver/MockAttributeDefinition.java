@@ -24,8 +24,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import com.google.common.base.Optional;
-
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
 public class MockAttributeDefinition extends BaseAttributeDefinition implements ValidatableComponent {
@@ -43,7 +41,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
     private int validateCount;
 
     /** Static value returned by this definition. */
-    private Optional<Attribute> staticValue;
+    private Attribute staticValue;
 
     /** Exception thrown by {@link #doAttributeResolution(AttributeResolutionContext))}. */
     private ResolutionException resolutionException;
@@ -57,7 +55,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
     public MockAttributeDefinition(final String id, final Attribute value) {
         setId(id);
         invalid = false;
-        staticValue = Optional.<Attribute> fromNullable(value);
+        staticValue = value;
     }
 
     /**
@@ -82,7 +80,7 @@ public class MockAttributeDefinition extends BaseAttributeDefinition implements 
     }
 
     /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
+    protected Attribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         if (resolutionException != null) {
             throw resolutionException;

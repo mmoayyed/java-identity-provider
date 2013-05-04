@@ -21,8 +21,6 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Optional;
-
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -38,7 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class PrincipalNameAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
@@ -56,6 +54,6 @@ public class PrincipalNameAttributeDefinition extends BaseAttributeDefinition {
         
         final Attribute attribute = new Attribute(getId());
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(principalName)));
-        return Optional.of(attribute);
+        return attribute;
     }
 }

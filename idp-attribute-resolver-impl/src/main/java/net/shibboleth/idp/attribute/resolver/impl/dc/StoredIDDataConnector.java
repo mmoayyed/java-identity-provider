@@ -40,8 +40,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /**
  * A data connector that generates persistent identifiers in one of two ways. The generated attribute has an ID of
  * <tt>peristentId</tt> and contains a single {@link String} value.
@@ -230,7 +228,7 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -240,38 +238,33 @@ public class StoredIDDataConnector extends BaseComputedIDDataConnector {
 
         if (null == attributeRecipientContext) {
             log.warn("Attribute definition '{}' no attribute recipient context provided ", getId());
-            return Optional.absent();
+            return null;
         }
 
         final String principal = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
-        boolean returnAbsent = false;
 
         if (null == principal) {
             log.warn("StoredID '{}' : No principal available, skipping ID creation", getId());
-            returnAbsent = true;
+            return null;
         }
 
         final String localId = StringSupport.trimOrNull(resolveSourceAttribute(resolutionContext));
         if (null == localId) {
             // We did the logging in the helper method
-            returnAbsent = true;
+            return null;
         }
 
         final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
         if (null == attributeIssuerID) {
             log.warn("StoredID '{}' : Could not get attribute issuer ID, skipping ID creation", getId());
-            returnAbsent = true;
+            return null;
         }
 
         final String attributeRecipientID =
                 StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
         if (null == attributeRecipientID) {
             log.warn("StoredID '{}' : Could not get attribute recipient ID, skipping ID creation", getId());
-            returnAbsent = true;
-        }
-
-        if (returnAbsent) {
-            return Optional.absent();
+            return null;
         }
 
         return encodeAsAttribute(getStoredId(principal, attributeIssuerID, attributeRecipientID, localId));

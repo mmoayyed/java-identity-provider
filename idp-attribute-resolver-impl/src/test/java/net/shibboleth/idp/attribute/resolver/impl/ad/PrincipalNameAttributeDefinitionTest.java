@@ -27,8 +27,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /**
  * test for {@link PrincipalNameAttributeDefinition}
  */
@@ -69,11 +67,11 @@ public class PrincipalNameAttributeDefinitionTest {
         defn.setId("id");
         defn.initialize();
         
-        Optional<Attribute> result = defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("principal", "issuer", "recipient"));
+        Attribute result = defn.doAttributeDefinitionResolve(TestSources.createResolutionContext("principal", "issuer", "recipient"));
         
-        Assert.assertEquals(result.get().getValues().size(), 1);
+        Assert.assertEquals(result.getValues().size(), 1);
         
-        StringAttributeValue value = (StringAttributeValue) result.get().getValues().iterator().next();
+        StringAttributeValue value = (StringAttributeValue) result.getValues().iterator().next();
         Assert.assertEquals(value.getValue(), "principal");
 
         

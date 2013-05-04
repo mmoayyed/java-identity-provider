@@ -36,8 +36,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /**
  * Tests for {Link CryptoTransientIdAttributeDefinition}.
  */
@@ -155,9 +153,9 @@ public class CryptoTransientIdAttributeDefinitionTest {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        final Optional<Attribute> result = defn.doAttributeDefinitionResolve(context);
+        final Attribute result = defn.doAttributeDefinitionResolve(context);
 
-        final Set<AttributeValue> values = result.get().getValues();
+        final Set<AttributeValue> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
         final String code = ((StringAttributeValue) values.iterator().next()).getValue();
 

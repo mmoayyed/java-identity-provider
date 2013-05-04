@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 /**
  * An attribute definition which returns an attribute with a single value - the AuthenticationMethod.
@@ -70,18 +69,18 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nullable protected Attribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
         final String method = StringSupport.trimOrNull(lookupStrategy.apply(resolutionContext));
 
         if (null == method) {
             log.info("Attribute definition '{}': null or empty method was returned", getId());
-            return Optional.absent();
+            return null;
         }
 
         final Attribute attribute = new Attribute(getId());
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(method)));
-        return Optional.of(attribute);
+        return attribute;
     }
 
     /** {@inheritDoc} */

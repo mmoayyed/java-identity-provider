@@ -53,7 +53,6 @@ import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 
 /**
@@ -161,7 +160,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    protected Optional<Attribute> doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
+    @Nonnull protected Attribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
         final Attribute resultantAttribute = new Attribute(getId());
@@ -203,7 +202,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             }
         }
 
-        return Optional.of(resultantAttribute);
+        return resultantAttribute;
     }
 
     /** {@inheritDoc} */

@@ -20,11 +20,10 @@ package net.shibboleth.idp.attribute.resolver.impl.dc;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-
-import com.google.common.base.Optional;
 
 //TODO(lajoie): I wonder if there should be an abstract class impl of this that has some properties like name and data type mappings, name lower/uppercasing, etc.
 
@@ -36,10 +35,10 @@ public interface MappingStrategy<T> {
      * 
      * @param results to map
      * 
-     * @return the mapped attributes
+     * @return the mapped attributes or null if none exist
      * 
      * @throws ResolutionException thrown if there is a problem reading data or mapping it
      */
-    @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull T results)
+    @Nullable  public Map<String, Attribute> map(@Nonnull T results)
             throws ResolutionException;
 }

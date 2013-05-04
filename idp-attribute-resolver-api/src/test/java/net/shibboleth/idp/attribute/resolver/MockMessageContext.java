@@ -37,9 +37,6 @@ import org.opensaml.ws.transport.OutTransport;
  * An old style {@link SAMLMessageContext} whose sole purpose is to provide 
  * a SubjectNameIdenfifier and an InboundMessageIssuer 
  */
-/**
- *
- */
 public class MockMessageContext implements SAMLMessageContext<SAMLObject, SAMLObject, SAMLObject> {
 
     /**

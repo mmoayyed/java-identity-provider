@@ -37,7 +37,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Constraints;
 import com.google.common.collect.MapConstraints;
@@ -141,9 +140,8 @@ public class AttributeResolutionContext extends BaseContext {
      *             already been recorded
      */
     public void recordAttributeDefinitionResolution(@Nonnull final BaseAttributeDefinition definition,
-            @Nonnull final Optional<Attribute> attribute) throws ResolutionException {
+            @Nullable final Attribute attribute) throws ResolutionException {
         Constraint.isNotNull(definition, "Resolver attribute definition can not be null");
-        Constraint.isNotNull(attribute, "Resolved attribute can not be null");
 
         if (resolvedAttributeDefinitions.containsKey(definition.getId())) {
             throw new ResolutionException("The resolution of attribute definition " + definition.getId()
@@ -173,9 +171,8 @@ public class AttributeResolutionContext extends BaseContext {
      *             been recorded
      */
     public void recordDataConnectorResolution(@Nonnull final BaseDataConnector connector,
-            @Nonnull final Optional<Map<String, Attribute>> attributes) throws ResolutionException {
+            @Nullable final Map<String, Attribute> attributes) throws ResolutionException {
         Constraint.isNotNull(connector, "Resolver data connector can not be null");
-        Constraint.isNotNull(attributes, "Resolved attributes can not be null");
 
         if (resolvedDataConnectors.containsKey(connector.getId())) {
             throw new ResolutionException("The resolution of data connector " + connector.getId()

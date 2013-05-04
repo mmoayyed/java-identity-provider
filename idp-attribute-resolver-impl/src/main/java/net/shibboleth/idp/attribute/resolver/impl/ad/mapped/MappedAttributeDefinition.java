@@ -45,7 +45,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -189,7 +188,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
     }
     
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -223,7 +222,7 @@ public class MappedAttributeDefinition extends BaseAttributeDefinition {
                 resultAttribute.getValues().addAll(mappingResult);
             }
         }
-        return Optional.of(resultAttribute);
+        return resultAttribute;
     }
 
     /** {@inheritDoc} */

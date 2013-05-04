@@ -38,13 +38,11 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -239,22 +237,18 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * This method delegates the actual resolution of the attribute's values to the
      * {@link #doAttributeDefinitionResolve(AttributeResolutionContext)} method. Afterwards, if
-     * {@link Optional#absent()} was not returned, this method will attach the registered display names, descriptions,
+     * null was not returned, this method will attach the registered display names, descriptions,
      * and encoders to the resultant attribute.
      */
-    @Nonnull protected Optional<Attribute> doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
+    @Nullable protected Attribute doResolve(@Nonnull final AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
-        final Optional<Attribute> optionalAttribute =
-                Constraint.isNotNull(doAttributeDefinitionResolve(resolutionContext),
-                        "return of doAttributeResolution was null");
+        final Attribute resolvedAttribute = doAttributeDefinitionResolve(resolutionContext);
 
-        if (!optionalAttribute.isPresent()) {
+        if (null == resolvedAttribute) {
             log.debug("Attribute definition '{}': no attribute was produced during resolution", getId());
-            return optionalAttribute;
+            return null;
         }
-
-        Attribute resolvedAttribute = optionalAttribute.get();
 
         if (resolvedAttribute.getValues().isEmpty()) {
             log.debug("Attribute definition '{}': produced an attribute with no values", getId());
@@ -275,7 +269,7 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
                 getId(), getAttributeEncoders());
         resolvedAttribute.setEncoders(getAttributeEncoders());
 
-        return optionalAttribute;
+        return resolvedAttribute;
     }
 
     /**
@@ -285,10 +279,10 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      * 
      * @param resolutionContext current attribute resolution context
      * 
-     * @return resolved attribute
+     * @return resolved attribute or null if nothing to resolve.
      * 
      * @throws ResolutionException thrown if there is a problem resolving and creating the attribute
      */
-    @Nonnull protected abstract Optional<Attribute> doAttributeDefinitionResolve(
+    @Nullable protected abstract Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
 }

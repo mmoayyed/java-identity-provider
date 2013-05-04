@@ -44,7 +44,7 @@ import com.google.common.base.Predicate;
  * a default result for {@link AbstractValueMatcherFunctor#getMatchingRules} which states that if the predicate is true
  * then we get all values for the attribute otherwise none.
  * 
- * AttributeRule implementations will extend a superclass of thi:s {@link AbstractValueMatcherFunctor} or
+ * AttributeRule implementations will extend a superclass of this {@link AbstractValueMatcherFunctor} or
  * {@link BaseRegexpValuePredicateMatcher} which will implement a sensible default for the PolicyRequirementRule and
  * inject the required valuePredicate into the constructor.
  */

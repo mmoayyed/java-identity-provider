@@ -39,8 +39,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Optional;
-
 /**
  * An attribute definition that creates {@link ScopedStringAttributeValue}s by taking a source attribute value and
  * applying a static scope to each.
@@ -73,7 +71,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -95,7 +93,7 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
                     new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
         }
 
-        return Optional.of(resultantAttribute);
+        return resultantAttribute;
     }
 
     /** {@inheritDoc} */

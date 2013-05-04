@@ -31,8 +31,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
 public class StaticAttributeDefinition extends BaseAttributeDefinition {
@@ -41,7 +39,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     private final Logger log = LoggerFactory.getLogger(StaticAttributeDefinition.class);
 
     /** Static value returned by this definition. */
-    private Optional<Attribute> value = Optional.absent();
+    private Attribute value ;
 
     /**
      * Set the attribute value we are returning.
@@ -52,9 +50,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
-        if (null != newAttribute) {
-            value = Optional.of(newAttribute);
-        }
+        value = newAttribute;
     }
 
     /**
@@ -62,16 +58,16 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the attribute.
      */
-    @Nonnull public Optional<Attribute> getValue() {
+    @Nonnull public Attribute getValue() {
         return value;
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        log.debug("Attribute definition '{}': Resolving static attribute {}", getId(), value.get());
+        log.debug("Attribute definition '{}': Resolving static attribute {}", getId(), value);
         return value;
     }
 
@@ -79,7 +75,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (!value.isPresent()) {
+        if (null == value) {
             throw new ComponentInitializationException("Static Attribute definition " + getId()
                     + " does not have an attribute set up.");
         }

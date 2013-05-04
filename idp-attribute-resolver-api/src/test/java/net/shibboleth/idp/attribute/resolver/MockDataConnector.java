@@ -26,8 +26,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.ValidatableComponent;
 
-import com.google.common.base.Optional;
-
 /** A data connector that just returns a static collection of attributes. */
 @ThreadSafe
 public class MockDataConnector extends BaseDataConnector implements ValidatableComponent {
@@ -45,7 +43,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
     private int validateCount;
 
     /** Static collection of values returned by this connector. */
-    private Optional<Map<String, Attribute>> values;
+    private Map<String, Attribute> values;
 
     /** Exception thrown by {@link #doDataConnectorResolve(AttributeResolutionContext)}. */
     private ResolutionException resolutionException;
@@ -58,7 +56,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
      */
     public MockDataConnector(String id, Map<String, Attribute> connectorValues) {
         setId(id);
-        values = Optional.<Map<String, Attribute>> fromNullable(connectorValues);
+        values = connectorValues;
     }
 
     /**
@@ -83,7 +81,7 @@ public class MockDataConnector extends BaseDataConnector implements ValidatableC
     }
 
     /** {@inheritDoc} */
-    protected Optional<Map<String, Attribute>> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
+    protected Map<String, Attribute> doDataConnectorResolve(AttributeResolutionContext resolutionContext)
             throws ResolutionException {
         if (resolutionException != null) {
             throw resolutionException;

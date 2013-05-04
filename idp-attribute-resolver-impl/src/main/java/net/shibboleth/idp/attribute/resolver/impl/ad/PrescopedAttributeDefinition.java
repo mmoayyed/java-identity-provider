@@ -40,8 +40,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /**
  * An attribute definition that creates {@link ScopedStringAttributeValue}s by taking a source attribute value splitting
  * it at a delimiter. The first atom becomes the attribute value and the second value becomes the scope.
@@ -79,7 +77,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -102,7 +100,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
             resultantAttribute.getValues().add(buildScopedStringAttributeValue((StringAttributeValue) dependencyValue));
         }
 
-        return Optional.of(resultantAttribute);
+        return resultantAttribute;
     }
 
     /**

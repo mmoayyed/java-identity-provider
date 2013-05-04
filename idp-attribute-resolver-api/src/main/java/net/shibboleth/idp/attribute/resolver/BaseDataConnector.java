@@ -30,8 +30,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /** Base class for data connector resolver plugins. */
 @ThreadSafe
 public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, Attribute>> {
@@ -40,7 +38,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
     private final Logger log = LoggerFactory.getLogger(BaseDataConnector.class);
 
     /** ID of the data connector to use if this one fails. */
-    private Optional<String> failoverDataConnectorId = Optional.absent();
+    private String failoverDataConnectorId;
 
     /**
      * Gets the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
@@ -49,7 +47,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * @return ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
-    @Nonnull public Optional<String> getFailoverDataConnectorId() {
+    @Nullable public String getFailoverDataConnectorId() {
         return failoverDataConnectorId;
     }
 
@@ -64,7 +62,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        failoverDataConnectorId = Optional.fromNullable(StringSupport.trimOrNull(id));
+        failoverDataConnectorId = StringSupport.trimOrNull(id);
     }
 
     /**
@@ -73,24 +71,24 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * This method delegates to {@link #doDataConnectorResolve(AttributeResolutionContext)}. It serves as a future
      * extension point for introducing new common behavior.
      */
-    @Nonnull public final Optional<Map<String, Attribute>> doResolve(
+    @Nullable public final Map<String, Attribute> doResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Optional<Map<String, Attribute>> optionalResult = doDataConnectorResolve(resolutionContext);
+        Map<String, Attribute> result = doDataConnectorResolve(resolutionContext);
 
-        if (!optionalResult.isPresent()) {
+        if (null == result) {
             log.debug("Data connector '{}': no attributes were produced during resolution", getId());
-            return optionalResult;
+            return result;
         } else {
             log.debug("Data connector '{}': produced the following {} attributes during resolution {}", new Object[] {
-                    getId(), optionalResult.get().size(), optionalResult.get().keySet(),});
-            for (String attrName : optionalResult.get().keySet()) {
-                Attribute attr = optionalResult.get().get(attrName);
+                    getId(), result.size(), result.keySet(),});
+            for (String attrName : result.keySet()) {
+                Attribute attr = result.get(attrName);
                 log.debug("Data connector '{}': Attribute '{}': Values '{}'",
                         new Object[] {getId(), attrName, attr.getValues(),});
             }
         }
 
-        return optionalResult;
+        return result;
     }
 
     /**
@@ -102,6 +100,6 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      * 
      * @throws ResolutionException thrown if there is a problem resolving the attributes
      */
-    @Nonnull protected abstract Optional<Map<String, Attribute>> doDataConnectorResolve(
+    @Nullable protected abstract Map<String, Attribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
 }

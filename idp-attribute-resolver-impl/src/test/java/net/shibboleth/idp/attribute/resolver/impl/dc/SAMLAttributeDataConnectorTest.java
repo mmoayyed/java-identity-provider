@@ -37,7 +37,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 /**
  * test for the {@link SAMLAttributeDataConnector}
@@ -54,11 +53,8 @@ public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
         connector.setAttributesStrategy(entityLocator);
         connector.setId(PATH);
         connector.initialize();
-        
-        final Optional<Map<String, Attribute>> optionalAttributes = connector.doDataConnectorResolve(null);
-        Assert.assertTrue(optionalAttributes.isPresent());
-        
-        final Map<String, Attribute> attributes = optionalAttributes.get();
+    
+        final Map<String, Attribute> attributes = connector.doDataConnectorResolve(null);
         Assert.assertEquals(attributes.size(), 2);
         
         Set<AttributeValue> attributeValues = attributes.get("SamlName").getValues();

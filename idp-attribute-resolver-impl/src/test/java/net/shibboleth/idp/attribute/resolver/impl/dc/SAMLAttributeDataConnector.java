@@ -43,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 /**
  * Data Connector to extra attributes from a saml2 {@link org.opensaml.saml.saml2.core.Assertion}. It is hoped that this
@@ -142,13 +141,13 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         final List<org.opensaml.saml.saml2.core.Attribute> samlAttributes = attributesStrategy.apply(resolutionContext);
 
         if (null == samlAttributes) {
             log.info("Connector '{}' no attributes found", getId());
-            return Optional.absent();
+            return null;
         }
 
         final Map<String, Attribute> retVal = new HashMap<>(samlAttributes.size());
@@ -165,7 +164,7 @@ public class SAMLAttributeDataConnector extends BaseDataConnector {
 
             retVal.put(attributeName, attribute);
         }
-        return Optional.of(retVal);
+        return retVal;
     }
 
 }

@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -32,8 +33,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 /**
  * A simple {@link ResultMappingStrategy} that assumes all columns in the result set should be mapped and that all
@@ -45,14 +44,14 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
     private final Logger log = LoggerFactory.getLogger(StringResultMappingStrategy.class);
 
     /** {@inheritDoc} */
-    @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull final ResultSet results)
+    @Nullable public Map<String, Attribute> map(@Nonnull final ResultSet results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Result set can not be null");
 
         try {
             if (!results.next()) {
                 log.debug("Result set did not contain any rows, nothing to map");
-                return Optional.absent();
+                return null;
             }
             final ResultSetMetaData resultMetadata = results.getMetaData();
 
@@ -65,7 +64,11 @@ public class StringResultMappingStrategy implements ResultMappingStrategy {
                 attributes.put(attribute.getId(), attribute);
             }
 
-            return Optional.of(attributes);
+            if (attributes.isEmpty()) {
+                return null;
+            } else {
+                return attributes;
+            }
         } catch (SQLException e) {
             throw new ResolutionException("Error reading data from result set", e);
         }

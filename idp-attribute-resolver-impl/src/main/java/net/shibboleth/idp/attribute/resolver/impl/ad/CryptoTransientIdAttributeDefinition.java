@@ -37,8 +37,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /**
  * An attribute definition that generates integrity protected, encrypted identifiers useful for stateless transient
  * subject IDs.
@@ -68,7 +66,7 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         final AttributeRecipientContext attributeRecipientContext =
@@ -115,7 +113,7 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
             log.error("Attribute definition '" + getId() + "': Caught exception wrapping principal identifier.", e);
         }
         
-        return Optional.of(result);
+        return result;
     }
 
     /**

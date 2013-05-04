@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -32,8 +33,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 //TODO(lajoie): do we want something that can map data types too like the RDBMS equivalent?
 //TODO(lajoie): want some settings to control what happens if there is more than one LdapEntry
@@ -48,7 +47,7 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
     private final Logger log = LoggerFactory.getLogger(StringAttributeValueMappingStrategy.class);
 
     /** {@inheritDoc} */
-    @Nonnull public Optional<Map<String, Attribute>> map(@Nonnull final SearchResult results)
+    @Nullable public Map<String, Attribute> map(@Nonnull final SearchResult results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Results can not be null");
 
@@ -64,9 +63,9 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
         }
         log.trace("Mapping strategy mapped {} to {}", results, attributes);
         if (attributes.isEmpty()) {
-            return Optional.<Map<String, Attribute>> absent();
+            return null;
         } else {
-            return Optional.of(attributes);
+            return attributes;
         }
     }
 }

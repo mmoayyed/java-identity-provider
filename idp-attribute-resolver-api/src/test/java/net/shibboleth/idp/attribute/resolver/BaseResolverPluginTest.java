@@ -24,7 +24,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 
 /** Unit test for {@link BaseResolverPlugin}. */
@@ -115,14 +114,14 @@ public class BaseResolverPluginTest {
         MockBaseResolverPlugin plugin = new MockBaseResolverPlugin("foo", "bar");
         plugin.initialize();
 
-        Assert.assertEquals(plugin.resolve(context), Optional.fromNullable("bar"));
+        Assert.assertEquals(plugin.resolve(context), "bar");
 
         context = new AttributeResolutionContext();
         plugin = new MockBaseResolverPlugin(" foo ", "bar");
         plugin.setActivationCriteria(Predicates.<AttributeResolutionContext> alwaysFalse());
 
         plugin.initialize();
-        Assert.assertEquals(plugin.resolve(context), Optional.absent());
+        Assert.assertNull(plugin.resolve(context));
 
     }
 
@@ -133,7 +132,7 @@ public class BaseResolverPluginTest {
     private static final class MockBaseResolverPlugin extends BaseResolverPlugin<String> {
 
         /** Static value return by {@link #doResolve(AttributeResolutionContext)}. */
-        private Optional<String> resolverValue;
+        private String resolverValue;
 
         /**
          * Constructor.
@@ -143,11 +142,11 @@ public class BaseResolverPluginTest {
          */
         public MockBaseResolverPlugin(String id, String value) {
             setId(id);
-            resolverValue = Optional.fromNullable(value);
+            resolverValue = value;
         }
 
         /** {@inheritDoc} */
-        protected Optional<String> doResolve(AttributeResolutionContext resolutionContext)
+        protected String doResolve(AttributeResolutionContext resolutionContext)
                 throws ResolutionException {
             return resolverValue;
         }

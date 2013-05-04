@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.impl.dc.ldap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -38,8 +39,6 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 /** A {@link BaseDataConnector} that queries an LDAP in order to retrieve attribute data. */
 public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSearchFilter> {
@@ -135,7 +134,7 @@ public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSea
      * 
      * @throws ResolutionException thrown if there is a problem retrieving data from the LDAP
      */
-    protected Optional<Map<String, Attribute>> retrieveAttributes(final ExecutableSearchFilter filter)
+    @Nullable protected Map<String, Attribute> retrieveAttributes(final ExecutableSearchFilter filter)
             throws ResolutionException {
 
         if (filter == null) {
@@ -148,7 +147,7 @@ public class LdapDataConnector extends AbstractSearchDataConnector<ExecutableSea
                 if (isNoResultAnError()) {
                     throw new ResolutionException("No attributes returned from search");
                 } else {
-                    return Optional.<Map<String, Attribute>> absent();
+                    return null;
                 }
             }
             return getMappingStrategy().map(result);

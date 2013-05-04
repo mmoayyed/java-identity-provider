@@ -22,13 +22,11 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Optional;
 
 /**
  * A {@link BaseAttributeDefinition} that creates an attribute whose values are the values the values of all its
@@ -38,13 +36,13 @@ import com.google.common.base.Optional;
 public class SimpleAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final Attribute result = new Attribute(getId());
         result.setValues(PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies()));
-        return Optional.of(result);
+        return result;
     }
 
     /** {@inheritDoc} */

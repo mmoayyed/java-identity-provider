@@ -19,17 +19,15 @@ package net.shibboleth.idp.attribute.resolver;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Optional;
-
 /**
  * A principal connector which just pulls the value from the 
  */
 public class MockSubjectNamePrincipalConnector extends BaseSubjectNamePrincipalConnectorDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<String> doResolve(AttributeResolutionContext resolutionContext)
+    @Nonnull protected String doResolve(AttributeResolutionContext resolutionContext)
             throws ResolutionException {
-        return Optional.of(contentOf(resolutionContext));
+        return contentOf(resolutionContext);
     }
 
 }

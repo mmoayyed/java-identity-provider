@@ -42,8 +42,6 @@ import net.shibboleth.utilities.java.support.security.RandomIdentifierGeneration
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /**
  * An attribute definition that generates random identifiers useful for transient subject IDs.
  * 
@@ -198,7 +196,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -242,6 +240,6 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         }
         Set<AttributeValue> vals = Collections.singleton((AttributeValue) new StringAttributeValue(tokenEntry.getId()));
         result.setValues(vals);
-        return Optional.of(result);
+        return result;
     }
 }

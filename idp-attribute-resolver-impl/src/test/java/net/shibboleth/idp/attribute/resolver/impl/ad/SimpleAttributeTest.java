@@ -36,8 +36,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.SimpleAttribute}. */
 public class SimpleAttributeTest {
 
@@ -62,9 +60,9 @@ public class SimpleAttributeTest {
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         simple.initialize();
 
-        final Optional<Attribute> result = simple.doAttributeDefinitionResolve(new AttributeResolutionContext());
+        final Attribute result = simple.doAttributeDefinitionResolve(new AttributeResolutionContext());
 
-        Assert.assertTrue(result.get().getValues().isEmpty());
+        Assert.assertTrue(result.getValues().isEmpty());
     }
 
     /**

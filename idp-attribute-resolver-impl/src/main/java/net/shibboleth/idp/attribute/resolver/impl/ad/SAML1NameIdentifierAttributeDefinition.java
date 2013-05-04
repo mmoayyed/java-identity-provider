@@ -42,8 +42,6 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /**
  * An attribute definition the creates attributes whose values are {@link NameIdentifier}.
  * 
@@ -181,7 +179,7 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nullable protected Attribute doAttributeDefinitionResolve(
             @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -208,13 +206,14 @@ public class SAML1NameIdentifierAttributeDefinition extends BaseAttributeDefinit
                     }
                 }
                 if (0 == outputValues.size()) {
-                    outputValues = null;
+                    log.warn("NameIdAttribute {} No appropriate values", getId());
+                    return null;
                 }
             }
         }
         result.setValues(outputValues);
 
-        return Optional.fromNullable(result);
+        return result;
     }
 
 }

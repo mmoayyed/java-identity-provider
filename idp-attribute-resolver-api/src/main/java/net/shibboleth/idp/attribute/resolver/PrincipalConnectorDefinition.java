@@ -18,10 +18,9 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.BaseContext;
-
-import com.google.common.base.Optional;
 
 /**
  * Definition of a Principal Connector. <b/> This is the component which takes a context and produces the unique
@@ -40,9 +39,9 @@ public interface PrincipalConnectorDefinition<ConsumedContext extends BaseContex
      * Resolve the principal with respect to the provided context.
      * 
      * @param context what to look at.
-     * @return the IdP principal, or {@link Optional#absent()} if this definition wasn't applicable
+     * @return the IdP principal, or null if this definition wasn't applicable
      * @throws ResolutionException if we encountered a fatal processing error.
      */
-    public Optional<String> resolve(@Nonnull final ConsumedContext context) throws ResolutionException;
+    @Nullable public String resolve(@Nonnull final ConsumedContext context) throws ResolutionException;
 
 }

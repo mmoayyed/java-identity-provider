@@ -41,8 +41,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /**
  * An {@link BaseAttributeDefinition} that produces its attribute values by taking the first group match of a regular
  * expression evaluating against the values of this definition's dependencies.
@@ -78,7 +76,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -113,7 +111,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
             }
         }
 
-        return Optional.of(resultantAttribute);
+        return resultantAttribute;
     }
     
 

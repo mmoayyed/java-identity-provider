@@ -29,7 +29,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 /**
  * Test for {@link PrincipalAuthenticationMethodAttributeDefinition}
@@ -55,7 +54,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
         defn.setId("id");
         defn.setLookupStrategy(new Strategy(""));
         defn.initialize();
-        Assert.assertFalse(defn.doAttributeDefinitionResolve(null).isPresent());
+        Assert.assertNull(defn.doAttributeDefinitionResolve(null));
     }
     
     @Test
@@ -65,11 +64,11 @@ public class PrincipalAuthenticationMethodAttributeDefinitionTest {
         defn.setLookupStrategy(new Strategy("Method"));
         defn.initialize();
         
-        Optional<Attribute> result = defn.doAttributeDefinitionResolve(null);
+        Attribute result = defn.doAttributeDefinitionResolve(null);
         
-        Assert.assertEquals(result.get().getValues().size(), 1);
+        Assert.assertEquals(result.getValues().size(), 1);
         
-        StringAttributeValue value = (StringAttributeValue) result.get().getValues().iterator().next();
+        StringAttributeValue value = (StringAttributeValue) result.getValues().iterator().next();
         Assert.assertEquals(value.getValue(), "Method");
     }
     

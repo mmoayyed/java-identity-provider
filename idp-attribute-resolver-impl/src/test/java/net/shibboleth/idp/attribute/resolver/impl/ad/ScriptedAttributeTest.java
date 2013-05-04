@@ -51,7 +51,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute}. */
 public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
@@ -95,7 +94,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
-        final Attribute val = attr.doAttributeDefinitionResolve(generateContext()).get();
+        final Attribute val = attr.doAttributeDefinitionResolve(generateContext());
         final Set<AttributeValue> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -125,7 +124,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
-        final Attribute val = attr.doAttributeDefinitionResolve(generateContext()).get();
+        final Attribute val = attr.doAttributeDefinitionResolve(generateContext());
         final Set<AttributeValue> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -148,7 +147,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         attr.initialize();
         Assert.assertNotNull(attr.getScript());
 
-        final Attribute val = attr.doAttributeDefinitionResolve(generateContext()).get();
+        final Attribute val = attr.doAttributeDefinitionResolve(generateContext());
         final Set<AttributeValue> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
@@ -188,7 +187,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         failureTest("fail1.script", "Unknown method");
         failureTest("fail2.script", "Bad output type");
-        Assert.assertFalse(buildTest("fail3.script").doAttributeDefinitionResolve(generateContext()).isPresent(),
+        Assert.assertNull(buildTest("fail3.script").doAttributeDefinitionResolve(generateContext()),
                 "returns nothing");
         failureTest("fail4.script", "getValues, then getNativeAttributes");
         failureTest("fail5.script", "getNativeAttributes, then getValues");
@@ -201,7 +200,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             ComponentInitializationException {
 
         final Attribute result =
-                buildTest("addAfterGetValues.script").doAttributeDefinitionResolve(generateContext()).get();
+                buildTest("addAfterGetValues.script").doAttributeDefinitionResolve(generateContext());
         final Set<AttributeValue> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("newValue")));
@@ -421,8 +420,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContext.script")));
         scripted.initialize();
 
-        Optional<Attribute> result = scripted.doAttributeDefinitionResolve(generateContext());
-        HashSet<AttributeValue> set = new HashSet(result.get().getValues());
+        Attribute result = scripted.doAttributeDefinitionResolve(generateContext());
+        HashSet<AttributeValue> set = new HashSet(result.getValues());
         Assert.assertEquals(set.size(), 3);
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.IDP_ENTITY_ID)));
@@ -438,8 +437,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContextUnimplemented.script")));
         scripted.initialize();
 
-        Optional<Attribute> result = scripted.doAttributeDefinitionResolve(generateContext());
-        Assert.assertEquals(result.get().getValues().iterator().next(), new StringAttributeValue("AllDone"));
+        Attribute result = scripted.doAttributeDefinitionResolve(generateContext());
+        Assert.assertEquals(result.getValues().iterator().next(), new StringAttributeValue("AllDone"));
 
     }
 

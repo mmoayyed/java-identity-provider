@@ -26,9 +26,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Optional;
-
 /**
  * Largely boilerplate test for {@link ResolvedAttributeDefinition}
  * 
@@ -40,7 +37,7 @@ public class ResolvedAttributeDefinitionTest {
         MockStaticAttributeDefinition attrDef = new MockStaticAttributeDefinition();
 
         try {
-            new ResolvedAttributeDefinition(null, Optional.of(attribute));
+            new ResolvedAttributeDefinition(null, attribute);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // OK
@@ -54,7 +51,7 @@ public class ResolvedAttributeDefinitionTest {
         }
 
         try {
-            new ResolvedAttributeDefinition(new MockStaticAttributeDefinition(), Optional.of(attribute));
+            new ResolvedAttributeDefinition(new MockStaticAttributeDefinition(), attribute);
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // OK
@@ -69,7 +66,7 @@ public class ResolvedAttributeDefinitionTest {
         attrDef.setId("Defn");
         attrDef.initialize();
         ResolvedAttributeDefinition resolvedAttributeDefinition =
-                new ResolvedAttributeDefinition(attrDef, Optional.of(new Attribute("foo")));
+                new ResolvedAttributeDefinition(attrDef, new Attribute("foo"));
 
         resolvedAttributeDefinition.toString();
 
@@ -78,7 +75,7 @@ public class ResolvedAttributeDefinitionTest {
         otherDef.setValue(new Attribute("bar"));
         otherDef.setId("OtherDefn");
         otherDef.initialize();
-        otherResolvedAttributeDefinition = new ResolvedAttributeDefinition(otherDef, Optional.of(new Attribute("bar")));
+        otherResolvedAttributeDefinition = new ResolvedAttributeDefinition(otherDef, new Attribute("bar"));
 
         Assert.assertFalse(resolvedAttributeDefinition.equals(null));
         Assert.assertFalse(resolvedAttributeDefinition.equals(this));
@@ -104,7 +101,7 @@ public class ResolvedAttributeDefinitionTest {
         attrDef.initialize();
 
         ResolvedAttributeDefinition resolvedAttributeDefinition =
-                new ResolvedAttributeDefinition(attrDef, Optional.of(new Attribute("foo")));
+                new ResolvedAttributeDefinition(attrDef, new Attribute("foo"));
         resolvedAttributeDefinition.getActivationCriteria();
 
         Assert.assertEquals(resolvedAttributeDefinition.getDependencies(), attrDef.getDependencies());

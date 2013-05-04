@@ -26,8 +26,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /**
  * Unit test for {@link BaseDataConnector}. This test does not test any methods inherited from
  * {@link BaseResolverPlugin}, those are covered in {@link BaseResolverPluginTest}.
@@ -38,7 +36,7 @@ public class BaseDataConnectorTest {
     @Test public void instantiation() {
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
-        Assert.assertFalse(connector.getFailoverDataConnectorId().isPresent());
+        Assert.assertNull(connector.getFailoverDataConnectorId());
     }
 
     /** Test getting/setting dependency ID. */
@@ -46,13 +44,13 @@ public class BaseDataConnectorTest {
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", Collections.EMPTY_MAP);
 
         connector.setFailoverDataConnectorId(" foo ");
-        Assert.assertEquals(connector.getFailoverDataConnectorId().get(), "foo");
+        Assert.assertEquals(connector.getFailoverDataConnectorId(), "foo");
 
         connector.setFailoverDataConnectorId("");
-        Assert.assertEquals(connector.getFailoverDataConnectorId(), Optional.absent());
+        Assert.assertNull(connector.getFailoverDataConnectorId());
 
         connector.setFailoverDataConnectorId(null);
-        Assert.assertEquals(connector.getFailoverDataConnectorId(), Optional.absent());
+        Assert.assertNull(connector.getFailoverDataConnectorId());
     }
 
     /** Test the resolution of the data connector. */
@@ -61,7 +59,7 @@ public class BaseDataConnectorTest {
 
         MockBaseDataConnector connector = new MockBaseDataConnector("foo", (Map<String, Attribute>) null);
         connector.initialize();
-        Assert.assertEquals(connector.resolve(context), Optional.absent());
+        Assert.assertNull(connector.resolve(context));
 
         HashMap<String, Attribute> values = new HashMap<String, Attribute>();
         connector = new MockBaseDataConnector("foo", values);
@@ -73,10 +71,10 @@ public class BaseDataConnectorTest {
 
         connector = new MockBaseDataConnector("foo", values);
         connector.initialize();
-        Optional<Map<String, Attribute>> result = connector.resolve(context);
+        Map<String, Attribute> result = connector.resolve(context);
         Assert.assertNotNull(result);
-        Assert.assertTrue(result.get().containsKey(attribute.getId()));
-        Assert.assertEquals(result.get().get(attribute.getId()), attribute);
+        Assert.assertTrue(result.containsKey(attribute.getId()));
+        Assert.assertEquals(result.get(attribute.getId()), attribute);
     }
 
     /**
@@ -86,7 +84,7 @@ public class BaseDataConnectorTest {
     private static final class MockBaseDataConnector extends BaseDataConnector {
 
         /** Static values returned for {@link #resolve(AttributeResolutionContext)}. */
-        private Optional<Map<String, Attribute>> staticValues;
+        private Map<String, Attribute> staticValues;
 
         /**
          * Constructor.
@@ -96,11 +94,11 @@ public class BaseDataConnectorTest {
          */
         public MockBaseDataConnector(final String id, final Map<String, Attribute> values) {
             setId(id);
-            staticValues = Optional.<Map<String, Attribute>> fromNullable(values);
+            staticValues = values;
         }
 
         /** {@inheritDoc} */
-        protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+        protected Map<String, Attribute> doDataConnectorResolve(
                 AttributeResolutionContext resolutionContext) throws ResolutionException {
             return staticValues;
         }

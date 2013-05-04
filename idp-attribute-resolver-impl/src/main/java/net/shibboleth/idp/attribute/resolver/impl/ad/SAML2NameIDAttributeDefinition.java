@@ -42,8 +42,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /**
  * An attribute definition that creates attributes whose values are {@link NameID}.
  * 
@@ -213,8 +211,8 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Nullable protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+            throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -240,13 +238,15 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
                     }
                 }
                 if (0 == outputValues.size()) {
-                    outputValues = null;
+                    log.warn("NameIdAttribute {} No appropriate values", getId());
+                    return null;
                 }
             }
         }
         result.setValues(outputValues);
 
-        return Optional.fromNullable(result);
+        return result;
+
     }
 
 }

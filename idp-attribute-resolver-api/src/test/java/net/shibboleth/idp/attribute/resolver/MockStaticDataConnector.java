@@ -36,7 +36,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 
 /** An attribute definition that simply returns a static value.   Used for testing only.  This is 
@@ -48,14 +47,14 @@ public class MockStaticDataConnector extends BaseDataConnector {
     private final Logger log = LoggerFactory.getLogger(MockStaticDataConnector.class);
 
     /** Static collection of values returned by this connector. */
-    private Optional<Map<String, Attribute>> attributes = Optional.absent();
+    private Map<String, Attribute> attributes;
 
     /**
      * Get the static values returned by this connector.
      * 
      * @return static values returned by this connector
      */
-    @Nonnull public Optional<Map<String, Attribute>> getAttributes() {
+    @Nonnull public Map<String, Attribute> getAttributes() {
         return attributes;
     }
 
@@ -69,7 +68,7 @@ public class MockStaticDataConnector extends BaseDataConnector {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (null == newValues) {
-            attributes = Optional.absent();
+            attributes = null;
             return;
         } 
         
@@ -81,15 +80,15 @@ public class MockStaticDataConnector extends BaseDataConnector {
             map.put(attr.getId(), attr);
         }
         
-        attributes = Optional.of((Map<String, Attribute>)ImmutableMap.copyOf(map));
+        attributes = ImmutableMap.copyOf(map);
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+    @Nonnull protected Map<String, Attribute> doDataConnectorResolve(
             final AttributeResolutionContext resolutionContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        log.debug("Data connector '{}': Resolving static attribute {}", getId(), attributes.get());
+        log.debug("Data connector '{}': Resolving static attribute {}", getId(), attributes);
         return attributes;
     }
 
@@ -97,7 +96,7 @@ public class MockStaticDataConnector extends BaseDataConnector {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (!attributes.isPresent()) {
+        if (null == attributes) {
             throw new ComponentInitializationException("Static Data connector " + getId()
                     + " does not have values set up.");
         }

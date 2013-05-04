@@ -36,14 +36,14 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
     @Test public void simple() {
         StaticDataConnector connector = getDataConnector("staticAttributes.xml", StaticDataConnector.class);
         
-        Assert.assertEquals(connector.getAttributes().get().keySet().size(), 2);
-        Attribute epe = connector.getAttributes().get().get("eduPersonEntitlement");
+        Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
+        Attribute epe = connector.getAttributes().get("eduPersonEntitlement");
         Set<AttributeValue> values = epe.getValues();
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
         Assert.assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
         
-        values = connector.getAttributes().get().get("staticEpA").getValues();
+        values = connector.getAttributes().get("staticEpA").getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("member")));
     }

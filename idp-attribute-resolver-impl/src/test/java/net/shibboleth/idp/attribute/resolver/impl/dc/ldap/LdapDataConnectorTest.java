@@ -36,7 +36,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -226,9 +225,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Optional<Map<String, Attribute>> optional = connector.doResolve(context);
-        Assert.assertTrue(optional.isPresent());
-        Map<String, Attribute> attrs = optional.get();
+        Map<String, Attribute> attrs = connector.doResolve(context);
         // check total attributes: uid, cn, sn, mail
         Assert.assertTrue(attrs.size() == 4);
         // check uid
@@ -280,8 +277,8 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         try {
-            Optional<Map<String, Attribute>> optional = connector.doResolve(context);
-            Assert.assertTrue(optional.isPresent());
+            Map<String, Attribute> res = connector.doResolve(context);
+            Assert.assertNotNull(res);
         } catch (ResolutionException e) {
             Assert.fail("Resolution exception occurred", e);
         }
@@ -302,7 +299,7 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         Assert.assertTrue(cache.size() == 0);
-        Optional<Map<String, Attribute>> optional = connector.doResolve(context);
+        Map<String, Attribute> optional = connector.doResolve(context);
         Assert.assertTrue(cache.size() == 1);
         Assert.assertEquals(cache.iterator().next(), optional);
     }

@@ -32,8 +32,6 @@ import net.shibboleth.utilities.java.support.component.ComponentValidationExcept
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /**
  * Unit test for {@link BaseAttributeDefinition}. This test does not test any methods inherited from
  * {@link BaseResolverPlugin}, those are covered in {@link BaseResolverPluginTest}.
@@ -177,12 +175,12 @@ public class BaseAttributeDefinitionTest {
 
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (Attribute) null);
         definition.initialize();
-        Assert.assertTrue(!definition.resolve(context).isPresent());
+        Assert.assertNull(definition.resolve(context));
 
         Attribute attribute = new Attribute("foo");
         definition = new MockAttributeDefinition("foo", attribute);
         definition.initialize();
-        Assert.assertEquals(definition.resolve(context).get(), attribute);
+        Assert.assertEquals(definition.resolve(context), attribute);
 
     }
     
@@ -249,7 +247,7 @@ public class BaseAttributeDefinitionTest {
     private static final class MockBaseAttributeDefinition extends BaseAttributeDefinition {
 
         /** Static attribute value returned from resolution. */
-        private Optional<Attribute> staticAttribute;
+        private Attribute staticAttribute;
 
         /**
          * Constructor.
@@ -259,11 +257,11 @@ public class BaseAttributeDefinitionTest {
          */
         public MockBaseAttributeDefinition(String id, Attribute attribute) {
             setId(id);
-            staticAttribute = Optional.<Attribute>fromNullable(attribute);
+            staticAttribute = attribute;
         }
 
         /** {@inheritDoc} */
-        protected Optional<Attribute> doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
+        protected Attribute doAttributeDefinitionResolve(AttributeResolutionContext resolutionContext)
                 throws ResolutionException {
             return staticAttribute;
         }

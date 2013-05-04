@@ -36,7 +36,6 @@ import net.shibboleth.utilities.java.support.component.DestroyedComponentExcepti
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
 /** Test the mapped attribute type. */
@@ -48,7 +47,7 @@ public class MappedAttributeTest {
     @Test public void instantiation() throws ComponentInitializationException, ResolutionException {
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
-        
+
         Assert.assertFalse(definition.isPassThru());
 
         try {
@@ -98,7 +97,6 @@ public class MappedAttributeTest {
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
 
-
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
@@ -106,11 +104,7 @@ public class MappedAttributeTest {
         definition.setValueMaps(Collections.singleton(substringValueMapping("foo", false, "foo")));
         definition.initialize();
 
-        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
-        Assert.assertNotNull(optionalResult);
-        Assert.assertTrue(optionalResult.isPresent());
-
-        Attribute result = optionalResult.get();
+        Attribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertTrue(result.getValues().isEmpty());
     }
@@ -121,7 +115,6 @@ public class MappedAttributeTest {
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
-
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
@@ -135,11 +128,7 @@ public class MappedAttributeTest {
         Assert.assertEquals(definition.getDefaultValue(), "default");
         definition.initialize();
 
-        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
-        Assert.assertNotNull(optionalResult);
-        Assert.assertTrue(optionalResult.isPresent());
-
-        Attribute result = optionalResult.get();
+        Attribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
@@ -175,7 +164,6 @@ public class MappedAttributeTest {
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
 
-
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
@@ -185,24 +173,19 @@ public class MappedAttributeTest {
         Assert.assertEquals(definition.getValueMaps().size(), 1);
         definition.initialize();
 
-        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
-        Assert.assertNotNull(optionalResult);
-        Assert.assertTrue(optionalResult.isPresent());
-
-        Attribute result = optionalResult.get();
+        Attribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertEquals(result.getValues().size(), 1);
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("student")));
     }
-    
+
     @Test public void defaultCase() throws Exception {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
-
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
@@ -215,24 +198,19 @@ public class MappedAttributeTest {
         Assert.assertFalse(definition.isPassThru());
         definition.initialize();
 
-        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
-        Assert.assertNotNull(optionalResult);
-        Assert.assertTrue(optionalResult.isPresent());
-
-        Attribute result = optionalResult.get();
+        Attribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertEquals(result.getValues().size(), 1);
         Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
     }
-    
+
     @Test public void passThrough() throws Exception {
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
-
 
         MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
@@ -245,21 +223,15 @@ public class MappedAttributeTest {
         definition.setPassThru(true);
         definition.initialize();
 
-        Optional<Attribute> optionalResult = definition.resolve(resolutionContext);
-        Assert.assertNotNull(optionalResult);
-        Assert.assertTrue(optionalResult.isPresent());
-
-        Attribute result = optionalResult.get();
+        Attribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
         Assert.assertEquals(result.getValues().size(), ResolverTestSupport.EPA3_VALUES.length);
-        for (String val: ResolverTestSupport.EPA3_VALUES) {
+        for (String val : ResolverTestSupport.EPA3_VALUES) {
             Assert.assertTrue(result.getValues().contains(new StringAttributeValue(val)));
         }
     }
 
-
-    
     protected ValueMap substringValueMapping(String targetValue, boolean caseInsensitive, String returnValue) {
         ValueMap retVal = new ValueMap();
         retVal.setReturnValue(returnValue);

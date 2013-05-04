@@ -43,8 +43,6 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
 /**
@@ -98,7 +96,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Attribute> doAttributeDefinitionResolve(
+    @Nullable protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
@@ -113,13 +111,13 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
         if (null == result) {
             log.info("AttributeDefinition '{}': No value returned", getId());
-            return Optional.absent();
+            return null;
         }
 
         if (result instanceof ScriptedAttribute) {
 
             ScriptedAttribute scriptedAttribute = (ScriptedAttribute) result;
-            return Optional.of(scriptedAttribute.getResultingAttribute());
+            return scriptedAttribute.getResultingAttribute();
 
         } else {
 

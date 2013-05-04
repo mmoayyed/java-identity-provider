@@ -36,7 +36,6 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 /** Tests for {@link StaticDataConnector}
@@ -51,9 +50,9 @@ public class StaticDataConnectorTest {
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");
 
-        Assert.assertFalse(connector.getAttributes().isPresent());
+        Assert.assertNull(connector.getAttributes());
         connector.setValues(null);
-        Assert.assertFalse(connector.getAttributes().isPresent());
+        Assert.assertNull(connector.getAttributes());
 
         try {
             connector.initialize();
@@ -64,12 +63,11 @@ public class StaticDataConnectorTest {
         
         List<Attribute> input = new ArrayList<Attribute>();
         connector.setValues(input);
-        Assert.assertTrue(connector.getAttributes().isPresent());
+        Assert.assertNotNull(connector.getAttributes());
 
         input.add(null);
         connector.setValues(input);
-        Assert.assertTrue(connector.getAttributes().isPresent());
-        
+        Assert.assertNotNull(connector.getAttributes());        
 
         input.add(attribute);
         input.add(null);
@@ -78,15 +76,14 @@ public class StaticDataConnectorTest {
         connector.setValues(input);
         connector.initialize();
 
-        Assert.assertTrue(connector.getAttributes().isPresent());
-        Assert.assertEquals(connector.getAttributes().get().size(), 2);
+        Assert.assertEquals(connector.getAttributes().size(), 2);
 
         AttributeResolutionContext context = new AttributeResolutionContext();
-        Optional<Map<String, Attribute>> result = connector.doResolve(context);
+        Map<String, Attribute> result = connector.doResolve(context);
 
-        Assert.assertEquals(result.get().size(), 2);
-        Assert.assertTrue(result.get().containsKey("attribute"));
-        Assert.assertTrue(result.get().containsKey("thingy"));
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.containsKey("attribute"));
+        Assert.assertTrue(result.containsKey("thingy"));
 
     }
     

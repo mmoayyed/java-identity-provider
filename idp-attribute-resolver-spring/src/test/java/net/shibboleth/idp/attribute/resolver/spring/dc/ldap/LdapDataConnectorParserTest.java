@@ -46,7 +46,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.cache.Cache;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
@@ -166,7 +165,7 @@ public class LdapDataConnectorParserTest {
         MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
 
-        Cache<String, Optional<Map<String, Attribute>>> resultCache = dataConnector.getResultCache();
+        Cache<String, Map<String, Attribute>> resultCache = dataConnector.getResultCache();
         AssertJUnit.assertNull(resultCache);
     }
 }

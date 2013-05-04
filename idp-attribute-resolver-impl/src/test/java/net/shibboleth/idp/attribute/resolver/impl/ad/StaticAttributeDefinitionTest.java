@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
 /** Tests for {@link StaticAttributeDefinition}
@@ -42,10 +41,10 @@ public class StaticAttributeDefinitionTest {
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
         StaticAttributeDefinition attrDef = new StaticAttributeDefinition();
         attrDef.setId("Static");
-        Assert.assertFalse(attrDef.getValue().isPresent());
+        Assert.assertNull(attrDef.getValue());
         
         attrDef.setValue(null);
-        Assert.assertFalse(attrDef.getValue().isPresent());
+        Assert.assertNull(attrDef.getValue());
 
         try {
             attrDef.initialize();
@@ -58,7 +57,7 @@ public class StaticAttributeDefinitionTest {
         attribute.setValues(Lists.newArrayList((AttributeValue) new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         attrDef.setValue(attribute);
-        Assert.assertTrue(attrDef.getValue().isPresent());
+        Assert.assertNotNull(attrDef.getValue());
 
         try {
             attrDef.doAttributeDefinitionResolve(new AttributeResolutionContext());
@@ -69,13 +68,13 @@ public class StaticAttributeDefinitionTest {
         
         attrDef.initialize();
 
-        Assert.assertTrue(attrDef.getValue().isPresent());
+        Assert.assertNotNull(attrDef.getValue());
 
         AttributeResolutionContext context = new AttributeResolutionContext();
-        Optional<Attribute> result = attrDef.doAttributeDefinitionResolve(context);
+        Attribute result = attrDef.doAttributeDefinitionResolve(context);
 
-        Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(result.get().getId(), "attribute");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.getId(), "attribute");
         
         try {
             attrDef.setValue(new Attribute("other"));

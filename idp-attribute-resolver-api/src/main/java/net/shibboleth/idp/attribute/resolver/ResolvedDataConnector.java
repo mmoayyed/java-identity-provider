@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -28,7 +29,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -46,7 +46,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
     private final BaseDataConnector resolvedConnector;
 
     /** The attributes produced by the resolved data connector. */
-    private final Optional<Map<String, Attribute>> resolvedAttributes;
+    private final Map<String, Attribute> resolvedAttributes;
 
     /**
      * Constructor.
@@ -55,15 +55,15 @@ public final class ResolvedDataConnector extends BaseDataConnector {
      * @param attributes attributes produced by the resolved data connector
      */
     public ResolvedDataConnector(@Nonnull BaseDataConnector connector,
-            @Nonnull Optional<Map<String, Attribute>> attributes) {
+            @Nullable Map<String, Attribute> attributes) {
         resolvedConnector = Constraint.isNotNull(connector, "Resolved data connector can not be null");
-        resolvedAttributes = Constraint.isNotNull(attributes, "Resolved attributes can not be null");
+        resolvedAttributes = attributes;
         Constraint.isTrue(connector.isInitialized(), "Provided connector should be initialized");
-        Constraint.isFalse(connector.isDestroyed(), "Provided connector must not be initialized");    
+        Constraint.isFalse(connector.isDestroyed(), "Provided connector must not be destroyed");    
         }
 
     /** {@inheritDoc} */
-    @Nonnull protected Optional<Map<String, Attribute>> doDataConnectorResolve(
+    @Nullable protected Map<String, Attribute> doDataConnectorResolve(
             AttributeResolutionContext resolutionContext) throws ResolutionException {
         return resolvedAttributes;
     }
@@ -84,8 +84,8 @@ public final class ResolvedDataConnector extends BaseDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Nonnull public Optional<String> getFailoverDataConnectorId() {
-        return Optional.absent();
+    @Nullable public String getFailoverDataConnectorId() {
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -123,7 +123,7 @@ public final class ResolvedDataConnector extends BaseDataConnector {
      * 
      * @return the resolved attributes
      */
-    @Nonnull public Optional<Map<String, Attribute>> getResolvedAttributes() {
+    @Nullable public Map<String, Attribute> getResolvedAttributes() {
         return resolvedAttributes;
     }
 

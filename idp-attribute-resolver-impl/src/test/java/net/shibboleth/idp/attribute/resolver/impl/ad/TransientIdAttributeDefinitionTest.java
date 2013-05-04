@@ -31,8 +31,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /** test for {@link net.shibboleth.idp.attribute.resolver.impl.TransientIdAttributeDefinition}. */
 public class TransientIdAttributeDefinitionTest {
 
@@ -65,11 +63,11 @@ public class TransientIdAttributeDefinitionTest {
 
         defn.initialize();
 
-        final Optional<Attribute> result =
+        final Attribute result =
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<AttributeValue> vals = result.get().getValues();
+        Set<AttributeValue> vals = result.getValues();
         Assert.assertEquals(vals.size(), 1);
 
         String val = (String) vals.iterator().next().getValue();
@@ -135,11 +133,11 @@ public class TransientIdAttributeDefinitionTest {
         defn.setIdStore(store);
         defn.initialize();
 
-        Optional<Attribute> result =
+        Attribute result =
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<AttributeValue> vals = result.get().getValues();
+        Set<AttributeValue> vals = result.getValues();
         String firstTime = (String) vals.iterator().next().getValue();
 
         result =
@@ -153,7 +151,7 @@ public class TransientIdAttributeDefinitionTest {
         result =
                 defn.doAttributeDefinitionResolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
-        vals = result.get().getValues();
+        vals = result.getValues();
         Assert.assertNotEquals(firstTime, vals.iterator().next().getValue());
 
     }

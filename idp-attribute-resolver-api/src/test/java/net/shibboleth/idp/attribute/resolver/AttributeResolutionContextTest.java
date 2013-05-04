@@ -27,8 +27,6 @@ import net.shibboleth.idp.attribute.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
-
 /** Unit test for {@link AttributeResolutionContext}. */
 public class AttributeResolutionContextTest {
 
@@ -120,16 +118,16 @@ public class AttributeResolutionContextTest {
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", attribute);
         definition.initialize();
 
-        context.recordAttributeDefinitionResolution(definition, Optional.<Attribute> fromNullable(attribute));
+        context.recordAttributeDefinitionResolution(definition, attribute);
         Assert.assertNotNull(context.getResolvedAttributeDefinitions());
         Assert.assertEquals(context.getResolvedAttributeDefinitions().size(), 1);
         Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("foo"));
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo") instanceof ResolvedAttributeDefinition);
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").getResolvedDefinition() == definition);
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").resolve(context).get() == attribute);
+        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("foo").resolve(context) == attribute);
 
         try {
-            context.recordAttributeDefinitionResolution(definition, Optional.<Attribute> fromNullable(attribute));
+            context.recordAttributeDefinitionResolution(definition, attribute);
             Assert.fail("able to record a second resolution for a single attribute definition");
         } catch (ResolutionException e) {
             // expected this
@@ -138,7 +136,7 @@ public class AttributeResolutionContextTest {
         definition = new MockAttributeDefinition("bar", (Attribute) null);
         definition.initialize();
 
-        context.recordAttributeDefinitionResolution(definition, Optional.<Attribute> absent());
+        context.recordAttributeDefinitionResolution(definition, null);
         Assert.assertNotNull(context.getResolvedAttributeDefinitions());
         Assert.assertEquals(context.getResolvedAttributeDefinitions().size(), 2);
         Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("foo"));
@@ -146,8 +144,7 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedAttributeDefinitions().get("bar"));
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar") instanceof ResolvedAttributeDefinition);
         Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar").getResolvedDefinition() == definition);
-        Assert.assertTrue(context.getResolvedAttributeDefinitions().get("bar").resolve(context)
-                .equals(Optional.absent()));
+        Assert.assertNull(context.getResolvedAttributeDefinitions().get("bar").resolve(context));
     }
 
     /** Test adding and retrieving data connectors. */
@@ -165,16 +162,16 @@ public class AttributeResolutionContextTest {
         MockDataConnector connector = new MockDataConnector("foo", attributes);
         connector.initialize();
 
-        context.recordDataConnectorResolution(connector, Optional.of(attributes));
+        context.recordDataConnectorResolution(connector, attributes);
         Assert.assertNotNull(context.getResolvedDataConnectors());
         Assert.assertEquals(context.getResolvedDataConnectors().size(), 1);
         Assert.assertNotNull(context.getResolvedDataConnectors().get("foo"));
         Assert.assertTrue(context.getResolvedDataConnectors().get("foo") instanceof ResolvedDataConnector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("foo").getResolvedConnector() == connector);
-        Assert.assertTrue(context.getResolvedDataConnectors().get("foo").resolve(context).get() == attributes);
+        Assert.assertTrue(context.getResolvedDataConnectors().get("foo").resolve(context) == attributes);
 
         try {
-            context.recordDataConnectorResolution(connector, Optional.of(attributes));
+            context.recordDataConnectorResolution(connector, attributes);
             Assert.fail("able to record a second resolution for a single data connector");
         } catch (ResolutionException e) {
             // expected this
@@ -183,7 +180,7 @@ public class AttributeResolutionContextTest {
         connector = new MockDataConnector("bar", (Map) null);
         connector.initialize();
 
-        context.recordDataConnectorResolution(connector, Optional.<Map<String, Attribute>>absent());
+        context.recordDataConnectorResolution(connector, null);
         Assert.assertNotNull(context.getResolvedDataConnectors());
         Assert.assertEquals(context.getResolvedDataConnectors().size(), 2);
         Assert.assertNotNull(context.getResolvedDataConnectors().get("foo"));
@@ -191,14 +188,14 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedDataConnectors().get("bar"));
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar") instanceof ResolvedDataConnector);
         Assert.assertTrue(context.getResolvedDataConnectors().get("bar").getResolvedConnector() == connector);
-        Assert.assertTrue(context.getResolvedDataConnectors().get("bar").resolve(context) == Optional.<Map<String, Attribute>>absent());
+        Assert.assertNull(context.getResolvedDataConnectors().get("bar").resolve(context));
         
         try {
             MockStaticDataConnector other = new MockStaticDataConnector();
             other.setId("bar");
             other.setValues(Collections.EMPTY_LIST);
             other.initialize();
-            context.recordDataConnectorResolution(other, Optional.<Map<String, Attribute>>absent());
+            context.recordDataConnectorResolution(other, null);
             Assert.fail("Cannot cross the same bridge twice or add the same resolvedId twice");
         } catch (ResolutionException ex) {
             //OK

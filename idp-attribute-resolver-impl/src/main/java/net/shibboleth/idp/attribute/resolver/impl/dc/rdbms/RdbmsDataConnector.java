@@ -38,8 +38,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-
 /** A {@link BaseDataConnector} that queries a relation database in order to retrieve attribute data. */
 public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableStatement> {
 
@@ -140,7 +138,7 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
      * @throws ResolutionException thrown if there is a problem retrieving data from the database or transforming that
      *             data into {@link Attribute}s
      */
-    protected Optional<Map<String, Attribute>> retrieveAttributes(final ExecutableStatement statement)
+    protected Map<String, Attribute> retrieveAttributes(final ExecutableStatement statement)
             throws ResolutionException {
 
         if (statement == null) {
@@ -160,7 +158,7 @@ public class RdbmsDataConnector extends AbstractSearchDataConnector<ExecutableSt
                 if (isNoResultAnError()) {
                     throw new ResolutionException("No attributes returned from query");
                 } else {
-                    return Optional.<Map<String, Attribute>> absent();
+                    return null;
                 }
             }
             return getMappingStrategy().map(queryResult);

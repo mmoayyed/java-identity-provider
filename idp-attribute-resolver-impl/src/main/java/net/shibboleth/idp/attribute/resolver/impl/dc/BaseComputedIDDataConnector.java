@@ -30,8 +30,8 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
@@ -41,8 +41,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 /**
  * A the basis of a data connector that generates a unique ID by computing the SHA-1 hash of a given attribute value,
@@ -152,13 +150,13 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        if (null == attributeDefinition || !attributeDefinition.getResolvedAttribute().isPresent()) {
+        if (null == attributeDefinition || null == attributeDefinition.getResolvedAttribute()) {
             log.warn("Source attribute {} for connector {} was not present in dependencies", getSourceAttributeId(),
                     getId());
             return null;
         }
 
-        final Set<AttributeValue> attributeValues = attributeDefinition.getResolvedAttribute().get().getValues();
+        final Set<AttributeValue> attributeValues = attributeDefinition.getResolvedAttribute().getValues();
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("Source attribute {} for connector {} provide no values", getSourceAttributeId(), getId());
             return null;
@@ -223,16 +221,16 @@ public abstract class BaseComputedIDDataConnector extends BaseDataConnector {
      * Encode the provided string.
      * 
      * @param value the value to encode or null if that failed
-     * @return Optional.absent() or the attribute.
+     * @return null or the attribute.
      */
-    @Nonnull protected Optional<Map<String, Attribute>> encodeAsAttribute(@Nullable String value) {
+    @Nullable protected Map<String, Attribute> encodeAsAttribute(@Nullable String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if (null == value) {
             // The message will have been logged above
-            return Optional.absent();
+            return null;
         }
         Attribute attribute = new Attribute(getGeneratedAttributeId());
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(value)));
-        return Optional.of(Collections.singletonMap(getGeneratedAttributeId(), attribute));
+        return Collections.singletonMap(getGeneratedAttributeId(), attribute);
     }
 }

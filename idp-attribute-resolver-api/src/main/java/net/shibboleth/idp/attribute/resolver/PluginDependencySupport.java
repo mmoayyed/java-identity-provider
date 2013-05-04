@@ -69,7 +69,7 @@ public final class PluginDependencySupport {
             ResolvedAttributeDefinition attributeDefinition =
                     resolutionContext.getResolvedAttributeDefinitions().get(dependency.getDependencyPluginId());
             if (attributeDefinition != null) {
-                resolvedAttribute = attributeDefinition.getResolvedAttribute().orNull();
+                resolvedAttribute = attributeDefinition.getResolvedAttribute();
                 addAttributeValues(resolvedAttribute, values);
                 continue;
             }
@@ -80,10 +80,9 @@ public final class PluginDependencySupport {
                 Constraint.isTrue(dependency.getDependencyAttributeId().isPresent(), "Data connector dependencies "
                         + "must specify a dependant attribute ID");
 
-                if (dataConnector.getResolvedAttributes().isPresent()) {
+                if (null != dataConnector.getResolvedAttributes()) {
                     resolvedAttribute =
-                            dataConnector.getResolvedAttributes().get()
-                                    .get(dependency.getDependencyAttributeId().get());
+                            dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId().get());
                     addAttributeValues(resolvedAttribute, values);
                     continue;
                 }
@@ -122,15 +121,15 @@ public final class PluginDependencySupport {
             ResolvedAttributeDefinition attributeDefinition =
                     resolutionContext.getResolvedAttributeDefinitions().get(dependency.getDependencyPluginId());
             if (attributeDefinition != null) {
-                addAttributeValues(attributeDefinition.getResolvedAttribute().orNull(), result);
+                addAttributeValues(attributeDefinition.getResolvedAttribute(), result);
                 continue;
             }
 
             ResolvedDataConnector dataConnector =
                     resolutionContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
-                if (dataConnector.getResolvedAttributes().isPresent()) {
-                    addAttributeValues(dataConnector.getResolvedAttributes().get(), result);
+                if (null != dataConnector.getResolvedAttributes()) {
+                    addAttributeValues(dataConnector.getResolvedAttributes(), result);
                     continue;
                 }
             }

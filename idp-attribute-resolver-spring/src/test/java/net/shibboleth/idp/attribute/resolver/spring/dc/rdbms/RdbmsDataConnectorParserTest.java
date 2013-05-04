@@ -40,7 +40,6 @@ import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Optional;
 import com.google.common.cache.Cache;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -118,7 +117,7 @@ public class RdbmsDataConnectorParserTest {
         MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
 
-        Cache<String, Optional<Map<String, Attribute>>> resultCache = dataConnector.getResultCache();
+        Cache<String, Map<String, Attribute>> resultCache = dataConnector.getResultCache();
         AssertJUnit.assertNull(resultCache);
     }
 }
