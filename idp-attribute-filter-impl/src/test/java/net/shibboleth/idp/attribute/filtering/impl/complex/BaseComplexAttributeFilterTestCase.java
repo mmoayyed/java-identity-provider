@@ -33,7 +33,6 @@ import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 
 /**
  * Base class for testing complex attribute filter operations.
@@ -51,7 +50,7 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
      * @throws ComponentInitializationException
      * @throws ResolutionException
      */
-    protected Optional<Map<String, Attribute>> getAttributes(String xmlFileName) throws ComponentInitializationException, ResolutionException {
+    protected Map<String, Attribute> getAttributes(String xmlFileName) throws ComponentInitializationException, ResolutionException {
         
         final EntityAttributes obj = (EntityAttributes) unmarshallElement(PATH + xmlFileName);
 
@@ -68,7 +67,7 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
         
         connector.initialize();
         
-        return Optional.fromNullable(connector.doResolve(null));
+        return connector.doResolve(null);
     }
 
     protected AttributeFilteringEngine getPolicy(String xmlFileName) {

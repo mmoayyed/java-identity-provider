@@ -85,20 +85,20 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         engine.initialize();
 
         AttributeFilterContext context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").get().values());
+        context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
         Map<String, Attribute> attributes = context.getFilteredAttributes();
         Attribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(getAttributes("uid-epawithjsmith.xml").get().values());
+        context.setPrefilteredAttributes(getAttributes("uid-epawithjsmith.xml").values());
         engine.filterAttributes(context);
         attributes = context.getFilteredAttributes();
         Assert.assertNull(attributes.get("eduPersonAffiliation"));
 
         context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(getAttributes("epa-uid.xml").get().values());
+        context.setPrefilteredAttributes(getAttributes("epa-uid.xml").values());
         engine.filterAttributes(context);
         attributes = context.getFilteredAttributes();
         Assert.assertNull(attributes.get("eduPersonAffiliation"));
@@ -134,20 +134,20 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         engine.initialize();
 
         AttributeFilterContext context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").get().values());
+        context.setPrefilteredAttributes(getAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
         Map<String, Attribute> attributes = context.getFilteredAttributes();
         Attribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(getAttributes("uid-epawithjsmith.xml").get().values());
+        context.setPrefilteredAttributes(getAttributes("uid-epawithjsmith.xml").values());
         engine.filterAttributes(context);
         attributes = context.getFilteredAttributes();
         Assert.assertNull(attributes.get("eduPersonAffiliation"));
 
         context = new AttributeFilterContext();
-        context.setPrefilteredAttributes(getAttributes("epa-uid.xml").get().values());
+        context.setPrefilteredAttributes(getAttributes("epa-uid.xml").values());
         engine.filterAttributes(context);
         attributes = context.getFilteredAttributes();
         Assert.assertNull(attributes.get("eduPersonAffiliation"));
