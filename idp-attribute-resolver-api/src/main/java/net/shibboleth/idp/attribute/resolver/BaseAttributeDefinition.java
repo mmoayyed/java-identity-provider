@@ -32,6 +32,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
@@ -68,6 +69,9 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
 
     /** Localized human readable description of attribute. */
     private Map<Locale, String> displayDescriptions = Collections.emptyMap();
+
+    /** cache for the log prefix - to save multiple recalculations. */
+    private String logPrefix;
 
     /**
      * Gets whether this attribute definition is only a dependency and thus its values should never be released outside
@@ -210,13 +214,16 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
     protected void doInitialize() throws ComponentInitializationException {
         
         // Set up the dependencies first.  Then the initialize in the parent
-        // will correctly rehash the dependenies.
+        // will correctly rehash the dependencies.
         if (null != sourceAttributeID) {
             for (ResolverPluginDependency depends : getDependencies()) {
                 depends.setDependencyAttributeId(sourceAttributeID);
             }
         }
         super.doInitialize();
+        
+        // The Id is now definitive.  Just in case it was used prior to that, reset the getPrefixCache
+        logPrefix = null;
         
         for (AttributeEncoder encoder : encoders) {
             ComponentSupport.initialize(encoder);
@@ -246,27 +253,27 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
         final Attribute resolvedAttribute = doAttributeDefinitionResolve(resolutionContext);
 
         if (null == resolvedAttribute) {
-            log.debug("Attribute definition '{}': no attribute was produced during resolution", getId());
+            log.debug("{} no attribute was produced during resolution", getLogPrefix());
             return null;
         }
 
         if (resolvedAttribute.getValues().isEmpty()) {
-            log.debug("Attribute definition '{}': produced an attribute with no values", getId());
+            log.debug("{} produced an attribute with no values", getLogPrefix());
         } else {
-            log.debug("Attribute definition '{}': produced an attribute with the following values {}", getId(),
+            log.debug("{} produced an attribute with the following values {}", getLogPrefix(),
                     resolvedAttribute.getValues());
         }
 
-        log.debug("Attribute definition '{}': associating the following display descriptions"
-                + " with the resolved attribute: {}", getId(), getDisplayDescriptions());
+        log.debug("{} associating the following display descriptions"
+                + " with the resolved attribute: {}", getLogPrefix(), getDisplayDescriptions());
         resolvedAttribute.setDisplayDescriptions(getDisplayDescriptions());
 
-        log.debug("Attribute definition '{}': associating the following display names with the resolved attribute: {}",
-                getId(), getDisplayNames());
+        log.debug("{} associating the following display names with the resolved attribute: {}",
+                getLogPrefix(), getDisplayNames());
         resolvedAttribute.setDisplayNames(getDisplayNames());
 
-        log.debug("Attribute definition '{}': associating the following encoders with the resolved attribute: {}",
-                getId(), getAttributeEncoders());
+        log.debug("{} associating the following encoders with the resolved attribute: {}",
+                getLogPrefix(), getAttributeEncoders());
         resolvedAttribute.setEncoders(getAttributeEncoders());
 
         return resolvedAttribute;
@@ -285,4 +292,22 @@ public abstract class BaseAttributeDefinition extends BaseResolverPlugin<Attribu
      */
     @Nullable protected abstract Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
+    
+    /**
+     * return a string which is to be prepended to all log messages.
+     * 
+     * @return "Attribute Definition '<definitionID>' :"
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        // local cache of cached entry to allow unsynchronised clearing.
+        String prefix = logPrefix;
+        if (null == prefix) {
+            StringBuilder builder = new StringBuilder("Attribute Definition '").append(getId()).append("':");
+            prefix = builder.toString();
+            if (null == logPrefix) {
+                logPrefix = prefix;
+            }
+        }
+        return prefix;
+    }
 }

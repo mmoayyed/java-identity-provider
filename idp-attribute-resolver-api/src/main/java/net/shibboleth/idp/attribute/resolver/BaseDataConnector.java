@@ -24,6 +24,8 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -39,6 +41,9 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
 
     /** ID of the data connector to use if this one fails. */
     private String failoverDataConnectorId;
+
+    /** cache for the log prefix - to save multiple recalculations. */
+    private String logPrefix;
 
     /**
      * Gets the ID of the {@link BaseDataConnector} whose values will be used in the event that this data connector
@@ -76,21 +81,29 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
         Map<String, Attribute> result = doDataConnectorResolve(resolutionContext);
 
         if (null == result) {
-            log.debug("Data connector '{}': no attributes were produced during resolution", getId());
+            log.debug("{} no attributes were produced during resolution", getId());
             return result;
         } else {
-            log.debug("Data connector '{}': produced the following {} attributes during resolution {}", new Object[] {
-                    getId(), result.size(), result.keySet(),});
+            log.debug("{} produced the following {} attributes during resolution {}", new Object[] {
+                    getLogPrefix(), result.size(), result.keySet(),});
             for (String attrName : result.keySet()) {
                 Attribute attr = result.get(attrName);
                 log.debug("Data connector '{}': Attribute '{}': Values '{}'",
-                        new Object[] {getId(), attrName, attr.getValues(),});
+                        new Object[] {getLogPrefix(), attrName, attr.getValues(),});
             }
         }
 
         return result;
     }
-
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        
+        super.doInitialize();
+        
+        // The Id is now definitive.  Just in case it was used prior to that, reset the getPrefixCache
+        logPrefix = null;
+    }
+    
     /**
      * Retrieves a collection of attributes from some data source.
      * 
@@ -102,4 +115,23 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
      */
     @Nullable protected abstract Map<String, Attribute> doDataConnectorResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException;
+    
+    /**
+     * return a string which is to be prepended to all log messages.
+     * 
+     * @return "Data connector '<definitionID>' :"
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        // local cache of cached entry to allow unsynchronised clearing of per class cache.
+        String prefix = logPrefix;
+        if (null == prefix) {
+            StringBuilder builder = new StringBuilder("Attribute Definition '").append(getId()).append("':");
+            prefix = builder.toString();
+            if (null == logPrefix) {
+                logPrefix = prefix;
+            }
+        }
+        return prefix;
+    }
+
 }
