@@ -65,6 +65,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     /** Data connectors defined for this resolver. */
     private final Map<String, BaseDataConnector> dataConnectors;
 
+    /** cache for the log prefix - to save multiple recalculations. */
+    private String logPrefix;
+
     /**
      * Constructor.
      * 
@@ -76,6 +79,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             @Nullable @NullableElements Collection<BaseAttributeDefinition> definitions,
             @Nullable @NullableElements Collection<BaseDataConnector> connectors) {
         setId(resolverId);
+
+        logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
 
         HashMap<String, BaseAttributeDefinition> checkedDefinitions = new HashMap<String, BaseAttributeDefinition>();
         if (definitions != null) {
@@ -129,7 +134,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         final LazyList<String> invalidDataConnectors = new LazyList<String>();
         for (BaseDataConnector plugin : dataConnectors.values()) {
-            log.debug("Attribute resolver {}: checking if data connector {} is valid", getId(), plugin.getId());
+            log.debug("{} checking if data connector {} is valid", logPrefix, plugin.getId());
             if (!validateDataConnector(plugin, invalidDataConnectors)) {
                 invalidDataConnectors.add(plugin.getId());
             }
@@ -137,20 +142,18 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         final LazyList<String> invalidAttributeDefinitions = new LazyList<String>();
         for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("Attribute resolver {}: checking if attribute definition {} is valid", getId(), plugin.getId());
+            log.debug("{} checking if attribute definition {} is valid", logPrefix, plugin.getId());
             try {
                 plugin.validate();
-                log.debug("Attribute resolver {}: attribute definition {} is valid", getId(), plugin.getId());
+                log.debug("{} attribute definition {} is valid", logPrefix, plugin.getId());
             } catch (ComponentValidationException e) {
-                log.warn("Attribute resolver {}: attribute definition {} is not valid", new Object[] {this.getId(),
-                        plugin.getId(), e,});
+                log.warn("{} attribute definition {} is not valid", new Object[] {logPrefix, plugin.getId(), e,});
                 invalidAttributeDefinitions.add(plugin.getId());
             }
         }
 
         if (!invalidDataConnectors.isEmpty() || !invalidAttributeDefinitions.isEmpty()) {
-            throw new ComponentValidationException("Attribute resolver " + getId()
-                    + ": the following attribute definitions were invalid ["
+            throw new ComponentValidationException(logPrefix + " the following attribute definitions were invalid ["
                     + StringSupport.listToStringValue(invalidAttributeDefinitions, ", ")
                     + "] and the following data connectors were invalid ["
                     + StringSupport.listToStringValue(invalidDataConnectors, ", ") + "]");
@@ -175,26 +178,25 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        log.debug("Attribute Resolver {}: initiating attribute resolution", getId());
+        log.debug("{} initiating attribute resolution", logPrefix);
 
         if (attributeDefinitions.size() == 0) {
-            log.debug("Attribute Resolver {}: no attribute definition available, no attributes were resolved", getId());
+            log.debug("{} no attribute definition available, no attributes were resolved", logPrefix);
             return;
         }
 
         final Collection<String> attributeIds = getToBeResolvedAttributes(resolutionContext);
-        log.debug("Attribute Resolver {}: attempting to resolve the following attribute definitions {}", getId(),
-                attributeIds);
+        log.debug("{} attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
 
         for (String attributeId : attributeIds) {
             resolveAttributeDefinition(attributeId, resolutionContext);
         }
 
-        log.debug("Attribute Resolver {}: finalizing resolved attributes", getId());
+        log.debug("{} finalizing resolved attributes", logPrefix);
         finalizeResolvedAttributes(resolutionContext);
 
-        log.debug("Attribute Resolver {}: final resolved attribute collection: {}", getId(), resolutionContext
-                .getResolvedAttributes().keySet());
+        log.debug("{} final resolved attribute collection: {}", logPrefix, resolutionContext.getResolvedAttributes()
+                .keySet());
 
         return;
     }
@@ -251,32 +253,30 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         Constraint.isNotNull(attributeId, "Attribute ID can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        log.debug("Attribute Resolver {}: beginning to resolve attribute definition {}", getId(), attributeId);
+        log.debug("{} beginning to resolve attribute definition {}", logPrefix, attributeId);
 
         if (resolutionContext.getResolvedAttributeDefinitions().containsKey(attributeId)) {
-            log.debug("Attribute Resolver {}: attribute definition {} was already resolved, nothing to do", getId(),
-                    attributeId);
+            log.debug("{} attribute definition {} was already resolved, nothing to do", logPrefix, attributeId);
             return;
         }
 
         final BaseAttributeDefinition definition = attributeDefinitions.get(attributeId);
         if (definition == null) {
-            log.debug("Attribute Resolver {}: no attribute definition was registered with ID {}, nothing to do",
-                    getId(), attributeId);
+            log.debug("{} no attribute definition was registered with ID {}, nothing to do", logPrefix, attributeId);
             return;
         }
 
         resolveDependencies(definition, resolutionContext);
 
-        log.debug("Attribute Resolver {}: resolving attribute definition {}", getId(), attributeId);
+        log.debug("{} resolving attribute definition {}", logPrefix, attributeId);
         final Attribute resolvedAttribute = definition.resolve(resolutionContext);
 
         if (null == resolvedAttribute) {
-            log.debug("Attribute Resolver {}: attribute definition {} produced no attribute", getId(), attributeId);
+            log.debug("{} attribute definition {} produced no attribute", logPrefix, attributeId);
             // TODO why would we record this?
         } else {
-            log.debug("Attribute Resolver {}: attribute definition {} produced an attribute with {} values",
-                    new Object[] {getId(), attributeId, resolvedAttribute.getValues().size()});
+            log.debug("{} attribute definition {} produced an attribute with {} values", new Object[] {logPrefix,
+                    attributeId, resolvedAttribute.getValues().size()});
         }
 
         resolutionContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
@@ -297,30 +297,28 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         Constraint.isNotNull(connectorId, "Data connector ID can not be null");
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        log.debug("Attribute Resolver {}: beginning to resolve data connector {}", getId(), connectorId);
+        log.debug("{} beginning to resolve data connector {}", logPrefix, connectorId);
         if (resolutionContext.getResolvedDataConnectors().containsKey(connectorId)) {
-            log.debug("Attribute Resolver {}: data connector {} was already resolved, nothing to do", getId(),
-                    connectorId);
+            log.debug("{} data connector {} was already resolved, nothing to do", logPrefix, connectorId);
             return;
         }
 
         final BaseDataConnector connector = dataConnectors.get(connectorId);
         if (connector == null) {
-            log.debug("Attribute Resolver {}: no data connector was registered with ID {}, nothing to do", getId(),
-                    connectorId);
+            log.debug("{} no data connector was registered with ID {}, nothing to do", logPrefix, connectorId);
             return;
         }
 
         resolveDependencies(connector, resolutionContext);
         Map<String, Attribute> resolvedAttributes;
         try {
-            log.debug("Attribute Resolver {}: resolving data connector {}", getId(), connectorId);
+            log.debug("{} resolving data connector {}", logPrefix, connectorId);
             resolvedAttributes = connector.resolve(resolutionContext);
         } catch (ResolutionException e) {
             final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (null != failoverDataConnectorId) {
-                log.debug("Attribute Resolver {}: data connector {} failed to resolve, invoking failover data"
-                        + " connector {}.  Reason for the failure was: {}", new Object[] {getId(), connectorId,
+                log.debug("{} data connector {} failed to resolve, invoking failover data"
+                        + " connector {}.  Reason for the failure was: {}", new Object[] {logPrefix, connectorId,
                         failoverDataConnectorId, e,});
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
                 return;
@@ -332,10 +330,10 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
 
         if (null != resolvedAttributes) {
-            log.debug("Attribute Resolver {}: data connector {} resolved the following attributes {}", new Object[] {
-                    getId(), connectorId, resolvedAttributes.keySet(),});
+            log.debug("{} data connector {} resolved the following attributes {}", new Object[] {logPrefix,
+                    connectorId, resolvedAttributes.keySet(),});
         } else {
-            log.debug("Attribute Resolver {}: data connector {} produced no attributes", getId(), connectorId);
+            log.debug("{} data connector {} produced no attributes", logPrefix, connectorId);
         }
         resolutionContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
@@ -357,7 +355,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             return;
         }
 
-        log.debug("Attribute Resolver {}: resolving dependencies for {}", getId(), plugin.getId());
+        log.debug("{} resolving dependencies for {}", logPrefix, plugin.getId());
 
         String pluginId;
         for (ResolverPluginDependency dependency : plugin.getDependencies()) {
@@ -373,7 +371,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             }
         }
 
-        log.debug("Attribute Resolver {}: finished resolving dependencies for {}", getId(), plugin.getId());
+        log.debug("{} finished resolving dependencies for {}", logPrefix, plugin.getId());
     }
 
     /**
@@ -386,7 +384,6 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
     protected void finalizeResolvedAttributes(@Nonnull final AttributeResolutionContext resolutionContext) {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-
         final LazySet<Attribute> resolvedAttributes = new LazySet<Attribute>();
 
         Attribute resolvedAttribute;
@@ -395,22 +392,21 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
 
             // remove nulls
             if (null == resolvedAttribute) {
-                log.debug("Attribute Resolver {}: removing result of attribute definition {}, it's null", getId(),
-                        definition.getId());
+                log.debug("{} removing result of attribute definition {}, it's null", logPrefix, definition.getId());
                 continue;
             }
 
             // remove dependency-only attributes
             if (definition.isDependencyOnly()) {
-                log.debug("Attribute Resolver {}: removing result of attribute definition {},"
-                        + " it's marked as depdency only", getId(), definition.getId());
+                log.debug("{} removing result of attribute definition {}, it's marked as depdency only", logPrefix,
+                        definition.getId());
                 continue;
             }
 
             // remove value-less attributes
             if (resolvedAttribute.getValues().size() == 0) {
-                log.debug("Attribute Resolver {}: removing result of attribute definition {},"
-                        + " it's attribute contains no values", getId(), definition.getId());
+                log.debug("{} removing result of attribute definition {}, it's attribute contains no values",
+                        logPrefix, definition.getId());
                 continue;
             }
 
@@ -436,8 +432,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         final String failoverId = connector.getFailoverDataConnectorId();
         if (null != failoverId) {
             if (!dataConnectors.containsKey(failoverId)) {
-                log.warn("Attribute resolver {}: failover data connector {} for {} cannot be found", new Object[] {
-                        getId(), failoverId, connector.getId(),});
+                log.warn("{} failover data connector {} for {} cannot be found", new Object[] {logPrefix, failoverId,
+                        connector.getId(),});
                 return false;
             }
         }
@@ -445,20 +441,20 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         boolean returnValue;
         try {
             connector.validate();
-            log.debug("Attribute resolver {}: data connector {} is valid", getId(), connector.getId());
+            log.debug("{} data connector {} is valid", logPrefix, connector.getId());
             returnValue = true;
         } catch (ComponentValidationException e) {
             if (null != failoverId) {
                 if (invalidDataConnectors.contains(failoverId)) {
-                    log.warn("Attribute resolver {}: data connector {} is not valid for the following reason"
-                            + " and failover data connector {} has already been found to be inavlid", new Object[] {
-                            getId(), connector.getId(), failoverId, e,});
+                    log.warn("{} data connector {} is not valid for the following reason and"
+                            + " failover data connector {} has already been found to be inavlid", new Object[] {
+                            logPrefix, connector.getId(), failoverId, e,});
                     invalidDataConnectors.add(connector.getId());
                     returnValue = false;
                 } else {
-                    log.warn("Attribute resolver {}: data connector {} is not valid for the following reason {},"
+                    log.warn("{} data connector {} is not valid for the following reason {},"
                             + " checking if failover data connector {} is valid",
-                            new Object[] {getId(), connector.getId(), e, failoverId,});
+                            new Object[] {logPrefix, connector.getId(), e, failoverId,});
                     returnValue = validateDataConnector(dataConnectors.get(failoverId), invalidDataConnectors);
                     if (!returnValue) {
                         invalidDataConnectors.add(failoverId);
@@ -466,8 +462,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                 }
             } else {
 
-                log.warn("Attribute resolver {}: data connector {} is not valid and has not failover connector",
-                        new Object[] {this.getId(), connector.getId(), e,});
+                log.warn("{} data connector {} is not valid and has not failover connector", new Object[] {logPrefix,
+                        connector.getId(), e,});
                 returnValue = false;
             }
         }
@@ -487,14 +483,12 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
         }
 
         for (BaseDataConnector plugin : dataConnectors.values()) {
-            log.debug("Attribute resolver {}: checking if data connector {} is has a circular dependency", getId(),
-                    plugin.getId());
+            log.debug("{} checking if data connector {} is has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
 
         for (BaseAttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("Attribute resolver {}: checking if attribute definition {} has a circular dependency", getId(),
-                    plugin.getId());
+            log.debug("{} checking if attribute definition {} has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
     }
@@ -519,8 +513,9 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             }
 
             if (circularCheckPluginId.equals(dependency.getDependencyPluginId())) {
-                throw new ComponentInitializationException("Plugin " + circularCheckPluginId + " and plugin "
-                        + dependency.getDependencyPluginId() + " have a circular dependecy on each other.");
+                throw new ComponentInitializationException(logPrefix + " Plugin " + circularCheckPluginId
+                        + " and plugin " + dependency.getDependencyPluginId()
+                        + " have a circular dependecy on each other.");
             }
 
             dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
@@ -528,8 +523,8 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
                 dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
             }
             if (dependencyPlugin == null) {
-                throw new ComponentInitializationException("Plugin " + plugin.getId() + " has a dependency on plugin "
-                        + dependency.getDependencyPluginId() + " which does not exist");
+                throw new ComponentInitializationException(logPrefix + " Plugin " + plugin.getId()
+                        + " has a dependency on plugin " + dependency.getDependencyPluginId() + " which doesn't exist");
             }
 
             checkPlugInDependencies(circularCheckPluginId, dependencyPlugin, checkedPlugins);

@@ -125,7 +125,7 @@ public abstract class BaseDataConnector extends BaseResolverPlugin<Map<String, A
         // local cache of cached entry to allow unsynchronised clearing of per class cache.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Attribute Definition '").append(getId()).append("':");
+            StringBuilder builder = new StringBuilder("Data Connector '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;
