@@ -22,6 +22,9 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.impl.dc.StoredIDDataConnector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -34,6 +37,8 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "StoredId");
 
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element element) {
@@ -43,7 +48,9 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     /** {@inheritDoc} */
     protected void doParse(Element config, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
+        log.debug("doParse {}", config);
         builder.addPropertyValue("dataSource", getDataSource(config));
+        // TODO set queryTimeout?
     }
     
     /**
@@ -52,7 +59,14 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
      * @return the DataSource
      */
     protected DataSource getDataSource(Element config) {
-        // TODO
-        return null;
+        final Element springBeans = getSpringBeansElement(config);
+        if (springBeans == null) {
+            log.debug("parsing v2 configuration");
+            final ManagedConnectionParser parser = new ManagedConnectionParser(config);
+            return parser.createDataSource();
+        } else {
+            final BeanFactory beanFactory = createBeanFactory(springBeans);
+            return beanFactory.getBean(DataSource.class);
+        }
     }
 }
