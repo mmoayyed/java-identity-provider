@@ -130,7 +130,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     /**
      * return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Definition: '<definitionID>' :"
+     * @return "Attribute Definition '<definitionID>' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
         if (null == logPrefix) {
