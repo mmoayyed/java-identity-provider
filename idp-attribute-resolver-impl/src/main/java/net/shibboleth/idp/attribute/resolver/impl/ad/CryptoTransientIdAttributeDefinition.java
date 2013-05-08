@@ -55,64 +55,59 @@ public class CryptoTransientIdAttributeDefinition extends BaseAttributeDefinitio
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         if (0 == idLifetime) {
-            log.debug("Attribute definition {}: set default lifetime of 4 hours.", getId());
+            log.debug("set default lifetime of 4 hours.", getLogPrefix());
             idLifetime = 1000 * 60 * 60 * 4;
         }
         if (null == dataSealer) {
-            throw new ComponentInitializationException("Attribute Resolver " + getId()
-                    + ": data sealer was null or unspecified");
+            throw new ComponentInitializationException(getLogPrefix() + " data sealer was null or unspecified");
         }
 
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Nonnull protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+            throws ResolutionException {
 
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + ": no attribute recipient context provided ");
+            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
 
         final String attributeIssuerID = attributeRecipientContext.getAttributeIssuerID();
         if (null == attributeIssuerID) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + ": provided attribute issuer ID was empty");
+            throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID was empty");
         }
 
         final String attributeRecipientID = attributeRecipientContext.getAttributeRecipientID();
         if (null == attributeRecipientID) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + ": provided attribute recipient ID was empty");
+            throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
         }
 
         final String principalName = attributeRecipientContext.getPrincipal();
         if (null == principalName) {
-            throw new ResolutionException("Attribute definition '" + getId() + ": provided prinicipal name was empty");
+            throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
 
         final Attribute result = new Attribute(getId());
 
-        log.debug("Attribute definition '{}': Building crypto transient ID for recipient: '{}',"
-                + "issuer: {}, principal identifer: {}", new Object[] {getId(), attributeRecipientID,
-                attributeIssuerID, principalName,});
+        log.debug("{} Building crypto transient ID for recipient: '{}', issuer: {}, principal identifer: {}",
+                new Object[] {getLogPrefix(), attributeRecipientID, attributeIssuerID, principalName,});
 
         StringBuilder principalTokenIdBuilder = new StringBuilder();
         principalTokenIdBuilder.append(attributeIssuerID).append("!").append(attributeRecipientID).append("!")
                 .append(principalName);
-        
+
         try {
             String transientId =
                     dataSealer.wrap(principalTokenIdBuilder.toString(), System.currentTimeMillis() + idLifetime);
             Set<AttributeValue> vals = Collections.singleton((AttributeValue) new StringAttributeValue(transientId));
             result.setValues(vals);
         } catch (DataSealerException e) {
-            log.error("Attribute definition '" + getId() + "': Caught exception wrapping principal identifier.", e);
+            throw new ResolutionException(getLogPrefix() + " Caught exception wrapping principal identifier. {}", e);
         }
-        
+
         return result;
     }
 

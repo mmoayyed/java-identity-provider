@@ -36,22 +36,20 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class PrincipalNameAttributeDefinition extends BaseAttributeDefinition {
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Nonnull protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+            throws ResolutionException {
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " no attribute recipient context provided ");
+            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
 
         final String principalName = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
         if (null == principalName) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided prinicipal name was empty");
+            throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
-        
+
         final Attribute attribute = new Attribute(getId());
         attribute.setValues(Collections.singleton((AttributeValue) new StringAttributeValue(principalName)));
         return attribute;

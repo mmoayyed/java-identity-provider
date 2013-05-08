@@ -72,14 +72,14 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         scopeDelimiter =
-                Constraint.isNotNull(StringSupport.trimOrNull(newScopeDelimiter),
-                        "Scope delimiter can not be null or empty");
+                Constraint.isNotNull(StringSupport.trimOrNull(newScopeDelimiter), getLogPrefix()
+                        + " Scope delimiter can not be null or empty");
     }
 
     /** {@inheritDoc} */
     @Nonnull protected Attribute doAttributeDefinitionResolve(
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
-        Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
+        Constraint.isNotNull(resolutionContext, getLogPrefix() + " Attribute resolution context can not be null");
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -87,14 +87,14 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
 
         final Set<AttributeValue> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(resolutionContext, getDependencies());
-        log.debug("Attribute definition '{}': Dependencies {} provided unmapped values of {}", new Object[] {getId(),
-                getDependencies(), dependencyValues,});
+        log.debug("{} Dependencies {} provided unmapped values of {}", new Object[] {getLogPrefix(), getDependencies(),
+                dependencyValues,});
 
         for (AttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new ResolutionException(new UnsupportedAttributeTypeException(
-                        "This attribute definition only operates on attribute values of type "
-                                + StringAttributeValue.class.getName()));
+                throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
+                        + " This attribute definition only operates on attribute values of type "
+                        + StringAttributeValue.class.getName()));
             }
 
             resultantAttribute.getValues().add(buildScopedStringAttributeValue((StringAttributeValue) dependencyValue));
@@ -115,17 +115,17 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
      */
     @Nonnull private ScopedStringAttributeValue buildScopedStringAttributeValue(@Nonnull StringAttributeValue value)
             throws ResolutionException {
-        Constraint.isNotNull(value, "Attribute value can not be null");
+        Constraint.isNotNull(value, getLogPrefix() + " Attribute value can not be null");
 
         final String[] stringValues = value.getValue().split(scopeDelimiter);
         if (stringValues.length < 2) {
-            log.error("Attribute definition '{}': Input attribute value {} does not contain"
-                    + " delimiter {} and can not be split", new Object[] {getId(), value.getValue(), scopeDelimiter,});
+            log.error("{} Input attribute value {} does not contain delimiter {} and can not be split", new Object[] {
+                    getLogPrefix(), value.getValue(), scopeDelimiter,});
             throw new ResolutionException("Input attribute value can not be split.");
         }
 
-        log.debug("Attribute definition '{}': Value '{}' was split into {} at scope delimiter '{}'", new Object[] {
-                getId(), value.getValue(), stringValues, scopeDelimiter,});
+        log.debug("{} Value '{}' was split into {} at scope delimiter '{}'",
+                new Object[] {getLogPrefix(), value.getValue(), stringValues, scopeDelimiter,});
         return new ScopedStringAttributeValue(stringValues[0], stringValues[1]);
     }
 
@@ -134,8 +134,7 @@ public class PrescopedAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (getDependencies().isEmpty()) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no dependencies were configured");
+            throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
     }
 }

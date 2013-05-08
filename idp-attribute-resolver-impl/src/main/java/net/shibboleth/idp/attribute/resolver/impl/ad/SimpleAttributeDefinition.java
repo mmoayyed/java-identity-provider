@@ -50,8 +50,7 @@ public class SimpleAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (getDependencies().isEmpty()) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no dependencies were configured");
+            throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
     }
 }

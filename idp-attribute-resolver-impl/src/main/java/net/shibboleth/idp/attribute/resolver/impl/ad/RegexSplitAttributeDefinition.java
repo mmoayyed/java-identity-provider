@@ -90,30 +90,26 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
 
         for (AttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new ResolutionException(
-                        new UnsupportedAttributeTypeException(
-                                "This attribute definition only operates on attribute values of type "
-                                        + StringAttributeValue.class.getName() + " not "
-                                        + dependencyValue.getClass().getName()));
+                throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
+                        + "This attribute definition only operates on attribute values of type "
+                        + StringAttributeValue.class.getName() + " not " + dependencyValue.getClass().getName()));
             }
 
-            log.debug("Attribute definition '{}': applying regexp '{}' to input value '{}'", new Object[] {getId(),
-                    regexp.pattern(), dependencyValue.getValue(),});
+            log.debug("{} applying regexp '{}' to input value '{}'", new Object[] {getLogPrefix(), regexp.pattern(),
+                    dependencyValue.getValue(),});
             final Matcher matcher = regexp.matcher((String) dependencyValue.getValue());
             if (matcher.matches()) {
-                log.debug("Attribute definition '{}': caputed the value '{}' by apply regexp '{}' to input value '{}",
-                        new Object[] {getId(), matcher.group(1), regexp.pattern(), dependencyValue.getValue()});
+                log.debug("{} computed the value '{}' by apply regexp '{}' to input value '{}'", new Object[] {
+                        getLogPrefix(), matcher.group(1), regexp.pattern(), dependencyValue.getValue(),});
                 resultantAttribute.getValues().add(new StringAttributeValue(matcher.group(1)));
             } else {
-                log.debug("Attribute definition '{}': Regexp '{}' did not match anything in input value '{}'",
-                        dependencyValue.getValue(),
-                        new Object[] {getId(), regexp.pattern(), dependencyValue.getValue()});
+                log.debug("{} Regexp '{}' did not match anything in input value '{}'",
+                        new Object[] {getLogPrefix(), regexp.pattern(), dependencyValue.getValue()});
             }
         }
 
         return resultantAttribute;
     }
-    
 
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
@@ -123,7 +119,7 @@ public class RegexSplitAttributeDefinition extends BaseAttributeDefinition {
             throw new ComponentInitializationException("Attribute definition '" + getId()
                     + "': no regular expression was configured");
         }
-        
+
         if (getDependencies().isEmpty()) {
             throw new ComponentInitializationException("Attribute definition '" + getId()
                     + "': no dependencies were configured");

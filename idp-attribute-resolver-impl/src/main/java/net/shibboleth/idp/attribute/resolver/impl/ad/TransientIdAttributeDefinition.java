@@ -139,9 +139,9 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         idGenerator = new RandomIdentifierGenerationStrategy(idSize);
 
         if (null == idStore) {
-            throw new ComponentInitializationException("Attribute definition '" + getId() + ": No Id store set");
+            throw new ComponentInitializationException(getLogPrefix() + " no Id store set");
         }
-        log.debug("Using the store called {}", idStore.getId());
+        log.debug("{} using the store '{}'", getLogPrefix(), idStore.getId());
     }
 
     /**
@@ -155,8 +155,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
             @Nonnull final AttributeRecipientContext attributeRecipientContext) throws ResolutionException {
         final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
         if (null == attributeIssuerID) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided attribute issuer ID was empty");
+            throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID was empty");
         }
         return attributeIssuerID;
     }
@@ -173,12 +172,11 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         final String attributeRecipientID =
                 StringSupport.trimOrNull(attributeRecipientContext.getAttributeRecipientID());
         if (null == attributeRecipientID) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided attribute recipient ID was empty");
+            throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
         }
         return attributeRecipientID;
     }
-    
+
     /**
      * Police and get the Principal.
      * 
@@ -186,18 +184,18 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * @return the Principal
      * @throws ResolutionException if it was non null
      */
-    @Nonnull @NotEmpty private String getPrincipal(
-            @Nonnull final AttributeRecipientContext attributeRecipientContext) throws ResolutionException {
+    @Nonnull @NotEmpty private String getPrincipal(@Nonnull final AttributeRecipientContext attributeRecipientContext)
+            throws ResolutionException {
         final String principalName = StringSupport.trimOrNull(attributeRecipientContext.getPrincipal());
         if (null == principalName) {
-            throw new ResolutionException("Attribute definition '" + getId() + " provided prinicipal name was empty");
+            throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
         }
         return principalName;
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(
-            @Nonnull AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Nonnull protected Attribute doAttributeDefinitionResolve(@Nonnull AttributeResolutionContext resolutionContext)
+            throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -206,8 +204,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " no attribute recipient context provided ");
+            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
 
         final String attributeIssuerID = getAttributeIssuerID(attributeRecipientContext);
@@ -226,17 +223,18 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         TransientIdEntry tokenEntry = idStore.get(principalTokenId);
         if (tokenEntry == null || tokenEntry.isExpired()) {
             String token = idGenerator.generateIdentifier();
-            if (tokenEntry == null) {
-                log.debug("Creating new transient ID {} for request {}", token, resolutionContext.getId());
-            } else {
-                log.debug("Previous token expired, Creating new transient ID {} for request {}", token,
-                        resolutionContext.getId());
+            if (tokenEntry != null) {
+                log.debug("{} previous transient ID '{}' expired for request '{}'",
+                        new Object[] {getLogPrefix(), tokenEntry.getId(), resolutionContext.getId(),});
             }
+            log.debug("{} creating new transient ID '{}' for request '{}'", new Object[] {getLogPrefix(), token,
+                    resolutionContext.getId(),});
             tokenEntry = new TransientIdEntry(idLifetime, attributeRecipientID, principalName, token);
             idStore.persist(token, tokenEntry);
             idStore.persist(principalTokenId, tokenEntry);
         } else {
-            log.debug("Found existing transient ID {} for request {}", tokenEntry.getId(), resolutionContext.getId());
+            log.debug("{} found existing transient ID '{}' for request '{}'",
+                    new Object[] {getLogPrefix(), tokenEntry.getId(), resolutionContext.getId(),});
         }
         Set<AttributeValue> vals = Collections.singleton((AttributeValue) new StringAttributeValue(tokenEntry.getId()));
         result.setValues(vals);

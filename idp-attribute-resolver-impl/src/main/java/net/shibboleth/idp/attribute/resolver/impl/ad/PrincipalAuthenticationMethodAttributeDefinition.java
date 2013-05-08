@@ -74,7 +74,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
         final String method = StringSupport.trimOrNull(lookupStrategy.apply(resolutionContext));
 
         if (null == method) {
-            log.info("Attribute definition '{}': null or empty method was returned", getId());
+            log.info("{} null or empty method was returned", getLogPrefix());
             return null;
         }
 
@@ -87,8 +87,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends BaseAttrib
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == lookupStrategy) {
-            throw new ComponentInitializationException("Attribute definition: '" + getId()
-                    + "': no lookup strategy found");
+            throw new ComponentInitializationException(getLogPrefix() + " no lookup strategy found");
         }
     }
 }

@@ -84,9 +84,9 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
 
         for (AttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
-                throw new ResolutionException(new UnsupportedAttributeTypeException(
-                        "This attribute definition only operates on attribute values of type "
-                                + StringAttributeValue.class.getName()));
+                throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
+                        + "This attribute definition only operates on attribute values of type "
+                        + StringAttributeValue.class.getName()));
             }
 
             resultantAttribute.getValues().add(
@@ -101,13 +101,11 @@ public class ScopedAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (null == scope) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no scope was configured");
+            throw new ComponentInitializationException(getLogPrefix() + "': no scope was configured");
         }
 
         if (getDependencies().isEmpty()) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no dependencies were configured");
+            throw new ComponentInitializationException(getLogPrefix() + "': no dependencies were configured");
         }
     }
 }

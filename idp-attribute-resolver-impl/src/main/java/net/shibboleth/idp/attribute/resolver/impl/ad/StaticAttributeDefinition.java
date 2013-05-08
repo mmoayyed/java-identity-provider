@@ -34,12 +34,12 @@ import org.slf4j.LoggerFactory;
 /** An attribute definition that simply returns a static value. */
 @ThreadSafe
 public class StaticAttributeDefinition extends BaseAttributeDefinition {
-    
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(StaticAttributeDefinition.class);
 
     /** Static value returned by this definition. */
-    private Attribute value ;
+    private Attribute value;
 
     /**
      * Set the attribute value we are returning.
@@ -49,7 +49,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     public synchronized void setValue(@Nullable Attribute newAttribute) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        
+
         value = newAttribute;
     }
 
@@ -63,11 +63,11 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /** {@inheritDoc} */
-    @Nonnull protected Attribute doAttributeDefinitionResolve(
-            final AttributeResolutionContext resolutionContext) throws ResolutionException {
+    @Nonnull protected Attribute doAttributeDefinitionResolve(final AttributeResolutionContext resolutionContext)
+            throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        log.debug("Attribute definition '{}': Resolving static attribute {}", getId(), value);
+        log.debug("{} resolving static attribute {}", getLogPrefix(), value);
         return value;
     }
 
@@ -76,8 +76,7 @@ public class StaticAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (null == value) {
-            throw new ComponentInitializationException("Static Attribute definition " + getId()
-                    + " does not have an attribute set up.");
+            throw new ComponentInitializationException(getLogPrefix() + " no attribute value set");
         }
     }
 }

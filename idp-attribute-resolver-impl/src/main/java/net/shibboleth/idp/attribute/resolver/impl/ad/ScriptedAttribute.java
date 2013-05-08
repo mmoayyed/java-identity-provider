@@ -60,13 +60,21 @@ public class ScriptedAttribute {
      */
     private Collection<Object> attributeValues;
 
+    /** The prefix for logging. Derived from the definition's logPrefix and the attribute ID. */
+    private final String logPrefix;
+
     /**
      * Constructor.
      * 
      * @param attribute the attribute we are encapsulating.
+     * @param prefix the log path from the definition.
      */
-    public ScriptedAttribute(@Nonnull Attribute attribute) {
+    public ScriptedAttribute(@Nonnull Attribute attribute, String prefix) {
         encapsulatedAttribute = attribute;
+
+        logPrefix =
+                new StringBuilder(prefix).append(" scripted attribute '").append(attribute.getId()).append("':")
+                        .toString();
     }
 
     /**
@@ -78,16 +86,16 @@ public class ScriptedAttribute {
      */
     @Nullable @NonnullElements public Collection<Object> getValues() throws ResolutionException {
         if (calledGetNativeAttribute) {
-            throw new ResolutionException("Attribute resolution '" + getId()
-                    + "' cannot call getNativeAttribute() and getValues() on the same attribute()");
+            throw new ResolutionException(getLogPrefix()
+                    + " cannot call getNativeAttribute() and getValues() on the same attribute()");
         }
         if (null != attributeValues) {
             return attributeValues;
         }
 
-        log.debug("Attribute resolution '{}': Attribute Values being prepared", getId());
+        log.debug("{} values being prepared", getLogPrefix());
 
-        // NOTE.  This has to be a List - the examples use get(0)
+        // NOTE. This has to be a List - the examples use get(0)
         ArrayList<Object> newValues = new ArrayList<Object>(encapsulatedAttribute.getValues().size());
         for (AttributeValue value : encapsulatedAttribute.getValues()) {
             if ((value instanceof StringAttributeValue) && !(value instanceof ScopedStringAttributeValue)) {
@@ -97,7 +105,7 @@ public class ScriptedAttribute {
             }
         }
         attributeValues = newValues;
-        log.debug("Attribute resolution '{}': Attribute Values are : {}", new Object[] {getId(), newValues,});
+        log.debug("{} values are : {}", getLogPrefix(), newValues);
         return newValues;
     }
 
@@ -109,7 +117,7 @@ public class ScriptedAttribute {
      */
     @Nonnull public Attribute getNativeAttribute() throws ResolutionException {
         if (null != attributeValues) {
-            throw new ResolutionException("Attribute resolution '" + getId()
+            throw new ResolutionException(getLogPrefix()
                     + "': cannot call getNativeAttribute() and getValues() on the same attribute()");
         }
         calledGetNativeAttribute = true;
@@ -147,11 +155,11 @@ public class ScriptedAttribute {
      */
     private void policeValueType(@Nullable Object what) throws ResolutionException {
         if (null == what) {
-            throw new ResolutionException("Attribute resolution '" + getId() + "': added element was null");
+            throw new ResolutionException(getLogPrefix() + " added element was null");
 
         } else if (!(what instanceof String) && !(what instanceof AttributeValue)) {
-            throw new ResolutionException("Attribute resolution '" + getId()
-                    + "': added element must be a String or AttributeValue, provided = " + what.getClass().toString());
+            throw new ResolutionException(getLogPrefix()
+                    + " added element must be a String or AttributeValue, provided = " + what.getClass().toString());
         }
     }
 
@@ -182,21 +190,29 @@ public class ScriptedAttribute {
     @Nonnull protected Attribute getResultingAttribute() throws ResolutionException {
 
         if (null == attributeValues) {
-            log.debug("Attribute resolution '{}': Return initial attribute", getId());
+            log.debug("{} return initial attribute unchanged", getLogPrefix());
             return encapsulatedAttribute;
         }
 
         // Otherwise re-marshall the {@link #attributeValues}
         Set<AttributeValue> values = new HashSet<AttributeValue>(attributeValues.size());
 
-        log.debug("Attribute resolution '{}': recreating attribute contents from {}", new Object[] {getId(),
-                attributeValues,});
+        log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
         for (Object object : attributeValues) {
             policeValueType(object);
             addValue(values, object);
         }
         encapsulatedAttribute.setValues(values);
-        log.debug("Attribute resolution '{}': recreated attribute contents are {}", new Object[] {getId(), values,});
+        log.debug("{} recreated attribute contents are {}", getLogPrefix(), values);
         return encapsulatedAttribute;
+    }
+
+    /**
+     * The prefix for the logs.
+     * 
+     * @return the prefix
+     */
+    @Nonnull protected String getLogPrefix() {
+        return logPrefix;
     }
 }

@@ -30,7 +30,7 @@ import net.shibboleth.idp.attribute.resolver.impl.ad.ScriptedAttribute;
 public class BasicAttribute extends ScriptedAttribute {
 
     /** Log. */
-    private Logger log = LoggerFactory.getLogger(BasicAttribute.class);
+    private Logger log = LoggerFactory.getLogger(ScriptedAttribute.class);
 
     /**
      * Constructor.
@@ -38,8 +38,7 @@ public class BasicAttribute extends ScriptedAttribute {
      * @param id The attribute Id.
      */
     public BasicAttribute(String id) {
-        super(new Attribute(id));
-        log.info("Scripted Attribute Definition: {} Use of V2 emulated class \""
-                + "BasicAttribute\", consider replacing this code", id);
+        super(new Attribute(id), "Scripted Attribute Definition: ");
+        log.info("{}  Use of V2 emulated class \"BasicAttribute\", consider replacing this code", getLogPrefix());
     }
 }

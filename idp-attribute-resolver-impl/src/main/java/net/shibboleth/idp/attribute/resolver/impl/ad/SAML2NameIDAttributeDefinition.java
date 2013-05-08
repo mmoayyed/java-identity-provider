@@ -146,14 +146,13 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
     protected NameID buildNameId(@Nonnull String nameIdValue, @Nonnull AttributeResolutionContext resolutionContext)
             throws ResolutionException {
 
-        log.debug("NameIdAttribute {} : Building a SAML2 NameID with value for {}", getId(), nameIdValue);
+        log.debug("{} building a SAML2 NameID with value of '{}'", getLogPrefix(), nameIdValue);
 
         final AttributeRecipientContext attributeRecipientContext =
                 resolutionContext.getSubcontext(AttributeRecipientContext.class);
 
         if (null == attributeRecipientContext) {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " no attribute recipient context provided ");
+            throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
 
         final String attributeRecipientID =
@@ -165,25 +164,28 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
         nameId.setValue(nameIdValue);
 
         if (nameIdFormat != null) {
+            log.debug("{} Format set to '{}'", getLogPrefix(), nameIdFormat);
             nameId.setFormat(nameIdFormat);
         }
 
         if (nameIdQualifier != null) {
+            log.debug("{} NameQualifier set to '{}'", getLogPrefix(), nameIdQualifier);
             nameId.setNameQualifier(nameIdQualifier);
         } else if (null != attributeIssuerID) {
+            log.debug("{} NameQualifier set to '{}'", getLogPrefix(), attributeIssuerID);
             nameId.setNameQualifier(attributeIssuerID);
         } else {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided attribute issuer ID  was empty");
+            throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID  was empty");
         }
 
         if (nameIdSPQualifier != null) {
+            log.debug("{} SPNameQualifier set to '{}'", getLogPrefix(), nameIdSPQualifier);
             nameId.setSPNameQualifier(nameIdSPQualifier);
         } else if (null != attributeRecipientID) {
+            log.debug("{} SPNameQualifier set to '{}'", getLogPrefix(), attributeRecipientID);
             nameId.setSPNameQualifier(attributeRecipientID);
         } else {
-            throw new ResolutionException("Attribute definition '" + getId()
-                    + " provided attribute recipient ID was empty");
+            throw new ResolutionException(getLogPrefix() + " provided attribute recipient ID was empty");
         }
 
         return nameId;
@@ -206,7 +208,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
             XMLObjectAttributeValue val = new XMLObjectAttributeValue(nid);
             return val;
         }
-        log.warn("NameIdAttribute {} : Value {} is not a string", getId(), theValue.toString());
+        log.warn("{} value {} is not a string", getLogPrefix(), theValue.toString());
         return null;
     }
 
@@ -238,7 +240,7 @@ public class SAML2NameIDAttributeDefinition extends BaseAttributeDefinition {
                     }
                 }
                 if (0 == outputValues.size()) {
-                    log.warn("NameIdAttribute {} No appropriate values", getId());
+                    log.warn("{} no appropriate values", getLogPrefix());
                     return null;
                 }
             }

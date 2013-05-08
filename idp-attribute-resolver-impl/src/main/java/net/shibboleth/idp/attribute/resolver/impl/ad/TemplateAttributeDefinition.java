@@ -75,7 +75,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
     /** Template to be evaluated. */
     private Template template;
-    
+
     /** Template (as Text) to be evaluated. */
     private String templateText;
 
@@ -137,7 +137,7 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
         templateText = velocityTemplate;
     }
-    
+
     /**
      * Gets the {@link VelocityEngine} to be used.
      * 
@@ -173,31 +173,31 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         String templateResult;
 
         for (int i = 0; i < valueCount; i++) {
-            log.debug("Attribute definition '{}': determing value {}", i + 1);
+            log.debug("{} determing value {}", getLogPrefix(), i + 1);
             velocityContext = new VelocityContext();
 
             for (String attributeId : sourceValues.keySet()) {
                 final AttributeValue value = sourceValues.get(attributeId).next();
                 if (!(value instanceof StringAttributeValue)) {
-                    throw new ResolutionException(new UnsupportedAttributeTypeException(
-                            "This attribute definition only supports attribute value types of "
-                                    + StringAttributeValue.class.getName() + " not values of type "
-                                    + value.getClass().getName()));
+                    throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
+                            + "This attribute definition only supports attribute value types of "
+                            + StringAttributeValue.class.getName() + " not values of type "
+                            + value.getClass().getName()));
                 }
 
-                log.debug("Attribute definition '{}': adding value '{}' for attribute '{}' to the template context",
-                        new Object[] {getId(), value.toString(), attributeId,});
+                log.debug("{} adding value '{}' for attribute '{}' to the template context", new Object[] {
+                        getLogPrefix(), value.getValue(), attributeId,});
                 velocityContext.put(attributeId, value.getValue());
             }
 
             try {
-                log.debug("Attribute definition '{}': evaluating template", getId());
+                log.debug("{} evaluating template", getLogPrefix());
                 templateResult = template.merge(velocityContext);
-                log.debug("Attribute definition '{}': result of template evaluating was '{}'", getId(), templateResult);
+                log.debug("{} result of template evaluating was '{}'", getLogPrefix(), templateResult);
                 resultantAttribute.getValues().add(new StringAttributeValue(templateResult));
             } catch (VelocityException e) {
                 // TODO (rdw) uncovered path
-                log.error("Attribute definition '" + getId() + "': unable to evaluate velocity template", e);
+                log.error(getLogPrefix() + " unable to evaluate velocity template", e);
                 throw new ResolutionException("Unable to evaluate template", e);
             }
         }
@@ -210,17 +210,15 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (getDependencies().isEmpty()) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no dependencies were configured");
+            throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
 
         if (null == engine) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no velocity engine was configured" );
+            throw new ComponentInitializationException(getLogPrefix() + " no velocity engine was configured");
         }
-        
+
         if (sourceAttributes.isEmpty()) {
-            log.info("Attribute Definition '{}': No Source Attributes supplied, was this intended?");
+            log.info("{} no Source Attributes supplied, was this intended?", getLogPrefix());
         }
 
         templateText = StringSupport.trimOrNull(templateText);
@@ -233,14 +231,14 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
             if (defaultTemplate.length() > 0) {
                 templateText = defaultTemplate.toString();
             } else {
-                throw new ComponentInitializationException("Attribute definition '" + getId()
-                        + "': no template and no source attributes were configured");                
+                throw new ComponentInitializationException(getLogPrefix()
+                        + " no template and no source attributes were configured");
             }
-            log.info("Attribute definition '{}' no template supplied default generated '{}'", getId(), templateText);
+            log.info("{} no template supplied. Default generated was '{}'", getLogPrefix(), templateText);
         }
-        
+
         template = Template.fromTemplate(engine, templateText);
-        
+
     }
 
     /**
@@ -269,17 +267,16 @@ public class TemplateAttributeDefinition extends BaseAttributeDefinition {
 
             final Set<AttributeValue> attributeValues = dependencyAttributes.get(attributeName);
             if (null == attributeValues) {
-                throw new ResolutionException("Attribute Resolution '" + getId()
-                        + "' : no values found for attribute named '" + attributeName + "'");
+                throw new ResolutionException(getLogPrefix() + " no values found for attribute named '" + attributeName
+                        + "'");
             }
 
             if (!valueCountSet) {
                 valueCount = attributeValues.size();
                 valueCountSet = true;
             } else if (attributeValues.size() != valueCount) {
-                final String msg =
-                        "All attributes used in TemplateAttributeDefinition " + getId()
-                                + " must have the same number of values.";
+                final String msg = getLogPrefix() + " all attributes used in"
+                                + " TemplateAttributeDefinition must have the same number of values.";
                 log.error(msg);
                 throw new ResolutionException(msg);
             }

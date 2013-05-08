@@ -105,12 +105,12 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         try {
             script.eval(context);
         } catch (ScriptException e) {
-            throw new ResolutionException("AttributeDefinition '" + getId() + "': unable to execute script", e);
+            throw new ResolutionException(getLogPrefix() + " unable to execute script", e);
         }
         Object result = context.getAttribute(getId());
 
         if (null == result) {
-            log.info("AttributeDefinition '{}': No value returned", getId());
+            log.info("{} no value returned", getLogPrefix());
             return null;
         }
 
@@ -121,7 +121,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
 
         } else {
 
-            throw new ResolutionException("AttributeDefinition '" + getId() + "': returned variable was of wrong type ("
+            throw new ResolutionException(getLogPrefix() + " returned variable was of wrong type ("
                     + result.getClass().toString() + ")");
         }
 
@@ -132,8 +132,7 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
         super.doInitialize();
 
         if (null == script) {
-            throw new ComponentInitializationException("Attribute definition '" + getId()
-                    + "': no script was configured");
+            throw new ComponentInitializationException(getLogPrefix() + " no script was configured");
         }
     }
 
@@ -155,29 +154,29 @@ public class ScriptedAttributeDefinition extends BaseAttributeDefinition {
                 PluginDependencySupport.getAllAttributeValues(resolutionContext, getDependencies());
 
         if (dependencyAttributes.containsKey(getId())) {
-            log.debug("Attribute definition '{}': to-be-populated attribute is a dependency.  Not created");
+            log.debug("{} to-be-populated attribute is a dependency.  Not created", getLogPrefix());
         } else {
-            log.debug("Attribute definition '{}': adding to-be-populated attribute to script context", getId());
+            log.debug("{} adding to-be-populated attribute to script context", getLogPrefix());
             final Attribute newAttribute = new Attribute(getId());
-            scriptContext.setAttribute(getId(), new ScriptedAttribute(newAttribute), ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute(getId(), new ScriptedAttribute(newAttribute, getLogPrefix()),
+                    ScriptContext.ENGINE_SCOPE);
         }
 
-        log.debug("Attribute definition '{}': adding current attribute resolution context to script context", getId());
+        log.debug("{} adding current attribute resolution context to script context", getLogPrefix());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
 
-        log.debug("Attribute definition '{}': adding emulated V2 request context context to script context", getId());
+        log.debug("{} adding emulated V2 request context context to script context", getLogPrefix());
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
                 ScriptContext.ENGINE_SCOPE);
 
         for (Entry<String, Set<AttributeValue>> dependencyAttribute : dependencyAttributes.entrySet()) {
-            log.debug("Attribute definition '{}': adding dependant attribute '{}' "
-                    + " with the following values to the script context: {}", new Object[] {getId(),
-                    dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
+            log.debug("{} adding dependant attribute '{}' with the following values to the script context: {}",
+                    new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final Attribute pseudoAttribute = new Attribute(dependencyAttribute.getKey());
             pseudoAttribute.setValues(dependencyAttribute.getValue());
 
-            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedAttribute(pseudoAttribute),
-                    ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedAttribute(pseudoAttribute,
+                    getLogPrefix()), ScriptContext.ENGINE_SCOPE);
         }
 
         return scriptContext;
