@@ -37,7 +37,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Objects;
 
 /** A simple, mock implementation of {@link MatchFunctor}. */
-public class MockAttributeValueMatcher extends AbstractIdentifiableInitializableComponent implements MatchFunctor, InitializableComponent, DestructableComponent, ValidatableComponent{ 
+public class MockMatchFunctor extends AbstractIdentifiableInitializableComponent implements MatchFunctor, InitializableComponent, DestructableComponent, ValidatableComponent{ 
 
     /** ID of the attribute to which this matcher applies. */
     private String matchingAttribute;
@@ -53,8 +53,17 @@ public class MockAttributeValueMatcher extends AbstractIdentifiableInitializable
     
     /** state variable */
     private boolean validated;
+    
+    /** to return from getMatchingValues(). */
+    private boolean retVal;
 
-    public MockAttributeValueMatcher() {
+    /** do we fail when validate is called? */
+    private boolean failValidate;
+
+    /** what was passed to getMatchingValues(). */
+    private AttributeFilterContext contextUsed;
+
+    public MockMatchFunctor() {
         setId("Mock");
     }
 
@@ -103,6 +112,9 @@ public class MockAttributeValueMatcher extends AbstractIdentifiableInitializable
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
+        if (failValidate) {
+            throw new ComponentValidationException();
+        }
         validated = true; 
     }
     
@@ -130,9 +142,24 @@ public class MockAttributeValueMatcher extends AbstractIdentifiableInitializable
         initialized = true;
     }
 
+    public void setRetVal(boolean what) {
+        retVal = what;
+    }
+
+
+    public AttributeFilterContext getContextUsedAndReset() {
+        AttributeFilterContext value = contextUsed;
+        contextUsed = null;
+        return value;
+    }
+
+    public void setFailValidate(boolean doFail) {
+        failValidate = doFail;
+    }
+
     /** {@inheritDoc} */
     public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
-        // TODO Auto-generated method stub
-        return false;
+        contextUsed = filterContext;
+        return retVal;
     }
 }

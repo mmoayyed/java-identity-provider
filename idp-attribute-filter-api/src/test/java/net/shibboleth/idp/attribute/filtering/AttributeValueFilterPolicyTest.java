@@ -40,7 +40,7 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         AttributeValueFilterPolicy policy = new AttributeValueFilterPolicy();
-        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
+        MockMatchFunctor matcher = new MockMatchFunctor();
         policy.setValueMatcher(matcher);
 
         Assert.assertFalse(policy.isInitialized(), "Created - not initialized");
@@ -226,7 +226,7 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testValidateApply() throws ComponentInitializationException, ComponentValidationException,
             AttributeFilteringException {
-        MockAttributeValueMatcher matcher = new MockAttributeValueMatcher();
+        MockMatchFunctor matcher = new MockMatchFunctor();
 
         final StringAttributeValue aStringAttributeValue = new StringAttributeValue("a");
         final StringAttributeValue bStringAttributeValue = new StringAttributeValue("b");

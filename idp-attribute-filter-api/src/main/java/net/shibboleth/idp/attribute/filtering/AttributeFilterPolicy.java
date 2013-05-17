@@ -43,7 +43,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -65,7 +64,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
     /** Criterion that must be met for this policy to be active for a given request. */
-    private final Predicate<AttributeFilterContext> activationCriteria;
+    private final MatchFunctor policyRequirementRule;
 
     /** Filters to be used on attribute values. */
     private final List<AttributeValueFilterPolicy> valuePolicies;
@@ -74,15 +73,15 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * Constructor.
      * 
      * @param policyId unique ID of this policy
-     * @param criterion criterion used to determine if this policy is active for a given request
+     * @param requirementRule criterion used to determine if this policy is active for a given request
      * @param policies value filtering policies employed if this policy is active
      */
-    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull Predicate criterion,
+    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull MatchFunctor requirementRule,
             @Nullable Collection<AttributeValueFilterPolicy> policies) {
         setId(policyId);
 
-        activationCriteria =
-                Constraint.isNotNull(criterion, "Attribute filter policy activiation criterion can not be null");
+        policyRequirementRule =
+                Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
 
         ArrayList<AttributeValueFilterPolicy> checkedPolicies = new ArrayList<AttributeValueFilterPolicy>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
@@ -98,8 +97,8 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @return criteria that must be met for this policy to be active for a given request
      */
-    @Nonnull public Predicate<AttributeFilterContext> getActivationCriteria() {
-        return activationCriteria;
+    @Nonnull public MatchFunctor getActivationCriteria() {
+        return policyRequirementRule;
     }
 
     /**
@@ -113,7 +112,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        ComponentSupport.validate(activationCriteria);
+        ComponentSupport.validate(policyRequirementRule);
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
             valuePolicy.validate();
@@ -139,13 +138,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
-        boolean isActive;
-        try {
-            isActive = activationCriteria.apply(filterContext);
-        } catch (RuntimeException e) {
-            // TODO deal with this. It is pig ugly.
-            throw new AttributeFilteringException(e);
-        }
+        final boolean isActive = policyRequirementRule.evaluatePolicyRule(filterContext);
         if (isActive) {
             log.debug("Attribute filter policy '{}' is active for this request", getId());
         } else {
@@ -196,7 +189,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        ComponentSupport.initialize(activationCriteria);
+        ComponentSupport.initialize(policyRequirementRule);
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
             valuePolicy.initialize();
@@ -205,7 +198,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        ComponentSupport.destroy(activationCriteria);
+        ComponentSupport.destroy(policyRequirementRule);
 
         for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
             valuePolicy.destroy();

@@ -39,11 +39,11 @@ import com.google.common.collect.Lists;
 /** {@link AttributeFilterPolicy} unit test. */
 public class AttributeFilterPolicyTest {
 
-    private MockPredicate predicate;
+    private MockMatchFunctor policyMatcher;
 
     private AttributeValueFilterPolicy valuePolicy;
 
-    private MockAttributeValueMatcher matcher;
+    private MockMatchFunctor valueMatcher;
 
     private final String ATTR_NAME = "foo";
 
@@ -52,40 +52,40 @@ public class AttributeFilterPolicyTest {
     private final String ID = "foo";
 
     @BeforeMethod public void setUp() {
-        predicate = new MockPredicate();
-        matcher = new MockAttributeValueMatcher();
+        policyMatcher = new MockMatchFunctor();
+        valueMatcher = new MockMatchFunctor();
         valuePolicy = new AttributeValueFilterPolicy();
         valuePolicy.setAttributeId(ATTR_NAME);
-        valuePolicy.setValueMatcher(matcher);
+        valuePolicy.setValueMatcher(valueMatcher);
     }
 
     @Test public void testPostConstructionState() {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
         Assert.assertEquals(policy.getId(), ID);
-        Assert.assertEquals(policy.getActivationCriteria(), predicate);
+        Assert.assertEquals(policy.getActivationCriteria(), policyMatcher);
         Assert.assertTrue(policy.getAttributeValuePolicies().contains(valuePolicy));
 
-        policy = new AttributeFilterPolicy(ID, predicate, null);
+        policy = new AttributeFilterPolicy(ID, policyMatcher, null);
         Assert.assertEquals(policy.getId(), ID);
-        Assert.assertEquals(policy.getActivationCriteria(), predicate);
+        Assert.assertEquals(policy.getActivationCriteria(), policyMatcher);
         Assert.assertTrue(policy.getAttributeValuePolicies().isEmpty());
 
         try {
-            new AttributeFilterPolicy(null, predicate, Arrays.asList(valuePolicy));
+            new AttributeFilterPolicy(null, policyMatcher, Arrays.asList(valuePolicy));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected
         }
 
         try {
-            new AttributeFilterPolicy("", predicate, Arrays.asList(valuePolicy));
+            new AttributeFilterPolicy("", policyMatcher, Arrays.asList(valuePolicy));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected
         }
 
         try {
-            new AttributeFilterPolicy("  ", predicate, Arrays.asList(valuePolicy));
+            new AttributeFilterPolicy("  ", policyMatcher, Arrays.asList(valuePolicy));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected
@@ -100,29 +100,29 @@ public class AttributeFilterPolicyTest {
     }
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
         Assert.assertFalse(policy.isInitialized(), "Created");
-        Assert.assertFalse(predicate.isInitialized(), "Created");
-        Assert.assertFalse(matcher.isInitialized(), "Created");
+        Assert.assertFalse(policyMatcher.isInitialized(), "Created");
+        Assert.assertFalse(valueMatcher.isInitialized(), "Created");
 
         Assert.assertFalse(policy.isDestroyed(), "Created");
-        Assert.assertFalse(predicate.isDestroyed(), "Created");
-        Assert.assertFalse(matcher.isDestroyed(), "Created");
+        Assert.assertFalse(policyMatcher.isDestroyed(), "Created");
+        Assert.assertFalse(valueMatcher.isDestroyed(), "Created");
 
-        policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
         policy.initialize();
         Assert.assertTrue(policy.isInitialized(), "Initialized");
-        Assert.assertTrue(predicate.isInitialized(), "Initialized");
-        Assert.assertTrue(matcher.isInitialized(), "Initialized");
+        Assert.assertTrue(policyMatcher.isInitialized(), "Initialized");
+        Assert.assertTrue(valueMatcher.isInitialized(), "Initialized");
 
         Assert.assertFalse(policy.isDestroyed(), "Initialized");
-        Assert.assertFalse(predicate.isDestroyed(), "Initialized");
-        Assert.assertFalse(matcher.isDestroyed(), "Initialized");
+        Assert.assertFalse(policyMatcher.isDestroyed(), "Initialized");
+        Assert.assertFalse(valueMatcher.isDestroyed(), "Initialized");
 
         policy.destroy();
         Assert.assertTrue(policy.isDestroyed(), "Destroyed");
-        Assert.assertTrue(predicate.isDestroyed(), "Destroyed");
-        Assert.assertTrue(matcher.isDestroyed(), "Destroyed");
+        Assert.assertTrue(policyMatcher.isDestroyed(), "Destroyed");
+        Assert.assertTrue(valueMatcher.isDestroyed(), "Destroyed");
 
         boolean thrown = false;
         try {
@@ -134,7 +134,7 @@ public class AttributeFilterPolicyTest {
     }
 
     @Test public void testAttributeValuePolicies() throws ComponentInitializationException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, null);
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, null);
         Assert.assertTrue(policy.getAttributeValuePolicies().isEmpty());
 
         try {
@@ -144,7 +144,7 @@ public class AttributeFilterPolicyTest {
             // expected
         }
 
-        policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
         Assert.assertEquals(policy.getAttributeValuePolicies().size(), 1);
 
         policy.initialize();
@@ -153,7 +153,7 @@ public class AttributeFilterPolicyTest {
     }
 
     @Test public void testValidate() throws ComponentInitializationException, ComponentValidationException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
 
         boolean thrown = false;
         try {
@@ -165,11 +165,11 @@ public class AttributeFilterPolicyTest {
 
         policy.initialize();
         policy.validate();
-        Assert.assertTrue(predicate.getValidated());
-        Assert.assertTrue(matcher.getValidated());
+        Assert.assertTrue(policyMatcher.getValidated());
+        Assert.assertTrue(valueMatcher.getValidated());
 
         thrown = false;
-        predicate.setFailValidate(true);
+        policyMatcher.setFailValidate(true);
         try {
             policy.validate();
         } catch (ComponentValidationException e) {
@@ -180,7 +180,7 @@ public class AttributeFilterPolicyTest {
     }
 
     @Test public void testApplicable() throws ComponentInitializationException, AttributeFilteringException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
 
         boolean thrown = false;
         try {
@@ -200,22 +200,22 @@ public class AttributeFilterPolicyTest {
         }
         Assert.assertTrue(thrown);
 
-        predicate.setRetVal(true);
+        policyMatcher.setRetVal(true);
         AttributeFilterContext context = new AttributeFilterContext();
-        Assert.assertNull(predicate.getContextUsedAndReset());
+        Assert.assertNull(policyMatcher.getContextUsedAndReset());
         Assert.assertTrue(policy.isApplicable(context));
-        Assert.assertEquals(predicate.getContextUsedAndReset(), context);
+        Assert.assertEquals(policyMatcher.getContextUsedAndReset(), context);
         //
         // Test that the reset worked
         //
-        Assert.assertNull(predicate.getContextUsedAndReset());
-        predicate.setRetVal(false);
+        Assert.assertNull(policyMatcher.getContextUsedAndReset());
+        policyMatcher.setRetVal(false);
         Assert.assertFalse(policy.isApplicable(context));
-        Assert.assertEquals(predicate.getContextUsedAndReset(), context);
+        Assert.assertEquals(policyMatcher.getContextUsedAndReset(), context);
     }
 
     @Test public void testApply() throws ComponentInitializationException, AttributeFilteringException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
 
         boolean thrown = false;
         try {
@@ -245,9 +245,9 @@ public class AttributeFilterPolicyTest {
         attribute2.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("45")));
         context.setPrefilteredAttributes(Arrays.asList(attribute, attribute2));
 
-        predicate.setRetVal(true);
-        matcher.setMatchingAttribute(ATTR_NAME);
-        matcher.setMatchingValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("three")));
+        policyMatcher.setRetVal(true);
+        valueMatcher.setMatchingAttribute(ATTR_NAME);
+        valueMatcher.setMatchingValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("three")));
 
         policy.apply(context);
 
@@ -261,7 +261,7 @@ public class AttributeFilterPolicyTest {
     }
 
     @Test public void testApplyToEmpty() throws ComponentInitializationException, AttributeFilteringException {
-        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, predicate, Arrays.asList(valuePolicy));
+        AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
         //
         // Empty attribute
         //
