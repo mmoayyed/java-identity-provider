@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.complex;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +28,12 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.impl.dc.SAMLAttributeDataConnector;
+import net.shibboleth.idp.attribute.resolver.impl.dc.attribute.BaseMappedAttribute;
+import net.shibboleth.idp.attribute.resolver.impl.dc.attribute.SAML2AttributeDataConnector;
+import net.shibboleth.idp.attribute.resolver.impl.dc.attribute.StringMappedAttribute;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 
@@ -38,35 +43,43 @@ import com.google.common.base.Function;
  * Base class for testing complex attribute filter operations.
  */
 public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
-    
+
     private static final String PATH = "/data/net/shibboleth/idp/filter/impl/complex/";
-    
+
     /**
-     * Helper function to return attributes pulled from a file (on the classpath).  The file is
-     * expected to contain a single <mdattr:EntityAttributes/> statement (for ease).
-     *   
+     * Helper function to return attributes pulled from a file (on the classpath). The file is expected to contain a
+     * single <mdattr:EntityAttributes/> statement (for ease).
+     * 
      * @param xmlFileName the file within the test directory.
      * @return the att
      * @throws ComponentInitializationException
      * @throws ResolutionException
      */
-    protected Map<String, Attribute> getAttributes(String xmlFileName) throws ComponentInitializationException, ResolutionException {
-        
+    protected Map<String, Attribute> getAttributes(String xmlFileName) throws ComponentInitializationException,
+            ResolutionException {
+
         final EntityAttributes obj = (EntityAttributes) unmarshallElement(PATH + xmlFileName);
 
-        SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
+        SAML2AttributeDataConnector connector = new SAML2AttributeDataConnector();
         connector.setId(xmlFileName);
-        connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<org.opensaml.saml.saml2.core.Attribute>>() {
-                        @Nullable
-            public 
-            
-            List<org.opensaml.saml.saml2.core.Attribute> apply(@Nullable AttributeResolutionContext input) {
-                return obj.getAttributes();
+        final List<BaseMappedAttribute> attributeMap = new ArrayList<BaseMappedAttribute>(2);
+        StringMappedAttribute map = new StringMappedAttribute();
+        map.setSamlName("eduPersonAffiliation");
+        map.setIds(Collections.singletonList("eduPersonAffiliation"));
+        attributeMap.add(map);
+        map = new StringMappedAttribute();
+        map.setSamlName("uid");
+        map.setIds(Collections.singletonList("uid"));
+        attributeMap.add(map);
+        connector.setMap(attributeMap);
+        connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<XMLObject>>() {
+            @Nullable public List<XMLObject> apply(@Nullable AttributeResolutionContext input) {
+                return (List) obj.getAttributes();
             }
         });
-        
+
         connector.initialize();
-        
+
         return connector.doResolve(null);
     }
 

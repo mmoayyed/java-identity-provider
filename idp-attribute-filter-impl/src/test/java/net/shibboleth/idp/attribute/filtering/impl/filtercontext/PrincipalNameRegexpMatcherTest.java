@@ -41,6 +41,7 @@ public class PrincipalNameRegexpMatcherTest {
         }
     
         matcher.setRegularExpression("^p.*");
+        matcher.setId("Test");
         matcher.initialize();
         // TODO
         // Assert.assertFalse(matcher.apply(null));

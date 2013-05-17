@@ -32,6 +32,7 @@ public class AttributeValueRegexpMatcherTest {
     @Test public void testApply() throws ComponentInitializationException {
         AttributeValueRegexpMatcher matcher = new AttributeValueRegexpMatcher();
         matcher.setRegularExpression(DataSources.TEST_REGEX);
+        matcher.setId("Test");
         matcher.initialize();
         
         Assert.assertTrue(matcher.compareAttributeValue(DataSources.STRING_VALUE));

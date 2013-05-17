@@ -22,16 +22,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -47,7 +45,7 @@ import com.google.common.base.Objects;
  * predicate is the logical NOT of the composed {@link MatchFunctor}.
  */
 @ThreadSafe
-public final class NotMatcher extends AbstractDestructableInitializableComponent implements MatchFunctor {
+public final class NotMatcher extends AbstractDestructableIdentifiableInitializableComponent implements MatchFunctor {
 
     /** The matcher we are negating. */
     private MatchFunctor negatedMatcher;
@@ -66,15 +64,17 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
      * 
      * @return matcher that is being negated
      */
-    public AttributeValueMatcher getNegtedMatcher() {
+    public MatchFunctor getNegtedMatcher() {
         return negatedMatcher;
     }
 
     /**
-     * The predicate is the logical NOT of the composed {@link MatchFunctor}. {@inheritDoc}
+     * {@inheritDoc} The result is the logical NOT of the composed {@link MatchFunctor}.
      */
-    public boolean apply(@Nullable AttributeFilterContext filterContext) {
-        return !negatedMatcher.apply(filterContext);
+
+    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) 
+            throws AttributeFilteringException {
+        return !negatedMatcher.evaluatePolicyRule(filterContext);
     }
 
     /**
@@ -88,7 +88,7 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final AttributeValueMatcher currentMatcher = getNegtedMatcher();
+        final MatchFunctor currentMatcher = getNegtedMatcher();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -154,5 +154,10 @@ public final class NotMatcher extends AbstractDestructableInitializableComponent
 
         ComponentSupport.initialize(negatedMatcher);
     }
+    /** {@inheritDoc} */
+    public void setId(String id) {
+        super.setId(id);
+    }
+
 
 }

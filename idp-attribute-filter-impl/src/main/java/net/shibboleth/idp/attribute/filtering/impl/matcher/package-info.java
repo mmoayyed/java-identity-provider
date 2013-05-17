@@ -18,7 +18,7 @@
 /**
  * Implementation of the various policy matchers.  
  * 
- * The classes in this package all implement {@link net.shibboleth.idp.attribute.filtering.AttributeValueMatcher} 
+ * The classes in this package all implement {@link net.shibboleth.idp.attribute.filtering.MatchFunctor} 
  */
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;

@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -58,8 +58,10 @@ public class AndMatcher extends AbstractComposedMatcher {
 
     /**
      * Return true iff all composed matchers return true. {@inheritDoc}
+     * @throws AttributeFilteringException 
      */
-    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+    public boolean evaluatePolicyRule( @Nullable final AttributeFilterContext filterContext) 
+            throws AttributeFilteringException {
         final List<MatchFunctor> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -74,7 +76,7 @@ public class AndMatcher extends AbstractComposedMatcher {
         }
 
         for (MatchFunctor child : currentMatchers) {
-            if (!child.apply(filterContext)) {
+            if (!child.evaluatePolicyRule(filterContext)) {
                 return false;
             }
         }

@@ -182,24 +182,24 @@ public class AttributeValueFilterPolicyTest {
         policy.setAttributeId("foo");
         Assert.assertNotNull(policy.getValueMatcher(), "AttributeValueMatcher - created");
 
-        Assert.assertNotSame(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+        Assert.assertNotSame(policy.getValueMatcher(), MatchFunctor.MATCHES_ALL,
                 "AttributeValueMatcher - precondition for rest of test");
 
-        policy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
-        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+        policy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        Assert.assertEquals(policy.getValueMatcher(), MatchFunctor.MATCHES_ALL,
                 "AttributeValueMatcher - changed");
         policy.initialize();
-        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+        Assert.assertEquals(policy.getValueMatcher(), MatchFunctor.MATCHES_ALL,
                 "AttributeValueMatcher - initialized");
 
         boolean thrown = false;
         try {
-            policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);
+            policy.setValueMatcher(MatchFunctor.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "AttributeValueMatcher - set after initialized");
-        Assert.assertEquals(policy.getValueMatcher(), AttributeValueMatcher.MATCHES_ALL,
+        Assert.assertEquals(policy.getValueMatcher(), MatchFunctor.MATCHES_ALL,
                 "AttributeValueMatcher - set after initialized");
 
         policy = new AttributeValueFilterPolicy();
@@ -208,7 +208,7 @@ public class AttributeValueFilterPolicyTest {
         policy.destroy();
         thrown = false;
         try {
-            policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);
+            policy.setValueMatcher(MatchFunctor.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }

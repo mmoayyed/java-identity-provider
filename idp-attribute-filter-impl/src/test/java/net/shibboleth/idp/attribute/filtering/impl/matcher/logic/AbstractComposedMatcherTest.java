@@ -29,8 +29,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.logic.AbstractComposedMatcher;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.CountingDestructableInitializableValidatableComponent;
@@ -96,6 +95,7 @@ public class AbstractComposedMatcherTest {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Set into the returned list");
+        matcher.setId("Test");
         
         matcher.initialize();
         
@@ -200,7 +200,7 @@ public class AbstractComposedMatcherTest {
             return null;
         }
 
-        public boolean apply(@Nullable AttributeFilterContext arg0) {
+        public boolean evaluatePolicyRule(@Nullable AttributeFilterContext arg0) {
             return false;
         }
     }
@@ -212,8 +212,13 @@ public class AbstractComposedMatcherTest {
             return null;
         }
 
-        public boolean apply(@Nullable AttributeFilterContext arg0) {
+        public boolean evaluatePolicyRule(@Nullable AttributeFilterContext arg0) {
             return false;
+        }
+
+        /** {@inheritDoc} */
+        @Nullable public String getId() {
+            return "99";
         }
         
     }

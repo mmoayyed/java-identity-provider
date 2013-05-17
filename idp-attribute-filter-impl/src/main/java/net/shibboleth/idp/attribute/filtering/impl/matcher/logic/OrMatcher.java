@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -30,19 +31,17 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import com.google.common.base.Objects;
 
 /**
  * {@link MatchFunctor} that implements the disjunction of matchers. That is, a given attribute value is
  * considered to have matched if it is returned by any of the composed {@link MatchFunctor}.
  */
 @ThreadSafe
-public class OrMatcher extends AbstractComposedMatcher implements MatchFunctor {
+public class OrMatcher extends AbstractComposedMatcher  {
 
     /**
      * Constructor.
@@ -54,7 +53,8 @@ public class OrMatcher extends AbstractComposedMatcher implements MatchFunctor {
     }
     
     /** {@inheritDoc} */
-    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) 
+            throws AttributeFilteringException {
         final List<MatchFunctor> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
@@ -66,7 +66,7 @@ public class OrMatcher extends AbstractComposedMatcher implements MatchFunctor {
         }
 
         for (MatchFunctor child : currentMatchers) {
-            if (child.apply(filterContext)) {
+            if (child.evaluatePolicyRule(filterContext)) {
                 return true;
             }
         }
@@ -103,31 +103,5 @@ public class OrMatcher extends AbstractComposedMatcher implements MatchFunctor {
         return Collections.unmodifiableSet(matchingValues);
     }
 
-    /** {@inheritDoc} */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-
-        if (obj == this) {
-            return true;
-        }
-
-        if (!(obj instanceof OrMatcher)) {
-            return false;
-        }
-
-        return Objects.equal(getComposedMatchers(), ((OrMatcher) obj).getComposedMatchers());
-    }
-
-    /** {@inheritDoc} */
-    public int hashCode() {
-        return getComposedMatchers().hashCode();
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        return Objects.toStringHelper(this).add("composedMatchers", getComposedMatchers()).toString();
-    }
 
 }

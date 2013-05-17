@@ -22,9 +22,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
@@ -34,8 +36,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
-/** A simple, mock implementation of {@link AttributeValueMatcher}. */
-public class MockAttributeValueMatcher implements AttributeValueMatcher, InitializableComponent, DestructableComponent, ValidatableComponent {
+/** A simple, mock implementation of {@link MatchFunctor}. */
+public class MockAttributeValueMatcher extends AbstractIdentifiableInitializableComponent implements MatchFunctor, InitializableComponent, DestructableComponent, ValidatableComponent{ 
 
     /** ID of the attribute to which this matcher applies. */
     private String matchingAttribute;
@@ -52,6 +54,10 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher, Initial
     /** state variable */
     private boolean validated;
 
+    public MockAttributeValueMatcher() {
+        setId("Mock");
+    }
+
     /**
      * Sets the ID of the attribute to which this matcher applies.
      * 
@@ -59,6 +65,9 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher, Initial
      */
     public void setMatchingAttribute(String id) {
         matchingAttribute = Constraint.isNotNull(StringSupport.trimOrNull(id), "attribute ID can not be null or empty");
+        if (!initialized) {
+            setId("Mock " + id);
+        }
     }
 
     /**
@@ -117,7 +126,13 @@ public class MockAttributeValueMatcher implements AttributeValueMatcher, Initial
     }
 
     /** {@inheritDoc} */
-    public void initialize() throws ComponentInitializationException {
+    public void doInitialize()  {
         initialized = true;
+    }
+
+    /** {@inheritDoc} */
+    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

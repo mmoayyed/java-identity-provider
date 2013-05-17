@@ -147,7 +147,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy();
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+        attribute1Policy.setValueMatcher(MatchFunctor.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
@@ -174,7 +174,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy();
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setValueMatcher(AttributeValueMatcher.MATCHES_NONE);
+        attribute1Policy.setValueMatcher(MatchFunctor.MATCHES_NONE);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
@@ -206,7 +206,7 @@ public class AttributeFilteringEngineTest {
 
         AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
         allowPolicy.setAttributeId("attribute1");
-        allowPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+        allowPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(denyPolicy,
@@ -233,7 +233,7 @@ public class AttributeFilteringEngineTest {
     @Test public void testNoPolicy() throws Exception {
         AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
         allowPolicy.setAttributeId("attribute1");
-        allowPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+        allowPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysFalse(), Lists.newArrayList(allowPolicy));
@@ -256,11 +256,11 @@ public class AttributeFilteringEngineTest {
         AttributeValueFilterPolicy denyPolicy = new AttributeValueFilterPolicy();
         denyPolicy.setAttributeId("attribute1");
         denyPolicy.setMatchingPermittedValues(false);
-        denyPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+        denyPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
 
         AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
         allowPolicy.setAttributeId("attribute1");
-        allowPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+        allowPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(), Lists.newArrayList(denyPolicy,

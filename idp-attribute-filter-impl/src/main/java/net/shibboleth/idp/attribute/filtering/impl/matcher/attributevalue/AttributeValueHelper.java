@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
@@ -25,6 +26,8 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
 
 /**
  * Helper methods for implementing the {@link Predicate<AttributeFilterContext>} part of the MatchFunctor.
@@ -45,27 +48,31 @@ public final class AttributeValueHelper {
      * 
      * @param valueComparator The class we are providing the helper function to. We will use its implementation of
      *            comparison to apply the rule described above.
-     * @param context the context we are looking at.
      * @param attributeId the attribute ID.
      * @return whether the rule holds or not.
      */
-    protected static boolean filterContextPredicate(@Nonnull final TargetedMatchFunctor valueComparator,
-            @Nonnull final AttributeFilterContext context, @Nonnull final String attributeId) {
+    protected static Predicate<AttributeFilterContext> filterContextPredicate(
+            @Nonnull final TargetedMatchFunctor valueComparator, @Nonnull final String attributeId) {
 
-        final Attribute attribute = context.getPrefilteredAttributes().get(attributeId);
+        return new Predicate<AttributeFilterContext>() {
 
-        if (null == attribute) {
-            // TODO logging
-            log.info("No attribute available");
-            return false;
-        }
+            public boolean apply(@Nullable AttributeFilterContext context) {
+                final Attribute attribute = context.getPrefilteredAttributes().get(attributeId);
 
-        for (AttributeValue value : attribute.getValues()) {
-            if (valueComparator.compareAttributeValue(value)) {
-                return true;
+                if (null == attribute) {
+                    // TODO logging
+                    log.info("No attribute available");
+                    return false;
+                }
+
+                for (AttributeValue value : attribute.getValues()) {
+                    if (valueComparator.compareAttributeValue(value)) {
+                        return true;
+                    }
+                }
+                return false;
             }
-        }
-        return false;
+        };
     }
 
     /**
@@ -76,27 +83,31 @@ public final class AttributeValueHelper {
      * 
      * @param valueComparator The class we are providing the helper function to. We will use its implementation of
      *            comparison to apply the rule described above.
-     * @param context the context we are looking at.
      * @return whether the rule holds or not.
      */
-    protected static boolean filterContextPredicate(@Nonnull final TargetedMatchFunctor valueComparator,
-            @Nonnull final AttributeFilterContext context) {
+    protected static Predicate<AttributeFilterContext> filterContextPredicate(
+            @Nonnull final TargetedMatchFunctor valueComparator) {
 
-        for (Attribute attribute : context.getPrefilteredAttributes().values()) {
+        return new Predicate<AttributeFilterContext>() {
 
-            if (null == attribute) {
-                // TODO logging
-                log.info("No attribute available");
-                continue;
-            }
+            public boolean apply(@Nullable AttributeFilterContext context) {
+                for (Attribute attribute : context.getPrefilteredAttributes().values()) {
 
-            for (AttributeValue value : attribute.getValues()) {
-                if (valueComparator.compareAttributeValue(value)) {
-                    return true;
+                    if (null == attribute) {
+                        // TODO logging
+                        log.info("No attribute available");
+                        continue;
+                    }
+
+                    for (AttributeValue value : attribute.getValues()) {
+                        if (valueComparator.compareAttributeValue(value)) {
+                            return true;
+                        }
+                    }
                 }
+                return false;
             }
-        }
-        return false;
+        };
     }
 
 }

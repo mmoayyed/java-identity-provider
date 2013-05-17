@@ -26,11 +26,10 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractValueMatcherFunctor;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.MockValuePredicateMatcher;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.logic.AndMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -52,6 +51,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
     @Test public void testNullArguments() throws Exception {
         AbstractValueMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
         AndMatcher matcher = new AndMatcher(Lists.<MatchFunctor> newArrayList(valuePredicate));
+        matcher.setId("test");
         matcher.initialize();
 
         try {
@@ -89,6 +89,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
             // expect this
         }
 
+        matcher.setId("test");
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -108,6 +109,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
 
     @Test public void emptyResults() throws ComponentInitializationException, AttributeFilteringException {
         AndMatcher matcher = new AndMatcher(Collections.EMPTY_LIST);
+        matcher.setId("test");
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
 
@@ -116,6 +118,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value3))));
 
+        matcher.setId("Test");
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
@@ -149,32 +152,37 @@ public class AndMatcherTest extends AbstractMatcherTest {
 
     }
 
-    @Test public void testPredicate() throws ComponentInitializationException {
+    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilteringException {
         AndMatcher matcher = new AndMatcher(null);
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher = new AndMatcher(Collections.EMPTY_SET);
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher =
                 new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(false),
                         new MockValuePredicateMatcher(false)));
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher =
                 new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(true), null,
                         new MockValuePredicateMatcher(false)));
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher =
                 new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(true), null,
                         new MockValuePredicateMatcher(true)));
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertTrue(matcher.apply(null));
+        Assert.assertTrue(matcher.evaluatePolicyRule(null));
 
     }
 }

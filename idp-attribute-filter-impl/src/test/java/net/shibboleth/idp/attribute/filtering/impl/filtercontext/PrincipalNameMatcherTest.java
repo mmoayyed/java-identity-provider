@@ -42,6 +42,7 @@ public class PrincipalNameMatcherTest {
     
         matcher.setMatchString("principal");
         matcher.setCaseSensitive(true);
+        matcher.setId("Test");
         matcher.initialize();
         // TODO
         // Assert.assertFalse(matcher.apply(null));
@@ -59,6 +60,7 @@ public class PrincipalNameMatcherTest {
     @Test public void testCaseSensitive() throws ComponentInitializationException {
 
         PrincipalNameMatcher matcher = new PrincipalNameMatcher();
+        matcher.setId("Test");
         matcher.setMatchString("principal");
         matcher.setCaseSensitive(true);
         matcher.initialize();
@@ -74,6 +76,7 @@ public class PrincipalNameMatcherTest {
         PrincipalNameMatcher matcher = new PrincipalNameMatcher();
         matcher.setMatchString("principal");
         matcher.setCaseSensitive(false);
+        matcher.setId("test");
         matcher.initialize();
         
         Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext("wibble", null, null)));

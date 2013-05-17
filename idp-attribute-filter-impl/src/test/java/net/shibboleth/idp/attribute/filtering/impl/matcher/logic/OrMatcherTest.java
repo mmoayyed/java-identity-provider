@@ -25,11 +25,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractValueMatcherFunctor;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.MockValuePredicateMatcher;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.logic.OrMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -51,6 +51,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
     @Test public void testNullArguments() throws Exception {
         AbstractValueMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
         OrMatcher matcher = new OrMatcher(Lists.<MatchFunctor> newArrayList(valuePredicate));
+        matcher.setId("test");
         matcher.initialize();
 
         try {
@@ -88,6 +89,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
             // expect this
         }
 
+        matcher.setId("Test");
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -104,6 +106,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
         }
 
         matcher = new OrMatcher(Collections.EMPTY_LIST);
+        matcher.setId("test");
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
     }
@@ -113,6 +116,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
                 new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(
                         equalTo("Nothing")), new MockValuePredicateMatcher(equalTo("Zippo"))));
 
+        matcher.setId("Test");
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -149,32 +153,37 @@ public class OrMatcherTest extends AbstractMatcherTest {
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());
     }
 
-    @Test public void testPredicate() throws ComponentInitializationException {
+    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilteringException {
         OrMatcher matcher = new OrMatcher(null);
+        matcher.setId("test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher = new OrMatcher(Collections.EMPTY_SET);
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher =
                 new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(false),
                         new MockValuePredicateMatcher(false)));
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher =
                 new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(false), null,
                         new MockValuePredicateMatcher(true)));
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertTrue(matcher.apply(null));
+        Assert.assertTrue(matcher.evaluatePolicyRule(null));
 
         matcher =
                 new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(true), null,
                         new MockValuePredicateMatcher(true)));
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertTrue(matcher.apply(null));
+        Assert.assertTrue(matcher.evaluatePolicyRule(null));
 
     }
 

@@ -27,7 +27,9 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -49,13 +51,17 @@ import com.google.common.base.Predicate;
  * inject the required valuePredicate into the constructor.
  */
 
-public abstract class AbstractValueMatcherFunctor extends AbstractInitializableComponent implements MatchFunctor {
+public abstract class AbstractValueMatcherFunctor extends AbstractIdentifiableInitializableComponent implements
+        MatchFunctor {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractValueMatcherFunctor.class);
 
     /** Predicate used to check attribute values. */
     private Predicate<AttributeValue> valuePredicate;
+
+    /** Predicate used to check attributePolicy. */
+    private Predicate<AttributeFilterContext> policyPredicate;
 
     /**
      * Set the predicate we used to do AttributeValueFiltering.
@@ -65,6 +71,16 @@ public abstract class AbstractValueMatcherFunctor extends AbstractInitializableC
     protected void setValuePredicate(@Nonnull Predicate<AttributeValue> newPredicate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         valuePredicate = Constraint.isNotNull(newPredicate, "Value Predicate should not be Null");
+    }
+
+    /**
+     * Set the predicate we used to do AttributeValueFiltering.
+     * 
+     * @param newPredicate the predicate.
+     */
+    protected void setPolicyPredicate(@Nonnull Predicate<AttributeFilterContext> newPredicate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        policyPredicate = Constraint.isNotNull(newPredicate, "Value Predicate should not be Null");
     }
 
     /** {@inheritDoc} */
@@ -82,7 +98,7 @@ public abstract class AbstractValueMatcherFunctor extends AbstractInitializableC
             //
             log.info("Attribute Filter:  No value predicate present for attribute '{}',"
                     + " applying the policy predicate", attribute.getId());
-            if (apply(filterContext)) {
+            if (policyPredicate.apply(filterContext)) {
                 return attribute.getValues();
             } else {
                 return Collections.EMPTY_SET;
@@ -94,7 +110,6 @@ public abstract class AbstractValueMatcherFunctor extends AbstractInitializableC
         log.debug("Attribute Filter:  Applying value predicate to all values of Attribute '{}'", attribute.getId());
 
         for (AttributeValue value : attribute.getValues()) {
-            // TODO.  If the target is a name matcher we should check the name.
             try {
                 if (valuePredicate.apply(value)) {
                     matchedValues.add(value);
@@ -109,6 +124,33 @@ public abstract class AbstractValueMatcherFunctor extends AbstractInitializableC
         }
 
         return matchedValues;
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        // TODO Check predicates (on;ly one non null) and setup the logprefix
+    }
+
+    /** {@inheritDoc} */
+    public void setId(String id) {
+        super.setId(id);
+    }
+
+    /** {@inheritDoc} */
+    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) 
+            throws AttributeFilteringException {
+        if (null != policyPredicate) {
+            return policyPredicate.apply(filterContext);
+        }
+        for (Attribute attribute: filterContext.getPrefilteredAttributes().values()) {
+            for (AttributeValue value : attribute.getValues()) {
+                if (valuePredicate.apply(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

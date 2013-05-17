@@ -32,9 +32,10 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
@@ -43,14 +44,14 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 
 /**
- * A {@link AttributeValueMatcher} that delegates to a JSR-223 script for its actual processing.
+ * A {@link net.shibboleth.idp.attribute.filtering.MatchFunctor} that delegates to a JSR-223 script for its
+ * actual processing.
  * 
  */
 @ThreadSafe
-public class ScriptedMatcher extends AbstractDestructableInitializableComponent implements MatchFunctor,
+public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements MatchFunctor,
         UnmodifiableComponent {
 
     /** Script to be evaluated. */
@@ -64,6 +65,11 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
     public ScriptedMatcher(@Nonnull EvaluableScript matchingScript) {
         setScript(matchingScript);
     }
+
+    /** {@inheritDoc} */
+    public void setId(String id) {
+        super.setId(id);
+    };
 
     /**
      * Gets the script to be evaluated.
@@ -98,7 +104,7 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
      * </p>
      * {@inheritDoc}
      */
-    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+    public boolean evaluatePolicyRule(@Nullable AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         final EvaluableScript currentScript = script;
@@ -111,18 +117,18 @@ public class ScriptedMatcher extends AbstractDestructableInitializableComponent 
         try {
             final Object result = currentScript.eval(scriptContext);
             if (null == result) {
-                //TODO
+                // TODO
                 throw new IllegalArgumentException("Matcher script did not return a result");
             }
 
             if (result instanceof Boolean) {
                 return ((Boolean) result).booleanValue();
             } else {
-                //TODO
+                // TODO
                 throw new IllegalArgumentException("Matcher script did not return a Collection");
             }
         } catch (ScriptException e) {
-            //TODO
+            // TODO
             throw new IllegalArgumentException("Error while executing value matching script", e);
         }
     }

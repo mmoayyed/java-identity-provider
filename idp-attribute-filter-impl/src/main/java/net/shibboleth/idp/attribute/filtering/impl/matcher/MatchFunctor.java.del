@@ -15,11 +15,21 @@
  * limitations under the License.
  */
 
+package net.shibboleth.idp.attribute.filtering.impl.matcher;
+
+import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+
 /**
- * Implementation of the logical policy matchers.  
+ * A compound Interface which implements both PolicyRequirementRules and AttributeRules. The former is implemented via
+ * the {@link Predicate<AttributeFilterContext>} interface The later via the {@link AttributeValueMatcher} 
+ * interface.<br/>
  * 
- * The classes in this package all implement {@link net.shibboleth.idp.attribute.filtering.MatchFunctor} 
+ * Thus anything which implements this can be plugged in to an
+ * {@link net.shibboleth.idp.attribute.filtering.AttributeFilterPolicy#activationCriteria} or into a
+ * {@link net.shibboleth.idp.attribute.filtering.AttributeValueFilterPolicy#valueMatchingRule}<br/>
+ * 
+ * This therefore reflects the schema. 
  */
+public interface MatchFunctor extends /*Predicate<AttributeFilterContext>,*/ AttributeValueMatcher {
 
-package net.shibboleth.idp.attribute.filtering.impl.matcher.logic;
-
+}

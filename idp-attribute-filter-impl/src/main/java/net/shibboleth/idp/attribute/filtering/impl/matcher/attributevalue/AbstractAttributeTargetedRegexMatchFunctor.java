@@ -19,14 +19,13 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
-
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractRegexpStringMatchFunctor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import com.google.common.base.Predicate;
 
 /**
  * Basic Implementation of a {@link net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor} based on regexp
@@ -50,15 +49,6 @@ public abstract class AbstractAttributeTargetedRegexMatchFunctor extends Abstrac
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable AttributeFilterContext filterContext) {
-        if (null != attributeId) {
-            return AttributeValueHelper.filterContextPredicate(this, filterContext, attributeId);
-        } else {
-            return AttributeValueHelper.filterContextPredicate(this, filterContext);            
-        }
-    }
-
-    /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         
         if (null == attributeId) {
@@ -70,6 +60,9 @@ public abstract class AbstractAttributeTargetedRegexMatchFunctor extends Abstrac
                     return compareAttributeValue(input);
                 }
             });
+            setPolicyPredicate(AttributeValueHelper.filterContextPredicate(this));
+        } else {
+            setPolicyPredicate(AttributeValueHelper.filterContextPredicate(this, attributeId));
         }
         super.doInitialize();
     }

@@ -51,21 +51,21 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
     private boolean attributeIdSet;
 
     /**
-     * Whether this attribute rule will treat values that its {@link AttributeValueMatcher} as values that are permitted
+     * Whether this attribute rule will treat values that its {@link MatchFunctor} as values that are permitted
      * or denied. Default value: true
      */
     private boolean matchingPermittedValues = true;
 
     /**
-     * Filter that permits the release of attribute values. Default value: {@link AttributeValueMatcher#MATCHES_NONE}
+     * Filter that permits the release of attribute values. Default value: {@link MatchFunctor#MATCHES_NONE}
      */
-    private AttributeValueMatcher valueMatchingRule;
+    private MatchFunctor valueMatchingRule;
 
     /** Constructor. */
     public AttributeValueFilterPolicy() {
         matchingPermittedValues = true;
         attributeId = "<unspecified attribute>";
-        valueMatchingRule = AttributeValueMatcher.MATCHES_NONE;
+        valueMatchingRule = MatchFunctor.MATCHES_NONE;
     }
 
     /**
@@ -94,7 +94,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
     }
 
     /**
-     * Gets whether this attribute rule will treat values that its {@link AttributeValueMatcher} as values that are
+     * Gets whether this attribute rule will treat values that its {@link MatchFunctor} as values that are
      * permitted or denied.
      * 
      * @return true if matching attribute rules are permitted values, false if they are not
@@ -105,11 +105,11 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
     }
 
     /**
-     * Sets whether this attribute rule will treat values that its {@link AttributeValueMatcher} as values that are
+     * Sets whether this attribute rule will treat values that its {@link MatchFunctor} as values that are
      * permitted or denied.
      * 
      * @param isMatchingPermittedValues whether this attribute rule will treat values that its
-     *            {@link AttributeValueMatcher} as values that are permitted or denied
+     *            {@link MatchFunctor} as values that are permitted or denied
      */
     public synchronized void setMatchingPermittedValues(boolean isMatchingPermittedValues) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -123,7 +123,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * 
      * @return matcher used to determine attribute values filtered by this rule
      */
-    @Nonnull public AttributeValueMatcher getValueMatcher() {
+    @Nonnull public MatchFunctor getValueMatcher() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return valueMatchingRule;
     }
@@ -133,7 +133,7 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
      * 
      * @param matcher matcher used to determine attribute values filtered by this rule
      */
-    public synchronized void setValueMatcher(@Nonnull AttributeValueMatcher matcher) {
+    public synchronized void setValueMatcher(@Nonnull MatchFunctor matcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

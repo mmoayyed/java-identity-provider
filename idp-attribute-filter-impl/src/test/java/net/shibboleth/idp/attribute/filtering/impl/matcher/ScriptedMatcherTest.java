@@ -85,6 +85,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
     @Test public void testGetMatcher() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        matcher.setId("Test");
         matcher.initialize();
 
         Assert.assertNotNull(matcher.getScript());
@@ -92,6 +93,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
     @Test public void testNullArguments() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        matcher.setId("Test");
         matcher.initialize();
 
         try {
@@ -132,6 +134,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
     @Test public void testValidScript() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        matcher.setId("Test");
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -142,6 +145,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
     @Test public void testNullReturnScript() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
+        matcher.setId("Test");
         matcher.initialize();
 
         try {
@@ -154,6 +158,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
     @Test public void testInvalidReturnObjectScript() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
+        matcher.setId("Test");
         matcher.initialize();
 
         try {
@@ -166,6 +171,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
     @Test public void testAddedValuesScript() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
+        matcher.setId("Test");
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -185,6 +191,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         }
         Assert.assertTrue(thrown, "getMatchingValues before init");
 
+        matcher.setId("Test");
         matcher.initialize();
         matcher.getMatchingValues(attribute, filterContext);
 
@@ -214,7 +221,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
 
         try {
-            matcher.apply(filterContext);
+            matcher.evaluatePolicyRule(filterContext);
         } catch (DestroyedComponentException e) {
             thrown = true;
         }
@@ -244,22 +251,25 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
     
     @Test public void testPredicate() throws ComponentInitializationException {
         ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
+        matcher.setId("test");
         matcher.initialize();
 
         try {
-            matcher.apply(filterContext);
+            matcher.evaluatePolicyRule(filterContext);
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
         }
         
         matcher = new ScriptedMatcher(trueReturnScript);
+        matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(matcher.apply(filterContext));
+        Assert.assertTrue(matcher.evaluatePolicyRule(filterContext));
         
         matcher = new ScriptedMatcher(falseReturnScript);
+        matcher.setId("test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(filterContext));
+        Assert.assertFalse(matcher.evaluatePolicyRule(filterContext));
 
     }
 

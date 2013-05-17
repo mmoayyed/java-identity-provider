@@ -20,9 +20,9 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 
-/** Base class for {@link AttributeValueMatcher} unit tests. */
+/** Base class for {@link MatchFunctor} unit tests. */
 public abstract class AbstractMatcherTest {
 
     /** An attribute value. */

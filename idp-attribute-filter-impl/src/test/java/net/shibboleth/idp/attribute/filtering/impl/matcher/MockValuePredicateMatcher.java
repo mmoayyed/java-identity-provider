@@ -26,7 +26,7 @@ import com.google.common.base.Predicate;
 
 public class MockValuePredicateMatcher extends AbstractValueMatcherFunctor {
 
-    final boolean predicateValue;
+    final boolean valuePredicate;
 
     /**
      * Constructor.
@@ -36,17 +36,24 @@ public class MockValuePredicateMatcher extends AbstractValueMatcherFunctor {
      */
     public MockValuePredicateMatcher(Predicate valueMatchingPredicate) throws ComponentInitializationException {
         setValuePredicate(valueMatchingPredicate);
-        predicateValue = false;
+        valuePredicate = false;
+        setId("mock1");
         initialize();
     }
 
-    public MockValuePredicateMatcher(boolean value) throws ComponentInitializationException {
-        predicateValue = value;
+    public MockValuePredicateMatcher(final boolean value) throws ComponentInitializationException {
+        setPolicyPredicate(new Predicate<AttributeFilterContext>() {
+
+            public boolean apply(@Nullable AttributeFilterContext input) {
+                return value;
+            } });
+        valuePredicate = value;
+        setId("mock2");
         initialize();
     }
 
     /** {@inheritDoc} */
     public boolean apply(@Nullable AttributeFilterContext arg0) {
-        return predicateValue;
+        return valuePredicate;
     }
 }

@@ -24,12 +24,12 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -44,7 +44,7 @@ import com.google.common.collect.Iterables;
  * Base class for {@link MatchFunctor} implementations that are compositions of other
  * {@link MatchFunctor}.
  */
-public abstract class AbstractComposedMatcher extends AbstractDestructableInitializableComponent implements
+public abstract class AbstractComposedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements
         MatchFunctor, UnmodifiableComponent, ValidatableComponent {
 
     /** The composed matchers. */
@@ -107,4 +107,10 @@ public abstract class AbstractComposedMatcher extends AbstractDestructableInitia
             ComponentSupport.initialize(matcher);
         }
     }
+
+    /** {@inheritDoc} */
+    public void setId(String id) {
+        super.setId(id);
+    }
+
 }

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
+import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractValueMatcherFunctor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
@@ -37,6 +38,11 @@ public class TargetedMatchFunctorTest {
         Assert.assertEquals(functor.getAttributeId(), NAME);
         Assert.assertNotEquals(functor.getAttributeId(), NAME.toUpperCase());
         
+        if (functor instanceof AbstractValueMatcherFunctor) {
+            AbstractValueMatcherFunctor id = (AbstractValueMatcherFunctor) functor;
+            id.setId("Test");
+        }
+
         functor.initialize();
         try {
             functor.setAttributeId(NAME);

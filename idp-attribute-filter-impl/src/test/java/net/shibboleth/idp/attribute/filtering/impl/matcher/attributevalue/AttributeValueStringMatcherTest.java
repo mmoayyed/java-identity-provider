@@ -32,6 +32,7 @@ public class AttributeValueStringMatcherTest {
         AttributeValueStringMatcher matcher = new AttributeValueStringMatcher();
         matcher.setCaseSensitive(false);
         matcher.setMatchString(DataSources.TEST_STRING);
+        matcher.setId("Test");
         matcher.initialize();
         
         Assert.assertTrue(matcher.compareAttributeValue(DataSources.STRING_VALUE));

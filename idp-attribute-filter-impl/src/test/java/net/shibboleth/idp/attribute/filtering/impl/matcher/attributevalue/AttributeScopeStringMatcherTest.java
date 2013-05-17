@@ -33,6 +33,7 @@ public class AttributeScopeStringMatcherTest {
         AttributeScopeStringMatcher matcher = new AttributeScopeStringMatcher();
         matcher.setCaseSensitive(false);
         matcher.setMatchString(DataSources.TEST_STRING);
+        matcher.setId("Test");
         matcher.initialize();
         
         Assert.assertFalse(matcher.compareAttributeValue(DataSources.STRING_VALUE));

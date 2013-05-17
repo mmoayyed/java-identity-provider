@@ -19,10 +19,12 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
 import java.util.regex.Pattern;
 
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
+
 /**
  * General {@link MatchFunctor} for regexp comparison of strings in Attribute Filters.  
  */
-public abstract class AbstractRegexpStringMatchFunctor extends AbstractValueMatcherFunctor implements MatchFunctor {
+public abstract class AbstractRegexpStringMatchFunctor extends AbstractValueMatcherFunctor  {
 
     /** Regular expression to match. */
     private Pattern regex;

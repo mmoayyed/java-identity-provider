@@ -25,9 +25,9 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractValueMatcherFunctor;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.MockValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -58,6 +58,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
 
         AbstractValueMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
         NotMatcher matcher = new NotMatcher(valuePredicate);
+        matcher.setId("NullArgs");
         matcher.initialize();
 
         try {
@@ -111,6 +112,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
             // expect this
         }
 
+        matcher.setId("test");
         matcher.initialize();
         Assert.assertTrue(inMatcher.isInitialized());
         Assert.assertFalse(inMatcher.getValidateCount() > 0);
@@ -148,7 +150,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
-
+        matcher.setId("test");
         matcher.initialize();
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -163,11 +165,14 @@ public class NotMatcherTest extends AbstractMatcherTest {
             // expect this
         }
 
-        matcher =
-                new NotMatcher(new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(
-                        equalTo(value1)), new MockValuePredicateMatcher(equalTo(value2)),
-                        new MockValuePredicateMatcher(equalTo(value3)))));
+        OrMatcher orMatcher =
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(equalTo(value1)),
+                        new MockValuePredicateMatcher(equalTo(value2)), new MockValuePredicateMatcher(equalTo(value3))));
 
+        orMatcher.setId("or");
+        matcher = new NotMatcher(orMatcher);
+
+        matcher.setId("Test");
         matcher.initialize();
 
         result = matcher.getMatchingValues(attribute, filterContext);
@@ -176,7 +181,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
     }
 
     // TODO
-    // @Test 
+    // @Test
     public void testEqualsHashToString() throws ComponentInitializationException {
         NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(equalTo(value2)));
 
@@ -198,14 +203,16 @@ public class NotMatcherTest extends AbstractMatcherTest {
 
     }
 
-    @Test public void testPredicate() throws ComponentInitializationException {
+    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilteringException {
         NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(true));
+        matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.apply(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(null));
 
         matcher = new NotMatcher(new MockValuePredicateMatcher(false));
+        matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(matcher.apply(null));
+        Assert.assertTrue(matcher.evaluatePolicyRule(null));
 
     }
 

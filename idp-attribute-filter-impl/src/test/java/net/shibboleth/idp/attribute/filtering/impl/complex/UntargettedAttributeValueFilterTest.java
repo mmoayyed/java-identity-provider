@@ -20,14 +20,15 @@ package net.shibboleth.idp.attribute.filtering.impl.complex;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeValueFilterPolicy;
-import net.shibboleth.idp.attribute.filtering.AttributeValueMatcher;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -35,6 +36,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
@@ -50,6 +52,13 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
 
         retVal.setCaseSensitive(true);
         retVal.setMatchString("jsmith");
+        
+        retVal.setId("valueMatcher");
+        try {
+            retVal.initialize();
+        } catch (ComponentInitializationException e) {
+            retVal = null;
+        }
 
         return retVal;
     }
@@ -124,10 +133,20 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         final AttributeValueFilterPolicy attributeValueFilterPolicy = new AttributeValueFilterPolicy();
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
         attributeValueFilterPolicy.setMatchingPermittedValues(true);
-        attributeValueFilterPolicy.setValueMatcher(AttributeValueMatcher.MATCHES_ALL);
+        attributeValueFilterPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        final Predicate<AttributeFilterContext> pred = new Predicate<AttributeFilterContext>() {
+            
+            public boolean apply(@Nullable AttributeFilterContext input) {
+                try {
+                    return valueMatcher().evaluatePolicyRule(input);
+                } catch (AttributeFilteringException e) {
+                    return false;
+                }
+            }
+        };
 
         final AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("targettedAtPermit", valueMatcher(),  Collections.singleton(attributeValueFilterPolicy));
+                new AttributeFilterPolicy("targettedAtPermit", pred,  Collections.singleton(attributeValueFilterPolicy));
 
         final AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Collections.singleton(policy));
 
