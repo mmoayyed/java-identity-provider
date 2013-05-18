@@ -30,20 +30,19 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeValueFilterPolicy;
-import net.shibboleth.idp.attribute.filtering.MockAttributeValueMatcher;
+import net.shibboleth.idp.attribute.filtering.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.MockMatchFunctor;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
 
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 /** {@link FilterAttributes} unit test. */
@@ -109,7 +108,7 @@ public class FilterAttributesTest {
 
         List<Attribute> attributes = Arrays.asList(attribute1, attribute2);
 
-        MockAttributeValueMatcher attribute1Matcher = new MockAttributeValueMatcher();
+        MockMatchFunctor attribute1Matcher = new MockMatchFunctor();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
 
@@ -118,7 +117,7 @@ public class FilterAttributesTest {
         attribute1Policy.setValueMatcher(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
+                new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -167,7 +166,7 @@ public class FilterAttributesTest {
 
         List<Attribute> attributes = Arrays.asList(attribute1, attribute2);
 
-        MockAttributeValueMatcher attribute1Matcher = new MockAttributeValueMatcher();
+        MockMatchFunctor attribute1Matcher = new MockMatchFunctor();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
 
@@ -176,7 +175,7 @@ public class FilterAttributesTest {
         attribute1Policy.setValueMatcher(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
+                new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
@@ -224,7 +223,7 @@ public class FilterAttributesTest {
 
         List<Attribute> attributes = Arrays.asList(attribute1);
 
-        MockAttributeValueMatcher attribute1Matcher = new MockAttributeValueMatcher();
+        MockMatchFunctor attribute1Matcher = new MockMatchFunctor();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
 
@@ -233,7 +232,7 @@ public class FilterAttributesTest {
         attribute1Policy.setValueMatcher(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", Predicates.alwaysTrue(),
+                new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
