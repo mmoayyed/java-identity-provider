@@ -34,17 +34,6 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
-
-        <!-- TODO Jetty SNAPSHOT repository, to be removed post-9.0.3 release. -->
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>sonatype-snapshots</id>
-            <name>Sonatype Jetty Snapshots</name>
-            <url>http://oss.sonatype.org/content/groups/jetty</url>
-        </repository>
-
     </repositories>
 
     <dependencies>
