@@ -23,15 +23,14 @@ import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.profile.HttpServletRequestMessageDecoderFactory;
-import org.opensaml.profile.ProfileException;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
+import org.opensaml.profile.ProfileException;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
@@ -47,16 +46,16 @@ public class DecodeMessage extends AbstractProfileAction {
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(DecodeMessage.class);
 
-    /** Factory used to produce the {@link MessageDecoder} instance used to decode the incoming message. */
-    private final HttpServletRequestMessageDecoderFactory decoderFactory;
+    /** The {@link MessageDecoder} instance used to decode the incoming message. */
+    private final MessageDecoder decoder;
 
     /**
      * Constructor.
      * 
-     * @param factory factory used to create a {@link MessageDecoder} for an incoming request
+     * @param messageDecoder the {@link MessageDecoder} used for the incoming request
      */
-    public DecodeMessage(@Nonnull final HttpServletRequestMessageDecoderFactory factory) {
-        decoderFactory = Constraint.isNotNull(factory, "Message decoder factory can not be null");
+    public DecodeMessage(@Nonnull final MessageDecoder messageDecoder) {
+        decoder = Constraint.isNotNull(messageDecoder, "Message decoder can not be null");
     }
 
     /** {@inheritDoc} */
@@ -64,7 +63,6 @@ public class DecodeMessage extends AbstractProfileAction {
             doExecute(@Nonnull final RequestContext springRequestContext,
                     @Nonnull final ProfileRequestContext profileRequestContext) throws ProfileException {
         try {
-            final MessageDecoder decoder = decoderFactory.newDecoder(profileRequestContext.getHttpRequest());
             log.debug("Action {}: Using message decoder of type {} for this request", getId(), decoder.getClass()
                     .getName());
 
@@ -72,8 +70,8 @@ public class DecodeMessage extends AbstractProfileAction {
             decoder.decode();
             final MessageContext msgContext = decoder.getMessageContext();
             decoder.destroy();
-            log.debug("Action {}: Incoming request decoded into a message context of type {}", getId(), msgContext
-                    .getClass().getName());
+            log.debug("Action {}: Incoming request decoded into a message of type {}", getId(), 
+                    msgContext.getMessage().getClass().getName());
 
             profileRequestContext.setInboundMessageContext(msgContext);
             return ActionSupport.buildProceedEvent(this);

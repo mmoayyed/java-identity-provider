@@ -21,9 +21,9 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.decoder.AbstractMessageDecoder;
 import org.opensaml.messaging.decoder.MessageDecodingException;
-import org.opensaml.messaging.decoder.servlet.HttpServletRequestMessageDecoder;
+import org.opensaml.messaging.encoder.AbstractMessageEncoder;
+import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
@@ -31,28 +31,42 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link DecodeMessage}. */
-public class DecodeMessageTest {
+/** Unit test for {@link EncodeMessageMessage}. */
+public class EncodeMessageTest {
     
     private MockMessage message; 
     
-    private MockMessageDecoder decoder;
+    private MockMessageEncoder encoder;
+    
+    private MessageContext<MockMessage> messageContext;
     
     private ProfileRequestContext profileCtx;
+    
+    private String expectedMessage;
     
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
         message = new MockMessage();
+        message.getProperties().put("foo", "3");
+        message.getProperties().put("bar", "1");
+        message.getProperties().put("baz", "2");
         
-        decoder = new MockMessageDecoder(message);
-        decoder.initialize();
+        // Encoded mock message, keys sorted alphabetically, per MockMessage#toString
+        expectedMessage = "bar=1&baz=2&foo=3";
+        
+        messageContext = new MessageContext<>();
+        messageContext.setMessage(message);
         
         profileCtx = new ProfileRequestContext();
+        profileCtx.setOutboundMessageContext(messageContext);
+        
+        encoder = new MockMessageEncoder();
+        // Note: we don't init the encoder, b/c that is done by the action after setting the message context
     }
 
     /** Test that the action proceeds properly if the message can be decoded. */
     @Test public void testDecodeMessage() throws Exception {
-        DecodeMessage action = new DecodeMessage(decoder);
+        EncodeMessage action = new EncodeMessage(encoder);
         action.setId("test");
         action.initialize();
 
@@ -60,42 +74,44 @@ public class DecodeMessageTest {
 
         ActionTestingSupport.assertProceedEvent(result);
 
-        Assert.assertNotNull(profileCtx.getInboundMessageContext());
-        Assert.assertEquals(profileCtx.getInboundMessageContext().getMessage(), message);
+        Assert.assertEquals(encoder.getEncodedMessage(), expectedMessage);
     }
 
     /** Test that the action errors out properly if the message can not be decoded. */
     @Test public void testThrowException() throws Exception {
-        decoder.setThrowException(true);
+        encoder.setThrowException(true);
 
-        DecodeMessage action = new DecodeMessage(decoder);
+        EncodeMessage action = new EncodeMessage(encoder);
         action.setId("test");
         action.initialize();
 
         Event result = action.doExecute(new MockRequestContext(), profileCtx);
 
-        ActionTestingSupport.assertEvent(result, DecodeMessage.UNABLE_TO_DECODE);
+        ActionTestingSupport.assertEvent(result, EncodeMessage.UNABLE_TO_ENCODE);
     }
 
     /**
-     * Mock implementation of {@link MessageDecoder } which either returns a  
+     * Mock implementation of {@link MessageEncoder } which either returns a  
      * {@link MessageContext} with a mock message or throws a {@link MessageDecodingException}.
      */
-    class MockMessageDecoder extends AbstractMessageDecoder<MockMessage> {
+    /**
+     *
+     */
+    class MockMessageEncoder extends AbstractMessageEncoder<MockMessage> {
 
         /** Whether a {@link MessageDecodingException} should be thrown by {@link #doDecode()}. */
         private boolean throwException = false;
         
-        /** The mock message to produce (optional). */
-        private MockMessage message;
-
+        /** Mock encoded message. */
+        private String message;
+        
         /**
-         * Constructor.
-         *
+         * Get the encoded message
+         * 
+         * @return the string buffer
          */
-        public MockMessageDecoder(MockMessage mockMessage) {
-            super();
-            message = mockMessage;
+        public String getEncodedMessage() {
+            return message;
         }
 
         /**
@@ -108,19 +124,13 @@ public class DecodeMessageTest {
         }
 
         /** {@inheritDoc} */
-        protected void doDecode() throws MessageDecodingException {
+        protected void doEncode() throws MessageEncodingException {
             if (throwException) {
-                throw new MessageDecodingException();
+                throw new MessageEncodingException();
             } else {
-                MessageContext<MockMessage> messageContext = new MessageContext<>();
-                if (message != null) {
-                    messageContext.setMessage(message);
-                } else {
-                    messageContext.setMessage(new MockMessage());
-                }
-                setMessageContext(messageContext);
+                message = getMessageContext().getMessage().getEncoded();
             }
         }
-
+        
     }
 }
