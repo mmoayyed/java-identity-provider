@@ -74,30 +74,30 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @param policyId unique ID of this policy
      * @param requirementRule criterion used to determine if this policy is active for a given request
-     * @param policies value filtering policies employed if this policy is active
+     * @param attributeRules value filtering policies employed if this policy is active
      */
     public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull MatchFunctor requirementRule,
-            @Nullable Collection<AttributeRule> policies) {
+            @Nullable Collection<AttributeRule> attributeRules) {
         setId(policyId);
 
         policyRequirementRule =
                 Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
 
         ArrayList<AttributeRule> checkedPolicies = new ArrayList<AttributeRule>();
-        CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
-        if (null != policies) {
-            valuePolicies = ImmutableList.copyOf(Iterables.filter(policies, Predicates.notNull()));
+        CollectionSupport.addIf(checkedPolicies, attributeRules, Predicates.notNull());
+        if (null != attributeRules) {
+            valuePolicies = ImmutableList.copyOf(Iterables.filter(attributeRules, Predicates.notNull()));
         } else {
             valuePolicies = Collections.EMPTY_LIST;
         }
     }
 
     /**
-     * Gets the criteria that must be met for this policy to be active for a given request.
+     * Gets the MatchFunctor that must be met for this policy to be active for a given request.
      * 
-     * @return criteria that must be met for this policy to be active for a given request
+     * @return MatchFunctor that must be met for this policy to be active for a given request
      */
-    @Nonnull public MatchFunctor getActivationCriteria() {
+    @Nonnull public MatchFunctor getPolicyRequirementRule() {
         return policyRequirementRule;
     }
 
@@ -106,7 +106,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @return attribute rules that are in effect if this policy is in effect
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AttributeRule> getAttributeValuePolicies() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AttributeRule> getAttributeRules() {
         return valuePolicies;
     }
 

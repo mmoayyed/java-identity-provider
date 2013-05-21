@@ -62,13 +62,13 @@ public class AttributeFilterPolicyTest {
     @Test public void testPostConstructionState() {
         AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
         Assert.assertEquals(policy.getId(), ID);
-        Assert.assertEquals(policy.getActivationCriteria(), policyMatcher);
-        Assert.assertTrue(policy.getAttributeValuePolicies().contains(valuePolicy));
+        Assert.assertEquals(policy.getPolicyRequirementRule(), policyMatcher);
+        Assert.assertTrue(policy.getAttributeRules().contains(valuePolicy));
 
         policy = new AttributeFilterPolicy(ID, policyMatcher, null);
         Assert.assertEquals(policy.getId(), ID);
-        Assert.assertEquals(policy.getActivationCriteria(), policyMatcher);
-        Assert.assertTrue(policy.getAttributeValuePolicies().isEmpty());
+        Assert.assertEquals(policy.getPolicyRequirementRule(), policyMatcher);
+        Assert.assertTrue(policy.getAttributeRules().isEmpty());
 
         try {
             new AttributeFilterPolicy(null, policyMatcher, Arrays.asList(valuePolicy));
@@ -135,21 +135,21 @@ public class AttributeFilterPolicyTest {
 
     @Test public void testAttributeValuePolicies() throws ComponentInitializationException {
         AttributeFilterPolicy policy = new AttributeFilterPolicy(ID, policyMatcher, null);
-        Assert.assertTrue(policy.getAttributeValuePolicies().isEmpty());
+        Assert.assertTrue(policy.getAttributeRules().isEmpty());
 
         try {
-            policy.getAttributeValuePolicies().add(new AttributeRule());
+            policy.getAttributeRules().add(new AttributeRule());
             Assert.fail();
         } catch (UnsupportedOperationException e) {
             // expected
         }
 
         policy = new AttributeFilterPolicy(ID, policyMatcher, Arrays.asList(valuePolicy));
-        Assert.assertEquals(policy.getAttributeValuePolicies().size(), 1);
+        Assert.assertEquals(policy.getAttributeRules().size(), 1);
 
         policy.initialize();
-        Assert.assertEquals(policy.getAttributeValuePolicies().size(), 1);
-        Assert.assertTrue(policy.getAttributeValuePolicies().contains(valuePolicy));
+        Assert.assertEquals(policy.getAttributeRules().size(), 1);
+        Assert.assertTrue(policy.getAttributeRules().contains(valuePolicy));
     }
 
     @Test public void testValidate() throws ComponentInitializationException, ComponentValidationException {
