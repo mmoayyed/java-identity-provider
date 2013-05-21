@@ -41,7 +41,7 @@ public class AttributeFilterPolicyTest {
 
     private MockMatchFunctor policyMatcher;
 
-    private AttributeValueFilterPolicy valuePolicy;
+    private AttributeRule valuePolicy;
 
     private MockMatchFunctor valueMatcher;
 
@@ -54,9 +54,9 @@ public class AttributeFilterPolicyTest {
     @BeforeMethod public void setUp() {
         policyMatcher = new MockMatchFunctor();
         valueMatcher = new MockMatchFunctor();
-        valuePolicy = new AttributeValueFilterPolicy();
+        valuePolicy = new AttributeRule();
         valuePolicy.setAttributeId(ATTR_NAME);
-        valuePolicy.setValueMatcher(valueMatcher);
+        valuePolicy.setPermitRule(AttributeFilteringEngineTest.makePermitRule(valueMatcher));
     }
 
     @Test public void testPostConstructionState() {
@@ -138,7 +138,7 @@ public class AttributeFilterPolicyTest {
         Assert.assertTrue(policy.getAttributeValuePolicies().isEmpty());
 
         try {
-            policy.getAttributeValuePolicies().add(new AttributeValueFilterPolicy());
+            policy.getAttributeValuePolicies().add(new AttributeRule());
             Assert.fail();
         } catch (UnsupportedOperationException e) {
             // expected

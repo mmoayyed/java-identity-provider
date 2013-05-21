@@ -67,7 +67,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     private final MatchFunctor policyRequirementRule;
 
     /** Filters to be used on attribute values. */
-    private final List<AttributeValueFilterPolicy> valuePolicies;
+    private final List<AttributeRule> valuePolicies;
 
     /**
      * Constructor.
@@ -77,13 +77,13 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * @param policies value filtering policies employed if this policy is active
      */
     public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull MatchFunctor requirementRule,
-            @Nullable Collection<AttributeValueFilterPolicy> policies) {
+            @Nullable Collection<AttributeRule> policies) {
         setId(policyId);
 
         policyRequirementRule =
                 Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
 
-        ArrayList<AttributeValueFilterPolicy> checkedPolicies = new ArrayList<AttributeValueFilterPolicy>();
+        ArrayList<AttributeRule> checkedPolicies = new ArrayList<AttributeRule>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
         if (null != policies) {
             valuePolicies = ImmutableList.copyOf(Iterables.filter(policies, Predicates.notNull()));
@@ -106,7 +106,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @return attribute rules that are in effect if this policy is in effect
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<AttributeValueFilterPolicy> getAttributeValuePolicies() {
+    @Nonnull @NonnullElements @Unmodifiable public List<AttributeRule> getAttributeValuePolicies() {
         return valuePolicies;
     }
 
@@ -114,7 +114,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     public void validate() throws ComponentValidationException {
         ComponentSupport.validate(policyRequirementRule);
 
-        for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
+        for (AttributeRule valuePolicy : valuePolicies) {
             valuePolicy.validate();
         }
     }
@@ -169,7 +169,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
                 attributes.keySet());
 
         Attribute attribute;
-        for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
+        for (AttributeRule valuePolicy : valuePolicies) {
             attribute = attributes.get(valuePolicy.getAttributeId());
             if (attribute != null) {
                 if (!attribute.getValues().isEmpty()) {
@@ -191,7 +191,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         ComponentSupport.initialize(policyRequirementRule);
 
-        for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
+        for (AttributeRule valuePolicy : valuePolicies) {
             valuePolicy.initialize();
         }
     }
@@ -200,7 +200,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     protected void doDestroy() {
         ComponentSupport.destroy(policyRequirementRule);
 
-        for (AttributeValueFilterPolicy valuePolicy : valuePolicies) {
+        for (AttributeRule valuePolicy : valuePolicies) {
             valuePolicy.destroy();
         }
 

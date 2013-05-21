@@ -25,8 +25,9 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
-import net.shibboleth.idp.attribute.filtering.AttributeValueFilterPolicy;
+import net.shibboleth.idp.attribute.filtering.AttributeRule;
 import net.shibboleth.idp.attribute.filtering.MatchFunctor;
+import net.shibboleth.idp.attribute.filtering.PermitValueRule;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -74,10 +75,11 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
     @Test public void testTargettedPolicyRequirement() throws ComponentInitializationException, ResolutionException,
             AttributeFilteringException {
 
-        final AttributeValueFilterPolicy attributeValueFilterPolicy = new AttributeValueFilterPolicy();
+        final AttributeRule attributeValueFilterPolicy = new AttributeRule();
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        attributeValueFilterPolicy.setMatchingPermittedValues(true);
-        attributeValueFilterPolicy.setValueMatcher(valueMatcher());
+        final PermitValueRule permit = new PermitValueRule();
+        permit.setValueMatcher(valueMatcher());
+        attributeValueFilterPolicy.setPermitRule(permit);
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", MatchFunctor.MATCHES_ALL,
@@ -125,10 +127,11 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
     @Test public void testTargettedPolicyValue() throws ComponentInitializationException, ResolutionException,
             AttributeFilteringException {
 
-        final AttributeValueFilterPolicy attributeValueFilterPolicy = new AttributeValueFilterPolicy();
+        final AttributeRule attributeValueFilterPolicy = new AttributeRule();
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        attributeValueFilterPolicy.setMatchingPermittedValues(true);
-        attributeValueFilterPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        final PermitValueRule permit = new PermitValueRule();
+        permit.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        attributeValueFilterPolicy.setPermitRule(permit);
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", valueMatcher(),  Collections.singleton(attributeValueFilterPolicy));
 

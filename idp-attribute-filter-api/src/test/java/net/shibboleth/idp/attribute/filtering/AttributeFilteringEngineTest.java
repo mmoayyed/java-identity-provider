@@ -67,6 +67,18 @@ public class AttributeFilteringEngineTest {
             // expected
         }
     }
+    
+    protected static PermitValueRule makePermitRule(MatchFunctor input) {
+        PermitValueRule result = new PermitValueRule();
+        result.setValueMatcher(input);
+        return result;
+    }
+
+    protected static DenyValueRule makeDenyRule(MatchFunctor input) {
+        DenyValueRule result = new DenyValueRule();
+        result.setValueMatcher(input);
+        return result;
+    }
 
     /** Test setting and retrieving filter policies. */
     @Test public void testFilterPolicies() throws Exception {
@@ -110,9 +122,9 @@ public class AttributeFilteringEngineTest {
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
 
-        AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy();
+        AttributeRule attribute1Policy = new AttributeRule();
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setValueMatcher(attribute1Matcher);
+        attribute1Policy.setPermitRule(makePermitRule(attribute1Matcher));
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
@@ -144,9 +156,9 @@ public class AttributeFilteringEngineTest {
 
     @Test public void testAllMatcher() throws Exception {
 
-        AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy();
+        AttributeRule attribute1Policy = new AttributeRule();
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        attribute1Policy.setPermitRule(makePermitRule(MatchFunctor.MATCHES_ALL));
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
@@ -171,9 +183,9 @@ public class AttributeFilteringEngineTest {
 
     @Test public void testNoneMatcher() throws Exception {
 
-        AttributeValueFilterPolicy attribute1Policy = new AttributeValueFilterPolicy();
+        AttributeRule attribute1Policy = new AttributeRule();
         attribute1Policy.setAttributeId("attribute1");
-        attribute1Policy.setValueMatcher(MatchFunctor.MATCHES_NONE);
+        attribute1Policy.setPermitRule(makePermitRule(MatchFunctor.MATCHES_NONE));
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
@@ -198,14 +210,13 @@ public class AttributeFilteringEngineTest {
         deny.setMatchingAttribute("attribute1");
         deny.setMatchingValues(Arrays.asList(new StringAttributeValue("one")));
 
-        AttributeValueFilterPolicy denyPolicy = new AttributeValueFilterPolicy();
+        AttributeRule denyPolicy = new AttributeRule();
         denyPolicy.setAttributeId("attribute1");
-        denyPolicy.setMatchingPermittedValues(false);
-        denyPolicy.setValueMatcher(deny);
+        denyPolicy.setDenyRule(makeDenyRule(deny));
 
-        AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
+        AttributeRule allowPolicy = new AttributeRule();
         allowPolicy.setAttributeId("attribute1");
-        allowPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        allowPolicy.setPermitRule(makePermitRule(MatchFunctor.MATCHES_ALL));
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL, Lists.newArrayList(denyPolicy,
@@ -230,9 +241,9 @@ public class AttributeFilteringEngineTest {
     }
 
     @Test public void testNoPolicy() throws Exception {
-        AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
+        AttributeRule allowPolicy = new AttributeRule();
         allowPolicy.setAttributeId("attribute1");
-        allowPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        allowPolicy.setPermitRule(makePermitRule(MatchFunctor.MATCHES_ALL));
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_NONE, Lists.newArrayList(allowPolicy));
@@ -252,14 +263,13 @@ public class AttributeFilteringEngineTest {
     }
 
     @Test public void testDenyAllFilterAttributes() throws Exception {
-        AttributeValueFilterPolicy denyPolicy = new AttributeValueFilterPolicy();
+        AttributeRule denyPolicy = new AttributeRule();
         denyPolicy.setAttributeId("attribute1");
-        denyPolicy.setMatchingPermittedValues(false);
-        denyPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        denyPolicy.setDenyRule(makeDenyRule(MatchFunctor.MATCHES_ALL));
 
-        AttributeValueFilterPolicy allowPolicy = new AttributeValueFilterPolicy();
+        AttributeRule allowPolicy = new AttributeRule();
         allowPolicy.setAttributeId("attribute1");
-        allowPolicy.setValueMatcher(MatchFunctor.MATCHES_ALL);
+        allowPolicy.setPermitRule(makePermitRule(MatchFunctor.MATCHES_ALL));
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL, Lists.newArrayList(denyPolicy,
@@ -282,9 +292,9 @@ public class AttributeFilteringEngineTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         MockMatchFunctor matcher = new MockMatchFunctor();
-        AttributeValueFilterPolicy filterPolicy = new AttributeValueFilterPolicy();
+        AttributeRule filterPolicy = new AttributeRule();
         filterPolicy.setAttributeId("attribute1");
-        filterPolicy.setValueMatcher(matcher);
+        filterPolicy.setPermitRule(makePermitRule(matcher));
 
         MockMatchFunctor otherMatcher = new MockMatchFunctor();
         AttributeFilterPolicy policy = new AttributeFilterPolicy("policy", otherMatcher, Arrays.asList(filterPolicy));
@@ -318,9 +328,9 @@ public class AttributeFilteringEngineTest {
 
     @Test public void testValidate() throws ComponentInitializationException, ComponentValidationException {
         MockMatchFunctor matcher = new MockMatchFunctor();
-        AttributeValueFilterPolicy filterPolicy = new AttributeValueFilterPolicy();
+        AttributeRule filterPolicy = new AttributeRule();
         filterPolicy.setAttributeId("attribute1");
-        filterPolicy.setValueMatcher(matcher);
+        filterPolicy.setPermitRule(makePermitRule(matcher));
 
         MockMatchFunctor otherMatcher = new MockMatchFunctor();
         AttributeFilterPolicy policy = new AttributeFilterPolicy("Id", otherMatcher, Arrays.asList(filterPolicy));

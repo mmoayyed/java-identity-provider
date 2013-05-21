@@ -17,9 +17,8 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
-import java.util.Collection;
-
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
@@ -36,37 +35,45 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Represents a value filtering rule for a particular attribute. */
+/**
+ * Represents a value filtering rule for a particular attribute. <code>
+     <element name="AttributeRule" type="afp:AttributeRuleType">
+        <annotation>
+            <documentation>A rule that describes how values of an attribute will be filtered.&lt;/documentation>
+        &lt;/annotation>
+    &lt;/element>
+ </code>
+ */
 @ThreadSafe
-public class AttributeValueFilterPolicy extends AbstractDestructableInitializableComponent implements
+public class AttributeRule extends AbstractDestructableInitializableComponent implements
         ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeValueFilterPolicy.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeRule.class);
 
-    /** Unique ID of the attribute this rule applies to. */
-    private String attributeId;
+    /**
+     * Unique ID of the attribute this rule applies to. <code>
+        <attribute name="attributeID" type="string" use="required">
+            <annotation>
+                <documentation>The ID of the attribute to which this rule applies.&lt;/documentation>
+            &lt;/annotation>
+        &lt;/attribute>
+      </code>
+     */
+    private String attributeId = "<UnassignedAttributeId>";
 
     /** Whether the attributeId has been set. */
     private boolean attributeIdSet;
 
     /**
-     * Whether this attribute rule will treat values that its {@link MatchFunctor} as values that are permitted
-     * or denied. Default value: true
+     * Filter that permits the release of attribute values.
      */
-    private boolean matchingPermittedValues = true;
+    private PermitValueRule permitValueRule;
 
     /**
-     * Filter that permits the release of attribute values. Default value: {@link MatchFunctor#MATCHES_NONE}
+     * Filter that denies the release of attribute values.
      */
-    private MatchFunctor valueMatchingRule;
-
-    /** Constructor. */
-    public AttributeValueFilterPolicy() {
-        matchingPermittedValues = true;
-        attributeId = "<unspecified attribute>";
-        valueMatchingRule = MatchFunctor.MATCHES_NONE;
-    }
+    private DenyValueRule denyValueRule;
 
     /**
      * Gets the ID of the attribute to which this rule applies.
@@ -94,57 +101,55 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
     }
 
     /**
-     * Gets whether this attribute rule will treat values that its {@link MatchFunctor} as values that are
-     * permitted or denied.
+     * Gets the matcher used to determine permitted attribute values filtered by this rule.
      * 
-     * @return true if matching attribute rules are permitted values, false if they are not
+     * @return matcher used to determine permitted attribute values filtered by this rule
      */
-    public boolean isMatchingPermittedValues() {
+    @Nullable public PermitValueRule getPermitRule() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        return matchingPermittedValues;
+        return permitValueRule;
     }
 
     /**
-     * Sets whether this attribute rule will treat values that its {@link MatchFunctor} as values that are
-     * permitted or denied.
+     * Sets the rule used to determine permitted attribute values filtered by this rule.
      * 
-     * @param isMatchingPermittedValues whether this attribute rule will treat values that its
-     *            {@link MatchFunctor} as values that are permitted or denied
+     * @param matcher matcher used to determine permitted attribute values filtered by this rule
      */
-    public synchronized void setMatchingPermittedValues(boolean isMatchingPermittedValues) {
+    public synchronized void setPermitRule(@Nonnull PermitValueRule matcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        matchingPermittedValues = isMatchingPermittedValues;
+        permitValueRule = Constraint.isNotNull(matcher, "Permit Rule can not be null");
     }
 
     /**
-     * Gets the matcher used to determine attribute values filtered by this rule.
+     * Gets the matcher used to determine denied attribute values filtered by this rule.
      * 
-     * @return matcher used to determine attribute values filtered by this rule
+     * @return matcher used to determine denied attribute values filtered by this rule
      */
-    @Nonnull public MatchFunctor getValueMatcher() {
+    @Nullable public DenyValueRule getDenyRule() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        return valueMatchingRule;
+        return denyValueRule;
     }
 
     /**
-     * Sets the matcher used to determine attribute values filtered by this rule.
+     * Sets the rule used to determine denied attribute values filtered by this rule.
      * 
-     * @param matcher matcher used to determine attribute values filtered by this rule
+     * @param matcher matcher used to determine denied attribute values filtered by this rule
      */
-    public synchronized void setValueMatcher(@Nonnull MatchFunctor matcher) {
+    public synchronized void setDenyRule(@Nonnull DenyValueRule matcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        valueMatchingRule = Constraint.isNotNull(matcher, "Attribute value matcher can not be null");
+        denyValueRule = Constraint.isNotNull(matcher, "Deny Rule can not be null");
     }
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        ComponentSupport.validate(valueMatchingRule);
+        ComponentSupport.validate(denyValueRule);
+        ComponentSupport.validate(permitValueRule);
     }
 
     /**
@@ -166,21 +171,18 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
         log.debug("Filtering values for attribute '{}' which currently contains {} values", getAttributeId(), attribute
                 .getValues().size());
 
-        Collection matchingValues = valueMatchingRule.getMatchingValues(attribute, filterContext);
-        if (matchingPermittedValues) {
-            log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
-                    getAttributeId());
-            filterContext.addPermittedAttributeValues(getAttributeId(), matchingValues);
-        } else {
-            log.debug("Filter has denied the release of {} values for attribute '{}'", matchingValues.size(),
-                    getAttributeId());
-            filterContext.addDeniedAttributeValues(getAttributeId(), matchingValues);
+        if (permitValueRule != null) {
+            permitValueRule.apply(attribute, filterContext);
+        }
+        if (denyValueRule != null) {
+            denyValueRule.apply(attribute, filterContext);
         }
     }
 
     /** {@inheritDoc} */
     protected void doDestroy() {
-        ComponentSupport.destroy(valueMatchingRule);
+        ComponentSupport.destroy(permitValueRule);
+        ComponentSupport.destroy(denyValueRule);
         super.doDestroy();
     }
 
@@ -192,11 +194,15 @@ public class AttributeValueFilterPolicy extends AbstractDestructableInitializabl
             throw new ComponentInitializationException("No attribute specified for this attribute value filter policy");
         }
 
-        if (valueMatchingRule == null) {
-            // Will never happen unless we change the constructor
-            throw new ComponentInitializationException("No value matching rule specified");
+        if (permitValueRule == null && denyValueRule == null) {
+            throw new ComponentInitializationException("Attribute Rule must have a permit rule or a deny rule");
+        }
+        if (permitValueRule != null && denyValueRule != null) {
+            throw new ComponentInitializationException("Attribute Rule must have a permit rule or"
+                    + " a deny rule, but not both");
         }
 
-        ComponentSupport.initialize(valueMatchingRule);
+        ComponentSupport.initialize(permitValueRule);
+        ComponentSupport.initialize(denyValueRule);
     }
 }
