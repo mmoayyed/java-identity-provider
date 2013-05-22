@@ -28,7 +28,8 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractValueMatcherFunctor;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractComparisonMatcherFunctor;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.MockValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -49,7 +50,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        AbstractValueMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
+        AbstractComparisonMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
         OrMatcher matcher = new OrMatcher(Lists.<MatchFunctor> newArrayList(valuePredicate));
         matcher.setId("test");
         matcher.initialize();
@@ -169,21 +170,21 @@ public class OrMatcherTest extends AbstractMatcherTest {
                         new MockValuePredicateMatcher(false)));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
 
         matcher =
                 new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(false), null,
                         new MockValuePredicateMatcher(true)));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertTrue(matcher.evaluatePolicyRule(null));
+        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
 
         matcher =
                 new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(true), null,
                         new MockValuePredicateMatcher(true)));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertTrue(matcher.evaluatePolicyRule(null));
+        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
 
     }
 

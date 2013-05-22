@@ -46,9 +46,9 @@ public class AttributeValueRegexpMatcher extends AbstractAttributeTargetedRegexM
 
         } else {
             final String valueAsString = ((AttributeValue) value).getValue().toString();
-            log.warn("FilterPredicate : Object supplied to StringAttributeValue comparison"
+            log.warn("{} Object supplied to StringAttributeValue comparison"
                     + " was of class {}, not StringAttributeValue, comparing with {}", new Object[] {
-                    value.getClass().getName(), valueAsString,});
+                    getLogPrefix(), value.getClass().getName(), valueAsString,});
             return super.regexpCompare(valueAsString);
         } 
     }

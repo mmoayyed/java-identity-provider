@@ -45,10 +45,10 @@ public class AttributeScopeRegexpMatcher extends AbstractAttributeTargetedRegexM
             return super.regexpCompare(scopedValue.getScope());
 
         } else {
-            log.warn("FilterPredicate : Object supplied to ScopedRegexpAttributeValue comparison"
-                    + " was of class '{}', not ScopedAttributeValue", value.getClass().getName());
+            log.warn("{} Object supplied to ScopedRegexpAttributeValue comparison was of class "
+                    + "'{}', not ScopedAttributeValue, not matched", getLogPrefix(), value.getClass().getName());
             return false;
-        } 
+        }
     }
 
 }

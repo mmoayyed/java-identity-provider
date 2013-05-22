@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.filtercontext;
 
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -29,12 +30,12 @@ import org.testng.annotations.Test;
  */
 public class PrincipalNameRegexpMatcherTest {
     
-    @Test public void testAll() throws ComponentInitializationException {
+    @Test public void testAll() throws ComponentInitializationException, AttributeFilteringException {
 
         PrincipalNameRegexpMatcher matcher = new PrincipalNameRegexpMatcher();
         
         try {
-            matcher.apply(null);
+            matcher.doCompare(null);
             Assert.fail();
         } catch (UninitializedComponentException ex) {
             // OK
@@ -47,16 +48,16 @@ public class PrincipalNameRegexpMatcherTest {
         // Assert.assertFalse(matcher.apply(null));
         
         try {
-            matcher.apply(DataSources.unPopulatedFilterContext());
+            matcher.doCompare(DataSources.unPopulatedFilterContext());
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // OK
         }
         
-        Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext(null, null, null)));
-        Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext("wibble", null, null)));
-        Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
-        Assert.assertTrue(matcher.apply(DataSources.populatedFilterContext("principal", null, null)));        
+        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, null)));
+        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("wibble", null, null)));
+        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
+        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("principal", null, null)));        
     }
 
 

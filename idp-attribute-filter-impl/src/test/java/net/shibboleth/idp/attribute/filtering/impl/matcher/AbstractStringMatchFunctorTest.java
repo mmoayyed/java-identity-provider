@@ -17,10 +17,6 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
-import javax.annotation.Nullable;
-
-import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -30,7 +26,7 @@ import org.testng.annotations.Test;
 public class AbstractStringMatchFunctorTest {
 
     @Test public void testSettersGetters() {
-        AbstractStringMatchFunctor matcher = new TestClass();
+        AbstractStringMatchFunctor matcher = new AbstractStringMatchFunctor(){};
 
         Assert.assertNull(matcher.getMatchString());
         Assert.assertFalse(matcher.getCaseSensitive());
@@ -45,7 +41,7 @@ public class AbstractStringMatchFunctorTest {
     }
 
     @Test public void testApply() {
-        AbstractStringMatchFunctor matcher = new TestClass() {};
+        AbstractStringMatchFunctor matcher = new AbstractStringMatchFunctor() {};
         matcher.setCaseSensitive(true);
         matcher.setMatchString(DataSources.TEST_STRING);
 
@@ -54,11 +50,9 @@ public class AbstractStringMatchFunctorTest {
         matcher.setCaseSensitive(false);
         Assert.assertTrue(matcher.stringCompare(DataSources.TEST_STRING));
         Assert.assertTrue(matcher.stringCompare(DataSources.TEST_STRING_UPPER));
+        
+        Assert.assertFalse(matcher.stringCompare(null));
     }
+    
 
-    private class TestClass extends AbstractStringMatchFunctor {
-        public boolean apply(@Nullable AttributeFilterContext input) {
-            return false;
-        }
-    }
 }

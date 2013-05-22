@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.filtercontext;
 
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -34,7 +35,7 @@ public class PrincipalNameMatcherTest {
         PrincipalNameMatcher matcher = new PrincipalNameMatcher();
         
         try {
-            matcher.apply(null);
+            matcher.doCompare(null);
             Assert.fail();
         } catch (UninitializedComponentException ex) {
             // OK
@@ -48,13 +49,13 @@ public class PrincipalNameMatcherTest {
         // Assert.assertFalse(matcher.apply(null));
         
         try {
-            matcher.apply(DataSources.unPopulatedFilterContext());
+            matcher.doCompare(DataSources.unPopulatedFilterContext());
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // OK
         }
         
-        Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext(null, null, null)));
+        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, null)));
     }
     
     @Test public void testCaseSensitive() throws ComponentInitializationException {
@@ -65,13 +66,13 @@ public class PrincipalNameMatcherTest {
         matcher.setCaseSensitive(true);
         matcher.initialize();
         
-        Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext("wibble", null, null)));
-        Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
-        Assert.assertTrue(matcher.apply(DataSources.populatedFilterContext("principal", null, null)));        
+        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext("wibble", null, null)));
+        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
+        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext("principal", null, null)));        
     }
 
     
-    @Test public void testCaseinSensitive() throws ComponentInitializationException {
+    @Test public void testCaseinSensitive() throws ComponentInitializationException, AttributeFilteringException {
 
         PrincipalNameMatcher matcher = new PrincipalNameMatcher();
         matcher.setMatchString("principal");
@@ -79,9 +80,8 @@ public class PrincipalNameMatcherTest {
         matcher.setId("test");
         matcher.initialize();
         
-        Assert.assertFalse(matcher.apply(DataSources.populatedFilterContext("wibble", null, null)));
-        Assert.assertTrue(matcher.apply(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
-        Assert.assertTrue(matcher.apply(DataSources.populatedFilterContext("principal", null, null)));        
+        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("wibble", null, null)));
+        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
+        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("principal", null, null)));        
     }
-
 }

@@ -23,25 +23,29 @@ import static com.google.common.base.Predicates.or;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-import net.shibboleth.utilities.java.support.logic.ExceptionPredicate;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-/** Unit test for {@link AbstractValueMatcherFunctor}. */
-public class AbstractValueMatcherFunctorTest extends AbstractMatcherTest {
+import com.google.common.base.Predicate;
+
+/** Unit test for {@link AbstractComparisonMatcherFunctor}. */
+public class AbstractComparisonMatcherFunctorTest extends AbstractMatcherTest {
 
     @BeforeTest public void setup() throws Exception {
         super.setUp();
     }
 
     @Test public void testNullArguments() throws Exception {
-        AbstractValueMatcherFunctor matcher = new MockValuePredicateMatcher(alwaysTrue());
+        AbstractComparisonMatcherFunctor matcher = new MockValuePredicateMatcher(alwaysTrue());
 
         boolean thrown = false;
         try {
@@ -77,7 +81,7 @@ public class AbstractValueMatcherFunctorTest extends AbstractMatcherTest {
     }
 
     @Test public void testGetMatchingValues() throws AttributeFilteringException, ComponentInitializationException {
-        AbstractValueMatcherFunctor matcher =
+        AbstractComparisonMatcherFunctor matcher =
                 new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -92,24 +96,36 @@ public class AbstractValueMatcherFunctorTest extends AbstractMatcherTest {
         result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertEquals(result.size(), 3);
     }
+    
+    @Test(expectedExceptions={ComponentInitializationException.class})
+    public void testInitializeNoPredicate() throws ComponentInitializationException {
+        AbstractComparisonMatcherFunctor matcher = new AbstractComparisonMatcherFunctor() {};
+        matcher.setId("none");
+        matcher.initialize();
+    }
 
-    @Test public void testFailingGetMatchingValues() throws ComponentInitializationException {
-        AbstractValueMatcherFunctor matcher =
-                new MockValuePredicateMatcher(new ExceptionPredicate(new RuntimeException()));
+    @Test(expectedExceptions={ComponentInitializationException.class})
+    public void testInitializeBothPredicates() throws ComponentInitializationException {
+        AbstractComparisonMatcherFunctor matcher = new AbstractComparisonMatcherFunctor() {};
+        matcher.setId("both");
+        matcher.setPolicyPredicate(new Predicate<AttributeFilterContext>() {
+            
+            public boolean apply(@Nullable AttributeFilterContext input) {
+                return false;
+            }
+        });
+        matcher.setValuePredicate(new Predicate<AttributeValue>() {
 
-        try {
-            matcher.getMatchingValues(attribute, filterContext);
-            Assert.fail();
-        } catch (AttributeFilteringException e) {
-            // OK
-        }
-
+            public boolean apply(@Nullable AttributeValue input) {
+                return false;
+            }});
+        matcher.initialize();
     }
 
     // TODO 
     // @Test
     public void testEqualsHashToString() throws ComponentInitializationException {
-        AbstractValueMatcherFunctor matcher =
+        AbstractComparisonMatcherFunctor matcher =
                 new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         matcher.toString();
@@ -118,7 +134,7 @@ public class AbstractValueMatcherFunctorTest extends AbstractMatcherTest {
         Assert.assertTrue(matcher.equals(matcher));
         Assert.assertFalse(matcher.equals(this));
 
-        AbstractValueMatcherFunctor other = new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
+        AbstractComparisonMatcherFunctor other = new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());

@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 /**
  * General {@link MatchFunctor} for {@link String} comparison of strings in Attribute Filters.   
  */
-public abstract class AbstractStringMatchFunctor extends AbstractValueMatcherFunctor {
+public abstract class AbstractStringMatchFunctor extends AbstractComparisonMatcherFunctor {
 
     /** String to match for a positive evaluation. */
     private String matchString;

@@ -27,7 +27,8 @@ import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractValueMatcherFunctor;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractComparisonMatcherFunctor;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.MockValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -56,7 +57,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
             // expected this
         }
 
-        AbstractValueMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
+        AbstractComparisonMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
         NotMatcher matcher = new NotMatcher(valuePredicate);
         matcher.setId("NullArgs");
         matcher.initialize();
@@ -207,12 +208,12 @@ public class NotMatcherTest extends AbstractMatcherTest {
         NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(true));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(null));
+        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
 
         matcher = new NotMatcher(new MockValuePredicateMatcher(false));
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(matcher.evaluatePolicyRule(null));
+        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
 
     }
 

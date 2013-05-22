@@ -19,7 +19,12 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractStringMatchFunctor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -31,8 +36,10 @@ import com.google.common.base.Predicate;
  * Basic Implementation of a {@link net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor} based on string
  * comparison. The missing parts
  */
-public abstract class AbstractAttributeTargetedStringMatchFunctor extends AbstractStringMatchFunctor implements
-        TargetedMatchFunctor {
+public abstract class AbstractAttributeTargetedStringMatchFunctor extends AbstractStringMatchFunctor {
+
+    /** log. */
+    private static Logger log = LoggerFactory.getLogger(AbstractAttributeTargetedStringMatchFunctor.class);
 
     /** ID of the attribute whose values will be evaluated. */
     private String attributeId;
@@ -47,22 +54,65 @@ public abstract class AbstractAttributeTargetedStringMatchFunctor extends Abstra
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         attributeId = StringSupport.trimOrNull(id);
     }
-    
+
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         if (null == attributeId) {
             // This is a UNTARGETTED filter, so we expect to be called to compare
             // attribute values
-            setValuePredicate(new Predicate<AttributeValue>() {
-    
-                public boolean apply(@Nullable AttributeValue input) {
-                    return compareAttributeValue(input);
-                }
-            });
-            setPolicyPredicate(AttributeValueHelper.filterContextPredicate(this));
+            setValuePredicate(targettedValuePredicate());
         } else {
-            setPolicyPredicate(AttributeValueHelper.filterContextPredicate(this, attributeId));
+            setPolicyPredicate(untargettedContextPredicate());
         }
+
         super.doInitialize();
     }
+
+    /**
+     * Create the Policy Predicate for use if the attributeId is specified.
+     * 
+     * @return if the attribute exists and has the value specified
+     */
+    private Predicate<AttributeFilterContext> untargettedContextPredicate() {
+        return new Predicate<AttributeFilterContext>() {
+
+            public boolean apply(@Nullable AttributeFilterContext context) {
+                final Attribute attribute = context.getPrefilteredAttributes().get(attributeId);
+
+                if (null == attribute) {
+                    log.info("{} No attribute '{}' available, returning false", getLogPrefix(), attributeId);
+                    return false;
+                }
+
+                for (AttributeValue value : attribute.getValues()) {
+                    if (compareAttributeValue(value)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
+
+    }
+
+    /**
+     * Create the Value predicate for use if the attribute Id is not specified.
+     * 
+     * @return whether the value matches.
+     */
+    private Predicate<AttributeValue> targettedValuePredicate() {
+        return new Predicate<AttributeValue>() {
+
+            public boolean apply(@Nullable AttributeValue input) {
+                return compareAttributeValue(input);
+            }
+        };
+    }
+    
+    /**
+     * Perform comparison.
+     * @param value the attribute value to inspect
+     * @return whether it matches the configuration of this match function.
+     */
+    protected abstract boolean compareAttributeValue(@Nullable AttributeValue value);
 }

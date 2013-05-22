@@ -39,7 +39,8 @@ public class AttributeScopeStringMatcherTest {
         Assert.assertFalse(matcher.compareAttributeValue(DataSources.STRING_VALUE));
         Assert.assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
         Assert.assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
-        
+        Assert.assertFalse(matcher.compareAttributeValue(null));
+
     }
 
 }

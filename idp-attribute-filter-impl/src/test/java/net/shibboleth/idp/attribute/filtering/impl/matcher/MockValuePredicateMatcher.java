@@ -24,7 +24,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import com.google.common.base.Predicate;
 
-public class MockValuePredicateMatcher extends AbstractValueMatcherFunctor {
+public class MockValuePredicateMatcher extends AbstractComparisonMatcherFunctor {
 
     final boolean valuePredicate;
 

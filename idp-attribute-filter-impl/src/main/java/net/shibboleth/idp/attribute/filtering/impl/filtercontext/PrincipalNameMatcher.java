@@ -19,13 +19,15 @@ package net.shibboleth.idp.attribute.filtering.impl.filtercontext;
 
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractStringMatchFunctor;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
 
 /**
  * Compare the principal name for this resolution with the provided name.
@@ -35,8 +37,20 @@ public class PrincipalNameMatcher extends AbstractStringMatchFunctor {
     /** The logger. */
     private Logger log = LoggerFactory.getLogger(PrincipalNameMatcher.class);
 
-    /** {@inheritDoc} */
-    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+    /** Constructor. */
+    public PrincipalNameMatcher() {
+        setPolicyPredicate(new Predicate<AttributeFilterContext>() {
+
+            public boolean apply(@Nullable AttributeFilterContext input) {
+                return doCompare(input);
+            }});        
+    }
+    
+    /** Compare the principal from the provided context with the string.
+     * @param filterContext the context
+     * @return whether it matches
+     */
+    protected boolean doCompare(@Nullable AttributeFilterContext filterContext) {
         
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -45,10 +59,12 @@ public class PrincipalNameMatcher extends AbstractStringMatchFunctor {
         final String principal = recipient.getPrincipal();
 
         if (null == principal) {
-            log.warn("No principal found for comparison");
+            log.warn("{} No principal found for comparison", getLogPrefix());
             return false;
         }
+        log.debug("{} found principal: ", getLogPrefix(), principal);
 
         return stringCompare(principal);
     }
+    
 }

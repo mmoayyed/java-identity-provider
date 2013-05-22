@@ -46,8 +46,8 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import com.google.common.base.Objects;
 
 /**
- * A {@link net.shibboleth.idp.attribute.filtering.MatchFunctor} that delegates to a JSR-223 script for its
- * actual processing.
+ * A {@link net.shibboleth.idp.attribute.filtering.MatchFunctor} that delegates to a JSR-223 script for its actual
+ * processing.
  * 
  */
 @ThreadSafe
@@ -56,6 +56,9 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
 
     /** Script to be evaluated. */
     private EvaluableScript script;
+
+    /** Log prefix. */
+    private String logPrefix;
 
     /**
      * Constructor.
@@ -69,6 +72,8 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
     /** {@inheritDoc} */
     public void setId(String id) {
         super.setId(id);
+        // clear cache
+        logPrefix = null;
     };
 
     /**
@@ -104,7 +109,8 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * </p>
      * {@inheritDoc}
      */
-    public boolean evaluatePolicyRule(@Nullable AttributeFilterContext filterContext) {
+    public boolean evaluatePolicyRule(@Nullable AttributeFilterContext filterContext)
+            throws AttributeFilteringException {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 
         final EvaluableScript currentScript = script;
@@ -117,19 +123,16 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
         try {
             final Object result = currentScript.eval(scriptContext);
             if (null == result) {
-                // TODO
-                throw new IllegalArgumentException("Matcher script did not return a result");
+                throw new IllegalArgumentException(getLogPrefix() + "Matcher script did not return a result");
             }
 
             if (result instanceof Boolean) {
                 return ((Boolean) result).booleanValue();
             } else {
-                // TODO
-                throw new IllegalArgumentException("Matcher script did not return a Collection");
+                throw new AttributeFilteringException(getLogPrefix() + "Matcher script did not return a Boolean");
             }
         } catch (ScriptException e) {
-            // TODO
-            throw new IllegalArgumentException("Error while executing value matching script", e);
+            throw new AttributeFilteringException(getLogPrefix() + "Error while executing value matching script", e);
         }
     }
 
@@ -162,7 +165,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
         try {
             final Object result = currentScript.eval(scriptContext);
             if (null == result) {
-                throw new AttributeFilteringException("Matcher script did not return a result");
+                throw new AttributeFilteringException(getLogPrefix() + "Matcher script did not return a result");
             }
 
             if (result instanceof Set) {
@@ -170,7 +173,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
                 returnValues.retainAll((Set) result);
                 return Collections.unmodifiableSet(returnValues);
             } else {
-                throw new AttributeFilteringException("Matcher script did not return a Collection");
+                throw new AttributeFilteringException("Matcher script did not return a Set");
             }
         } catch (ScriptException e) {
             throw new AttributeFilteringException("Error while executing value matching script", e);
@@ -213,7 +216,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
 
     /** {@inheritDoc} */
     public int hashCode() {
-        return 27 * script.hashCode();
+        return Objects.hashCode(script, getId());
     }
 
     /** {@inheritDoc} */
@@ -221,4 +224,21 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
         return Objects.toStringHelper(this).add("Script", getScript()).toString();
     }
 
+    /**
+     * return a string which is to be prepended to all log messages.
+     * 
+     * @return "Scripted Attribute Filter '<filterID>' :"
+     */
+    protected String getLogPrefix() {
+        // local cache of cached entry to allow unsynchronised clearing.
+        String prefix = logPrefix;
+        if (null == prefix) {
+            StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
+            prefix = builder.toString();
+            if (null == logPrefix) {
+                logPrefix = prefix;
+            }
+        }
+        return prefix;
+    }
 }

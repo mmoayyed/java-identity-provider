@@ -39,29 +39,32 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * This is the bases of all implementations of {@link MatchFunctor} which do some sort of element comparison.<br/>
+ * This is the bases of all implementations of {@link MatchFunctor} which do some sort of comparison.<br/>
  * <br/>
  * 
- * PolicyRequirementRule implementations will implement the {@link Predicate<AttributeFilterContext>} part and will get
- * a default result for {@link AbstractValueMatcherFunctor#getMatchingRules} which states that if the predicate is true
- * then we get all values for the attribute otherwise none.
+ * PolicyRequirementRule implementations will set {@link #policyPredicate} and get a default result for
+ * {@link #getMatchingValues(Attribute, AttributeFilterContext)} which states that if the predicate is true then we get
+ * all values for the attribute otherwise none.
  * 
- * AttributeRule implementations will extend a superclass of this {@link AbstractValueMatcherFunctor} or
- * {@link BaseRegexpValuePredicateMatcher} which will implement a sensible default for the PolicyRequirementRule and
- * inject the required valuePredicate into the constructor.
+ * AttributeRule implementations will set {@link #valuePredicate} or and get a default for
+ * {@link #evaluatePolicyRule(AttributeFilterContext)} which says that if this is true for one value then it is true for
+ * all.
  */
 
-public abstract class AbstractValueMatcherFunctor extends AbstractIdentifiableInitializableComponent implements
+public abstract class AbstractComparisonMatcherFunctor extends AbstractIdentifiableInitializableComponent implements
         MatchFunctor {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractValueMatcherFunctor.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractComparisonMatcherFunctor.class);
 
     /** Predicate used to check attribute values. */
     private Predicate<AttributeValue> valuePredicate;
 
     /** Predicate used to check attributePolicy. */
     private Predicate<AttributeFilterContext> policyPredicate;
+
+    /** The String used to prefix log message. */
+    private String logPrefix;
 
     /**
      * Set the predicate we used to do AttributeValueFiltering.
@@ -84,6 +87,27 @@ public abstract class AbstractValueMatcherFunctor extends AbstractIdentifiableIn
     }
 
     /** {@inheritDoc} */
+    public void setId(String id) {
+        super.setId(id);
+    }
+
+    /** {@inheritDoc} */
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        // Id is definitive, reset prefix
+        logPrefix = null;
+
+        if (null == valuePredicate && null == policyPredicate) {
+            throw new ComponentInitializationException(getLogPrefix()
+                    + "A ValuePredicate or PolicyPredicate should be present");
+        }
+        if (null != valuePredicate && null != policyPredicate) {
+            throw new ComponentInitializationException(getLogPrefix()
+                    + "A ValuePredicate or PolicyPredicate should be present, not both");
+        }
+    }
+
+    /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(@Nonnull Attribute attribute,
             @Nonnull AttributeFilterContext filterContext) throws AttributeFilteringException {
 
@@ -96,8 +120,8 @@ public abstract class AbstractValueMatcherFunctor extends AbstractIdentifiableIn
             // This is a "PolicyRule" rule. So the rule is, if we are true then everything,
             // else nothing.
             //
-            log.info("Attribute Filter:  No value predicate present for attribute '{}',"
-                    + " applying the policy predicate", attribute.getId());
+            log.info("{} No value predicate present for attribute '{}'," + " applying the policy predicate",
+                    getLogPrefix(), attribute.getId());
             if (policyPredicate.apply(filterContext)) {
                 return attribute.getValues();
             } else {
@@ -107,19 +131,11 @@ public abstract class AbstractValueMatcherFunctor extends AbstractIdentifiableIn
 
         HashSet matchedValues = new HashSet();
 
-        log.debug("Attribute Filter:  Applying value predicate to all values of Attribute '{}'", attribute.getId());
+        log.debug("{} Applying value predicate to all values of Attribute '{}'", getLogPrefix(), attribute.getId());
 
         for (AttributeValue value : attribute.getValues()) {
-            try {
-                if (valuePredicate.apply(value)) {
-                    matchedValues.add(value);
-                }
-            } catch (Exception e) {
-                // TODO - this is pig ugly
-                log.debug("Attribute value '{}' of type '{}' in Attribute '{}' "
-                        + "caused an error while being evaluated '{}':\n{}", new Object[] {value,
-                        value.getClass().getName(), attribute.getId(), valuePredicate.getClass().getName(), e,});
-                throw new AttributeFilteringException("Unable to apply predicate to attribute value", e);
+            if (valuePredicate.apply(value)) {
+                matchedValues.add(value);
             }
         }
 
@@ -127,23 +143,18 @@ public abstract class AbstractValueMatcherFunctor extends AbstractIdentifiableIn
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        // TODO Check predicates (on;ly one non null) and setup the logprefix
-    }
-
-    /** {@inheritDoc} */
-    public void setId(String id) {
-        super.setId(id);
-    }
-
-    /** {@inheritDoc} */
-    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) 
-            throws AttributeFilteringException {
+    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext context) throws AttributeFilteringException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        Constraint.isNotNull(context, "Attribute filter context can not be null");
+        
         if (null != policyPredicate) {
-            return policyPredicate.apply(filterContext);
+            log.debug("{} Applying policy Predicate", getLogPrefix());
+            return policyPredicate.apply(context);
         }
-        for (Attribute attribute: filterContext.getPrefilteredAttributes().values()) {
+        
+        log.info("{} Applying value predicate supplied as policy to all values of all attributes", getLogPrefix());
+
+        for (Attribute attribute : context.getPrefilteredAttributes().values()) {
             for (AttributeValue value : attribute.getValues()) {
                 if (valuePredicate.apply(value)) {
                     return true;
@@ -152,5 +163,22 @@ public abstract class AbstractValueMatcherFunctor extends AbstractIdentifiableIn
         }
         return false;
     }
-
+    
+    /**
+     * return a string which is to be prepended to all log messages.
+     * 
+     * @return "Attribute Filter '<filterID>' :"
+     */
+    protected String getLogPrefix() {
+        // local cache of cached entry to allow unsynchronised clearing.
+        String prefix = logPrefix;
+        if (null == prefix) {
+            StringBuilder builder = new StringBuilder("Attribute Filter '").append(getId()).append("':");
+            prefix = builder.toString();
+            if (null == logPrefix) {
+                logPrefix = prefix;
+            }
+        }
+        return prefix;
+    }
 }

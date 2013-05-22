@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * General {@link net.shibboleth.idp.attribute.filtering.MatchFunctor} for regexp comparison of strings in Attribute
  * Filters.
  */
-public abstract class AbstractRegexpStringMatchFunctor extends AbstractValueMatcherFunctor {
+public abstract class AbstractRegexpStringMatchFunctor extends AbstractComparisonMatcherFunctor {
 
     /** Regular expression to match. */
     private Pattern regex;

@@ -39,8 +39,7 @@ public class AttributeValueStringMatcherTest {
         Assert.assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
         Assert.assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
         Assert.assertFalse(matcher.compareAttributeValue(DataSources.BYTE_ATTRIBUTE_VALUE));
-        
-        
+        Assert.assertFalse(matcher.compareAttributeValue(null));
         Assert.assertTrue(matcher.compareAttributeValue(DataSources.OTHER_VALUE));
         
     }

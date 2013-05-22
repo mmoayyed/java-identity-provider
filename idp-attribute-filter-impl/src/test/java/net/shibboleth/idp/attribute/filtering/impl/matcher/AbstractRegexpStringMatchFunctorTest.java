@@ -17,11 +17,6 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher;
 
-import javax.annotation.Nullable;
-
-import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractRegexpStringMatchFunctor;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -32,20 +27,18 @@ public class AbstractRegexpStringMatchFunctorTest {
 
 
     @Test public void testApply() {
-        AbstractRegexpStringMatchFunctor predicate = new TestMatchFunctor();
+        AbstractRegexpStringMatchFunctor predicate = new AbstractRegexpStringMatchFunctor(){};
         predicate.setRegularExpression(DataSources.TEST_REGEX);
 
         Assert.assertTrue(predicate.regexpCompare(DataSources.TEST_STRING));
         Assert.assertFalse(predicate.regexpCompare("o" + DataSources.TEST_STRING));
+        Assert.assertFalse(predicate.regexpCompare(null));
+        Assert.assertEquals(predicate.getRegularExpression(), DataSources.TEST_REGEX);
 
-    }
-
-    private class TestMatchFunctor extends AbstractRegexpStringMatchFunctor{
-
-        /** {@inheritDoc} */
-        public boolean apply(@Nullable AttributeFilterContext input) {
-            return false;
-        }
+        predicate = new AbstractRegexpStringMatchFunctor(){};
+        Assert.assertFalse(predicate.regexpCompare(DataSources.TEST_STRING));
+        
         
     }
+
 }

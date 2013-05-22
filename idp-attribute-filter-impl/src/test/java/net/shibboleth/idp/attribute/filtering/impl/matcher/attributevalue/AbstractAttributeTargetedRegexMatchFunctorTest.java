@@ -17,24 +17,92 @@
 
 package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
+import java.util.Collections;
+
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * Tests for {@link AbstractAttributeTargetedRegexMatchFunctor}.
  */
-public class AbstractAttributeTargetedRegexMatchFunctorTest extends TargetedMatchFunctorTest {
+public class AbstractAttributeTargetedRegexMatchFunctorTest {
 
     @Test public void setterGetterTest() throws ComponentInitializationException {
-        setterGetterTest(new AbstractAttributeTargetedRegexMatchFunctor() {
-            
+
+        final String NAME = "foo";
+        final AbstractAttributeTargetedRegexMatchFunctor functor = new AbstractAttributeTargetedRegexMatchFunctor() {
             public boolean compareAttributeValue(@Nullable AttributeValue value) {
                 return false;
             }
-        });
+        };
+        Assert.assertNull(functor.getAttributeId());
+
+        functor.setAttributeId(NAME);
+        Assert.assertEquals(functor.getAttributeId(), NAME);
+        Assert.assertNotEquals(functor.getAttributeId(), NAME.toUpperCase());
+
+        functor.setId("Test");
+
+        functor.initialize();
+        try {
+            functor.setAttributeId(NAME);
+            Assert.fail();
+        } catch (UnmodifiableComponentException e) {
+            // OK
+        }
     }
-}
+    @Test public void testTargetedPolicy() throws ComponentInitializationException, AttributeFilteringException {
+        final String NAME = "foo";
+        AbstractAttributeTargetedRegexMatchFunctor functor = new AbstractAttributeTargetedRegexMatchFunctor() {
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return false;
+            }
+        };
+        Assert.assertNull(functor.getAttributeId());
+
+        functor.setAttributeId(NAME);
+        functor.setId("Test");
+        functor.initialize();
+        
+        Assert.assertFalse(functor.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
+        final AttributeFilterContext context = DataSources.unPopulatedFilterContext();
+        final Attribute attribute = new Attribute(NAME);
+        attribute.setValues(Collections.singleton((AttributeValue)new StringAttributeValue("value")));
+        context.setPrefilteredAttributes(Collections.singleton(attribute));
+        Assert.assertFalse(functor.evaluatePolicyRule(context));
+        functor =  new AbstractAttributeTargetedRegexMatchFunctor() {
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return true;
+            }
+        };
+        functor.setAttributeId(NAME);
+        functor.setId("Test");
+        functor.initialize();
+        Assert.assertTrue(functor.evaluatePolicyRule(context));
+    }
+    @Test public void testUnargetedValue() throws ComponentInitializationException, AttributeFilteringException {
+        final String NAME = "foo";
+        final AbstractAttributeTargetedRegexMatchFunctor functor = new AbstractAttributeTargetedRegexMatchFunctor() {
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return true;
+            }
+        };
+        Assert.assertNull(functor.getAttributeId());
+
+        functor.setId("Test");
+        functor.initialize();
+        final Attribute attribute = new Attribute(NAME);
+        attribute.setValues(Collections.singleton((AttributeValue)new StringAttributeValue("value")));
+        Assert.assertEquals(functor.getMatchingValues(attribute, DataSources.unPopulatedFilterContext()).size(), 1);
+    }}

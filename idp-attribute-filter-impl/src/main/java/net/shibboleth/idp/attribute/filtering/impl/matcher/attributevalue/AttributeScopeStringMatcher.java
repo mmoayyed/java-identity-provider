@@ -44,9 +44,9 @@ public class AttributeScopeStringMatcher extends AbstractAttributeTargetedString
             final ScopedStringAttributeValue scopedValue = (ScopedStringAttributeValue) value;
             return super.stringCompare(scopedValue.getScope());
 
-        } else  {
-            log.warn("FilterPredicate : Object supplied to ScopedAttributeValue comparison"
-                    + " was of class '{}', not ScopedAttributeValue", value.getClass().getName());
+        } else {
+            log.warn("{} Object supplied to ScopedAttributeValue comparison"
+                    + " was of class '{}', not ScopedAttributeValue", getLogPrefix(), value.getClass().getName());
             return false;
         }
     }

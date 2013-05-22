@@ -27,6 +27,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicate;
+
 /**
  * Compare the principal name for this resolution with the provided name.
  */
@@ -35,8 +37,20 @@ public class PrincipalNameRegexpMatcher extends AbstractRegexpStringMatchFunctor
     /** The logger. */
     private Logger log = LoggerFactory.getLogger(PrincipalNameRegexpMatcher.class);
 
-    /** {@inheritDoc} */
-    public boolean apply(@Nullable AttributeFilterContext filterContext) {
+    /** Constructor. */
+    public PrincipalNameRegexpMatcher() {
+        setPolicyPredicate(new Predicate<AttributeFilterContext>() {
+
+            public boolean apply(@Nullable AttributeFilterContext input) {
+                return doCompare(input);
+            }});        
+    }
+
+    /** Compare the principal from the provided context with the string.
+     * @param filterContext the context
+     * @return whether it matches
+     */
+    protected boolean doCompare(@Nullable AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -45,9 +59,10 @@ public class PrincipalNameRegexpMatcher extends AbstractRegexpStringMatchFunctor
         final String principal = recipient.getPrincipal();
 
         if (null == principal) {
-            log.warn("No principal found for comparison");
+            log.warn("{} No principal found for comparison", getLogPrefix());
             return false;
         }
+        log.debug("{} found principal: ", getLogPrefix(), principal);
 
         return regexpCompare(principal);
     }

@@ -90,6 +90,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
         Assert.assertNotNull(matcher.getScript());
     }
+    
 
     @Test public void testNullArguments() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
@@ -143,30 +144,31 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
 
-    @Test public void testNullReturnScript() throws Exception {
+    @Test(expectedExceptions={AttributeFilteringException.class})
+    public void testNullReturnScript() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
         matcher.setId("Test");
         matcher.initialize();
 
-        try {
-            matcher.getMatchingValues(attribute, filterContext);
-            Assert.fail();
-        } catch (AttributeFilteringException e) {
-            // expected this
-        }
+        matcher.getMatchingValues(attribute, filterContext);
     }
 
-    @Test public void testInvalidReturnObjectScript() throws Exception {
+    @Test(expectedExceptions={AttributeFilteringException.class}) 
+    public void testInvalidReturnObjectValue() throws Exception {
         ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
         matcher.setId("Test");
         matcher.initialize();
 
-        try {
-            matcher.getMatchingValues(attribute, filterContext);
-            Assert.fail();
-        } catch (AttributeFilteringException e) {
-            // expected this
-        }
+        matcher.getMatchingValues(attribute, filterContext);
+    }
+
+    @Test(expectedExceptions={AttributeFilteringException.class}) 
+    public void testInvalidReturnObjectRule() throws Exception {
+        ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
+        matcher.setId("Test");
+        matcher.initialize();
+
+        matcher.evaluatePolicyRule(filterContext);
     }
 
     @Test public void testAddedValuesScript() throws Exception {
@@ -249,7 +251,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
 
     }
     
-    @Test public void testPredicate() throws ComponentInitializationException {
+    @Test public void testPredicate() throws ComponentInitializationException, AttributeFilteringException {
         ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
         matcher.setId("test");
         matcher.initialize();

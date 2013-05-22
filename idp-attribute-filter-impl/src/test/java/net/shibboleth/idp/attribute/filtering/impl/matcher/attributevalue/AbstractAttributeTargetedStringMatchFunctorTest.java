@@ -19,23 +19,74 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * Tests for {@link AbstractAttributeTargetedStringMatchFunctor}.
  */
-public class AbstractAttributeTargetedStringMatchFunctorTest extends TargetedMatchFunctorTest {
+public class AbstractAttributeTargetedStringMatchFunctorTest {
 
     @Test public void setterGetterTest() throws ComponentInitializationException {
-        setterGetterTest(new AbstractAttributeTargetedStringMatchFunctor() {
-            
+
+        final String NAME = "foo";
+        final AbstractAttributeTargetedStringMatchFunctor functor = new AbstractAttributeTargetedStringMatchFunctor() {
             public boolean compareAttributeValue(@Nullable AttributeValue value) {
                 return false;
             }
-        });
+        };
+        Assert.assertNull(functor.getAttributeId());
+
+        functor.setAttributeId(NAME);
+        Assert.assertEquals(functor.getAttributeId(), NAME);
+        Assert.assertNotEquals(functor.getAttributeId(), NAME.toUpperCase());
+
+        functor.setId("Test");
+
+        functor.initialize();
+        try {
+            functor.setAttributeId(NAME);
+            Assert.fail();
+        } catch (UnmodifiableComponentException e) {
+            // OK
+        }
     }
 
+    @Test public void testTargetedPolicy() throws ComponentInitializationException, AttributeFilteringException {
+        final String NAME = "foo";
+        final AbstractAttributeTargetedStringMatchFunctor functor = new AbstractAttributeTargetedStringMatchFunctor() {
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return false;
+            }
+        };
+        Assert.assertNull(functor.getAttributeId());
+
+        functor.setAttributeId(NAME);
+        functor.setId("Test");
+        functor.initialize();
+        
+        Assert.assertFalse(functor.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
+        
+    }
+    @Test public void testUnargetedValue() throws ComponentInitializationException, AttributeFilteringException {
+        final String NAME = "foo";
+        final AbstractAttributeTargetedStringMatchFunctor functor = new AbstractAttributeTargetedStringMatchFunctor() {
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return false;
+            }
+        };
+        Assert.assertNull(functor.getAttributeId());
+
+        functor.setAttributeId(NAME);
+        functor.setId("Test");
+        functor.initialize();
+        Assert.assertTrue(functor.getMatchingValues(new Attribute("foo"), DataSources.unPopulatedFilterContext()).isEmpty());
+    }
 }

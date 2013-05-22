@@ -58,19 +58,13 @@ public class OrMatcher extends AbstractComposedMatcher  {
         final List<MatchFunctor> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        if (currentMatchers == null) {
-            //
-            // we should treat the null case the same as the empty list OR(null == OR({}) == FALSE
-            //
-            return false;
-        }
-
-        for (MatchFunctor child : currentMatchers) {
-            if (child.evaluatePolicyRule(filterContext)) {
-                return true;
+        if (currentMatchers != null) {
+            for (MatchFunctor child : currentMatchers) {
+                if (child.evaluatePolicyRule(filterContext)) {
+                    return true;
+                }
             }
-        }
-        
+        }        
         return false;
     }
 
