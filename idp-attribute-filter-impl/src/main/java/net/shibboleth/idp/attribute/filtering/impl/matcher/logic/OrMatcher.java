@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filtering.impl.matcher.logic;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -33,15 +32,16 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * {@link MatchFunctor} that implements the disjunction of matchers. That is, a given attribute value is
- * considered to have matched if it is returned by any of the composed {@link MatchFunctor}.
+ * {@link MatchFunctor} that implements the disjunction of matchers. That is, a given attribute value is considered to
+ * have matched if it is returned by any of the composed {@link MatchFunctor}.
  */
 @ThreadSafe
-public class OrMatcher extends AbstractComposedMatcher  {
+public class OrMatcher extends AbstractComposedMatcher {
 
     /**
      * Constructor.
@@ -51,9 +51,9 @@ public class OrMatcher extends AbstractComposedMatcher  {
     public OrMatcher(@Nullable @NullableElements final Collection<MatchFunctor> composedMatchers) {
         super(composedMatchers);
     }
-    
+
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) 
+    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext)
             throws AttributeFilteringException {
         final List<MatchFunctor> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -64,10 +64,9 @@ public class OrMatcher extends AbstractComposedMatcher  {
                     return true;
                 }
             }
-        }        
+        }
         return false;
     }
-
 
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
@@ -84,18 +83,12 @@ public class OrMatcher extends AbstractComposedMatcher  {
         if (currentMatchers.isEmpty()) {
             return Collections.emptySet();
         }
-        Iterator<MatchFunctor> matcherItr = currentMatchers.iterator();
 
-        Set<AttributeValue> matchingValues = matcherItr.next().getMatchingValues(attribute, filterContext);
-        while (matcherItr.hasNext()) {
-            matchingValues.addAll(matcherItr.next().getMatchingValues(attribute, filterContext));
-            if (matchingValues.isEmpty()) {
-                return Collections.emptySet();
-            }
+        Set<AttributeValue> matchingValues = new LazySet<AttributeValue>();
+        for (MatchFunctor matchFunctor : getComposedMatchers()) {
+            matchingValues.addAll(matchFunctor.getMatchingValues(attribute, filterContext));
         }
 
         return Collections.unmodifiableSet(matchingValues);
     }
-
-
 }
