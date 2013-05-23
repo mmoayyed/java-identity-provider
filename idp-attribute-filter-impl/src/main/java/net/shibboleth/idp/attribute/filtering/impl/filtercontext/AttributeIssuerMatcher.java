@@ -30,15 +30,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * Compare the principal name for this resolution with the provided name.
+ * Compare the attribute issuer's entity ID for this resolution with the provided name.
  */
-public class PrincipalNameMatcher extends AbstractStringMatchFunctor {
+public class AttributeIssuerMatcher extends AbstractStringMatchFunctor {
 
     /** The logger. */
-    private Logger log = LoggerFactory.getLogger(PrincipalNameMatcher.class);
+    private Logger log = LoggerFactory.getLogger(AttributeIssuerMatcher.class);
 
     /** Constructor. */
-    public PrincipalNameMatcher() {
+    public AttributeIssuerMatcher() {
         setPolicyPredicate(new Predicate<AttributeFilterContext>() {
 
             public boolean apply(@Nullable AttributeFilterContext input) {
@@ -46,7 +46,7 @@ public class PrincipalNameMatcher extends AbstractStringMatchFunctor {
             }});        
     }
     
-    /** Compare the principal from the provided context with the string.
+    /** Compare the issuer from the provided context with the string.
      * @param filterContext the context
      * @return whether it matches
      */
@@ -56,15 +56,15 @@ public class PrincipalNameMatcher extends AbstractStringMatchFunctor {
         
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
-        final String principal = recipient.getPrincipal();
+        final String issuer = recipient.getAttributeIssuerID();
 
-        if (null == principal) {
-            log.error("{} No principal found for comparison", getLogPrefix());
+        if (null == issuer) {
+            log.error("{} No attribute issuer found for comparison", getLogPrefix());
             return false;
         }
-        log.debug("{} found principal: ", getLogPrefix(), principal);
+        log.debug("{} found attribute issuer: ", getLogPrefix(), issuer);
 
-        return stringCompare(principal);
+        return stringCompare(issuer);
     }
     
 }

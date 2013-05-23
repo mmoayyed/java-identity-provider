@@ -26,13 +26,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link PrincipalNameMatcher}.
+ * Tests for {@link AttributeIssuerMatcher}.
  */
-public class PrincipalNameMatcherTest {
+public class AttributeRequesterMatcherTest {
     
     @Test public void testNull() throws ComponentInitializationException {
 
-        PrincipalNameMatcher matcher = new PrincipalNameMatcher();
+        AttributeRequesterMatcher matcher = new AttributeRequesterMatcher();
         
         try {
             matcher.doCompare(null);
@@ -41,12 +41,12 @@ public class PrincipalNameMatcherTest {
             // OK
         }
     
-        matcher.setMatchString("principal");
+        matcher.setMatchString("requester");
         matcher.setCaseSensitive(true);
         matcher.setId("Test");
         matcher.initialize();
         // TODO
-        // Assert.assertFalse(matcher.apply(null));
+        // Assert.assertFalse(matcher.doCompare(null));
         
         try {
             matcher.doCompare(DataSources.unPopulatedFilterContext());
@@ -60,28 +60,29 @@ public class PrincipalNameMatcherTest {
     
     @Test public void testCaseSensitive() throws ComponentInitializationException {
 
-        PrincipalNameMatcher matcher = new PrincipalNameMatcher();
+        AttributeRequesterMatcher matcher = new AttributeRequesterMatcher();
         matcher.setId("Test");
-        matcher.setMatchString("principal");
+        matcher.setMatchString("requester");
         matcher.setCaseSensitive(true);
         matcher.initialize();
         
-        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext("wibble", null, null)));
-        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
-        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext("principal", null, null)));        
+        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, null)));
+        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, "wibble")));
+        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, "REQUESTER")));
+        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "requester")));        
     }
 
     
     @Test public void testCaseInsensitive() throws ComponentInitializationException, AttributeFilteringException {
 
-        PrincipalNameMatcher matcher = new PrincipalNameMatcher();
-        matcher.setMatchString("principal");
+        AttributeRequesterMatcher matcher = new AttributeRequesterMatcher();
+        matcher.setMatchString("requester");
         matcher.setCaseSensitive(false);
         matcher.setId("test");
         matcher.initialize();
         
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("wibble", null, null)));
-        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
-        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("principal", null, null)));        
+        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, "wibble")));
+        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "REQUESTER")));
+        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "requester")));        
     }
 }
