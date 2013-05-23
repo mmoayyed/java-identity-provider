@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.MatchFunctor;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
@@ -40,6 +41,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 /** {@link OrMatcher} unit test. */
@@ -96,7 +99,7 @@ public class OrMatcherTest extends AbstractMatcherTest {
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
-        Assert.assertTrue(result.contains(value2) && result.contains(value2));
+        Assert.assertTrue(result.contains(value2) && result.contains(value1));
 
         matcher.destroy();
         try {
@@ -110,6 +113,25 @@ public class OrMatcherTest extends AbstractMatcherTest {
         matcher.setId("test");
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
+    }
+    
+    @Test public void testRegressionGetValues() throws ComponentInitializationException, AttributeFilteringException {
+        OrMatcher matcher =
+                new OrMatcher(Lists.<MatchFunctor> newArrayList(
+                        new MockValuePredicateMatcher(Predicates.alwaysFalse()),
+                        new MockValuePredicateMatcher(Predicates.alwaysFalse()),
+                        new MockValuePredicateMatcher(equalTo(value1)),
+                        new MockValuePredicateMatcher(equalTo(value2))));
+        matcher.setId("Test");
+        matcher.initialize();
+
+        Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(value2) && result.contains(value1));
+
+        matcher.destroy();
+
     }
 
     @Test public void testNoMatchingValues() throws Exception {
