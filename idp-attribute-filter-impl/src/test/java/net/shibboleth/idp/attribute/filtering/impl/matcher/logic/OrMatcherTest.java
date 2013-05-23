@@ -25,11 +25,10 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.MatchFunctor;
-import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractComparisonMatcherFunctor;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.AbstractMatcherTest;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.MockValuePredicateMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -41,7 +40,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
