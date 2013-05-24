@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resource.Resource;
 import net.shibboleth.utilities.java.support.resource.ResourceException;
 
@@ -66,10 +67,14 @@ public final class SpringSupport {
         // beanDefinitionReader.loadBeanDefinitions(configurationResources.toArray(new Resource[] {}));
         try {
             for (Resource configurationResource : configurationResources) {
+
+                // TODO initialize resources here ?
+                configurationResource.initialize();
+
                 beanDefinitionReader.loadBeanDefinitions(new InputStreamResource(
                         configurationResource.getInputStream(), configurationResource.getLocation()));
             }
-        } catch (BeanDefinitionStoreException | ResourceException e) {
+        } catch (BeanDefinitionStoreException | ComponentInitializationException | ResourceException e) {
             // TODO fix exception handling
             e.printStackTrace();
             throw new RuntimeException(e);
