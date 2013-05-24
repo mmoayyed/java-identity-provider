@@ -31,7 +31,7 @@ public class Saml1XmlObjectAttributeEncoderParserTest extends BaseAttributeDefin
 
     @Test public void specified() {
         Saml1XmlObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml1XMLObject.xml", Saml1XmlObjectAttributeEncoder.class);
+                getAttributeEncoder("saml1XmlObject.xml", Saml1XmlObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "SAML1_XMLObject_ATTRIBUTE_NAME");
         Assert.assertEquals(encoder.getNamespace(),"SAML1_XMLObject_ATTRIBUTE_NAME_SPACE");
@@ -39,13 +39,13 @@ public class Saml1XmlObjectAttributeEncoderParserTest extends BaseAttributeDefin
     
     @Test public void defaultCase() {
         Saml1XmlObjectAttributeEncoder encoder =
-                getAttributeEncoder("saml1XMLObjectDefault.xml", Saml1XmlObjectAttributeEncoder.class);
+                getAttributeEncoder("saml1XmlObjectDefault.xml", Saml1XmlObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "XMLObject_ATTRIBUTE");
         Assert.assertEquals(encoder.getNamespace(),"urn:mace:shibboleth:1.0:attributeNamespace:uri");
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class,})  public void noName() {
-        getAttributeEncoder("saml1XMLObjectNoName.xml", Saml1XmlObjectAttributeEncoder.class);
+        getAttributeEncoder("saml1XmlObjectNoName.xml", Saml1XmlObjectAttributeEncoder.class);
     }
 }
