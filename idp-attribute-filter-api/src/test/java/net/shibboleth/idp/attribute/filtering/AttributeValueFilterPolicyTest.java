@@ -40,14 +40,15 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         AttributeRule policy = new AttributeRule();
-        MockMatchFunctor matcher = new MockMatchFunctor();
-        policy.setPermitRule(AttributeFilteringEngineTest.makePermitRule(matcher));
+        MockMatchFunctor matcher = new MockMatchFunctor();        
+        policy.setPermitRule(matcher);
 
         Assert.assertFalse(policy.isInitialized(), "Created - not initialized");
         Assert.assertFalse(matcher.isInitialized(), "Create - not initialized");
         Assert.assertFalse(policy.isDestroyed(), "Created - not destroyed");
         Assert.assertFalse(matcher.isDestroyed(), "Created - not destroyed");
 
+        policy.setId("id");
         policy.setAttributeId("foo");
         policy.initialize();
 
@@ -72,6 +73,7 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testAttributeId() throws ComponentInitializationException {
         AttributeRule policy = new AttributeRule();
+        policy.setId("id");
         Assert.assertNotNull(policy.getAttributeId(), "AttributeId can never be null");
 
         boolean thrown = false;
@@ -100,9 +102,10 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertTrue(thrown, "init with no Id");
 
         policy = new AttributeRule();
+        policy.setId("id");                
         policy.setAttributeId(" ID ");
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
-        policy.setPermitRule(AttributeFilteringEngineTest.makePermitRule(MatchFunctor.MATCHES_ALL));
+        policy.setPermitRule(MatchFunctor.MATCHES_ALL);
         policy.initialize();
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
 
@@ -138,34 +141,36 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testValueMatcher() throws ComponentInitializationException {
         AttributeRule policy = new AttributeRule();
+        policy.setId("id");
         policy.setAttributeId("foo");
 
-        policy.setPermitRule(AttributeFilteringEngineTest.makePermitRule(MatchFunctor.MATCHES_ALL));
-        Assert.assertEquals(policy.getPermitRule().getValueMatcher(), MatchFunctor.MATCHES_ALL,
+        policy.setPermitRule(MatchFunctor.MATCHES_ALL);
+        Assert.assertEquals(policy.getPermitRule(), MatchFunctor.MATCHES_ALL,
                 "AttributeValueMatcher - changed");
         policy.initialize();
-        Assert.assertEquals(policy.getPermitRule().getValueMatcher(), MatchFunctor.MATCHES_ALL,
+        Assert.assertEquals(policy.getPermitRule(), MatchFunctor.MATCHES_ALL,
                 "AttributeValueMatcher - initialized");
 
         boolean thrown = false;
         try {
-            policy.getPermitRule().setValueMatcher(MatchFunctor.MATCHES_NONE);
+            policy.setPermitRule(MatchFunctor.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "AttributeValueMatcher - set after initialized");
-        Assert.assertEquals(policy.getPermitRule().getValueMatcher(), MatchFunctor.MATCHES_ALL,
+        Assert.assertEquals(policy.getPermitRule(), MatchFunctor.MATCHES_ALL,
                 "AttributeValueMatcher - set after initialized");
 
         policy = new AttributeRule();
+        policy.setId("id");
         policy.setAttributeId(" foo");
-        policy.setPermitRule(AttributeFilteringEngineTest.makePermitRule(MatchFunctor.MATCHES_ALL));
+        policy.setPermitRule(MatchFunctor.MATCHES_ALL);
         policy.initialize();
         policy.destroy();
         thrown = false;
         try {
-            policy.getPermitRule().setValueMatcher(MatchFunctor.MATCHES_NONE);
-        } catch (DestroyedComponentException e) {
+            policy.setPermitRule(MatchFunctor.MATCHES_NONE);
+        } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "setMatchingPermittedValues after destroy");
@@ -199,7 +204,8 @@ public class AttributeValueFilterPolicyTest {
         matcher.setMatchingValues(Arrays.asList(aStringAttributeValue, cStringAttributeValue));
 
         AttributeRule policy = new AttributeRule();
-        policy.setPermitRule(AttributeFilteringEngineTest.makePermitRule(matcher));
+        policy.setId("id");        
+        policy.setPermitRule(matcher);
         policy.setAttributeId(ATTR_NAME);
 
         boolean thrown = false;
@@ -251,7 +257,8 @@ public class AttributeValueFilterPolicyTest {
         Assert.assertNull(context.getDeniedAttributeValues().get(ATTR_NAME));
 
         policy = new AttributeRule();
-        policy.setDenyRule(AttributeFilteringEngineTest.makeDenyRule(matcher));
+        policy.setId("id");
+        policy.setDenyRule(matcher);
         policy.setAttributeId(ATTR_NAME);
         policy.initialize();
 

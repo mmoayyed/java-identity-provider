@@ -17,13 +17,16 @@
 
 package net.shibboleth.idp.attribute.filtering;
 
+import java.util.Set;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.Attribute;
+import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.AbstractDestructableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -45,7 +48,7 @@ import org.slf4j.LoggerFactory;
  </code>
  */
 @ThreadSafe
-public class AttributeRule extends AbstractDestructableInitializableComponent implements
+public class AttributeRule extends AbstractDestructableIdentifiableInitializableComponent implements
         ValidatableComponent, UnmodifiableComponent {
 
     /** Class logger. */
@@ -68,12 +71,17 @@ public class AttributeRule extends AbstractDestructableInitializableComponent im
     /**
      * Filter that permits the release of attribute values.
      */
-    private PermitValueRule permitValueRule;
+    private MatchFunctor permitValueRule;
 
     /**
      * Filter that denies the release of attribute values.
      */
-    private DenyValueRule denyValueRule;
+    private MatchFunctor denyValueRule;
+
+    /** {@inheritDoc} */
+    public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
+        super.setId(componentId);
+    }
 
     /**
      * Gets the ID of the attribute to which this rule applies.
@@ -105,7 +113,7 @@ public class AttributeRule extends AbstractDestructableInitializableComponent im
      * 
      * @return matcher used to determine permitted attribute values filtered by this rule
      */
-    @Nullable public PermitValueRule getPermitRule() {
+    @Nullable public MatchFunctor getPermitRule() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return permitValueRule;
     }
@@ -115,7 +123,7 @@ public class AttributeRule extends AbstractDestructableInitializableComponent im
      * 
      * @param matcher matcher used to determine permitted attribute values filtered by this rule
      */
-    public synchronized void setPermitRule(@Nonnull PermitValueRule matcher) {
+    public synchronized void setPermitRule(@Nonnull MatchFunctor matcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -127,7 +135,7 @@ public class AttributeRule extends AbstractDestructableInitializableComponent im
      * 
      * @return matcher used to determine denied attribute values filtered by this rule
      */
-    @Nullable public DenyValueRule getDenyRule() {
+    @Nullable public MatchFunctor getDenyRule() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return denyValueRule;
     }
@@ -137,7 +145,7 @@ public class AttributeRule extends AbstractDestructableInitializableComponent im
      * 
      * @param matcher matcher used to determine denied attribute values filtered by this rule
      */
-    public synchronized void setDenyRule(@Nonnull DenyValueRule matcher) {
+    public synchronized void setDenyRule(@Nonnull MatchFunctor matcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -172,10 +180,16 @@ public class AttributeRule extends AbstractDestructableInitializableComponent im
                 .getValues().size());
 
         if (permitValueRule != null) {
-            permitValueRule.apply(attribute, filterContext);
+            Set<AttributeValue> matchingValues = permitValueRule.getMatchingValues(attribute, filterContext);
+            log.debug("Filter has permitted the release of {} values for attribute '{}'", matchingValues.size(),
+                    attribute.getId());
+            filterContext.addPermittedAttributeValues(attribute.getId(), matchingValues);
         }
         if (denyValueRule != null) {
-            denyValueRule.apply(attribute, filterContext);
+            Set<AttributeValue> matchingValues = denyValueRule.getMatchingValues(attribute, filterContext);
+            log.debug("Filter has denied the release of {} values for attribute '{}'", matchingValues.size(),
+                    attribute.getId());
+            filterContext.addDeniedAttributeValues(attribute.getId(), matchingValues);
         }
     }
 

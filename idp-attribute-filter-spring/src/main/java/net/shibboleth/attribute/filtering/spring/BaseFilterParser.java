@@ -23,9 +23,7 @@ import net.shibboleth.utilities.java.support.security.RandomIdentifierGeneration
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
-import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Strings;
@@ -39,16 +37,11 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseFilterParser.class);
-    
+
     /** Generator of unique IDs. */
     // TODO correct random identifier ?
     private static IdentifierGenerationStrategy idGen = new RandomIdentifierGenerationStrategy();
-    
-    /** {@inheritDoc} */
-    protected String resolveId(Element configElement, AbstractBeanDefinition beanDefinition, ParserContext parserContext) {
-        return getQualifiedId(configElement, configElement.getLocalName(), configElement.getAttributeNS(null, "id"));
-    }
-    
+
     /**
      * Generates an ID for a filter engine component. If the given localId is null a random one will be generated.
      * 
@@ -66,7 +59,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
         qualifiedId.append("/");
         qualifiedId.append(AttributeFilterPolicyGroupParser.ELEMENT_NAME.getLocalPart());
         qualifiedId.append(":");
-        qualifiedId.append(policyGroupId);        
+        qualifiedId.append(policyGroupId);
         if (!Strings.isNullOrEmpty(componentNamespace)) {
             qualifiedId.append("/");
             qualifiedId.append(componentNamespace);
@@ -81,7 +74,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
 
         // TODO remove debug logging
         log.debug("getQualifiedId element {} qualified id '{}'", configElement, qualifiedId.toString());
-        
+
         return qualifiedId.toString();
     }
 

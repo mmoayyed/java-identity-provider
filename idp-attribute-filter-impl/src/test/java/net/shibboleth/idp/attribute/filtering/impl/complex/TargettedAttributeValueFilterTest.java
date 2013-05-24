@@ -27,7 +27,6 @@ import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
 import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
 import net.shibboleth.idp.attribute.filtering.AttributeRule;
 import net.shibboleth.idp.attribute.filtering.MatchFunctor;
-import net.shibboleth.idp.attribute.filtering.PermitValueRule;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.attributevalue.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -76,10 +75,9 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
             AttributeFilteringException {
 
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
+        attributeValueFilterPolicy.setId("test");
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        final PermitValueRule permit = new PermitValueRule();
-        permit.setValueMatcher(valueMatcher());
-        attributeValueFilterPolicy.setPermitRule(permit);
+        attributeValueFilterPolicy.setPermitRule(valueMatcher());
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", MatchFunctor.MATCHES_ALL,
@@ -127,10 +125,9 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
             AttributeFilteringException {
 
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
+        attributeValueFilterPolicy.setId("test");
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        final PermitValueRule permit = new PermitValueRule();
-        permit.setValueMatcher(MatchFunctor.MATCHES_ALL);
-        attributeValueFilterPolicy.setPermitRule(permit);
+        attributeValueFilterPolicy.setPermitRule(MatchFunctor.MATCHES_ALL);
         
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", valueMatcher(),  Collections.singleton(attributeValueFilterPolicy));

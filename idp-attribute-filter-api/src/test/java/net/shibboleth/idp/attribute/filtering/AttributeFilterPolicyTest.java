@@ -55,8 +55,9 @@ public class AttributeFilterPolicyTest {
         policyMatcher = new MockMatchFunctor();
         valueMatcher = new MockMatchFunctor();
         valuePolicy = new AttributeRule();
+        valuePolicy.setId("valuePolicy");
         valuePolicy.setAttributeId(ATTR_NAME);
-        valuePolicy.setPermitRule(AttributeFilteringEngineTest.makePermitRule(valueMatcher));
+        valuePolicy.setPermitRule(valueMatcher);
     }
 
     @Test public void testPostConstructionState() {

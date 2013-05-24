@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser to configure an {@link AttributeRule}.
  */
-public class AttributeRuleParser extends BaseFilterParser {
+public class AttributeRuleParser extends MatcherParser {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
@@ -72,8 +72,10 @@ public class AttributeRuleParser extends BaseFilterParser {
             // builder.addPropertyValue("permitValueRule", SpringConfigurationUtils.parseInnerCustomElement(
             // permitValueRule.get(0), parserContext));
             // builder.addPropertyValue("permitValueRule",
-            ManagedList<BeanDefinition> permitValueRules = SpringSupport.parseCustomElements(permitValueRule, parserContext);
+            ManagedList<BeanDefinition> permitValueRules =
+                    SpringSupport.parseCustomElements(permitValueRule, parserContext);
             log.debug("permitValueRules {}", permitValueRules);
+            builder.addPropertyValue("permitRule", permitValueRules.get(0));
         }
 
         List<Element> permitValueRuleRef =

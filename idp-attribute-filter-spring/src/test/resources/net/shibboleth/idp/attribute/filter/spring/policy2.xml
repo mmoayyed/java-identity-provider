@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<afp:AttributeFilterPolicyGroup xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="PolicyExample2" xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd                                                     urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd ">
+
+    <!-- Release affiliation to anyone in the InCommon group -->
+    <afp:AttributeFilterPolicy id="InCommonRelease">
+        <afp:PolicyRequirementRule xsi:type="basic:ANY"/>
+        
+        <afp:AttributeRule attributeID="affiliation">
+            <afp:PermitValueRule xmlns="urn:mace:shibboleth:2.0:afp:mf:basic" xsi:type="OR">
+                <Rule xsi:type="AttributeValueString" value="faculty"/>
+                <Rule xsi:type="AttributeValueString" value="student"/>
+                <Rule xsi:type="AttributeValueString" value="staff"/>
+                <Rule xsi:type="AttributeValueString" value="alum"/>
+                <Rule xsi:type="AttributeValueString" value="member"/>
+                <Rule xsi:type="AttributeValueString" value="affiliate"/>
+                <Rule xsi:type="AttributeValueString" value="employee"/>
+            </afp:PermitValueRule>
+        </afp:AttributeRule>
+        
+    </afp:AttributeFilterPolicy>
+  
+</afp:AttributeFilterPolicyGroup>

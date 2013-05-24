@@ -17,6 +17,7 @@
 
 package net.shibboleth.attribute.filtering.spring.basic;
 
+import net.shibboleth.attribute.filtering.spring.matcher.attributevalue.AttributeValueStringMatcherParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete port from v2
@@ -29,7 +30,12 @@ public class AttributeFilterBasicNamespaceHandler extends BaseSpringNamespaceHan
     /** {@inheritDoc} */
     public void init() {
 
-        // registerBeanDefinitionParser(AnyBeanDefinitionParser.SCHEMA_TYPE, new AnyBeanDefinitionParser());
+        registerBeanDefinitionParser(AnyMatcherParser.SCHEMA_TYPE, new AnyMatcherParser());
+
+        registerBeanDefinitionParser(OrMatcherParser.SCHEMA_TYPE, new OrMatcherParser());
+        
+        registerBeanDefinitionParser(AttributeValueStringMatcherParser.SCHEMA_TYPE,
+                new AttributeValueStringMatcherParser());
 
         /**
          * registerBeanDefinitionParser(AndMatchFunctorBeanDefinitionParser.SCHEMA_TYPE, new
