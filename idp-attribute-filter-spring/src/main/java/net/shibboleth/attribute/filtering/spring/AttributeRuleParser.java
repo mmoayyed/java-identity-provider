@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.filtering.AttributeValueFilterPolicy;
+import net.shibboleth.idp.attribute.filtering.AttributeRule;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -39,10 +39,10 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser to configure an {@link AttributeRule}.
  */
-public class AttributeValueFilterPolicyBeanDefinitionParser extends BaseFilterBeanDefinitionParser {
+public class AttributeRuleParser extends BaseFilterParser {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeValueFilterPolicyBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeRuleParser.class);
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AttributeRule");
@@ -52,7 +52,7 @@ public class AttributeValueFilterPolicyBeanDefinitionParser extends BaseFilterBe
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {
-        return AttributeValueFilterPolicy.class;
+        return AttributeRule.class;
     }
 
     /** {@inheritDoc} */

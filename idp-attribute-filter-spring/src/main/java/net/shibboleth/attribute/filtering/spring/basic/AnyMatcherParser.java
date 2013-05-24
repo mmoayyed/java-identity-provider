@@ -15,23 +15,26 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring;
+package net.shibboleth.attribute.filtering.spring.basic;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.spring.service.AbstractServiceBeanDefinitionParser;
+import net.shibboleth.attribute.filtering.spring.BaseFilterParser;
 
 import org.w3c.dom.Element;
 
-/** Bean definition parser for an {@link AttributeFilterService}. */
-public class AttributeFilterServiceBeanDefinitionParser extends AbstractServiceBeanDefinitionParser {
+// TODO incomplete
+/**
+ * Bean definition parser for {@link AnyMatchFunctor} objects.
+ */
+public class AnyMatcherParser extends BaseFilterParser {
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
-            "ShibbolethAttributeFilteringEngine");
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return AttributeFilterService.class;
+    protected Class getBeanClass(Element arg0) {
+        // TODO
+        return null;
     }
 }

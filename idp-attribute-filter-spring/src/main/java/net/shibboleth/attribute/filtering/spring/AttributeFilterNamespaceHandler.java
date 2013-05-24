@@ -29,19 +29,19 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
 
     /** {@inheritDoc} */
     public void init() {
-        registerBeanDefinitionParser(AttributeFilterServiceBeanDefinitionParser.SCHEMA_TYPE,
-                new AttributeFilterServiceBeanDefinitionParser());
+        registerBeanDefinitionParser(AttributeFilterServiceParser.SCHEMA_TYPE,
+                new AttributeFilterServiceParser());
 
-        BeanDefinitionParser parser = new AttributeFilterPolicyGroupBeanDefinitionParser();
-        registerBeanDefinitionParser(AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(AttributeFilterPolicyGroupBeanDefinitionParser.TYPE_NAME, parser);
+        BeanDefinitionParser parser = new AttributeFilterPolicyGroupParser();
+        registerBeanDefinitionParser(AttributeFilterPolicyGroupParser.ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(AttributeFilterPolicyGroupParser.TYPE_NAME, parser);
 
-        parser = new AttributeFilterPolicyBeanDefinitionParser();
-        registerBeanDefinitionParser(AttributeFilterPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(AttributeFilterPolicyBeanDefinitionParser.TYPE_NAME, parser);
+        parser = new AttributeFilterPolicyParser();
+        registerBeanDefinitionParser(AttributeFilterPolicyParser.ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(AttributeFilterPolicyParser.TYPE_NAME, parser);
 
-        parser = new AttributeValueFilterPolicyBeanDefinitionParser();
-        registerBeanDefinitionParser(AttributeValueFilterPolicyBeanDefinitionParser.ELEMENT_NAME, parser);
-        registerBeanDefinitionParser(AttributeValueFilterPolicyBeanDefinitionParser.TYPE_NAME, parser);
+        parser = new AttributeRuleParser();
+        registerBeanDefinitionParser(AttributeRuleParser.ELEMENT_NAME, parser);
+        registerBeanDefinitionParser(AttributeRuleParser.TYPE_NAME, parser);
     }
 }

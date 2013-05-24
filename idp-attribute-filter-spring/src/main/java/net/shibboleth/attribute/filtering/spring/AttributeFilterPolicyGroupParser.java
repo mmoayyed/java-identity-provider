@@ -34,7 +34,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Bean definition parser for an attribute filter policy group. */
-public class AttributeFilterPolicyGroupBeanDefinitionParser implements BeanDefinitionParser {
+public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
@@ -53,7 +53,7 @@ public class AttributeFilterPolicyGroupBeanDefinitionParser implements BeanDefin
             "PermitValue");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupParser.class);
 
     /** {@inheritDoc} */
     public BeanDefinition parse(Element config, ParserContext context) {

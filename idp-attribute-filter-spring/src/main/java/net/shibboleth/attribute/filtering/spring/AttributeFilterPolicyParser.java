@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 
 // TODO incomplete v2 port
 /** Bean definition parser for an {@link AttributeFilterPolicy}. */
-public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDefinitionParser {
+public class AttributeFilterPolicyParser extends BaseFilterParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
@@ -50,7 +50,7 @@ public class AttributeFilterPolicyBeanDefinitionParser extends BaseFilterBeanDef
             "AttributeFilterPolicyType");
 
     /** Class logger. */
-    private static Logger log = LoggerFactory.getLogger(AttributeFilterPolicyBeanDefinitionParser.class);
+    private static Logger log = LoggerFactory.getLogger(AttributeFilterPolicyParser.class);
 
     /** {@inheritDoc} */
     protected Class getBeanClass(Element arg0) {

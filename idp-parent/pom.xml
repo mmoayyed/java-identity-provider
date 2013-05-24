@@ -44,6 +44,8 @@
         <module>../idp-profile-impl</module>
         <module>../idp-saml-impl</module>
         <module>../idp-war</module>
+        
+        <module>../idp-attribute-filter-spring</module>
     </modules>
 
     <properties>

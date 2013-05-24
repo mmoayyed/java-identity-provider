@@ -28,15 +28,17 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import com.google.common.base.Strings;
+
 // TODO incomplete v2 port
 /**
  * Base class for Spring bean definition parsers within the filter engine configuration. This base class is responsible
  * for generating an ID for the Spring bean that is unique within all the policy components loaded.
  */
-public abstract class BaseFilterBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseFilterBeanDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(BaseFilterParser.class);
     
     /** Generator of unique IDs. */
     // TODO correct random identifier ?
@@ -62,15 +64,15 @@ public abstract class BaseFilterBeanDefinitionParser extends AbstractSingleBeanD
 
         StringBuilder qualifiedId = new StringBuilder();
         qualifiedId.append("/");
-        qualifiedId.append(AttributeFilterPolicyGroupBeanDefinitionParser.ELEMENT_NAME.getLocalPart());
+        qualifiedId.append(AttributeFilterPolicyGroupParser.ELEMENT_NAME.getLocalPart());
         qualifiedId.append(":");
         qualifiedId.append(policyGroupId);        
-        if (!StringSupport.isEmpty(componentNamespace)) {
+        if (!Strings.isNullOrEmpty(componentNamespace)) {
             qualifiedId.append("/");
             qualifiedId.append(componentNamespace);
             qualifiedId.append(":");
 
-            if (StringSupport.isEmpty(localId)) {
+            if (Strings.isNullOrEmpty(localId)) {
                 qualifiedId.append(idGen.generateIdentifier());
             } else {
                 qualifiedId.append(localId);
