@@ -71,7 +71,7 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
       </code> which should return One values of eduPersonAffiliation when eduPersonAffiliation attribute has a value of "jsmith"
      * 
      */
-    @Test public void testTargettedPolicyRequirement() throws ComponentInitializationException, ResolutionException,
+    @Test public void testUntargettedPolicyRequirement() throws ComponentInitializationException, ResolutionException,
             AttributeFilteringException {
 
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
@@ -122,7 +122,7 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
     * which should return all values of eduPersonAffiliation when any attribute has a value of "jsmith"
      * 
      */
-    @Test public void testTargettedPolicyValue() throws ComponentInitializationException, ResolutionException,
+    @Test public void testUntargettedPolicyValue() throws ComponentInitializationException, ResolutionException,
             AttributeFilteringException {
 
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
