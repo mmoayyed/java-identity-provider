@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring;
+package net.shibboleth.idp.attribute.filtering.spring;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.shibboleth.attribute.filtering.spring.AttributeFilterService;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
@@ -29,10 +30,7 @@ import net.shibboleth.idp.service.ServiceException;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.resource.ClasspathResource;
 import net.shibboleth.utilities.java.support.resource.Resource;
-import net.shibboleth.utilities.java.support.resource.ResourceException;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
