@@ -15,23 +15,23 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring;
+package net.shibboleth.idp.attribute.filtering.spring.matcher;
 
-import javax.xml.namespace.QName;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import net.shibboleth.idp.spring.service.AbstractServiceParser;
-
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
-/** Bean definition parser for an {@link AttributeFilterService}. */
-public class AttributeFilterServiceParser extends AbstractServiceParser {
-
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
-            "ShibbolethAttributeFilteringEngine");
+/**
+ * Bean definition parser for match functions that match a string value against an attribute value.
+ */
+public abstract class AbstractAttributeTargetedStringMatchFunctorParser extends AbstractStringMatchFunctorParser {
 
     /** {@inheritDoc} */
-    protected Class getBeanClass(Element element) {
-        return AttributeFilterService.class;
+    protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
+        super.doParse(configElement, builder);
+
+        builder.addPropertyValue("attributeId",
+                StringSupport.trimOrNull(configElement.getAttributeNS(null, "attributeID")));
     }
 }

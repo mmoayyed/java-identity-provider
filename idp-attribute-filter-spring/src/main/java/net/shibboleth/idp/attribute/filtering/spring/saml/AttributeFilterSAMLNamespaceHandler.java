@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring.saml;
+package net.shibboleth.idp.attribute.filtering.spring.saml;
 
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 

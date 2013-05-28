@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring.basic;
+package net.shibboleth.idp.attribute.filtering.spring.basic;
 
-import net.shibboleth.attribute.filtering.spring.matcher.attributevalue.AttributeValueStringMatcherParser;
+import net.shibboleth.idp.attribute.filtering.spring.matcher.attributevalue.AttributeValueStringMatcherParser;
 import net.shibboleth.idp.spring.BaseSpringNamespaceHandler;
 
 // TODO incomplete port from v2

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring;
+package net.shibboleth.idp.attribute.filtering.spring;
 
 import java.util.List;
 import java.util.Map;

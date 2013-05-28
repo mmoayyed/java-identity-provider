@@ -15,23 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring.matcher;
+package net.shibboleth.idp.attribute.filtering.spring.basic;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import javax.xml.namespace.QName;
 
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import net.shibboleth.idp.attribute.filtering.impl.matcher.logic.AnyMatcher;
+import net.shibboleth.idp.attribute.filtering.spring.MatcherParser;
+
 import org.w3c.dom.Element;
 
 /**
- * Bean definition parser for match functions that match a string value against an attribute value.
+ * Bean definition parser for {@link AnyMatchFunctor} objects.
  */
-public abstract class AbstractAttributeTargetedStringMatchFunctorParser extends AbstractStringMatchFunctorParser {
+public class AnyMatcherParser extends MatcherParser {
+
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
-    protected void doParse(Element configElement, BeanDefinitionBuilder builder) {
-        super.doParse(configElement, builder);
-
-        builder.addPropertyValue("attributeId",
-                StringSupport.trimOrNull(configElement.getAttributeNS(null, "attributeID")));
+    protected Class getBeanClass(Element arg0) {
+        return AnyMatcher.class;
     }
 }

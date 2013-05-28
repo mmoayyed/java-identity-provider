@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring.basic;
+package net.shibboleth.idp.attribute.filtering.spring.basic;
 
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.attribute.filtering.spring.MatcherParser;
 import net.shibboleth.idp.attribute.filtering.impl.matcher.logic.OrMatcher;
+import net.shibboleth.idp.attribute.filtering.spring.MatcherParser;
 import net.shibboleth.idp.spring.SpringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

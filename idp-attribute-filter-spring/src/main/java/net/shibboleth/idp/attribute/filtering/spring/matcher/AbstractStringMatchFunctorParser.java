@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.attribute.filtering.spring.matcher;
+package net.shibboleth.idp.attribute.filtering.spring.matcher;
 
-import net.shibboleth.attribute.filtering.spring.MatcherParser;
+import net.shibboleth.idp.attribute.filtering.spring.MatcherParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
