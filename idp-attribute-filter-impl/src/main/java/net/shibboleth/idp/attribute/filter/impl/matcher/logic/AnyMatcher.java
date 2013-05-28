@@ -25,15 +25,15 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 
 /**
- * {@link MatchFunctor} that returns true when evaluated as a policy requirement rule and returns all attribute values
+ * {@link Matcher} that returns true when evaluated as a policy requirement rule and returns all attribute values
  * when evaluated as an attribute rule.
  */
-public class AnyMatcher extends AbstractIdentifiableInitializableComponent implements MatchFunctor {
+public class AnyMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {
 
     /** {@inheritDoc} */
     public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
@@ -41,7 +41,7 @@ public class AnyMatcher extends AbstractIdentifiableInitializableComponent imple
     }
     
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext)
+    public boolean matches(@Nonnull AttributeFilterContext filterContext)
              throws AttributeFilterException {
         return true;
     }

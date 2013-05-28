@@ -26,8 +26,8 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcherFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
@@ -51,8 +51,8 @@ public class AndMatcherTest extends AbstractMatcherTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        AbstractComparisonMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
-        AndMatcher matcher = new AndMatcher(Lists.<MatchFunctor> newArrayList(valuePredicate));
+        AbstractComparisonMatcher valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
+        AndMatcher matcher = new AndMatcher(Lists.<Matcher> newArrayList(valuePredicate));
         matcher.setId("test");
         matcher.initialize();
 
@@ -80,7 +80,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         AndMatcher matcher =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(
+                new AndMatcher(Lists.<Matcher> newArrayList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(or(equalTo(value2), equalTo(value3)))));
 
@@ -116,7 +116,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
 
         matcher =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(
+                new AndMatcher(Lists.<Matcher> newArrayList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value3))));
 
@@ -129,7 +129,7 @@ public class AndMatcherTest extends AbstractMatcherTest {
     // @Test 
     public void testEqualsHashToString() throws ComponentInitializationException {
         AndMatcher matcher =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
+                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
                         new MockValuePredicateMatcher(equalTo(value3))));
 
         matcher.toString();
@@ -139,14 +139,14 @@ public class AndMatcherTest extends AbstractMatcherTest {
         Assert.assertFalse(matcher.equals(this));
 
         AndMatcher other =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
+                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value2)),
                         new MockValuePredicateMatcher(equalTo(value3))));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 
         other =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(equalTo(value3)),
+                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value3)),
                         new MockValuePredicateMatcher(equalTo(value2))));
 
         Assert.assertFalse(matcher.equals(other));
@@ -158,33 +158,33 @@ public class AndMatcherTest extends AbstractMatcherTest {
         AndMatcher matcher = new AndMatcher(null);
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(null));
+        Assert.assertFalse(matcher.matches(null));
 
         matcher = new AndMatcher(Collections.EMPTY_SET);
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(null));
+        Assert.assertFalse(matcher.matches(null));
 
         matcher =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(false),
+                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(false),
                         new MockValuePredicateMatcher(false)));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
+        Assert.assertFalse(matcher.matches(DataSources.unPopulatedFilterContext()));
 
         matcher =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(true), null,
+                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(true), null,
                         new MockValuePredicateMatcher(false)));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
+        Assert.assertFalse(matcher.matches(DataSources.unPopulatedFilterContext()));
 
         matcher =
-                new AndMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(true), null,
+                new AndMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(true), null,
                         new MockValuePredicateMatcher(true)));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
+        Assert.assertTrue(matcher.matches(DataSources.unPopulatedFilterContext()));
 
     }
 }

@@ -81,7 +81,7 @@ public class AttributeIssuerMatcherTest {
         matcher.setId("test");
         matcher.initialize();
         
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, "wibble", null)));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, "wibble", null)));
         Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, "ISSUER", null)));
         Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, "issuer", null)));        
     }

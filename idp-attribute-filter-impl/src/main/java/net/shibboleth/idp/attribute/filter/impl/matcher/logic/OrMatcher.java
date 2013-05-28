@@ -30,15 +30,15 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * {@link MatchFunctor} that implements the disjunction of matchers. That is, a given attribute value is considered to
- * have matched if it is returned by any of the composed {@link MatchFunctor}.
+ * {@link Matcher} that implements the disjunction of matchers. That is, a given attribute value is considered to
+ * have matched if it is returned by any of the composed {@link Matcher}.
  */
 @ThreadSafe
 public class OrMatcher extends AbstractComposedMatcher {
@@ -48,19 +48,19 @@ public class OrMatcher extends AbstractComposedMatcher {
      * 
      * @param composedMatchers matchers being composed
      */
-    public OrMatcher(@Nullable @NullableElements final Collection<MatchFunctor> composedMatchers) {
+    public OrMatcher(@Nullable @NullableElements final Collection<Matcher> composedMatchers) {
         super(composedMatchers);
     }
 
     /** {@inheritDoc} */
     public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext)
             throws AttributeFilterException {
-        final List<MatchFunctor> currentMatchers = getComposedMatchers();
+        final List<Matcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         if (currentMatchers != null) {
-            for (MatchFunctor child : currentMatchers) {
-                if (child.evaluatePolicyRule(filterContext)) {
+            for (Matcher child : currentMatchers) {
+                if (child.matches(filterContext)) {
                     return true;
                 }
             }
@@ -76,7 +76,7 @@ public class OrMatcher extends AbstractComposedMatcher {
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final List<MatchFunctor> currentMatchers = getComposedMatchers();
+        final List<Matcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -85,7 +85,7 @@ public class OrMatcher extends AbstractComposedMatcher {
         }
 
         Set<AttributeValue> matchingValues = new LazySet<AttributeValue>();
-        for (MatchFunctor matchFunctor : getComposedMatchers()) {
+        for (Matcher matchFunctor : getComposedMatchers()) {
             matchingValues.addAll(matchFunctor.getMatchingValues(attribute, filterContext));
         }
 

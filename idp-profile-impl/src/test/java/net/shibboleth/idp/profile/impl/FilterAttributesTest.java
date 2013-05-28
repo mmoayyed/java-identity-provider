@@ -30,8 +30,8 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
-import net.shibboleth.idp.attribute.filter.MockMatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.MockMatcher;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -108,7 +108,7 @@ public class FilterAttributesTest {
 
         List<Attribute> attributes = Arrays.asList(attribute1, attribute2);
 
-        MockMatchFunctor attribute1Matcher = new MockMatchFunctor();
+        MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
 
@@ -118,7 +118,7 @@ public class FilterAttributesTest {
         attribute1Policy.setPermitRule(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
@@ -167,7 +167,7 @@ public class FilterAttributesTest {
 
         List<Attribute> attributes = Arrays.asList(attribute1, attribute2);
 
-        MockMatchFunctor attribute1Matcher = new MockMatchFunctor();
+        MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
 
@@ -177,7 +177,7 @@ public class FilterAttributesTest {
         attribute1Policy.setPermitRule(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
@@ -225,7 +225,7 @@ public class FilterAttributesTest {
 
         List<Attribute> attributes = Arrays.asList(attribute1);
 
-        MockMatchFunctor attribute1Matcher = new MockMatchFunctor();
+        MockMatcher attribute1Matcher = new MockMatcher();
         attribute1Matcher.setMatchingAttribute("attribute1");
         attribute1Matcher.setMatchingValues(null);
 
@@ -235,7 +235,7 @@ public class FilterAttributesTest {
         attribute1Policy.setPermitRule(attribute1Matcher);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
+                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
         AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));

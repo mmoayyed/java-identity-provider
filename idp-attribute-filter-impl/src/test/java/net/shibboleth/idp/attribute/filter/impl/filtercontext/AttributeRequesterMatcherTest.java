@@ -83,7 +83,7 @@ public class AttributeRequesterMatcherTest {
         matcher.setId("test");
         matcher.initialize();
         
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, "wibble")));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, "wibble")));
         Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "REQUESTER")));
         Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "requester")));        
     }

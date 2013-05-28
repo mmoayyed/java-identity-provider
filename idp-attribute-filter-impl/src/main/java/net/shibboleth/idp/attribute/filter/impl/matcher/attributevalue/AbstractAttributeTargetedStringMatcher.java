@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatchFunctor;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -33,13 +33,13 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import com.google.common.base.Predicate;
 
 /**
- * Basic Implementation of a {@link net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor} based on string
+ * Basic Implementation of a {@link net.shibboleth.idp.attribute.Matcher.impl.matcher.MatchFunctor} based on string
  * comparison. The missing parts
  */
-public abstract class AbstractAttributeTargetedStringMatchFunctor extends AbstractStringMatchFunctor {
+public abstract class AbstractAttributeTargetedStringMatcher extends AbstractStringMatcher {
 
     /** log. */
-    private static Logger log = LoggerFactory.getLogger(AbstractAttributeTargetedStringMatchFunctor.class);
+    private static Logger log = LoggerFactory.getLogger(AbstractAttributeTargetedStringMatcher.class);
 
     /** ID of the attribute whose values will be evaluated. */
     private String attributeId;

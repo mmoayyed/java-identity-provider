@@ -19,7 +19,7 @@
  * Implementation of the attribute value Matchers.  
  * 
  * The classes in this package perform testing against {@link net.shibboleth.idp.attribute.AttributeValue} and
- * implement {@link net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor}. 
+ * implement {@link net.shibboleth.idp.attribute.filter.Matcher}. 
  */
 
 package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;

@@ -64,7 +64,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicy.class);
 
     /** Criterion that must be met for this policy to be active for a given request. */
-    private final MatchFunctor policyRequirementRule;
+    private final Matcher policyRequirementRule;
 
     /** Filters to be used on attribute values. */
     private final List<AttributeRule> valuePolicies;
@@ -76,7 +76,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * @param requirementRule criterion used to determine if this policy is active for a given request
      * @param attributeRules value filtering policies employed if this policy is active
      */
-    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull MatchFunctor requirementRule,
+    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull Matcher requirementRule,
             @Nullable Collection<AttributeRule> attributeRules) {
         setId(policyId);
 
@@ -97,7 +97,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
      * 
      * @return MatchFunctor that must be met for this policy to be active for a given request
      */
-    @Nonnull public MatchFunctor getPolicyRequirementRule() {
+    @Nonnull public Matcher getPolicyRequirementRule() {
         return policyRequirementRule;
     }
 
@@ -138,7 +138,7 @@ public class AttributeFilterPolicy extends AbstractDestructableIdentifiableIniti
 
         log.debug("Checking if attribute filter policy '{}' is active", getId());
 
-        final boolean isActive = policyRequirementRule.evaluatePolicyRule(filterContext);
+        final boolean isActive = policyRequirementRule.matches(filterContext);
         if (isActive) {
             log.debug("Attribute filter policy '{}' is active for this request", getId());
         } else {

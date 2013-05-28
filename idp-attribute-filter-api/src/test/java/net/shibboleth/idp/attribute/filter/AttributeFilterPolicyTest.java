@@ -43,11 +43,11 @@ import com.google.common.collect.Lists;
 /** {@link AttributeFilterPolicy} unit test. */
 public class AttributeFilterPolicyTest {
 
-    private MockMatchFunctor policyMatcher;
+    private MockMatcher policyMatcher;
 
     private AttributeRule valuePolicy;
 
-    private MockMatchFunctor valueMatcher;
+    private MockMatcher valueMatcher;
 
     private final String ATTR_NAME = "foo";
 
@@ -56,8 +56,8 @@ public class AttributeFilterPolicyTest {
     private final String ID = "foo";
 
     @BeforeMethod public void setUp() {
-        policyMatcher = new MockMatchFunctor();
-        valueMatcher = new MockMatchFunctor();
+        policyMatcher = new MockMatcher();
+        valueMatcher = new MockMatcher();
         valuePolicy = new AttributeRule();
         valuePolicy.setId("valuePolicy");
         valuePolicy.setAttributeId(ATTR_NAME);

@@ -25,8 +25,8 @@ import java.util.Set;
 
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcherFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractMatcherTest;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.filter.impl.matcher.MockValuePredicateMatcher;
@@ -59,7 +59,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
             // expected this
         }
 
-        AbstractComparisonMatcherFunctor valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
+        AbstractComparisonMatcher valuePredicate = new MockValuePredicateMatcher(alwaysTrue());
         NotMatcher matcher = new NotMatcher(valuePredicate);
         matcher.setId("NullArgs");
         matcher.initialize();
@@ -169,7 +169,7 @@ public class NotMatcherTest extends AbstractMatcherTest {
         }
 
         OrMatcher orMatcher =
-                new OrMatcher(Lists.<MatchFunctor> newArrayList(new MockValuePredicateMatcher(equalTo(value1)),
+                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value1)),
                         new MockValuePredicateMatcher(equalTo(value2)), new MockValuePredicateMatcher(equalTo(value3))));
 
         orMatcher.setId("or");
@@ -210,12 +210,12 @@ public class NotMatcherTest extends AbstractMatcherTest {
         NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(true));
         matcher.setId("Test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
+        Assert.assertFalse(matcher.matches(DataSources.unPopulatedFilterContext()));
 
         matcher = new NotMatcher(new MockValuePredicateMatcher(false));
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
+        Assert.assertTrue(matcher.matches(DataSources.unPopulatedFilterContext()));
 
     }
 

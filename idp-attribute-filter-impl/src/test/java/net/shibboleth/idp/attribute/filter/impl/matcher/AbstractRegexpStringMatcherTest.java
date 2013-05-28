@@ -17,19 +17,19 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractRegexpStringMatchFunctor;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractRegexpStringMatcher;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link AbstractRegexpStringMatchFunctor}
+ * Tests for {@link AbstractRegexpStringMatcher}
  */
-public class AbstractRegexpStringMatchFunctorTest {
+public class AbstractRegexpStringMatcherTest {
 
 
     @Test public void testApply() {
-        AbstractRegexpStringMatchFunctor predicate = new AbstractRegexpStringMatchFunctor(){};
+        AbstractRegexpStringMatcher predicate = new AbstractRegexpStringMatcher(){};
         predicate.setRegularExpression(DataSources.TEST_REGEX);
 
         Assert.assertTrue(predicate.regexpCompare(DataSources.TEST_STRING));
@@ -37,7 +37,7 @@ public class AbstractRegexpStringMatchFunctorTest {
         Assert.assertFalse(predicate.regexpCompare(null));
         Assert.assertEquals(predicate.getRegularExpression(), DataSources.TEST_REGEX);
 
-        predicate = new AbstractRegexpStringMatchFunctor(){};
+        predicate = new AbstractRegexpStringMatcher(){};
         Assert.assertFalse(predicate.regexpCompare(DataSources.TEST_STRING));
         
         

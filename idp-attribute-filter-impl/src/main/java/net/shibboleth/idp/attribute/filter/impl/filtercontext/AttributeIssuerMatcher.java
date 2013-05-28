@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatchFunctor;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatcher;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -32,7 +32,7 @@ import com.google.common.base.Predicate;
 /**
  * Compare the attribute issuer's entity ID for this resolution with the provided name.
  */
-public class AttributeIssuerMatcher extends AbstractStringMatchFunctor {
+public class AttributeIssuerMatcher extends AbstractStringMatcher {
 
     /** The logger. */
     private Logger log = LoggerFactory.getLogger(AttributeIssuerMatcher.class);

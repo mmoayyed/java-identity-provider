@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcherFunctor;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -38,15 +38,15 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 
-/** Unit test for {@link AbstractComparisonMatcherFunctor}. */
-public class AbstractComparisonMatcherFunctorTest extends AbstractMatcherTest {
+/** Unit test for {@link AbstractComparisonMatcher}. */
+public class AbstractComparisonMatcherTest extends AbstractMatcherTest {
 
     @BeforeTest public void setup() throws Exception {
         super.setUp();
     }
 
     @Test public void testNullArguments() throws Exception {
-        AbstractComparisonMatcherFunctor matcher = new MockValuePredicateMatcher(alwaysTrue());
+        AbstractComparisonMatcher matcher = new MockValuePredicateMatcher(alwaysTrue());
 
         boolean thrown = false;
         try {
@@ -82,7 +82,7 @@ public class AbstractComparisonMatcherFunctorTest extends AbstractMatcherTest {
     }
 
     @Test public void testGetMatchingValues() throws AttributeFilterException, ComponentInitializationException {
-        AbstractComparisonMatcherFunctor matcher =
+        AbstractComparisonMatcher matcher =
                 new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         Set<AttributeValue> result = matcher.getMatchingValues(attribute, filterContext);
@@ -100,14 +100,14 @@ public class AbstractComparisonMatcherFunctorTest extends AbstractMatcherTest {
     
     @Test(expectedExceptions={ComponentInitializationException.class})
     public void testInitializeNoPredicate() throws ComponentInitializationException {
-        AbstractComparisonMatcherFunctor matcher = new AbstractComparisonMatcherFunctor() {};
+        AbstractComparisonMatcher matcher = new AbstractComparisonMatcher() {};
         matcher.setId("none");
         matcher.initialize();
     }
 
     @Test(expectedExceptions={ComponentInitializationException.class})
     public void testInitializeBothPredicates() throws ComponentInitializationException {
-        AbstractComparisonMatcherFunctor matcher = new AbstractComparisonMatcherFunctor() {};
+        AbstractComparisonMatcher matcher = new AbstractComparisonMatcher() {};
         matcher.setId("both");
         matcher.setPolicyPredicate(new Predicate<AttributeFilterContext>() {
             
@@ -126,7 +126,7 @@ public class AbstractComparisonMatcherFunctorTest extends AbstractMatcherTest {
     // TODO 
     // @Test
     public void testEqualsHashToString() throws ComponentInitializationException {
-        AbstractComparisonMatcherFunctor matcher =
+        AbstractComparisonMatcher matcher =
                 new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         matcher.toString();
@@ -135,7 +135,7 @@ public class AbstractComparisonMatcherFunctorTest extends AbstractMatcherTest {
         Assert.assertTrue(matcher.equals(matcher));
         Assert.assertFalse(matcher.equals(this));
 
-        AbstractComparisonMatcherFunctor other = new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
+        AbstractComparisonMatcher other = new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2)));
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());

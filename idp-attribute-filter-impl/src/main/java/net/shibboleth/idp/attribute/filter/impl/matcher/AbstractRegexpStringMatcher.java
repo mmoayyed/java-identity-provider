@@ -20,10 +20,10 @@ package net.shibboleth.idp.attribute.filter.impl.matcher;
 import java.util.regex.Pattern;
 
 /**
- * General {@link net.shibboleth.idp.attribute.filter.MatchFunctor} for regexp comparison of strings in Attribute
+ * General {@link net.shibboleth.idp.attribute.filter.Matcher} for regexp comparison of strings in Attribute
  * Filters.
  */
-public abstract class AbstractRegexpStringMatchFunctor extends AbstractComparisonMatcherFunctor {
+public abstract class AbstractRegexpStringMatcher extends AbstractComparisonMatcher {
 
     /** Regular expression to match. */
     private Pattern regex;

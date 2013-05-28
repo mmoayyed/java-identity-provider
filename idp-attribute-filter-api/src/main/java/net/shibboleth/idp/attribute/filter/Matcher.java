@@ -41,10 +41,10 @@ import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
  */
 //TODO - why? 
 @ThreadSafe
-public interface MatchFunctor extends IdentifiableComponent {
+public interface Matcher extends IdentifiableComponent {
 
-    /** A {@link MatchFunctor} that returns true/all attribute values as matched. */
-    public static final MatchFunctor MATCHES_ALL = new MatchFunctor() {
+    /** A {@link Matcher} that returns true/all attribute values as matched. */
+    public static final Matcher MATCHES_ALL = new Matcher() {
 
         /** {@inheritDoc} */
         public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
@@ -52,7 +52,7 @@ public interface MatchFunctor extends IdentifiableComponent {
             return attribute.getValues();
         }
 
-        public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext)
+        public boolean matches(@Nonnull AttributeFilterContext filterContext)
                 throws AttributeFilterException {
             return true;
         }
@@ -62,8 +62,8 @@ public interface MatchFunctor extends IdentifiableComponent {
         }
     };
 
-    /** A {@link MatchFunctor} that returns false/no attribute values as matched. */
-    public static final MatchFunctor MATCHES_NONE = new MatchFunctor() {
+    /** A {@link Matcher} that returns false/no attribute values as matched. */
+    public static final Matcher MATCHES_NONE = new Matcher() {
 
         /** {@inheritDoc} */
         public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
@@ -71,7 +71,7 @@ public interface MatchFunctor extends IdentifiableComponent {
             return Collections.emptySet();
         }
 
-        public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext)
+        public boolean matches(@Nonnull AttributeFilterContext filterContext)
                 throws AttributeFilterException {
             return false;
         }
@@ -97,7 +97,7 @@ public interface MatchFunctor extends IdentifiableComponent {
      * @throws AttributeFilterException
      *             when badness occurrs.
      */
-    boolean evaluatePolicyRule(@Nonnull final AttributeFilterContext filterContext)
+    boolean matches(@Nonnull final AttributeFilterContext filterContext)
             throws AttributeFilterException;
 
     /**

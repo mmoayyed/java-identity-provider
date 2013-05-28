@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 /**
  * Base class for string matching functors.
  */
-public abstract class AbstractStringMatchFunctorParser extends MatcherParser {
+public abstract class AbstractStringMatcherParser extends MatcherParser {
 
     /** {@inheritDoc} */
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {

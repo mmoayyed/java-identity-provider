@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import org.w3c.dom.Element;
 
 // TODO incomplete v2 port
 /**
- * Spring bean definition parser to configure an {@link MatchFunctor}.
+ * Spring bean definition parser to configure an {@link Matcher}.
  */
 public abstract class MatcherParser extends BaseFilterParser {
 

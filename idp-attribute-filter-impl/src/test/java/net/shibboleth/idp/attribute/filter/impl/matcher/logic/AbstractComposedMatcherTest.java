@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.logic.AbstractComposedMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
@@ -47,7 +47,7 @@ public class AbstractComposedMatcherTest {
 
     @Test
     public void testInitDestroy() throws ComponentInitializationException, AttributeFilterException, ComponentValidationException {
-        List<MatchFunctor> firstList = new ArrayList<MatchFunctor>(2);
+        List<Matcher> firstList = new ArrayList<Matcher>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
         
         for (int i = 0; i < 2;i++) {
@@ -153,7 +153,7 @@ public class AbstractComposedMatcherTest {
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Initial state - no matchers");
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add null - no matchers");
         
-        List<MatchFunctor> list = new ArrayList<MatchFunctor>();
+        List<Matcher> list = new ArrayList<Matcher>();
         
         for (int i = 0; i < 30; i++) {
             list.add(null);
@@ -192,7 +192,7 @@ public class AbstractComposedMatcherTest {
          *
          * @param composedMatchers
          */
-        public ComposedMatcher(Collection<MatchFunctor> composedMatchers) {
+        public ComposedMatcher(Collection<Matcher> composedMatchers) {
             super(composedMatchers);
         }
 
@@ -201,19 +201,19 @@ public class AbstractComposedMatcherTest {
             return null;
         }
 
-        public boolean evaluatePolicyRule(@Nullable AttributeFilterContext arg0) {
+        public boolean matches(@Nullable AttributeFilterContext arg0) {
             return false;
         }
     }
     
-    public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  MatchFunctor, DestructableComponent, InitializableComponent, ValidatableComponent {
+    public static class TestMatcher extends CountingDestructableInitializableValidatableComponent implements  Matcher, DestructableComponent, InitializableComponent, ValidatableComponent {
 
         public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
                 throws AttributeFilterException {
             return null;
         }
 
-        public boolean evaluatePolicyRule(@Nullable AttributeFilterContext arg0) {
+        public boolean matches(@Nullable AttributeFilterContext arg0) {
             return false;
         }
 

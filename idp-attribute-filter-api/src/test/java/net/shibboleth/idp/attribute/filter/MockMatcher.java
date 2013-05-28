@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
@@ -39,8 +39,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Objects;
 
-/** A simple, mock implementation of {@link MatchFunctor}. */
-public class MockMatchFunctor extends AbstractIdentifiableInitializableComponent implements MatchFunctor, InitializableComponent, DestructableComponent, ValidatableComponent{ 
+/** A simple, mock implementation of {@link Matcher}. */
+public class MockMatcher extends AbstractIdentifiableInitializableComponent implements Matcher, InitializableComponent, DestructableComponent, ValidatableComponent{ 
 
     /** ID of the attribute to which this matcher applies. */
     private String matchingAttribute;
@@ -66,7 +66,7 @@ public class MockMatchFunctor extends AbstractIdentifiableInitializableComponent
     /** what was passed to getMatchingValues(). */
     private AttributeFilterContext contextUsed;
 
-    public MockMatchFunctor() {
+    public MockMatcher() {
         setId("Mock");
     }
 
@@ -161,7 +161,7 @@ public class MockMatchFunctor extends AbstractIdentifiableInitializableComponent
     }
 
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+    public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
         contextUsed = filterContext;
         return retVal;
     }

@@ -55,10 +55,10 @@ public class PrincipalNameRegexpMatcherTest {
             // OK
         }
         
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, null)));
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("wibble", null, null)));
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
-        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext("principal", null, null)));        
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, null)));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext("wibble", null, null)));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
+        Assert.assertTrue(matcher.matches(DataSources.populatedFilterContext("principal", null, null)));        
     }
 
 

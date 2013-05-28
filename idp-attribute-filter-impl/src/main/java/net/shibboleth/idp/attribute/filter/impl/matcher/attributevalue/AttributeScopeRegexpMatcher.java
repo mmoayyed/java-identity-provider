@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Test that an {@link ScopedStringAttributeValue} is a regexp match to the supplied parameter.
  */
-public class AttributeScopeRegexpMatcher extends AbstractAttributeTargetedRegexMatchFunctor {
+public class AttributeScopeRegexpMatcher extends AbstractAttributeTargetedRegexMatcher {
 
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(AttributeScopeRegexpMatcher.class);

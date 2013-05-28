@@ -31,7 +31,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -40,9 +40,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Objects;
 
 /**
- * {@link MatchFunctor} that implements the conjunction of matchers. That is, a given attribute value is considered to
- * have matched if, and only if, it is returned by every composed {@link MatchFunctor}. The predicate is true if and
- * only if all composed {@link MatchFunctor} returns true.
+ * {@link Matcher} that implements the conjunction of matchers. That is, a given attribute value is considered to
+ * have matched if, and only if, it is returned by every composed {@link Matcher}. The predicate is true if and
+ * only if all composed {@link Matcher} returns true.
  */
 @ThreadSafe
 public class AndMatcher extends AbstractComposedMatcher {
@@ -52,7 +52,7 @@ public class AndMatcher extends AbstractComposedMatcher {
      * 
      * @param composedMatchers matchers being composed
      */
-    public AndMatcher(@Nullable @NullableElements final Collection<MatchFunctor> composedMatchers) {
+    public AndMatcher(@Nullable @NullableElements final Collection<Matcher> composedMatchers) {
         super(composedMatchers);
     }
 
@@ -62,7 +62,7 @@ public class AndMatcher extends AbstractComposedMatcher {
      */
     public boolean evaluatePolicyRule( @Nullable final AttributeFilterContext filterContext) 
             throws AttributeFilterException {
-        final List<MatchFunctor> currentMatchers = getComposedMatchers();
+        final List<Matcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -75,8 +75,8 @@ public class AndMatcher extends AbstractComposedMatcher {
             return false;
         }
 
-        for (MatchFunctor child : currentMatchers) {
-            if (!child.evaluatePolicyRule(filterContext)) {
+        for (Matcher child : currentMatchers) {
+            if (!child.matches(filterContext)) {
                 return false;
             }
         }
@@ -86,7 +86,7 @@ public class AndMatcher extends AbstractComposedMatcher {
 
     /**
      * A given attribute value is considered to have matched if, and only if, it is returned by every composed
-     * {@link MatchFunctor}. {@inheritDoc}
+     * {@link Matcher}. {@inheritDoc}
      */
     @Nonnull @NonnullElements public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
             @Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
@@ -95,14 +95,14 @@ public class AndMatcher extends AbstractComposedMatcher {
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final List<MatchFunctor> currentMatchers = getComposedMatchers();
+        final List<Matcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         if (currentMatchers.isEmpty()) {
             return Collections.emptySet();
         }
-        Iterator<MatchFunctor> matcherItr = currentMatchers.iterator();
+        Iterator<Matcher> matcherItr = currentMatchers.iterator();
 
         Set<AttributeValue> matchingValues = matcherItr.next().getMatchingValues(attribute, filterContext);
         while (matcherItr.hasNext()) {

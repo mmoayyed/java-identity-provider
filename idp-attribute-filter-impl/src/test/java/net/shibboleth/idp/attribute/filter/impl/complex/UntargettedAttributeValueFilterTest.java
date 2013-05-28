@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -42,7 +42,7 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
     /*
      * We will test this rule: xsi:type="basic:AttributeValueString" value="jsmith" ignoreCase="true"
      */
-    private MatchFunctor valueMatcher() {
+    private Matcher valueMatcher() {
         AttributeValueStringMatcher retVal = new AttributeValueStringMatcher();
 
         retVal.setCaseSensitive(true);
@@ -80,7 +80,7 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         attributeValueFilterPolicy.setPermitRule(valueMatcher());
 
         final AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("targettedAtPermit", MatchFunctor.MATCHES_ALL,
+                new AttributeFilterPolicy("targettedAtPermit", Matcher.MATCHES_ALL,
                         Collections.singleton(attributeValueFilterPolicy));
 
         final AttributeFilter engine = new AttributeFilter("engine", Collections.singleton(policy));
@@ -128,7 +128,7 @@ public class UntargettedAttributeValueFilterTest extends BaseComplexAttributeFil
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
         attributeValueFilterPolicy.setId("test");
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        attributeValueFilterPolicy.setPermitRule(MatchFunctor.MATCHES_ALL);
+        attributeValueFilterPolicy.setPermitRule(Matcher.MATCHES_ALL);
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", valueMatcher(),  Collections.singleton(attributeValueFilterPolicy));
 

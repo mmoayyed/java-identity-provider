@@ -71,12 +71,12 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
     /**
      * Filter that permits the release of attribute values.
      */
-    private MatchFunctor permitValueRule;
+    private Matcher permitValueRule;
 
     /**
      * Filter that denies the release of attribute values.
      */
-    private MatchFunctor denyValueRule;
+    private Matcher denyValueRule;
 
     /** {@inheritDoc} */
     public synchronized void setId(@Nonnull @NotEmpty final String componentId) {
@@ -113,7 +113,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
      * 
      * @return matcher used to determine permitted attribute values filtered by this rule
      */
-    @Nullable public MatchFunctor getPermitRule() {
+    @Nullable public Matcher getPermitRule() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return permitValueRule;
     }
@@ -123,7 +123,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
      * 
      * @param matcher matcher used to determine permitted attribute values filtered by this rule
      */
-    public synchronized void setPermitRule(@Nonnull MatchFunctor matcher) {
+    public synchronized void setPermitRule(@Nonnull Matcher matcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -135,7 +135,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
      * 
      * @return matcher used to determine denied attribute values filtered by this rule
      */
-    @Nullable public MatchFunctor getDenyRule() {
+    @Nullable public Matcher getDenyRule() {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         return denyValueRule;
     }
@@ -145,7 +145,7 @@ public class AttributeRule extends AbstractDestructableIdentifiableInitializable
      * 
      * @param matcher matcher used to determine denied attribute values filtered by this rule
      */
-    public synchronized void setDenyRule(@Nonnull MatchFunctor matcher) {
+    public synchronized void setDenyRule(@Nonnull Matcher matcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

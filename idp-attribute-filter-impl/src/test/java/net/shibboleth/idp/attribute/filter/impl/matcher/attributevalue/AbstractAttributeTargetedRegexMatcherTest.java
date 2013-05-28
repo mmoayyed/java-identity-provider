@@ -17,13 +17,17 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue;
 
+import java.util.Collections;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
-import net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue.AbstractAttributeTargetedStringMatchFunctor;
+import net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue.AbstractAttributeTargetedRegexMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
@@ -31,14 +35,14 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link AbstractAttributeTargetedStringMatchFunctor}.
+ * Tests for {@link AbstractAttributeTargetedRegexMatcher}.
  */
-public class AbstractAttributeTargetedStringMatchFunctorTest {
+public class AbstractAttributeTargetedRegexMatcherTest {
 
     @Test public void setterGetterTest() throws ComponentInitializationException {
 
         final String NAME = "foo";
-        final AbstractAttributeTargetedStringMatchFunctor functor = new AbstractAttributeTargetedStringMatchFunctor() {
+        final AbstractAttributeTargetedRegexMatcher functor = new AbstractAttributeTargetedRegexMatcher() {
             public boolean compareAttributeValue(@Nullable AttributeValue value) {
                 return false;
             }
@@ -59,10 +63,9 @@ public class AbstractAttributeTargetedStringMatchFunctorTest {
             // OK
         }
     }
-
     @Test public void testTargetedPolicy() throws ComponentInitializationException, AttributeFilterException {
         final String NAME = "foo";
-        final AbstractAttributeTargetedStringMatchFunctor functor = new AbstractAttributeTargetedStringMatchFunctor() {
+        AbstractAttributeTargetedRegexMatcher functor = new AbstractAttributeTargetedRegexMatcher() {
             public boolean compareAttributeValue(@Nullable AttributeValue value) {
                 return false;
             }
@@ -73,21 +76,34 @@ public class AbstractAttributeTargetedStringMatchFunctorTest {
         functor.setId("Test");
         functor.initialize();
         
-        Assert.assertFalse(functor.evaluatePolicyRule(DataSources.unPopulatedFilterContext()));
-        
+        Assert.assertFalse(functor.matches(DataSources.unPopulatedFilterContext()));
+        final AttributeFilterContext context = DataSources.unPopulatedFilterContext();
+        final Attribute attribute = new Attribute(NAME);
+        attribute.setValues(Collections.singleton((AttributeValue)new StringAttributeValue("value")));
+        context.setPrefilteredAttributes(Collections.singleton(attribute));
+        Assert.assertFalse(functor.matches(context));
+        functor =  new AbstractAttributeTargetedRegexMatcher() {
+            public boolean compareAttributeValue(@Nullable AttributeValue value) {
+                return true;
+            }
+        };
+        functor.setAttributeId(NAME);
+        functor.setId("Test");
+        functor.initialize();
+        Assert.assertTrue(functor.matches(context));
     }
     @Test public void testUnargetedValue() throws ComponentInitializationException, AttributeFilterException {
         final String NAME = "foo";
-        final AbstractAttributeTargetedStringMatchFunctor functor = new AbstractAttributeTargetedStringMatchFunctor() {
+        final AbstractAttributeTargetedRegexMatcher functor = new AbstractAttributeTargetedRegexMatcher() {
             public boolean compareAttributeValue(@Nullable AttributeValue value) {
-                return false;
+                return true;
             }
         };
         Assert.assertNull(functor.getAttributeId());
 
-        functor.setAttributeId(NAME);
         functor.setId("Test");
         functor.initialize();
-        Assert.assertTrue(functor.getMatchingValues(new Attribute("foo"), DataSources.unPopulatedFilterContext()).isEmpty());
-    }
-}
+        final Attribute attribute = new Attribute(NAME);
+        attribute.setValues(Collections.singleton((AttributeValue)new StringAttributeValue("value")));
+        Assert.assertEquals(functor.getMatchingValues(attribute, DataSources.unPopulatedFilterContext()).size(), 1);
+    }}

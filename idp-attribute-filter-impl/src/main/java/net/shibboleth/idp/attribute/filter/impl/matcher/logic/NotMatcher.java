@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -39,23 +39,23 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Objects;
 
 /**
- * {@link MatchFunctor} that implements the negation of a matcher. <br/>
+ * {@link Matcher} that implements the negation of a matcher. <br/>
  * <br/>
- * A given attribute value is considered to have matched if it is not returned by the composed {@link MatchFunctor}. The
- * predicate is the logical NOT of the composed {@link MatchFunctor}.
+ * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}. The
+ * predicate is the logical NOT of the composed {@link Matcher}.
  */
 @ThreadSafe
-public final class NotMatcher extends AbstractDestructableIdentifiableInitializableComponent implements MatchFunctor {
+public final class NotMatcher extends AbstractDestructableIdentifiableInitializableComponent implements Matcher {
 
     /** The matcher we are negating. */
-    private MatchFunctor negatedMatcher;
+    private Matcher negatedMatcher;
 
     /**
      * Constructor.
      * 
      * @param valueMatcher attribute value matcher to be negated
      */
-    public NotMatcher(@Nonnull final MatchFunctor valueMatcher) {
+    public NotMatcher(@Nonnull final Matcher valueMatcher) {
         negatedMatcher = Constraint.isNotNull(valueMatcher, "Attribute value matcher can not be null");
     }
 
@@ -64,21 +64,21 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
      * 
      * @return matcher that is being negated
      */
-    public MatchFunctor getNegtedMatcher() {
+    public Matcher getNegtedMatcher() {
         return negatedMatcher;
     }
 
     /**
-     * {@inheritDoc} The result is the logical NOT of the composed {@link MatchFunctor}.
+     * {@inheritDoc} The result is the logical NOT of the composed {@link Matcher}.
      */
 
-    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext) 
+    public boolean matches(@Nonnull AttributeFilterContext filterContext) 
             throws AttributeFilterException {
-        return !negatedMatcher.evaluatePolicyRule(filterContext);
+        return !negatedMatcher.matches(filterContext);
     }
 
     /**
-     * A given attribute value is considered to have matched if it is not returned by the composed {@link MatchFunctor}.
+     * A given attribute value is considered to have matched if it is not returned by the composed {@link Matcher}.
      * {@inheritDoc}
      */
     public Set<AttributeValue> getMatchingValues(@Nonnull final Attribute attribute,
@@ -88,7 +88,7 @@ public final class NotMatcher extends AbstractDestructableIdentifiableInitializa
 
         // Capture the matchers to avoid race with setComposedMatchers
         // Do this before the test on destruction to avoid race with destroy code
-        final MatchFunctor currentMatcher = getNegtedMatcher();
+        final Matcher currentMatcher = getNegtedMatcher();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

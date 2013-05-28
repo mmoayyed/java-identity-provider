@@ -20,7 +20,7 @@
  * 
  * The classes in this package perform testing against 
  * {@link net.shibboleth.idp.attribute.filter.AttributeFilterContext} and
- * implement {@link net.shibboleth.idp.attribute.filtering.impl.matcher.MatchFunctor}. 
+ * implement {@link net.shibboleth.idp.attribute.filter.Matcher}. 
  */
 
 package net.shibboleth.idp.attribute.filter.impl.filtercontext;

@@ -55,10 +55,10 @@ public class AttributeRequesterRegexpMatcherTest {
         // TODO
         // Assert.assertFalse(matcher.apply(null));
         
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, null)));
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, "wibble")));
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, "REQUESTER")));
-        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, "requester")));        
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, null)));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, "wibble")));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, "REQUESTER")));
+        Assert.assertTrue(matcher.matches(DataSources.populatedFilterContext(null, null, "requester")));        
     }
 
 

@@ -55,10 +55,10 @@ public class AttributeIssuerRegexpMatcherTest {
         // TODO
         // Assert.assertFalse(matcher.doCompare(null));
 
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, null, null)));
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, "wibble", null)));
-        Assert.assertFalse(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, "ISSUER", null)));
-        Assert.assertTrue(matcher.evaluatePolicyRule(DataSources.populatedFilterContext(null, "issuer", null)));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, null)));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, "wibble", null)));
+        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, "ISSUER", null)));
+        Assert.assertTrue(matcher.matches(DataSources.populatedFilterContext(null, "issuer", null)));
     }
 
 }

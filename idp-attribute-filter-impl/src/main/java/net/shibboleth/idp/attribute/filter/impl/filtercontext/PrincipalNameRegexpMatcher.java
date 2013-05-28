@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractRegexpStringMatchFunctor;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractRegexpStringMatcher;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -32,7 +32,7 @@ import com.google.common.base.Predicate;
 /**
  * Compare the principal name for this resolution with the provided name.
  */
-public class PrincipalNameRegexpMatcher extends AbstractRegexpStringMatchFunctor {
+public class PrincipalNameRegexpMatcher extends AbstractRegexpStringMatcher {
 
     /** The logger. */
     private Logger log = LoggerFactory.getLogger(PrincipalNameRegexpMatcher.class);

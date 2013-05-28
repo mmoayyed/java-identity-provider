@@ -17,18 +17,18 @@
 
 package net.shibboleth.idp.attribute.filter.impl.matcher;
 
-import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatchFunctor;
+import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatcher;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Tests for {@link AbstractStringMatchFunctor}
+ * Tests for {@link AbstractStringMatcher}
  */
-public class AbstractStringMatchFunctorTest {
+public class AbstractStringMatcherTest {
 
     @Test public void testSettersGetters() {
-        AbstractStringMatchFunctor matcher = new AbstractStringMatchFunctor(){};
+        AbstractStringMatcher matcher = new AbstractStringMatcher(){};
 
         Assert.assertNull(matcher.getMatchString());
         Assert.assertFalse(matcher.getCaseSensitive());
@@ -43,7 +43,7 @@ public class AbstractStringMatchFunctorTest {
     }
 
     @Test public void testApply() {
-        AbstractStringMatchFunctor matcher = new AbstractStringMatchFunctor() {};
+        AbstractStringMatcher matcher = new AbstractStringMatcher() {};
         matcher.setCaseSensitive(true);
         matcher.setMatchString(DataSources.TEST_STRING);
 

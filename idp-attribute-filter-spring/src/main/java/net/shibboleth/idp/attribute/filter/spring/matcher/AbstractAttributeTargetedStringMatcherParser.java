@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 /**
  * Bean definition parser for match functions that match a string value against an attribute value.
  */
-public abstract class AbstractAttributeTargetedStringMatchFunctorParser extends AbstractStringMatchFunctorParser {
+public abstract class AbstractAttributeTargetedStringMatcherParser extends AbstractStringMatcherParser {
 
     /** {@inheritDoc} */
     protected void doParse(Element configElement, BeanDefinitionBuilder builder) {

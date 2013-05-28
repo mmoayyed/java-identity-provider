@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * This is the bases of all implementations of {@link MatchFunctor} which do some sort of comparison.<br/>
+ * This is the bases of all implementations of {@link Matcher} which do some sort of comparison.<br/>
  * <br/>
  * 
  * PolicyRequirementRule implementations will set {@link #policyPredicate} and get a default result for
@@ -47,15 +47,15 @@ import com.google.common.base.Predicate;
  * all values for the attribute otherwise none.
  * 
  * AttributeRule implementations will set {@link #valuePredicate} or and get a default for
- * {@link #evaluatePolicyRule(AttributeFilterContext)} which says that if this is true for one value then it is true for
+ * {@link #matches(AttributeFilterContext)} which says that if this is true for one value then it is true for
  * all.
  */
 
-public abstract class AbstractComparisonMatcherFunctor extends AbstractIdentifiableInitializableComponent implements
-        MatchFunctor {
+public abstract class AbstractComparisonMatcher extends AbstractIdentifiableInitializableComponent implements
+        Matcher {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractComparisonMatcherFunctor.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractComparisonMatcher.class);
 
     /** Predicate used to check attribute values. */
     private Predicate<AttributeValue> valuePredicate;
@@ -143,7 +143,7 @@ public abstract class AbstractComparisonMatcherFunctor extends AbstractIdentifia
     }
 
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext context) throws AttributeFilterException {
+    public boolean matches(@Nonnull AttributeFilterContext context) throws AttributeFilterException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isNotNull(context, "Attribute filter context can not be null");
         

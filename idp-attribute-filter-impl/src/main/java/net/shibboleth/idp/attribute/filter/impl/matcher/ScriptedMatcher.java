@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractDestructableIdentifiableInitializableComponent;
@@ -46,12 +46,12 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 import com.google.common.base.Objects;
 
 /**
- * A {@link net.shibboleth.idp.attribute.filter.MatchFunctor} that delegates to a JSR-223 script for its actual
+ * A {@link net.shibboleth.idp.attribute.filter.Matcher} that delegates to a JSR-223 script for its actual
  * processing.
  * 
  */
 @ThreadSafe
-public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements MatchFunctor,
+public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializableComponent implements Matcher,
         UnmodifiableComponent {
 
     /** Script to be evaluated. */
@@ -109,7 +109,7 @@ public class ScriptedMatcher extends AbstractDestructableIdentifiableInitializab
      * </p>
      * {@inheritDoc}
      */
-    public boolean evaluatePolicyRule(@Nullable AttributeFilterContext filterContext)
+    public boolean matches(@Nullable AttributeFilterContext filterContext)
             throws AttributeFilterException {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 

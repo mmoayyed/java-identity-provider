@@ -169,7 +169,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        matcher.evaluatePolicyRule(filterContext);
+        matcher.matches(filterContext);
     }
 
     @Test public void testAddedValuesScript() throws Exception {
@@ -224,7 +224,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
 
         try {
-            matcher.evaluatePolicyRule(filterContext);
+            matcher.matches(filterContext);
         } catch (DestroyedComponentException e) {
             thrown = true;
         }
@@ -258,7 +258,7 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         matcher.initialize();
 
         try {
-            matcher.evaluatePolicyRule(filterContext);
+            matcher.matches(filterContext);
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
@@ -267,12 +267,12 @@ public class ScriptedMatcherTest extends AbstractMatcherTest {
         matcher = new ScriptedMatcher(trueReturnScript);
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertTrue(matcher.evaluatePolicyRule(filterContext));
+        Assert.assertTrue(matcher.matches(filterContext));
         
         matcher = new ScriptedMatcher(falseReturnScript);
         matcher.setId("test");
         matcher.initialize();
-        Assert.assertFalse(matcher.evaluatePolicyRule(filterContext));
+        Assert.assertFalse(matcher.matches(filterContext));
 
     }
 

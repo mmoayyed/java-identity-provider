@@ -26,7 +26,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentValidationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -44,7 +44,7 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
         AttributeRule policy = new AttributeRule();
-        MockMatchFunctor matcher = new MockMatchFunctor();        
+        MockMatcher matcher = new MockMatcher();        
         policy.setPermitRule(matcher);
 
         Assert.assertFalse(policy.isInitialized(), "Created - not initialized");
@@ -109,7 +109,7 @@ public class AttributeValueFilterPolicyTest {
         policy.setId("id");                
         policy.setAttributeId(" ID ");
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
-        policy.setPermitRule(MatchFunctor.MATCHES_ALL);
+        policy.setPermitRule(Matcher.MATCHES_ALL);
         policy.initialize();
         Assert.assertEquals(policy.getAttributeId(), "ID", "Get Attribute ID");
 
@@ -148,32 +148,32 @@ public class AttributeValueFilterPolicyTest {
         policy.setId("id");
         policy.setAttributeId("foo");
 
-        policy.setPermitRule(MatchFunctor.MATCHES_ALL);
-        Assert.assertEquals(policy.getPermitRule(), MatchFunctor.MATCHES_ALL,
+        policy.setPermitRule(Matcher.MATCHES_ALL);
+        Assert.assertEquals(policy.getPermitRule(), Matcher.MATCHES_ALL,
                 "AttributeValueMatcher - changed");
         policy.initialize();
-        Assert.assertEquals(policy.getPermitRule(), MatchFunctor.MATCHES_ALL,
+        Assert.assertEquals(policy.getPermitRule(), Matcher.MATCHES_ALL,
                 "AttributeValueMatcher - initialized");
 
         boolean thrown = false;
         try {
-            policy.setPermitRule(MatchFunctor.MATCHES_NONE);
+            policy.setPermitRule(Matcher.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "AttributeValueMatcher - set after initialized");
-        Assert.assertEquals(policy.getPermitRule(), MatchFunctor.MATCHES_ALL,
+        Assert.assertEquals(policy.getPermitRule(), Matcher.MATCHES_ALL,
                 "AttributeValueMatcher - set after initialized");
 
         policy = new AttributeRule();
         policy.setId("id");
         policy.setAttributeId(" foo");
-        policy.setPermitRule(MatchFunctor.MATCHES_ALL);
+        policy.setPermitRule(Matcher.MATCHES_ALL);
         policy.initialize();
         policy.destroy();
         thrown = false;
         try {
-            policy.setPermitRule(MatchFunctor.MATCHES_NONE);
+            policy.setPermitRule(Matcher.MATCHES_NONE);
         } catch (UnmodifiableComponentException e) {
             thrown = true;
         }
@@ -191,7 +191,7 @@ public class AttributeValueFilterPolicyTest {
 
     @Test public void testValidateApply() throws ComponentInitializationException, ComponentValidationException,
             AttributeFilterException {
-        MockMatchFunctor matcher = new MockMatchFunctor();
+        MockMatcher matcher = new MockMatcher();
 
         final StringAttributeValue aStringAttributeValue = new StringAttributeValue("a");
         final StringAttributeValue bStringAttributeValue = new StringAttributeValue("b");

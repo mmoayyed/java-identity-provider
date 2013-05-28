@@ -21,14 +21,14 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.impl.matcher.attributevalue.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
-import net.shibboleth.idp.attribute.filter.spring.matcher.AbstractAttributeTargetedStringMatchFunctorParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.AbstractAttributeTargetedStringMatcherParser;
 
 import org.w3c.dom.Element;
 
 /**
  * Bean definition parser for {@link AttributeValueStringMatchFunctor}s.
  */
-public class AttributeValueStringMatcherParser extends AbstractAttributeTargetedStringMatchFunctorParser {
+public class AttributeValueStringMatcherParser extends AbstractAttributeTargetedStringMatcherParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
