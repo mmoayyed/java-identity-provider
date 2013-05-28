@@ -22,9 +22,9 @@ import javax.annotation.Nonnull;
 import net.shibboleth.ext.spring.webflow.Event;
 import net.shibboleth.ext.spring.webflow.Events;
 import net.shibboleth.idp.attribute.AttributeContext;
-import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
-import net.shibboleth.idp.attribute.filtering.AttributeFilteringException;
+import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.ProfileException;
@@ -41,7 +41,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 
-/** A stage which invokes the {@link AttributeFilteringEngine} for the current request. */
+/** A stage which invokes the {@link AttributeFilter} for the current request. */
 @Events({
         @Event(id = EventIds.PROCEED_EVENT_ID),
         @Event(id = EventIds.INVALID_RELYING_PARTY_CTX, description = "No relying party context available for request"),
@@ -56,7 +56,7 @@ public class FilterAttributes extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(FilterAttributes.class);
 
     /** Engine used to fetch attributes. */
-    private final AttributeFilteringEngine filterEngine;
+    private final AttributeFilter filterEngine;
 
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
@@ -68,7 +68,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * 
      * @param engine engine used to filter attributes
      */
-    public FilterAttributes(@Nonnull final AttributeFilteringEngine engine) {
+    public FilterAttributes(@Nonnull final AttributeFilter engine) {
         super();
 
         filterEngine = Constraint.isNotNull(engine, "Attribute filtering engine cannot be null");
@@ -82,7 +82,7 @@ public class FilterAttributes extends AbstractProfileAction {
      * 
      * @return engine used to filter attributes
      */
-    @Nonnull public AttributeFilteringEngine getAttributeFilteringEnginer() {
+    @Nonnull public AttributeFilter getAttributeFilteringEnginer() {
         return filterEngine;
     }
 
@@ -149,7 +149,7 @@ public class FilterAttributes extends AbstractProfileAction {
             relyingPartyCtx.removeSubcontext(filterContext);
 
             attributeContext.setAttributes(filterContext.getFilteredAttributes().values());
-        } catch (AttributeFilteringException e) {
+        } catch (AttributeFilterException e) {
             log.error("Action {}: Error encountered while filtering attributes", getId(), e);
             return ActionSupport.buildEvent(this, UNABLE_FILTER_ATTRIBS);
         }

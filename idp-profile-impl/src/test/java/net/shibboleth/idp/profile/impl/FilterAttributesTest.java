@@ -26,12 +26,12 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.AttributeContext;
 import net.shibboleth.idp.attribute.AttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.filtering.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filtering.AttributeFilterPolicy;
-import net.shibboleth.idp.attribute.filtering.AttributeFilteringEngine;
-import net.shibboleth.idp.attribute.filtering.AttributeRule;
-import net.shibboleth.idp.attribute.filtering.MatchFunctor;
-import net.shibboleth.idp.attribute.filtering.MockMatchFunctor;
+import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
+import net.shibboleth.idp.attribute.filter.AttributeFilter;
+import net.shibboleth.idp.attribute.filter.AttributeRule;
+import net.shibboleth.idp.attribute.filter.MatchFunctor;
+import net.shibboleth.idp.attribute.filter.MockMatchFunctor;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.relyingparty.RelyingPartyContext;
@@ -52,7 +52,7 @@ public class FilterAttributesTest {
     @Test public void testNoRelyingPartyContext() throws Exception {
         ProfileRequestContext profileCtx = new ProfileRequestContext();
 
-        AttributeFilteringEngine engine = new AttributeFilteringEngine("test", null);
+        AttributeFilter engine = new AttributeFilter("test", null);
 
         FilterAttributes action = new FilterAttributes(engine);
         action.setId("test");
@@ -67,7 +67,7 @@ public class FilterAttributesTest {
     @Test public void testNoAttributeContext() throws Exception {
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
 
-        AttributeFilteringEngine engine = new AttributeFilteringEngine("test", null);
+        AttributeFilter engine = new AttributeFilter("test", null);
 
         FilterAttributes action = new FilterAttributes(engine);
         action.setId("test");
@@ -85,7 +85,7 @@ public class FilterAttributesTest {
         AttributeContext attribCtx = new AttributeContext();
         profileCtx.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
-        AttributeFilteringEngine engine = new AttributeFilteringEngine("test", null);
+        AttributeFilter engine = new AttributeFilter("test", null);
 
         FilterAttributes action = new FilterAttributes(engine);
         action.setId("test");
@@ -121,7 +121,7 @@ public class FilterAttributesTest {
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
-        AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
+        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
@@ -180,7 +180,7 @@ public class FilterAttributesTest {
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
-        AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
+        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
@@ -238,7 +238,7 @@ public class FilterAttributesTest {
                 new AttributeFilterPolicy("attribute1Policy", MatchFunctor.MATCHES_ALL,
                         Lists.newArrayList(attribute1Policy));
 
-        AttributeFilteringEngine engine = new AttributeFilteringEngine("engine", Lists.newArrayList(policy));
+        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
         engine.initialize();
 
         ProfileRequestContext profileCtx = new RequestContextBuilder().buildProfileRequestContext();
