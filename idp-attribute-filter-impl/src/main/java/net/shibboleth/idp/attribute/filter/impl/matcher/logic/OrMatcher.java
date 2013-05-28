@@ -37,8 +37,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * {@link Matcher} that implements the disjunction of matchers. That is, a given attribute value is considered to
- * have matched if it is returned by any of the composed {@link Matcher}.
+ * {@link Matcher} that implements the disjunction of matchers. That is, a given attribute value is considered to have
+ * matched if it is returned by any of the composed {@link Matcher}.
  */
 @ThreadSafe
 public class OrMatcher extends AbstractComposedMatcher {
@@ -53,8 +53,7 @@ public class OrMatcher extends AbstractComposedMatcher {
     }
 
     /** {@inheritDoc} */
-    public boolean evaluatePolicyRule(@Nonnull AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
         final List<Matcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);

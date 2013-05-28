@@ -40,9 +40,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Objects;
 
 /**
- * {@link Matcher} that implements the conjunction of matchers. That is, a given attribute value is considered to
- * have matched if, and only if, it is returned by every composed {@link Matcher}. The predicate is true if and
- * only if all composed {@link Matcher} returns true.
+ * {@link Matcher} that implements the conjunction of matchers. That is, a given attribute value is considered to have
+ * matched if, and only if, it is returned by every composed {@link Matcher}. The predicate is true if and only if all
+ * composed {@link Matcher} returns true.
  */
 @ThreadSafe
 public class AndMatcher extends AbstractComposedMatcher {
@@ -58,10 +58,10 @@ public class AndMatcher extends AbstractComposedMatcher {
 
     /**
      * Return true iff all composed matchers return true. {@inheritDoc}
-     * @throws AttributeFilterException 
+     * 
+     * @throws AttributeFilterException
      */
-    public boolean evaluatePolicyRule( @Nullable final AttributeFilterContext filterContext) 
-            throws AttributeFilterException {
+    public boolean matches(@Nullable final AttributeFilterContext filterContext) throws AttributeFilterException {
         final List<Matcher> currentMatchers = getComposedMatchers();
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
