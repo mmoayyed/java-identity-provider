@@ -19,23 +19,24 @@ package net.shibboleth.idp.attribute.resolver;
 
 import javax.annotation.Nullable;
 
-import org.opensaml.saml.common.binding.SAMLMessageContext;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 
 import com.google.common.base.Function;
 
 /**
  *
  */
-public class SamlContextFinder implements Function<AttributeResolutionContext, SAMLMessageContext> {
+public class SamlContextFinder implements Function<AttributeResolutionContext, MessageContext<SAMLObject>> {
 
-    SAMLMessageContext context;
+    MessageContext<SAMLObject> context;
     
-    public SamlContextFinder(SAMLMessageContext theContext) {
+    public SamlContextFinder(MessageContext<SAMLObject> theContext) {
         context = theContext;
     }
     
     /** {@inheritDoc} */
-    @Nullable public SAMLMessageContext apply(@Nullable AttributeResolutionContext input) {
+    @Nullable public MessageContext<SAMLObject> apply(@Nullable AttributeResolutionContext input) {
 
         return context;
     }

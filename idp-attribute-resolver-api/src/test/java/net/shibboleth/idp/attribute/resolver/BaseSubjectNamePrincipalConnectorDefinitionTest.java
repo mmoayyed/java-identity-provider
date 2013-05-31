@@ -23,12 +23,13 @@ import java.util.HashSet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
-import org.opensaml.saml.common.binding.SAMLMessageContext;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.messaging.context.SamlPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SamlSubjectNameIdentifierContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
-import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.AssertionBuilder;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -89,7 +90,9 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         final NameIdentifier nameId = new NameIdentifierBuilder().buildObject();
         nameId.setFormat(FORMAT);
         nameId.setNameIdentifier(IDENTIFIER);
-        final SAMLMessageContext context = new MockMessageContext(ISSUER, nameId);
+        final MessageContext<SAMLObject> context = new MessageContext<>();
+        context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
+        context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
         
         final BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 
@@ -107,7 +110,9 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
         final NameID nameId = new NameIDBuilder().buildObject();
         nameId.setFormat(FORMAT);
         nameId.setValue(IDENTIFIER);
-        final SAMLMessageContext context = new MockMessageContext(ISSUER, nameId);
+        final MessageContext<SAMLObject> context = new MessageContext<>();
+        context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
+        context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(nameId);
         
         final BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 
@@ -122,8 +127,9 @@ public class BaseSubjectNamePrincipalConnectorDefinitionTest extends OpenSAMLIni
     
     @Test public void badNavigation() throws ResolutionException, ComponentInitializationException {
 
-        final Assertion entity = new AssertionBuilder().buildObject();
-        final SAMLMessageContext context = new MockMessageContext(ISSUER, entity);
+        final MessageContext<SAMLObject> context = new MessageContext<>();
+        context.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ISSUER);
+        context.getSubcontext(SamlSubjectNameIdentifierContext.class, true).setSubjectNameIdentifier(null);
         
         BaseSubjectNamePrincipalConnectorDefinition defn = new MockSubjectNamePrincipalConnector();
         defn.setContextFinderStrategy(new SamlContextFinder(context)); 

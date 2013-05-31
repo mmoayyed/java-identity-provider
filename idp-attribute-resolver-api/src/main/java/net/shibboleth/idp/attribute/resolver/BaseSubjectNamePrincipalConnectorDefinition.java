@@ -29,8 +29,10 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.binding.SAMLMessageContext;
+import org.opensaml.saml.common.messaging.context.SamlPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SamlSubjectNameIdentifierContext;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml2.core.NameID;
 
@@ -39,7 +41,8 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * The base implementation of all SAML Subject Name Connectors.<b/> This takes on the heavy lifting of finding the
- * SAMLMessageContext, looking up the nameID and so forth. Concrete implementations take care of the other plumbing.
+ * MessageContext containing the SAML message being processed, looking up the nameID and so forth. 
+ * Concrete implementations take care of the other plumbing.
  */
 public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseResolverPlugin<String> implements
         PrincipalConnectorDefinition<AttributeResolutionContext> {
@@ -55,9 +58,11 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     private Set<String> relyingParties = Collections.EMPTY_SET;
 
     /**
-     * TODO remove The temporary mechanism to get the SAML message.
+     * TODO - verify that this is correct going forward.
+     * 
+     * The strategy to resolve the message context containing the SAML message being processed.
      */
-    private Function<AttributeResolutionContext, SAMLMessageContext> contextFinderStrategy;
+    private Function<AttributeResolutionContext, MessageContext<SAMLObject>> contextFinderStrategy;
 
     /**
      * Get NameID format.
@@ -98,29 +103,31 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     }
 
     /**
-     * Temporary function to set up the context navigation mechanism.<b/> This is used to go from a
-     * {@link AttributeResolutionContext} to a {@link SAMLMessageContext}. It is expected that the latter will become a
-     * real "context" and at that stage we can do a getParent.getSubcontext(SAMLMessageContext.class);
+     * TODO - verify that this is correct going forward.
      * 
-     * @param function the navigation function. TODO This function needs to be removed and replaced by proper navigation
-     *            at a later stage.
+     * Function to set up the context navigation mechanism. This is used to go from a
+     * {@link AttributeResolutionContext} to a {@link MessageContext} containing a SAML protocol message represented by
+     * a {@link SAMLObject}.
+     * 
+     * @param function the navigation function. 
      */
-    public void setContextFinderStrategy(final Function<AttributeResolutionContext, SAMLMessageContext> function) {
+    public void setContextFinderStrategy(final Function<AttributeResolutionContext, 
+            MessageContext<SAMLObject>> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         contextFinderStrategy = function;
     }
 
     /**
-     * Helper function to get the {@link SAMLMessageContext} from our context.
+     * Helper function to get the {@link MessageContext} from our context.
      * 
      * @param inputContext What we are passed
-     * @return the {@link SAMLMessageContext} never null.
+     * @return the {@link MessageContext} never null.
      * @throws ResolutionException if we could not find the context.
      */
-    @Nonnull protected SAMLMessageContext locateSamlMessageContext(final AttributeResolutionContext inputContext)
-            throws ResolutionException {
+    @Nonnull protected MessageContext<SAMLObject> locateSamlMessageContext(
+            final AttributeResolutionContext inputContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final SAMLMessageContext samlContext = contextFinderStrategy.apply(inputContext);
+        final MessageContext<SAMLObject> samlContext = contextFinderStrategy.apply(inputContext);
         if (null == samlContext) {
             throw new ResolutionException("Principal Connector" + getId() + " could not locate input message");
         }
@@ -140,30 +147,32 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     }
 
     /**
+     * TODO - verify that this is correct going forward.
+     * 
      * Helper function to find the IssuerId ("entityID of SP") for this message. This allow the attribute resolver to
-     * not be involved in the required navigation. TODO It is hoped that this will become static when the context
-     * navigation is fixed.
+     * not be involved in the required navigation.
      * 
      * @param context the resolution context.
      * @return the IssuerID never null
      * @throws ResolutionException if we could not navigate the structures directly.
      */
     @Nonnull public String issuerIdOf(final AttributeResolutionContext context) throws ResolutionException {
-        return locateSamlMessageContext(context).getInboundMessageIssuer();
+        return locateSamlMessageContext(context).getSubcontext(SamlPeerEntityContext.class, true).getEntityId();
     }
 
     /**
+     * TODO - verify that this is correct going forward.
+     * 
      * Helper function to find the format (from the {@link NameID} or {@link NameIdentifier}) for this message. This
      * allow the attribute resolver to not be involved in the required navigation.
-     * 
-     * TODO It is hoped that this will become static when the context navigation is fixed.
      * 
      * @param context the resolution context.
      * @return the format never null
      * @throws ResolutionException if we could not navigate the structures directly.
      */
     @Nonnull public String formatOf(final AttributeResolutionContext context) throws ResolutionException {
-        final SAMLObject object = locateSamlMessageContext(context).getSubjectNameIdentifier();
+        final SAMLObject object = locateSamlMessageContext(context)
+                .getSubcontext(SamlSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();
 
         if (object instanceof NameID) {
             final NameID nameId = (NameID) object;
@@ -173,21 +182,22 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
             return nameIdentifier.getFormat();
         }
         throw new ResolutionException("Principal Connector" + getId() + " message was a "
-                + object.getClass().toString() + ", not a NameId or a NameIdentifier");
+                + (object == null ? "null" : object.getClass().toString()) + ", not a NameId or a NameIdentifier");
     }
 
     /**
-     * Helper function to find the context (from the {@link NameID} or {@link NameIdentifier}) for this message. The
-     * superclasses may use this to do the lookup
+     * TODO - verify that this is correct going forward.
      * 
-     * TODO It is hoped that this will become static when the context navigation is fixed.
+     * Helper function to find the context (from the {@link NameID} or {@link NameIdentifier}) for this message. The
+     * superclasses may use this to do the lookup.
      * 
      * @param context the resolution context.
      * @return the format never null
      * @throws ResolutionException if we could not navigate the structures directly.
      */
     @Nonnull protected String contentOf(final AttributeResolutionContext context) throws ResolutionException {
-        final SAMLObject object = locateSamlMessageContext(context).getSubjectNameIdentifier();
+        final SAMLObject object = locateSamlMessageContext(context)
+                .getSubcontext(SamlSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();
 
         if (object instanceof NameID) {
             final NameID nameId = (NameID) object;
@@ -197,7 +207,7 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
             return nameIdentifier.getNameIdentifier();
         }
         throw new ResolutionException("Principal Connector" + getId() + " message was a "
-                + object.getClass().toString() + ", not a NameId or a NameIdentifier");
+                + (object == null ? "null" : object.getClass().toString()) + ", not a NameId or a NameIdentifier");
     }
 
 }
