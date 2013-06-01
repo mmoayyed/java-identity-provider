@@ -26,7 +26,7 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-api</artifactId>
-            <version>${project.version}</version>
+            <version>${opensaml.version}</version>
         </dependency>
 
 
@@ -46,7 +46,7 @@
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-saml-impl</artifactId>
-            <version>${project.version}</version>
+            <version>${opensaml.version}</version>
             <scope>test</scope>
         </dependency>
         
