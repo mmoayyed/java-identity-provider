@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,11 +35,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Constraints;
 import com.google.common.collect.MapConstraints;
 
@@ -84,18 +87,16 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes which are to be filtered
      */
     public void setPrefilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        Map<String, Attribute> checkedAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+        Collection<Attribute> checkedAttributes = new ArrayList<Attribute>();
+        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
-        if (attributes != null) {
-            for (Attribute attribute : attributes) {
-                if (attribute != null) {
-                    checkedAttributes.put(attribute.getId(), attribute);
-                }
-            }
+        prefilteredAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, Attribute>(checkedAttributes.size()),
+                        MapConstraints.notNull());
+
+        for (Attribute attribute : checkedAttributes) {
+            prefilteredAttributes.put(attribute.getId(), attribute);
         }
-
-        prefilteredAttributes = checkedAttributes;
     }
 
     /**
@@ -211,23 +212,15 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes that have been filtered
      */
     public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        
-        if (null == attributes) {
-            filteredAttributes = Collections.EMPTY_MAP;
-        } else {
-            final Map<String, Attribute> checkedAttributes =
-                    MapConstraints.constrainedMap(new HashMap<String, Attribute>(attributes.size()),
-                            MapConstraints.notNull());
-    
-            if (attributes != null) {
-                for (Attribute attribute : attributes) {
-                    if (attribute != null) {
-                        checkedAttributes.put(attribute.getId(), attribute);
-                    }
-                }
-            }
-    
-            filteredAttributes = checkedAttributes;
+        Collection<Attribute> checkedAttributes = new ArrayList<Attribute>();
+        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
+
+        filteredAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, Attribute>(checkedAttributes.size()),
+                        MapConstraints.notNull());
+
+        for (Attribute attribute : checkedAttributes) {
+            filteredAttributes.put(attribute.getId(), attribute);
         }
     }
 }
