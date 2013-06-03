@@ -32,6 +32,15 @@ public class MatcherException extends RuntimeException {
     /**
      * version UID.
      */
-    private static final long serialVersionUID = -5961546706929012912L;
+    private static final long serialVersionUID = 599342584063832167L;
+
+    /**
+     * Constructor.
+     *
+     * @param string what to say
+     */
+    public MatcherException(String string) {
+        super(string);
+    }
 
 }
