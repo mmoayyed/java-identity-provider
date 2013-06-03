@@ -211,18 +211,23 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes that have been filtered
      */
     public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
-        Map<String, Attribute> checkedAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, Attribute>(attributes.size()),
-                        MapConstraints.notNull());
-
-        if (attributes != null) {
-            for (Attribute attribute : attributes) {
-                if (attribute != null) {
-                    checkedAttributes.put(attribute.getId(), attribute);
+        
+        if (null == attributes) {
+            filteredAttributes = Collections.EMPTY_MAP;
+        } else {
+            final Map<String, Attribute> checkedAttributes =
+                    MapConstraints.constrainedMap(new HashMap<String, Attribute>(attributes.size()),
+                            MapConstraints.notNull());
+    
+            if (attributes != null) {
+                for (Attribute attribute : attributes) {
+                    if (attribute != null) {
+                        checkedAttributes.put(attribute.getId(), attribute);
+                    }
                 }
             }
+    
+            filteredAttributes = checkedAttributes;
         }
-
-        filteredAttributes = checkedAttributes;
     }
 }

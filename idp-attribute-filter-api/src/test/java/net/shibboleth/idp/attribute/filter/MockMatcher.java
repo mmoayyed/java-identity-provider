@@ -60,8 +60,8 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     /** to return from getMatchingValues(). */
     private boolean retVal;
 
-    /** do we fail when validate is called? */
-    private boolean failValidate;
+    /** do we fail when validate is called? do we fail when we are called?*/
+    private boolean fails;
 
     /** what was passed to getMatchingValues(). */
     private AttributeFilterContext contextUsed;
@@ -95,6 +95,9 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     /** {@inheritDoc} */
     public Set<AttributeValue> getMatchingValues(Attribute attribute, AttributeFilterContext filterContext)
             throws AttributeFilterException {
+        if (fails) {
+            throw new MatcherException("throws");
+        }
         if (!Objects.equal(attribute.getId(), matchingAttribute)) {
             return Collections.EMPTY_SET;
         }
@@ -115,7 +118,7 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
 
     /** {@inheritDoc} */
     public void validate() throws ComponentValidationException {
-        if (failValidate) {
+        if (fails) {
             throw new ComponentValidationException();
         }
         validated = true; 
@@ -157,11 +160,14 @@ public class MockMatcher extends AbstractIdentifiableInitializableComponent impl
     }
 
     public void setFailValidate(boolean doFail) {
-        failValidate = doFail;
+        fails = doFail;
     }
 
     /** {@inheritDoc} */
     public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
+        if (fails) {
+            throw new MatcherException("oops");
+        }
         contextUsed = filterContext;
         return retVal;
     }
