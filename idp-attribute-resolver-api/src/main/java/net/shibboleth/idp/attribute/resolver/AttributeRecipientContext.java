@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /** A context which carries Information about the Recipient of the attribute.  This is the
  *  principal, the "self" entityID and the RecipientEntityID. */
@@ -35,6 +36,15 @@ public class AttributeRecipientContext extends BaseContext {
     
     /** The other entityID. This is required by some resolvers and injected during setup. */
     private String attributeRecipientID;
+    
+    /** How was the principal Authenticated? */
+    private String principalAuthenticationMethod;
+    
+    /** The issuer's metadata. */
+    private EntityDescriptor issuerMetadata;
+
+    /** The issuer's metadata. */
+    private EntityDescriptor requesterMetadata;
 
     /** Gets the principal associated with this resolution. 
      * 
@@ -83,4 +93,50 @@ public class AttributeRecipientContext extends BaseContext {
     @Nullable public void setAttributeRecipientID(@Nullable String value) {
         attributeRecipientID = value;
     }
+    /** Sets how the principal was authenticated. 
+     * @return Returns the principalAuthenticationMethod.
+     */
+    @Nullable public String getPrincipalAuthenticationMethod() {
+        return principalAuthenticationMethod;
+    }
+
+    /** Gets how the principal was authenticated.
+     * @param method The principalAuthenticationMethod to set.
+     */
+    public void setPrincipalAuthenticationMethod(String method) {
+        this.principalAuthenticationMethod = method;
+    }
+
+    /**
+     * Return the metadata for the entity issuing the attributes.
+     * @return Returns the issuerMetadata.
+     */
+    public EntityDescriptor getIssuerMetadata() {
+        return issuerMetadata;
+    }
+
+    /**
+     * Sets the metadata for the entity issuing the attributes.
+     * @param metadata The issuerMetadata to set.
+     */
+    public void setIssuerMetadata(EntityDescriptor metadata) {
+        this.issuerMetadata = metadata;
+    }
+
+    /**
+     * Return the metadata for the entity requesting the attributes.
+     * @return Returns the requesterMetadata.
+     */
+    public EntityDescriptor getRequesterMetadata() {
+        return requesterMetadata;
+    }
+
+    /**
+     * Sets the metadata for the entity requesting the attributes.
+     * @param metadata The requesterMetadata to set.
+     */
+    public void setRequesterMetadata(EntityDescriptor metadata) {
+        this.requesterMetadata = metadata;
+    }
+
 }
