@@ -58,8 +58,6 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     private Set<String> relyingParties = Collections.EMPTY_SET;
 
     /**
-     * TODO - verify that this is correct going forward.
-     * 
      * The strategy to resolve the message context containing the SAML message being processed.
      */
     private Function<AttributeResolutionContext, MessageContext<SAMLObject>> contextFinderStrategy;
@@ -103,8 +101,6 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     }
 
     /**
-     * TODO - verify that this is correct going forward.
-     * 
      * Function to set up the context navigation mechanism. This is used to go from a
      * {@link AttributeResolutionContext} to a {@link MessageContext} containing a SAML protocol message represented by
      * a {@link SAMLObject}.
@@ -147,8 +143,6 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     }
 
     /**
-     * TODO - verify that this is correct going forward.
-     * 
      * Helper function to find the IssuerId ("entityID of SP") for this message. This allow the attribute resolver to
      * not be involved in the required navigation.
      * 
@@ -161,8 +155,6 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     }
 
     /**
-     * TODO - verify that this is correct going forward.
-     * 
      * Helper function to find the format (from the {@link NameID} or {@link NameIdentifier}) for this message. This
      * allow the attribute resolver to not be involved in the required navigation.
      * 
@@ -186,8 +178,6 @@ public abstract class BaseSubjectNamePrincipalConnectorDefinition extends BaseRe
     }
 
     /**
-     * TODO - verify that this is correct going forward.
-     * 
      * Helper function to find the context (from the {@link NameID} or {@link NameIdentifier}) for this message. The
      * superclasses may use this to do the lookup.
      * 
