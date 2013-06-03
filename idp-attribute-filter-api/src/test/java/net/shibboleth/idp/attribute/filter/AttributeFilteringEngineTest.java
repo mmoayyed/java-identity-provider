@@ -175,6 +175,39 @@ public class AttributeFilteringEngineTest {
         Assert.assertTrue(result.contains(new StringAttributeValue("one")));
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
     }
+    
+    @Test public void testAllMatcherThrows() throws Exception {
+
+        AttributeRule attribute1Policy = new AttributeRule();
+        attribute1Policy.setId("attribute1Policy");
+        attribute1Policy.setAttributeId("attribute1");
+        attribute1Policy.setPermitRule(Matcher.MATCHES_ALL);
+
+        AttributeRule attribute2Policy = new AttributeRule();
+        attribute2Policy.setId("attribute2Policy");
+        attribute2Policy.setAttributeId("attribute1");
+        MockMatcher matcher = new MockMatcher();
+        matcher.setFailValidate(true);
+        attribute2Policy.setPermitRule(matcher);
+
+        AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("attribute1Policy", Matcher.MATCHES_ALL,
+                        Lists.newArrayList(attribute1Policy, attribute2Policy));
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+
+        Attribute attribute1 = new Attribute("attribute1");
+        attribute1.setValues(Lists.<AttributeValue> newArrayList(new StringAttributeValue("one"),
+                new StringAttributeValue("two")));
+        filterContext.getPrefilteredAttributes().put(attribute1.getId(), attribute1);
+
+        AttributeFilter engine = new AttributeFilter("engine", Lists.newArrayList(policy));
+        engine.initialize();
+
+        engine.filterAttributes(filterContext);
+        Assert.assertTrue(filterContext.getFilteredAttributes().isEmpty());
+    }
+
 
     @Test public void testNoneMatcher() throws Exception {
 

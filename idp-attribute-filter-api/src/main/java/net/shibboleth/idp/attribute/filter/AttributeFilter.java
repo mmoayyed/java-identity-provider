@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +63,9 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
 
     /** Filter policies used by this engine. */
     private final List<AttributeFilterPolicy> filterPolicies;
+
+    /** Log prefix. */
+    private String logPrefix;
 
     /**
      * Constructor.
@@ -118,43 +122,45 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
      * @param filterContext context containing the attributes to be filtered and collecting the results of the filtering
      *            process
      * 
-     * @throws AttributeFilterException thrown if there is a problem retrieving or applying the attribute filter
-     *             policy
+     * @throws AttributeFilterException thrown if there is a problem retrieving or applying the attribute filter policy
      */
-    public void filterAttributes(@Nonnull final AttributeFilterContext filterContext)
-            throws AttributeFilterException {
+    public void filterAttributes(@Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         Map<String, Attribute> prefilteredAttributes = filterContext.getPrefilteredAttributes();
 
-        log.debug("Attribute filter engine '{}': beginning process of filtering the following {} attributes: {}",
-                new Object[] {getId(), prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
+        log.debug("{} beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
+                prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
 
-        final List<AttributeFilterPolicy> policies = getFilterPolicies();
-        for (AttributeFilterPolicy policy : policies) {
-            if (!policy.isApplicable(filterContext)) {
-                log.debug("Attribute filtering engine '{}': filter policy '{}' is not applicable", getId(),
-                        policy.getId());
-                continue;
-            }
-
-            policy.apply(filterContext);
-        }
-
-        Attribute filteredAttribute;
-        for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
-            final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
-            if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
-                try {
-                    filteredAttribute = prefilteredAttributes.get(attributeId).clone();
-                } catch (CloneNotSupportedException e) {
-                    throw new AttributeFilterException(e);
+        try {
+            final List<AttributeFilterPolicy> policies = getFilterPolicies();
+            for (AttributeFilterPolicy policy : policies) {
+                if (!policy.isApplicable(filterContext)) {
+                    log.debug("{} filter policy '{}' is not applicable", getLogPrefix(), policy.getId());
+                    continue;
                 }
-                filteredAttribute.setValues(filteredAttributeValues);
-                filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
+
+                policy.apply(filterContext);
             }
+
+            Attribute filteredAttribute;
+            for (String attributeId : filterContext.getPrefilteredAttributes().keySet()) {
+                final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
+                if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
+                    try {
+                        filteredAttribute = prefilteredAttributes.get(attributeId).clone();
+                    } catch (CloneNotSupportedException e) {
+                        throw new AttributeFilterException(e);
+                    }
+                    filteredAttribute.setValues(filteredAttributeValues);
+                    filterContext.getFilteredAttributes().put(filteredAttribute.getId(), filteredAttribute);
+                }
+            }
+        } catch (MatcherException e) {
+            log.error("{} filtering failed {}", getLogPrefix(), e);
+            filterContext.setFilteredAttributes(Collections.EMPTY_SET);
         }
     }
 
@@ -166,8 +172,8 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
      * @param attributeId ID of the attribute whose values are to be retrieved
      * @param filterContext current attribute filter context
      * 
-     * @return null if no values were permitted to be released, an empty collection if values were permitted but 
-     *         then all were removed by deny policies, a collection containing permitted values
+     * @return null if no values were permitted to be released, an empty collection if values were permitted but then
+     *         all were removed by deny policies, a collection containing permitted values
      */
     @Nullable protected Collection getFilteredValues(@Nonnull @NotEmpty final String attributeId,
             @Nonnull final AttributeFilterContext filterContext) {
@@ -191,7 +197,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
                     getId(), attributeId);
         } else {
             log.debug("Attribute filtering engine '{}': {} values for attribute '{}' remained after filtering",
-                    new Object[] {getId(), filteredAttributeValues.size(), attributeId,});
+                    new Object[] {filteredAttributeValues.size(), attributeId,});
         }
 
         return filteredAttributeValues;
@@ -200,6 +206,7 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        logPrefix = null;
 
         for (AttributeFilterPolicy policy : filterPolicies) {
             policy.initialize();
@@ -215,4 +222,21 @@ public class AttributeFilter extends AbstractDestructableIdentifiableInitializab
 
         super.doDestroy();
     }
+
+    /**
+     * Get the prefix for logging.
+     * 
+     * @return Returns the logPrefix.
+     */
+    public String getLogPrefix() {
+        String result;
+
+        result = logPrefix;
+        if (null == result) {
+            result = new StringBuffer("Attribute filtering engine '").append(getId()).append("' ").toString();
+            logPrefix = result;
+        }
+        return logPrefix;
+    }
+
 }
