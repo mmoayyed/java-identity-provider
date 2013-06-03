@@ -212,7 +212,8 @@ public final class AttributeFilterContext extends BaseContext {
      */
     public void setFilteredAttributes(@Nullable @NullableElements final Collection<Attribute> attributes) {
         Map<String, Attribute> checkedAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, Attribute>(), MapConstraints.notNull());
+                MapConstraints.constrainedMap(new HashMap<String, Attribute>(attributes.size()),
+                        MapConstraints.notNull());
 
         if (attributes != null) {
             for (Attribute attribute : attributes) {
