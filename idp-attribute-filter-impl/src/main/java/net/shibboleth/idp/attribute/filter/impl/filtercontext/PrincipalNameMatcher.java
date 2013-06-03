@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatcher;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -59,8 +60,7 @@ public class PrincipalNameMatcher extends AbstractStringMatcher {
         final String principal = recipient.getPrincipal();
 
         if (null == principal) {
-            log.error("{} No principal found for comparison", getLogPrefix());
-            return false;
+            throw new MatcherException(getLogPrefix() + " No principal found for comparison");
         }
         log.debug("{} found principal: ", getLogPrefix(), principal);
 

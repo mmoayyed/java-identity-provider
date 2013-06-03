@@ -22,6 +22,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.NavigationHelper;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
@@ -37,14 +38,14 @@ public class NavigationHelperTest {
         try {
             NavigationHelper.locateResolverContext(new AttributeFilterContext());
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (MatcherException e) {
             // OK
         }
 
         try {
             NavigationHelper.locateResolverContext((new BaseContext() {}).getSubcontext(AttributeFilterContext.class, true));
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (MatcherException e) {
             // OK
         }
 
@@ -52,7 +53,7 @@ public class NavigationHelperTest {
         try {
             NavigationHelper.locateRecipientContext(filterContext);
             Assert.fail();
-        } catch (IllegalArgumentException e) {
+        } catch (MatcherException e) {
             // OK
         }
 

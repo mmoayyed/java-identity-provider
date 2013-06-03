@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 
@@ -46,15 +47,13 @@ public final class NavigationHelper {
         final BaseContext parent = filterContext.getParent();
 
         if (null == parent) {
-            //  TODO
-            throw new IllegalArgumentException("Attribute Filter:  Count not locate the parent context");
+            throw new MatcherException("Attribute Filter:  Count not locate the parent context");
         }
 
         final AttributeResolutionContext resolutionContext =
                 parent.getSubcontext(AttributeResolutionContext.class, false);
         if (null == resolutionContext) {
-            //  TODO
-            throw new IllegalArgumentException("Attribute Filter:  Count not locate the resolution context");
+            throw new MatcherException("Attribute Filter:  Count not locate the resolution context");
         }
         return resolutionContext;
     }
@@ -72,8 +71,7 @@ public final class NavigationHelper {
                 filterContext.getSubcontext(AttributeRecipientContext.class, false);
         
         if (null == recipientContext) {
-            //  TODO
-            throw new IllegalArgumentException("Attribute Filter:  Count not locate the recipient context");
+            throw new MatcherException("Attribute Filter:  Count not locate the recipient context");
         }
         
         return recipientContext;

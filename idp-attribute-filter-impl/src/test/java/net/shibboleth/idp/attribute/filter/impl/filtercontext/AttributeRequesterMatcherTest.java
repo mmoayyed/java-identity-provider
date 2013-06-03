@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.AttributeIssuerMatcher;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.AttributeRequesterMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
@@ -31,60 +32,56 @@ import org.testng.annotations.Test;
  * Tests for {@link AttributeIssuerMatcher}.
  */
 public class AttributeRequesterMatcherTest {
-    
+
+    private AttributeRequesterMatcher getMatcher(boolean caseSensitive) throws ComponentInitializationException {
+        AttributeRequesterMatcher matcher = new AttributeRequesterMatcher();
+        matcher.setMatchString("requester");
+        matcher.setCaseSensitive(caseSensitive);
+        matcher.setId("Test");
+        matcher.initialize();
+        return matcher;
+
+    }
+
+    private AttributeRequesterMatcher getMatcher() throws ComponentInitializationException {
+        return getMatcher(true);
+    }
+
     @Test public void testNull() throws ComponentInitializationException {
 
-        AttributeRequesterMatcher matcher = new AttributeRequesterMatcher();
-        
         try {
-            matcher.doCompare(null);
+            new AttributeRequesterMatcher().doCompare(null);
             Assert.fail();
         } catch (UninitializedComponentException ex) {
             // OK
         }
-    
-        matcher.setMatchString("requester");
-        matcher.setCaseSensitive(true);
-        matcher.setId("Test");
-        matcher.initialize();
-        // TODO
-        // Assert.assertFalse(matcher.doCompare(null));
-        
-        try {
-            matcher.doCompare(DataSources.unPopulatedFilterContext());
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // OK
-        }
-        
-        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, null)));
     }
-    
+
+    @Test(expectedExceptions = {MatcherException.class}) public void testUnpopulated()
+            throws ComponentInitializationException, AttributeFilterException {
+        getMatcher().doCompare(DataSources.unPopulatedFilterContext());
+    }
+
+    @Test(expectedExceptions = {MatcherException.class}) public void testNoRequester()
+            throws ComponentInitializationException, AttributeFilterException {
+        getMatcher().doCompare(DataSources.populatedFilterContext(null, null, null));
+    }
+
     @Test public void testCaseSensitive() throws ComponentInitializationException {
 
-        AttributeRequesterMatcher matcher = new AttributeRequesterMatcher();
-        matcher.setId("Test");
-        matcher.setMatchString("requester");
-        matcher.setCaseSensitive(true);
-        matcher.initialize();
-        
-        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, null)));
+        final AttributeRequesterMatcher matcher = getMatcher();
+
         Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, "wibble")));
         Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, "REQUESTER")));
-        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "requester")));        
+        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "requester")));
     }
 
-    
     @Test public void testCaseInsensitive() throws ComponentInitializationException, AttributeFilterException {
 
-        AttributeRequesterMatcher matcher = new AttributeRequesterMatcher();
-        matcher.setMatchString("requester");
-        matcher.setCaseSensitive(false);
-        matcher.setId("test");
-        matcher.initialize();
-        
+        final AttributeRequesterMatcher matcher = getMatcher(false);
+
         Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, "wibble")));
         Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "REQUESTER")));
-        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "requester")));        
+        Assert.assertTrue(matcher.doCompare(DataSources.populatedFilterContext(null, null, "requester")));
     }
 }

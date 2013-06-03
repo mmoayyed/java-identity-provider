@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.PrincipalNameMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -31,41 +32,38 @@ import org.testng.annotations.Test;
  */
 public class PrincipalNameMatcherTest {
     
+    private PrincipalNameMatcher getMatcher(boolean b) throws ComponentInitializationException {
+        PrincipalNameMatcher matcher = new PrincipalNameMatcher();
+        matcher.setMatchString("principal");
+        matcher.setCaseSensitive(b);
+        matcher.setId("Test");
+        matcher.initialize();
+        return matcher;
+    }
+    
     @Test public void testNull() throws ComponentInitializationException {
 
-        PrincipalNameMatcher matcher = new PrincipalNameMatcher();
-        
         try {
-            matcher.doCompare(null);
+            new PrincipalNameMatcher().doCompare(null);
             Assert.fail();
         } catch (UninitializedComponentException ex) {
             // OK
-        }
-    
-        matcher.setMatchString("principal");
-        matcher.setCaseSensitive(true);
-        matcher.setId("Test");
-        matcher.initialize();
-        // TODO
-        // Assert.assertFalse(matcher.apply(null));
-        
-        try {
-            matcher.doCompare(DataSources.unPopulatedFilterContext());
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // OK
-        }
-        
-        Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext(null, null, null)));
+        }       
     }
     
+    @Test(expectedExceptions={MatcherException.class}) public void testUnpopulated() throws ComponentInitializationException, AttributeFilterException {
+        final PrincipalNameMatcher matcher = getMatcher(true);
+        matcher.matches(DataSources.unPopulatedFilterContext());
+    }
+
+    @Test(expectedExceptions={MatcherException.class}) public void testNoPrincipal() throws ComponentInitializationException, AttributeFilterException {
+        final PrincipalNameMatcher matcher = getMatcher(true);
+        matcher.matches(DataSources.populatedFilterContext(null, null, null));
+    }
+
     @Test public void testCaseSensitive() throws ComponentInitializationException {
 
-        PrincipalNameMatcher matcher = new PrincipalNameMatcher();
-        matcher.setId("Test");
-        matcher.setMatchString("principal");
-        matcher.setCaseSensitive(true);
-        matcher.initialize();
+        PrincipalNameMatcher matcher = getMatcher(true);
         
         Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext("wibble", null, null)));
         Assert.assertFalse(matcher.doCompare(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
@@ -75,11 +73,7 @@ public class PrincipalNameMatcherTest {
     
     @Test public void testCaseInsensitive() throws ComponentInitializationException, AttributeFilterException {
 
-        PrincipalNameMatcher matcher = new PrincipalNameMatcher();
-        matcher.setMatchString("principal");
-        matcher.setCaseSensitive(false);
-        matcher.setId("test");
-        matcher.initialize();
+        PrincipalNameMatcher matcher = getMatcher(false);
         
         Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext("wibble", null, null)));
         Assert.assertTrue(matcher.matches(DataSources.populatedFilterContext("PRINCIPAL", null, null)));

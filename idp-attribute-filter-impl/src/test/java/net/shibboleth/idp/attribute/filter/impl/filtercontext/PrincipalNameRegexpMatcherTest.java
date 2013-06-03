@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.PrincipalNameRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -31,35 +32,38 @@ import org.testng.annotations.Test;
  */
 public class PrincipalNameRegexpMatcherTest {
     
+    private PrincipalNameRegexpMatcher getMatcher() throws ComponentInitializationException {
+        final PrincipalNameRegexpMatcher matcher = new PrincipalNameRegexpMatcher();
+        matcher.setRegularExpression("^p.*");
+        matcher.setId("Test");
+        matcher.initialize();
+        return matcher;
+    }
+    
     @Test public void testAll() throws ComponentInitializationException, AttributeFilterException {
 
-        PrincipalNameRegexpMatcher matcher = new PrincipalNameRegexpMatcher();
-        
         try {
-            matcher.doCompare(null);
+            new PrincipalNameRegexpMatcher().doCompare(null);
             Assert.fail();
         } catch (UninitializedComponentException ex) {
             // OK
         }
+        
+        final PrincipalNameRegexpMatcher matcher = getMatcher();
     
-        matcher.setRegularExpression("^p.*");
-        matcher.setId("Test");
-        matcher.initialize();
-        // TODO
-        // Assert.assertFalse(matcher.apply(null));
-        
-        try {
-            matcher.doCompare(DataSources.unPopulatedFilterContext());
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // OK
-        }
-        
-        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, null)));
         Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext("wibble", null, null)));
         Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext("PRINCIPAL", null, null)));
         Assert.assertTrue(matcher.matches(DataSources.populatedFilterContext("principal", null, null)));        
     }
 
+    @Test(expectedExceptions={MatcherException.class}) public void testNoPrincipal() throws ComponentInitializationException, AttributeFilterException {
+        final PrincipalNameRegexpMatcher matcher = getMatcher();
+        matcher.matches(DataSources.populatedFilterContext(null, null, null));
+    }
+
+    @Test(expectedExceptions={MatcherException.class}) public void testUnpopulated() throws ComponentInitializationException, AttributeFilterException {
+        final PrincipalNameRegexpMatcher matcher = getMatcher();
+        matcher.matches(DataSources.unPopulatedFilterContext());
+    }
 
 }

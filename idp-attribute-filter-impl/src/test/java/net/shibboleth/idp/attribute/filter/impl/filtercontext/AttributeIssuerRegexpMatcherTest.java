@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.filtercontext.AttributeIssuerRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.impl.matcher.DataSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -31,34 +32,37 @@ import org.testng.annotations.Test;
  */
 public class AttributeIssuerRegexpMatcherTest {
 
+    private AttributeIssuerRegexpMatcher getMatcher() throws ComponentInitializationException {
+        AttributeIssuerRegexpMatcher matcher = new AttributeIssuerRegexpMatcher();
+        matcher.setRegularExpression("^issu.*");
+        matcher.setId("Test");
+        matcher.initialize();
+        return matcher;
+    }
+
     @Test public void testAll() throws ComponentInitializationException, AttributeFilterException {
 
-        AttributeIssuerRegexpMatcher matcher = new AttributeIssuerRegexpMatcher();
-
         try {
-            matcher.doCompare(null);
+            new AttributeIssuerRegexpMatcher().doCompare(null);
             Assert.fail();
         } catch (UninitializedComponentException ex) {
             // OK
         }
+        AttributeIssuerRegexpMatcher matcher = getMatcher();
 
-        matcher.setRegularExpression("^issu.*");
-        matcher.setId("Test");
-        matcher.initialize();
-
-        try {
-            matcher.doCompare(DataSources.unPopulatedFilterContext());
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            // OK
-        }
-        // TODO
-        // Assert.assertFalse(matcher.doCompare(null));
-
-        Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, null, null)));
         Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, "wibble", null)));
         Assert.assertFalse(matcher.matches(DataSources.populatedFilterContext(null, "ISSUER", null)));
         Assert.assertTrue(matcher.matches(DataSources.populatedFilterContext(null, "issuer", null)));
+    }
+
+    @Test(expectedExceptions = {MatcherException.class}) public void testUnpopulated()
+            throws ComponentInitializationException, AttributeFilterException {
+        getMatcher().doCompare(DataSources.unPopulatedFilterContext());
+    }
+
+    @Test(expectedExceptions = {MatcherException.class}) public void testNoIssuer()
+            throws ComponentInitializationException, AttributeFilterException {
+        getMatcher().doCompare(DataSources.populatedFilterContext(null, null, null));
     }
 
 }

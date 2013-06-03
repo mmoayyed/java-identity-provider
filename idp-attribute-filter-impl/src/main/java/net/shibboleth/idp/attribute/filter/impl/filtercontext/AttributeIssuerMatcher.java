@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.impl.filtercontext;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractStringMatcher;
 import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -59,8 +60,7 @@ public class AttributeIssuerMatcher extends AbstractStringMatcher {
         final String issuer = recipient.getAttributeIssuerID();
 
         if (null == issuer) {
-            log.error("{} No attribute issuer found for comparison", getLogPrefix());
-            return false;
+           throw new MatcherException(getLogPrefix() + " No attribute issuer found for comparison");
         }
         log.debug("{} found attribute issuer: ", getLogPrefix(), issuer);
 
