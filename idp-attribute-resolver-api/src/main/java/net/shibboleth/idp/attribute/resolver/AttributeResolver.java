@@ -49,7 +49,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 
 //TODO(lajoie) perf metrics
-//TODO(lajoie) need to deal with thread safety issue where attribute definitions/data connectors might change in the midst of a resolution
+//TODO(lajoie) need to deal with thread safety issue 
+//             where attribute definitions/data connectors might change in the midst of a resolution
 
 /** A component that resolves the attributes for a particular subject. */
 @ThreadSafe
@@ -276,7 +277,7 @@ public class AttributeResolver extends AbstractDestructableIdentifiableInitializ
             // TODO why would we record this?
         } else {
             log.debug("{} attribute definition {} produced an attribute with {} values", new Object[] {logPrefix,
-                    attributeId, resolvedAttribute.getValues().size()});
+                    attributeId, resolvedAttribute.getValues().size(),});
         }
 
         resolutionContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
