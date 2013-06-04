@@ -44,7 +44,7 @@ public class AttributeRecipientContext extends BaseContext {
     private EntityDescriptor issuerMetadata;
 
     /** The issuer's metadata. */
-    private EntityDescriptor requesterMetadata;
+    private EntityDescriptor attributeRecipientMetadata;
 
     /** Gets the principal associated with this resolution. 
      * 
@@ -103,7 +103,7 @@ public class AttributeRecipientContext extends BaseContext {
     /** Gets how the principal was authenticated.
      * @param method The principalAuthenticationMethod to set.
      */
-    public void setPrincipalAuthenticationMethod(String method) {
+    public void setPrincipalAuthenticationMethod(@Nullable String method) {
         this.principalAuthenticationMethod = method;
     }
 
@@ -111,7 +111,7 @@ public class AttributeRecipientContext extends BaseContext {
      * Return the metadata for the entity issuing the attributes.
      * @return Returns the issuerMetadata.
      */
-    public EntityDescriptor getIssuerMetadata() {
+    @Nullable public EntityDescriptor getIssuerMetadata() {
         return issuerMetadata;
     }
 
@@ -119,7 +119,7 @@ public class AttributeRecipientContext extends BaseContext {
      * Sets the metadata for the entity issuing the attributes.
      * @param metadata The issuerMetadata to set.
      */
-    public void setIssuerMetadata(EntityDescriptor metadata) {
+    public void setIssuerMetadata(@Nullable EntityDescriptor metadata) {
         this.issuerMetadata = metadata;
     }
 
@@ -127,16 +127,16 @@ public class AttributeRecipientContext extends BaseContext {
      * Return the metadata for the entity requesting the attributes.
      * @return Returns the requesterMetadata.
      */
-    public EntityDescriptor getRequesterMetadata() {
-        return requesterMetadata;
+    @Nullable public EntityDescriptor getAttributeRecipientMetadata() {
+        return attributeRecipientMetadata;
     }
 
     /**
      * Sets the metadata for the entity requesting the attributes.
      * @param metadata The requesterMetadata to set.
      */
-    public void setRequesterMetadata(EntityDescriptor metadata) {
-        this.requesterMetadata = metadata;
+    public void setAttributeRecipientMetadata(@Nullable EntityDescriptor metadata) {
+        this.attributeRecipientMetadata = metadata;
     }
 
 }
