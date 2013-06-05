@@ -42,7 +42,7 @@ public final class NavigationHelper {
      * @param filterContext the filterContext
      * @return the associated resolution context
      */
-    @Nonnull protected static AttributeResolutionContext locateResolverContext(
+    @Nonnull public static AttributeResolutionContext locateResolverContext(
             @Nonnull AttributeFilterContext filterContext) {
         final BaseContext parent = filterContext.getParent();
 
@@ -64,7 +64,8 @@ public final class NavigationHelper {
      * @param filterContext the filterContext
      * @return the associated recipient context
      */
-    @Nonnull protected static AttributeRecipientContext locateRecipientContext(
+    @Nonnull
+    public static AttributeRecipientContext locateRecipientContext(
             @Nonnull AttributeResolutionContext filterContext) {
         
         final AttributeRecipientContext recipientContext =
