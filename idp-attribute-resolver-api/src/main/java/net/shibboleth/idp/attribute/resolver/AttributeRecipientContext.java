@@ -111,7 +111,7 @@ public class AttributeRecipientContext extends BaseContext {
      * Return the metadata for the entity issuing the attributes.
      * @return Returns the issuerMetadata.
      */
-    @Nullable public EntityDescriptor getIssuerMetadata() {
+    @Nullable public EntityDescriptor getAttributeIssuerMetadata() {
         return issuerMetadata;
     }
 
@@ -119,7 +119,7 @@ public class AttributeRecipientContext extends BaseContext {
      * Sets the metadata for the entity issuing the attributes.
      * @param metadata The issuerMetadata to set.
      */
-    public void setIssuerMetadata(@Nullable EntityDescriptor metadata) {
+    public void setAttributeIssuerMetadata(@Nullable EntityDescriptor metadata) {
         this.issuerMetadata = metadata;
     }
 

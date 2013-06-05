@@ -77,7 +77,7 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         if (null != idp) {
             recipientContext.setAttributeIssuerID(idp.getEntityID());
         }
-        recipientContext.setIssuerMetadata(idp);
+        recipientContext.setAttributeIssuerMetadata(idp);
         if (null != sp) {
             recipientContext.setAttributeRecipientID(sp.getEntityID());
         }
