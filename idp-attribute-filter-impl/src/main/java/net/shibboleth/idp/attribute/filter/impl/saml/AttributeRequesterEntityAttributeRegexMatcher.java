@@ -24,15 +24,16 @@ import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
- * Matcher that checks, via an exact match, if the attribute issuer contains an entity attribute with a given
- * value.
+ * Matcher functor that checks, via matching against a regular expression, if the attribute requester contains an entity
+ * attribute with a given value.
  */
-public class AttributeIssuerEntityAttributeExactMatcher extends AbstractEntityAttributeExactMatcher {
+public class AttributeRequesterEntityAttributeRegexMatcher extends AbstractEntityAttributeRegexMatcher {
 
     /** {@inheritDoc} */
     protected EntityDescriptor getEntityMetadata(AttributeFilterContext filterContext) {
         final AttributeRecipientContext recipient =
                 NavigationHelper.locateRecipientContext(NavigationHelper.locateResolverContext(filterContext));
-        return recipient.getAttributeIssuerMetadata();
+        return recipient.getAttributeRecipientMetadata();
     }
+
 }

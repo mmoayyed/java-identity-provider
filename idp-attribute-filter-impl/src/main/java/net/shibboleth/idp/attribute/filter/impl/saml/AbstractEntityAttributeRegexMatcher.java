@@ -17,40 +17,43 @@
 
 package net.shibboleth.idp.attribute.filter.impl.saml;
 
-import javax.annotation.Nullable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.google.common.base.Objects;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 
 /**
- * Base class for matchers that perform an exact match of a given attribute string value against entity attribute
- * value.
+ * Base class for matchers that perform an regular expression match of a given attribute string value against
+ * entity attribute value.
  */
-public abstract class AbstractEntityAttributeExactMatcher extends AbstractEntityAttributeMatcher {
-
+public abstract class AbstractEntityAttributeRegexMatcher extends AbstractEntityAttributeMatcher {
+    
     /** The value of the entity attribute the entity must have. */
-    private String value;
+    private Pattern valueRegex;
 
     /**
      * Gets the value of the entity attribute the entity must have.
      * 
      * @return value of the entity attribute the entity must have
      */
-    public String getValue() {
-        return value;
+    public Pattern getValueRegex() {
+        return valueRegex;
     }
 
     /**
      * Sets the value of the entity attribute the entity must have.
      * 
-     * @param attributeValue value of the entity attribute the entity must have
+     * @param attributeValueRegex value of the entity attribute the entity must have
      */
-    public void setValue(String attributeValue) {
-        value = attributeValue;
+    public void setValueRegex(Pattern attributeValueRegex) {
+        valueRegex = attributeValueRegex;
     }
 
     /** {@inheritDoc} */
-    protected boolean entityAttributeValueMatches(@Nullable String stringValue) {
-        return Objects.equal(value, stringValue);
+    protected boolean entityAttributeValueMatches(String entityAttributeValue) {
+        Matcher valueMatcher = valueRegex.matcher(StringSupport.trim(entityAttributeValue));
+        return valueMatcher.matches();
     }
+
 }

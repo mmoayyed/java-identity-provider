@@ -39,7 +39,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 
 /**
- * Base class for match functions that check whether a particular entity attribute is present and contains a given
+ * Base class for matchers that check whether a particular entity attribute is present and contains a given
  * value.
  */
 public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonMatcher {
