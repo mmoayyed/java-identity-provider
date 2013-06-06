@@ -19,11 +19,13 @@ package net.shibboleth.idp.attribute.filter.impl.saml;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.MatcherException;
 import net.shibboleth.idp.attribute.filter.impl.matcher.AbstractComparisonMatcher;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -107,7 +109,8 @@ public abstract class AbstractEntityAttributeMatcher extends AbstractComparisonM
      * 
      * @return true if the entity has the configured attribute, false otherwise
      */
-    protected boolean hasEntityAttribute(AttributeFilterContext filterContext) {
+    protected boolean hasEntityAttribute(@Nonnull AttributeFilterContext filterContext) {
+        Constraint.isNotNull(filterContext, "Context must be supplied");
         EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
         if (entityDescriptor == null) {
             throw new MatcherException(getLogPrefix() + " No metadata available for the entity");

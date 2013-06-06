@@ -151,6 +151,8 @@ uQfWf/K4Fj4CqCzMOU3mmvy7ricwz/4Kzas=
                 <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p"/>
                 <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/>
             </KeyDescriptor>
+
+            <NameIDFormat>https://example.org/foo</NameIDFormat>
             
             <ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://issues.shibboleth.net/jira/Shibboleth.sso/Artifact/SOAP" index="0"/>
             <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact" Location="https://issues.shibboleth.net/jira/Shibboleth.sso/SLO/Artifact"/>

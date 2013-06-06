@@ -22,6 +22,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 
 /** A context which carries Information about the Recipient of the attribute.  This is the
  *  principal, the "self" entityID and the RecipientEntityID. */
@@ -41,10 +42,17 @@ public class AttributeRecipientContext extends BaseContext {
     private String principalAuthenticationMethod;
     
     /** The issuer's metadata. */
-    private EntityDescriptor issuerMetadata;
+    private EntityDescriptor attributeIssuerMetadata;
 
-    /** The issuer's metadata. */
+    /** The recipient's metadata. */
     private EntityDescriptor attributeRecipientMetadata;
+    
+    /** The issuer's Role Descriptor.  */
+    private RoleDescriptor attributeIssuerRoleDescriptor;
+    
+    /** The requester's Role Descriptor.  */
+    private RoleDescriptor attributeRequesterRoleDescriptor;
+    
 
     /** Gets the principal associated with this resolution. 
      * 
@@ -104,7 +112,7 @@ public class AttributeRecipientContext extends BaseContext {
      * @param method The principalAuthenticationMethod to set.
      */
     public void setPrincipalAuthenticationMethod(@Nullable String method) {
-        this.principalAuthenticationMethod = method;
+        principalAuthenticationMethod = method;
     }
 
     /**
@@ -112,7 +120,7 @@ public class AttributeRecipientContext extends BaseContext {
      * @return Returns the issuerMetadata.
      */
     @Nullable public EntityDescriptor getAttributeIssuerMetadata() {
-        return issuerMetadata;
+        return attributeIssuerMetadata;
     }
 
     /**
@@ -120,7 +128,7 @@ public class AttributeRecipientContext extends BaseContext {
      * @param metadata The issuerMetadata to set.
      */
     public void setAttributeIssuerMetadata(@Nullable EntityDescriptor metadata) {
-        this.issuerMetadata = metadata;
+        attributeIssuerMetadata = metadata;
     }
 
     /**
@@ -136,7 +144,39 @@ public class AttributeRecipientContext extends BaseContext {
      * @param metadata The requesterMetadata to set.
      */
     public void setAttributeRecipientMetadata(@Nullable EntityDescriptor metadata) {
-        this.attributeRecipientMetadata = metadata;
+        attributeRecipientMetadata = metadata;
+    }
+
+    /**
+     * Get the attribute issuer's RoleDescriptor. 
+     * @return Returns the attributeIssuerRoleDescriptor.
+     */
+    @Nullable public RoleDescriptor getAttributeIssuerRoleDescriptor() {
+        return attributeIssuerRoleDescriptor;
+    }
+
+    /**
+     * Set the attribute issuer's Role Descriptor. 
+     * @param roleDescriptor The attributeIssuerRoleDescriptor to set.
+     */
+    public void setAttributeIssuerRoleDescriptor(@Nullable RoleDescriptor roleDescriptor) {
+        attributeIssuerRoleDescriptor = roleDescriptor;
+    }
+
+    /**
+     * Get the attribute requester's Role Descriptor. 
+     * @return Returns the attributeRequesterRoleDescriptor.
+     */
+    @Nullable public RoleDescriptor getAttributeRequesterRoleDescriptor() {
+        return attributeRequesterRoleDescriptor;
+    }
+
+    /**
+     * Set the attribute requester's RoleDescriptor. 
+     * @param roleDescriptor The attributeRequesterRoleDescriptor to set.
+     */
+    public void setAttributeRequesterRoleDescriptor(@Nullable RoleDescriptor roleDescriptor) {
+        attributeRequesterRoleDescriptor = roleDescriptor;
     }
 
 }

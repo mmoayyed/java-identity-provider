@@ -76,10 +76,12 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
         recipientContext.setPrincipal(principal);
         if (null != idp) {
             recipientContext.setAttributeIssuerID(idp.getEntityID());
+            recipientContext.setAttributeIssuerRoleDescriptor(idp.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
         }
         recipientContext.setAttributeIssuerMetadata(idp);
         if (null != sp) {
             recipientContext.setAttributeRecipientID(sp.getEntityID());
+            recipientContext.setAttributeRequesterRoleDescriptor(sp.getSPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol"));
         }
         recipientContext.setAttributeRecipientMetadata(sp);
         resolutionContext.addSubcontext(recipientContext);
