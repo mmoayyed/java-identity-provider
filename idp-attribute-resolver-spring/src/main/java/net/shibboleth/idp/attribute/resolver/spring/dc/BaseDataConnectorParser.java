@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -25,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.BaseDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -77,8 +82,7 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
                 ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
         if (failoverConnector != null && !failoverConnector.isEmpty()) {
             String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
-            log.debug("{} setting the following failover data connector dependencies {}",
-                    getLogPrefix(), connectorId);
+            log.debug("{} setting the following failover data connector dependencies {}", getLogPrefix(), connectorId);
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
     }
@@ -88,7 +92,7 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * multiple <beans/> declarations, only the first is returned.
      * 
      * @param config to check for spring beans declaration
-     *
+     * 
      * @return spring beans element
      */
     @Nullable protected Element getSpringBeansElement(@Nullable final Element config) {
@@ -103,7 +107,7 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * Creates a Spring bean factory from the supplied Spring beans element.
      * 
      * @param springBeans to create bean factory from
-     *
+     * 
      * @return bean factory
      */
     @Nonnull protected BeanFactory createBeanFactory(@Nonnull final Element springBeans) {
@@ -125,7 +129,7 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
      * @param <T> type of bean to return
      * @param beanFactory to get the bean from
      * @param clazz type of the bean to retrieve
-     *
+     * 
      * @return spring bean
      */
     @Nullable protected <T> T getBean(@Nonnull final BeanFactory beanFactory, @Nonnull final Class<T> clazz) {
@@ -137,6 +141,47 @@ public abstract class BaseDataConnectorParser extends BaseResolverPluginParser {
             log.debug("no spring bean configured of type {}", clazz);
         }
         return bean;
+    }
+
+    /**
+     * Returns the results of {@link Introspector#getBeanInfo(Class, Class)} for the supplied connector class.
+     * 
+     * @param connectorClass to introspect
+     * 
+     * @return property descriptors or null if an error occurred
+     */
+    @Nullable protected PropertyDescriptor[] getBeanPropertyDescriptors(
+            @Nonnull final Class<? extends BaseDataConnector> connectorClass) {
+        PropertyDescriptor[] descriptors = null;
+        try {
+            final BeanInfo info = Introspector.getBeanInfo(connectorClass, BaseDataConnector.class);
+            descriptors = info.getPropertyDescriptors();
+        } catch (IntrospectionException e) {
+            log.error("could not retrieve bean info for class {}", connectorClass, e);
+        }
+        return descriptors;
+    }
+
+    /**
+     * Gets the property descriptors for the supplied connector class and then retrieves the bean for each descriptor
+     * type. If a bean is found it is added to the supplied builder.
+     * 
+     * @param builder to add property values to
+     * @param beanFactory to retrieve bean configuration from
+     * @param connectorClass to read property descriptors from
+     */
+    protected void addPropertyDescriptorValues(@Nonnull BeanDefinitionBuilder builder,
+            @Nonnull BeanFactory beanFactory, @Nonnull final Class<? extends BaseDataConnector> connectorClass) {
+        for (PropertyDescriptor descriptor : getBeanPropertyDescriptors(connectorClass)) {
+            log.debug("parsing property descriptor {}", descriptor);
+            final Object value = getBean(beanFactory, descriptor.getPropertyType());
+            if (value != null) {
+                builder.addPropertyValue(descriptor.getName(), value);
+                log.debug("added property value {}", value);
+            } else {
+                log.debug("no configuration found for {}", descriptor.getPropertyType());
+            }
+        }
     }
 
     /**

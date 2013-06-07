@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.Attribute;
 import net.shibboleth.idp.attribute.resolver.impl.dc.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.impl.dc.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.impl.dc.Validator;
+import net.shibboleth.idp.attribute.resolver.impl.dc.ldap.LdapDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.FormatExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.impl.dc.rdbms.RdbmsDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.dc.BaseDataConnectorParser;
@@ -90,32 +91,14 @@ public class RdbmsDataConnectorParser extends BaseDataConnectorParser {
 
         final Element springBeans = getSpringBeansElement(config);
         final BeanFactory beanFactory = createBeanFactory(springBeans);
-        final DataSource dataSource = beanFactory.getBean(DataSource.class);
+        addPropertyDescriptorValues(builder, beanFactory, RdbmsDataConnector.class);
 
-        ExecutableSearchBuilder searchBuilder = getBean(beanFactory, ExecutableSearchBuilder.class);
-        Constraint.isNotNull(searchBuilder, "No executable search builder found");
-
-        final Validator validator = getBean(beanFactory, Validator.class);
-        final MappingStrategy strategy = getBean(beanFactory, MappingStrategy.class);
-        final Cache<String, Map<String, Attribute>> cache = getBean(beanFactory, Cache.class);
         final Boolean noResultAnError =
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
                         "noResultIsError")));
         log.debug("parsed noResultAnError {}", noResultAnError);
-
-        builder.addPropertyValue("dataSource", dataSource);
-        builder.addPropertyValue("executableSearchBuilder", searchBuilder);
-        if (validator != null) {
-            builder.addPropertyValue("validator", validator);
-        }
-        if (strategy != null) {
-            builder.addPropertyValue("mappingStrategy", strategy);
-        }
         if (noResultAnError != null && noResultAnError.booleanValue()) {
             builder.addPropertyValue("noResultAnError", true);
-        }
-        if (cache != null) {
-            builder.addPropertyValue("resultCache", cache);
         }
         builder.setInitMethodName("initialize");
     }

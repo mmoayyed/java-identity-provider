@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
+import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,7 @@ import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -111,39 +113,24 @@ public class LdapDataConnectorParser extends BaseDataConnectorParser {
 
         final Element springBeans = getSpringBeansElement(config);
         final BeanFactory beanFactory = createBeanFactory(springBeans);
-        final ConnectionFactory connectionFactory = beanFactory.getBean(ConnectionFactory.class);
-        final SearchExecutor searchExecutor = beanFactory.getBean(SearchExecutor.class);
+        addPropertyDescriptorValues(builder, beanFactory, LdapDataConnector.class);
 
+        // TODO this should use the Templated builder once the velocity engine is working
         ExecutableSearchBuilder searchBuilder = getBean(beanFactory, ExecutableSearchBuilder.class);
         if (searchBuilder == null) {
-            // TODO this should use the Templated builder once the velocity engine is working
+            final SearchExecutor searchExecutor = beanFactory.getBean(SearchExecutor.class);
             searchBuilder =
                     new ParameterizedExecutableSearchFilterBuilder(searchExecutor.getSearchFilter().getFilter());
             log.debug("no executable search builder configured, created {}", searchBuilder);
+            builder.addPropertyValue("executableSearchBuilder", searchBuilder);
         }
 
-        final Validator validator = getBean(beanFactory, Validator.class);
-        final MappingStrategy strategy = getBean(beanFactory, MappingStrategy.class);
-        final Cache<String, Map<String, Attribute>> cache = getBean(beanFactory, Cache.class);
         final Boolean noResultAnError =
                 AttributeSupport.getAttributeValueAsBoolean(AttributeSupport.getAttribute(config, new QName(
                         "noResultIsError")));
         log.debug("parsed noResultAnError {}", noResultAnError);
-
-        builder.addPropertyValue("connectionFactory", connectionFactory);
-        builder.addPropertyValue("searchExecutor", searchExecutor);
-        builder.addPropertyValue("executableSearchBuilder", searchBuilder);
-        if (validator != null) {
-            builder.addPropertyValue("validator", validator);
-        }
-        if (strategy != null) {
-            builder.addPropertyValue("mappingStrategy", strategy);
-        }
         if (noResultAnError != null && noResultAnError.booleanValue()) {
             builder.addPropertyValue("noResultAnError", true);
-        }
-        if (cache != null) {
-            builder.addPropertyValue("resultCache", cache);
         }
         builder.setInitMethodName("initialize");
     }
