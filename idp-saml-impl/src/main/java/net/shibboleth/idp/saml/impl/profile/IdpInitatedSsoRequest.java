@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.impl.profile.saml1;
+package net.shibboleth.idp.saml.impl.profile;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -45,8 +45,6 @@ public class IdpInitatedSsoRequest {
      */
     private final String acsUrl;
     
-    //TODO get rid of relay state here, should be handled by decoder and stored in binding context like others.
-
     /** An opaque value to be returned to the service provider with the authentication response. */
     private final String relayState;
 

@@ -17,38 +17,72 @@
 
 package net.shibboleth.idp.saml.impl.profile.saml1;
 
-import java.util.UUID;
-
-//TODO need to deal with relay state
-
 import net.shibboleth.idp.saml.impl.profile.BaseIdpInitiatedSsoRequestMessageDecoder;
+import net.shibboleth.idp.saml.impl.profile.IdpInitatedSsoRequest;
 
-import org.opensaml.messaging.context.BasicMessageMetadataContext;
+import org.joda.time.DateTime;
+import org.joda.time.chrono.ISOChronology;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
+import org.opensaml.saml.common.messaging.context.SamlBindingContext;
+import org.opensaml.saml.common.messaging.context.SamlMessageInfoContext;
+import org.opensaml.saml.common.messaging.context.SamlPeerEntityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Decodes an incoming Shibboleth Authentication Request message. */
-class IdpInitiatedSsoRequestMessageDecoder extends BaseIdpInitiatedSsoRequestMessageDecoder<IdpInitatedSsoRequest> {
+public class IdpInitiatedSsoRequestMessageDecoder extends 
+        BaseIdpInitiatedSsoRequestMessageDecoder<IdpInitatedSsoRequest> {
+    
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(IdpInitiatedSsoRequestMessageDecoder.class);
+    
+    /**
+     * Gets the SAML binding URI supported by this decoder.
+     * 
+     * @return SAML binding URI supported by this decoder
+     */
+    public String getBindingURI() {
+        return "urn:mace:shibboleth:1.0:profiles:AuthnRequest";
+    }
 
     /** {@inheritDoc} */
     protected void doDecode() throws MessageDecodingException {
-        IdpInitatedSsoRequest authnRequest =
-                new IdpInitatedSsoRequest(getEntityId(getHttpServletRequest()), getAcsUrl(getHttpServletRequest()),
-                        getTarget(getHttpServletRequest()), getTime(getHttpServletRequest()));
+        IdpInitatedSsoRequest ssoRequest = buildIdpInitiatedSsoRequest();
 
         MessageContext<IdpInitatedSsoRequest> messageContext = new MessageContext<IdpInitatedSsoRequest>();
-        messageContext.setMessage(authnRequest);
-
-        //TODO fix
-        BasicMessageMetadataContext msgMetadata = new BasicMessageMetadataContext();
-        msgMetadata.setMessageId(UUID.randomUUID().toString());
-        msgMetadata.setMessageIssueInstant(authnRequest.getTime());
-        msgMetadata.setMessageIssuer(authnRequest.getEntityId());
-
-        messageContext.addSubcontext(msgMetadata);
+        messageContext.setMessage(ssoRequest);
         
-        //TODO binding context
+        messageContext.getSubcontext(SamlPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
+        
+        SamlMessageInfoContext msgInfoContext = messageContext.getSubcontext(SamlMessageInfoContext.class, true);
+        msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
+        msgInfoContext.setMessageId(getMessageID());
+        
+        populateBindingContext(messageContext);
 
         setMessageContext(messageContext);
+    }
+    
+    /**
+     * Populate the context which carries information specific to this binding.
+     * 
+     * @param messageContext the current message context
+     */
+    protected void populateBindingContext(MessageContext<IdpInitatedSsoRequest> messageContext) {
+        String relayState = messageContext.getMessage().getRelayState();
+        log.debug("Decoded SAML relay state of: {}", relayState);
+        
+        SamlBindingContext bindingContext = messageContext.getSubcontext(SamlBindingContext.class, true);
+        bindingContext.setRelayState(relayState);
+
+        bindingContext.setBindingUri(getBindingURI());
+        bindingContext.setHasBindingSignature(false);
+        bindingContext.setIntendedDestinationEndpointUriRequired(false);
+    }
+
+    /** {@inheritDoc} */
+    protected String getMessageToLog() {
+        return "SAML 1 IdP-initiated request was: " + getMessageContext().getMessage().toString();
     }
 }
