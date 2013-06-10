@@ -57,6 +57,9 @@ public final class AttributeFilterContext extends BaseContext {
 
     /** Values, for a given attribute, that are not permitted to be released. */
     private Map<String, Set<AttributeValue>> deniedValues;
+    
+    /** The requested Attributes (from the metadata for this request). */
+    private Map<String, RequestedAttribute> requestedAttributes;
 
     /** Attributes which have been filtered. */
     private Map<String, Attribute> filteredAttributes;
@@ -221,6 +224,29 @@ public final class AttributeFilterContext extends BaseContext {
 
         for (Attribute attribute : checkedAttributes) {
             filteredAttributes.put(attribute.getId(), attribute);
+        }
+    }
+
+    /** Get the attributes requested in the ACS.
+     * @return Returns the requestedAttributes.
+     */
+    public Map<String,RequestedAttribute> getRequestedAttributes() {
+        return requestedAttributes;
+    }
+
+    /** Set the attributes requested by the ACS.
+     * @param attributes The requestedAttributes to set.
+     */
+    public void setRequestedAttributes(@Nullable @NullableElements final Collection<RequestedAttribute> attributes) {
+        Collection<RequestedAttribute> checkedAttributes = new ArrayList<RequestedAttribute>();
+        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
+
+        requestedAttributes =
+                MapConstraints.constrainedMap(new HashMap<String, RequestedAttribute>(checkedAttributes.size()),
+                        MapConstraints.notNull());
+
+        for (RequestedAttribute attribute : checkedAttributes) {
+            requestedAttributes.put(attribute.getId(), attribute);
         }
     }
 }
