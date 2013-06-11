@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.filter.impl.saml;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -36,6 +36,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Matcher that checks whether an attribute is enumerated in an SP's metadata as a required or optional attribute. Also
@@ -65,7 +67,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             @Nonnull final AttributeFilterContext filterContext) throws AttributeFilterException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        final Map<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
+        final Multimap<String, RequestedAttribute> requestedAttributes = filterContext.getRequestedAttributes();
 
         if (null == requestedAttributes || requestedAttributes.isEmpty()) {
             log.debug("{}:  The peer's metadata did not have appropriate requested attributes available",
@@ -77,19 +79,31 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             }
         }
 
-        final RequestedAttribute requestedAttribute = requestedAttributes.get(attribute.getId());
+        final Collection<RequestedAttribute> requestedAttributeList = requestedAttributes.get(attribute.getId());
 
-        if (null == requestedAttribute) {
-            log.debug("{} Attribute {} not found in metadata", getLogPrefix(), attribute.getId());
+        if (null == requestedAttributeList) {
+            log.debug("{} Attribute {} not found in metadata", getLogPrefix(),
+                    attribute.getId());
             return Collections.EMPTY_SET;
         }
+        
+        Set<AttributeValue> values = new HashSet<AttributeValue>();
+        
+        for (RequestedAttribute requestedAttribute: requestedAttributeList) {
+            
+            if (null == requestedAttribute) {
+                log.info("{} Attribute {} found in metadata but with no values that could be decoded");
+                continue;
+            }
 
-        if (!requestedAttribute.getIsRequired() && onlyIfRequired) {
-            log.debug("{} Attribute {} found in metadata, but was not required", getLogPrefix(), attribute.getId());
-            return Collections.EMPTY_SET;
+            if (!requestedAttribute.getIsRequired() && onlyIfRequired) {
+                log.debug("{} Attribute {} found in metadata, but was not required", getLogPrefix(), attribute.getId());
+                continue;
+            }
+            
+            values.addAll(filterValues(attribute, requestedAttribute.getValues()));
         }
-
-        return filterValues(attribute, requestedAttribute.getValues());
+        return values;
     }
 
     /**

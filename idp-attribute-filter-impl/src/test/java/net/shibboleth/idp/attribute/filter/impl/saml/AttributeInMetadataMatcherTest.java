@@ -32,7 +32,9 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 /**
  * Tests for {@link AttributeInMetadataMatcher}
@@ -55,17 +57,28 @@ public class AttributeInMetadataMatcherTest {
         return matcher;
     }
     
-    private AttributeFilterContext makeContext(RequestedAttribute attribute) {
+    private AttributeFilterContext makeContext(String attributeId, RequestedAttribute attribute) {
         
         final AttributeFilterContext context = new AttributeFilterContext();
         
-        if (null == attribute) {
-            context.setRequestedAttributes(Collections.EMPTY_LIST);
+        if (null == attributeId) {
+            context.setRequestedAttributes(null);
         } else {
-            context.setRequestedAttributes(Collections.singleton(attribute));
+            final Multimap<String, RequestedAttribute> multimap = ArrayListMultimap.create();
+            multimap.put(attributeId, attribute);
+            context.setRequestedAttributes(multimap);
         }
         return context;
     }
+    
+    private AttributeFilterContext makeContext(RequestedAttribute attribute) {
+        
+        if (null == attribute) {
+            return makeContext(null, null);
+        }
+        return makeContext(attribute.getId(), attribute);
+    }
+
 
     @Test public void getters() throws ComponentInitializationException {
         AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
@@ -152,4 +165,44 @@ public class AttributeInMetadataMatcherTest {
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
     }
+    
+    @Test public void valuesButNoConvert() throws AttributeFilterException, ComponentInitializationException {
+        
+        final Attribute attr =
+                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
+                        DataSources.NON_MATCH_STRING_VALUE));
+        
+        AttributeFilterContext context = makeContext("attr", null);
+        
+        Set<AttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Assert.assertTrue(result.isEmpty());
+    }
+
+    @Test public void multiValues() throws AttributeFilterException, ComponentInitializationException {
+        
+        final Attribute attr =
+                makeAttribute("attr", Lists.newArrayList((AttributeValue) DataSources.STRING_VALUE,
+                        DataSources.NON_MATCH_STRING_VALUE));
+        
+        RequestedAttribute req1 = new RequestedAttribute("attr");
+        req1.setRequired(true);
+        req1.setValues(Collections.singleton((AttributeValue)DataSources.STRING_VALUE));
+        
+        RequestedAttribute req2 = new RequestedAttribute("attr");
+        req2.setRequired(true);
+        req2.setValues(Collections.singleton((AttributeValue)DataSources.NON_MATCH_STRING_VALUE));
+        
+        final AttributeFilterContext context = new AttributeFilterContext();
+        
+        final Multimap<String, RequestedAttribute> multimap = ArrayListMultimap.create();
+        multimap.put(req1.getId(), req1);
+        multimap.put(req2.getId(), req2);
+        context.setRequestedAttributes(multimap);
+        
+        Set<AttributeValue> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
+        Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
+    }
+
 }

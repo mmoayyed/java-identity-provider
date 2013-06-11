@@ -44,6 +44,7 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Constraints;
 import com.google.common.collect.MapConstraints;
+import com.google.common.collect.Multimap;
 
 /** Context used to collect data as attributes are filtered. */
 @NotThreadSafe
@@ -57,9 +58,9 @@ public final class AttributeFilterContext extends BaseContext {
 
     /** Values, for a given attribute, that are not permitted to be released. */
     private Map<String, Set<AttributeValue>> deniedValues;
-    
+
     /** The requested Attributes (from the metadata for this request). */
-    private Map<String, RequestedAttribute> requestedAttributes;
+    private Multimap<String, RequestedAttribute> requestedAttributes;
 
     /** Attributes which have been filtered. */
     private Map<String, Attribute> filteredAttributes;
@@ -227,26 +228,26 @@ public final class AttributeFilterContext extends BaseContext {
         }
     }
 
-    /** Get the attributes requested in the ACS.
+    /**
+     * Get the attributes requested in the ACS.<br/>
+     * Note that a null requested attribute means that the attribute existed, but that no values could be converted.
+     * This is distinct from the attribute existing and having no values (an non null requested attribute, but an empty
+     * {@link Attribute#getValues()})
+     * 
      * @return Returns the requestedAttributes.
      */
-    public Map<String,RequestedAttribute> getRequestedAttributes() {
+    @NullableElements @Nonnull public Multimap<String, RequestedAttribute> getRequestedAttributes() {
         return requestedAttributes;
     }
 
-    /** Set the attributes requested by the ACS.
+    /**
+     * Set the attributes requested by the ACS.
+     * 
      * @param attributes The requestedAttributes to set.
      */
-    public void setRequestedAttributes(@Nullable @NullableElements final Collection<RequestedAttribute> attributes) {
-        Collection<RequestedAttribute> checkedAttributes = new ArrayList<RequestedAttribute>();
-        CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
+    public void
+            setRequestedAttributes(@Nullable @NullableElements final Multimap<String, RequestedAttribute> attributes) {
 
-        requestedAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, RequestedAttribute>(checkedAttributes.size()),
-                        MapConstraints.notNull());
-
-        for (RequestedAttribute attribute : checkedAttributes) {
-            requestedAttributes.put(attribute.getId(), attribute);
-        }
+        requestedAttributes = attributes;
     }
 }
