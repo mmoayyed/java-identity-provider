@@ -29,9 +29,9 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.opensaml.util.storage.StorageRecord;
-import org.opensaml.util.storage.StorageService;
-import org.opensaml.util.storage.impl.MemoryStorageService;
+import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageService;
+import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
