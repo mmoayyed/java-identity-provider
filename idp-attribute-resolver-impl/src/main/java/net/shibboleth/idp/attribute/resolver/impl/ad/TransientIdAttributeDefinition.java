@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -30,35 +31,47 @@ import net.shibboleth.idp.attribute.resolver.AttributeRecipientContext;
 import net.shibboleth.idp.attribute.resolver.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.BaseAttributeDefinition;
-import net.shibboleth.idp.persistence.PersistenceManager;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
+import org.opensaml.util.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * An attribute definition that generates random identifiers useful for transient subject IDs.
  * 
- * Information about the created IDs are stored within a provided {@link PersistenceManager} in the form of
- * {@link TransientIdEntry}s. Each entry is mapped under two keys; the generated ID and a key derived from the tuple
- * (outbound message issuer, inbound message issuer, principal name).
+ * Information about the created IDs are stored within a provided {@link StorageService}.
+ * The identifier itself is the record key, and the value combines the principal name
+ * with the identifier of the recipient.
  */
 public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
 
+    /** Context label for storage of IDs. */
+    public static final String CONTEXT = "TransientId";
+
+    /** Delimiter for storage of ID-associated data. */
+    public static final String DELIMITER = "!";
+
+    /** Index into delimited field storage of relying party identifier. */
+    public static final int RELYING_PARTY_ID_INDEX = 0;
+
+    /** Index into delimited field storage of principal name. */
+    public static final int PRINCIPAL_NAME_INDEX = 1;
+    
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
 
-    /** Store used to map tokens to principals. */
-    // TODO This needs to be changed when Persistence is finalized.
-    private PersistenceManager<TransientIdEntry> idStore;
+    /** Store used to map identifiers to principals. */
+    private StorageService idStore;
 
-    /** Generator of random, hex-encoded, tokens. */
+    /** Generator of random, hex-encoded, identifiers. */
     private IdentifierGenerationStrategy idGenerator;
 
     /** Size, in bytes, of the token. */
@@ -80,7 +93,7 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @return the ID store we are using.
      */
-    @Nullable @NonnullAfterInit public PersistenceManager<TransientIdEntry> getIdStore() {
+    @Nullable @NonnullAfterInit public StorageService getIdStore() {
         return idStore;
     }
 
@@ -89,9 +102,9 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
      * 
      * @param store the store to use.
      */
-    public void setIdStore(PersistenceManager<TransientIdEntry> store) {
+    public void setIdStore(@Nonnull final StorageService store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        idStore = store;
+        idStore = Constraint.isNotNull(store, "StorageService cannot be null");
     }
 
     /**
@@ -145,22 +158,6 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
     }
 
     /**
-     * Police and get the AttributeIssuerID.
-     * 
-     * @param attributeRecipientContext where to look
-     * @return the AttributeIssuerID
-     * @throws ResolutionException if it was non null
-     */
-    @Nonnull @NotEmpty private String getAttributeIssuerID(
-            @Nonnull final AttributeRecipientContext attributeRecipientContext) throws ResolutionException {
-        final String attributeIssuerID = StringSupport.trimOrNull(attributeRecipientContext.getAttributeIssuerID());
-        if (null == attributeIssuerID) {
-            throw new ResolutionException(getLogPrefix() + " provided attribute issuer ID was empty");
-        }
-        return attributeIssuerID;
-    }
-
-    /**
      * Police and get the AttributeRecipientID.
      * 
      * @param attributeRecipientContext where to look
@@ -207,8 +204,6 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
             throw new ResolutionException(getLogPrefix() + " no attribute recipient context provided ");
         }
 
-        final String attributeIssuerID = getAttributeIssuerID(attributeRecipientContext);
-
         final String attributeRecipientID = getAttributeRecipientID(attributeRecipientContext);
 
         final String principalName = getPrincipal(attributeRecipientContext);
@@ -216,28 +211,43 @@ public class TransientIdAttributeDefinition extends BaseAttributeDefinition {
         final Attribute result = new Attribute(getId());
 
         StringBuilder principalTokenIdBuilder = new StringBuilder();
-        principalTokenIdBuilder.append(attributeIssuerID).append("!").append(attributeRecipientID);
-        principalTokenIdBuilder.append("!").append(principalName);
+        principalTokenIdBuilder.append(attributeRecipientID).append("!").append(principalName);
         String principalTokenId = principalTokenIdBuilder.toString();
 
-        TransientIdEntry tokenEntry = idStore.get(principalTokenId);
-        if (tokenEntry == null || tokenEntry.isExpired()) {
-            String token = idGenerator.generateIdentifier();
-            if (tokenEntry != null) {
-                log.debug("{} previous transient ID '{}' expired for request '{}'",
-                        new Object[] {getLogPrefix(), tokenEntry.getId(), resolutionContext.getId(),});
+        // This code used to store the entries keyed by the ID *and* the value, which I think
+        // was used to prevent generation of multiple IDs if the resolver runs multiple times.
+        // This is the source of the current V2 bug that causes the same transient to be reused
+        // for the same SP within the TTL window. If we need to prevent multiple resolutions, I
+        // suggest we do that by storing transactional state for resolver plugins in the context
+        // tree. But in practice, I'm not sure it matters much how many times this runs, that's
+        // the point of a transient. So this version never reads the store, it just writes to it.
+        
+        String id = idGenerator.generateIdentifier();
+        
+        log.debug("{} creating new transient ID '{}' for request '{}'", new Object[] {getLogPrefix(), id,
+                resolutionContext.getId(),});
+        
+        long expiration = System.currentTimeMillis() + idLifetime;
+        
+        int collisions = 0;
+        while (collisions < 5) {
+            try {
+                if (idStore.create(CONTEXT, id, principalTokenId, expiration)) {
+                    // TODO: think we want this to be a NameID-valued attribute now. Or maybe we're keeping this,
+                    // but adding a parallel version. I'm thinking maybe we could handle compatibility with the old
+                    // String-based encoders by special-casing them to handle NameID-valued attributes?
+                    Set<AttributeValue> vals = Collections.singleton((AttributeValue) new StringAttributeValue(id));
+                    result.setValues(vals);
+                    return result;
+                } else {
+                    ++collisions;
+                }
+            } catch (IOException e) {
+                throw new ResolutionException(getLogPrefix() + " error saving transient ID to storage service", e);
             }
-            log.debug("{} creating new transient ID '{}' for request '{}'", new Object[] {getLogPrefix(), token,
-                    resolutionContext.getId(),});
-            tokenEntry = new TransientIdEntry(idLifetime, attributeRecipientID, principalName, token);
-            idStore.persist(token, tokenEntry);
-            idStore.persist(principalTokenId, tokenEntry);
-        } else {
-            log.debug("{} found existing transient ID '{}' for request '{}'",
-                    new Object[] {getLogPrefix(), tokenEntry.getId(), resolutionContext.getId(),});
         }
-        Set<AttributeValue> vals = Collections.singleton((AttributeValue) new StringAttributeValue(tokenEntry.getId()));
-        result.setValues(vals);
-        return result;
+        
+        throw new ResolutionException(getLogPrefix() + " exceeded allowable number of collisions");
     }
+    
 }

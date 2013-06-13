@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.impl.ad;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -28,6 +29,9 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.util.storage.StorageRecord;
+import org.opensaml.util.storage.StorageService;
+import org.opensaml.util.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -50,7 +54,7 @@ public class TransientIdAttributeDefinitionTest {
         }
     }
 
-    @Test public void single() throws ComponentInitializationException, ResolutionException {
+    @Test public void single() throws ComponentInitializationException, ResolutionException, IOException {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         testInitializeFail(defn, "no dependencies");
@@ -58,7 +62,8 @@ public class TransientIdAttributeDefinitionTest {
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         testInitializeFail(defn, "no IdStore");
 
-        final TestIdStore store = new TestIdStore();
+        final StorageService store = new MemoryStorageService();
+        store.initialize();
         defn.setIdStore(store);
 
         defn.initialize();
@@ -72,13 +77,20 @@ public class TransientIdAttributeDefinitionTest {
 
         String val = (String) vals.iterator().next().getValue();
 
-        Assert.assertEquals(val, store.getLastValue().getId());
+        StorageRecord record = store.read(TransientIdAttributeDefinition.CONTEXT, val);
+        
+        Assert.assertNotNull(record);
         Assert.assertTrue(val.length() >= defn.getIdSize());
+        
+        String[] fields = record.getValue().split(TransientIdAttributeDefinition.DELIMITER);
+        
+        Assert.assertNotNull(fields);
+        Assert.assertEquals(fields.length, 2);
+        Assert.assertEquals(fields[TransientIdAttributeDefinition.RELYING_PARTY_ID_INDEX], TestSources.SP_ENTITY_ID);
+        Assert.assertEquals(fields[TransientIdAttributeDefinition.PRINCIPAL_NAME_INDEX], TestSources.PRINCIPAL_ID);
 
-        Assert.assertEquals(store.getLastValue().getPrincipalName(), TestSources.PRINCIPAL_ID);
-        Assert.assertEquals(store.getLastValue().getRelyingPartyId(), TestSources.SP_ENTITY_ID);
-        Assert.assertTrue(store.getLastId().contains(TestSources.IDP_ENTITY_ID));
-
+        defn.destroy();
+        store.destroy();
     }
 
     private void constructAndFail(String sp, String idp, String principal, String whyItFailed)
@@ -86,7 +98,8 @@ public class TransientIdAttributeDefinitionTest {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        final TestIdStore store = new TestIdStore();
+        final StorageService store = new MemoryStorageService();
+        store.initialize();
         defn.setIdStore(store);
         defn.initialize();
         try {
@@ -95,11 +108,13 @@ public class TransientIdAttributeDefinitionTest {
         } catch (ResolutionException e) {
             // OK
         }
+
+        defn.destroy();
+        store.destroy();
     }
 
     @Test public void fails() throws ComponentInitializationException {
 
-        constructAndFail(TestSources.SP_ENTITY_ID, null, TestSources.PRINCIPAL_ID, "Null IdP");
         constructAndFail(TestSources.SP_ENTITY_ID, TestSources.IDP_ENTITY_ID, null, "Null principal");
         constructAndFail(null, TestSources.IDP_ENTITY_ID, TestSources.PRINCIPAL_ID, "Null SP");
     }
@@ -108,7 +123,8 @@ public class TransientIdAttributeDefinitionTest {
         final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        final TestIdStore store = new TestIdStore();
+        final StorageService store = new MemoryStorageService();
+        store.initialize();
         defn.setIdStore(store);
 
         defn.setIdLifetime(TEST_LIFETIME);
@@ -120,6 +136,9 @@ public class TransientIdAttributeDefinitionTest {
         Assert.assertEquals(defn.getIdSize(), TEST_ID_SIZE);
 
         Assert.assertEquals(defn.getIdStore(), store);
+
+        defn.destroy();
+        store.destroy();
     }
 
     @Test public void rerun() throws ComponentInitializationException, ResolutionException,
@@ -129,7 +148,8 @@ public class TransientIdAttributeDefinitionTest {
         defn.setIdLifetime(TEST_LIFETIME);
         defn.setIdSize(TEST_ID_SIZE);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
-        final TestIdStore store = new TestIdStore();
+        final StorageService store = new MemoryStorageService();
+        store.initialize();
         defn.setIdStore(store);
         defn.initialize();
 
@@ -154,5 +174,7 @@ public class TransientIdAttributeDefinitionTest {
         vals = result.getValues();
         Assert.assertNotEquals(firstTime, vals.iterator().next().getValue());
 
+        defn.destroy();
+        store.destroy();
     }
 }
